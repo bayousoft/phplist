@@ -40,6 +40,7 @@ if(isset($import)) {
     Fatal_Error("Please choose whether to sign up immediately or to send a notification");
     return;
   }
+  $notify = $_POST["notify"];
 
   if ($_FILES["import_file"]) {
     move_uploaded_file($_FILES['import_file']['tmp_name'], $GLOBALS['tmpdir'].'/'. $_FILES['import_file']['name']);
