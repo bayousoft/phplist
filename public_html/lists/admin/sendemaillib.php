@@ -213,6 +213,20 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
   # remove any existing placeholders
   $htmlmessage = ereg_replace("\[[A-Z\. ]+\]","",$htmlmessage);
   $textmessage = ereg_replace("\[[A-Z\. ]+\]","",$textmessage);
+	
+	# check that the HTML message has proper <head> </head> and <body> </body> tags
+	# some readers fail when it doesn't
+	if (!preg_match("#<body>.*</body>#i",$htmlmessage)) {
+		$htmlmessage = '<body>'.$htmlmessage.'</body>';
+	}	
+	if (!preg_match("#<head>.*</head>#i",$htmlmessage)) {
+		$htmlmessage = '<head>
+        <meta content="text/html;charset='.$cached[$messageid]["html_charset"].'" http-equiv="Content-Type">
+        <title></title></head>'.$htmlmessage;
+	}
+	if (!preg_match("#<html>.*</html>#i",$htmlmessage)) {
+		$htmlmessage = '<html>'.$htmlmessage.'</html>';
+	}
 
   # particularly Outlook seems to have trouble if it is not \r\n
   # reports have come that instead this creates lots of trouble
