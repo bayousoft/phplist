@@ -244,7 +244,7 @@ if ((($send && is_array($_POST["list"])) || $save || $sendtest || $prepare) && $
     }
   }	else {
     #	mark this	message	as listmessage for list	0
-    $result	=	Sql_query("insert	into $tables[listmessage]	(messageid,listid,entered) values($messageid,0,now())");
+    $result	=	Sql_query("insert ignore into $tables[listmessage]	(messageid,listid,entered) values($messageid,0,now())");
   }
 
 # we want to create a join on tables as follows, in order to find users who have their attributes to the values chosen
