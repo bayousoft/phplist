@@ -207,12 +207,14 @@ if (ALLOW_ATTACHMENTS && (!is_dir($GLOBALS["attachment_repository"]) || !is_writ
 }
 ;
 
+/*
 if (USEFCK) {
 	$imgdir = getenv("DOCUMENT_ROOT").$GLOBALS["pageroot"].'/'.FCKIMAGES_DIR.'/';
   if (!is_dir($imgdir) || !is_writeable ($imgdir)) {
 		Warn("The FCK image directory does not exist, or is not writable");
 	}
 }
+*/
 
 if (defined("USE_PDF") && USE_PDF && !defined('FPDF_VERSION')) {
 	Warn("You are trying to use PDF support without having FPDF loaded");

@@ -14,6 +14,36 @@ if (Sql_Table_exists($tables["config"])) {
   $GLOBALS["firsttime"] = 1;
   return;
 }
+
+# check for latest version
+$checkinterval = sprintf('%d',getConfig("check_new_version"));
+if (!isset($checkinterval)) {
+	$checkinterval = 7;
+}
+if ($checkinterval) {
+  $needscheck = Sql_Fetch_Row_Query(sprintf('select date_add(value,interval %d day) < now() as needscheck from %s where item = "updatelastcheck"',$checkinterval,$tables["config"]));
+  if ($needscheck[0]) {
+    ini_set("user_agent","PHPlist version ".VERSION);
+    ini_set("default_socket_timeout",5);
+    if ($fp = @fopen ("http://www.phplist.com/files/LATESTVERSION","r")) {
+      $latestversion = fgets ($fp);
+      $latestversion = preg_replace("/[^\.\d]/","",$latestversion);
+      $v = VERSION;
+      $v = str_replace("-dev","",$v);
+      if (strcmp($v,$latestversion)) {
+        print "<div align=center><font color=green size=2>A new version of PHPlist is available!</font><br/>";
+        print "<br/>The new version may have fixed security issues,<br/>so it is recommended to upgrade as soon as possible";
+        print "<br/>Your version: <b>".$v."</b>";
+        print "<br/>Latest version: <b>".$latestversion."</b><br/>  ";
+        print '<a href="http://www.phplist.com/files/changelog">View what has changed</a>&nbsp;&nbsp;';
+        print '<a href="http://www.phplist.com/files/phplist-'.$latestversion.'.tgz">Download</a></div>';
+      }
+    }
+    Sql_Query(sprintf('replace into %s (item,value,editable) values("updatelastcheck",now(),0)',
+      $tables["config"]));
+  }
+}
+
 ?>
 <br/><br/>
 <?

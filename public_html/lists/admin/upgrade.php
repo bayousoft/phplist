@@ -253,6 +253,9 @@ if ($doit == "yes") {
   # mark the database to be our current version
   if ($success) {
 		SaveConfig("version",VERSION,0);
+    # mark now to be the last time we checked for an update
+    Sql_Query(sprintf('replace into %s (item,value,editable) values("updatelastcheck",now(),0)',
+      $tables["config"]));
     Info("Success");
    }
    else

@@ -58,6 +58,9 @@ if ($success) {
   # mark the database to be our current version
   Sql_Query(sprintf('replace into %s (item,value,editable) values("version","%s",0)',
     $tables["config"],VERSION));
+  # mark now to be the last time we checked for an update
+  Sql_Query(sprintf('replace into %s (item,value,editable) values("updatelastcheck",now(),0)',
+    $tables["config"]));
   # add a testlist
 	$info = 'List for testing. If you don\'t make this list active and add yourself as a member, you can use this list to test a message. If the message comes out ok, you can resend it to other lists.';
   $result = Sql_query("insert into {$tables["list"]} (name,description,entered,active,owner) values(\"test\",\"$info\",now(),0,1)");

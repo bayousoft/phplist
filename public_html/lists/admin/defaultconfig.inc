@@ -131,6 +131,9 @@ $default_config = array (
 "admin_address" => array('webmaster@[DOMAIN]',
 		"Person in charge of this system (one email address)","text"),
 
+# how often to check for new versions of PHPlist
+"check_new_version" => array("7","How often do you want to check for a new version of PHPlist (days)","text"),    
+
 # admin addresses are other people who receive copies of subscriptions
 "admin_addresses" => array('',
 		"List of people to CC in system emails (separate by commas)","text",1),
