@@ -79,7 +79,7 @@ ob_end_flush();
     printf ('<option value="%d" %s>%s</option>',$row["id"],$row["id"] == $list["owner"]? "selected":"",$row["loginname"]);
   print '</select></td></tr>';
 } else {
-	printf('<input type=hidden name="owner" value="%d">',$list["owner"]);
+	printf('<input type=hidden name="owner" value="%d">',$_SESSION["logindetails"]["id"]);
 }
 if (ENABLE_RSS) {
  if ($list["rssfeed"]) {
