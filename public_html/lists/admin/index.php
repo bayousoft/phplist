@@ -19,7 +19,8 @@ if (PHP_SAPI == "cli") {
   header("Cache-Control: no-cache, must-revalidate");           // HTTP/1.1
   header("Pragma: no-cache");                                   // HTTP/1.0
 }
-if (!ini_get("register_globals")) {
+
+if (!ini_get("register_globals") || ini_get("register_globals") == "off") {
 	# fix register globals, for now, should be phased out gradually
   # sure, this gets around the entire reason that register globals
   # should be off, but going through three years of code takes a long time....
@@ -28,13 +29,15 @@ if (!ini_get("register_globals")) {
 #    print "$key = $val<br/>";
   }
 }
-if ($_SERVER["ConfigFile"] && is_file($_SERVER["ConfigFile"])) {
+require_once dirname(__FILE__) .'/commonlib/lib/magic_quotes.php';
+
+if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
 	print '<!-- using '.$_SERVER["ConfigFile"].'-->'."\n";
   include $_SERVER["ConfigFile"];
-} elseif (is_file($cline["c"])) {
+} elseif (isset($cline["c"]) && is_file($cline["c"])) {
 	print '<!-- using '.$cline["c"].' -->'."\n";
   include $cline["c"];
-} elseif ($_ENV["CONFIG"] && is_file($_ENV["CONFIG"])) {
+} elseif (isset($_ENV["CONFIG"]) && is_file($_ENV["CONFIG"])) {
 #	print '<!-- using '.$_ENV["CONFIG"].'-->'."\n";
   include $_ENV["CONFIG"];
 } elseif (is_file("../config/config.php")) {
@@ -202,8 +205,8 @@ if ($page != "login") {
   #	Error("Register Globals in your php.ini needs to be <b>on</b>");
   if (ini_get("safe_mode") && WARN_ABOUT_PHP_SETTINGS)
     Warn("In safe mode, not everything will work as expected");
-  if (!ini_get("magic_quotes_gpc") && WARN_ABOUT_PHP_SETTINGS)
-    Warn("Things will work better when PHP magic_quotes_gpc = on");
+  if (!get_magic_quotes_gpc() && WARN_ABOUT_PHP_SETTINGS)
+    Warn("Things will work better and more secure when PHP magic_quotes_gpc = on");
   if (ini_get("magic_quotes_runtime") && WARN_ABOUT_PHP_SETTINGS)
     Warn("Things will work better when PHP magic_quotes_runtime = off");
   if (defined("ENABLE_RSS") && ENABLE_RSS && !function_exists("xml_parse") && WARN_ABOUT_PHP_SETTINGS)

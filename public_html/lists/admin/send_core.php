@@ -69,7 +69,7 @@ if (((!$send) && (!$save) && (!$sendtest)) && ($id)) {
 
 // If we've got magic quotes on, then we need to get rid of the slashes - either 
 // from the database or from the previous $_POST
-if (get_magic_quotes_gpc()) {
+#if (get_magic_quotes_gpc()) {
 	$_POST["msgsubject"] = stripslashes($_POST["msgsubject"]);
 	$_POST["from"] = stripslashes($_POST["from"]);
 	$_POST["tofield"] = stripslashes($_POST["tofield"]);
@@ -77,7 +77,7 @@ if (get_magic_quotes_gpc()) {
 	$_POST["message"] = stripslashes($_POST["message"]);
   $_POST["textmessage"] = stripslashes($_POST["textmessage"]);
 	$_POST["footer"] = stripslashes($_POST["footer"]);
-}
+#}
 
 # check the criterias, one attribute can only exist once
 if ($send) {
