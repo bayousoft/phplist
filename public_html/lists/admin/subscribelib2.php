@@ -74,7 +74,9 @@ if (isset($_POST["email"]) && $check_for_host) {
   $validhost = 1;
 }
 
-if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && is_array($_POST["list"])
+$listsok = ((!ALLOW_NON_LIST_SUBSCRIBE && is_array($_POST["list"])) || ALLOW_NON_LIST_SUBSCRIBE);
+
+if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
    && $allthere && $validhost) {
   # now check whether this user already exists.
   $email = $_POST["email"];
@@ -212,8 +214,18 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && is_array($_POST["
   }
 
   # personalise the thank you page
+  if ($subscribepagedata["thankyoupage"]) {
+  	$thankyoupage = $subscribepagedata["thankyoupage"];
+  } else {
+  	$thankyoupage = '<h3>'.$strThanks.'</h3>'. $strEmailConfirmation;
+	}
+
   $user_att = getUserAttributeValues($email);
   while (list($att_name,$att_value) = each ($user_att)) {
+    if (eregi("\[".$att_name."\]",$thankyoupage,$regs))
+      $thankyoupage = eregi_replace("\[".$att_name."\]",$att_value,$thankyoupage);
+    if (eregi("\[email\]",$thankyoupage,$regs))
+      $thankyoupage = eregi_replace("\[email\]",$email,$thankyoupage);
   	foreach (array("strEmailConfirmation","strThanks","strEmailFailed") as $var) {
       if (eregi("\[".$att_name."\]",$GLOBALS[$var],$regs))
         $GLOBALS[$var] = eregi_replace("\[".$att_name."\]",$att_value,$GLOBALS[$var]);
@@ -226,13 +238,12 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && is_array($_POST["
   	if (sendMail($email, getConfig("subscribesubject:$id"), $subscribemessage,system_messageheaders($email),$envelope)) {
     	sendAdminCopy("Lists subscription","\n".$email . " has subscribed\n\n$history_entry");
       addUserHistory($email,$history_subject,$history_entry);
-  		print '<h3>'.$strThanks.'</h3>';
-      print $strEmailConfirmation;
+      print $thankyoupage;
    	} else {
       print '<h3>'.$strEmailFailed.'</h3>';
 		}
   } else {
-    print '<h3>'.$strThanks.'</h3>';
+    print $thankyoupage;
     print "<p>User has been added and confirmed</p>";
   }
 

@@ -83,6 +83,11 @@ $commandline_users = array("admin");
 # to 1. See README.passwords for more information
 define("ASKFORPASSWORD",0);
 
+# if you do not require users to actually sign up to lists, but only want to 
+# use the subscribe page as a kind of registration system, you can set this to 1 and 
+# users will not receive an error when they do not check a list to subscribe to
+define("ALLOW_NON_LIST_SUBSCRIBE",0);
+
 # to increase security the session of a user is checked for the IP address
 # this needs to be the same for every request. This may not work with 
 # network situations where you connect via multiple proxies, so you can
