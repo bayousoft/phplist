@@ -1,0 +1,68 @@
+.shader {
+  margin-bottom: 0px;
+  border-color: #e7be8f;
+}
+.shaderheader {
+  font-size : 11px; 
+  color : black;
+  background-color : #e7be8f; 
+  font-weight: bold; 
+  border-top: 1px black solid;  
+  border-bottom: 1px black solid;
+  border-left: 1px black solid;  
+  border-right: 1px black solid;
+  text-align : left; 
+  text-decoration : none; 
+  padding: 2px;
+  vertical-align : top; 
+  padding-left : 3px;
+}
+.footertext {
+  visibility: hidden;
+}  
+
+.shaderheadertext {
+  font-size : 11px; 
+  color : black;
+  background-color : #e7be8f; 
+  font-weight: bold; 
+  text-align : left; 
+  text-decoration : none; 
+  padding: 2px;
+  vertical-align : top; 
+  padding-left : 3px;
+}
+.shaderfootertext {
+  font-size : 11px; 
+  color : black;
+  background-color : #e7be8f; 
+  font-weight: bold; 
+  text-align : left; 
+  text-decoration : none; 
+  padding: 2px;
+  vertical-align : top; 
+  padding-left : 3px;
+}
+
+.shaderdivider {
+  //background-color:#e7be8f; 
+}
+.shaderborder {
+  //background-color:#e7be8f; 
+}
+.shaderborderright {
+  background-color:#e7be8f; 
+  text-align : right; 
+  text-decoration : none; 
+}
+.shadersmall { 
+  font-family:"MS Sans Serif",Geneva,sans-serif;
+  font-size:10px;
+  text-decoration:none;
+}
+
+.shadersmallnavtext {
+  font-family:"MS Sans Serif",Geneva,sans-serif;
+  font-size:10px;
+  text-decoration:none;
+}
