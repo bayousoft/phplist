@@ -31,6 +31,7 @@ if (!defined("MAILQUEUE_BATCH_SIZE")) define("MAILQUEUE_BATCH_SIZE",0);
 if (!defined("MAILQUEUE_BATCH_PERIOD")) define("MAILQUEUE_BATCH_PERIOD",3600);
 if (!defined("NAME")) define("NAME",'PHPlist');
 if (!defined("USE_OUTLOOK_OPTIMIZED_HTML")) define("USE_OUTLOOK_OPTIMIZED_HTML",0);
+if (!defined("EXPORT_EXCEL")) define("EXPORT_EXCEL",0);
 if (!defined("USE_PREPARE")) define("USE_PREPARE",0);
 if (!defined("HTMLEMAIL_ENCODING")) define("HTMLEMAIL_ENCODING","quoted-printable");
 

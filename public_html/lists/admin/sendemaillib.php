@@ -198,8 +198,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
   }
 
   if (is_array($GLOBALS["default_config"])) {
-  	reset($GLOBALS["default_config"]);
-    while (list($key,$val) = each($GLOBALS["default_config"])) {
+    foreach($GLOBALS["default_config"] as $key => $val) {
       if (is_array($val)) {
         $htmlmessage = eregi_replace("\[$key\]",getConfig($key),$htmlmessage);
         $textmessage = eregi_replace("\[$key\]",getConfig($key),$textmessage);

@@ -392,6 +392,9 @@ $attachment_repository = '/tmp';
 # application/vnd.ms-excel to make it open automatically in excel
 $export_mimetype = 'application/csv';
 
+# if you want to use export format optimized for Excel, set this one to 1
+define("EXPORT_EXCEL",0);
+
 # Repetition. This adds the option to repeat the same message in the future.
 # After the message has been sent, this option will cause the system to automatically
 # create a new message with the same content. Be careful with it, because you may
