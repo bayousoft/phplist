@@ -1,6 +1,6 @@
 <?php
 ob_start();
-$er = error_reporting(0); # some ppl have warnings on
+$er = error_reporting(63); # some ppl have warnings on
 if ($_SERVER["ConfigFile"] && is_file($_SERVER["ConfigFile"])) {
   include $_SERVER["ConfigFile"];
 } elseif ($_ENV["CONFIG"] && is_file($_ENV["CONFIG"])) {
@@ -10,14 +10,14 @@ if ($_SERVER["ConfigFile"] && is_file($_SERVER["ConfigFile"])) {
 }
 error_reporting($er);
 
-if ($u && $m) {
+if ($_GET["u"] && $_GET["m"]) {
   $userid = Sql_Fetch_Row_Query(sprintf('select id from %s where uniqid = "%s"',
-    $tables["user"],$u));
+    $GLOBALS["tables"]["user"],$_GET["u"]));
   if ($userid[0]) {
     Sql_Query(sprintf('update %s set viewed = now() where messageid = %d and userid = %d',
-      $tables["usermessage"],$m,$userid[0]));
+      $GLOBALS["tables"]["usermessage"],$_GET["m"],$userid[0]));
     Sql_Query(sprintf('update %s set viewed = viewed + 1 where id = %d',
-      $tables["message"],$m));
+      $GLOBALS["tables"]["message"],$_GET["m"]));
   }
 }
 header("Content-Type: image/png");
