@@ -319,7 +319,7 @@ while ($message = Sql_fetch_array($messages)) {
   # the email
   # we don't do this otherwise because it slows down the process, possibly
   # causing us to not find anything at all
-  if ($GLOBALS["commandline"]) {
+  if ($GLOBALS["commandline"] && !$processrss) {
     $doneusers = array();
     $req = Sql_Query("select userid from {$tables["usermessage"]} where messageid = $messageid");
     while ($row = Sql_Fetch_Row($req)) {
