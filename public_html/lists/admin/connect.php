@@ -62,8 +62,7 @@ if (!isset($adminlanguage) || !is_array($adminlanguage)) {
 }
 
 # identify pages that can be run on commandline
-#$commandline_pages = array("send","processqueue","processbounces");
-$commandline_pages = array("send");
+$commandline_pages = array("send","processqueue","processbounces");
 
 if (isset($message_envelope))
   $envelope = "-f$message_envelope";
@@ -275,7 +274,11 @@ function sendMail ($to,$subject,$message,$header = "",$parameters = "") {
   } else {
   	# send mails to one place when running a test version
     $message = "To: $to\n".$message;
-   	return mail($GLOBALS["developer_email"],$subject,$message,$header,$parameters);
+    if ($GLOBALS["developer_email"]) {
+     	return mail($GLOBALS["developer_email"],$subject,$message,$header,$parameters);
+    } else {
+      print Warn("Running CVS version, but developer_email not set");
+    }
   }
 }
 
