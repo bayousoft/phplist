@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # script to run PHPlist from commandline. You may need to edit this to make it work
 # with your shell environment. The following should work for Bash
 
