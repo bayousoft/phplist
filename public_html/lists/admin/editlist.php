@@ -27,22 +27,27 @@ if ($GLOBALS["require_login"] && !isSuperUser()) {
   }
 }
 
+$id = sprintf('%d',$_GET["id"]);
 if ($id)
   echo "<br />".PageLink2("members","Members of this list","id=$id");
 echo "<hr />";
 
-if (isset($save) && isset($listname) && $listname) {
+if (isset($_POST["save"]) && isset($_POST["listname"]) && $_POST["listname"]) {
   if ($GLOBALS["require_login"] && !isSuperUser())
     $owner = $_SESSION["logindetails"]["id"];
-  if (!isset($active)) $active = 0;
-  if (isset($id) && $id) {
-    $query = sprintf('update %s set name="%s",description="%s",active=%d,listorder=%d,prefix = "%s", owner = %d, rssfeed = "%s" where id=%d',$tables["list"],addslashes($listname),addslashes($description),$active,$listorder,$prefix,$owner,$rssfeed,$id);
+  if (!isset($_POST["active"])) $_POST["active"] = 0;
+  if ($id) {
+    $query = sprintf('update %s set name="%s",description="%s",
+    active=%d,listorder=%d,prefix = "%s", owner = %d, rssfeed = "%s" 
+    where id=%d',$tables["list"],addslashes($_POST["listname"]),
+    addslashes($_POST["description"]),$_POST["active"],$_POST["listorder"],
+    $_POST["prefix"],$_POST["owner"],$_POST["rssfeed"],$id);
   } else {
     $query = sprintf('insert into %s 
     	(name,description,entered,listorder,owner,prefix,rssfeed,active)
     	values("%s","%s",now(),%d,%d,"%s","%s",%d)',
-      $tables["list"],addslashes($listname),addslashes($description),
-      $listorder,$owner,$prefix,$rssfeed,$active);
+      $tables["list"],addslashes($_POST["listname"]),addslashes($_POST["description"]),
+      $_POST["listorder"],$_POST["owner"],$_POST["prefix"],$_POST["rssfeed"],$_POST["active"]);
   }
 #  print $query;
   $result = Sql_Query($query);
