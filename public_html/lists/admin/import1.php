@@ -42,7 +42,9 @@ if(isset($import)) {
   }
 
   if ($_FILES["import_file"]) {
-    $fp = fopen ($_FILES["import_file"]['tmp_name'], "r");
+    move_uploaded_file($_FILES['import_file']['tmp_name'], $GLOBALS['tmpdir'].'/'. $_FILES['import_file']['name']);
+    if( !($fp = fopen ($GLOBALS['tmpdir'].'/'. $_FILES['import_file']['name'], "r")))
+      Fatal_Error("The file ".$_FILES['import_file']['tmp_name']." is not readable !");
     $email_list = fread($fp, filesize ($_FILES["import_file"]['tmp_name']));
     fclose($fp);
     unlink($_FILES["import_file"]['tmp_name']);
@@ -114,6 +116,7 @@ if(isset($import)) {
   // Do import
   } else {
     $count_email_add = 0;
+    $count_email_exist = 0;
     $count_list_add = 0;
     $num_lists = sizeof($lists);
     if ($hasinfo) {
@@ -146,6 +149,15 @@ if(isset($import)) {
           $user = Sql_fetch_array($result);
           $userid = $user["id"];
           $uniqid = $user["uniqid"];
+          $history_entry = 'Import of existing user';
+          $old_data = Sql_Fetch_Array_Query(sprintf('select * from %s where id = %d',$tables["user"],$userid));
+          $old_data = array_merge($old_data,getUserAttributeValues('',$userid));
+          # and membership of lists
+          $req = Sql_Query("select * from {$tables["listuser"]} where userid = $userid");
+          while ($row = Sql_Fetch_Array($req)) {
+            $old_listmembership[$row["listid"]] = listName($row["listid"]);
+          }
+          $count_email_exist++;
         } else {
 
           // Email does not exist
@@ -163,12 +175,13 @@ if(isset($import)) {
 
 	        $count_email_add++;
           $some = 1;
+          $history_entry = 'Import of new user';
 
           # add the attributes for this user
           reset($attributes);
           while (list($attr,$value) = each($attributes))
             Sql_query(sprintf('replace into %s (attributeid,userid,value) values("%s","%s","%s")',
-              $tables["user_attribute"],$attr,$userid,$value));
+              $tables["user_attribute"],$attr,$userid,addslashes($value)));
         }
 
         #add this user to the lists identified
@@ -187,6 +200,35 @@ if(isset($import)) {
         $subscribemessage = ereg_replace('\[LISTS\]', $listoflists, getUserConfig("subscribemessage",$userid));
         if (!TEST && $notify == "yes" && $addition)
           sendMail($email, getConfig("subscribesubject"), $subscribemessage,system_messageheaders(),$envelope);
+        # history stuff
+        $current_data = Sql_Fetch_Array_Query(sprintf('select * from %s where id = %d',$tables["user"],$userid));
+        $current_data = array_merge($current_data,getUserAttributeValues('',$userid));
+        foreach ($current_data as $key => $val) {
+          if (!is_numeric($key))
+          if ($old_data[$key] != $val && $key != "modified") {
+            $history_entry .= "$key = $val\nchanged from $old_data[$key]\n";
+          }
+        }
+        if (!$history_entry) {
+          $history_entry = "\nNo userdata changed";
+        }
+        # check lists
+        $req = Sql_Query("select * from {$tables["listuser"]} where userid = $userid");
+        while ($row = Sql_Fetch_Array($req)) {
+          $listmembership[$row["listid"]] = listName($row["listid"]);
+        }
+        $history_entry .= "\nList subscriptions:\n";
+        foreach ($old_listmembership as $key => $val) {
+          $history_entry .= "Was subscribed to: $val\n";
+        }
+        foreach ($listmembership as $key => $val) {
+          $history_entry .= "Is now subscribed to: $val\n";
+        }
+        if (!sizeof($listmembership)) {
+          $history_entry .= "Not subscribed to any lists\n";
+        }
+      	
+        addUserHistory($email,"Import by ".adminName(),$history_entry);
 
       }; // end if
     }; // end while
@@ -197,6 +239,8 @@ if(isset($import)) {
     $dispemail = ($count_email_add == 1) ? "new email was ": "new emails were ";
     $dispemail2 = ($additional_emails == 1) ? "email was ":"emails were ";
 
+    if ($count_email_exist) {
+      print "<br/>$count_email_exist emails existed in the database";
     if(!$some && !$additional_emails) {
       print "<br>All the emails already exist in the database.";
     } else {
