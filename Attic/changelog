@@ -1,4 +1,12 @@
-Changelog for PHPlist 2004-03-10 21:18
+Changelog for PHPlist 2004-03-16 13:13
+
+2004-03-11 14:51  mdethmers
+
+	fixed bug in csv import not finding email in CSV file
+
+2004-03-10 21:21  mdethmers
+
+	new version 2.8.2
 
 2004-03-10 21:10  mdethmers
 
@@ -74,6 +82,19 @@ Changelog for PHPlist 2004-03-10 21:18
 
 	fixed issue where edited messages did not remember the lists they
 	were sent to
+
+2004-02-25 12:06  mdethmers
+
+	improved user import by requesting confirmation of mapping of
+	columns to existing attributes if they are not found
+
+2004-02-25 12:01  mdethmers
+
+	updated userlib to provide userhistory logging
+
+2004-02-25 12:00  mdethmers
+
+	updated interfacelib to allow rows for an item in a listing
 
 2004-02-25 11:35  mdethmers
 
@@ -196,10 +217,26 @@ Changelog for PHPlist 2004-03-10 21:18
 
 	fixed some parse errors
 
+2004-01-15 15:26  mdethmers
+
+	missing bracket
+
+2004-01-14 14:12  mdethmers
+
+	updated loadUser to optionally find user from session
+
+2004-01-14 13:51  mdethmers
+
+	updated form handling to deal with changed attribute type
+
 2004-01-13 13:07  mdethmers
 
 	added default stylesheet for HTML messages that are sent without a
 	template
+
+2004-01-13 10:56  mdethmers
+
+	fixed issue in attributes when merging attributes
 
 2004-01-12 16:18  mdethmers
 
@@ -263,6 +300,10 @@ Changelog for PHPlist 2004-03-10 21:18
 
 	added default date to date object
 
+2004-01-09 13:22  mdethmers
+
+	added filesize guideline to cvs upload
+
 2004-01-09 09:38  peteness
 
 	Link to edit opens a different page for prepared messages.
@@ -283,6 +324,10 @@ Changelog for PHPlist 2004-03-10 21:18
 	display / remove attachments (previously, you could only)	 
 	*add* attachements, and the edit logic pretty much needed a way    
 	    to maintain them.
+
+2004-01-08 12:40  mdethmers
+
+	removed verbose from csv import
 
 2004-01-08 12:38  mdethmers
 
@@ -334,6 +379,14 @@ Changelog for PHPlist 2004-03-10 21:18
 	fixed bug in languages file for frontend not requiring the correct
 	file
 
+2004-01-05 17:10  mdethmers
+
+	fixed some typos in CSV user import
+
+2003-12-22 19:24  mdethmers
+
+	modifications to handle register globals off
+
 2003-12-12 17:15  mdethmers
 
 	added another italian translation :-), italian3.inc
@@ -347,6 +400,11 @@ Changelog for PHPlist 2004-03-10 21:18
 2003-12-10 21:48  mdethmers
 
 	added All Mailinglists to language file
+
+2003-12-04 11:35  mdethmers
+
+	added format checking of UK postcodes and switch auto create
+	attributes off
 
 2003-12-03 15:38  mdethmers
 
@@ -441,6 +499,14 @@ Changelog for PHPlist 2004-03-10 21:18
 2003-11-23 23:42  mdethmers
 
 	added support for ADOdb
+
+2003-11-21 21:11  mdethmers
+
+	Initial revision
+
+2003-11-21 21:11  mdethmers
+
+	commonlib init
 
 2003-11-21 12:50  mdethmers
 
