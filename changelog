@@ -1,4 +1,55 @@
-Changelog for PHPlist 2004-04-09 18:28
+Changelog for PHPlist 2004-05-05 15:00
+
+2004-04-22 18:31  mdethmers
+
+	updated shaders to remember states between switching pages
+
+2004-04-21 21:38  mdethmers
+
+	fixed bug in processqueue when using commandline
+
+2004-04-20 14:03  mdethmers
+
+	updated commandline to allow specification of config file on
+	commandline
+
+2004-04-20 13:44  mdethmers
+
+	added about page
+
+2004-04-19 16:18  mdethmers
+
+	new version 2.5.8
+
+2004-04-19 11:29  mdethmers
+
+	updated collapsing div to be able to default to closed
+
+2004-04-16 21:39  mdethmers
+
+	added shader styles
+
+2004-04-16 21:37  mdethmers
+
+	added shader widget to interface library and made listing object
+	contained in it
+
+2004-04-15 21:04  mdethmers
+
+	fixed bug that caused <BR>s to be added to a table when using the
+	FCKeditor
+
+2004-04-15 20:42  mdethmers
+
+	made pop port for processing bounces configurable
+
+2004-04-15 09:34  mdethmers
+
+	added tabs interface object
+
+2004-04-09 18:16  mdethmers
+
+	new version 2.8.5
 
 2004-04-09 18:14  mdethmers
 
