@@ -429,9 +429,8 @@ if ((($send && is_array($_POST["list"])) || $save || $sendtest || $prepare) && $
 		$emailaddresses = split('[/,,/;]', $_POST["testtarget"]);
 
 		foreach ($emailaddresses as $address) {
-			$result = Sql_query(sprintf("select id,email,uniqid,htmlemail,rssfrequency,confirmed from %s where email = \"%s\"",
-											$tables["user"],
-											$address));
+    	$address = trim($address);
+			$result = Sql_query(sprintf('select id,email,uniqid,htmlemail,rssfrequency,confirmed from %s where email = "%s"',$tables["user"],$address));
 			if ($user = Sql_fetch_array($result)) {
 				sendEmail($id, $address, $user["uniqid"], $user["htmlemail"]);
 				print "Sent test mail to: $address<br>";
