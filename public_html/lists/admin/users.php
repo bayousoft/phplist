@@ -234,7 +234,7 @@ if ($total > MAX_USER_PP) {
           PageLink2("users","&lt;",sprintf('start=%d',max(0,$start-MAX_USER_PP)).$find_url),
           PageLink2("users","&gt;",sprintf('start=%d',min($total,$start+MAX_USER_PP)).$find_url),
           PageLink2("users","&gt;&gt;",sprintf('start=%d',$total-MAX_USER_PP).$find_url));
-  $result = Sql_Verbose_query("$listquery $order $limit");
+  $result = Sql_query("$listquery $order $limit");
 } else {
   $result = Sql_Query("$listquery $order");
 }

@@ -167,7 +167,7 @@ if(isset($import)) {
           # add the attributes for this user
           reset($attributes);
           while (list($attr,$value) = each($attributes))
-            Sql_Verbose_query(sprintf('replace into %s (attributeid,userid,value) values("%s","%s","%s")',
+            Sql_query(sprintf('replace into %s (attributeid,userid,value) values("%s","%s","%s")',
               $tables["user_attribute"],$attr,$userid,$value));
         }
 
