@@ -221,6 +221,19 @@ if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
          	}
         }
         print "$c Users deleted<br/>\n";
+  		} elseif ($option == "markinvalidunconfirmed") {
+      	Info("Marking users with an invalid email as unconfirmed");
+        flush();
+       	$req = Sql_Query("select id,email from {$tables["user"]}");
+      	$c=0;
+        while ($row = Sql_Fetch_Array($req)) {
+					set_time_limit(60);
+        	if (!is_email($row["email"])) {
+          	$c++;
+            Sql_Query("update {$tables["user"]} set confirmed = 0 where id = {$row["id"]}");
+         	}
+        }
+        print "$c Users updated<br/>\n";
     	} elseif ($option == "removestaleentries") {
       	Info("Cleaning some user tables of invalid entries");
         # some cleaning up of data:
@@ -308,6 +321,7 @@ print "</p>";
 
 <p>To delete all users who are not subscribed to any list, <?=PageLink2("reconcileusers&option=nolists","Click here")?>
 <p>To find users who have an invalid email, <?=PageLink2("reconcileusers&option=invalidemail","Click here")?>
+<p>To mark all users with an invalid email as unconfirmed, <?=PageLink2("reconcileusers&option=markinvalidunconfirmed","Click here")?>
 <p>To delete users who have an invalid email, <?=PageLink2("reconcileusers&option=deleteinvalidemail","Click here")?>
 <p>To mark all users to receive HTML, <?=PageLink2("reconcileusers&option=markallhtml","Click here")?>
 <p>To mark all users to receive text, <?=PageLink2("reconcileusers&option=markalltext","Click here")?>
