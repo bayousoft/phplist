@@ -1,4 +1,59 @@
-Changelog for PHPlist 2004-05-05 15:00
+Changelog for PHPlist 2004-05-10 15:26
+
+2004-05-10 15:21  mdethmers
+
+	added stripslashes to import pages
+
+2004-05-10 15:12  mdethmers
+
+	added experimental code to optimize HTML email for outlook
+
+2004-05-10 13:17  mdethmers
+
+	small reorganisation of the main menu
+
+2004-05-10 13:17  mdethmers
+
+	fixed some more stripslashes
+
+2004-05-10 12:32  mdethmers
+
+	added warning to have magic quotes runtime off
+
+2004-05-10 12:32  mdethmers
+
+	fixed bug where helpwindow would not re-open when closed after
+	first time
+
+2004-05-06 18:25  mdethmers
+
+	added gg as a valid top domain
+
+2004-05-06 12:52  mdethmers
+
+	updated all kinds of pages to use stripslashes
+
+2004-05-06 12:50  mdethmers
+
+	updated re-subscription to not create a completely new user record,
+	but update the existing one
+
+2004-05-06 11:38  mdethmers
+
+	updated info in configure
+
+2004-05-06 10:52  mdethmers
+
+	added option to create uniqid for users who do not have one
+
+2004-05-05 17:57  mdethmers
+
+	added workaround for FCK bug, when using FCKeditor. Caused an error
+	please enter subject even when a subject was entered
+
+2004-05-05 15:04  mdethmers
+
+	added PHPlist version to system details report in help
 
 2004-04-22 18:31  mdethmers
 
