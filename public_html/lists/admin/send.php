@@ -15,22 +15,62 @@ switch ($access) {
 # handle commandline
 if ($GLOBALS["commandline"]) {
 #  error_reporting(63);
-  $cline = getopt("s:l:"); # does not actually work well, so only used for checking that all required are there
-  foreach ($cline as $key => $val) {
-    print "Option: $key = $val\n";
-  }
-  if (!$cline || !$cline["s"] || !$cline["l"]) {
-    clineUsage("-s Subject -l list < message");
+  $cline = parseCline();
+  reset($cline);
+  if (!$cline || !is_array($cline) || !$cline["s"] || !$cline["l"]) {
+    clineUsage("-s subject -l list [-f from] < message");
     exit;
   }
-  print "Sending message with subject ".$cline["s"]. " to list ". $cline["l"]."\n";
-  exit;
-  
+
+	$listnames = explode(" ",$cline["l"]);
+  $listids = array();
+  foreach ($listnames as $listname) {
+  	if (!is_numeric($listname)) {
+      $listid = Sql_Fetch_Array_Query(sprintf('select * from %s where name = "%s"',
+        $tables["list"],$listname));
+      if ($listid["id"]) {
+        $listids[$listid["id"]] = $listname;
+      }
+   	} else {
+      $listid = Sql_Fetch_Array_Query(sprintf('select * from %s where id = %d',
+        $tables["list"],$listname));
+      if ($listid["id"]) {
+	    	$listids[$listid["id"]] = $listid["name"];
+    	}
+    }
+  }
+
+  $_POST["list"] = array();
+  foreach ($listids as $key => $val) {
+  	$_POST["list"][$key] = "signup";
+    $lists .= '"'.$val.'"' . " ";
+  }
+
+  if ($cline["f"]) {
+	  $_POST["from"] = $cline["f"];
+  } else {
+  	$_POST["from"] = getConfig("message_from_name") . ' '.getConfig("message_from_address");
+  }
+  $_POST["subject"] = $cline["s"];
+  $_POST["send"] = "1";
+  $_POST["footer"] = getConfig("messagefooter");
+  while (!feof (STDIN)) {
+    $_POST["message"] .= fgets(STDIN, 4096);
+  }
+
+#  print clineSignature();
+#  print "Sending message with subject ".$_POST["subject"]. " to ". $lists."\n";
 }
 
 include "send_core.php";
 
 if ($done) {
+	if ($GLOBALS["commandline"]) {
+  	ob_end_clean();
+    print clineSignature();
+    print "Message with subject ".$_POST["subject"]. " was sent to ". $lists."\n";
+    exit;
+  }
 	return;
 }
 

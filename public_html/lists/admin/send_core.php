@@ -84,7 +84,7 @@ if ($_POST["send"] && $subject && $_POST["message"] && $from && !$duplicate_attr
       $_POST["sendformat"],
       $_POST["template"],$_POST["rsstemplate"],$_SESSION["logindetails"]['id']
 );
-	if (!$htmlformatted && strip_tags($message) != $message)
+	if (!$htmlformatted && strip_tags($_POST["message"]) != $_POST["message"])
   	$msg = '<span class="error">Warning: You indicated the content was not HTML, but there were some HTML tags in it. This may cause errors</span>';
 
   $result = Sql_query($query);

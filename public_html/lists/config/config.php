@@ -70,6 +70,10 @@ $bounce_unsubscribe_treshold = 5;
 #
 $require_login = 1;
 
+# if you use commandline, you will need to identify the users who are allowed to run
+# the script. See README.commandline for more info
+$commandline_users = array("admin");
+
 # as of version 2.4.1, you can have your users define a password for themselves as well
 # this will cause some public pages to ask for an email and a password when the password is
 # set for the user. If you want to activate this functionality, set the following

@@ -42,7 +42,11 @@ if ($GLOBALS["commandline"]) {
   $GLOBALS["require_login"] = 0;
   $opt = getopt("p:");
   if ($opt["p"]) {
-    $_GET["page"] = $opt["p"];
+		if (!in_array($opt["p"],$GLOBALS["commandline_pages"])) {
+			clineError($opt["p"]." does not process commandline");
+    } else {
+	    $_GET["page"] = $opt["p"];
+    }
   } else {
     clineUsage(" [other parameters]");
     exit;

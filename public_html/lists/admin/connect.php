@@ -61,6 +61,10 @@ if (!isset($adminlanguage) || !is_array($adminlanguage)) {
 	);
 }
 
+# identify pages that can be run on commandline
+#$commandline_pages = array("send","processqueue","processbounces");
+$commandline_pages = array("send");
+
 if (isset($message_envelope))
   $envelope = "-f$message_envelope";
 $database_connection = Sql_Connect($database_host,$database_user,$database_password,$database_name);
@@ -374,16 +378,37 @@ function ClineSignature() {
 function ClineError($msg) {
   ob_end_clean();
   print ClineSignature();
-  $cline = getopt("s:l:");
-  print "\n$msg\n";
+  print "\nError: $msg\n";
+  exit;
 }
 
 function clineUsage($line = "") {
-  ob_end_clean();
+#	if (!ereg("dev",VERSION))
+	  ob_end_clean();
   print clineSignature();
   print "Usage: ".$_SERVER["SCRIPT_FILENAME"]." -p page $line\n\n";
   exit;
-}  
+}
+
+function parseCline() {
+	$res = array();
+  $cur = "";
+  foreach ($GLOBALS["argv"] as $clinearg) {
+  	if (substr($clinearg,0,1) == "-") {
+    	$par = substr($clinearg,1,1);
+      $clinearg = substr($clinearg,2,strlen($clinearg));
+     # $res[$par] = "";
+      $cur = $par;
+	    $res[$cur] .= $clinearg;
+   	} elseif ($cur) {
+    	if ($res[$cur])
+		    $res[$cur] .= ' '.$clinearg;
+      else
+      	$res[$cur] .= $clinearg;
+    }
+  }
+  return $res;
+}
 
 function Error($msg) {
   if ($GLOBALS["commandline"]) {
