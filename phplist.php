@@ -47,10 +47,8 @@ class phplist extends DefaultPlugin {
       "user_rss" => $table_prefix . "user_rss",
       "rssitem_user" => $table_prefix . "rssitem_user"
     );
-    if (!$this->isInitialised()) {
-      $this->initialise();
-    }
     $this->addDataType("phplist_1","Mailinglist Pages");
+   # $_GET["id"] = 1;
   }
 
   function name() {
@@ -75,9 +73,10 @@ class phplist extends DefaultPlugin {
   function frontendlib() {
   	return array(
     	"public_html/lists/admin/lib.php",
-    	"public_html/lists/admin/frontendlib.php",
-    	"public_html/lists/admin/defaultconfig.inc",
-      "public_html/lists/texts/english.inc"
+      "public_html/lists/texts/english.inc",
+ //   	"public_html/lists/admin/subscribelib2.php",
+    	"public_html/lists/admin/phplistObj.php",
+#    	"public_html/lists/admin/defaultconfig.inc",
 		);
   }
 
@@ -199,11 +198,15 @@ class phplist extends DefaultPlugin {
 
   function show($dbdata,$leaf,$branch,$fielddata) {
     global $config;
+    $GLOBALS["dontcache"] = 1;
     $data = parseDelimitedData($dbdata);
     switch ($data["subtype"]) {
       case "1":
-        return $this->selectPage($data["spage"]);break;
-      default: return "";
+      	$phplistObj = new phplistObj($data["spage"]);
+        $html .= 'PHPlist'.$phplistObj->PageContent();
+        return $html;
+				break;
+      default: return "Invalid Subtype";
     }
   }
 
