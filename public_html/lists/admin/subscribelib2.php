@@ -144,6 +144,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && is_array($_POST["
 
   # remember the users attributes
   # make sure to only remember the ones from this subscribe page
+  $history_entry = 'Subscribe page: '.$id;
   $attids = join(',',$attributes);
   $attids = substr($attids,0,-1);
   if ($attids && $attids != "") {
@@ -164,12 +165,14 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && is_array($_POST["
         }
         Sql_Query(sprintf('replace into %s (attributeid,userid,value) values("%s","%s","%s")',
           $tables["user_attribute"],$row["id"],$userid,$value));
+        $history_entry .= "\n".$row["name"] . ' = '.UserAttributeValue($userid,$row["id"]);
   #    }
     }
   }
+  $history_entry .= "\n\nLists: \n$lists";
 
   $subscribemessage = ereg_replace('\[LISTS\]', $lists, getUserConfig("subscribemessage:$id",$userid));
-	
+
   print '<title>'.$GLOBALS["strSubscribeTitle"].'</title>';
   print $subscribepagedata["header"];
   if ($_SESSION["adminloggedin"]) {
@@ -178,13 +181,14 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && is_array($_POST["
     if ($_POST["makeconfirmed"]) {
     	$sendrequest = 0;
       Sql_Query(sprintf('update %s set confirmed = 1 where email = "%s"',$tables["user"],$email));
+      addUserHistory($email,"Subscription by ".$_SESSION["logindetails"]["adminname"],$history_entry);
     } else {
     	$sendrequest = 1;
 		}
   } else {
   	$sendrequest = 1;
   }
-  
+
   # personalise the thank you page
   $user_att = getUserAttributeValues($email);
   while (list($att_name,$att_value) = each ($user_att)) {
@@ -198,7 +202,8 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && is_array($_POST["
 
   if ($sendrequest) {
   	if (sendMail($email, getConfig("subscribesubject:$id"), $subscribemessage,system_messageheaders($email),$envelope)) {
-    	sendAdminCopy("Lists subscription",$email . " has subscribed to $lists");
+    	sendAdminCopy("Lists subscription","\n".$email . " has subscribed\n\n$history_entry");
+      addUserHistory($email,"Subscription",$history_entry);
   		print '<h3>'.$strThanks.'</h3>';
       print $strEmailConfirmation;
    	} else {
@@ -206,11 +211,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && is_array($_POST["
 		}
   } else {
     print '<h3>'.$strThanks.'</h3>';
-    if ($sendrequest) {
-	    print $strEmailConfirmation;
-    } else {
-    	print "<p>User has been added and confirmed</p>";
-    }
+    print "<p>User has been added and confirmed</p>";
   }
 
   print "<P>".$PoweredBy.'</p>';
@@ -223,7 +224,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && is_array($_POST["
       $tables["user"],$_GET["uid"]));
     $userid = $req[0];
   } else {
-    $req = Sql_Fetch_Row_query("select * from {$tables["user"]} where email = \"".$_REQUEST["email"]."\"");
+    $req = Sql_Fetch_Row_query("select id from {$tables["user"]} where email = \"".$_REQUEST["email"]."\"");
     $userid = $req[0];
   }
   if (!$userid)
@@ -243,6 +244,10 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && is_array($_POST["
 	    exit;
     }
   }
+  # read the current values to compare changes
+  $old_data = Sql_Fetch_Array_Query(sprintf('select * from %s where id = %d',$tables["user"],$userid));
+  $old_data = array_merge($old_data,getUserAttributeValues('',$userid));
+  $history_entry = 'http://'.getConfig("website").$GLOBALS["adminpages"].'/?page=user&id='.$userid."\n\n";
 
   if (ASKFORPASSWORD && $_POST["password"]) {
   	if (ENCRYPTPASSWORD) {
@@ -255,6 +260,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && is_array($_POST["
     if ($_POST["password"] != $curpwd[0]) {
     	$storepassword = 'password = "'.$newpassword.'",';
       Sql_query("update {$tables["user"]} set passwordchanged = now() where id = $userid");
+      $history_entry .= "\nPassword changed";
     } else {
     	$storepassword = "";
     }
@@ -337,6 +343,19 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && is_array($_POST["
       }
     }
   }
+  $current_data = Sql_Fetch_Array_Query(sprintf('select * from %s where id = %d',$tables["user"],$userid));
+  $current_data = array_merge($current_data,getUserAttributeValues('',$userid));
+  foreach ($current_data as $key => $val) {
+  	if (!is_numeric($key))
+  	if ($old_data[$key] != $val && $key != "password" && $key != "modified") {
+    	$information_changed = 1;
+    	$history_entry .= "$key = $val\n*changed* from $old_data[$key]\n";
+   	}
+  }
+  if (!$information_changed) {
+  	$history_entry .= "\nNo user details changed";
+  }
+  $history_entry .= "\n\nList Membership: \n$lists\n";
 
   $message = ereg_replace('\[LISTS\]', $lists, getUserConfig("updatemessage",$userid));
   $message = ereg_replace('\[USERDATA\]', $datachange, $message);
@@ -354,14 +373,16 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && is_array($_POST["
       if (sendMail($data["email"],getConfig("updatesubject"),$oldaddressmessage, system_messageheaders($email),$envelope) &&
 	      sendMail($email,getConfig("updatesubject"),$newaddressmessage, system_messageheaders($email),$envelope)) {
 				$ok = 1;
-    		sendAdminCopy("Lists information changed",$data["email"] . " has changed their information.\nThe email has changed to $email.");
+    		sendAdminCopy("Lists information changed","\n".$data["email"] . " has changed their information.\n\nThe email has changed to $email.\n\n$history_entry");
+      	addUserHistory($email,"Change",$history_entry);
       } else {
       	$ok = 0;
       }
     } else {
       if (sendMail($email, getConfig("updatesubject"), $message, system_messageheaders($email),$envelope)) {
       	$ok = 1;
-    		sendAdminCopy("Lists information changed",$data["email"] . " has changed their information");
+    		sendAdminCopy("Lists information changed","\n".$data["email"] . " has changed their information\n\n$history_entry");
+      	addUserHistory($email,"Change",$history_entry);
       } else {
       	$ok = 0;
       }

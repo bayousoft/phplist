@@ -76,6 +76,7 @@ if (!isset($usertable_prefix))
 
 $tables = array(
   "user" => $usertable_prefix . "user",
+  "user_history" => $usertable_prefix . "user_history",
   "list" => $table_prefix . "list",
   "listuser" => $table_prefix . "listuser",
   "message" => $table_prefix . "message",
@@ -203,6 +204,9 @@ function checkAccess($page) {
 }
 
 function adminName($id) {
+	if (!$id) {
+  	$id = $_SESSION["logindetails"]["id"];
+  }
   global $tables;
   $req = Sql_Fetch_Row_Query(sprintf('select loginname from %s where id = %d',$tables["admin"],$id));
   return $req[0] ? $req[0] : "<font color=red>Nobody</font>";

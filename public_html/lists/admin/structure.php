@@ -38,6 +38,15 @@ $DBstruct = array( # order of tables is essential for smooth upgrade
         "foreignkey" => array("varchar(100)","Foreign Key"),
         "index" => array("(foreignkey)","sys:Foreign Key")
     ),
+    "user_history" => array(
+        "id" => array("integer not null primary key auto_increment","sys:ID"),
+        "userid" => array("integer not null",""),
+        "ip" => array("varchar(255)",""),
+        "date" => array("datetime",""),
+        "summary" => array("varchar(255)",""),
+        "detail" => array("text",""),
+        "systeminfo" => array("text",""),
+    ),
     "list" => array ( # a list in the system
         "id" => array("integer not null primary key auto_increment","ID"),
         "name" => array("varchar(255) not null","Name"),

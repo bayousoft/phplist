@@ -20,6 +20,7 @@ switch ($page) {
   case "users": $page_title = "List of All users";break;
   case "reconcileusers": $page_title = "Reconcile users";break;
   case "user": $page_title = "Details of a user";break;
+  case "userhistory": $page_title = "History of a user";break;
   case "messages": $page_title = "All messages";break;
   case "message": $page_title = "View a message";break;
   case "processqueue": $page_title = "Send message queue";break;

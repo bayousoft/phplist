@@ -146,17 +146,30 @@ a:hover.menusearch{font-family: verdana, sans-serif;font-size : 11px; color : #0
 
 .listinghdname {
   font-family: verdana, sans-serif;
-  font-size : 11px; 
+  font-size : 11px;
   color : black;
   background-color : #e7be8f;
-  font-weight: bold; 
-  border-top: 1px black solid;  
+  font-weight: bold;
+  border-top: 1px black solid;
   border-bottom: 1px black solid;
-  display : block; 
-  text-align : left; 
-  text-decoration : none; 
+  display : block;
+  text-align : left;
+  text-decoration : none;
   padding: 2px;
-  vertical-align : top; 
+  vertical-align : top;
+  padding-left : 3px;
+}
+.listingrowname {
+  font-family: verdana, sans-serif;
+  font-size : 11px;
+  color : black;
+  background-color : #e7be8f;
+  font-weight: bold;
+  display : block;
+  text-align : right;
+  text-decoration : none;
+  padding: 2px;
+  vertical-align : top;
   padding-left : 3px;
 }
 .listinghdelement {

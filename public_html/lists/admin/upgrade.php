@@ -224,7 +224,9 @@ if ($doit == "yes") {
       # make sure that current queued messages are sent
       Sql_Verbose_Query("update {$tables["message"]} set embargo = now() where status = \"submitted\"");
       Sql_Query("alter table {$tables["message"]} change column status status enum('submitted','inprocess','sent','cancelled','prepared','draft')");
-    case "2.6.6":
+    case "2.6.6":case "2.7.0": case "2.7.1": case "2.7.2":
+    	Sql_Create_Table($tables["user_history"],$DBstruct["user_history"]);
+
     case "whatever versions we will get later":
       #Sql_Query("alter table table that altered");
       break;
@@ -232,80 +234,8 @@ if ($doit == "yes") {
       # an unknown version, so we do a generic upgrade, if the version is older than 1.4.1
       if ($dbversion > "1.4.1")
       	break;
-      ignore_user_abort();
-      set_time_limit(500);
-      reset($DBstruct);
-      while (list($table,$value) = each ($DBstruct)) {
-        set_time_limit(500);
-        if ($table_prefix)
-          Sql_Query("alter table $table rename $tables[$table]",1);
-        print "<br>Upgrading $table<br />";
-				if ($table == "user" && Sql_Table_Column_Exists($tables["user"],"name")) {
-					$c = 1;
-					foreach (array("name","address1","address2","postcode","town") as $item) {
-						Sql_Verbose_Query(sprintf('insert into %s (name,type,listorder,required) values("%s","textline",%d,0)',$tables["attribute"],$item,$c));
-						$c++;
-						$attribute_id = Sql_Insert_id();
-						print "<P>Now copying user data to new table<br>";
-						$req = Sql_Query("select id,$item from ".$tables["user"]);
-						while ($user = Sql_Fetch_Row($req))
-							Sql_Query(sprintf('insert into %s values(%d,%d,"%s")',$tables["user_attribute"],$attribute_id,$user[0],addslashes($user[1])));
-						Sql_Verbose_Query("alter table {$tables["user"]} drop column $item");
-						flush();
-					}
-				}
-        $success = $success && upgradeTable($tables[$table],$DBstruct[$table]);
-				flush();
-      }
-			Sql_Verbose_Query("update {$tables["user"]} set confirmed = 1");
-      $req = Sql_Query("select tablename from ".$tables["attribute"]);
-      while ($row = Sql_Fetch_Row($req)) {
-        set_time_limit(500);
-        if (Sql_Table_Exists("listattr_".$row[0]) && $table_prefix)
-          Sql_Verbose_Query("alter table listattr_$row[0] rename $table_prefix"."listattr_".$row[0]);
-        if (Sql_Table_Exists($table_prefix."listattr_".$row[0]))
-          Sql_Query("alter table $table_prefix"."listattr_".$row[0]." add column listorder integer default 0",0);
-      }
-			flush();
-
-    	# something we should have done ages ago. make checkboxes save "on" value in user_attribute
-      $req = Sql_Query("select * from {$tables["attribute"]} where type = \"checkbox\"");
-      while ($row = Sql_Fetch_Array($req)) {
-      	$req2 = Sql_Query("select * from $table_prefix"."listattr_$row[tablename]");
-        while ($row2 = Sql_Fetch_array($req2)) {
-        	if ($row2["name"] == "Checked")
-          	Sql_Query(sprintf('update %s set value = "on" where attributeid = %d and value = %d',
-            	$tables["user_attribute"],$row["id"],$row2["id"]));
-        }
-       	Sql_Query(sprintf('update %s set value = "" where attributeid = %d and value != "on"',
-         	$tables["user_attribute"],$row["id"]));
-        Sql_Query("drop table $table_prefix"."listattr_".$row["tablename"]);
-      }
-      Sql_Query("insert into {$tables["task"]} (page,type) values(\"export\",\"user\")");
-			Sql_Query(sprintf('insert into %s values(0,"%s","%s","%s",now(),now(),"%s","%s",now(),%d,0)',
-				$tables["admin"],"admin","admin","",$adminname,"phplist",1),0);
-    	if (is_array($system_pages))
-        while (list($type,$pages) = each ($system_pages)) {
-          foreach ($pages as $page)
-            Sql_Query(sprintf('insert into %s (page,type) values("%s","%s")',
-              $tables["task"],$page,$type));
-        }
-      # make sure all users have a uniqid
-      $req = Sql_Query("select id from {$tables["user"]} where uniqid = \"\"");
-      print "<br>Giving every user a unique ID<br />";
-      flush();
-      $num = Sql_Affected_Rows();
-      print "$num to process<br/>";
-      $c =0;
-      while ($user = Sql_Fetch_Row($req)) {
-        $c++;
-        Sql_Query(sprintf('update %s set uniqid = "%s" where id = %d',$tables["user"],getUniqId(),$user[0]));
-        if ($c % 15 == 0) {
-          print $c . "<br/>";
-          flush();
-        }
-      }
-      print "<p>All done";
+      Error("Sorry, your version is too old to safely upgrade");
+      $success = 0;
       break;
   }
   print '<script language="Javascript" type="text/javascript"> finish(); </script>';
