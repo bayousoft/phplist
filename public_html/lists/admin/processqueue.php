@@ -330,7 +330,8 @@ while ($message = Sql_fetch_array($messages)) {
     while ($row = Sql_Fetch_Row($req)) {
       array_push($doneusers,$row[0]);
     }
-    $exclusion = " and {$tables['listuser']}.userid not in (".join(",",$doneusers).")";
+    if (sizeof($doneusers))
+      $exclusion = " and {$tables['listuser']}.userid not in (".join(",",$doneusers).")";
   }
   
   $query = "select distinct {$tables['listuser']}.userid
@@ -454,7 +455,7 @@ while ($message = Sql_fetch_array($messages)) {
 				output( "Not sending to $userdata[0], already sent ".$um[0]);
 		}
   }
-  if (!$num_per_batch || $batch_total < ($reload * $num_per_batch)) {
+  if (!$num || !$num_per_batch || $batch_total < ($reload * $num_per_batch)) {
     if (!$someusers)
       output( "Hmmm, No users found to send to");
     $someusers = 0;
