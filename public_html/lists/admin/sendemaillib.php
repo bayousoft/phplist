@@ -313,15 +313,18 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
 		##$mail->IsSMTP();
   }
 
+  list($dummy,$domaincheck) = split('@',$email);
+  $text_domains = explode("\n",trim(getConfig("alwayssendtextto")));
+  if (in_array($domaincheck,$text_domains)) {
+    $htmlpref = 0;
+    if (VERBOSE)
+		  output("Sending text only to $domaincheck");
+  }
+
   # so what do we actually send?
   switch($cached[$messageid]["sendformat"]) {
     case "HTML":
       # send html to users who want it and text to everyone else
-		  list($dummy,$domaincheck) = split('@',$email);
-			$text_domains = getConfig("alwayssendtextto");
-      if (is_array($text_domains) && in_array($domaincheck,$text_domains)) {
-      	$htmlpref = 0;
-      }
       if ($htmlpref) {
       	Sql_Query("update {$tables["message"]} set ashtml = ashtml + 1 where id = $messageid");
   			if (ENABLE_RSS && sizeof($rssitems))
