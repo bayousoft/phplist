@@ -62,7 +62,7 @@ $process_id = getPageLock();
 $req = Sql_Query("select rssfeed,id from {$tables["list"]} where rssfeed != \"\" order by listorder");
 while ($feed = Sql_Fetch_Row($req)) {
 	$nothingtodo = 0;
-	output( "<hr>Parsing $feed[0] ..\n");
+	output( "<hr>Parsing $feed[0] ..");
   flush();
   $report = "Parsing $feed[0]";
   $mailreport .= "\n$feed[0] ";
@@ -77,10 +77,10 @@ while ($feed = Sql_Fetch_Row($req)) {
   if ($parseresult) {
   	$report .= " ok\n";
     $mailreport .= " ok ";
-  	print "..ok<br/>\n";
+  	output( "..ok<br/>");
   } else {
   	$report .= " failed\n";
-  	print "..failed<br/>\n";
+  	output( "..failed<br/>");
     $mailreport .= " failed\n";
     $mailreport .= $rss->lasterror;
     $failreport .= "\n".$feed[0] . " failed \n". $rss->lasterror;
@@ -112,7 +112,7 @@ while ($feed = Sql_Fetch_Row($req)) {
         }
       }
     }
-    printf('<br/>%d items, %d new items',$itemcount,$newitemcount);
+    output(sprintf('<br/>%d items, %d new items',$itemcount,$newitemcount));
     $report .= sprintf('%d items, %d new items'."\n",$itemcount,$newitemcount);
     $mailreport .= sprintf('-> %d items, %d new items'."\n",$itemcount,$newitemcount);
   }
