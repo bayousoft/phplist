@@ -1,6 +1,9 @@
 <?
-require_once "accesscheck.php";
-
+if ( is_file("accesscheck.php") ) {
+  require_once "accesscheck.php";
+} elseif ( is_file("admin/accesscheck.php") ) {
+  require_once "admin/accesscheck.php";
+} 
 /*
 
 Languages, countries, and the charsets typically used for them
