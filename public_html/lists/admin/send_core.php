@@ -7,6 +7,9 @@ if (file_exists("FCKeditor/fckeditor.php") && USEFCK) {
 } else {
 	$usefck = 0;
 }
+include $GLOBALS["coderoot"] . "date.php";
+$embargo = new date("embargo");
+$embargo->useTime = true;
 
 echo '<script language="Javascript" src="js/jslib.js" type="text/javascript"></script><hr><p>';
 
@@ -60,13 +63,14 @@ if ($_POST["send"] && $subject && $_POST["message"] && $from && !$duplicate_attr
 			$tables["message"],$_POST["rsstemplate"],$_SESSION["logindetails"]["id"]));
 	}
 
-  $query = sprintf('insert into %s (subject,fromfield,tofield,replyto,message,footer,status,entered,htmlformatted,sendformat,template,rsstemplate,owner) values(
-      "%s","%s","%s","%s","%s","%s","%s",%s,%d,"%s",%d,"%s",%d)',
+  $query = sprintf('insert into %s (subject,fromfield,tofield,replyto,embargo,message,footer,status,entered,htmlformatted,sendformat,template,rsstemplate,owner) values(
+      "%s","%s","%s","%s","%s","%s","%s","%s",%s,%d,"%s",%d,"%s",%d)',
       $tables["message"],
       addslashes($subject),
       addslashes($from),
       addslashes($_POST["tofield"]),
       addslashes($_POST["replyto"]),
+			$embargo->getDate()." ".$embargo->getTime().":00",
       addslashes($_POST["message"]),
       addslashes($_POST["footer"]),
       $status,"now()",
@@ -203,7 +207,6 @@ if ($_POST["send"] && $subject && $_POST["message"] && $from && !$duplicate_attr
       if (strlen($_POST[$type]) > 255)
       	print Warn("Mime Type is longer than 255 characters, this is trouble");
       $description = $_POST[$fieldname."_description"];
-      print $tmpfile;
       if ($tmpfile && filesize($tmpfile) && $tmpfile != "none") {
         list($name,$ext) = explode(".",basename($remotename));
         # create a temporary file to make sure to use a unique file name to store with
@@ -231,6 +234,16 @@ if ($_POST["send"] && $subject && $_POST["message"] && $from && !$duplicate_attr
         } else {
         	print Warn("Uploaded file $att_cnt not properly received, empty file");
         }
+      } elseif ($_POST["localattachment".$att_cnt]) {
+      	$type = findMime(basename($_POST["localattachment".$att_cnt]));
+        Sql_query(sprintf('insert into %s (remotefile,mimetype,description,size) values("%s","%s","%s",%d)',
+          $tables["attachment"],
+          $_POST["localattachment".$att_cnt],$type,$description,filesize($_POST["localattachment".$att_cnt]))
+        );
+        $attachmentid = Sql_Insert_id();
+        Sql_query(sprintf('insert into %s (messageid,attachmentid) values(%d,%d)',
+        $tables["message_attachment"],$messageid,$attachmentid));
+        print Info("Added attachment ".$att_cnt. " mime: $type");
       }
     }
   }
@@ -301,6 +314,8 @@ if (!$from) {
 <tr><td colspan=2>
 
 </td></tr>
+<tr><td><?=Help("embargo")?> Embargoed until</td><td><?=$embargo->showInput("embargo","",$_POST["embargo"])?></td></tr>
+</td></tr>
 <tr><td colspan=2><?=Help("format")?> Format: <b>Auto detect</b> <input type=radio name="htmlformatted" value="auto" <?=!isset($htmlformatted) || $htmlformatted == "auto"?"checked":""?>>
 <b>HTML</b> <input type=radio name="htmlformatted" value="1" <?=$htmlformatted == "1" ?"checked":""?>>
 <b>Text</b> <input type=radio name="htmlformatted" value="0" <?=$htmlformatted == "0" ?"checked":""?>>
@@ -328,9 +343,8 @@ while ($row = Sql_Fetch_Array($req)) {
 }
 ?>
 </select></td></tr>
-<? } ?>
-<tr><td colspan=2><?=Help("message")?> Message. </td></tr>
-<?
+<? }
+
 if (ENABLE_RSS) {
 	print '<tr><td colspan=2>If you want to use this message as the template for sending RSS feeds
  	select the frequency it should be used for and use [RSS] in your message to indicate where the list of items needs to go.
@@ -343,6 +357,7 @@ if (ENABLE_RSS) {
 }
 ?>
 
+<tr><td colspan=2><?=Help("message")?> Message. </td></tr>
 
 <tr><td colspan=2>
 
@@ -370,7 +385,10 @@ if (ALLOW_ATTACHMENTS) {
 	print "<table><tr><td colspan=2>".Help("attachments")." Add Attachments to your message</td></tr>";
 	for ($att_cnt = 1;$att_cnt <= NUMATTACHMENTS;$att_cnt++) {
   	printf ('<tr><td>File %d:</td><td><input type=file name="attachment%d"></td></tr>',$att_cnt,$att_cnt);
-  	printf ('<tr><td colspan=2>Description:</td></tr>
+    if (FILESYSTEM_ATTACHMENTS) {
+	    printf('<tr><td><b>or</b> path to file on server:</td><td><input type=text name="localattachment%d" size="50"></td></tr>',$att_cnt,$att_cnt);
+  	}
+    printf ('<tr><td colspan=2>Description:</td></tr>
     	<tr><td colspan=2><textarea name="attachment%d_description" cols=45 rows=3 wrap="virtual"></textarea></td></tr>',$att_cnt);
  	}
   print '</table>';
