@@ -30,7 +30,7 @@ if (!$id) {
       else
         $value = $val[0];
       printf('<p><a href="%s">edit</a> <b>%s</b><br/>',PageURL2("configure","","id=$key"),$val[1]);
-      print nl2br(htmlspecialchars($value)) . "<br/><hr/>";
+      print nl2br(htmlspecialchars(stripslashes($value))) . "<br/><hr/>";
     }
   }
 } else {
@@ -51,13 +51,13 @@ if (!$id) {
 #  print $value . '<br/>';
   if ($val[2] == "textarea")
     printf('<textarea name="values[%s]" rows=25 cols=55>%s</textarea><br/>',
-      $id,htmlspecialchars($value));
+      $id,htmlspecialchars(stripslashes($value)));
   else if ($val[2] == "text")
     printf('<input type="text" name="values[%s]" size="70" value="%s"><br/>',
-    $id,htmlspecialchars($value));
+    $id,htmlspecialchars(stripslashes($value)));
   else if ($val[2] == "boolean")
     printf('<input type="text" name="values[%s]" size="10" value="%s"><br/>',
-    $id,htmlspecialchars($value));
+    $id,htmlspecialchars(stripslashes($value)));
   print '<br/><input type="hidden" name="save" value="1"><input type="submit" name="savebutton" value="Save Changes"></form>';
 }
 ?>
