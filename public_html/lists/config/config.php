@@ -198,13 +198,11 @@ define ("MANUALLY_PROCESS_QUEUE",1);
 # only use it if all your users have Outlook (not Express)
 define("WORKAROUND_OUTLOOK_BUG",0);
 
-# batch processing
-# if you are on a shared host, it will probably be appreciated if you don't send
-# out loads of emails in one go. To do this, you can configure batch processing.
-# Please note, the following two values can be overridden by your ISP by using
-# a server wide configuration. So if you notice these values to be different
-# in reality, that may be the case
-
+# user history system info.
+# when logging the history of a user, you can specify which system variables you
+# want to log. These are the ones that are found in the $_SERVER and the $_ENV
+# variables of PHP. check http://www.php.net/manual/en/language.variables.predefined.php
+# the values are different per system, but these ones are quite common.
 $userhistory_systeminfo = array(
 	'HTTP_USER_AGENT',
 	'HTTP_REFERER',
@@ -274,18 +272,19 @@ define ("NUMCRITERIAS",2);
 # users will not receive an error when they do not check a list to subscribe to
 define("ALLOW_NON_LIST_SUBSCRIBE",0);
 
+# batch processing
+# if you are on a shared host, it will probably be appreciated if you don't send
+# out loads of emails in one go. To do this, you can configure batch processing.
+# Please note, the following two values can be overridden by your ISP by using
+# a server wide configuration. So if you notice these values to be different
+# in reality, that may be the case
+
 # define the amount of emails you want to send per period. If 0, batch processing
 # is disabled
 define("MAILQUEUE_BATCH_SIZE",0);
 
 # define the length of one batch processing period, in seconds (3600 is an hour)
 define("MAILQUEUE_BATCH_PERIOD",3600);
-
-# user history system info.
-# when logging the history of a user, you can specify which system variables you
-# want to log. These are the ones that are found in the $_SERVER and the $_ENV
-# variables of PHP. check http://www.php.net/manual/en/language.variables.predefined.php
-# the values are different per system, but these ones are quite common.
 
 /*
 
