@@ -25,10 +25,10 @@ $topic = $regs[1];
 if ($topic) {
 	if (is_file($adminlanguage["iso"].'/'.$topic.".php")) {
 		$include = $adminlanguage["iso"].'/'.$topic . ".php";
-  } 
+  }
 } else {
   $include = "";
-} 
+}
 
 ?>
 <HTML>
@@ -38,7 +38,8 @@ if ($topic) {
 <BODY>
 <!-- content -->
 <?
-print "<h3>$page_title</h3>";
+print "<table width=100%><tr><td valign=top><h3>PHPlist Help: $topic</h3></td><td align=right valign=top>";
+print '<A HREF="Javascript:close()">Close this window</A></td></tr></table>';
 if ($include) {
 	include $include;
 } else {
