@@ -422,7 +422,7 @@ function Error($msg) {
   $message = '
 
   An error has occurred in the Mailinglist System
-  URL: '.$_ENV["REQUEST_URI"].'
+  URL: '.$_SERVER["REQUEST_URI"].'
   Error message: ' . $msg;
 
   $message .= "\n==== debugging information\n\nSERVER Vars\n";
@@ -454,8 +454,8 @@ function Fatal_Error($msg) {
   $message = '
 
   An error has occurred in the Mailinglist System
-
-  ' . $msg;
+  URL: '.$_SERVER["REQUEST_URI"].'
+  Error: ' . $msg;
   sendMail(getConfig("report_address"),"Mail list error",$message,"");
  # include "footer.inc";
  # exit;
