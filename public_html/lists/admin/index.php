@@ -121,10 +121,10 @@ if (isset($GLOBALS["require_login"]) && $GLOBALS["require_login"]) {
       $page = "login";
     }
   } elseif ($_REQUEST["forgotpassword"]) {
-  	$req = Sql_Query('select email,password from '.$tables["admin"].' where email = "'.$_REQUEST["forgotpassword"].'"');
+  	$req = Sql_Query('select email,password,loginname from '.$tables["admin"].' where email = "'.$_REQUEST["forgotpassword"].'"');
     if (Sql_Affected_Rows()) {
     	$row = Sql_Fetch_Row($req);
-			sendMail ($row[0],"Your password for PHPlist","\n\nYour password is $row[1]",system_messageheaders(),$envelope_from);
+			sendMail ($row[0],"Your password for PHPlist","\n\nYour loginname is $row[2]\nYour password is $row[1]",system_messageheaders(),$envelope_from);
       $msg = "Your password has been sent by email";
    	}
     $page = "login";
