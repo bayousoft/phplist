@@ -193,6 +193,50 @@ if ($_POST["send"] && $subject && $_POST["message"] && $from && !$duplicate_attr
  # commented, because this could take too long
  # Sql_Query($count_query);
  # $num = Sql_Affected_rows();
+
+  if (ALLOW_ATTACHMENTS) {
+    for ($att_cnt = 1;$att_cnt <= NUMATTACHMENTS;$att_cnt++) {
+    	$fieldname = "attachment".$att_cnt;
+      $tmpfile = $_FILES[$fieldname]['tmp_name'];
+      $remotename = $_FILES[$fieldname]["name"];
+      $type = $_FILES[$fieldname]["type"];
+      if (strlen($_POST[$type]) > 255)
+      	print Warn("Mime Type is longer than 255 characters, this is trouble");
+      $description = $_POST[$fieldname."_description"];
+      print $tmpfile;
+      if ($tmpfile && filesize($tmpfile) && $tmpfile != "none") {
+        list($name,$ext) = explode(".",basename($remotename));
+        # create a temporary file to make sure to use a unique file name to store with
+        $newfile = tempnam($GLOBALS["attachment_repository"],$name);
+        $newfile .= ".".$ext;
+        $newfile = basename($newfile);
+        $file_size = filesize($tmpfile);
+        $fd = fopen( $tmpfile, "r" );
+        $contents = fread( $fd, filesize( $tmpfile ) );
+        fclose( $fd );
+        if ($file_size) {
+        	# this may seem odd, but it allows for a remote (ftp) repository
+          # also, "copy" does not work across filesystems
+          $fd = fopen( $attachment_repository."/".$newfile, "w" );
+          fwrite( $fd, $contents );
+          fclose( $fd );
+          Sql_query(sprintf('insert into %s (filename,remotefile,mimetype,description,size) values("%s","%s","%s","%s",%d)',
+          $tables["attachment"],
+          basename($newfile),$remotename,$type,$description,$file_size)
+          );
+          $attachmentid = Sql_Insert_id();
+          Sql_query(sprintf('insert into %s (messageid,attachmentid) values(%d,%d)',
+          $tables["message_attachment"],$messageid,$attachmentid));
+          print Info("Added attachment ".$att_cnt);
+        } else {
+        	print Warn("Uploaded file $att_cnt not properly received, empty file");
+        }
+      }
+    }
+  }
+
+
+
   $done = 1;
 
   ?>
@@ -231,8 +275,13 @@ if (!$footer)
 
 echo $msg;
 if (!$done) {
+if (ALLOWATTACHMENTS) {
+	$enctype = 'enctype="multipart/form-data"';
+} else {
+	$enctype = '';
+}
 ?>
-<?=formStart();
+<?=formStart($enctype);
 
 if ($_GET["page"] == "preparemessage")
 	print Help("preparemessage","What is prepare a message");
@@ -316,6 +365,17 @@ if (ENABLE_RSS) {
 
 </table>
 <?
+
+if (ALLOW_ATTACHMENTS) {
+	print "<table><tr><td colspan=2>".Help("attachments")." Add Attachments to your message</td></tr>";
+	for ($att_cnt = 1;$att_cnt <= NUMATTACHMENTS;$att_cnt++) {
+  	printf ('<tr><td>File %d:</td><td><input type=file name="attachment%d"></td></tr>',$att_cnt,$att_cnt);
+  	printf ('<tr><td colspan=2>Description:</td></tr>
+    	<tr><td colspan=2><textarea name="attachment%d_description" cols=45 rows=3 wrap="virtual"></textarea></td></tr>',$att_cnt);
+ 	}
+  print '</table>';
+}
+
 $html = '
 <p><b>Select the criteria for this message:</b>
 <ol>
