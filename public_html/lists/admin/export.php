@@ -1,7 +1,7 @@
 <?php
 require_once "accesscheck.php";
 
-# $Id: export.php,v 1.3 2004-06-02 10:07:23 mdethmers Exp $
+# $Id: export.php,v 1.4 2004-07-19 15:42:51 mdethmers Exp $
 
 # export users from PHPlist
 
@@ -91,7 +91,7 @@ if ($process == "Export") {
     if (!Sql_Affected_rows($lists))
       print "No Lists";
     while ($list = Sql_fetch_array($lists)) {
-      print $list["name"]." ";
+      print stripslashes($list["name"])." ";
     }
     print $row_delim;
   }

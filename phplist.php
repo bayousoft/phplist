@@ -18,7 +18,7 @@ class phplist extends DefaultPlugin {
 
     $this->tables = array(
       "user" => $usertable_prefix . "user",
-  		"user_history" => $usertable_prefix . "user_history",
+      "user_history" => $usertable_prefix . "user_history",
       "list" => $table_prefix . "list",
       "listuser" => $table_prefix . "listuser",
       "message" => $table_prefix . "message",
@@ -65,38 +65,38 @@ class phplist extends DefaultPlugin {
 
   function codelib() {
     return array(
-    	"public_html/lists/admin/lib.php",
-    	"public_html/lists/admin/defaultconfig.inc",
+      "public_html/lists/admin/lib.php",
+      "public_html/lists/admin/defaultconfig.inc",
       "public_html/lists/texts/english.inc");
   }
 
   function frontendlib() {
-  	return array(
-    	"public_html/lists/admin/lib.php",
+    return array(
+      "public_html/lists/admin/lib.php",
       "public_html/lists/texts/english.inc",
- //   	"public_html/lists/admin/subscribelib2.php",
-#    	"public_html/lists/admin/phplistObj.php",
-#    	"public_html/lists/admin/defaultconfig.inc",
-		);
+ //     "public_html/lists/admin/subscribelib2.php",
+#      "public_html/lists/admin/phplistObj.php",
+#      "public_html/lists/admin/defaultconfig.inc",
+    );
   }
 
   function parseText($data,$leaf,$branch) {
     return $data;
   }
-  
+
   function getListsAsArray() {
-  	$list = array();
+    $list = array();
     $list[0] = "-- None";
     $req = Sql_Query(sprintf('select distinct id, name from %s order by listorder',$this->tables["list"]));
     while ($row = Sql_Fetch_Array($req)){
-    	$list[$row["id"]] = $row["name"];
+      $list[$row["id"]] = $row["name"];
     }
     return $list;
-	}
-  
+  }
+
   function addUserToList($userid,$listid) {
-  	Sql_Query(sprintf('replace into %s (userid,listid,entered) values(%d,%d,now())',
-    	$this->tables["listuser"],$userid,$listid));
+    Sql_Query(sprintf('replace into %s (userid,listid,entered) values(%d,%d,now())',
+      $this->tables["listuser"],$userid,$listid));
   }
 
   function addEmail($email,$password = "") {
@@ -111,27 +111,27 @@ class phplist extends DefaultPlugin {
   }
 
   function addEmailToList($email,$listid) {
-  	$userid = Sql_Fetch_Row_Query(sprintf('select * from %s where email = "%s"',
-    	$this->tables["user"],$email));
+    $userid = Sql_Fetch_Row_Query(sprintf('select * from %s where email = "%s"',
+      $this->tables["user"],$email));
     if ($userid[0]) {
-    	$this->addUserToList($userid[0],$listid);
+      $this->addUserToList($userid[0],$listid);
       return 1;
     } else {
-    	$id = $this->addEmail($email);
+      $id = $this->addEmail($email);
       if ($id) {
         $this->addUserToList($id,$listid);
         return 1;
       }
-   	}
+     }
     return 0;
   }
 
   function confirmUser($userid) {
-  	Sql_Query(sprintf('update %s set confirmed = 1 where id = %d',$this->tables["user"],$userid));
+    Sql_Query(sprintf('update %s set confirmed = 1 where id = %d',$this->tables["user"],$userid));
   }
-  
+
   function sendConfirmationRequest($userid) {
-  	Sql_Query(sprintf('update %s set confirmed = 1 where id = %d',$this->tables["user"],$userid));
+    Sql_Query(sprintf('update %s set confirmed = 1 where id = %d',$this->tables["user"],$userid));
   }
 
   function display($subtype,$name,$value,$docid = 0) {
@@ -146,7 +146,7 @@ class phplist extends DefaultPlugin {
         $html .= sprintf('<select name="%s_spage">',$name);
         $html .= sprintf('<option value="0"> -- select one</option>');
         while ($row = Sql_Fetch_Array($req)) {
-        	$selected = $data["spage"] == $row["id"] ? "selected":"";
+          $selected = $data["spage"] == $row["id"] ? "selected":"";
           $html .= sprintf('<option value="%s" %s> %s</option>',$row["id"],$selected,$row["title"]);
         }
         return $html;
@@ -178,7 +178,7 @@ class phplist extends DefaultPlugin {
     $tasks["eventlog"] = "Eventlog";
     return $tasks;
   }
-  
+
   function adminPages() {
     $tasks = array(
       "home" => "Administer Mailinglists",
@@ -199,7 +199,7 @@ class phplist extends DefaultPlugin {
   }
 
   function selectPage($id) {
-  	if (!$id) return '<!-- no subscribe page defined -->';
+    if (!$id) return '<!-- no subscribe page defined -->';
     $html = '';
 #    if (preg_match("/(\w+)/",$_GET["p"],$regs)) {
     switch ($_GET["p"]) {
@@ -221,7 +221,7 @@ class phplist extends DefaultPlugin {
         break;
     }
     return $html;
-	}
+  }
 
   function show($dbdata,$leaf,$branch,$fielddata) {
     global $config;
@@ -229,10 +229,10 @@ class phplist extends DefaultPlugin {
     $data = parseDelimitedData($dbdata);
     switch ($data["subtype"]) {
       case "1":
-      	$phplistObj = new phplistObj($data["spage"]);
+        $phplistObj = new phplistObj($data["spage"]);
         $html .= 'PHPlist'.$phplistObj->PageContent();
         return $html;
-				break;
+        break;
       default: return "Invalid Subtype";
     }
   }
@@ -259,7 +259,7 @@ class phplist extends DefaultPlugin {
     $tables = $this->tables;
     include $config["code_root"].'/'.$config["uploader_dir"].'/plugins/phplist/'.$this->coderoot()."/upgrade.php";
   }
-  
+
   function version() {
     return $this->VERSION;
   }
@@ -275,7 +275,7 @@ class phplist extends DefaultPlugin {
     $data["name"] = $fielddata["name"];
     $data["subtype"] = $_POST[$value];
     if ($data["subtype"] == 1) {
-    	# save link info
+      # save link info
       $data["spage"] = $_POST[$fielddata["name"]."_spage"];
       $data["subtype"] = 1;
     }
