@@ -77,6 +77,7 @@ if (MAILQUEUE_BATCH_PERIOD) {
 if ($num_per_batch && $batch_period) {
   # check how many were sent in the last batch period and take off that
   # amount from this batch
+  $original_num_per_batch = $num_per_batch;
   $recently_sent = Sql_Fetch_Row_Query(sprintf('select count(*) from %s where date_add(entered,interval %d second) > now()',
     $tables["usermessage"],$batch_period));
   $num_per_batch -= $recently_sent[0];
@@ -88,7 +89,7 @@ if ($num_per_batch && $batch_period) {
 }
   
 print '<script language="Javascript" src="js/progressbar.js" type="text/javascript"></script>';
-print formStart('name="outputform"').'<textarea name="output" rows=20 cols=75></textarea></form>';
+print formStart('name="outputform"').'<textarea name="output" rows=22 cols=75></textarea></form>';
 
 # report keeps track of what is going on
 $report = "";
@@ -131,7 +132,13 @@ function my_shutdown () {
 		# if the script timed out in stage 5, reload the page to continue with the rest
     $reload++;
     if (!$GLOBALS["commandline"] && $num_per_batch && $batch_period) {
-      output("Waiting for $batch_period seconds before reloading");
+      if ($sent + 10 < $GLOBALS["original_num_per_batch"]) {
+        output("Less than batch size were sent, so reloading imminently");
+        $delaytime = 10000;
+      } else {
+        output("Waiting for $batch_period seconds before reloading");
+        $delaytime = $batch_period * 1000;
+      }
       output("Do not reload this page yourself, because that will cause processing to start from the beginning");
       printf( '<script language="Javascript" type="text/javascript">
         function reload() {
@@ -142,7 +149,7 @@ function my_shutdown () {
           document.location = document.location.pathname + query + "&reload=%d&lastsent=%d&lastskipped=%d";
         }
         setTimeout("reload()",%d);
-      </script>',$reload,$sent,$notsent,$batch_period * 1000);
+      </script>',$reload,$sent,$notsent,$delaytime);
     } else {
       printf( '<script language="Javascript" type="text/javascript">
         var query = window.location.search;
@@ -226,7 +233,13 @@ if (is_file($ISPlockfile)) {
   ProcessError("Processing has been suspended by your ISP, please try again later",1);
 }
 if ($num_per_batch > 0) {
-  output("Sending in batches of $num_per_batch emails",0);
+  if ($original_num_per_batch != $num_per_batch) {
+    output("Sending in batches of $original_num_per_batch emails",0);
+    $diff = $original_num_per_batch - $num_per_batch;
+    output("This batch will be $num_per_batch emails, because in the last $batch_period seconds $diff emails were sent",0);
+  } else {
+    output("Sending in batches of $num_per_batch emails",0);
+  }
 } elseif ($num_per_batch < 0) {
   output("In the last $batch_period seconds more emails were sent than is currently allowed per batch.",0);
 }
@@ -372,7 +385,7 @@ while ($message = Sql_fetch_array($messages)) {
 
 			# pick the first one
 			$user = Sql_fetch_row($users);
-			if ($user[5]){# && is_email($user[1])) {
+			if ($user[5] && is_email($user[1])) {
 				$userid = $user[0];    # id of the user
 				$useremail = $user[1]; # email of the user
 				$userhash = $user[2];  # unique string of the user
