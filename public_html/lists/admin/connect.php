@@ -14,12 +14,8 @@ if (is_file(getenv("DOCUMENT_ROOT") ."/../VERSION")) {
 
 define("VERSION",$version."dev2.8");
 
-if (file_exists("commonlib/lib/userlib.php")) {
-	include_once ("commonlib/lib/userlib.php");
-} elseif (file_exists("admin/commonlib/lib/userlib.php")) {
-	include_once ("admin/commonlib/lib/userlib.php");
-}
-include "pluginlib.php";
+include_once dirname(__FILE__)."/commonlib/lib/userlib.php";
+include_once dirname(__FILE__). "/pluginlib.php";
 
 # make sure magic quotes are on. Try to switch it on, this may fail
 ini_set("magic_quotes_gpc","on");
@@ -51,11 +47,7 @@ if (!isset($table_prefix))
 if (!isset($usertable_prefix))
   $usertable_prefix = $table_prefix;
 
-if (file_exists("lib.php")) {
-  include_once "lib.php";
-} else {
-  include_once "admin/lib.php";
-}
+include_once dirname(__FILE__)."/lib.php";
 
 $tables = array(
   "user" => $usertable_prefix . "user",

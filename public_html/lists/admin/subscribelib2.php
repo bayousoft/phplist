@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__FILE__)."/accesscheck.php";
 
 mt_srand((double)microtime()*1000000);
 $randval = mt_rand();
@@ -387,7 +388,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
    	}
   }
   if (!$information_changed) {
-  	$history_entry .= "\nNo user details changed";
+  	$history_entry .= "\nNo user system details changed";
   }
   $history_entry .= "\n\nList Membership: \n$lists\n";
 

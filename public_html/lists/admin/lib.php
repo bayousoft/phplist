@@ -1,9 +1,5 @@
 <?php
-if (file_exists("accesscheck.php")) {
-  require_once "accesscheck.php";
-} else {
-  require_once "admin/accesscheck.php";
-}
+require_once dirname(__FILE__)."/accesscheck.php";
 # library used for plugging into the webbler, instead of "connect"
 # depricated and should be removed
 
