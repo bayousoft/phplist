@@ -1,4 +1,38 @@
-Changelog for PHPlist 2004-03-04 18:47
+Changelog for PHPlist 2004-03-10 21:18
+
+2004-03-10 21:10  mdethmers
+
+	fixed bug in HTML to text parsing
+
+2004-03-09 00:28  mdethmers
+
+	added history for auto unsubscribing in process bounces
+
+2004-03-08 17:33  mdethmers
+
+	new version 2.8.1
+
+2004-03-08 17:32  mdethmers
+
+	added simple method of inputting text part of multi part email
+	manually
+
+2004-03-06 14:09  mdethmers
+
+	enabled getrss for commandline processing
+
+2004-03-05 23:24  mdethmers
+
+	updated user history functionality, by also logging confirmation,
+	unsubscription and admin changes to list membership
+
+2004-03-05 23:23  mdethmers
+
+	added basic check on validity of html in email
+
+2004-03-04 19:06  mdethmers
+
+	new version 2.8.0
 
 2004-03-04 18:21  mdethmers
 
