@@ -69,6 +69,10 @@ function moveUser($userid) {
   Sql_Query(sprintf('insert into %s (userid,listid) values(%d,%d)',$tables["listuser"],$userid,$newlist));
 }
 
+function addUniqID($userid) {
+	Sql_query(sprintf('update %s set uniqid = "%s" where id = %d',$GLOBALS["tables"]["user"],getUniqID(),$userid));
+}
+
 if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
   $access = accessLevel("reconcileusers");
   switch ($access) {
@@ -81,6 +85,13 @@ if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
             Sql_Query("update {$tables["user"]} set confirmed = 1");
             $total =Sql_Affected_Rows();
             print "$total users apply<br/>";
+            break;
+          case "adduniqid":
+            info( "Creating UniqID for all users who do not have one");
+						$req = Sql_Query("select * from {$tables["user"]} where uniqid is NULL or uniqid = \"\"");
+            $total =Sql_Affected_Rows();
+            print "$total users apply<br/>";
+            $todo = "addUniqID";
             break;
           case "markallhtml":
             info( "Marking all users to receive HTML");
@@ -322,6 +333,7 @@ print "</p>";
 
 <p>To delete all users who are not subscribed to any list, <?=PageLink2("reconcileusers&option=nolists","Click here")?>
 <p>To find users who have an invalid email, <?=PageLink2("reconcileusers&option=invalidemail","Click here")?>
+<p>To make sure that all users have a UniqID, <?=PageLink2("reconcileusers&option=adduniqid","Click here")?>
 <p>To mark all users with an invalid email as unconfirmed, <?=PageLink2("reconcileusers&option=markinvalidunconfirmed","Click here")?>
 <p>To delete users who have an invalid email, <?=PageLink2("reconcileusers&option=deleteinvalidemail","Click here")?>
 <p>To mark all users to receive HTML, <?=PageLink2("reconcileusers&option=markallhtml","Click here")?>
