@@ -268,7 +268,7 @@ function sendMail ($to,$subject,$message,$header = "",$parameters = "") {
   } else {
   	# send mails to one place when running a test version
     $message = "To: $to\n".$message;
-   	return mail('phplist@tincan.co.uk',$subject,$message,$header,$parameters);
+   	return mail($GLOBALS["developer_email"],$subject,$message,$header,$parameters);
   }
 }
 
