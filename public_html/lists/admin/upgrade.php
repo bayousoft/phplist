@@ -217,6 +217,8 @@ if ($doit == "yes") {
       }
     case "2.6.0":case "2.6.1":case "2.6.2":case "2.6.3":case "2.6.4":case "2.6.5":
 			Sql_Query("alter table {$tables["message"]} add column embargo (datetime)");
+      # make sure that current queued messages are sent
+      Sql_Query("update {$tables["message"]} set embargo = now() where status = \"submitted\"");
     case "whatever versions we will get later":
       #Sql_Query("alter table table that altered");
       break;
