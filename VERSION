@@ -1,6 +1,6 @@
 # file that keeps track of the latest tag in cvs and the corresponding version
 # this automates publishing a new version, when it's tagged
 # if you don't understand this, don't worry. You don't need this file
-VERSION=2.8.6
-TAG=pl286
+VERSION=2.8.6-1
+TAG=pl2861
 PREVTAG=pl285
