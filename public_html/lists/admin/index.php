@@ -214,10 +214,11 @@ if ($page != "login") {
     if (!ini_get("open_basedir")) {
       Warn("The attachment repository ".$GLOBALS["attachment_repository"]." doesn't exist or isn't writable");
     } else {
+    	Warn("open_basedir restrictions are in effect.");
       if (is_dir($GLOBALS["attachment_repository"]))
-        Warn("The attachment repository ".$GLOBALS["attachment_repository"]." is not accessible for writing. <br/>open_basedir restrictions are in effect. ");
+        Warn("The attachment repository ".$GLOBALS["attachment_repository"]." is not accessible for writing.");
       else
-        Warn("The attachment repository ".$GLOBALS["attachment_repository"]." does not exist. ");
+        Warn("The attachment repository ".$GLOBALS["attachment_repository"]." does not exist or is not accessible. ");
     }
   }
 }

@@ -37,7 +37,7 @@ $DBstruct = array( # order of tables is essential for smooth upgrade
         "extradata" => array("text","Additional data"),
         "foreignkey" => array("varchar(100)","Foreign Key"),
         "index" => array("(foreignkey)","sys:Foreign Key"),
-        "index" => array("idx_phplist_user_user_uniqid (uniqid)","")
+        "index" => array("idx_phplist_user_user_uniqid (uniqid)","sys:index")
     ),
     "user_history" => array(
         "id" => array("integer not null primary key auto_increment","sys:ID"),
