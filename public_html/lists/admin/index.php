@@ -184,13 +184,6 @@ if ($GLOBALS["require_login"] && $page != "login") {
   if ($_REQUEST["page"] != "logout")
   print '<div align="right">'.PageLink2("logout","Logout").'</div>';
 }
-if (ereg("dev",VERSION)) {
-	if ($GLOBALS["developer_email"]) {
-		print Info("Running CVS version. All emails will be sent to ".$GLOBALS["developer_email"]);
-  } else {
-  	print Info("Running CVS version, but developer email is not set");
-  }
-}
 
 # include some information
 if (is_file("info/".$adminlanguage["info"]."/$include")) {
@@ -199,19 +192,34 @@ if (is_file("info/".$adminlanguage["info"]."/$include")) {
 #	print "Not a file: "."info/".$adminlanguage["info"]."/$include";
 }
 
-#if (!ini_get("register_globals") && WARN_ABOUT_PHP_SETTINGS)
-#	Error("Register Globals in your php.ini needs to be <b>on</b>");
-if (ini_get("safe_mode") && WARN_ABOUT_PHP_SETTINGS)
-	Warn("In safe mode, not everything will work as expected");
-if (!ini_get("magic_quotes_gpc") && WARN_ABOUT_PHP_SETTINGS)
-	Warn("Things will work better when PHP magic_quotes_gpc = on");
-if (defined("ENABLE_RSS") && ENABLE_RSS && !function_exists("xml_parse") && WARN_ABOUT_PHP_SETTINGS)
-	Warn("XML is not supported");
+if ($page != "login") {
+  if (ereg("dev",VERSION)) {
+    if ($GLOBALS["developer_email"]) {
+      print Info("Running CVS version. All emails will be sent to ".$GLOBALS["developer_email"]);
+    } else {
+      print Info("Running CVS version, but developer email is not set");
+    }
+  }
+  #if (!ini_get("register_globals") && WARN_ABOUT_PHP_SETTINGS)
+  #	Error("Register Globals in your php.ini needs to be <b>on</b>");
+  if (ini_get("safe_mode") && WARN_ABOUT_PHP_SETTINGS)
+    Warn("In safe mode, not everything will work as expected");
+  if (!ini_get("magic_quotes_gpc") && WARN_ABOUT_PHP_SETTINGS)
+    Warn("Things will work better when PHP magic_quotes_gpc = on");
+  if (defined("ENABLE_RSS") && ENABLE_RSS && !function_exists("xml_parse") && WARN_ABOUT_PHP_SETTINGS)
+    Warn("XML is not supported");
 
-if (ALLOW_ATTACHMENTS && WARN_ABOUT_PHP_SETTINGS && (!is_dir($GLOBALS["attachment_repository"]) || !is_writeable ($GLOBALS["attachment_repository"]))) {
-	Warn("The attachment repository ".$GLOBALS["attachment_repository"]." doesn't exist or isn't writable");
+  if (ALLOW_ATTACHMENTS && WARN_ABOUT_PHP_SETTINGS && (!is_dir($GLOBALS["attachment_repository"]) || !is_writable ($GLOBALS["attachment_repository"]))) {
+    if (!ini_get("open_basedir")) {
+      Warn("The attachment repository ".$GLOBALS["attachment_repository"]." doesn't exist or isn't writable");
+    } else {
+      if (is_dir($GLOBALS["attachment_repository"]))
+        Warn("The attachment repository ".$GLOBALS["attachment_repository"]." is not accessible for writing. <br/>open_basedir restrictions are in effect. ");
+      else
+        Warn("The attachment repository ".$GLOBALS["attachment_repository"]." does not exist. ");
+    }
+  }
 }
-;
 
 /*
 if (USEFCK) {

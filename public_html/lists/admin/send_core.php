@@ -495,6 +495,10 @@ if (ALLOW_ATTACHMENTS) {
 } else {
 	$enctype = '';
 }
+
+$tabs = new WebblerTabs();
+$tabs->addTab("Test","http://tincan.co.uk");
+print $tabs->display();
 ?>
 <?=formStart($enctype . ' name="sendmessageform"');
 
