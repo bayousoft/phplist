@@ -1,5 +1,16 @@
 <?php
 
+/*
+
+=========================================================================
+
+General settings for language and database
+
+=========================================================================
+
+*/
+
+
 # select the language module to use
 # Look for <country>.inc files in the texts directory
 # to find your language
@@ -19,9 +30,31 @@ $database_user = "phplist";
 $database_password = 'phplist';
 
 # if you use multiple installations of PHPlist you can set this to
-# something to identify this one. it will be prepended to email report 
+# something to identify this one. it will be prepended to email report
 # subjects
-$installation_name = 'PHPlist'; 
+$installation_name = 'PHPlist';
+
+# if you want a prefix to all your tables, specify it here,
+$table_prefix = "phplist_";
+
+# if you want to use a different prefix to user tables, specify it here.
+# read README.usertables for more information
+$usertable_prefix = "phplist_user_";
+
+# if you change the path to the PHPlist system, make the change here as well
+# path should be relative to the root directory of your webserver (document root)
+$pageroot = '/lists';
+$adminpages = $pageroot . '/admin';
+
+/*
+
+=========================================================================
+
+Settings for handling bounces
+
+=========================================================================
+
+*/
 
 # Message envelope. This is the email that system messages come from
 # it is useful to make this one where you can process the bounces on
@@ -37,7 +70,7 @@ $installation_name = 'PHPlist';
 # This can be 'pop' or 'mbox'
 $bounce_protocol = 'pop';
 
-# set this to 0, if you set up a cron to download bounces regularly by using the 
+# set this to 0, if you set up a cron to download bounces regularly by using the
 # commandline option. If this is 0, users cannot run the page from the web
 # frontend. Read README.commandline to find out how to set it up on the
 # commandline
@@ -74,12 +107,26 @@ $bounce_mailbox_purge_unprocessed = 1;
 # how many bounces in a row need to have occurred for a user to be marked unconfirmed
 $bounce_unsubscribe_treshold = 5;
 
-# set this to 1 if you want PHPlist to deal with login for the administrative 
+
+/*
+
+=========================================================================
+
+Security related settings
+
+=========================================================================
+
+*/
+
+# set this to 1 if you want PHPlist to deal with login for the administrative
 # section of the system
 # you will be able to add administrators who control their own lists
 # default login is "admin" with password "phplist"
 #
 $require_login = 1;
+
+# if you use login, how many lists can be created per administrator
+define("MAXLIST",1);
 
 # if you use commandline, you will need to identify the users who are allowed to run
 # the script. See README.commandline for more info
@@ -96,13 +143,8 @@ define("ASKFORPASSWORD",0);
 # to 1 for this to have an effect
 define("UNSUBSCRIBE_REQUIRES_PASSWORD",0);
 
-# if you do not require users to actually sign up to lists, but only want to 
-# use the subscribe page as a kind of registration system, you can set this to 1 and 
-# users will not receive an error when they do not check a list to subscribe to
-define("ALLOW_NON_LIST_SUBSCRIBE",0);
-
 # to increase security the session of a user is checked for the IP address
-# this needs to be the same for every request. This may not work with 
+# this needs to be the same for every request. This may not work with
 # network situations where you connect via multiple proxies, so you can
 # switch off the checking by setting this to 0
 define("CHECK_SESSIONIP",1);
@@ -114,13 +156,21 @@ define("CHECK_SESSIONIP",1);
 # the system
 define("ENCRYPTPASSWORD",0);
 
-# if you use login, how many lists can be created per administrator
-define("MAXLIST",1);
-
 # Check for host of email entered for subscription
 # Do not use it if your server is not 24hr online
 # make the 0 a 1, if you want to use it
 $check_for_host = 0;
+
+/*
+
+=========================================================================
+
+Debugging and informational
+
+=========================================================================
+
+*/
+
 
 # if test is true (not 0) it will not actually send ANY messages,
 # but display what it would have sent
@@ -142,6 +192,12 @@ define ("WARN_ABOUT_PHP_SETTINGS",1);
 # check README.commandline how to do this
 define ("MANUALLY_PROCESS_QUEUE",1);
 
+# if you want to use \r\n for formatting messages set the 0 to 1
+# see also http://www.securityfocus.com/archive/1/255910
+# this is likely to break things for other mailreaders, so you should
+# only use it if all your users have Outlook (not Express)
+define("WORKAROUND_OUTLOOK_BUG",0);
+
 # batch processing
 # if you are on a shared host, it will probably be appreciated if you don't send
 # out loads of emails in one go. To do this, you can configure batch processing.
@@ -149,12 +205,21 @@ define ("MANUALLY_PROCESS_QUEUE",1);
 # a server wide configuration. So if you notice these values to be different
 # in reality, that may be the case
 
-# define the amount of emails you want to send per period. If 0, batch processing
-# is disabled
-define("MAILQUEUE_BATCH_SIZE",0);
+$userhistory_systeminfo = array(
+	'HTTP_USER_AGENT',
+	'HTTP_REFERER',
+	'REMOTE_ADDR'
+);
 
-# define the length of one batch processing period, in seconds (3600 is an hour)
-define("MAILQUEUE_BATCH_PERIOD",3600);
+/*
+
+=========================================================================
+
+Feedback to developers
+
+=========================================================================
+
+*/
 
 # use Register to "register" to PHPlist.com. Once you set TEST to 0, the system will then
 # request the "Powered By" image from www.phplist.com, instead of locally. This will give me
@@ -188,36 +253,55 @@ define ("NOSTATSCOLLECTION",0);
 # which is useful for me for future developments
 # $stats_collection_address = 'phplist-stats@tincan.co.uk';
 
+/*
+
+=========================================================================
+
+Miscellaneous
+
+=========================================================================
+
+*/
+
+
 # the number of criterias you want to be able to select when sending a message.
 # Useful is is to make it the same as the number of selectable attributes you enter in the
 # system, but that is up to you (selectable = select, radio or checkbox)
 define ("NUMCRITERIAS",2);
 
-# if you want a prefix to all your tables, specify it here,
-$table_prefix = "phplist_";
+# if you do not require users to actually sign up to lists, but only want to
+# use the subscribe page as a kind of registration system, you can set this to 1 and
+# users will not receive an error when they do not check a list to subscribe to
+define("ALLOW_NON_LIST_SUBSCRIBE",0);
 
-# if you want to use a different prefix to user tables, specify it here.
-# read README.usertables for more information
-$usertable_prefix = "phplist_user_";
+# define the amount of emails you want to send per period. If 0, batch processing
+# is disabled
+define("MAILQUEUE_BATCH_SIZE",0);
 
-# if you change the path to these pages, make the change here as well
-# path should be relative to the root directory of your webserver
-# you may have to change it at loads of other places as well
-
-$pageroot = '/lists';
-$adminpages = $pageroot . '/admin';
+# define the length of one batch processing period, in seconds (3600 is an hour)
+define("MAILQUEUE_BATCH_PERIOD",3600);
 
 # user history system info.
-# when logging the history of a user, you can specify which system variables you 
+# when logging the history of a user, you can specify which system variables you
 # want to log. These are the ones that are found in the $_SERVER and the $_ENV
 # variables of PHP. check http://www.php.net/manual/en/language.variables.predefined.php
 # the values are different per system, but these ones are quite common.
 
-$userhistory_systeminfo = array(
-	'HTTP_USER_AGENT',
-	'HTTP_REFERER',
-	'REMOTE_ADDR'
-);
+/*
+
+=========================================================================
+
+Advanced Features, HTML editor, RSS, Attachments, Plugins. PDF creation
+
+=========================================================================
+
+*/
+
+# you can specify the encoding for HTML messages here. This only works if you do
+# not use the phpmailer (see below)
+# the default should be fine. Valid options are 7bit, quoted-printable and base64
+define("HTMLEMAIL_ENCODING","quoted-printable");
+
 
 # PHPlist can send RSS feeds to users. Feeds can be sent daily, weekly or
 # monthly. This feature is currently marked experimental.
@@ -303,12 +387,6 @@ $attachment_repository = '/tmp';
 # $pdf_font = 'Times';
 # $pdf_fontstyle = '';
 # $pdf_fontsize = 14;
-
-# if you want to use \r\n for formatting messages set the 0 to 1
-# see also http://www.securityfocus.com/archive/1/255910
-# this is likely to break things for other mailreaders, so you should
-# only use it if all your users have Outlook (not Express)
-define("WORKAROUND_OUTLOOK_BUG",0);
 
 # the mime type for the export files. You can try changing this to
 # application/vnd.ms-excel to make it open automatically in excel
