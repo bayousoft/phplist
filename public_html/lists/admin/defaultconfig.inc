@@ -339,6 +339,21 @@ Thank you.
 "html_charset" => array("iso-8859-1","Charset for HTML messages","text"),
 "text_charset" => array("iso-8859-1","Charset for Text messages","text"),
 
+"html_email_style" => array('
+<style type="text/css">
+body { font-size : 11px; font-family: Verdana, Arial, Helvetica, sans-serif; }
+a { font-size: 11px; color: #ff6600; font-style: normal; font-family: verdana, sans-serif; text-decoration: none; }
+a:visited { color: #666666; }
+a:hover {	text-decoration: underline; }
+p { font-weight: normal; font-size: 11px; color: #666666; font-style: normal; font-family: verdana, sans-serif; text-decoration: none; }
+h1 {font-weight: bold; font-size: 14px; color: #666666; font-style: normal; font-family: verdana, sans-serif; text-decoration: none;}
+h2 {font-weight: bold; font-size: 13px; color: #666666; font-style: normal; font-family: verdana, sans-serif; text-decoration: none;}
+h3 {font-weight: bold; font-size: 12px; color: #666666; font-style: normal; font-family: verdana, sans-serif; text-decoration: none; margin:0px; padding:0px;}
+h4 {font-weight: bold; font-size: 11px; color: #666666; font-style: normal; font-family: verdana, sans-serif; text-decoration: none; margin:0px; padding:0px;}
+hr {width : 100%; height : 1px; color: #ff9900; size:1px;}
+</style>
+',"CSS for HTML messages without a template","textarea"),
+
 "alwayssendtextto" => array("mail.com\nemail.com","Domains that only accept text emails, one per line","textarea"),
 # do not do anything with this line
 "last one" => "blah");

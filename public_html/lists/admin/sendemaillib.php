@@ -93,7 +93,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
   You can configure how the credits are added to your pages and emails in your
   config file.
 
-	Michiel Dethmers, Tincan Ltd 2003
+	Michiel Dethmers, Tincan Ltd 2003, 2004
 */
   if (!EMAILTEXTCREDITS) {
   	$html["signature"] = $PoweredByImage;#'<div align="center" id="signature"><a href="http://www.phplist.com"><img src="powerphplist.png" width=88 height=31 title="Powered by PHPlist" alt="Powered by PHPlist" border="0"></a></div>';
@@ -115,13 +115,14 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
   	$textcontent = $msg;
     $htmlcontent = parseText($msg);
   }
+  $style = getConfig("html_email_style");
 
   if ($cached[$messageid]["template"])
     # template used
     $htmlmessage = eregi_replace("\[CONTENT\]",$htmlcontent,$cached[$messageid]["template"]);
   else
     # no template used
-    $htmlmessage = $htmlcontent;
+    $htmlmessage = $style.$htmlcontent;
   $textmessage = $textcontent;
 
   foreach (array("preferences","unsubscribe","signature") as $item) {
