@@ -41,6 +41,8 @@ if (!defined("MIMETYPES_FILE")) define("MIMETYPES_FILE","/etc/mime.types");
 if (!defined("DEFAULT_MIMETYPE")) define("DEFAULT_MIMETYPE","application/octet-stream");
 if (!defined("USE_REPETITION")) define("USE_REPETITION",0);
 if (!defined("USE_EDITMESSAGE")) define("USE_EDITMESSAGE",0);
+# let's keep it default to old behaviour for now
+if (!defined("USE_PREPARE")) define("USE_PREPARE",1);
 
 if (!isset($GLOBALS["export_mimetype"])) $GLOBALS["export_mimetype"] = 'application/csv';
 
@@ -556,7 +558,13 @@ function newMenu() {
   foreach ($GLOBALS["main_menu"] as $page => $desc) {
     $link = PageLink2($page,$desc);
     if ($link) {
-      $html .= $spb.$link.$spe;
+      if ($page == "preparesend" || $page == "sendprepared") {
+        if (USE_PREPARE) {
+          $html .= $spb.$link.$spe;
+        }
+      } else {
+        $html .= $spb.$link.$spe;
+      }
     }
   }
   if (sizeof($GLOBALS["plugins"])) {
@@ -1008,8 +1016,25 @@ function findMime($filename) {
   return DEFAULT_MIMETYPE;
 }
 
+function excludedDateForRepetition($date) {
+  if (!is_array($GLOBALS["repeat_exclude"])) return 0;
+  foreach ($GLOBALS["repeat_exclude"] as $exclusion) {
+    $formatted_value = Sql_Fetch_Row_Query(sprintf('select date_format("%s","%s")',$date,$exclusion["format"]));
+    foreach ($exclusion["values"] as $disallowed) {
+      if ($formatted_value[0] == $disallowed) {
+        return 1;
+      }
+    }
+  }
+  return 0;
+}
+
 function repeatMessage($msgid) {
 	if (!USE_REPETITION) return;
+  
+  # get the future embargo, either "repeat" minutes after the old embargo
+  # or "repeat" after this very moment to make sure that we're not sending the 
+  # message every time running the queue when there's no embargo set.
   $msgdata = Sql_Fetch_Array_Query(
   	sprintf('select *,date_add(embargo,interval repeat minute) as newembargo,
     	date_add(now(),interval repeat minute) as newembargo2, date_add(embargo,interval repeat minute) > now() as isfuture
@@ -1030,6 +1055,25 @@ function repeatMessage($msgid) {
       Sql_Query(sprintf('update %s set %s = "%s" where id = %d',
         $GLOBALS["tables"]["message"],$column,addslashes($msgdata[$column]),$id));
    	}
+  }
+  
+  # check whether the new embargo is not on an exclusion
+  if (is_array($GLOBALS["repeat_exclude"])) {
+    $repeat = $msgdata["repeat"];
+    $loopcnt = 0;
+    while (excludedDateForRepetition($msgdata["newembargo"])) {
+      $repeat += $msgdata["repeat"];
+      $loopcnt++;
+      $msgdata = Sql_Fetch_Array_Query(
+          sprintf('select *,date_add(embargo,interval %d minute) as newembargo,
+            date_add(now(),interval %d minute) as newembargo2, date_add(embargo,interval %d minute) > now() as isfuture
+            from %s where id = %d and repeatuntil > now()',$repeat,$repeat,$repeat,
+            $GLOBALS["tables"]["message"],$msgid));
+      if ($loopcnt > 15) {
+        logEvent("Unable to find new embargo date too many exclusions? for message $msgid");
+        return;
+      }
+    }
   }
   # correct some values
   if (!$msgdata["isfuture"]) {

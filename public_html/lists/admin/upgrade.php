@@ -31,7 +31,10 @@ if ($doit == "yes") {
   print '<script language="Javascript" src="js/progressbar.js" type="text/javascript"></script>';
   print '<script language="Javascript" type="text/javascript"> document.write(progressmeter); start();</script>';
   # upgrade depending on old version
-  $dbversion = ereg_replace("-dev","",$dbversion);
+#  $dbversion = ereg_replace("-dev","",$dbversion);
+  if (preg_match("/(.*?)-/",$dbversion,$regs)) {
+    $dbversion = $regs[1];
+  }
   switch ($dbversion) {
     case "1.4.1":
       # nothing changed,

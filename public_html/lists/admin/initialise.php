@@ -59,7 +59,7 @@ if ($success) {
   Sql_Query(sprintf('replace into %s (item,value,editable) values("version","%s",0)',
     $tables["config"],VERSION));
   # add a testlist
-	$info = 'List for testing. I you don\'t make this list live and add yourself as a member, you can use this list to test a message. If the message comes out ok, you can resend it to other lists.';
+	$info = 'List for testing. If you don\'t make this list active and add yourself as a member, you can use this list to test a message. If the message comes out ok, you can resend it to other lists.';
   $result = Sql_query("insert into {$tables["list"]} (name,description,entered,active,owner) values(\"test\",\"$info\",now(),0,1)");
   $body = '
   	Version: '.VERSION."\r\n".

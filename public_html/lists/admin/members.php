@@ -72,6 +72,7 @@ if (isset($processtags) && $access != "view") {
 				while (list($key,$val) = each ($user)) {
 					Sql_query("replace into {$tables["listuser"]} (listid,userid)
 						values($copydestination,$key)");
+          $cnt++;
 				}
 				$msg = $cnt .' users were copied to '.listName($copydestination);
 				break;

@@ -258,6 +258,14 @@ $export_mimetype = 'application/csv';
 # the embargo of the message will be increased with the repetition interval you choose
 define("USE_REPETITION",0);
 
+# Prepare a message. This system allows you to create messages as a super admin
+# that can then be reviewed and selected by sub admins to send to their own lists
+# it is old functionality that is quite confusing, and therefore by default it
+# is now off. If you used to use it, you can switch it on here. If you did not
+# use it, or are a new user, it is better to leave it off. It has nothing to
+# do with being able to edit messages.
+define("USE_PREPARE",0);
+
 # If you want to use the PHPMailer class from phpmailer.sourceforge.net, set the following
 # to 1, this code is not finished yet, and it is highly experimental. Do not use on
 # live installations, only to play around with, and for testing.

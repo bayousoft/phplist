@@ -23,6 +23,7 @@ echo '<script language="Javascript" src="js/jslib.js" type="text/javascript"></s
 
 // load some variables in a register globals-safe fashion
 $send = $_POST["send"]; // Only get this from the POST variable (not session or anywhere else)
+$prepare = $_POST["prepare"];
 $id = $_GET["id"];  // Only get this from the GET variable
 $save = $_POST["save"]; // Save button pressed?
 $sendtest = $_POST["sendtest"];
@@ -42,9 +43,11 @@ if (((!$send) && (!$save) && (!$sendtest)) && ($id)) {
   }
   while ($msg = Sql_fetch_array($result)) {
     while (list($field,$val) = each($DBstruct["message"])) {
-      $_POST[$field] = stripslashes($msg[$field]);
+      $_POST[$field] = $msg[$field];
     }
   }
+
+
   // A bit of additional cleanup
   $_POST["from"] = $_POST["fromfield"];  // Database field name doesn't match form fieldname...
   $_POST["repeatinterval"] = $_POST["repeat"]; // same here
@@ -58,8 +61,18 @@ if (((!$send) && (!$save) && (!$sendtest)) && ($id)) {
   while ($lst = Sql_fetch_array($result)) {
     array_push($lists_done,$lst[id]);
   }
-
 	// Load the criteria settings...
+} 
+
+// If we've got magic quotes on, then we need to get rid of the slashes - either 
+// from the database or from the previous $_POST
+if (get_magic_quotes_gpc()) {
+	$_POST["subject"] = stripslashes($_POST["subject"]);
+	$_POST["from"] = stripslashes($_POST["from"]);
+	$_POST["tofield"] = stripslashes($_POST["tofield"]);
+	$_POST["replyto"] = stripslashes($_POST["replyto"]);
+	$_POST["message"] = stripslashes($_POST["message"]);
+	$_POST["footer"] = stripslashes($_POST["footer"]);
 }
 
 # check the criterias, one attribute can only exist once
@@ -84,12 +97,12 @@ else
 	$htmlformatted = $_POST["htmlformatted"];
   
 # sanitise the header fields, what else do we need to check on?
-if (preg_match("/[\n|\r]/",$_POST["from"])) {
+if (preg_match("/\n|\r/",$_POST["from"])) {
 	$from = "";
 } else {
 	$from = $_POST["from"];
 }
-if (preg_match("/[\n|\r]/",$_POST["subject"])) {
+if (preg_match("/\n|\r/",$_POST["subject"])) {
 	$subject = "";
 } else {
 	$subject = $_POST["subject"];
@@ -105,7 +118,7 @@ if (!$_POST["repeatuntil"]) {
 	$_POST["repeatuntil"] = $repeatuntil->getDate() ." ".$repeatuntil->getTime();
 }
 
-if (($send || $save || $sendtest) && $subject && $_POST["message"] && $from && !$duplicate_attribute) {
+if ((($send && is_array($_POST["list"])) || $save || $sendtest || $prepare) && $subject && $_POST["message"] && $from && !$duplicate_attribute) {
 
   if ($save || $sendtest) {
 		// We're just saving, not sending.
@@ -197,28 +210,28 @@ if (($send || $save || $sendtest) && $subject && $_POST["message"] && $from && !
 			);
 		$result	=	Sql_query($query);
 		$messageid = Sql_insert_id();
-
-		// More	"Insert	only"	stuff	here (no need	to change	it on	an edit!)
-		if (is_array($_POST["list"]))	{
-			if ($_POST["list"]["all"]) {
-				$res = Sql_query("select * from	$tables[list]	$subselect");
-				while($row = Sql_fetch_array($res))	{
-					$listid	=	$row["id"];
-					if ($row["active"])	{
-						$result	=	Sql_query("insert	into $tables[listmessage]	(messageid,listid,entered) values($messageid,$listid,now())");
-					}
-				}
-			}	else {
-				while(list($key,$val)= each($_POST["list"])) {
-					if ($val ==	"signup")
-						$result	=	Sql_query("insert	into $tables[listmessage]	(messageid,listid,entered) values($messageid,$key,now())");
-				}
-			}
-		}	else {
-			#	mark this	message	as listmessage for list	0
-			$result	=	Sql_query("insert	into $tables[listmessage]	(messageid,listid,entered) values($messageid,0,now())");
-		}
 	}
+
+  // More	"Insert	only"	stuff	here (no need	to change	it on	an edit!)
+  if (is_array($_POST["list"]))	{
+    if ($_POST["list"]["all"]) {
+      $res = Sql_query("select * from	$tables[list]	$subselect");
+      while($row = Sql_fetch_array($res))	{
+        $listid	=	$row["id"];
+        if ($row["active"])	{
+          $result	=	Sql_query("insert	into $tables[listmessage]	(messageid,listid,entered) values($messageid,$listid,now())");
+        }
+      }
+    }	else {
+      while(list($key,$val)= each($_POST["list"])) {
+        if ($val ==	"signup")
+          $result	=	Sql_query("insert	into $tables[listmessage]	(messageid,listid,entered) values($messageid,$key,now())");
+      }
+    }
+  }	else {
+    #	mark this	message	as listmessage for list	0
+    $result	=	Sql_query("insert	into $tables[listmessage]	(messageid,listid,entered) values($messageid,0,now())");
+  }
 
 # we want to create a join on tables as follows, in order to find users who have their attributes to the values chosen
 # (independent of their list membership).
@@ -303,7 +316,8 @@ if (($send || $save || $sendtest) && $subject && $_POST["message"] && $from && !
 
   # if no selection was made, use all
   if (!isset($where_clause)) {
-    $count_query = addslashes("select distinct userid from $tables[user_attribute]");
+    $count_query = "";
+#    $count_query = addslashes("select distinct userid from $tables[user_attribute]");
   } else {
     $count_query = addslashes("select $select_clause where $where_clause");
   }
@@ -335,7 +349,7 @@ if (($send || $save || $sendtest) && $subject && $_POST["message"] && $from && !
         if ($file_size) {
         	# this may seem odd, but it allows for a remote (ftp) repository
           # also, "copy" does not work across filesystems
-          $fd = fopen( $attachment_repository."/".$newfile, "w" );
+          $fd = fopen($GLOBALS["attachment_repository"]."/".$newfile, "w" );
           fwrite( $fd, $contents );
           fclose( $fd );
           Sql_query(sprintf('insert into %s (filename,remotefile,mimetype,description,size) values("%s","%s","%s","%s",%d)',
@@ -345,7 +359,12 @@ if (($send || $save || $sendtest) && $subject && $_POST["message"] && $from && !
           $attachmentid = Sql_Insert_id();
           Sql_query(sprintf('insert into %s (messageid,attachmentid) values(%d,%d)',
           $tables["message_attachment"],$messageid,$attachmentid));
-          print Info("Added attachment ".$att_cnt);
+          
+          # do a final check
+          if (filesize($GLOBALS["attachment_repository"]."/".$newfile))
+            print Info("Added attachment ".$att_cnt . " .. ok");
+          else
+            print Info("Adding attachment ".$att_cnt." .. failed");
         } else {
         	print Warn("Uploaded file $att_cnt not properly received, empty file");
         }
@@ -364,7 +383,7 @@ if (($send || $save || $sendtest) && $subject && $_POST["message"] && $from && !
   }
 
 	if ($_POST["id"]) {
-		print "<h3>Message edited</H3><br>";
+		print "<h3>Message saved</H3><br>";
 	} else {
 		$id = $messageid; // New ID - need to set it for later use (test email).
 		print "<h3>Message added</H3><br>";
@@ -408,7 +427,7 @@ if (($send || $save || $sendtest) && $subject && $_POST["message"] && $from && !
 		}
 		echo "<HR>";
 	}
-} elseif ($send || $sendtest || $save) {
+} elseif ($send || $sendtest || $save || $prepare) {
 	// We *didn't* send or save because some value was missing...  We're in an error condition here...
 
 	$errormessage = "";
@@ -423,9 +442,11 @@ if (($send || $save || $sendtest) && $subject && $_POST["message"] && $from && !
 		$errormessage = "Please enter a subject";
 	} elseif ($duplicate_attribute) {
 		$errormessage = "Error: you can use an attribute in one rule only";
-	}
+	} elseif ($send && !is_array($_POST["list"])) {
+    $errormessage = "Please select the list(s) to send the message to";
+  }
 	echo "<font color=red size=+2>$errormessage</font><br>\n";
-} elseif (($_POST["deleteatt"]) && ($id)) {
+} elseif (is_array($_POST["deleteattachments"]) && $id) {
 	if (ALLOW_ATTACHMENTS) {
 		// Delete Attachment button hit...
 		$deleteattachments = $_POST["deleteattachments"];
@@ -445,7 +466,6 @@ if (($send || $save || $sendtest) && $subject && $_POST["message"] && $from && !
 		} 
 	}
 }
-
 // Pull in $footer variable from post 
 $footer = $_POST["footer"]; 
 
@@ -463,7 +483,7 @@ if (ALLOW_ATTACHMENTS) {
 	$enctype = '';
 }
 ?>
-<?=formStart($enctype);
+<?=formStart($enctype . ' name="sendmessageform"');
 
 if ($_GET["page"] == "preparemessage")
 	print Help("preparemessage","What is prepare a message");
@@ -475,11 +495,11 @@ if (!$from) {
 ?>
 
 <table>
-<tr><td><?=Help("subject")?> Subject:</td><td><input type=text name=subject value="<?php echo $subject?>" size=40></td></tr>
+<tr><td><?=Help("subject")?> Subject:</td><td><input type=text name=subject value="<?php echo htmlentities($subject)?>" size=40></td></tr>
 <tr><td colspan=2>
 </ul>
 </td></tr>
-<tr><td><?=Help("from")?> From line:</td><td><input type=text name=from value="<?php echo $from?>" size=40></td></tr>
+<tr><td><?=Help("from")?> From line:</td><td><input type=text name=from value="<?php echo htmlentities($from)?>" size=40></td></tr>
 <tr><td colspan=2>
 
 </td></tr>
@@ -529,7 +549,7 @@ if (Sql_affected_Rows()) {
 <?
 $req = Sql_Query("select id,title from {$tables["template"]} order by listorder");
 while ($row = Sql_Fetch_Array($req)) {
-  printf('<option value="%d" %s>%s</option>',$row["id"], $row["id"]==$template?'SELECTED':'',$row["title"]);
+  printf('<option value="%d" %s>%s</option>',$row["id"], $row["id"]==$_POST["template"]?'SELECTED':'',$row["title"]);
 }
 ?>
 </select></td></tr>
@@ -576,6 +596,10 @@ if (ALLOW_ATTACHMENTS) {
 	// message and display that (and allow deletion of!)
 
 	print "<table><tr><td colspan=2>".Help("attachments")." Add Attachments to your message</td></tr>";
+  print '<tr><td colspan=2>
+    The upload has the following limits set by the server:<br/>
+    Maximum size of a total data sent to server: '.ini_get("post_max_size")."<br/>".
+    'Maximum size of each individual file: '.ini_get("upload_max_filesize")."</td></tr>";
 
 	if ($id) {
 		$result = Sql_Query(sprintf("Select Att.id, Att.filename, Att.remotefile, Att.mimetype, Att.description, Att.size, MsgAtt.id linkid".
@@ -586,27 +610,42 @@ if (ALLOW_ATTACHMENTS) {
 
 
 		$tabletext = "";
+    $ls = new WebblerListing("Current Attachments");
 
 		while ($row = Sql_fetch_array($result)) {
-			$tabletext .= "<tr><td>".$row["filename"]."</td><td>".$row["description"]."&nbsp;</td><td>".$row["size"]."</td>";
+#			$tabletext .= "<tr><td>".$row["remotefile"]."</td><td>".$row["description"]."&nbsp;</td><td>".$row["size"]."</td>";
+      $ls->addElement($row["id"]);
+      $ls->addColumn($row["id"],"filename",$row["remotefile"]);
+      $ls->addColumn($row["id"],"desc",$row["description"]);
+      $ls->addColumn($row["id"],"size",$row["size"]);
+      $phys_file = $GLOBALS["attachment_repository"]."/".$row["filename"]; 
+      if (is_file($phys_file) && filesize($phys_file)) {
+        $ls->addColumn($row["id"],"file",$GLOBALS["img_tick"]);
+      } else {
+        $ls->addColumn($row["id"],"file",$GLOBALS["img_cross"]);
+      }
+      $ls->addColumn($row["id"],"del",sprintf('<input type=checkbox name="deleteattachments[]" value="%s">',$row["linkid"]));
+        
 			// Probably need to check security rights here...
-			$tabletext .= "<td><input type=checkbox name=\"deleteattachments[]\" value=\"".$row["linkid"]."\"></td>";
-			$tabletext .= "</tr>\n";
-		}      
-
-		if ($tabletext) {
-			print "<tr><td colspan=2><table border=1><tr><td>Filename</td><td>Description</td><td>Size</td><td>&nbsp;</td></tr>\n";
-			print "$tabletext";
-			print "<tr><td colspan=4 align=\"center\"><input type=submit name=deleteatt value=\"Delete Checked\"></td></tr>";
-			print "</table></td></tr>\n";
+#			$tabletext .= "<td><input type=checkbox name=\"deleteattachments[]\" value=\"".$row["linkid"]."\"></td>";
+#			$tabletext .= "</tr>\n";
 		}
+    $ls->addButton("Delete Checked","javascript:document.sendmessageform.submit()");
+    print '<tr><td colspan=2>'.$ls->display().'</td></tr>';
+
+#		if ($tabletext) {
+#			print "<tr><td colspan=2><table border=1><tr><td>Filename</td><td>Description</td><td>Size</td><td>&nbsp;</td></tr>\n";
+#			print "$tabletext";
+#			print "<tr><td colspan=4 align=\"center\"><input type=submit name=deleteatt value=\"Delete Checked\"></td></tr>";
+#			print "</table></td></tr>\n";
+#		}
 	}
 	for ($att_cnt = 1;$att_cnt <= NUMATTACHMENTS;$att_cnt++) {
-  	printf ('<tr><td>File %d:</td><td><input type=file name="attachment%d">&nbsp;&nbsp;<input type=submit name="save" value="Add (and save)"></td></tr>',$att_cnt,$att_cnt);
+  	printf ('<tr><td>New Attachment</td><td><input type=file name="attachment%d">&nbsp;&nbsp;<input type=submit name="save" value="Add (and save)"></td></tr>',$att_cnt);
     if (FILESYSTEM_ATTACHMENTS) {
 	    printf('<tr><td><b>or</b> path to file on server:</td><td><input type=text name="localattachment%d" size="50"></td></tr>',$att_cnt,$att_cnt);
   	}
-    printf ('<tr><td colspan=2>Description:</td></tr>
+    printf ('<tr><td colspan=2>Description of attachment:</td></tr>
     	<tr><td colspan=2><textarea name="attachment%d_description" cols=45 rows=3 wrap="virtual"></textarea></td></tr>',$att_cnt);
  	}
 	print '</table>';

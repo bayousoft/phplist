@@ -21,7 +21,7 @@ switch ($access) {
 include "send_core.php";
 
 if (!$done)  {
-  print '<p><input type=submit name=send value="Add message"></form>';
+  print '<p><input type=submit name=prepare value="Add message"></form>';
 }
 
 ?>

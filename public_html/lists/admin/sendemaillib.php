@@ -418,8 +418,22 @@ function addAttachments($msgid,&$mail,$type) {
               $fd = fopen( $GLOBALS["attachment_repository"]."/".$newfile, "w" );
               fwrite( $fd, $contents );
               fclose( $fd );
-              Sql_Query(sprintf('update %s set filename = "%s" where id = %d',
-              	$GLOBALS["tables"]["attachment"],$newfile,$att["attachmentid"]));
+              # check that it was successful
+              if (filesize($GLOBALS["attachment_repository"]."/".$newfile)) {
+                Sql_Query(sprintf('update %s set filename = "%s" where id = %d',
+                  $GLOBALS["tables"]["attachment"],$newfile,$att["attachmentid"]));
+              } else {
+                # now this one could be sent many times, so send only once per run
+                if (!isset($GLOBALS[$att["remotefile"]."_warned"])) {
+                  logEvent("Unable to make a copy of attachment ".$att["remotefile"]." in repository");
+                  $msg = "Error, when trying to send message $msgid the filesystem attachment
+                    ".$att["remotefile"]." could not be copied to the repository. Check for permissions.";
+                  sendMail(getConfig("report_address"),"Mail list error",$msg,"");
+                  $GLOBALS[$att["remotefile"]."_warned"] = time();
+                }
+              }
+            } else {
+              logEvent("failed to open attachment ".$att["remotefile"]." to add to message $msgid ");
             }
 					} else {
           	logEvent("Attachment ".$att["remotefile"]." does not exist");

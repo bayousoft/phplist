@@ -93,8 +93,15 @@ if ($done) {
 
 $result = Sql_query("SELECT * FROM $tables[list] $subselect");
 while ($row = Sql_fetch_array($result)) {
+  # check whether this message has been marked to send to a list (when editing)
+  $checked = 0;
+  if ($_GET["id"]) {
+    $sendtolist = Sql_Query(sprintf('select * from %s where
+      messageid = %d and listid = %d',$tables["listmessage"],$_GET["id"],$row["id"]));
+    $checked = Sql_Affected_Rows();
+  }
   print "<li><input type=checkbox name=list[".$row["id"] . "] value=signup ";
-  if ($_POST["list"][$row["id"]] == "signup")
+  if ($checked || $_POST["list"][$row["id"]] == "signup")
     print "checked";
   print ">".$row["name"];
   if ($row["active"])

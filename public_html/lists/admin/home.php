@@ -129,15 +129,17 @@ if (checkAccess("send")) {
   $ls->addElement("send",PageURL2("send"));
   $ls->addColumn("send","&nbsp;","Send a message");
 }
-if (checkAccess("preparesend")) {
-  $some = 1;
-  $ls->addElement("preparesend",PageURL2("preparesend"));
-  $ls->addColumn("preparesend","&nbsp;","Prepare a message");
-}
-if (checkAccess("sendprepared")) {
-  $some = 1;
-  $ls->addElement("sendprepared",PageURL2("sendprepared"));
-  $ls->addColumn("sendprepared","&nbsp;","Send a prepared message");
+if (USE_PREPARE) {
+  if (checkAccess("preparesend")) {
+    $some = 1;
+    $ls->addElement("preparesend",PageURL2("preparesend"));
+    $ls->addColumn("preparesend","&nbsp;","Prepare a message");
+  }
+  if (checkAccess("sendprepared")) {
+    $some = 1;
+    $ls->addElement("sendprepared",PageURL2("sendprepared"));
+    $ls->addColumn("sendprepared","&nbsp;","Send a prepared message");
+  }
 }
 if (checkAccess("templates")) {
   $some = 1;
