@@ -73,13 +73,6 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
   if (VERBOSE)
     output("Sending message $messageid with subject{$cached[$messageid]["subject"]} to $email\n");
 
-  $msg = $cached[$messageid]["content"];
-  $user_att = getUserAttributeValues($email);
-  while (list($att_name,$att_value) = each ($user_att)) {
-    if (eregi("\[".$att_name."\]",$msg,$regs))
-      $msg = eregi_replace("\[".$att_name."\]",$att_value,$msg);
-  }
-  
   # erase any placeholders that were not found
 #  $msg = ereg_replace("\[[A-Z ]+\]","",$msg);
 
@@ -114,16 +107,22 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
     $msg = ereg_replace($regs[0],"",$msg);
   }
 
+  $content = $cached[$messageid]["content"];
 	if ($cached[$messageid]["htmlformatted"]) {
   	if (!$cached[$messageid]["textcontent"]) {
-	  	$textcontent = stripHTML($msg);
+	  	$textcontent = stripHTML($content);
     } else {
     	$textcontent = $cached[$messageid]["textcontent"];
     }
-    $htmlcontent = $msg;
+    $htmlcontent = $content;
   } else {
-  	$textcontent = $msg;
-    $htmlcontent = parseText($msg);
+#  	$textcontent = $content;
+  	if (!$cached[$messageid]["textcontent"]) {
+	  	$textcontent = $content;
+    } else {
+    	$textcontent = $cached[$messageid]["textcontent"];
+    }
+    $htmlcontent = parseText($content);
   }
   $style = getConfig("html_email_style");
 
@@ -215,6 +214,16 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
     $textmessage = eregi_replace("\[RSS\]",$rssentries["text"],$textmessage);
   }
 
+  $user_att = getUserAttributeValues($email);
+  while (list($att_name,$att_value) = each ($user_att)) {
+    if (eregi("\[".$att_name."\]",$htmlmessage,$regs)) {
+      $htmlmessage = eregi_replace("\[".$att_name."\]",$att_value,$htmlmessage);
+    }
+    if (eregi("\[".$att_name."\]",$textmessage,$regs)) {
+      $textmessage = eregi_replace("\[".$att_name."\]",$att_value,$textmessage);
+    }
+  }
+
   # remove any existing placeholders
   $htmlmessage = ereg_replace("\[[A-Z\. ]+\]","",$htmlmessage);
   $textmessage = ereg_replace("\[[A-Z\. ]+\]","",$textmessage);
@@ -237,11 +246,11 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
   # reports have come that instead this creates lots of trouble
 	# this is now done in the global sendMail function, so it is not
   # necessary here
-/*  if (USE_CARRIAGE_RETURNS) {
-		$htmlmessage = preg_replace("/\r?\n/", "\r\n", $htmlmessage);
-		$textmessage = preg_replace("/\r?\n/", "\r\n", $textmessage);
-  }
-*/
+#  if (USE_CARRIAGE_RETURNS) {
+#		$htmlmessage = preg_replace("/\r?\n/", "\r\n", $htmlmessage);
+#		$textmessage = preg_replace("/\r?\n/", "\r\n", $textmessage);
+#  }
+
   # build the email
   if (!PHPMAILER) {
     $mail = new html_mime_mail(
