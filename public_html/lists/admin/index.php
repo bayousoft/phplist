@@ -193,7 +193,7 @@ if (is_file("info/".$adminlanguage["info"]."/$include")) {
 }
 
 if ($page != "login") {
-  if (ereg("dev",VERSION)) {
+  if (ereg("dev",VERSION) && !TEST) {
     if ($GLOBALS["developer_email"]) {
       print Info("Running CVS version. All emails will be sent to ".$GLOBALS["developer_email"]);
     } else {
