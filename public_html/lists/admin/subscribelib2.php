@@ -233,6 +233,11 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
 	      $GLOBALS[$var] = eregi_replace("\[email\]",$email,$GLOBALS[$var]);
    	}
   }
+  
+  reset($GLOBALS["plugins"]);
+  foreach ($GLOBALS["plugins"] as $name => $plugin) {
+  	$thankyoupage = $plugin->parseThankyou($id,$userid,$thankyoupage);
+  }
 
   if ($sendrequest) {
   	if (sendMail($email, getConfig("subscribesubject:$id"), $subscribemessage,system_messageheaders($email),$envelope)) {

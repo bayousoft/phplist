@@ -19,6 +19,7 @@ if (file_exists("commonlib/lib/userlib.php")) {
 } elseif (file_exists("admin/commonlib/lib/userlib.php")) {
 	include_once ("admin/commonlib/lib/userlib.php");
 }
+include "pluginlib.php";
 
 # make sure magic quotes are on. Try to switch it on, this may fail
 ini_set("magic_quotes_gpc","on");
@@ -639,7 +640,12 @@ function SidebarLink($name,$desc,$url="") {
 function PageURL2($name,$desc = "",$url="") {
   if ($url)
     $url = "&".$url;
-  return sprintf('./?page=%s%s',$name,$url);
+  if (!preg_match("/&pi=/i",$name) && $_GET["pi"] && is_object($GLOBALS["plugins"][$_GET["pi"]])) {
+    $pi = '&pi='.$_GET["pi"];
+  } else {
+    $pi = "";
+  }
+  return sprintf('./?page=%s%s%s',$name,$url,$pi);
 }
 
 function Redirect($page) {

@@ -67,7 +67,6 @@ if (!ini_get("register_globals")) {
   }
 }
 include "commonlib/lib/interfacelib.php";
-include "pluginlib.php";
 include "pagetop.php";
 if (!isset($_GET["page"]))
   $page = "home";

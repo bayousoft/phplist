@@ -5,7 +5,7 @@ DirectoryIndex index.php
 Order allow,deny
 deny from all
 </FilesMatch>
-<FilesMatch "(index.php|dl.php|ut.php)$">
+<FilesMatch "(index.php|dl.php|ut.php|download.php)$">
 Order allow,deny
 allow from all
 </FilesMatch>
