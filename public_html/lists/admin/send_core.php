@@ -4,7 +4,7 @@ require_once "accesscheck.php";
 
 if (file_exists("FCKeditor/fckeditor.php") && USEFCK) {
 	include("./FCKeditor/fckeditor.php") ;
-
+  
   // Create the editor object here so we can check to see if *it* wants us to use it (this 
 	// does a browser check, etc.
 	$oFCKeditor = new FCKeditor ;
