@@ -422,8 +422,8 @@ function Error($msg) {
   $message = '
 
   An error has occurred in the Mailinglist System
-
-  ' . $msg;
+  URL: '.$_ENV["REQUEST_URI"].'
+  Error message: ' . $msg;
 
   $message .= "\n==== debugging information\n\nSERVER Vars\n";
   if (is_array($_SERVER))
