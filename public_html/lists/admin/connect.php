@@ -102,6 +102,8 @@ $rssfrequencies = array(
 $redfont = "<font color=\"red\">";
 $efont = "</font>";
 $GLOBALS["coderoot"] = "";
+$GLOBALS["mail_error"] = "";
+$GLOBALS["mail_error_count"] = 0;
 
 function SaveConfig($item,$value,$editable=1) {
 	global $tables;
@@ -263,23 +265,18 @@ function Error($msg) {
     return;
   }
   print "<div class=\"error\" align=center>Error: $msg </div>";
-  $message = '
-
-  An error has occurred in the Mailinglist System
-  URL: '.$_SERVER["REQUEST_URI"].'
-  Error message: ' . $msg;
-
-  $message .= "\n==== debugging information\n\nSERVER Vars\n";
-  if (is_array($_SERVER))
-  while (list($key,$val) = each ($_SERVER))
-  	if ($key != "password")
-	    $message .= $key . "=" . $val . "\n";
-  $message .= "\nPOST Vars\n";
-  if (is_array($_POST))
-  while (list($key,$val) = each ($_POST))
-  	if ($key != "password")
-	    $message .= $key . "=" . $val . "\n";
-  sendMail(getConfig("report_address"),$GLOBALS["installation_name"]." Mail list error",$message,"");
+  
+  $GLOBALS["mail_error"] .= 'Error: '.$msg."\n";
+  $GLOBALS["mail_error_count"]++;
+  if (is_array($_POST) && sizeof($_POST)) {
+    $GLOBALS["mail_error"] .= "\nPost vars:\n";
+    while (list($key,$val) = each ($_POST)) {
+      if ($key != "password")
+        $GLOBALS["mail_error"] .= $key . "=" . $val . "\n";
+      else 
+        $GLOBALS["mail_error"] .= "password=********\n";
+    }
+  }
 }
 
 function clean ($value) {
@@ -313,7 +310,7 @@ function Warn($msg) {
   An warning has occurred in the Mailinglist System
 
   ' . $msg;
-  sendMail(getConfig("report_address"),"Mail list warning",$message,"");
+#  sendMail(getConfig("report_address"),"Mail list warning",$message,"");
 }
 
 function Info($msg) {
@@ -841,5 +838,27 @@ function formatDateTime ($datetime,$short = 0) {
   $time = substr($datetime,11,8);
   return formatDate($date,$short). " ".formatTime($time,$short);
 }
+
+function phplist_shutdown () {
+#	output( "Script status: ".connection_status(),0); # with PHP 4.2.1 buggy. http://bugs.php.net/bug.php?id=17774
+  $status = connection_status();
+  if ($GLOBALS["mail_error_count"]) {
+    $message = '
+
+    Some errors occurred in the PHPlist Mailinglist System
+    URL: '.$_SERVER["REQUEST_URI"].'
+    Error message(s): ' . "\n".$GLOBALS["mail_error"];
+
+    $message .= "\n==== debugging information\n\nSERVER Vars\n";
+    if (is_array($_SERVER))
+    while (list($key,$val) = each ($_SERVER))
+      if ($key != "password")
+        $message .= $key . "=" . $val . "\n";
+    sendMail(getConfig("report_address"),$GLOBALS["installation_name"]." Mail list error",$message,"");
+  }
+}
+
+register_shutdown_function("phplist_shutdown");
+
 
 ?>
