@@ -1,113 +1,121 @@
-// Progressbar - Version 2.0
+// Timer Bar - Version 1.0
 // Author: Brian Gosselin of http://scriptasylum.com
-// Featured on Dynamic Drive (http://www.dynamicdrive.com)
-// adapted for PHPlist by Michiel Dethmers http://www.phplist.com
+// Script featured on http://www.dynamicdrive.com
 
-var yposition=100;                       //POSITION OF LOAD BAR FROM TOP OF WINDOW, IN PIXELS
-var loadedcolor='black' ;                // PROGRESS BAR COLOR
-var unloadedcolor='white';               // BGCOLOR OF UNLOADED AREA
-var barheight=30;                        // HEIGHT OF PROGRESS BAR IN PIXELS (MIN 25)
-var barwidth=500;                        // WIDTH OF THE BAR IN PIXELS  
-var bordercolor='grey';                  // COLOR OF THE BORDER
-var text = 'Processing, please wait ...';
-var total = 100;
-var done = false;
+var loadedcolor='darkgray' ;       // PROGRESS BAR COLOR
+var unloadedcolor='lightgrey';     // COLOR OF UNLOADED AREA
+var bordercolor='navy';            // COLOR OF THE BORDER
+var barheight=25;                  // HEIGHT OF PROGRESS BAR IN PIXELS
+var barwidth=450;                  // WIDTH OF THE BAR IN PIXELS
+var waitTime=25;                   // NUMBER OF SECONDS FOR PROGRESSBAR
 
-//DO NOT EDIT BEYOND THIS POINT 
-var NS4 = (navigator.appName.indexOf("Netscape")>=0 && parseFloat(navigator.appVersion) >= 4 && parseFloat(navigator.appVersion) < 5)? true : false;
-var IE4 = (document.all)? true : false;
-var NS6 = (parseFloat(navigator.appVersion) >= 5 && navigator.appName.indexOf("Netscape")>=0 )? true: false;
-var imagesdone=false;
-var blocksize=barwidth/total;
-barheight=Math.max(barheight,25);
-var loaded=0, perouter, perdone, stopped;
+// THE FUNCTION BELOW CONTAINS THE ACTION(S) TAKEN ONCE BAR REACHES 100%.
+// IF NO ACTION IS DESIRED, TAKE EVERYTHING OUT FROM BETWEEN THE CURLY BRACES ({})
+// BUT LEAVE THE FUNCTION NAME AND CURLY BRACES IN PLACE.
+// PRESENTLY, IT IS SET TO DO NOTHING, BUT CAN BE CHANGED EASILY.
+// TO CAUSE A REDIRECT TO ANOTHER PAGE, INSERT THE FOLLOWING LINE:
+// window.location="http://redirect_page.html";
+// JUST CHANGE THE ACTUAL URL OF COURSE :)
 
-var txt=(NS4)?'<layer name="perouter" bgcolor="'+bordercolor+'" visibility="hide">' : '<div id="perouter" style="position:absolute; visibility:hidden; background-color:'+bordercolor+'">';
-txt+='<table cellpadding="0" cellspacing="1" border="0"><tr><td width="'+barwidth+'" height="'+barheight+'" valign="center">';
-if(NS4)txt+='<ilayer width="100%" height="100%"><layer width="100%" height="100%" bgcolor="'+unloadedcolor+'" top="0" left="0">';
-txt+='<table cellpadding="0" cellspacing="0" border="0"><tr><td valign="center" width="'+barwidth+'" height="'+barheight+'" bgcolor="'+unloadedcolor+'"><center><font color="'+loadedcolor+'" size="1" face="sans-serif">'+text+'</font></center></td></tr></table>';
-if(NS4) txt+='</layer>';
-txt+=(NS4)? '<layer name="perdone" width="100%" height="'+barheight+'" bgcolor="'+loadedcolor+'" top="0" left="0">' : '<div id="perdone" style="position:absolute; top:1px; left:1px; width:'+barwidth+'px; height:'+barheight+'px; background-color:'+loadedcolor+'; z-index:100">';
-txt+='<table cellpadding="0" cellspacing="0" border="0"><tr><td valign="center" width="'+barwidth+'" height="'+barheight+'" bgcolor="'+loadedcolor+'"><center><font color="'+unloadedcolor+'" size="1" face="sans-serif">'+text+'</font></center></td></tr></table>';
-txt+=(NS4)? '</layer></ilayer>' : '</div>';
+var action=function()
+{
+//alert("Welcome to Dynamic Drive!");
+//window.location="http://www.dynamicdrive.com
+}
+
+//*****************************************************//
+//**********  DO NOT EDIT BEYOND THIS POINT  **********//
+//*****************************************************//
+
+var ns4=(document.layers)?true:false;
+var ie4=(document.all)?true:false;
+var blocksize=(barwidth-2)/waitTime/10;
+var loaded=0;
+var PBouter;
+var PBdone;
+var PBbckgnd;
+var Pid=0;
+var txt='';
+var dir = 1;
+if(ns4){
+txt+='<table border=0 cellpadding=0 cellspacing=0><tr><td>';
+txt+='<ilayer name="PBouter" visibility="hide" height="'+barheight+'" width="'+barwidth+'" onmouseup="hidebar()">';
+txt+='<layer width="'+barwidth+'" height="'+barheight+'" bgcolor="'+bordercolor+'" top="0" left="0"></layer>';
+txt+='<layer width="'+(barwidth-2)+'" height="'+(barheight-2)+'" bgcolor="'+unloadedcolor+'" top="1" left="1"></layer>';
+txt+='<layer name="PBdone" width="'+(barwidth-2)+'" height="'+(barheight-2)+'" bgcolor="'+loadedcolor+'" top="1" left="1"></layer>';
+txt+='</ilayer>';
 txt+='</td></tr></table>';
-txt+=(NS4)?'</layer>' : '</div>';
+}else{
+txt+='<div id="PBouter" style="position:relative; visibility:hidden; background-color:'+bordercolor+'; width:'+barwidth+'px; height:'+barheight+'px;">';
+txt+='<div style="position:absolute; top:1px; left:1px; width:'+(barwidth-2)+'px; height:'+(barheight-2)+'px; background-color:'+unloadedcolor+'; font-size:12px; color:black; text-align:center;">Processing please wait</div>';
+txt+='<div id="PBdone" style="position:absolute; top:1px; left:1px; width:0px; height:'+(barheight-2)+'px; background-color:'+loadedcolor+'; font-size:12px; color:white"></div>';
+txt+='</div>';
+}
 
-
+//document.write(txt);
 var progressmeter = txt;
 
+function incrCount(){
+window.status="Loading...";
+loaded+=dir;
+if(loaded<0) {
+	loaded=0;
+  dir = -dir;
+}
+if(loaded>=waitTime*10){
+//	loaded=0;
+  dir = -dir;
+  //clearInterval(Pid);
+  //loaded=waitTime*10;
+  //setTimeout('hidebar()',100);
+}
+resizeEl(PBdone, 0, blocksize*loaded, barheight-2, 0);
+}
+
+function hidebar(){
+clearInterval(Pid);
+window.status='';
+if(ns4)PBouter.visibility="hide";
+else PBouter.style.visibility="hidden";
+//action();
+}
+
+//THIS FUNCTION BY MIKE HALL OF BRAINJAR.COM
+function findlayer(name,doc){
+var i,layer;
+for(i=0;i<doc.layers.length;i++){
+layer=doc.layers[i];
+if(layer.name==name)return layer;
+if(layer.document.layers.length>0)
+if((layer=findlayer(name,layer.document))!=null)
+return layer;
+}
+return null;
+}
 
 function start(){
-  if(NS4){
-    perouter=document.perouter;
-    perdone=document.perouter.document.layers[0].document.perdone;
-  }
-  if(NS6){
-    perouter=document.getElementById('perouter');
-    perdone=document.getElementById('perdone');
-  } else if(document.all){
-    perouter=document.all.perouter;
-    perdone=document.all.perdone;
-  }
-  cliplayer(perdone,0,0,barheight,0);
-  window.onresize=setouterpos;
-  setouterpos();
-  stopped = false;
-  increase();
+PBouter=(ns4)?findlayer('PBouter',document):(ie4)?document.all['PBouter']:document.getElementById('PBouter');
+PBdone=(ns4)?PBouter.document.layers['PBdone']:(ie4)?document.all['PBdone']:document.getElementById('PBdone');
+resizeEl(PBdone,0,0,barheight-2,0);
+if(ns4)PBouter.visibility="show";
+else PBouter.style.visibility="visible";
+Pid=setInterval('incrCount()',95);
+}
+
+function resizeEl(id,t,r,b,l){
+if(ns4){
+id.clip.left=l;
+id.clip.top=t;
+id.clip.right=r;
+id.clip.bottom=b;
+}else id.style.width=r+'px';
 }
 
 function stop() {
   stopped = true;
 }
 
-function setouterpos(){
-  var ww=(IE4)? document.body.clientWidth : window.innerWidth;
-  var x=(ww-barwidth)/2;
-  if(NS4){
-    perouter.moveTo(x,yposition);
-    perouter.visibility="show";
-  }
-  if(IE4||NS6){
-    perouter.style.left=x+'px';
-    perouter.style.top=yposition+'px';
-    perouter.style.visibility="visible";
-  }
-}
-
-function increase() {
-  loaded++;
-  dispbars();
-  if (!stopped)
-    setTimeout('increase()', 100);
-}
-
-function dispbars(){
-  cliplayer(perdone, 0, blocksize*loaded, barheight, 0);
-  if (loaded > total)
-    // setTimeOut("hidebar()",100);
-    loaded = 0;
-}
-
-function reload() {
- // reload the page without parameters
-  document.location = document.location;
-}
-
 function finish() {
   hidebar();
 }
 
-function hidebar(){
- (NS4)? perouter.visibility="hide" : perouter.style.visibility="hidden";
-  done=true;
-}
-
-function cliplayer(layer, ct, cr, cb, cl){
-  if(NS4){
-    layer.clip.left=cl;
-    layer.clip.top=ct;
-    layer.clip.right=cr;
-    layer.clip.bottom=cb;
-  }
-  if(IE4||NS6)layer.style.clip='rect('+ct+' '+cr+' '+cb+' '+cl+')';
-}
