@@ -1,4 +1,270 @@
-Changelog for PHPlist 2004-01-16 21:37
+Changelog for PHPlist 2004-01-16 22:34
+
+2004-01-16 22:26  mdethmers
+
+	merged editmessage branch into main branch
+
+2004-01-16 21:36  mdethmers
+
+	added loginname to password reminder email
+
+2004-01-16 21:22  mdethmers
+
+	fixed some parse errors
+
+2004-01-13 13:07  mdethmers
+
+	added default stylesheet for HTML messages that are sent without a
+	template
+
+2004-01-12 16:18  mdethmers
+
+	some tiny fixes
+
+2004-01-12 16:18  mdethmers
+
+	fixed typo
+
+2004-01-12 09:13  mdethmers
+
+	more wrapping of long RSS urls
+
+2004-01-10 15:38  mdethmers
+
+	fixed listing of lists to wrap better if the source of an RSS is
+	very long
+
+2004-01-10 13:57  mdethmers
+
+	added URI to error messages, for real now
+
+2004-01-10 13:51  mdethmers
+
+	added URI to error messages
+
+2004-01-09 20:00  mdethmers
+
+	added security and access checks for editing messages
+
+2004-01-09 20:00  mdethmers
+
+	added draft status as status that should not be sent when
+	processing queue
+
+2004-01-09 19:32  mdethmers
+
+	fixed issue when using VERBOSE in edit message mode
+
+2004-01-09 19:32  mdethmers
+
+	updated upgrade for new version
+
+2004-01-09 19:31  mdethmers
+
+	edited access mechanism in user
+
+2004-01-09 19:30  mdethmers
+
+	fixed date to initialise with time when passed a value
+
+2004-01-09 19:30  mdethmers
+
+	fixed send_core to remember repeat interval
+
+2004-01-09 18:42  mdethmers
+
+	fixed send_core to remember RSS frequency
+
+2004-01-09 18:40  mdethmers
+
+	added default date to date object
+
+2004-01-09 09:38  peteness
+
+	Link to edit opens a different page for prepared messages.
+
+2004-01-09 09:32  peteness
+
+	All message types were showing that they'd been queued (= instead
+	of ==).
+
+2004-01-09 09:07  peteness
+
+	Fixed several variables that were not being loaded consistently (or
+	not being filled in on the form consistently).
+
+2004-01-09 07:32  peteness
+
+	Restructured error message area just a touch.  Added logic to
+	display / remove attachments (previously, you could only)	 
+	*add* attachements, and the edit logic pretty much needed a way    
+	    to maintain them.
+
+2004-01-08 12:38  mdethmers
+
+	updated the commandline to allow processqueue and processbounces,
+	without too much output
+
+2004-01-08 12:32  mdethmers
+
+	added warning if running in CVS mode and developer email is not set
+
+2004-01-08 09:46  peteness
+
+	Database updated to add "draft" type to enum on status field in
+	messages.  *NOTE: I don't know what I'm doing with this area -
+	*particularly* in the	     upgrade.php area.	I modified it to
+	make sure we don't forget to	    update it, but it's probably
+	not right.
+
+2004-01-08 09:44  peteness
+
+	Basic functionality for editing messages, including:	All edit
+	controls in send_core  Draft list in messages  "Edit" link in
+	messages	 Update logic in send_core to update database	
+	Test Email logic in send_core to send tests.  * The load/save logic
+	isn't fully complete yet - criteria and attachments   aren't ready
+	to go.
+
+2004-01-08 09:41  mdethmers
+
+	added update to portuguese (portugal)
+
+2004-01-07 22:38  mdethmers
+
+	updated plugin system to allow plugins to reside outside the
+	PHPlist tree, so they can be configured without interfering after
+	upgrades
+
+2004-01-07 09:26  peteness
+
+	Added HTML input fields and submit buttons for "Send Test Message"
+	and "Save Draft".
+
+2004-01-07 08:06  peteness
+
+	Added default setting for USE_EDITMESSAGE.
+
+2004-01-06 23:46  mdethmers
+
+	fixed bug in languages file for frontend not requiring the correct
+	file
+
+2003-12-12 17:15  mdethmers
+
+	added another italian translation :-), italian3.inc
+
+2003-12-10 21:51  mdethmers
+
+	added 'view' capacity for admin, who can only view user data but
+	not change it, and changed all instances of  to it's  equivalent to
+	work toward proper register globals off
+
+2003-12-10 21:48  mdethmers
+
+	added All Mailinglists to language file
+
+2003-12-03 15:38  mdethmers
+
+	finished initial stages for sending messages via the commandline
+
+2003-12-03 15:37  mdethmers
+
+	added commandline README
+
+2003-12-01 09:19  mdethmers
+
+	added commandline mechanism, stage 1
+
+2003-11-26 16:12  mdethmers
+
+	updated rescheduling of messages to forget about previous local
+	attachments
+
+2003-11-26 16:10  mdethmers
+
+	fixed error reporting to not send a password
+
+2003-11-26 15:27  mdethmers
+
+	added repetition of messages. Messages can automatically be
+	re-submitted based on an interval
+
+2003-11-26 00:34  mdethmers
+
+	fixed issue where listowner could see more than their own list when
+	sending a message
+
+2003-11-25 21:07  mdethmers
+
+	updated upgrade for database changes
+
+2003-11-25 17:20  mdethmers
+
+	updated some formatting of help
+
+2003-11-25 16:56  mdethmers
+
+	added embargo to a message to send, which means a message will not
+	be sent before this date (and time)
+
+2003-11-25 16:55  mdethmers
+
+	added ability to use local (server side) attachments
+
+2003-11-25 16:54  mdethmers
+
+	added use of time in date object
+
+2003-11-24 18:34  mdethmers
+
+	updated system to allow multiple persons to receive admin messages
+	and reports
+
+2003-11-24 15:50  mdethmers
+
+	new version 2.6.5
+
+2003-11-24 15:45  mdethmers
+
+	updated some of the docs and readme-s
+
+2003-11-24 15:44  mdethmers
+
+	re-enabled attachments
+
+2003-11-24 14:41  mdethmers
+
+	removed old upgrade files
+
+2003-11-24 12:42  mdethmers
+
+	fixed bug 825, multiple database connections connects to wrong
+	database
+
+2003-11-24 12:20  mdethmers
+
+	added more security info and security checks
+
+2003-11-24 00:19  mdethmers
+
+	added ability to switch check for IP address in admin session off
+
+2003-11-23 23:47  mdethmers
+
+	fixed bug 799, import1 did not work with register globals off
+
+2003-11-23 23:42  mdethmers
+
+	added support for ADOdb
+
+2003-11-21 12:50  mdethmers
+
+	initial import
+
+2003-11-21 12:50  mdethmers
+
+	Initial revision
 
 
 #### ChangeLog before move to SourceForge
