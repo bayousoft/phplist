@@ -19,7 +19,15 @@ if (PHP_SAPI == "cli") {
   header("Cache-Control: no-cache, must-revalidate");           // HTTP/1.1
   header("Pragma: no-cache");                                   // HTTP/1.0
 }
-
+if (!ini_get("register_globals")) {
+	# fix register globals, for now, should be phased out gradually
+  # sure, this gets around the entire reason that register globals
+  # should be off, but going through three years of code takes a long time....
+  foreach ($_REQUEST as $key => $val) {
+  	$$key = $val;
+#    print "$key = $val<br/>";
+  }
+}
 if ($_SERVER["ConfigFile"] && is_file($_SERVER["ConfigFile"])) {
 	print '<!-- using '.$_SERVER["ConfigFile"].'-->'."\n";
   include $_SERVER["ConfigFile"];
@@ -62,15 +70,6 @@ if ($GLOBALS["commandline"]) {
 # fix for old PHP versions, although not failsafe :-(
 if (!isset($_POST) && isset($HTTP_POST_VARS)) {
   include "commonlib/lib/oldphp_vars.php";
-}
-if (!ini_get("register_globals")) {
-	# fix register globals, for now, should be phased out gradually
-  # sure, this gets around the entire reason that register globals 
-  # should be off, but going through three years of code takes a long time....
-  foreach ($_REQUEST as $key => $val) {
-  	$$key = $val;
-#    print "$key = $val<br/>";
-  }
 }
 include "commonlib/lib/interfacelib.php";
 include "pagetop.php";
