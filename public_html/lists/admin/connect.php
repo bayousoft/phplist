@@ -376,11 +376,13 @@ function Error($msg) {
   $message .= "\n==== debugging information\n\nSERVER Vars\n";
   if (is_array($_SERVER))
   while (list($key,$val) = each ($_SERVER))
-    $message .= $key . "=" . $val . "\n";
+  	if ($key != "password")
+	    $message .= $key . "=" . $val . "\n";
   $message .= "\nPOST Vars\n";
   if (is_array($_POST))
   while (list($key,$val) = each ($_POST))
-    $message .= $key . "=" . $val . "\n";
+  	if ($key != "password")
+	    $message .= $key . "=" . $val . "\n";
   sendMail(getConfig("report_address"),"Mail list error",$message,"");
 }
 
@@ -996,6 +998,12 @@ function repeatMessage($msgid) {
     $GLOBALS["tables"]["message_attachment"],$msgid,$GLOBALS["tables"]["message_attachment"],
     $GLOBALS["tables"]["attachment"]));
   while ($row = Sql_Fetch_Array($req)) {
+  	if (is_file($row["remotefile"])) {
+    	# if the "remote file" is actually local, we want to refresh the attachment, so we set
+      # filename to nothing
+      $row["filename"] = "";
+    }
+
   	Sql_Query(sprintf('insert into %s (filename,remotefile,mimetype,description,size)
     	values("%s","%s","%s","%s",%d)',
       $GLOBALS["tables"]["attachment"],addslashes($row["filename"]),addslashes($row["remotefile"]),
