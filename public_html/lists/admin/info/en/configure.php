@@ -8,7 +8,7 @@ Some useful placeholders are:
 <li>SUBSCRIBEURL - the location of the subscribe page
 <li>UNSUBSCRIBEURL - the location of the unsubscribe page
 <li>PREFERENCESURL - the location of the page where users can update their details
-<li>CONFIRMURL - the location of the page where users have to confirm their subscription
+<li>CONFIRMATIONURL - the location of the page where users have to confirm their subscription
 </ul>
 <!--For the header and the footer you can use the following code to include external documents:
 <br/>
