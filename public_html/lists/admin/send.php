@@ -103,7 +103,7 @@ while ($row = Sql_fetch_array($result)) {
   print "<li><input type=checkbox name=list[".$row["id"] . "] value=signup ";
   if ($checked || $_POST["list"][$row["id"]] == "signup")
     print "checked";
-  print ">".$row["name"];
+  print ">".stripslashes($row["name"]);
   if ($row["active"])
     print " (<font color=red>List is Active</font>)";
   else

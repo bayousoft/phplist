@@ -2,6 +2,9 @@
 require_once "accesscheck.php";
 
 $GLOBALS["plugins"] = array();
+if (!defined("PLUGIN_ROOTDIR")) {
+	define("PLUGIN_ROOTDIR","notdefined");
+}
 if (is_dir(PLUGIN_ROOTDIR)) {
   include_once "defaultplugin.php";
   $files = array();

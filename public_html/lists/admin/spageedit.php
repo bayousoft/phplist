@@ -34,7 +34,7 @@ if ($_POST["save"] || $_POST["activate"] || $_POST["deactivate"]) {
   Sql_Query(sprintf('delete from %s where id = %d',$tables["subscribepage_data"],$id));
   foreach (array("title","intro","header","footer","thankyoupage","button","htmlchoice") as $item) {
   	Sql_Query(sprintf('insert into %s (name,id,data) values("%s",%d,"%s")',
-    	$tables["subscribepage_data"],$item,$id,stripslashes($_POST[$item])));
+    	$tables["subscribepage_data"],$item,$id,$_POST[$item]));
   }
 
   foreach (array("subscribesubject","subscribemessage","confirmationsubject","confirmationmessage") as $item) {
@@ -128,15 +128,15 @@ if ($id) {
 print '<tr><td colspan=2><h1>General Information</h1></td></tr>';
 
 printf('<tr><td valign=top>Title</td><td><input type=text name=title value="%s" size=60></td></tr>',
-	htmlspecialchars($data["title"]));
+	htmlspecialchars(stripslashes($data["title"])));
 printf('<tr><td valign=top>Intro</td><td><textarea name=intro cols=60 rows=10 wrap=virtual>%s</textarea></td></tr>',
-	htmlspecialchars($data["intro"]));
+	htmlspecialchars(stripslashes($data["intro"])));
 printf('<tr><td valign=top>Header</td><td><textarea name=header cols=60 rows=10 wrap=virtual>%s</textarea></td></tr>',
-	htmlspecialchars($data["header"]));
+	htmlspecialchars(stripslashes($data["header"])));
 printf('<tr><td valign=top>Footer</td><td><textarea name=footer cols=60 rows=10 wrap=virtual>%s</textarea></td></tr>',
-	htmlspecialchars($data["footer"]));
+	htmlspecialchars(stripslashes($data["footer"])));
 printf('<tr><td valign=top>Thank you page</td><td><textarea name=thankyoupage cols=60 rows=10 wrap=virtual>%s</textarea></td></tr>',
-	htmlspecialchars($data["thankyoupage"]));
+	htmlspecialchars(stripslashes($data["thankyoupage"])));
 printf('<tr><td valign=top>Text for Button</td><td><input type=text name=button value="%s" size=60></td></tr>',
 	htmlspecialchars($data["button"]));
 printf('<tr><td valign=top>HTML Email choice</td><td>');
@@ -149,14 +149,14 @@ printf ('<input type=radio name="htmlchoice" value="radiohtml" %s> Radio buttons
 print "</td></tr>";
 print "<tr><td colspan=2><h1>Message they receive when they subscribe</h1></td></tr>";
 printf('<tr><td valign=top>Subject</td><td><input type=text name=subscribesubject value="%s" size=60></td></tr>',
-	htmlspecialchars($data["subscribesubject"]));
+	htmlspecialchars(stripslashes($data["subscribesubject"])));
 printf('<tr><td valign=top>Message</td><td><textarea name=subscribemessage cols=60 rows=10 wrap=virtual>%s</textarea></td></tr>',
-	htmlspecialchars($data["subscribemessage"]));
+	htmlspecialchars(stripslashes($data["subscribemessage"])));
 print "<tr><td colspan=2><h1>Message they receive when they confirm their subscription</h1></td></tr>";
 printf('<tr><td valign=top>Subject</td><td><input type=text name=confirmationsubject value="%s" size=60></td></tr>',
-	htmlspecialchars($data["confirmationsubject"]));
+	htmlspecialchars(stripslashes($data["confirmationsubject"])));
 printf('<tr><td valign=top>Message</td><td><textarea name=confirmationmessage cols=60 rows=10 wrap=virtual>%s</textarea></td></tr>',
-	htmlspecialchars($data["confirmationmessage"]));
+	htmlspecialchars(stripslashes($data["confirmationmessage"])));
 print '<tr><td colspan=2><h1>Select the attributes to use</h1></td></tr><tr><td colspan=2>';
   $req = Sql_Query(sprintf('select * from %s order by listorder',
   	$tables["attribute"]));
@@ -204,7 +204,7 @@ if (!Sql_Affected_Rows())
 	print "<tr><td colspan=2>No lists available, please create one first</td></tr>";
 while ($row = Sql_Fetch_Array($req)) {
 	printf ('<tr><td valign=top width=150><input type=checkbox name="list[%d]" value="%d" %s> %s</td><td>%s</td></tr>',
-  	$row["id"],$row["id"],in_array($row["id"],$selected_lists)?"checked":"",$row["name"],$row["description"]);
+  	$row["id"],$row["id"],in_array($row["id"],$selected_lists)?"checked":"",stripslashes($row["name"]),stripslashes($row["description"]));
 }
 
 print '</table>';

@@ -52,7 +52,7 @@ while ($row = Sql_fetch_array($result)) {
 		<td valign=top>%s | %s | <a href="javascript:deleteRec(\'%s\');">delete</a></td>
 		<td valign=top><input type=checkbox name="active[%d]" value="1" %s></td>
 		<td valign=top>%s</td></tr><tr><td>&nbsp;</td><td colspan=5>%s</td></tr><tr><td colspan=6><hr width=50%% size=4></td></tr>',
-    $row["id"],$row["name"],$count[0],
+    $row["id"],stripslashes($row["name"]),$count[0],
 		$row["id"],$row["listorder"],
     PageLink2("editlist","edit","id=".$row["id"]),
     PageLink2("members","view members","id=".$row["id"]),
