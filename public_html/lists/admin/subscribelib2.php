@@ -12,7 +12,7 @@ if (!$id && $_GET["page"] != "import1") {
   exit;
 }
 
-$req = Sql_Query(sprintf('select * from %s where id = %d',$tables["subscribepage_data"],$id));
+$req = Sql_Query(sprintf('select * from %s where id = %d',$GLOBALS["tables"]["subscribepage_data"],$id));
 while ($row = Sql_Fetch_Array($req)) {
   $subscribepagedata[$row["name"]] = $row["data"];
 }
@@ -30,7 +30,7 @@ if (is_array($attributes)) {
   $reqs = join(',',$required);
   # check if all required attributes have been entered;
   if ($reqs) {
-    $res = Sql_Query("select * from {$tables["attribute"]} where id in ($reqs)");
+    $res = Sql_Query("select * from {$GLOBALS["tables"]["attribute"]} where id in ($reqs)");
     $allthere = 1;
     while ($row = Sql_Fetch_Array($res)) {
       if ($row["tablename"] != "")
@@ -58,7 +58,7 @@ if ($allthere && ASKFORPASSWORD && ($_POST["passwordreq"] || $_POST["password"])
   }
   if ($_POST["email"]) {
     $curpwd = Sql_Fetch_Row_Query(sprintf('select password from %s where email = "%s"',
-    	$tables["user"],$_POST["email"]));
+    	$GLOBALS["tables"]["user"],$_POST["email"]));
 
     if ($curpwd[0] && $_POST["password"] != $curpwd[0]) {
     	$missing = $GLOBALS["strInvalidPassword"];
@@ -80,10 +80,10 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
    && $allthere && $validhost) {
   # now check whether this user already exists.
   $email = $_POST["email"];
-  $result = Sql_query("select * from {$tables["user"]} where email = \"$email\"");
+  $result = Sql_query("select * from {$GLOBALS["tables"]["user"]} where email = \"$email\"");
   if (!Sql_affected_rows()) {
     # they do not exist, so add them
-    $query = "insert into {$tables["user"]} (email,entered,uniqid,
+    $query = "insert into {$GLOBALS["tables"]["user"]} (email,entered,uniqid,
     	htmlemail,subscribepage,rssfrequency) values(";
   } else {
     # they do exist, so update the existing record
@@ -110,7 +110,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
 	  $old_data = array_merge($old_data,getUserAttributeValues('',$userid));
   	$history_entry = 'http://'.getConfig("website").$GLOBALS["adminpages"].'/?page=user&id='.$userid."\n\n";
     $query = sprintf('replace into %s (id,email,entered,uniqid,
-    	htmlemail,subscribepage,rssfrequency) values(',$tables["user"]);
+    	htmlemail,subscribepage,rssfrequency) values(',$GLOBALS["tables"]["user"]);
     $query .= "$userid,";
   }
 
@@ -143,10 +143,10 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
     	$newpassword = sprintf('%s',$_POST["password"]);
     }
    	# see whether is has changed
-    $curpwd = Sql_Fetch_Row_Query("select password from {$tables["user"]} where id = $userid");
+    $curpwd = Sql_Fetch_Row_Query("select password from {$GLOBALS["tables"]["user"]} where id = $userid");
     if ($_POST["password"] != $curpwd[0]) {
     	$storepassword = 'password = "'.$newpassword.'"';
-      Sql_query("update {$tables["user"]} set passwordchanged = now(),$storepassword where id = $userid");
+      Sql_query("update {$GLOBALS["tables"]["user"]} set passwordchanged = now(),$storepassword where id = $userid");
     } else {
     	$storepassword = "";
     }
@@ -158,7 +158,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
   if (is_array($_POST["list"])) {
     while(list($key,$val)= each($_POST["list"])) {
       if ($val == "signup") {
-        $result = Sql_query("replace into {$tables["listuser"]} (userid,listid,entered) values($userid,$key,now())");
+        $result = Sql_query("replace into {$GLOBALS["tables"]["listuser"]} (userid,listid,entered) values($userid,$key,now())");
         $lists .= "\n  * ".listname($key);
       }
     }
@@ -170,7 +170,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
   $attids = join(',',$attributes);
   $attids = substr($attids,0,-1);
   if ($attids && $attids != "") {
-    $res = Sql_Query("select * from ".$tables["attribute"]." where id in ($attids)");
+    $res = Sql_Query("select * from ".$GLOBALS["tables"]["attribute"]." where id in ($attids)");
     while ($row = Sql_Fetch_Array($res)) {
       if ($row["tablename"] != "")
         $fieldname = $row["tablename"];
@@ -186,7 +186,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
           $value = join(",",$newval);
         }
         Sql_Query(sprintf('replace into %s (attributeid,userid,value) values("%s","%s","%s")',
-          $tables["user_attribute"],$row["id"],$userid,$value));
+          $GLOBALS["tables"]["user_attribute"],$row["id"],$userid,$value));
         $history_entry .= "\n".$row["name"] . ' = '.UserAttributeValue($userid,$row["id"]);
   #    }
     }
@@ -194,7 +194,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
 	if (is_array($old_data)) {
 		$history_subject = 'Re-Subscription';
 		# when they submit a new subscribe
-	  $current_data = Sql_Fetch_Array_Query(sprintf('select * from %s where id = %d',$tables["user"],$userid));
+	  $current_data = Sql_Fetch_Array_Query(sprintf('select * from %s where id = %d',$GLOBALS["tables"]["user"],$userid));
 	  $current_data = array_merge($current_data,getUserAttributeValues('',$userid));
 	  foreach ($current_data as $key => $val) {
 	  	if (!is_numeric($key))
@@ -221,7 +221,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
     print '<p><a href="'.$adminpages.'">Back to the main admin page</a></p>';
     if ($_POST["makeconfirmed"]) {
     	$sendrequest = 0;
-      Sql_Query(sprintf('update %s set confirmed = 1 where email = "%s"',$tables["user"],$email));
+      Sql_Query(sprintf('update %s set confirmed = 1 where email = "%s"',$GLOBALS["tables"]["user"],$email));
       addUserHistory($email,$history_subject." by ".$_SESSION["logindetails"]["adminname"],$history_entry);
     } else {
     	$sendrequest = 1;
@@ -237,20 +237,14 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
   	$thankyoupage = '<h3>'.$strThanks.'</h3>'. $strEmailConfirmation;
 	}
 
+  if (eregi("\[email\]",$thankyoupage,$regs))
+    $thankyoupage = eregi_replace("\[email\]",$email,$thankyoupage);
   $user_att = getUserAttributeValues($email);
   while (list($att_name,$att_value) = each ($user_att)) {
     if (eregi("\[".$att_name."\]",$thankyoupage,$regs))
       $thankyoupage = eregi_replace("\[".$att_name."\]",$att_value,$thankyoupage);
-    if (eregi("\[email\]",$thankyoupage,$regs))
-      $thankyoupage = eregi_replace("\[email\]",$email,$thankyoupage);
-  	foreach (array("strEmailConfirmation","strThanks","strEmailFailed") as $var) {
-      if (eregi("\[".$att_name."\]",$GLOBALS[$var],$regs))
-        $GLOBALS[$var] = eregi_replace("\[".$att_name."\]",$att_value,$GLOBALS[$var]);
-      if (eregi("\[email\]",$GLOBALS[$var],$regs))
-	      $GLOBALS[$var] = eregi_replace("\[email\]",$email,$GLOBALS[$var]);
-   	}
   }
-  
+
   reset($GLOBALS["plugins"]);
   foreach ($GLOBALS["plugins"] as $name => $plugin) {
   	$thankyoupage = $plugin->parseThankyou($id,$userid,$thankyoupage);
@@ -276,19 +270,19 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
   $email = trim($_POST["email"]);
   if ($_GET["uid"]) {
     $req = Sql_Fetch_Row_Query(sprintf('select id from %s where uniqid = "%s"',
-      $tables["user"],$_GET["uid"]));
+      $GLOBALS["tables"]["user"],$_GET["uid"]));
     $userid = $req[0];
   } else {
-    $req = Sql_Fetch_Row_query("select id from {$tables["user"]} where email = \"".$_REQUEST["email"]."\"");
+    $req = Sql_Fetch_Row_query("select id from {$GLOBALS["tables"]["user"]} where email = \"".$_REQUEST["email"]."\"");
     $userid = $req[0];
   }
   if (!$userid)
     Fatal_Error("Error, no such user");
   # update the existing record, check whether the email has changed
-  $req = Sql_Query("select * from {$tables["user"]} where id = $userid");
+  $req = Sql_Query("select * from {$GLOBALS["tables"]["user"]} where id = $userid");
   $data = Sql_fetch_array($req);
   # check whether they are changing to an email that already exists, should not be possible
-	$req = Sql_Query("select uniqid from {$tables["user"]} where email = \"$email\"");
+	$req = Sql_Query("select uniqid from {$GLOBALS["tables"]["user"]} where email = \"$email\"");
   if (Sql_Affected_Rows()) {
   	$row = Sql_Fetch_Row($req);
     if ($row[0] != $_GET["uid"]) {
@@ -300,7 +294,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
     }
   }
   # read the current values to compare changes
-  $old_data = Sql_Fetch_Array_Query(sprintf('select * from %s where id = %d',$tables["user"],$userid));
+  $old_data = Sql_Fetch_Array_Query(sprintf('select * from %s where id = %d',$GLOBALS["tables"]["user"],$userid));
   $old_data = array_merge($old_data,getUserAttributeValues('',$userid));
   $history_entry = 'http://'.getConfig("website").$GLOBALS["adminpages"].'/?page=user&id='.$userid."\n\n";
 
@@ -311,10 +305,10 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
     	$newpassword = sprintf('%s',$_POST["password"]);
     }
    	# see whether is has changed
-    $curpwd = Sql_Fetch_Row_Query("select password from {$tables["user"]} where id = $userid");
+    $curpwd = Sql_Fetch_Row_Query("select password from {$GLOBALS["tables"]["user"]} where id = $userid");
     if ($_POST["password"] != $curpwd[0]) {
     	$storepassword = 'password = "'.$newpassword.'",';
-      Sql_query("update {$tables["user"]} set passwordchanged = now() where id = $userid");
+      Sql_query("update {$GLOBALS["tables"]["user"]} set passwordchanged = now() where id = $userid");
       $history_entry .= "\nPassword changed";
     } else {
     	$storepassword = "";
@@ -324,28 +318,28 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
   }
 
   $query = sprintf('update %s set email = "%s", %s htmlemail = %d where id = %d',
-    $tables["user"],addslashes($_POST["email"]),$storepassword,$_POST["htmlemail"],$userid);
+    $GLOBALS["tables"]["user"],addslashes($_POST["email"]),$storepassword,$_POST["htmlemail"],$userid);
  #print $query;
   $result = Sql_query($query);
   if ($data["email"] != $email) {
     $emailchanged = 1;
-    Sql_Query(sprintf('update %s set confirmed = 0 where id = %d',$tables["user"],$userid));
+    Sql_Query(sprintf('update %s set confirmed = 0 where id = %d',$GLOBALS["tables"]["user"],$userid));
   }
 
   # subscribe to the lists
   # first take them off the ones, then re-subscribe
 	if ($subscribepagedata["lists"]) {
     $subscribepagedata["lists"] = preg_replace("/^\,/","",$subscribepagedata["lists"]);
-		Sql_query(sprintf('delete from %s where userid = %d and listid in (%s)',$tables["listuser"],$userid,$subscribepagedata["lists"]));
+		Sql_query(sprintf('delete from %s where userid = %d and listid in (%s)',$GLOBALS["tables"]["listuser"],$userid,$subscribepagedata["lists"]));
 	} else {
-		Sql_query(sprintf('delete from %s where userid = %d',$tables["listuser"],$userid));
+		Sql_query(sprintf('delete from %s where userid = %d',$GLOBALS["tables"]["listuser"],$userid));
 	}
 
   $lists = "";
   if (is_array($_POST["list"])) {
     while(list($key,$val)= each($_POST["list"])) {
       if ($val == "signup") {
-        $result = Sql_query("replace into {$tables["listuser"]} (userid,listid,entered) values($userid,$key,now())");
+        $result = Sql_query("replace into {$GLOBALS["tables"]["listuser"]} (userid,listid,entered) values($userid,$key,now())");
         $lists .= "  * ".$_POST["listname"][$key]."\n";
       }
     }
@@ -367,7 +361,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
   $attids = join(',',$attributes);
   $attids = substr($attids,0,-1);
   if ($attids && $attids != "") {
-    $res = Sql_Query("select * from ".$tables["attribute"] ." where id in ($attids)");
+    $res = Sql_Query("select * from ".$GLOBALS["tables"]["attribute"] ." where id in ($attids)");
     while ($attribute = Sql_Fetch_Array($res)) {
       if ($attribute["tablename"] != "")
         $fieldname = $attribute["tablename"];
@@ -384,7 +378,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
       }
       if ($replace) {
         Sql_query(sprintf('replace into %s (attributeid,userid,value) values("%s","%s","%s")',
-          $tables["user_attribute"],$attribute["id"],$userid,$value));
+          $GLOBALS["tables"]["user_attribute"],$attribute["id"],$userid,$value));
         if ($attribute["type"] != "hidden") {
           $datachange .= strip_tags($attribute["name"]) . " = ";
           if ($attribute["type"] == "checkbox")
@@ -398,7 +392,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
       }
     }
   }
-  $current_data = Sql_Fetch_Array_Query(sprintf('select * from %s where id = %d',$tables["user"],$userid));
+  $current_data = Sql_Fetch_Array_Query(sprintf('select * from %s where id = %d',$GLOBALS["tables"]["user"],$userid));
   $current_data = array_merge($current_data,getUserAttributeValues('',$userid));
   foreach ($current_data as $key => $val) {
   	if (!is_numeric($key))
@@ -482,7 +476,7 @@ function ListAvailableLists($userid = 0,$lists_to_show = "") {
 
 	$some = 0;
 	$html = '<ul class="list">';
-  $result = Sql_query("SELECT * FROM {$tables["list"]} $subselect order by listorder");
+  $result = Sql_query("SELECT * FROM {$GLOBALS["tables"]["list"]} $subselect order by listorder");
   while ($row = Sql_fetch_array($result)) {
     if ($row["active"]) {
       $html .= '<li class="list"><input type="checkbox" name="list['.$row["id"] . ']" value=signup ';
@@ -490,7 +484,7 @@ function ListAvailableLists($userid = 0,$lists_to_show = "") {
         $html .= "checked";
       if ($userid) {
         $req = Sql_Fetch_Row_Query(sprintf('select userid from %s where userid = %d and listid = %d',
-          $tables["listuser"],$userid,$row["id"]));
+          $GLOBALS["tables"]["listuser"],$userid,$row["id"]));
         if (Sql_Affected_Rows())
           $html .= "checked";
       }
@@ -527,8 +521,8 @@ function ListAttributes($attributes,$attributedata,$htmlchoice = 0,$userid = 0) 
 */
   if ($userid) {
     $data = array();
-    $current = Sql_Fetch_array_Query("select * from {$tables["user"]} where id = $userid");
-  	$datareq = Sql_Query("select * from {$tables["user_attribute"]} where userid = $userid");
+    $current = Sql_Fetch_array_Query("select * from {$GLOBALS["tables"]["user"]} where id = $userid");
+  	$datareq = Sql_Query("select * from {$GLOBALS["tables"]["user_attribute"]} where userid = $userid");
     while ($row = Sql_Fetch_Array($datareq)) {
       $data[$row["attributeid"]] = $row["value"];
     }
@@ -558,7 +552,7 @@ function ListAttributes($attributes,$attributedata,$htmlchoice = 0,$userid = 0) 
   <tr><td><div class="required">%s</div></td>
   <td class="attributeinput"><input type=text name=email value="%s" size="%d">
   <script language="Javascript" type="text/javascript">addFieldToCheck("email","%s");</script></td></tr>',
-  $strEmail,htmlspecialchars($email),$textlinewidth,$strEmail);
+  $GLOBALS["strEmail"],htmlspecialchars($email),$textlinewidth,$GLOBALS["strEmail"]);
 
   if ($_GET["page"] != "import1")
   if (ASKFORPASSWORD) {
@@ -635,7 +629,7 @@ function ListAttributes($attributes,$attributedata,$htmlchoice = 0,$userid = 0) 
 
   $attids = join(',',array_keys($attributes));
   if ($attids) {
-    $res = Sql_Query("select * from {$tables["attribute"]} where id in ($attids)");
+    $res = Sql_Query("select * from {$GLOBALS["tables"]["attribute"]} where id in ($attids)");
     while ($attr = Sql_Fetch_Array($res)) {
       $attr["required"] = $attributedata[$attr["id"]]["required"];
       $attr["default_value"] = $attributedata[$attr["id"]]["default_value"];
@@ -647,7 +641,7 @@ function ListAttributes($attributes,$attributedata,$htmlchoice = 0,$userid = 0) 
       if ($userid && !isset($_POST[$fieldname])) {
         # post values take precedence
         $val = Sql_Fetch_Row_Query(sprintf('select value from %s where
-          attributeid = %d and userid = %d',$tables["user_attribute"],$attr["id"],$userid));
+          attributeid = %d and userid = %d',$GLOBALS["tables"]["user_attribute"],$attr["id"],$userid));
         $_POST[$postvalue] = $val[0];
       }
       switch ($attr["type"]) {
@@ -745,7 +739,7 @@ function ListAllAttributes() {
 	global $tables;
  	$attributes = array();
   $attributedata = array();
-  $res = Sql_Query("select * from {$tables["attribute"]} order by listorder");
+  $res = Sql_Query("select * from {$GLOBALS["tables"]["attribute"]} order by listorder");
   while ($row = Sql_Fetch_Array($res)) {
  # 	print $row["id"]. " ".$row["name"];
   	$attributes[$row["id"]] = $row["listorder"];
@@ -761,7 +755,7 @@ function ListAllAttributes() {
 function RSSOptions($data,$userid = 0) {
 	global $rssfrequencies,$tables;
   if ($userid) {
-  	$current = Sql_Fetch_Row_Query("select rssfrequency from {$tables["user"]} where id = $userid");
+  	$current = Sql_Fetch_Row_Query("select rssfrequency from {$GLOBALS["tables"]["user"]} where id = $userid");
     $default = $current[0];
   }
   if (!$default || !in_array($default,array_keys($rssfrequencies))) {
