@@ -1,4 +1,104 @@
-Changelog for PHPlist 2004-03-16 13:13
+Changelog for PHPlist 2004-04-03 23:35
+
+2004-04-03 23:19  mdethmers
+
+	added doc explaining about batch processing
+
+2004-04-03 23:08  mdethmers
+
+	updated config file to reflect recent changes added system for ISPs
+	to have server wide configuration to force batch processing and set
+	limits to it added system for ISPs to (temporarily) suspend sending
+	of emails completely
+
+2004-04-03 23:03  mdethmers
+
+	updated integration with the webbler
+
+2004-04-03 23:02  mdethmers
+
+	added batch processing of messages to send out
+
+2004-04-03 23:01  mdethmers
+
+	added configurable requirement for password when unsubscribing
+
+2004-04-03 23:00  mdethmers
+
+	added more identification of user and type of bounce in list of
+	bounces when a bounce is to a system message
+
+2004-04-03 22:57  mdethmers
+
+	fixed bug, no form ending in editlist
+
+2004-04-03 22:57  mdethmers
+
+	fixed bug default plugin not referring to correct plugin directory
+
+2004-04-03 22:55  mdethmers
+
+	fixed problem with open_basedir in import1
+
+2004-04-03 22:54  mdethmers
+
+	moved common stuff from connect to lib
+
+2004-04-03 22:50  mdethmers
+
+	fixed clash between webbler and phplist
+
+2004-04-03 22:48  mdethmers
+
+	added user history entry when user is unconfirmed for a bounced
+	system message
+
+2004-04-03 22:46  mdethmers
+
+	added feature mark all users as html or text or confirmed in
+	reconcile users
+
+2004-04-03 22:45  mdethmers
+
+	fixed bug database error when saving a message as draft after it
+	had been loaded for editing
+
+2004-04-03 22:44  mdethmers
+
+	fixed bug requiring a password when a user re-subscribes with an
+	email and a password has already been set for that user. If the
+	password used is correct it is allowed
+
+2004-04-03 22:35  mdethmers
+
+	fixed, admins are able to subscribe users to lists they do not own
+
+2004-03-25 22:40  mdethmers
+
+	added hebrew translation
+
+2004-03-24 13:14  mdethmers
+
+	added configurable thank-you page for subscribe pages and added
+	method for plugins to add content to this
+
+2004-03-22 11:58  mdethmers
+
+	added configurable option to not require signing up to any lists
+
+2004-03-22 11:57  mdethmers
+
+	added configurable thank you page that is displayed after signing
+	up
+
+2004-03-22 10:01  mdethmers
+
+	added method to 'unrequire' fields in a form, when eg ticking a
+	checkbox
+
+2004-03-16 13:05  mdethmers
+
+	new version 2.8.3
 
 2004-03-11 14:51  mdethmers
 
