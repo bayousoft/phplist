@@ -40,7 +40,7 @@ if (ini_get("safe_mode")) {
 
 $maxbatch = -1;
 $minbatchperiod = -1;
-# check for batch limits 
+# check for batch limits
 if ($fp = @fopen("/etc/phplist.conf","r")) {
   $contents = fread($fp, filesize("/etc/phplist.conf"));
   fclose($fp);
@@ -123,7 +123,7 @@ function my_shutdown () {
   finish("info",$report);
 	if ($script_stage < 5 && !$nothingtodo) {
 		output ("Warning: script never reached stage 5\nThis may be caused by a too slow or too busy server \n");
-	} elseif( $script_stage == 5)	{
+	} elseif( $script_stage == 5 && !$nothingtodo)	{
 		# if the script timed out in stage 5, reload the page to continue with the rest
     $reload++;
     if (!$GLOBALS["commandline"] && $num_per_batch && $batch_period) {
@@ -239,7 +239,7 @@ if ($num_per_batch > 0) {
     output("Sending in batches of $num_per_batch emails",0);
   }
 } elseif ($num_per_batch < 0) {
-  output("In the last $batch_period seconds more emails were sent than is currently allowed per batch.",0);
+  output("In the last $batch_period seconds more emails were sent ($recently_sent[0]) than is currently allowed per batch ($original_num_per_batch).",0);
 }
 $rss_content_treshold = sprintf('%d',getConfig("rssthreshold"));
 if ($reload) {
@@ -319,6 +319,7 @@ while ($message = Sql_fetch_array($messages)) {
   # the email
   # we don't do this otherwise because it slows down the process, possibly
   # causing us to not find anything at all
+  $exclusion = "";
   if ($GLOBALS["commandline"] && !$processrss) {
     $doneusers = array();
     $req = Sql_Query("select userid from {$tables["usermessage"]} where messageid = $messageid");
@@ -355,10 +356,12 @@ while ($message = Sql_fetch_array($messages)) {
       $userids = Sql_query("$query");
       if (Sql_Has_Error($database_connection)) {  ProcessError(Sql_Error($database_connection)); }
     } else {
+    	output("No users to process for this batch");
       $userids = Sql_Query(sprintf('select * from %s where id = 0',$tables["user"]));
     }
   }
   while ($userdata = Sql_fetch_row($userids)) {
+		$userid = $userdata[0];    # id of the user
 	  $some = 1;
     #set_time_limit(60);
     # check if we have been "killed"
@@ -438,6 +441,11 @@ while ($message = Sql_fetch_array($messages)) {
           if (VERBOSE)
             output("Unconfirmed user: $user[1], $user[0]");
         	$unconfirmed++;
+          # when running from commandline we mark it as sent, otherwise we might get
+          # stuck when using batch processing
+          if ($GLOBALS["commandline"]) {
+            $um = Sql_query("replace into {$tables['usermessage']} (userid,messageid) values($userid,$messageid)");
+          }
         } elseif ($user[1] || $user[0]) {
           if (VERBOSE)
             output("Invalid email: $user[1], $user[0]");
