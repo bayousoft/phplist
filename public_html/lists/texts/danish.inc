@@ -1,4 +1,4 @@
-<?
+<?php
 # language dependent text used in the interface for users (not admin)
 # translation started by Steen Rabøl <srabol@mail.tele.dk>
 # translation corrected and continued by Carsten Gehling <carsten@sarum.dk>

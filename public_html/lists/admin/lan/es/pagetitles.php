@@ -1,4 +1,4 @@
-<?
+<?php
 switch ($page) {
   case "home": $page_title = 'Página Principal de Administrador';break;
   case "attributes": $page_title = 'Configurar Atributos';break;

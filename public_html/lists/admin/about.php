@@ -1,7 +1,7 @@
 <div align=center>
 <table width="75%" border=1 cellspacing=5 cellpadding=5>
-<tr><td colspan="2" class="abouthead"><?=NAME?></td></tr>
-<tr><td width=50 valign=top>Powered by <a href="http://www.phplist.com" target="_blank">PHPlist</a>, version <?=VERSION?> <a href="http://www.phplist.com" target="_blank"><br/><br/><img src="../images/power-phplist.png" width=70 height=30 border=0></a></td>
+<tr><td colspan="2" class="abouthead"><?php echo NAME?></td></tr>
+<tr><td width=50 valign=top>Powered by <a href="http://www.phplist.com" target="_blank">PHPlist</a>, version <?php echo VERSION?> <a href="http://www.phplist.com" target="_blank"><br/><br/><img src="../images/power-phplist.png" width=70 height=30 border=0></a></td>
 <td valign=top>
 PHPlist is licensed with the <a href="http://www.gnu.org/copyleft" target="_blank">GNU Public License (GPL)</a>.
 <br/>

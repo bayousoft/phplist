@@ -69,8 +69,8 @@ if ($total > MAX_USER_PP) {
 
 ?>
 <table>
-<tr><td colspan=4><?=formStart()?><input type=hidden name=id value="<?=$listid?>">
-Find an admin: <input type=text name=find value="<?=$find?>" size=40><input type=submit value="Go">
+<tr><td colspan=4><?php echo formStart()?><input type=hidden name=id value="<?=$listid?>">
+Find an admin: <input type=text name=find value="<?php echo $find?>" size=40><input type=submit value="Go">
 </form></td></tr></table>
 <?php
 $ls = new WebblerListing("Administrators");

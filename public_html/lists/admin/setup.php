@@ -1,4 +1,4 @@
-<?
+<?php
 require_once "accesscheck.php";
 
 # quick installation checklist

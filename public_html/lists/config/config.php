@@ -1,4 +1,4 @@
-<?
+<?php
 
 # select the language module to use
 # Look for <country>.inc files in the texts directory

@@ -1,4 +1,4 @@
-<?
+<?php
 ob_start();
 $er = error_reporting(0); # some ppl have warnings on
 if ($_SERVER["ConfigFile"] && is_file($_SERVER["ConfigFile"])) {

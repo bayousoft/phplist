@@ -76,7 +76,7 @@ else
 
 </ul>
 </form>
-<p><?
+<p><?php
 
 if ($GLOBALS["require_login"] && !isSuperUser()) {
   $numlists = Sql_Fetch_Row_query("select count(*) from {$tables["list"]} where owner = ".$_SESSION["logindetails"]["id"]);

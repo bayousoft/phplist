@@ -1,4 +1,4 @@
-<?
+<?php
 require_once "accesscheck.php";
 
 if ($delete) {
@@ -13,7 +13,7 @@ if ($delete) {
 <script language="Javascript" src="js/jslib.js" type="text/javascript"></script>
 
 
-<?
+<?php
 
 $req = Sql_Query("select * from {$tables["template"]} order by listorder");
 if (!Sql_Affected_Rows())

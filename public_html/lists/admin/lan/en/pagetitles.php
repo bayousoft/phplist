@@ -1,4 +1,4 @@
-<?
+<?php
 switch ($page) {
   case "home": $page_title = 'Main Admin Page';break;
   case "setup": $page_title = 'Configuration Options';break;

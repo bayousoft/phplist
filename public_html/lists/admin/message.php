@@ -78,8 +78,8 @@ while ($lst = Sql_fetch_array($result)) {
 </table>
 
 <a name="resend"></a><p>Send this (same) message to (a) new list(s):</P>
-<?=formStart()?>
-<input type=hidden name="id" value="<?=$id?>">
+<?php echo formStart()?>
+<input type=hidden name="id" value="<?php echo $id?>">
 <ul>
 <?php
 

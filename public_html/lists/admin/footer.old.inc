@@ -24,7 +24,7 @@
 <td><img src="images/bot_04.png" width=136 height=25 hspace=0 vspace=0 border=0 alt=""></td>
 <td><img src="images/bot_05.png" width=82 height=25 hspace=0 vspace=0 border=0 alt=""></td>
 <!--EDITABLE TEXT PART of bottom bar goes in here-->
-<td bgcolor="#339933" align="center" class="botbartd"><img src="images/spacer.png" width=213 height=1 hspace=0 vspace=0 border=0 alt=""><br><span class="botbar">&copy; <a href="http://www.tincan.co.uk" target="_tincan" class="url">tincan limited</a> | <a href="http://www.phplist.com" class="url" target="phplist">php list</a> v <?=VERSION?></span></td>
+<td bgcolor="#339933" align="center" class="botbartd"><img src="images/spacer.png" width=213 height=1 hspace=0 vspace=0 border=0 alt=""><br><span class="botbar">&copy; <a href="http://www.tincan.co.uk" target="_tincan" class="url">tincan limited</a> | <a href="http://www.phplist.com" class="url" target="phplist">php list</a> v <?php echo VERSION?></span></td>
 <td><img src="images/bot_07.png" width=159 height=25 hspace=0 vspace=0 border=0 alt=""></td>
 <td><img src="images/bot_08.png" width=36 height=25 hspace=0 vspace=0 border=0 alt=""></td>
 </tr>

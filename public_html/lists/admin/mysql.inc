@@ -1,4 +1,4 @@
-<?
+<?php
 
 # sql functions, currently only set up to work with MySql
 # replace functions in this file to make it work with other Databases

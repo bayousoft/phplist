@@ -1,4 +1,4 @@
-<?
+<?php
 require_once "accesscheck.php";
 
 if ($_GET["action"] == "js") {
@@ -29,7 +29,7 @@ if ($_GET["action"] == "js") {
 	$smileys = substr($smileys,0,-1);
 
 ?>
-oTB_Items.Attribute			= new TBCombo( "Attributes"			, "doAttribute(this)"		, 'Attribute'		, '<?=$attnames?>', '<?=$attcodes?>') ;
+oTB_Items.Attribute			= new TBCombo( "Attributes"			, "doAttribute(this)"		, 'Attribute'		, '<?php echo $attnames?>', '<?=$attcodes?>') ;
 
 function doAttribute(combo)
 {
@@ -66,12 +66,12 @@ config.ToolbarFontNames = ';Arial;Comic Sans MS;Courier New;Tahoma;Times New Rom
 config.LinkShowTargets = true ;
 config.LinkTargets = '_blank;_parent;_self;_top' ;
 config.LinkDefaultTarget = '_blank' ;
-config.ImageBrowser = <?=$enable_image_upload?> ;
+config.ImageBrowser = <?php echo $enable_image_upload?> ;
 config.ImageBrowserURL = config.BasePath + "../?page=fckphplist&action=browseimage" ;
 config.ImageBrowserWindowWidth  = 600 ;
 config.ImageBrowserWindowHeight = 480 ;
 
-config.ImageUpload = <?=$enable_image_upload?> ;
+config.ImageUpload = <?php echo $enable_image_upload?> ;
 // Page that effectivelly upload the image.
 config.ImageUploadURL = config.BasePath + "../?page=fckphplist&action=uploadimage" ;
 config.ImageUploadWindowWidth	= 600 ;
@@ -87,14 +87,14 @@ config.LinkUpload = false ;
 config.LinkUploadURL = config.BasePath + "../?page=fckphplist&action=uploadfile" ;
 
 //config.SmileyPath	= config.BasePath + "images/smiley/fun/" ;
-config.SmileyPath = document.location.protocol + '//' + document.location.host +'<?=$GLOBALS["pageroot"].'/images/smiley/'?>'
+config.SmileyPath = document.location.protocol + '//' + document.location.host +'<?php echo $GLOBALS["pageroot"].'/images/smiley/'?>'
 
-config.SmileyImages	= [<?=$smileys?>] ;
+config.SmileyImages	= [<?php echo $smileys?>] ;
 config.SmileyColumns = 8 ;
 config.SmileyWindowWidth	= 800 ;
 config.SmileyWindowHeight	= 600 ;
 
-<? exit;
+<?php exit;
 } elseif ($_GET["action"] == "browseimage") {
 /*
  * FCKeditor - The text editor for internet
@@ -198,7 +198,7 @@ function ok()
 							</tr>
 							<tr height="100%">
 								<td>
-									<DIV class="ImagePreviewArea"><? echo $html_img_lst ?></DIV>
+									<DIV class="ImagePreviewArea"><?php echo $html_img_lst ?></DIV>
 								</td>
 							</tr>
 						</table>
@@ -229,7 +229,7 @@ function ok()
 </TABLE>
 	</BODY>
 </HTML>
-<?
+<?php
 exit;
 } elseif ($_GET["action"] == "uploadimage") {
 //	ob_end_clean();
@@ -319,7 +319,7 @@ if (file_exists($UPLOAD_BASE_DIR.$HTTP_POST_FILES['FCKeditor_File']['name'])) {
 		</TABLE>
 	</form></BODY>
 </HTML>
-<?
+<?php
 //exit;
 } elseif ($_GET["action"]) {
 	print "Sorry, ".$_GET["action"]." has not been implemented yet";

@@ -1,4 +1,4 @@
-<?
+<?php
 require_once "accesscheck.php";
 
 # make sure we have not send any output yet

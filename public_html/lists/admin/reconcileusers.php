@@ -331,23 +331,23 @@ print "</p>";
 ?>
 
 
-<p>To delete all users who are not subscribed to any list, <?=PageLink2("reconcileusers&option=nolists","Click here")?>
-<p>To find users who have an invalid email, <?=PageLink2("reconcileusers&option=invalidemail","Click here")?>
-<p>To make sure that all users have a UniqID, <?=PageLink2("reconcileusers&option=adduniqid","Click here")?>
-<p>To mark all users with an invalid email as unconfirmed, <?=PageLink2("reconcileusers&option=markinvalidunconfirmed","Click here")?>
-<p>To delete users who have an invalid email, <?=PageLink2("reconcileusers&option=deleteinvalidemail","Click here")?>
-<p>To mark all users to receive HTML, <?=PageLink2("reconcileusers&option=markallhtml","Click here")?>
-<p>To mark all users to receive text, <?=PageLink2("reconcileusers&option=markalltext","Click here")?>
-<p>To mark all users confirmed, <?=PageLink2("reconcileusers&option=markallconfirmed","Click here")?>
-<p>To try to (automatically) fix emails for users who have an invalid email, <?=PageLink2("reconcileusers&option=fixinvalidemail","Click here")?>
-<p>To remove stale entries from tables, <?=PageLink2("reconcileusers&option=removestaleentries","Click here")?>
+<p>To delete all users who are not subscribed to any list, <?php echo PageLink2("reconcileusers&option=nolists","Click here")?>
+<p>To find users who have an invalid email, <?php echo PageLink2("reconcileusers&option=invalidemail","Click here")?>
+<p>To make sure that all users have a UniqID, <?php echo PageLink2("reconcileusers&option=adduniqid","Click here")?>
+<p>To mark all users with an invalid email as unconfirmed, <?php echo PageLink2("reconcileusers&option=markinvalidunconfirmed","Click here")?>
+<p>To delete users who have an invalid email, <?php echo PageLink2("reconcileusers&option=deleteinvalidemail","Click here")?>
+<p>To mark all users to receive HTML, <?php echo PageLink2("reconcileusers&option=markallhtml","Click here")?>
+<p>To mark all users to receive text, <?php echo PageLink2("reconcileusers&option=markalltext","Click here")?>
+<p>To mark all users confirmed, <?php echo PageLink2("reconcileusers&option=markallconfirmed","Click here")?>
+<p>To try to (automatically) fix emails for users who have an invalid email, <?php echo PageLink2("reconcileusers&option=fixinvalidemail","Click here")?>
+<p>To remove stale entries from tables, <?php echo PageLink2("reconcileusers&option=removestaleentries","Click here")?>
 <hr>
 <form method=get>
 <input type=hidden name="page" value="reconcileusers">
 <input type=hidden name="option" value="nolistsnewlist">
 <p>To move all users who are not subscribed to any list to
 <select name="list">
-<?
+<?php
 $req = Sql_Query(sprintf('select id,name from %s order by listorder',$tables["list"]));
 while ($row = Sql_Fetch_Row($req)) {
 	printf ('<option value="%d">%s</option>',$row[0],$row[1]);
@@ -371,8 +371,8 @@ while ($row = Sql_Fetch_Row($req)) {
 <form method=get>
 <table><tr><td colspan=2>
 To resend the request for confirmation to users who signed up and have not confirmed their subscription</td></tr>
-<tr><td>Date they signed up after:</td><td><?=$from->showInput("","",$fromval);?></td></tr>
-<tr><td>Date they signed up before:</td><td><?=$to->showInput("","",$toval);?></td></tr>
+<tr><td>Date they signed up after:</td><td><?php echo $from->showInput("","",$fromval);?></td></tr>
+<tr><td>Date they signed up before:</td><td><?php echo $to->showInput("","",$toval);?></td></tr>
 <tr><td colspan=2>Text to prepend to email:</td></tr>
 <tr><td colspan=2><textarea name="prepend" rows="10" cols="60">
 Sorry, to bother you. We are cleaning up our database and
@@ -393,8 +393,8 @@ subscription. The details of how to confirm are below.
 <form method=get>
 <table><tr><td colspan=2>
 To delete users who signed up and have not confirmed their subscription</td></tr>
-<tr><td>Date they signed up after:</td><td><?=$from->showInput("","",$fromval);?></td></tr>
-<tr><td>Date they signed up before:</td><td><?=$to->showInput("","",$toval);?></td></tr>
+<tr><td>Date they signed up after:</td><td><?php echo $from->showInput("","",$fromval);?></td></tr>
+<tr><td>Date they signed up before:</td><td><?php echo $to->showInput("","",$toval);?></td></tr>
 </table>
 <input type=hidden name="page" value="reconcileusers">
 <input type=hidden name="option" value="deleteunconfirmed">

@@ -60,14 +60,14 @@ ob_end_flush();
 
 ?> 
 
-<?=formStart()?>
+<?php echo formStart()?>
 <input type=hidden name=id value="<?php echo $id ?>">
 <table border=0>
 <tr><td>List name:</td><td><input type=text name="listname" value="<?php echo  htmlspecialchars(StripSlashes($list["name"]))?>"></td></tr>
 <tr><td>Check this box to make this list active (listed)</td><td><input type=checkbox name=active value="1" <?php echo $list["active"] ? "checked" : ""; ?>></td></tr>
-<tr><td>Order for listing</td><td><input type=text name="listorder" value="<? echo $list["listorder"] ?>" size=5></td></tr>
-<!--tr><td>Subject Prefix</td><td><input type=text name="prefix" value="<? echo $list["prefix"] ?>" size=5></td></tr-->
-<? if ($GLOBALS["require_login"] && (isSuperUser() || accessLevel("editlist") == "all")) {
+<tr><td>Order for listing</td><td><input type=text name="listorder" value="<?php echo $list["listorder"] ?>" size=5></td></tr>
+<!--tr><td>Subject Prefix</td><td><input type=text name="prefix" value="<?php echo $list["prefix"] ?>" size=5></td></tr-->
+<?php if ($GLOBALS["require_login"] && (isSuperUser() || accessLevel("editlist") == "all")) {
   print '<tr><td>Owner</td><td><select name="owner">';
   $req = Sql_Query("select id,loginname from {$tables["admin"]} order by loginname");
   while ($row = Sql_Fetch_Array($req))

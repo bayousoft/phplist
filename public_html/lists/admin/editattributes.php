@@ -1,8 +1,8 @@
-<?
+<?php
 require_once "accesscheck.php";
 
 # this file is shared between the webbler and PHPlist
-# $Id: editattributes.php,v 1.1.1.1 2003-11-21 12:50:22 mdethmers Exp $
+# $Id: editattributes.php,v 1.2 2004-05-11 11:41:38 mdethmers Exp $
 
 
 ob_end_flush();
@@ -42,13 +42,13 @@ $table = $table_prefix ."listattr_".$data["tablename"];
 ?>
 <script language="Javascript" src="js/jslib.js" type="text/javascript"></script>
 
-<br><?=PageLink2("editattributes","add new","id=$id&action=new")?> <?=$data["name"]?>
+<br><?php echo PageLink2("editattributes","add new","id=$id&action=new")?> <?=$data["name"]?>
 <br><a href="javascript:deleteRec2('Are you sure you want to delete all
- records?','<?=PageURL2("editattributes","delete all","id=$id&deleteall=yes")?>');">delete all</a>
+ records?','<?php echo PageURL2("editattributes","delete all","id=$id&deleteall=yes")?>');">delete all</a>
 <hr><p>
-<?=formStart()?>
+<?php echo formStart()?>
 <input type=hidden name="action" value="add">
-<input type=hidden name="id" value="<?=$id?>">
+<input type=hidden name="id" value="<?php echo $id?>">
 
 
 
@@ -103,7 +103,7 @@ function deleteItem($table,$attributeid,$delete) {
     $result = Sql_query("delete from $table where id = $delete");
   } else {
     ?>
-    Cannot delete <b><?=$val?></b><br />
+    Cannot delete <b><?php echo $val?></b><br />
     The Following record(s) are dependent on this value<br />
     Update the record(s) to not use this attribute value and try again<p>
     <?php
@@ -148,9 +148,9 @@ if (isset($action) && $action == "new") {
   // ??
   ?>
 
-  <p>add new <? echo $data["name"] ?>, one per line<br />
+  <p>add new <?php echo $data["name"] ?>, one per line<br />
   <textarea name="itemlist" rows=20 cols=50></textarea><br />
-  <input type="Submit" name="submit" value="add new <? echo $data["name"] ?>s"><br />
+  <input type="Submit" name="submit" value="add new <?php echo $data["name"] ?>s"><br />
 
 <?php
 }

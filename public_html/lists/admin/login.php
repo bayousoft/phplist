@@ -1,4 +1,4 @@
-<?
+<?php
 require_once "accesscheck.php";
 
 if (TEST)
@@ -13,10 +13,10 @@ if ($_GET["page"]) {
 	$page = "home";
 }
 ?>
-<font class="error"><?=$msg?></font>
+<font class="error"><?php echo $msg?></font>
 <p>
 <form method=post>
-<input type=hidden name="page" value="<?=$page?>">
+<input type=hidden name="page" value="<?php echo $page?>">
 <table width=100% border=0 cellpadding=2 cellspacing=0>
 <tr><td><span class="general">Name:</span></td></tr>
 <tr><td><input type=text name="login" value="" size=30></td></tr>

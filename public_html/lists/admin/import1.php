@@ -1,4 +1,4 @@
-<?
+<?php
 require_once "accesscheck.php";
 
 print '<script language="Javascript" src="js/progressbar.js" type="text/javascript"></script>';
@@ -256,7 +256,7 @@ if(isset($import)) {
 
 
 <ul>
-<?=FormStart(' enctype="multipart/form-data" name="import"')?>
+<?php echo FormStart(' enctype="multipart/form-data" name="import"')?>
 <?php
 if ($GLOBALS["require_login"] && !isSuperUser()) {
   $access = accessLevel("import1");
@@ -300,14 +300,14 @@ if (Sql_Affected_Rows() == 1) {
 <tr><td>Test output:</td><td><input type="checkbox" name="import_test" value="yes"></td></tr>
 <tr><td colspan=2>If you choose "send notification email" the users you are adding will be sent the request for confirmation of subscription to which they will have to reply. This is recommended, because it will identify invalid emails.</td></tr>
 <tr><td>Send&nbsp;Notification&nbsp;email&nbsp;<input type="radio" name="notify" value="yes"></td><td>Make confirmed immediately&nbsp;<input type="radio" name="notify" value="no"></td></tr>
-<?
+<?php
 include_once $GLOBALS["coderoot"] ."subscribelib2.php";
 print ListAllAttributes();
 ?>
 
 <tr><td><input type="submit" name="import" value="Import"></td><td>&nbsp;</td></tr>
 </table>
-<? } ?>
+<?php } ?>
 
 </p>
 

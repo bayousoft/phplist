@@ -1,4 +1,4 @@
-<?
+<?php
 
 # language dependent text used in the interface for users (not admin)
 # contributed by Igor Guskow igor@suplementa.com.br

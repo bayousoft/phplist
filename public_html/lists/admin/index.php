@@ -1,4 +1,4 @@
-<?
+<?php
 ob_start();
 $er = error_reporting(0);
 # setup commandline

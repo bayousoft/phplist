@@ -1,5 +1,5 @@
 
-<?
+<?php
 
 # language dependent text used in the interface for users (not admin)
 # translation by Gijsbert Rochat 

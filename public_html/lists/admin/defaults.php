@@ -1,4 +1,4 @@
-<?
+<?php
 require_once "accesscheck.php";
 
 
@@ -69,8 +69,8 @@ if (is_array($selected)) {
 ?>
 
 
-<?=formStart()?>
-<?
+<?php echo formStart()?>
+<?php
 reset($attributes);
 while (list($key,$attribute) = each ($attributes)) {
   list($name,$desc) = explode(":",$key);

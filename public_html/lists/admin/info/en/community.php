@@ -2,7 +2,7 @@
 <h1>The PHPlist community</h1>
 <p><b>Latest Version</b><br/>
 Please make sure you are using the latest version when submitting a bugreport.<br/>
-<?
+<?php
 ini_set("user_agent",NAME. " (PHPlist version ".VERSION.")");
 ini_set("default_socket_timeout",5);
 if ($fp = @fopen ("http://www.phplist.com/files/LATESTVERSION","r")) {
@@ -56,7 +56,7 @@ it's existence. You probably made quite an effort to find it and to decide to us
 having compared it to other similar applications, so you could help other people benefit
 from your experience.</p>
 
-<p>To do so, you can <?=PageLink2("vote","Vote")?> for PHPlist, or write reviews on the
+<p>To do so, you can <?php echo PageLink2("vote","Vote")?> for PHPlist, or write reviews on the
 sites that list applications. You can also tell other people you know about it.
 </li>
 <li><p>You can <b>Translate</b> PHPlist into your language and submit the translation. I hope to
@@ -94,13 +94,13 @@ and create an account for yourself. You will get a password by email.<br/>
 You can then enter the "mantis" system and submit a bugreport.</p>
 <p>Your system details are:</p>
 <ul>
-<li>PHPlist version: <?=VERSION?></li>
-<li>PHP version: <?=phpversion()?></li>
-<li>Webserver: <?=getenv("SERVER_SOFTWARE")?></li>
-<li>Website: <a href="http://<?=getConfig("website")."$pageroot"?>"><?=getConfig("website")."$pageroot"?></a></li>
-<li>Mysql Info: <?=mysql_get_server_info();?></li>
+<li>PHPlist version: <?php echo VERSION?></li>
+<li>PHP version: <?php echo phpversion()?></li>
+<li>Webserver: <?php echo getenv("SERVER_SOFTWARE")?></li>
+<li>Website: <a href="http://<?php echo getConfig("website")."$pageroot"?>"><?=getConfig("website")."$pageroot"?></a></li>
+<li>Mysql Info: <?php echo mysql_get_server_info();?></li>
 <li>PHP Modules:<br/><ul>
-<?
+<?php
 $le = get_loaded_extensions();
 foreach($le as $module) {
     print "<LI>$module\n";

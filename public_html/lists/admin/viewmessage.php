@@ -1,4 +1,4 @@
-<?
+<?php
 # view prepared message
 require_once "accesscheck.php";
 

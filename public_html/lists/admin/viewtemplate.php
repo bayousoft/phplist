@@ -1,4 +1,4 @@
-<?
+<?php
 # view template
 require_once "accesscheck.php";
 

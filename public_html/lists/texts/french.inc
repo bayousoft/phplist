@@ -1,4 +1,4 @@
-<?
+<?php
 # language dependent text used in the interface for users (not admin)
 # translation by Gijsbert Rochat, updated by Jean-Luc Picard
 $strCharSet             = 'ISO-8859-1';

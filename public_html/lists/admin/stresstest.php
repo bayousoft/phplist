@@ -1,4 +1,4 @@
-<?
+<?php
 require_once "accesscheck.php";
 
 print "Sorry, stresstest is out of date";
@@ -25,7 +25,7 @@ ignore_user_abort(1);
 <h1>Stresstest</h1>
 Filling database with stress test information, please wait
 <br><b>Warning</b> this is quite demanding for your browser!
-<?
+<?php
 
 function fill($prefix,$listid) {
   global $server_name,$tables,$table_prefix;

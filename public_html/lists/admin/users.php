@@ -242,10 +242,10 @@ if ($total > MAX_USER_PP) {
 }
 ?>
 <table border=0>
-<tr><td colspan=4><input type=hidden name=id value="<?=$listid?>">
-Find a user: <input type=text name=find value="<?=$find != '%' ? $find : ""?>" size=30>
+<tr><td colspan=4><input type=hidden name=id value="<?php echo $listid?>">
+Find a user: <input type=text name=find value="<?php echo $find != '%' ? $find : ""?>" size=30>
 <select name="findby"><option value="">Email</option>
-<?
+<?php
   $att_req = Sql_Query("select id,name from ".$tables["attribute"]." where type = \"hidden\" or type = \"textline\" or type = \"select\"");
   while ($row = Sql_Fetch_Array($att_req)) {
   	printf('<option value="%d" %s>%s</option>',$row["id"],$row["id"] == $findby ? "selected":"",substr($row["name"],0,20));
@@ -253,7 +253,7 @@ Find a user: <input type=text name=find value="<?=$find != '%' ? $find : ""?>" s
 ?></select><input type=submit value="Go">&nbsp;&nbsp;<a href="./?page=users&find=NULL">reset</a>
 </form></td></tr>
 <tr><td colspan=4>
-<?
+<?php
 #if (($require_login && isSuperUser()) || !$require_login)
   print PageLink2("dlusers","Download all users as CSV file","nocache=".uniqid(""));
 ?></td></tr>

@@ -1,4 +1,4 @@
-<?
+<?php
 require_once "accesscheck.php";
 
 ob_end_flush();
@@ -67,7 +67,7 @@ if (isset($_POST["action"]) && $_POST["action"] == "Save Changes") {
 
 
 
-<?
+<?php
 print formStart();
 $res = Sql_Query("select * from {$tables['adminattribute']} order by listorder");
 if (Sql_Affected_Rows())
@@ -78,21 +78,21 @@ else {
 while ($row = Sql_Fetch_array($res)) {
   ?>
   <table border=1>
-  <tr><td colspan=2>Attribute:<? echo $row["id"] ?></td><td colspan=2>Delete <input type="checkbox" name="delete[<? echo $row["id"] ?>]" value="1"></td></tr>
-  <tr><td colspan=2>Name: </td><td colspan=2><input type=text name="name[<? echo $row["id"]?>]" value="<? echo htmlspecialchars(stripslashes($row["name"])) ?>" size=40></td></tr>
-  <tr><td colspan=2>Type: </td><td colspan=2><input type=hidden name="type[<?=$row["id"]?>]" value="<?=$row["type"]?>"><?=$row["type"]?></td></tr>
-  <tr><td colspan=2>Default Value: </td><td colspan=2><input type=text name="default[<? echo $row["id"]?>]" value="<? echo htmlspecialchars(stripslashes($row["default_value"])) ?>" size=40></td></tr>
-  <tr><td>Order of Listing: </td><td><input type=text name="listorder[<? echo $row["id"]?>]" value="<? echo $row["listorder"] ?>" size=5></td>
-  <td>Is this attribute required?: </td><td><input type=checkbox name="required[<? echo $row["id"]?>]" value="1" <? echo $row["required"] ? "checked": "" ?>></td></tr>
+  <tr><td colspan=2>Attribute:<?php echo $row["id"] ?></td><td colspan=2>Delete <input type="checkbox" name="delete[<? echo $row["id"] ?>]" value="1"></td></tr>
+  <tr><td colspan=2>Name: </td><td colspan=2><input type=text name="name[<?php echo $row["id"]?>]" value="<? echo htmlspecialchars(stripslashes($row["name"])) ?>" size=40></td></tr>
+  <tr><td colspan=2>Type: </td><td colspan=2><input type=hidden name="type[<?php echo $row["id"]?>]" value="<?=$row["type"]?>"><?=$row["type"]?></td></tr>
+  <tr><td colspan=2>Default Value: </td><td colspan=2><input type=text name="default[<?php echo $row["id"]?>]" value="<? echo htmlspecialchars(stripslashes($row["default_value"])) ?>" size=40></td></tr>
+  <tr><td>Order of Listing: </td><td><input type=text name="listorder[<?php echo $row["id"]?>]" value="<? echo $row["listorder"] ?>" size=5></td>
+  <td>Is this attribute required?: </td><td><input type=checkbox name="required[<?php echo $row["id"]?>]" value="1" <? echo $row["required"] ? "checked": "" ?>></td></tr>
   </table><hr>
-<? } ?>
+<?php } ?>
 
 <a name="new"></a>
 <h3>Add a new Attribute:</h3>
 <table border=1>
 <tr><td colspan=2>Name: </td><td colspan=2><input type=text name="name[0]" value="" size=40></td></tr>
 <tr><td colspan=2>Type: </td><td colspan=2><select name="type[0]">
-<?
+<?php
 $types = array('checkbox','textline',"hidden");#'radio','select',
 while (list($key,$val) = each($types)) {
   printf('<option value="%s" %s>%s',$val,"",$val);

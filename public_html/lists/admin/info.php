@@ -1,5 +1,5 @@
 
-<?
+<?php
 require_once "accesscheck.php";
 
 # just make sure the file is not called directly

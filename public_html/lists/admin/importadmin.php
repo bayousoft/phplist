@@ -1,4 +1,4 @@
-<?
+<?php
 require_once "accesscheck.php";
 
 print '<script language="Javascript" src="js/progressbar.js" type="text/javascript"></script>';
@@ -258,7 +258,7 @@ if(isset($import)) {
 ?>
 
 
-<?=formStart('enctype="multipart/form-data" name="import"')?>
+<?php echo formStart('enctype="multipart/form-data" name="import"')?>
 <?php
 if ($GLOBALS["require_login"] && !isSuperUser()) {
   $access = accessLevel("import2");
@@ -289,6 +289,6 @@ you want to add to the system. The columns need to have the following headers: <
 <tr><td colspan=2>Check this box to create a list for each administrator, named after their loginname <input type=checkbox name="createlist" value="yes" checked></td></tr>
 <tr><td><input type="submit" name="import" value="Import"></td><td>&nbsp;</td></tr>
 </table>
-<? } ?>
+<?php } ?>
 
 </p>

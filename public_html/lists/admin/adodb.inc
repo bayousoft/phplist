@@ -1,4 +1,4 @@
-<?
+<?php
 
 # configuration to make PHPlist work via AdoDB
 # which will make it work with any database supported by AdoDB

@@ -1,4 +1,4 @@
-<?
+<?php
 require_once "accesscheck.php";
 
 # library used for plugging into the webbler, instead of "connect"

@@ -1,4 +1,4 @@
-<?
+<?php
 // 2004-1-7  This function really isn't quite ready for register globals.  
 require_once "accesscheck.php";
 
@@ -514,7 +514,7 @@ function checkForm() {
 	return true;
 }
 </script>
-<?
+<?php
 print formStart($enctype . ' name="sendmessageform"');
 #print '<form method="post" enctype="multipart/form-data" name="sendmessageform" onSubmit="return checkForm()">';
 print '<input type=hidden name="workaround_fck_bug" value="1">';
@@ -529,23 +529,23 @@ if (!$from) {
 ?>
 
 <table>
-<tr><td><?=Help("subject")?> Subject:</td><td><input type=text name="msgsubject" value="<?php echo htmlentities($subject)?>" size=40></td></tr>
+<tr><td><?php echo Help("subject")?> Subject:</td><td><input type=text name="msgsubject" value="<?php echo htmlentities($subject)?>" size=40></td></tr>
 <tr><td colspan=2>
 </ul>
 </td></tr>
-<tr><td><?=Help("from")?> From line:</td><td><input type=text name=from value="<?php echo htmlentities($from)?>" size=40></td></tr>
+<tr><td><?php echo Help("from")?> From line:</td><td><input type=text name=from value="<?php echo htmlentities($from)?>" size=40></td></tr>
 <tr><td colspan=2>
 
 </td></tr>
-<tr><td><?=Help("embargo")?> Embargoed until</td><td><?=$embargo->showInput("embargo","",$_POST["embargo"])?></td></tr>
+<tr><td><?php echo Help("embargo")?> Embargoed until</td><td><?=$embargo->showInput("embargo","",$_POST["embargo"])?></td></tr>
 </td></tr>
 
-<? if (USE_REPETITION) { 
+<?php if (USE_REPETITION) { 
 
 	$repeatinterval = $_POST["repeatinterval"];
 	?>
 
-<tr><td><?=Help("repetition")?> Repeat message every:</td><td>
+<tr><td><?php echo Help("repetition")?> Repeat message every:</td><td>
 <select name="repeatinterval">
 <option value="0"<?php if ($repeatinterval == 0) { echo " SELECTED"; } ?>>-- no repetition</option>
 <option value="60"<?php if ($repeatinterval == 60) { echo " SELECTED"; } ?>>Hour</option>
@@ -555,39 +555,39 @@ if (!$from) {
 
 </td></tr>
 </td></tr>
-<tr><td>  Repeat until:</td><td><?=$repeatuntil->showInput("repeatuntil","",$_POST["repeatuntil"])?></td></tr>
+<tr><td>  Repeat until:</td><td><?php echo $repeatuntil->showInput("repeatuntil","",$_POST["repeatuntil"])?></td></tr>
 </td></tr>
 
-<? } ?>
+<?php } ?>
 
-<tr><td colspan=2><?=Help("format")?> Format: <b>Auto detect</b> <input type=radio name="htmlformatted" value="auto" <?=!isset($htmlformatted) || $htmlformatted == "auto"?"checked":""?>>
-<b>HTML</b> <input type=radio name="htmlformatted" value="1" <?=$htmlformatted == "1" ?"checked":""?>>
-<b>Text</b> <input type=radio name="htmlformatted" value="0" <?=$htmlformatted == "0" ?"checked":""?>>
+<tr><td colspan=2><?php echo Help("format")?> Format: <b>Auto detect</b> <input type=radio name="htmlformatted" value="auto" <?=!isset($htmlformatted) || $htmlformatted == "auto"?"checked":""?>>
+<b>HTML</b> <input type=radio name="htmlformatted" value="1" <?php echo $htmlformatted == "1" ?"checked":""?>>
+<b>Text</b> <input type=radio name="htmlformatted" value="0" <?php echo $htmlformatted == "0" ?"checked":""?>>
 </td></tr>
-<tr><td colspan=2><?=Help("sendformat")?> Send as:
-HTML <input type=radio name="sendformat" value="HTML" <?=$_POST["sendformat"]=="HTML"?"checked":""?>>
-text <input type=radio name="sendformat" value="text" <?=$_POST["sendformat"]=="text"?"checked":""?>>
-<? if (USE_PDF) { ?>
-PDF <input type=radio name="sendformat" value="PDF" <?=$_POST["sendformat"]=="PDF"?"checked":""?>>
-<? } ?>
-text and HTML <input type=radio name="sendformat" value="text and HTML" <?=$_POST["sendformat"]=="text and HTML" || !isset($_POST["sendformat"]) ?"checked":""?>>
-<? if (USE_PDF) { ?>
-text and PDF <input type=radio name="sendformat" value="text and PDF" <?=$_POST["sendformat"]=="text and PDF" ?"checked":""?>>
-<? } ?>
+<tr><td colspan=2><?php echo Help("sendformat")?> Send as:
+HTML <input type=radio name="sendformat" value="HTML" <?php echo $_POST["sendformat"]=="HTML"?"checked":""?>>
+text <input type=radio name="sendformat" value="text" <?php echo $_POST["sendformat"]=="text"?"checked":""?>>
+<?php if (USE_PDF) { ?>
+PDF <input type=radio name="sendformat" value="PDF" <?php echo $_POST["sendformat"]=="PDF"?"checked":""?>>
+<?php } ?>
+text and HTML <input type=radio name="sendformat" value="text and HTML" <?php echo $_POST["sendformat"]=="text and HTML" || !isset($_POST["sendformat"]) ?"checked":""?>>
+<?php if (USE_PDF) { ?>
+text and PDF <input type=radio name="sendformat" value="text and PDF" <?php echo $_POST["sendformat"]=="text and PDF" ?"checked":""?>>
+<?php } ?>
 </td></tr>
-<?
+<?php
 $req = Sql_Query("select id,title from {$tables["template"]} order by listorder");
 if (Sql_affected_Rows()) {
 ?>
-<tr><td><?=Help("usetemplate")?> Use template: </td><td><select name="template"><option value=0>-- select one</option>
-<?
+<tr><td><?php echo Help("usetemplate")?> Use template: </td><td><select name="template"><option value=0>-- select one</option>
+<?php
 $req = Sql_Query("select id,title from {$tables["template"]} order by listorder");
 while ($row = Sql_Fetch_Array($req)) {
   printf('<option value="%d" %s>%s</option>',$row["id"], $row["id"]==$_POST["template"]?'SELECTED':'',$row["title"]);
 }
 ?>
 </select></td></tr>
-<? }
+<?php }
 
 if (ENABLE_RSS) {
 	print '<tr><td colspan=2>If you want to use this message as the template for sending RSS feeds
@@ -601,15 +601,15 @@ if (ENABLE_RSS) {
 }
 ?>
 
-<tr><td colspan=2><?=Help("message")?> Message. </td></tr>
+<tr><td colspan=2><?php echo Help("message")?> Message. </td></tr>
 
 <tr><td colspan=2>
 
-<? if (!$usefck) { ?>
+<?php if (!$usefck) { ?>
 
 	<textarea name=message cols=45 rows=20><?php echo $_POST["message"] ?></textarea>
 
-<? } else {
+<?php } else {
 	$oFCKeditor = new FCKeditor ;
 	//$oFCKeditor->ToolbarSet = 'Accessibility' ;
 	$oFCKeditor->ToolbarSet = 'Default' ;
@@ -636,19 +636,19 @@ if (ENABLE_RSS) {
 ?>
 </td></tr>
 
-<? if (USE_MANUAL_TEXT_PART) { ?>
+<?php if (USE_MANUAL_TEXT_PART) { ?>
 <tr><td colspan=2>
 	Plain Text version of message
 </td></tr>
 <tr><td colspan=2>
 	<textarea name=textmessage cols=45 rows=20><?php echo $_POST["textmessage"] ?></textarea>
 </td></tr>
-<? } ?>
+<?php } ?>
 <tr><td colspan=2>Message Footer. <br/>Use <b>[UNSUBSCRIBE]</b> to insert the personal unsubscribe URL for each user. <br/>Use <b>[PREFERENCES]</b> to insert the personal URL for a user to update their details.</td></tr>
 <tr><td colspan=2><textarea name=footer cols=45 rows=5><?php echo $footer ?></textarea></td></tr>
 
 </table>
-<?
+<?php
 
 if (ALLOW_ATTACHMENTS) {
 	// If we have a message id saved, we want to query the attachments that are associated with this
@@ -775,7 +775,7 @@ else
 
 ?>
 </ol>
-<? } 
+<?php } 
 
 if (!$_POST["status"]) {
 	$savecaption = "Save message as draft";

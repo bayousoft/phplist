@@ -2,7 +2,7 @@
 <div align="center">
 <table><tr><td>
 
-<?
+<?php
 require_once "accesscheck.php";
 
 $dbversion = getConfig("version");
@@ -270,7 +270,7 @@ if ($doit == "yes") {
 ?>
 <p>Your database requires upgrading, please make sure to create a backup of your database first.</p>
 
-<p>When you're ready click <?=PageLink2("upgrade","Here","doit=yes")?>. Depending on the size of your database, this may take quite a while. Please make sure not to interrupt the process, once you've started it.</p>
-<? } ?>
+<p>When you're ready click <?php echo PageLink2("upgrade","Here","doit=yes")?>. Depending on the size of your database, this may take quite a while. Please make sure not to interrupt the process, once you've started it.</p>
+<?php } ?>
 </td></tr></table>
 </div>

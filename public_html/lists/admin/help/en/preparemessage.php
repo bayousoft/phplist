@@ -24,7 +24,7 @@ the list, not of the values of the main administrator.
 The format of the [LISTOWNER] placeholders is <b>[LISTOWNER.ATTRIBUTE]</b><br/>
 <p>Currently you have the following admin attributes defined:
 <table border=1><tr><td><b>Attribute</b></td><td><b>Placeholder</b></td></tr>
-<?
+<?php
 $req = Sql_query("select name from {$tables["adminattribute"]} order by listorder");
 if (!Sql_Affected_Rows())
 	print '<tr><td colspan=2>None</td></tr>';

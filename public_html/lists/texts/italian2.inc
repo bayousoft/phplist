@@ -1,5 +1,5 @@
 
-<?
+<?php
 # language dependent text used in the interface for users (not admin)
 # Italian Module translated by Bartolotta Gioachino developers@rockitalia.com http://www.ladysilvia.net
 # translated for version 1.1.3b

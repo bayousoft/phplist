@@ -1,7 +1,7 @@
-<?
+<?php
 require_once "accesscheck.php";
 
-# $Id: export.php,v 1.1.1.1 2003-11-21 12:50:22 mdethmers Exp $
+# $Id: export.php,v 1.2 2004-05-11 11:41:38 mdethmers Exp $
 
 # export users from PHPlist
 
@@ -88,15 +88,15 @@ if ($list)
 <br/><br/>
 <table>
 
-<tr><td>Date From:</td><td><?=$from->showInput("","",$fromval);?></td></tr>
-<tr><td>Date To: </td><td><?=$to->showInput("","",$toval);?></td></tr>
+<tr><td>Date From:</td><td><?php echo $from->showInput("","",$fromval);?></td></tr>
+<tr><td>Date To: </td><td><?php echo $to->showInput("","",$toval);?></td></tr>
 <tr><td colspan=2>What date needs to be used:</td></tr>
 <tr><td><input type=radio name="column" value="entered" checked></td><td>When they signed up</td></tr>
 <tr><td><input type=radio name="column" value="modified"></td><td>When the record was changed</td></tr>
 </td></tr>
 <tr><td colspan=2>Select the columns to include in the export</td></tr>
 
-<?
+<?php
   $cols = array();
   while (list ($key,$val) = each ($DBstruct["user"])) {
     if (!ereg("sys",$val[1])) {

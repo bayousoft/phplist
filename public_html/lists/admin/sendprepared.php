@@ -1,4 +1,4 @@
-<?
+<?php
 require_once "accesscheck.php";
 
 echo '<script language="Javascript" src="js/jslib.js" type="text/javascript"></script><hr><p>';
@@ -64,16 +64,16 @@ if ($message && $list) {
   $done = 1;
   ?>
   <h3>Message Queued for sending</h3>
-  <? #echo $num ?> <!--users apply (at the moment, independent of list membership)<p>-->
+  <?php #echo $num ?> <!--users apply (at the moment, independent of list membership)<p>-->
 <?php
 } elseif ($send && !$message) {
   ?>
   <font color=red size=+2>Please select a message</font><br>
-  <?
+  <?php
 } elseif ($send && !$list) {
   ?>
   <font color=red size=+2>Please select a list to send to</font><br>
-  <?
+  <?php
 }
 
 if (!$done) {
@@ -130,6 +130,6 @@ if ($num == 1) {
 
 ?>
 </ul>
-<p><input type=submit name=send value="Send Message <?=$buttonmsg?>" onClick="document.sendpreparedform.submit()">
+<p><input type=submit name=send value="Send Message <?php echo $buttonmsg?>" onClick="document.sendpreparedform.submit()">
 </form>
-<? } ?>
+<?php } ?>

@@ -1,4 +1,4 @@
-<?
+<?php
 require_once "accesscheck.php";
 if (!$GLOBALS["commandline"]) {
   ob_end_flush();

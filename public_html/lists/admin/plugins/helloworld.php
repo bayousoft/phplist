@@ -1,4 +1,4 @@
-<?
+<?php
 class helloworld extends phplistPlugin {
   var $name = "Hello World";
   var $coderoot = "plugins/defaultplugin/";

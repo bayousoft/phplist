@@ -1,5 +1,5 @@
 
-<?
+<?php
 
 if ($_POST["info"]) {
   print "You typed: ".$_POST["info"]."<br/>";

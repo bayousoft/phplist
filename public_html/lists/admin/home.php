@@ -1,5 +1,5 @@
 
-<?
+<?php
 require_once "accesscheck.php";
 
 ob_end_flush();
@@ -46,7 +46,7 @@ if ($checkinterval) {
 
 ?>
 <br/><br/>
-<?
+<?php
 #$ls = new WebblerListing("System Functions");
 
 $some = 0;

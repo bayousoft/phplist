@@ -1,4 +1,4 @@
-<?
+<?php
 require_once "accesscheck.php";
 # convert the database to add the prefix
 

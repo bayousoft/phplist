@@ -1,4 +1,4 @@
-<?
+<?php
 
 $strAccessExplain = '
 <hr/>

@@ -3,7 +3,7 @@
 
 <form method=post>
 <table>
-<?
+<?php
 require_once "accesscheck.php";
 
 # configure subscribe page
@@ -170,15 +170,15 @@ print '<tr><td colspan=2><h1>Select the attributes to use</h1></td></tr><tr><td 
       $bgcol = '#ffffff';
     }
   ?>
-  <table border=1 width=100% bgcolor="<?=$bgcol?>">
-  <tr><td colspan=2 width=150>Attribute:<? echo $row["id"] ?></td><td colspan=2>Check this box to use this attribute in the page <input type="checkbox" name="attr_use[<? echo $row["id"] ?>]" value="1" <?=$checked[$row["id"]]?>></td></tr>
-  <tr><td colspan=2>Name: </td><td colspan=2><h2><? echo htmlspecialchars(stripslashes($row["name"])) ?></h2></td></tr>
-  <tr><td colspan=2>Type: </td><td colspan=2><h2><?=$row["type"]?></h2></td></tr>
-  <tr><td colspan=2>Default Value: </td><td colspan=2><input type=text name="attr_default[<? echo $row["id"]?>]" value="<? echo htmlspecialchars(stripslashes($value["default_value"])) ?>" size=40></td></tr>
-  <tr><td>Order of Listing: </td><td><input type=text name="attr_listorder[<? echo $row["id"]?>]" value="<? echo $value["listorder"] ?>" size=5></td>
-  <td>Is this attribute required?: </td><td><input type=checkbox name="attr_required[<? echo $row["id"]?>]" value="1" <? echo $value["required"] ? "checked": "" ?>></td></tr>
+  <table border=1 width=100% bgcolor="<?php echo $bgcol?>">
+  <tr><td colspan=2 width=150>Attribute:<?php echo $row["id"] ?></td><td colspan=2>Check this box to use this attribute in the page <input type="checkbox" name="attr_use[<? echo $row["id"] ?>]" value="1" <?=$checked[$row["id"]]?>></td></tr>
+  <tr><td colspan=2>Name: </td><td colspan=2><h2><?php echo htmlspecialchars(stripslashes($row["name"])) ?></h2></td></tr>
+  <tr><td colspan=2>Type: </td><td colspan=2><h2><?php echo $row["type"]?></h2></td></tr>
+  <tr><td colspan=2>Default Value: </td><td colspan=2><input type=text name="attr_default[<?php echo $row["id"]?>]" value="<? echo htmlspecialchars(stripslashes($value["default_value"])) ?>" size=40></td></tr>
+  <tr><td>Order of Listing: </td><td><input type=text name="attr_listorder[<?php echo $row["id"]?>]" value="<? echo $value["listorder"] ?>" size=5></td>
+  <td>Is this attribute required?: </td><td><input type=checkbox name="attr_required[<?php echo $row["id"]?>]" value="1" <? echo $value["required"] ? "checked": "" ?>></td></tr>
   </table><hr>
-<?
+<?php
 	}
 
 print '</td></tr>';

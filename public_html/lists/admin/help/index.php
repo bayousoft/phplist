@@ -1,4 +1,4 @@
-<?
+<?php
 ob_start();
 if ($_SERVER["ConfigFile"] && is_file($_SERVER["ConfigFile"])) {
 	print '<!-- using '.$_SERVER["ConfigFile"].'-->'."\n";
@@ -37,7 +37,7 @@ if ($topic) {
 <link rel="stylesheet" type="text/css" href="../styles/styles_help.css"></HEAD>
 <BODY>
 <!-- content -->
-<?
+<?php
 print "<table width=100%><tr><td valign=top><h3>PHPlist Help: $topic</h3></td><td align=right valign=top>";
 print '<A HREF="Javascript:close()">Close this window</A></td></tr></table>';
 if ($include) {
@@ -47,7 +47,7 @@ if ($include) {
 }
  ?>
 <table><tr><td>
-<?
+<?php
 
 ob_end_flush();
  ?>

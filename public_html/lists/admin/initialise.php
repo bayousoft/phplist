@@ -1,4 +1,4 @@
-<?
+<?php
 require_once "accesscheck.php";
 
 include $GLOBALS["coderoot"] . "structure.php";

@@ -1,5 +1,5 @@
 <script language="Javascript" src="js/jslib.js" type="text/javascript"></script>
-<?
+<?php
 require_once "accesscheck.php";
 
 function getTemplateImages($content) {
@@ -134,37 +134,37 @@ if ($action == "addimages") {
 }
 ?>
 
-<p class="error"><?=$msg?></p>
-<?=PageLink2("templates","List of Templates");?>
+<p class="error"><?php echo $msg?></p>
+<?php echo PageLink2("templates","List of Templates");?>
 <p>
-<?=formStart()?>
-<input type=hidden name="id" value="<?=$id?>">
+<?php echo formStart()?>
+<input type=hidden name="id" value="<?php echo $id?>">
 <table>
 <tr>
   <td>Title of this template</td>
-  <td><input type=text name="title" value="<?=stripslashes(htmlspecialchars($data["title"]))?>" size=30></td>
+  <td><input type=text name="title" value="<?php echo stripslashes(htmlspecialchars($data["title"]))?>" size=30></td>
 </tr>
 <tr>
   <td colspan=2>Content of the template.<br />The content should at least have <b>[CONTENT]</b> somewhere.</td>
 </tr>
 <tr>
-  <td colspan=2><textarea name="content" cols="70" rows="40" wrap="virtual"><?=stripslashes(htmlspecialchars($data["template"]))?></textarea></td>
+  <td colspan=2><textarea name="content" cols="70" rows="40" wrap="virtual"><?php echo stripslashes(htmlspecialchars($data["template"]))?></textarea></td>
 </tr>
 <!--tr>
 	<td>Make sure all images<br/>start with this URL (optional)</td>
-  <td><input type=text name="baseurl" size=40 value="<?=htmlspecialchars($baseurl)?>"></td>
+  <td><input type=text name="baseurl" size=40 value="<?php echo htmlspecialchars($baseurl)?>"></td>
 </tr-->
 <tr>
 	<td>Check that all links have a full URL</td>
-  <td><input type=checkbox name="checkfulllinks" <?=$checkfulllinks?"checked":""?>></td>
+  <td><input type=checkbox name="checkfulllinks" <?php echo $checkfulllinks?"checked":""?>></td>
 </tr>
 <tr>
 	<td>Check that all images have a full URL</td>
-  <td><input type=checkbox name="checkfullimages" <?=$checkfullimages?"checked":""?>></td>
+  <td><input type=checkbox name="checkfullimages" <?php echo $checkfullimages?"checked":""?>></td>
 </tr>
 <tr>
 	<td>Check that all external images exist</td>
-  <td><input type=checkbox name="checkimagesexist" <?=$checkimagesexist?"checked":""?>></td>
+  <td><input type=checkbox name="checkimagesexist" <?php echo $checkimagesexist?"checked":""?>></td>
 </tr>
 
 <tr>

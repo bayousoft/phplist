@@ -140,7 +140,7 @@ if (isset($add)) {
 
       require $GLOBALS["coderoot"] . "subscribelib2.php";
       ?>
-      <? 
+      <?php 
       # pass the entered email on to the form
       $_REQUEST["email"] = $_POST["new"];
   /*      printf('
@@ -153,9 +153,9 @@ if (isset($add)) {
       ?>
 
       <tr><td colspan=2><input type=hidden name=action value="insert"><input
- type=hidden name=doadd value="yes"><input type=hidden name=id value="<? echo
+ type=hidden name=doadd value="yes"><input type=hidden name=id value="<?php echo
  $id ?>"><input type=submit name=subscribe value="Add User"></form></td></tr></table>
-      <?
+      <?php
       return;
     }
   }
@@ -244,7 +244,7 @@ if (isset($id)) {
   }
   </script>
   <input type=checkbox name="checkall" onClick="checkAll()">Tag all users in this page
-  <?
+  <?php
 
 	$ls = new WebblerListing("Members");
   while ($user = Sql_fetch_array($result)) {
@@ -283,7 +283,7 @@ if ($access == "view") return;
 <tr><td colspan=2><h3>What to do with "Tagged" users:</h3>This will only process the users in this page that have the "Tag" checkbox checked</td></tr>
 <tr><td colspan=2>Delete (from this list) <input type=radio name="tagaction"
  value="delete"></td></tr>
-<?
+<?php
 
 $res = Sql_Query("select id,name from {$tables["list"]} $subselect");
 while ($row = Sql_Fetch_array($res)) {
@@ -294,35 +294,35 @@ if ($html) {
 ?>
   <tr><td>Move <input type=radio name="tagaction" value="move"> </td><td>to
  <select name=movedestination>
-  <? echo $html ?>
+  <?php echo $html ?>
 </select></td></tr>
   <tr><td>Copy <input type=radio name="tagaction" value="copy"> </td><td>to
  <select name=copydestination>
-  <? echo $html ?>
+  <?php echo $html ?>
 </select></td></tr>
 <tr><td colspan=2>Nothing <input type=radio name="tagaction"
  value="nothing" checked></td></tr>
-<? } ?>
+<?php } ?>
 <tr><td colspan=2><hr></td></tr>
 <tr><td colspan=2><h3>What to do with all users</h3>This will process all users on this list</td></tr>
 <tr><td colspan=2>Delete (from this list) <input type=radio name="tagaction_all"
  value="delete"></td></tr>
-<?
+<?php
 
 
 if ($html) {
 ?>
   <tr><td>Move <input type=radio name="tagaction_all" value="move"> </td><td>to
  <select name="movedestination_all">
-  <? echo $html ?>
+  <?php echo $html ?>
 </select></td></tr>
   <tr><td>Copy <input type=radio name="tagaction_all" value="copy"> </td><td>to
  <select name="copydestination_all">
-  <? echo $html ?>
+  <?php echo $html ?>
 </select></td></tr>
 <tr><td colspan=2>Nothing <input type=radio name="tagaction_all"
  value="nothing" checked></td></tr>
-<? } ?>
+<?php } ?>
 
 <tr><td colspan=2><input type=submit name=processtags value="Do it"></td></tr>
 </table>

@@ -10,7 +10,7 @@ function checkSubFolders(folder) {
 }
 </script>
 
-<?
+<?php
 require_once "accesscheck.php";
 
 ob_end_flush();

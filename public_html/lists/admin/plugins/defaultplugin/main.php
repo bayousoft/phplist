@@ -3,7 +3,7 @@
 
 <p>The <i>Hello World page</i> is more interesting</p>
 
-<?
+<?php
 
 $plugin = $GLOBALS["plugins"][$_GET["pi"]];
 $menu = $plugin->adminmenu();

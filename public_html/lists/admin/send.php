@@ -1,4 +1,4 @@
-<?
+<?php
 require_once "accesscheck.php";
 
 $access = accessLevel("send");
@@ -82,7 +82,7 @@ if ($done) {
 <p>Please select the lists you want to send it to:
 <ul>
 <li><input type=checkbox name="list[all]" value=signup
-<?
+<?php
   if ($_POST["list"]["all"] == "signup")
     print "checked";
 ?>

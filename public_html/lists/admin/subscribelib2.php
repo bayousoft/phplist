@@ -1,4 +1,4 @@
-<?
+<?php
 
 mt_srand((double)microtime()*1000000);
 $randval = mt_rand();

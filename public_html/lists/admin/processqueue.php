@@ -1,4 +1,4 @@
-<?
+<?php
 require_once "accesscheck.php";
 
 #if (!MANUALLY_PROCESS_QUEUE) {
@@ -10,7 +10,7 @@ require_once "accesscheck.php";
 onerror = null;
 this.onerror = null;
 </script>
-<?
+<?php
 if (!$GLOBALS["commandline"]) {
   ob_end_flush();
   if (!MANUALLY_PROCESS_QUEUE) {

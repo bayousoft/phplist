@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 	We request you retain the full headers below including the links.
 	This not only gives respect to the large amount of time given freely
@@ -18,5 +18,5 @@
 <link rel="copyright" href="mailto:phplist%40tincan.co.uk" >
 <meta name="Author" content="Michiel Dethmers - http://www.phplist.com">
 <meta name="Copyright" content="Michiel Dethmers, Tincan Ltd - http://tincan.co.uk">
-<meta name="Powered-By" content="PHPlist version <?=VERSION?>">
-<meta http-equiv="Content-Type" content="text/html; charset=<?=$strCharSet?>">
+<meta name="Powered-By" content="PHPlist version <?php echo VERSION?>">
+<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $strCharSet?>">
