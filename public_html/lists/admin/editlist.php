@@ -76,7 +76,7 @@ ob_end_flush();
 }
 if (ENABLE_RSS) {
  if ($list["rssfeed"]) {
- 	 $validate = sprintf('(<a href="http://feeds.archive.org/validator/check?url=%s" target="_blank">validate</a>)',$list["rssfeed"]);
+ 	 $validate = sprintf('(<a href="http://feedvalidator.org/check?url=%s" target="_blank">validate</a>)',$list["rssfeed"]);
 	 $viewitems = PageLink2("viewrss&id=".$id,"View Items");
  }
  printf('<tr><td>RSS Source %s %s</td><td><input type=text name="rssfeed" value="%s" size=50></td></tr>',
