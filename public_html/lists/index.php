@@ -450,9 +450,9 @@ function unsubscribePage($id) {
   }
 
   while ($row = Sql_fetch_array($result)) {
-		$out .=  '<input type=hidden name="listname['.$row["id"] . ']" value="'.$row["name"].'"/>';
+		$out .=  '<input type=hidden name="listname['.$row["id"] . ']" value="'.stripslashes($row["name"]).'"/>';
   	if (!$hide) {
-      $out .= "<li><input type=checkbox name=list[".$row["id"] . "] value=signoff>".$row["name"] ." \n";
+      $out .= "<li><input type=checkbox name=list[".$row["id"] . "] value=signoff>".stripslashes($row["name"]) ." \n";
       $desc = nl2br(StripSlashes($row["description"]));
       $out .= "<dd>$desc\n";
     } else {
