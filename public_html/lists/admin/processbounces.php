@@ -136,7 +136,12 @@ function processBounce ($link,$num,$header) {
       $tables["bounce"],
       $userid,$bounceid));
    	logEvent("$userid system message bounced, user marked unconfirmed");
-  	Sql_Query(sprintf('update %s
+    addUserHistory($user,"Bounced system message","
+    <br/>User marked unconfirmed
+    <br/><a href=\"./?page=bounce&id=$bounceid\">View Bounce</a>
+    
+    ");
+    Sql_Query(sprintf('update %s
     	set confirmed = 0
       where id = %d',
       $tables["user"],
