@@ -242,6 +242,10 @@ if ($doit == "yes") {
       $success = 0;
       break;
   }
+	# fix the new powered by image for the templates
+  Sql_Query(sprintf('update %s set data = "%s",width=70,height=30 where filename = "powerphplist.png"',
+  	$tables["templateimage"],$newpoweredimage));
+
   print '<script language="Javascript" type="text/javascript"> finish(); </script>';
   # update the system pages
   while (list($type,$pages) = each ($system_pages)) {
