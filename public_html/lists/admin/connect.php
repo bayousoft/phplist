@@ -15,7 +15,7 @@ if (is_file(getenv("DOCUMENT_ROOT") ."/../VERSION")) {
 define("VERSION",$version."dev2.8");
 
 include_once dirname(__FILE__)."/commonlib/lib/userlib.php";
-include_once dirname(__FILE__). "/pluginlib.php";
+include_once dirname(__FILE__)."/pluginlib.php";
 
 # make sure magic quotes are on. Try to switch it on, this may fail
 ini_set("magic_quotes_gpc","on");
