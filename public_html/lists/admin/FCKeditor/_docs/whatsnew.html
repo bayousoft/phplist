@@ -1,0 +1,202 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
+<HTML xmlns:o>
+	<HEAD>
+		<TITLE>FCKeditor - What's New</TITLE>
+	</HEAD>
+	<BODY>
+		<H3>Version 1.1</H3>
+		<UL>
+			<LI>
+				The "<STRONG>Multi Language</STRONG>" system is now available. This version 
+				ships with English and Italian versions completed. Other languages will be 
+				available soon. The editor automatically detects the client language and sets 
+				all labels, tooltips and dialog boxes to it, if available. The auto detection 
+				and the default language can be set in the <STRONG>fck_config.file</STRONG>.
+			<LI>
+				Two files can now be created to isolate customizations code from the original 
+				source code of the editor: <STRONG>fckeditor.config.js</STRONG> and <STRONG>fckeditor.custom.js</STRONG>. 
+			Create these files in the root folder of your web site, if needed. The first 
+			one can be used to add or override configurations set on fck_config.js. The 
+			second one is used for custom actions and behaviors.
+			<LI>
+			A problem with relative links and images like "/test/test.doc" has been solved. 
+			In prior versions, only with XHTML support enabled, the URL was changed to 
+			something like "http://www.mysite.xxx/test/test.doc" (The domain was 
+			automatically added). Now the XHTML cleaning procedure gets the URLs exactly 
+			how they are defined in the editor’s HTML.
+			<LI>
+				[<A href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=742168&amp;group_id=75348&amp;atid=543653"
+					target="_blank">SF BUG-742168</A>] Mouse drag and drop from toolbar 
+			buttons has been disabled.
+			<LI>
+				[<A href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=768210&amp;group_id=75348&amp;atid=543653"
+					target="_blank">SF BUG-768210</A>] HTML entities, like <STRONG>&amp;lt;</STRONG>, 
+			were not load correctly. The problem is solved.
+			<LI>
+				[<A href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=748812&amp;group_id=75348&amp;atid=543653"
+					target="_blank">SF BUG-748812</A>] The link dialog window doesn't open when 
+				the link button is grayed.</LI>
+		</UL>
+		<H3>Version 1.0</H3>
+		<UL>
+			<LI>
+			Three new options are available in the configuration file to set what file 
+			types are allowed / denied to be uploaded from the "Insert Link" and "Insert 
+			Image" dialog boxes.
+			<LI>
+			Upload options, for links and images, are automatically hidden on IE 5.0 
+			browsers (it's not compatible).
+			<LI>
+			[SF BUG-734894] Fixed a problem on XHTML cleaning: the value on INPUT fields 
+			were lost.
+			<LI>
+			[SF BUG-713797] Fixed some image dialog errors when trying to set image 
+			properties when no image is available.
+			<LI>
+			[SF BUG-736414] Developed a workaround for a DHTML control bug when loading in 
+			the editor some HTML started with &lt;p&gt;&lt;hr&gt;&lt;/p&gt;.
+			<LI>
+			[SF BUG-737143] Paste from Word cleaning changed to solve some IE 5.0 errors. 
+			This feature is still not available over IE 5.0.
+			<LI>
+			[SF BUG-737233] CSS mappings are now OK on the PHP image browser module.
+			<LI>
+			[SF BUG-737495] The image preview in the image dialog box is now working 
+			correctly.
+			<LI>
+			[SF BUG-737532] The editor automatically switches to WYSIWYG mode when the form 
+			is posted.
+			<LI>
+				[SF BUG-739571] The editor is now working well over Opera (as for Netscape, a 
+				TEXTAREA is shown).
+			</LI>
+		</UL>
+		<H3>Version 1.0 Final Candidate</H3>
+		<UL>
+			<LI>
+			A new dialog box for the "Link" command is available. Now you can upload and 
+			browse the server exactly like the image dialog box. It's also possible to 
+			define the link title and target window (_blank, _self, _parent and _top). As 
+			with the image dialog box, a sample (and simple) file server browser is 
+			available.
+			<LI>
+			A new configuration option is available to force every paste action to be 
+			handled as plain text. See "config.ForcePasteAsPlainText" in fck_config.js.
+			<LI>
+			A new Toolbar button is available: "Paste from Word". It automatically cleans 
+			the clipboard content before pasting (removesWord styles, classes, xml stuff, 
+			etc...). This command is available for IE 5.5 and more. For IE 5.0 users, a 
+			message is displayed advising that the text will not be cleaned before pasting.
+			<LI>
+			The editor automatically detects Word clipboard data on pasting operations and 
+			asks the user to clean it before pasting. This option is turned on by default 
+			but it can be configured. See "config.AutoDetectPasteFromWord" in 
+			fck_config.js.
+			<LI>
+			Table properties are now available in cells' right click context menu.
+			<LI>
+				It's now possible to edit cells advanced properties from it's right click 
+				context menu.
+			</LI>
+		</UL>
+		<H3>Version 1.0 Release Candidate 1 (RC1)</H3>
+		<UL>
+			<LI>
+			Some performance improvements.
+			<LI>
+			The file dhtmled.cab has been added to the package for clients ho needs to 
+			install the Microsoft DHTML Editor component.
+			<LI>
+			[SF BUG-713952] The format command options are localized, so it depends on the 
+			IE language to work. Until version 0.9.5 it was working only over English IE 
+			browsers. Now the options are load dynamically on the client using the client's 
+			language.
+			<LI>
+			[SF BUG-712103] The style command is localized, so it depends on the IE 
+			language to work. Until version 0.9.5 it was working only over English IE 
+			browsers. Now it configures itself using the client's language.
+			<LI>
+				[SF BUG-726137] On version 0.9.5, some commands (special chars, image, 
+				emoticons, ...) remove the next available character before inserting the 
+				required content even if no selection was made in the editor. Now the editor 
+				replaces only the selected content (if available).
+			</LI>
+		</UL>
+		<H3>Version 0.9.5 beta</H3>
+		<UL>
+			<LI>
+			XHTML support is now available! It can be enabled/disabled in the fck_config.js 
+			file.
+			<LI>
+			"Show Table Borders" option: show borders for tables with borders size set to 
+			zero.
+			<LI>
+			"Show Details" option: show hidden elements (comments, scripts, paragraphs, 
+			line breaks)
+			<LI>
+			IE behavior integration module. Thanks to Daniel Shryock.
+			<LI>
+			"Find" option: to find text in the document.
+			<LI>
+			More performance enhancements.
+			<LI>
+			New testsubmit.php file. Thansk to Jim Michaels.
+			<LI>
+			Two initial PHP upload manager implementations (not working yet). Thanks to 
+			Frederic Tyndiuk and Christian Liljedahl.
+			<LI>
+			Initial PHP image browser implementation (not working yet). Thanks to Frederic 
+			Tyndiuk.
+			<LI>
+				Initial CFM upload manager implementation. Thanks to John Watson.
+			</LI>
+		</UL>
+		<H3>Version 0.9.4 beta</H3>
+		<UL>
+			<LI>
+			ColdFusion module integration is now available! Thanks to John Watson.
+			<LI>
+			"Insert Smiley" toolbar option! Thanks to Fredox. Take a look at fck_config.js 
+			for configuration options.
+			<LI>
+			"Paste as plain text" toolbar option!
+			<LI>
+			Right click support for links (edit / remove).
+			<LI>
+			Buttons now are shown in gray when disabled.
+			<LI>
+			Buttons are shown just when the image is downloaded (no more "red x" while 
+			waiting for it).
+			<LI>
+			The toolbar background color can be set with a CSS style (see fck_editor.css).
+			<LI>
+				Toolbar images have been reviewed:
+				<UL>
+					<LI>
+					Now they are transparent.
+					<LI>
+					No more over...gif for every button (so the editor loads quicker).
+					<LI>
+						Buttons states are controlled with CSS styles. (see fck_editor.css).</LI></UL>
+			<LI>
+			Internet Explorer 5.0 compatibility, except for the image uploading popup.
+			<LI>
+			Optimizations when loading the editor.
+			<LI>
+			[SF BUG-709544] - Toolbar buttons wait for the images to be downloaded to start 
+			watching and responding the user actions (turn buttons on/off when the user 
+			changes position inside the editor).
+			<LI>
+			Javascript integration is now Object Oriented. CreateFCKeditor function is not 
+			available anymore. Take a look in test.html.
+			<LI>
+				Two new configuration options, ImageBrowser and ImageUpload, are available to 
+				turn on and off the image upload and image browsing options in the Image dialog 
+				box. This options can be hidden for a specific editor instance throw specific 
+				URL parameter in the editor’s IFRAME (upload=true/false&amp;browse=true/false). 
+				All specific language integration modules handle this option. For sample see 
+				the _test directory.
+			</LI>
+		</UL>
+	</BODY>
+</HTML>

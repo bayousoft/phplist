@@ -1,0 +1,12 @@
+2003-08-06 15:18  michiel
+
+	* public_html/lists/admin/info/en/: adminattributes.php,
+	attributes.php, bounces.php, community.php, configure.php,
+	defaults.php, eventlog.php, export.php, getrss.php, import1.php,
+	import2.php, importadmin.php, import.php, login.php, logout.php,
+	members.php, message.php, messages.php, reconcileusers.php,
+	setup.php, spageedit.php, spage.php, templates.php, vote.php: made
+	a first start to make the backend translatable, by splitting help
+	and information in the pages into different directories identified
+	by the language iso
+

@@ -1,0 +1,58 @@
+
+How to install PHPlist
+
+If you've been using the previous public release, make sure to read UPGRADE. If you did, but
+you don't mind losing all your data, you can use the methods below.
+
+To install:
+
+(this assumes your webfiles reside in "public_html", and you have created a Mysql database already)
+
+* Take the archive file and unpack it in a temporary directory using "tar zxf phplist-x.y.z.tgz"
+* Move the contents of the directory "public_html" to your HTML area. (mv public_html/* ~/public_html)
+
+* You may want to password protect the "admin" directory in the lists directory.
+That's up to you. Check your webserver documentation. An example htaccess file for Apache is included
+(rename the "htaccess" file to ".htaccess":
+  - mv ~/public_html/lists/admin/htaccess ~/public_html/lists/admin/.htaccess).
+
+* Change the stuff in lists/config/config.php, you certainly will want to change the
+database location, username and password and the domain.
+
+* Use your browser to go to the admin index on your site (http://www.yoursite.com/lists/admin/)
+and choose the toplink (Setup PHPlist).
+
+* Choose the link "Configure Attributes" to identify the things you want to know from your
+users and the attributes that the system will offer you to make a selection on when sending messages.
+
+* Add some lists and you're up and running.
+
+* Sending messages
+It's useful to make this automatic, so you don't need to think about it, but if that's not possible
+you can do it manually, by using the "Process Message Queue" link in the admin page.
+
+If you want to automate it, you may want to use the perl script which you find in the cgi-bin directory.
+This script is still experimental, so use with care. Don't use the perl script if you want to send
+HTML messages. It won't work.
+
+The "public" pages are in the "lists" directory. You can edit the index.php file to make them look
+the way you want, and change footer.inc and header.inc. For the pages to work off the directory
+you need to have "index.php" as your default document (normally index.html) and the .htaccess file
+make sure of that. This may not work if you don't have permissions from your ISP to change
+the apache configuration. Consult your ISP if you're not sure.
+
+The "trick" to post to the directory will not always work. Particularly users with Windows have
+found that they get "Method not allowed" errors, when using PHPlist. If you get this, you should
+try to tell your webserver to allow the "POST" method to any URL in the PHPlist tree, particularly
+the directories (/lists and /lists/admin by default) themselves. If that doesn't work, you can
+set the option in the bottom of the config file, but that's not that neat :-)
+
+The current version will not work with an out-of-the-box PHP4.2.0 This is because 4.2.0 sets
+"register_globals" to be "Off". I will work on this for next versions, but for now, the only
+solution will be to set "register_globals" to "On". Sorry if that causes problems.
+
+If you want to use the FCKeditor (WYSISYG) for your messages, you can do so, by installing it 
+in a directory called FCKeditor in the admin directory of PHPlist. 
+Check out http://www.fredck.com/FCKeditor/
+
+That's it.

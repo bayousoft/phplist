@@ -1,0 +1,7 @@
+
+AuthName "Mailinglist Administration"
+AuthType Basic
+AuthUserFile /path/to/password/file
+
+require valid-user
+
