@@ -2,10 +2,17 @@
   margin-bottom: 0px;
   border-color: #e7be8f;
 }
+.shaderfooter {
+  font-size : 11px;
+  background-color : #e7be8f;
+  font-weight: bold;
+  text-align : left;
+  text-decoration : none;
+}
 .shaderheader {
   font-size : 11px; 
   color : black;
-  background-color : #e7be8f; 
+  background-color : #e7be8f;
   font-weight: bold; 
   border-top: 1px black solid;  
   border-bottom: 1px black solid;
@@ -17,45 +24,49 @@
   vertical-align : top; 
   padding-left : 3px;
 }
-.footertext {
+.shaderfootertexthidden {
+  font-size : 11px;
+  color : black;
+  background-color : #e7be8f;
+  font-weight: bold;
+  text-align : left;
+  text-decoration : none;
+  padding: 0px;
+  vertical-align : top;
+  padding-left : 3px;
   visibility: hidden;
-}  
-
-.shaderheadertext {
-  font-size : 11px; 
-  color : black;
-  background-color : #e7be8f; 
-  font-weight: bold; 
-  text-align : left; 
-  text-decoration : none; 
-  padding: 2px;
-  vertical-align : top; 
-  padding-left : 3px;
-}
-.shaderfootertext {
-  font-size : 11px; 
-  color : black;
-  background-color : #e7be8f; 
-  font-weight: bold; 
-  text-align : left; 
-  text-decoration : none; 
-  padding: 2px;
-  vertical-align : top; 
-  padding-left : 3px;
 }
 
+.shaderfootertextvisible {
+  font-size : 11px;
+  color : black;
+  background-color : #e7be8f;
+  font-weight: bold;
+  text-align : left;
+  text-decoration : none;
+  padding: 0px;
+  vertical-align : top;
+  padding-left : 3px;
+  visibility: visible;
+}
+
+.shaderfooterright {
+  background-color:#e7be8f;
+  text-align : right;
+  text-decoration : none;
+}
 .shaderdivider {
-  //background-color:#e7be8f; 
+  //background-color:#e7be8f;
 }
 .shaderborder {
-  //background-color:#e7be8f; 
+  //background-color:#e7be8f;
 }
 .shaderborderright {
-  background-color:#e7be8f; 
-  text-align : right; 
-  text-decoration : none; 
+  background-color:#e7be8f;
+  text-align : right;
+  text-decoration : none;
 }
-.shadersmall { 
+.shadersmall {
   font-family:"MS Sans Serif",Geneva,sans-serif;
   font-size:10px;
   text-decoration:none;
