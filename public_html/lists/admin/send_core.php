@@ -446,8 +446,13 @@ if (($send || $save || $sendtest) && $subject && $_POST["message"] && $from && !
 	}
 }
 
+// Pull in $footer variable from post 
+$footer = $_POST["footer"]; 
 
-if (!$footer)
+// If $id wasn't passed in (if it was passed, then $_POST should have
+// the database value in it already, and if it's empty, then we should
+// leave it empty) and $footer is blank, load the default.
+if ((!$id) && (!$footer))
   $footer = getConfig("messagefooter");
 
 echo $msg;
