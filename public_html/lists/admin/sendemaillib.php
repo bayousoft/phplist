@@ -75,7 +75,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
   }# else
   #	dbg("Using cached {$cached[$messageid]["fromemail"]}");
   if (VERBOSE)
-    output("Sending message $messageid with subject{$cached[$messageid]["subject"]} to $email\n");
+    output("Sending message $messageid with subject{$cached[$messageid]["subject"]} to $email");
 
   # erase any placeholders that were not found
 #  $msg = ereg_replace("\[[A-Z ]+\]","",$msg);
