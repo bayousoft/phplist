@@ -99,6 +99,33 @@ class phplist extends DefaultPlugin {
     	$this->tables["listuser"],$userid,$listid));
   }
 
+  function addEmail($email,$password = "") {
+    Sql_Query(sprintf('insert into user set email = "%s",
+      entered = now(),password = "%s",
+      passwordchanged = now(),disabled = 0,
+      uniqid = "%s",htmlemail = 1
+      ', $email,$password,getUniqid()),1);
+    $id = Sql_Insert_Id();
+    $_SESSION["userid"] = $id;
+    return $id;
+  }
+
+  function addEmailToList($email,$listid) {
+  	$userid = Sql_Fetch_Row_Query(sprintf('select * from %s where email = "%s"',
+    	$this->tables["user"],$email));
+    if ($userid[0]) {
+    	$this->addUserToList($userid[0],$listid);
+      return 1;
+    } else {
+    	$id = $this->addEmail($email);
+      if ($id) {
+        $this->addUserToList($id,$listid);
+        return 1;
+      }
+   	}
+    return 0;
+  }
+
   function confirmUser($userid) {
   	Sql_Query(sprintf('update %s set confirmed = 1 where id = %d',$this->tables["user"],$userid));
   }
