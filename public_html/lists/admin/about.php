@@ -11,6 +11,8 @@ Copyright &copy; 2000-2004 <a href="http://tincan.co.uk" target="_blank">Tincan 
 <b>Developers</b>:<ul>
 <li>Michiel Dethmers, Tincan Ltd</li>
 <li>Pete Ness, Nessoft LLC</li>
+<li>Xavier Dutoit, Sydesy</li>
+<li>Paul Brett, Ahead 4 Business</li>
 </ul>
 <p>The developers wish to thank the many contributors to this system, who have helped out with bug reports, suggestions, donations, feature requests, sponsoring, translations and many other contributions.</p>
 
