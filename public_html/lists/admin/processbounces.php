@@ -352,6 +352,8 @@ while ($user = Sql_Fetch_Row($userid_req)) {
         output(sprintf('unsubscribing %d -> %d bounces',$user[0],$cnt));
         $userurl = PageLink2("user&id=$user[0]",$user[0]);
         logEvent("User $userurl has consecutive bounces ($cnt) over treshold, user marked unconfirmed");
+        $emailreq = Sql_Fetch_Row_Query("select email from {$tables["user"]} where id = $user[0]");
+        addUserHistory($emailreq[0],"Auto Unsubscribed","User auto unsubscribed for $cnt consecutive bounces");
         Sql_Query(sprintf('update %s set confirmed = 0 where id = %d',$tables["user"],$user[0]));
         $email_req = Sql_Fetch_Row_Query(sprintf('select email from %s where id = %d',$tables["user"],$user[0]));
         $unsubscribed_users .= $email_req[0] . " [$user[0]] ($cnt)\n";
