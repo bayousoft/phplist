@@ -76,6 +76,24 @@ if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
       if ($option) {
       	set_time_limit(600);
         switch ($option) {
+          case "markallconfirmed":
+            info( "Marking all users confirmed");
+            Sql_Query("update {$tables["user"]} set confirmed = 1");
+            $total =Sql_Affected_Rows();
+            print "$total users apply<br/>";
+            break;
+          case "markallhtml":
+            info( "Marking all users to receive HTML");
+            Sql_Query("update {$tables["user"]} set htmlemail = 1");
+            $total =Sql_Affected_Rows();
+            print "$total users apply<br/>";
+            break;
+          case "markalltext":
+            info( "Marking all users to receive text");
+            Sql_Query("update {$tables["user"]} set htmlemail = 0");
+            $total =Sql_Affected_Rows();
+            print "$total users apply<br/>";
+            break;
           case "nolists":
             info( "Deleting users who are not on any list");
             $req = Sql_Query(sprintf('select %s.id from %s
@@ -291,6 +309,9 @@ print "</p>";
 <p>To delete all users who are not subscribed to any list, <?=PageLink2("reconcileusers&option=nolists","Click here")?>
 <p>To find users who have an invalid email, <?=PageLink2("reconcileusers&option=invalidemail","Click here")?>
 <p>To delete users who have an invalid email, <?=PageLink2("reconcileusers&option=deleteinvalidemail","Click here")?>
+<p>To mark all users to receive HTML, <?=PageLink2("reconcileusers&option=markallhtml","Click here")?>
+<p>To mark all users to receive text, <?=PageLink2("reconcileusers&option=markalltext","Click here")?>
+<p>To mark all users confirmed, <?=PageLink2("reconcileusers&option=markallconfirmed","Click here")?>
 <p>To try to (automatically) fix emails for users who have an invalid email, <?=PageLink2("reconcileusers&option=fixinvalidemail","Click here")?>
 <p>To remove stale entries from tables, <?=PageLink2("reconcileusers&option=removestaleentries","Click here")?>
 <hr>
