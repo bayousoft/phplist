@@ -2,14 +2,14 @@
 require_once "accesscheck.php";
 
 $GLOBALS["plugins"] = array();
-if (is_dir("plugins")) {
+if (is_dir(PLUGIN_ROOTDIR)) {
   include_once "defaultplugin.php";
   $files = array();
-  $dh=opendir("plugins");
+  $dh=opendir(PLUGIN_ROOTDIR);
   while (false!==($file = readdir($dh))) { 
     if ($file != "." && $file != ".." && 
       !preg_match("/~$/",$file) && 
-      is_file("plugins/".$file) && 
+      is_file(PLUGIN_ROOTDIR."/".$file) && 
       preg_match("/\.php$/",$file) ){
       array_push($files,$file);
     }
@@ -20,7 +20,7 @@ if (is_dir("plugins")) {
   foreach ($files as $file) {
     list($name,$ext) = explode(".",$file);
     if (preg_match("/[\w]+/",$name)) {
-      include_once "plugins/" . $file;
+      include_once PLUGIN_ROOTDIR."/" . $file;
       eval("\$class = new ". $name ."();");
 #      print "$name = $class<br/>";
       $GLOBALS["plugins"][$name] = $class;

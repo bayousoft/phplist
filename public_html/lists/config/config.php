@@ -207,6 +207,16 @@ define("MIMETYPES_FILE","/etc/mime.types");
 # if a mimetype cannot be determined for a file, specify the default mimetype here:
 define("DEFAULT_MIMETYPE","application/octet-stream");
 
+# you can create your own pages to slot into PHPlist and do certain things
+# that are more specific to your situation (plugins)
+# if you do this, you can specify the directory where your plugins are. It is
+# useful to keep this outside the PHPlist system, so they are retained after
+# upgrading
+# there are some example plugins in the "plugins" directory inside the
+# admin directory
+# this directory needs to be absolute or relative to the admin directory
+define("PLUGIN_ROOTDIR","plugins");
+
 # the attachment repository is the place where the files are stored (if you use
 # ALLOW_ATTACHMENTS)
 # this needs to be writable to your webserver user
@@ -229,7 +239,7 @@ $attachment_repository = '/tmp';
 # see also http://www.securityfocus.com/archive/1/255910
 # this is likely to break things for other mailreaders, so you should
 # only use it if all your users have Outlook (not Express)
-define("WORKAROUND_OUTLOOK_BUG",1);
+define("WORKAROUND_OUTLOOK_BUG",0);
 
 # the mime type for the export files. You can try changing this to
 # application/vnd.ms-excel to make it open automatically in excel
