@@ -20,7 +20,9 @@ if (isset($_GET["find"])) {
 }
 $find = $_SESSION["userlistfilter"]["find"];
 $findby = $_SESSION["userlistfilter"]["findby"];
-
+if (!$findby) {
+	$findby = "email";
+}
 # hmm interesting, if they select a findby but not a find, use the Sql wildcard:
 if ($findby && !$find)
 	$find = '%';
@@ -246,7 +248,7 @@ if ($total > MAX_USER_PP) {
 <tr><td colspan=4><input type=hidden name=id value="<?php echo $listid?>">
 Find a user: <input type=text name=find value="<?php echo $find != '%' ? $find : ""?>" size=30>
 <select name="findby"><option value="email" <?php echo $findby == "email"? "selected":""?>>Email</option>
-<select name="findby"><option value="foreignkey" <?php echo $findby == "foreignkey"? "selected":""?>>Foreign Key</option>
+<option value="foreignkey" <?php echo $findby == "foreignkey"? "selected":""?>>Foreign Key</option>
 <?php
   $att_req = Sql_Query("select id,name from ".$tables["attribute"]." where type = \"hidden\" or type = \"textline\" or type = \"select\"");
   while ($row = Sql_Fetch_Array($att_req)) {
