@@ -1,5 +1,6 @@
 
 var helpwin = null;
+var helploc = null;
 function deleteRec(url) {
 	if (confirm("Are you sure you want to delete this record?")) {
 		document.location = url;
@@ -11,20 +12,21 @@ function deleteRec2(msg,url) {
 		document.location = url;
 }
 
-function help($loc) {
-	if (helpwin == "object" || (helpwin != null && helpwin.document != null)) {
+function help(loc) {
+	if (helpwin && !helpwin.closed) {
 			helpwin.close();
-			helpwin = null;
-			t_url = url;
-			t_w = w;
-			t_h = h;
-			setTimeout("openhelp($loc)",500)
-	} else
-		openhelp($loc);
+			helpwin = '';
+      helploc = loc;
+			setTimeout("openhelp()",500)
+	} else {
+  	helploc = loc;
+		openhelp();
+  }
 }
 
-function openhelp($loc) {
-  helpwin=window.open($loc,"help",'screenX=100,screenY=100,width=350,height=350,scrollbars=yes');
+function openhelp() {
+helpwin=window.open(helploc,"help",'screenX=100,screenY=100,width=350,height=350,scrollbars=yes');
+  if (window.focus) {helpwin.focus()}
 }
 function print_self(){
   window.focus();
