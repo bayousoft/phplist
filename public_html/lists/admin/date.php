@@ -1,7 +1,7 @@
 <?
 require_once "accesscheck.php";
 
-if (!is_object("date")) return;
+if (is_object("date")) return;
 class date {
   var $type = "date";
   var $name = "";
@@ -21,6 +21,7 @@ class date {
      "11" => "November",
      "12" => "December"
   );
+  var $useTime = false;
 
   function date($name = "") {
   	$this->name = $name;
@@ -29,10 +30,16 @@ class date {
   function getDate($value = "") {
   	if (!$value)
     	$value = $this->name;
-    global $year,$month,$day;
-    if ($year && $month && $day)
-      return sprintf("%04d-%02d-%02d",$year[$value],$month[$value],$day[$value]);
+    if ($_REQUEST["year"] && $_REQUEST["month"] && $_REQUEST["day"])
+      return sprintf("%04d-%02d-%02d",$_REQUEST["year"][$value],$_REQUEST["month"][$value],$_REQUEST["day"][$value]);
   }
+
+  function getTime($value = "") {
+  	if (!$value)
+    	$value = $this->name;
+    if ($_REQUEST["hour"] && $_REQUEST["minute"])
+      return sprintf("%02d:%02d",$_REQUEST["hour"][$value],$_REQUEST["minute"][$value]);
+	}
 
   function showInput($name,$fielddata,$value,$document_id = 0) {
   	if (!$name)
@@ -41,6 +48,7 @@ class date {
     $year = substr($value,0,4);
     $month = substr($value,5,2);
     $day = substr($value,8,2);
+
     if (!$day && !$month && !$year) {
       $now = getdate(time());
       $day = $now["mday"];
@@ -64,7 +72,7 @@ class date {
         $sel = "selected";
       $html .= sprintf('<option value="%s" %s>%s',$key,$sel,$val);
     }
-    
+
     $html .= '</select><select name="year['.$name.']">';
     for ($i=$year - 3;$i<$year + 10;$i++) {
       $html .= "<option ";
@@ -73,6 +81,24 @@ class date {
       $html .= ">$i";
     }
     $html .= "</select>";
+    if ($this->useTime) {
+    	$html .= '<select name="hour['.$name.']">';
+      for ($i=0;$i<23;$i++) {
+        $sel = "";
+        if ($i == $hour)
+          $sel = "selected";
+        $html .= sprintf('<option value="%d" %s>%02d',$i,$sel,$i);
+      }
+      $html .= '</select>';
+    	$html .= '<select name="minute['.$name.']">';
+      for ($i=0;$i<59;$i+=15) {
+        $sel = "";
+        if ($i == $minute)
+          $sel = "selected";
+        $html .= sprintf('<option value="%d" %s>%02d',$i,$sel,$i);
+      }
+      $html .= '</select>';
+    }
     return $html;
   }
 
