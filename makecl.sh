@@ -1,12 +1,17 @@
 #!/bin/bash
 DATE=`date +"%Y-%m-%d %H:%M"`;
 
-cvs2cl.pl --prune -r -t --hide-filenames
+cvs2cl.pl --prune -r -t --hide-filenames > /dev/null 2>&1
 echo "Changelog for PHPlist $DATE" > cl
 echo >> cl
+if [ -f ChangeLog ]; then
 cat ChangeLog changelog.presf >> cl
 mv cl changelog
 rm -f ChangeLog
+else
+echo Error creating ChangeLog
+rm -f cl
+fi
 # make one for languages as well
 
 exit;
