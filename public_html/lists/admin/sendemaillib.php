@@ -392,10 +392,25 @@ function addAttachments($msgid,&$mail,$type) {
               $contents = fread($fp,filesize($attachment_repository."/".$att["filename"]));
               fclose($fp);
               $mail->add_attachment($contents,
-                $att["remotefile"],
+                basename($att["remotefile"]),
                 $att["mimetype"]);
-              }
             }
+          } elseif (is_file($att["remotefile"]) && filesize($att["remotefile"])) {
+          	# handle local filesystem attachments
+            $fp = fopen($att["remotefile"],"r");
+            if ($fp) {
+              $contents = fread($fp,filesize($att["remotefile"]));
+              fclose($fp);
+              $mail->add_attachment($contents,
+                basename($att["remotefile"]),
+                $att["mimetype"]);
+            }
+					} else {
+          	logEvent("Attachment ".$att["remotefile"]." does not exist");
+            $msg = "Error, when trying to send message $msgid the attachment
+            	".$att["remotefile"]." could not be found";
+            sendMail(getConfig("report_address"),"Mail list error",$msg,"");
+					}
          	break;
        	case "text":
         	$viewurl = "http://".$website.$pageroot.'/dl.php?id='.$att["id"];
