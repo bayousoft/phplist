@@ -268,7 +268,13 @@ define("DEFAULT_MIMETYPE","application/octet-stream");
 # there are some example plugins in the "plugins" directory inside the
 # admin directory
 # this directory needs to be absolute, or relative to the admin directory
-define("PLUGIN_ROOTDIR","plugins");
+
+define("PLUGIN_ROOTDIR","/home/me/phplistplugins");
+
+# uncomment this one to see the examples in the system (and then comment the 
+# one above)
+#define("PLUGIN_ROOTDIR","plugins");
+
 
 # the attachment repository is the place where the files are stored (if you use
 # ALLOW_ATTACHMENTS)
