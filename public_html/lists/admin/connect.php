@@ -38,6 +38,17 @@ if (!isset($adminlanguage) || !is_array($adminlanguage)) {
 	);
 }
 
+function SaveConfig($item,$value,$editable=1) {
+	global $tables;
+  if ($value == "false" || $value == "no") {
+  	$value = 0;
+  } else if ($value == "true" || $value == "yes") {
+  	$value = 1;
+  }
+ 	Sql_Query(sprintf('replace into %s (item,value,editable) values("%s","%s",%d)',
+ 	  $tables["config"],$item,addslashes($value),$editable));
+}
+
 # identify pages that can be run on commandline
 $commandline_pages = array("send","processqueue","processbounces","getrss");
 
@@ -50,6 +61,7 @@ if (!isset($table_prefix))
 if (!isset($usertable_prefix))
   $usertable_prefix = $table_prefix;
 
+include "lib.php";
 $tables = array(
   "user" => $usertable_prefix . "user",
   "user_history" => $usertable_prefix . "user_history",
@@ -836,6 +848,5 @@ function formatDateTime ($datetime,$short = 0) {
   $time = substr($datetime,11,8);
   return formatDate($date,$short). " ".formatTime($time,$short);
 }
-include "lib.php";
 
 ?>

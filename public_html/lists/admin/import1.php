@@ -241,6 +241,7 @@ if(isset($import)) {
 
     if ($count_email_exist) {
       print "<br/>$count_email_exist emails existed in the database";
+    }
     if(!$some && !$additional_emails) {
       print "<br>All the emails already exist in the database.";
     } else {

@@ -47,17 +47,6 @@ if (defined("IN_WEBBLER") && is_object($GLOBALS["config"]["plugins"]["phplist"])
   $GLOBALS["table_prefix"] = $GLOBALS["config"]["plugins"]["phplist"]->table_prefix;
 }
 
-function SaveConfig($item,$value,$editable=1) {
-	global $tables;
-  if ($value == "false" || $value == "no") {
-  	$value = 0;
-  } else if ($value == "true" || $value == "yes") {
-  	$value = 1;
-  }
- 	Sql_Query(sprintf('replace into %s (item,value,editable) values("%s","%s",%d)',
- 	  $tables["config"],$item,addslashes($value),$editable));
-}
-
 function listName($id) {
   global $tables;
   $req = Sql_Fetch_Row_Query(sprintf('select name from %s where id = %d',$tables["list"],$id));
