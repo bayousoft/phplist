@@ -4,25 +4,47 @@ require_once "accesscheck.php";
 # library used for plugging into the webbler, instead of "connect"
 # depricated and should be removed
 
-if (!defined(TEST))
-	define("TEST",0);
-
 #error_reporting(63);
 
-# make sure magic quotes are on. Try to switch it on
-ini_set("magic_quotes_gpc","on");
+# set some defaults if they are not specified
+if (!defined("REGISTER")) define("REGISTER",1);
 if (!defined("USE_PDF")) define("USE_PDF",0);
 if (!defined("ENABLE_RSS")) define("ENABLE_RSS",0);
 if (!defined("ALLOW_ATTACHMENTS")) define("ALLOW_ATTACHMENTS",0);
 if (!defined("EMAILTEXTCREDITS")) define("EMAILTEXTCREDITS",0);
 if (!defined("PAGETEXTCREDITS")) define("PAGETEXTCREDITS",0);
-if (!defined("NUMCRITERIAS")) define("NUMCRITERIAS",2);
+if (!defined("USEFCK")) define("USEFCK",0);
+if (!defined("ASKFORPASSWORD")) define("ASKFORPASSWORD",0);
+if (!defined("UNSUBSCRIBE_REQUIRES_PASSWORD")) define("UNSUBSCRIBE_REQUIRES_PASSWORD",0);
+if (!defined("ENCRYPTPASSWORD")) define("ENCRYPTPASSWORD",0);
+if (!defined("PHPMAILER")) define("PHPMAILER",0);
+if (!defined("MANUALLY_PROCESS_QUEUE")) define("MANUALLY_PROCESS_QUEUE",1);
+if (!defined("CHECK_SESSIONIP")) define("CHECK_SESSIONIP",1);
+if (!defined("FILESYSTEM_ATTACHMENTS")) define("FILESYSTEM_ATTACHMENTS",0);
+if (!defined("MIMETYPES_FILE")) define("MIMETYPES_FILE","/etc/mime.types");
+if (!defined("DEFAULT_MIMETYPE")) define("DEFAULT_MIMETYPE","application/octet-stream");
+if (!defined("USE_REPETITION")) define("USE_REPETITION",0);
+if (!defined("USE_EDITMESSAGE")) define("USE_EDITMESSAGE",0);
+if (!defined("FCKIMAGES_DIR")) define("FCKIMAGES_DIR","uploadimages");
+if (!defined("USE_MANUAL_TEXT_PART")) define("USE_MANUAL_TEXT_PART",0);
+if (!defined("ALLOW_NON_LIST_SUBSCRIBE")) define("ALLOW_NON_LIST_SUBSCRIBE",0);
+if (!defined("MAILQUEUE_BATCH_SIZE")) define("MAILQUEUE_BATCH_SIZE",0);
+if (!defined("MAILQUEUE_BATCH_PERIOD")) define("MAILQUEUE_BATCH_PERIOD",3600);
+
+# keep it default to old behaviour for now
+if (!defined("USE_PREPARE")) define("USE_PREPARE",1);
+
+if (!isset($GLOBALS["export_mimetype"])) $GLOBALS["export_mimetype"] = 'application/csv';
+
+if (!defined("WORKAROUND_OUTLOOK_BUG") && defined("USE_CARRIAGE_RETURNS")) {
+	define("WORKAROUND_OUTLOOK_BUG",USE_CARRIAGE_RETURNS);
+}
 
 $domain = getConfig("domain");
 $website = getConfig("website");
-if (is_object($config["plugins"]["phplist"])) {
-	$tables = $config["plugins"]["phplist"]->tables;
-  $table_prefix = $config["plugins"]["phplist"]->table_prefix;
+if (defined("IN_WEBBLER") && is_object($GLOBALS["config"]["plugins"]["phplist"])) {
+	$tables = $GLOBALS["config"]["plugins"]["phplist"]->tables;
+  $table_prefix = $GLOBALS["config"]["plugins"]["phplist"]->table_prefix;
 }
 
 function listName($id) {
@@ -46,15 +68,58 @@ function HTMLselect ($name, $table, $column, $value) {
   return $res;
 }
 
-function sendMail ($to,$subject,$message,$header,$parameters) {
+function sendMail ($to,$subject,$message,$header = "",$parameters = "") {
 	# global function to capture sending emails, to avoid trouble with
-	# older php versions
+	# older (and newer!) php versions
+	if (TEST)
+		return 1;
+  if (!$to)  {
+		logEvent("Error: empty To: in message with subject $subject to send");
+  	return 0;
+  } elseif (!$subject) {
+		logEvent("Error: empty Subject: in message to send to $to");
+  	return 0;
+  }    
 	$v = phpversion();
 	$v = preg_replace("/\-.*$/","",$v);
-	if ($v > "4.0.5")
-    return mail($to,$subject,$message,$header,$parameters);
-	else
-    return mail($to,$subject,$message,$header);
+	if ($GLOBALS["message_envelope"]) {
+  	$header = rtrim($header);
+    if ($header)
+      $header .= "\n";
+		$header .= "Errors-To: ".$GLOBALS["message_envelope"];
+		if (!$parameters || !ereg("-f".$GLOBALS["message_envelope"],$parameters)) {
+			$parameters = '-f'.$GLOBALS["message_envelope"];
+		}
+	}
+
+  if (WORKAROUND_OUTLOOK_BUG) {
+  	$header = rtrim($header);
+    if ($header)
+      $header .= "\n";
+ 		$header .= "X-Outlookbug-fixed: Yes";
+		$message = preg_replace("/\r?\n/", "\r\n", $message);
+  }
+
+  # version 4.2.3 (and presumably up) does not allow the fifth parameter in safe mode
+  # make sure not to send out loads of test emails to ppl when developing
+  if (!ereg("dev",VERSION)) {
+    if ($v > "4.0.5" && !ini_get("safe_mode")) {
+    	if (mail($to,$subject,$message,$header,$parameters))
+      	return 1;
+      else
+      	return mail($to,$subject,$message,$header);
+    }
+    else
+      return mail($to,$subject,$message,$header);
+  } else {
+  	# send mails to one place when running a test version
+    $message = "To: $to\n".$message;
+    if ($GLOBALS["developer_email"]) {
+     	return mail($GLOBALS["developer_email"],$subject,$message,$header,$parameters);
+    } else {
+      print "Error: Running CVS version, but developer_email not set";
+    }
+  }
 }
 
 function safeImageName($name) {
@@ -150,15 +215,13 @@ function timeDiff($time1,$time2) {
   return $res;
 }
 
-function previewTemplate($id,$adminid = 0,$text = "") {
+function previewTemplate($id,$adminid = 0,$text = "", $footer = "") {
   global $tables;
-  if ($_GET["pi"])
-  	$rest = '&pi='.$_GET["pi"];
   $tmpl = Sql_Fetch_Row_Query(sprintf('select template from %s where id = %d',$tables["template"],$id));
-  $template = $tmpl[0];
+  $template = stripslashes($tmpl[0]);
   $img_req = Sql_Query(sprintf('select id,filename from %s where template = %d order by filename desc',$tables["templateimage"],$id));
   while ($img = Sql_Fetch_Array($img_req)) {
-    $template = preg_replace("#".preg_quote($img["filename"])."#","?page=image&id=".$img["id"].$rest,$template);
+    $template = preg_replace("#".preg_quote($img["filename"])."#","?page=image&id=".$img["id"],$template);
   }
   if ($adminid) {
     $att_req = Sql_Query("select name,value from {$tables["adminattribute"]},{$tables["admin_attribute"]} where {$tables["adminattribute"]}.id = {$tables["admin_attribute"]}.adminattributeid and {$tables["admin_attribute"]}.adminid = $adminid");
@@ -166,10 +229,23 @@ function previewTemplate($id,$adminid = 0,$text = "") {
       $template = preg_replace("#\[LISTOWNER.".strtoupper(preg_quote($att["name"]))."\]#",$att["value"],$template);
     }
   }
+  if ($footer)
+	  $template = eregi_replace("\[FOOTER\]",$footer,$template);
   $template = preg_replace("#\[CONTENT\]#",$text,$template);
+  $template = eregi_replace("\[UNSUBSCRIBE\]",sprintf('<a href="%s">%s</a>',getConfig("unsubscribeurl"),$GLOBALS["strThisLink"]),$template);
+  $template = eregi_replace("\[PREFERENCES\]",sprintf('<a href="%s">%s</a>',getConfig("preferencesurl"),$GLOBALS["strThisLink"]),$template);
+  if (!EMAILTEXTCREDITS) {
+	  $template = eregi_replace("\[SIGNATURE\]",$GLOBALS["PoweredByImage"],$template);
+  } else {
+	  $template = eregi_replace("\[SIGNATURE\]",$GLOBALS["PoweredByText"],$template);
+  }
   $template = ereg_replace("\[[A-Z\. ]+\]","",$template);
+  $template = ereg_replace('<form','< form',$template);
+  $template = ereg_replace('</form','< /form',$template);
+
   return $template;
 }
+
 
 function parseMessage($content,$template,$adminid = 0) {
   global $tables;
@@ -266,6 +342,15 @@ function releaseLock($processid) {
 	global $tables;
   if (!$processid) return;
   Sql_query("delete from {$tables["sendprocess"]} where id = $processid");
+}
+
+function adminName($id) {
+	if (!$id) {
+  	$id = $_SESSION["logindetails"]["id"];
+  }
+  global $tables;
+  $req = Sql_Fetch_Row_Query(sprintf('select loginname from %s where id = %d',$tables["admin"],$id));
+  return $req[0] ? $req[0] : "<font color=red>Nobody</font>";
 }
 
 if (!function_exists("dbg")) {
