@@ -80,18 +80,12 @@ if (isset($GLOBALS["require_login"]) && $GLOBALS["require_login"]) {
       $msg = "your account has been disabled";
       $page = "login";
     } elseif ($userdata[0] && $userdata[0] == $_REQUEST["password"] && strlen($userdata[0]) > 3) {
-      #session_register("adminloggedin");
-      #session_register("logindetails");
       $_SESSION["adminloggedin"] = getenv("REMOTE_ADDR");
       # assigning to $_SESSION this is broken in 4.2.3
       $_SESSION["logindetails"] = array(
         "adminname" => $_REQUEST["login"],
         "id" => $userdata[2]
       );
-#			$logindetails = array(
-#        "adminname" => $_REQUEST["login"],
-#        "id" => $userdata[2]
-#      );
       if ($_POST["page"] && $_POST["page"] != "") {
       	$page = $_POST["page"];
       }
@@ -117,22 +111,23 @@ if (isset($GLOBALS["require_login"]) && $GLOBALS["require_login"]) {
     $_SESSION["logindetails"] = "";
   	$page = "login";
   } elseif ($_SESSION["logindetails"]) {
-#  } elseif ($logindetails) {
-#    $noaccess_req = Sql_Query(sprintf('select disabled from %s where id = "%s"',$tables["admin"],$logindetails["id"]));
-    $noaccess_req = Sql_Query(sprintf('select disabled from %s where id = "%s"',$tables["admin"],$_SESSION["logindetails"]["id"]));
-    if (!Sql_Affected_Rows()) {
+    $noaccess_req = Sql_Fetch_Row_Query(sprintf('select id,disabled 
+      from %s where id = "%s"',$tables["admin"],
+      $_SESSION["logindetails"]["id"]));
+    if (!$noaccess_req[0]) {
       session_unregister("adminloggedin");
       session_unregister("logindetails");
+      $_SESSION["adminloggedin"] = "";
+      $_SESSION["logindetails"] = "";
       $page = "login";
       $msg = "No such account";
-    } else {
-      $noaccess = Sql_Fetch_Array($noaccess_req);
-      if ($noaccess[0]) {
-        session_unregister("adminloggedin");
-        session_unregister("logindetails");
-        $page = "login";
-        $msg = "your account has been disabled";
-      }
+    } elseif ($noaccess_req[1]) {
+      session_unregister("adminloggedin");
+      session_unregister("logindetails");
+      $_SESSION["adminloggedin"] = "";
+      $_SESSION["logindetails"] = "";
+      $page = "login";
+      $msg = "your account has been disabled";
     }
   }
 }

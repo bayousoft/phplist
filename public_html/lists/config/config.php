@@ -232,9 +232,17 @@ $tmpdir = '/tmp';
 # $form_action = 'index.php';
 
 # select the database module to use
-# currently there is only mysql, anyone wanting to submit other database modules is
+# anyone wanting to submit other database modules is
 # very welcome!
 $database_module = "mysql.inc";
+
+# there is now support for the use of ADOdb
+# this is still experimental, and any findings should be reported in the
+# bugtracker
+# in order to use it, define the following settings:
+#$database_module = 'adodb.inc';
+#$adodb_inc_file = '/path/to/adodb_inc.php';
+#$adodb_driver = 'mysql';
 
 # if you want more trouble, make this 63 (very unlikely you will like the result)
 $error_level = error_reporting(0);

@@ -36,7 +36,7 @@ switch ($access) {
 $html = '';
 $result = Sql_query("SELECT * FROM $tables[list] $subselect order by listorder");
 while ($row = Sql_fetch_array($result)) {
-	$count = Sql_Fetch_Row_Query("select count(*) from {$tables["listuser"]} where listid = {$row["id"]}");
+	$count = Sql_Fetch_Row_Query("select count(*) from {$tables["listuser"]} where listid = {$row["id"]} ");
   $desc = stripslashes($row["description"]);
   if ($row["rssfeed"]) {
   	$desc = "RSS source:".$row["rssfeed"]."  ".

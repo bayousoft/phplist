@@ -14,9 +14,10 @@ if ($_SERVER["ConfigFile"] && is_file($_SERVER["ConfigFile"])) {
   exit;
 }
 include "../pagetop.php";
-if (!isset($topic))
+if (!isset($_GET["topic"]))
   $topic = "home";
-
+else
+  $topic = $_GET["topic"];
 
 preg_match("/([\w_]+)/",$topic,$regs);
 $topic = $regs[1];

@@ -1,7 +1,6 @@
 <p>Notes for merging attributes.</p>
-<br/>
 <p>Merging attributes means that the values for users will stay the same, but that
-the actual attribute they belong to becomes one. The attribute that will remain
+the actual attribute they belong to is merged into one. The attribute that will remain
 is the first one (by listorder, as you see it in the page).</p>
 <ul>
 <li>You can only merge attributes that have the same type</li>

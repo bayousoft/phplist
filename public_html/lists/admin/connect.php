@@ -102,7 +102,7 @@ $rssfrequencies = array(
 
 $redfont = "<font color=\"red\">";
 $efont = "</font>";
-$$GLOBALS["coderoot"] = "";
+$GLOBALS["coderoot"] = "";
 
 /*
 	We request you retain the $PoweredBy variable including the links.
@@ -445,7 +445,8 @@ function newMenu() {
 	$spe = '</span>';
   if ($GLOBALS["require_login"])
     $html .= $spb.PageLink2("logout","Logout").'<br />'.$spe;
-
+    
+  $_GET["pi"] = "";
   $html .= $spb.PageLink2("home","Main Page").$spe;
   $req = Sql_Query(sprintf('select * from %s %s',$tables["subscribepage"],$subselect));
   $spages = array();
