@@ -13,7 +13,8 @@ used. Currently this class has been used verbatim. Lots of thanks go to Ed.
 More info in the lists/admin/onyxrss directory
 
 For a more visual message editing facility the FCKeditor from Frederico Caldeira Knabben
-has been integrated.
+has been integrated. Frederico has done a brilliant job, and we're very thankful
+for making his code LGPL. 
 More information is at http://www.fredck.com/FCKeditor/
 
 Thanks go to all the people who have contributed (and are contributing) by

@@ -188,6 +188,13 @@ define("MANUALLY_PROCESS_RSS",1);
 # if you want to try it, set this to 1
 define("USEFCK",0);
 
+# If you want to upload images to the FCKeditor, you need to specify the location
+# of the directory where the images go. This needs to be writable by the webserver,
+# and it needs to be in your public document (website) area
+# the directory is relative to the root of PHPlist as set below
+# This is a potential security risk, so read README.security for more information
+define("FCKIMAGES_DIR","uploadimages");
+
 # attachments is a new feature and is currently still experimental
 # set this to 1 if you want to try it
 # caution, message may become very large. it is generally more
