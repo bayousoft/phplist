@@ -105,7 +105,7 @@ if (isset($GLOBALS["require_login"]) && $GLOBALS["require_login"]) {
     $page = "login";
   } elseif (!session_is_registered("adminloggedin")) {
     $page = "login";
-  } elseif ($_SESSION["adminloggedin"] && $_SESSION["adminloggedin"] != getenv("REMOTE_ADDR")) {
+  } elseif (CHECK_SESSIONIP && $_SESSION["adminloggedin"] && $_SESSION["adminloggedin"] != getenv("REMOTE_ADDR")) {
   	$msg = "Your IP address has changed. For security reasons, please login again";
     $_SESSION["adminloggedin"] = "";
     $_SESSION["logindetails"] = "";

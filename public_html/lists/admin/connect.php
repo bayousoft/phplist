@@ -31,6 +31,7 @@ if (!defined("ASKFORPASSWORD")) define("ASKFORPASSWORD",0);
 if (!defined("ENCRYPTPASSWORD")) define("ENCRYPTPASSWORD",0);
 if (!defined("PHPMAILER")) define("PHPMAILER",0);
 if (!defined("MANUALLY_PROCESS_QUEUE")) define("MANUALLY_PROCESS_QUEUE",1);
+if (!defined("CHECK_SESSIONIP")) define("CHECK_SESSIONIP",1);
 if (!$GLOBALS["export_mimetype"]) $GLOBALS["export_mimetype"] = 'application/csv';
 if (!defined("WORKAROUND_OUTLOOK_BUG") && defined("USE_CARRIAGE_RETURNS")) {
 	define("WORKAROUND_OUTLOOK_BUG",USE_CARRIAGE_RETURNS);

@@ -306,7 +306,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && is_array($_POST["
   $attids = join(',',$attributes);
   $attids = substr($attids,0,-1);
   if ($attids && $attids != "") {
-    $res = Sql_Verbose_Query("select * from ".$tables["attribute"] ." where id in ($attids)");
+    $res = Sql_Query("select * from ".$tables["attribute"] ." where id in ($attids)");
     while ($attribute = Sql_Fetch_Array($res)) {
       if ($attribute["tablename"] != "")
         $fieldname = $attribute["tablename"];
@@ -322,7 +322,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && is_array($_POST["
         $value = join(",",$values);
       }
       if ($replace) {
-        Sql_Verbose_query(sprintf('replace into %s (attributeid,userid,value) values("%s","%s","%s")',
+        Sql_query(sprintf('replace into %s (attributeid,userid,value) values("%s","%s","%s")',
           $tables["user_attribute"],$attribute["id"],$userid,$value));
         if ($attribute["type"] != "hidden") {
           $datachange .= strip_tags($attribute["name"]) . " = ";

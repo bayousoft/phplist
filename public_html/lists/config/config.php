@@ -76,6 +76,12 @@ $require_login = 1;
 # to 1. See README.passwords for more information
 define("ASKFORPASSWORD",0);
 
+# to increase security the session of a user is checked for the IP address
+# this needs to be the same for every request. This may not work with 
+# network situations where you connect via multiple proxies, so you can
+# switch off the checking by setting this to 0
+define("CHECK_SESSIONIP",1);
+
 # if you use passwords, you can store them encrypted or in plain text
 # if you want to encrypt them, set this one to 1
 # if you use encrypted passwords, users can only request you as an administrator to
