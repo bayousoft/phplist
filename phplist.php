@@ -194,6 +194,7 @@ class phplist extends DefaultPlugin {
       "eventlog" => "Eventlog",
       "spage" => "Configure Subscribe Pages",
       "spageedit" => "Edit a Subscribe Page",
+      "editlist" => "Edit a list",
     );
     return $tasks;
   }
