@@ -147,7 +147,7 @@ if ($reload) {
 $send_process_id = getPageLock();
 $script_stage = 1; # we are active
 
-$messages = Sql_query("select id,userselection,rsstemplate from ".$tables["message"]." where status != \"sent\" and status != \"prepared\" order by entered");
+$messages = Sql_query("select id,userselection,rsstemplate from ".$tables["message"]." where status != \"sent\" and status != \"prepared\" and embargo < now() order by entered");
 $num = Sql_affected_rows();
 if (Sql_Has_Error($database_connection)) {  ProcessError(Sql_Error($database_connection)); }
 

@@ -17,9 +17,17 @@ if ($_SERVER["ConfigFile"] && is_file($_SERVER["ConfigFile"])) {
 error_reporting($er);
 
 $id = sprintf('%d',$_GET["id"]);
-$data = Sql_Fetch_Row_Query("select filename,mimetype,remotefile,description,size from {$tables["attachment"]} where id = $id");
 
-if ($data[0] && is_file($attachment_repository. "/".$data[0])) {
+$data = Sql_Fetch_Row_Query("select filename,mimetype,remotefile,description,size from {$tables["attachment"]} where id = $id");
+if (is_file($attachment_repository. "/".$data[0])) {
+	$file = $attachment_repository. "/".$data[0];
+} elseif (is_file($data[2]) && filesize($data[2])) {
+  $file = $data[2];
+} else {
+	$file = "";
+}
+
+if ($file && is_file($file)) {
   ob_end_clean();
   if ($data[1]) {
     header("Content-type: $data[1]");
@@ -32,7 +40,7 @@ if ($data[0] && is_file($attachment_repository. "/".$data[0])) {
   if ($data[4])
   	$size = $data[4];
   else
-  	$size = filesize($attachment_repository."/".$data[0]);
+  	$size = filesize($file);
 
   if ($size) {
 	  header ("Content-Length: " . $size);
@@ -40,7 +48,7 @@ if ($data[0] && is_file($attachment_repository. "/".$data[0])) {
   }
   else
   	$fsize = 4096;
-  $fp = fopen($attachment_repository. "/".$data[0],"r");
+  $fp = fopen($file,"r");
   while ($buffer = fread($fp,$fsize)) {
     print $buffer;
   flush();

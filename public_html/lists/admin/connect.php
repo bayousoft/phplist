@@ -18,8 +18,10 @@ if (file_exists("commonlib/lib/userlib.php")) {
 	include_once ("admin/commonlib/lib/userlib.php");
 }
 
-# make sure magic quotes are on. Try to switch it on
+# make sure magic quotes are on. Try to switch it on, this may fail
 ini_set("magic_quotes_gpc","on");
+
+# set some defaults if they are not specified
 if (!defined("REGISTER")) define("REGISTER",1);
 if (!defined("USE_PDF")) define("USE_PDF",0);
 if (!defined("ENABLE_RSS")) define("ENABLE_RSS",0);
@@ -32,7 +34,12 @@ if (!defined("ENCRYPTPASSWORD")) define("ENCRYPTPASSWORD",0);
 if (!defined("PHPMAILER")) define("PHPMAILER",0);
 if (!defined("MANUALLY_PROCESS_QUEUE")) define("MANUALLY_PROCESS_QUEUE",1);
 if (!defined("CHECK_SESSIONIP")) define("CHECK_SESSIONIP",1);
+if (!defined("FILESYSTEM_ATTACHMENTS")) define("FILESYSTEM_ATTACHMENTS",0);
+if (!defined("MIMETYPES_FILE")) define("MIMETYPES_FILE","/etc/mime.types");
+if (!defined("DEFAULT_MIMETYPE")) define("DEFAULT_MIMETYPE","application/octet-stream");
+
 if (!$GLOBALS["export_mimetype"]) $GLOBALS["export_mimetype"] = 'application/csv';
+
 if (!defined("WORKAROUND_OUTLOOK_BUG") && defined("USE_CARRIAGE_RETURNS")) {
 	define("WORKAROUND_OUTLOOK_BUG",USE_CARRIAGE_RETURNS);
 }
@@ -43,7 +50,7 @@ $GLOBALS["img_cross"] = '<img src="images/cross.gif" alt="No">';
 # if keys need expanding with 0-s
 $checkboxgroup_storesize = 1; # this will allow 10000 options for checkboxes
 
-if (!is_array($adminlanguage)) {
+if (!isset($adminlanguage) || !is_array($adminlanguage)) {
 	$adminlanguage = array(
 		"info" => "en",
     "iso" => "en",
@@ -913,6 +920,31 @@ function FileNotFound() {
   header("404, File Not Found");
   printf('<html><head><title>404 Not Found</title></head><body><h1>Not Found</h1>The requested document was not found on this server<br/>Please contact the <a href="mailto:%s?subject=File not Found: %s">Administrator</a><p><hr><address><a href="http://tincan.co.uk/phplist" target="_tincan">phplist</a> version %s</address></body></html>',getConfig("admin_address"),$_SERVER["REQUEST_URI"],VERSION);
   exit;
+}
+
+function findMime($filename) {
+  list($name,$ext) = explode(".",$filename);
+  if (!$ext || !is_file(MIMETYPES_FILE)) {
+    return DEFAULT_MIMETYPE;
+  }
+  $fp = @fopen(MIMETYPES_FILE,"r");
+  $contents = fread($fp,filesize(MIMETYPES_FILE));
+  fclose($fp);
+  $lines = explode("\n",$contents);
+  foreach ($lines as $line) {
+    if (!ereg("#",$line) && !preg_match("/^\s*$/",$line)) {
+    	$line = preg_replace("/\t/"," ",$line);
+      $items = explode(" ",$line);
+      $mime = array_shift($items);
+      foreach ($items as $extension) {
+        $extension = trim($extension);
+        if ($ext == $extension) {
+          return $mime;
+        }
+      }
+    }
+  }
+  return DEFAULT_MIMETYPE;
 }
 
 function formatTime($time,$short = 0) {

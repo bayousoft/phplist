@@ -215,7 +215,8 @@ if ($doit == "yes") {
       while ($row = Sql_Fetch_Row($cbgroups)) {
         Sql_Query("update {$tables["user_attribute"]} set value = \"\" where attributeid = $row[0] and value=\"Empty\"");
       }
-    case "2.6.0":
+    case "2.6.0":case "2.6.1":case "2.6.2":case "2.6.3":case "2.6.4":case "2.6.5":
+			Sql_Query("alter table {$tables["message"]} add column embargo (datetime)");
     case "whatever versions we will get later":
       #Sql_Query("alter table table that altered");
       break;

@@ -190,6 +190,19 @@ define("ALLOW_ATTACHMENTS",0);
 # if you use the above, how many would you want to add per message (max)
 define("NUMATTACHMENTS",1);
 
+# when using attachments you can upload them to the server
+# if you want to use attachments from the local filesystem (server) set this to 1
+# filesystem attachments are attached at real send time of the message, not at 
+# the time of creating the message
+define("FILESYSTEM_ATTACHMENTS",0);
+
+# if you add filesystem attachments, you will need to tell PHPlist where your
+# mime.types file is.
+define("MIMETYPES_FILE","/etc/mime.types");
+
+# if a mimetype cannot be determined for a file, specify the default mimetype here:
+define("DEFAULT_MIMETYPE","application/octet-stream");
+
 # the attachment repository is the place where the files are stored (if you use
 # ALLOW_ATTACHMENTS)
 # this needs to be writable to your webserver user

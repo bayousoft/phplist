@@ -105,6 +105,7 @@ if ($total) {
       <tr><td valign="top">From:</td><td valign="top">%s</td></tr>
       <tr><td valign="top">Subject:</td><td valign="top">%s</td></tr>
       <tr><td valign="top">Entered:</td><td valign="top">%s</td></tr>
+      <tr><td valign="top">Embargo:</td><td valign="top">%s</td></tr>
       </table>
       </td><td>
       %s<br />
@@ -117,6 +118,7 @@ if ($total) {
       stripslashes($msg["fromfield"]),
       stripslashes($msg["subject"]),
       $msg["entered"],
+      $msg["embargo"],
       $msg["status"] == "sent"?
       	"Sent: ".$msg["sent"].'<br/>Time to send: '.timeDiff($msg["sendstart"],$msg["sent"]).
        	sprintf('<br /><table border=1>

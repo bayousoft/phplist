@@ -73,6 +73,7 @@ $DBstruct = array( # order of tables is essential for smooth upgrade
         "footer" => array("text","Footer for a message"),
         "entered" => array("datetime","Entered"),
         "modified" => array("timestamp", "Modified"),
+        "embargo" => array("datetime","Time to send message"),
         "status" => array("enum('submitted','inprocess','sent','cancelled','prepared')","Status"),
         "processed" => array("mediumint unsigned default 0", "Number Processed"),
         "userselection" => array("text","query to select the users for this message"),
