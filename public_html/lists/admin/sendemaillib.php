@@ -539,14 +539,15 @@ function stripHTML($text) {
 	$text = preg_replace("/<h[\d]>(.*?)<\/h[\d]\s*>/is","**\\1**\n",$text);
   $text = preg_replace("/\s+/"," ",$text);
   $text = preg_replace("/<i>(.*?)<\/i\s*>/is","/\\1/",$text);
-  $text = preg_replace("/<\/tr\s*?>/","<\/tr>\n\n",$text);
-  $text = preg_replace("/<\/p\s*?>/","<\/p>\n\n",$text);
-  $text = preg_replace("/<br\s*?>/","<br>\n",$text);
-  $text = preg_replace("/<br\s*?\/>/","<br\/>\n",$text);
-  $text = preg_replace("/<table/","\n\n<table",$text);
+  $text = preg_replace("/<\/tr\s*?>/i","<\/tr>\n\n",$text);
+  $text = preg_replace("/<\/p\s*?>/i","<\/p>\n\n",$text);
+  $text = preg_replace("/<br\s*?>/i","<br>\n",$text);
+  $text = preg_replace("/<br\s*?\/>/i","<br\/>\n",$text);
+  $text = preg_replace("/<table/i","\n\n<table",$text);
 	$text = strip_tags($text);
   $text = replaceChars($text);
 	$text = preg_replace("/###NL###/","\n",$text);
+  # reduce whitespace
 	while (preg_match("/  /",$text))
 		$text = preg_replace("/  /"," ",$text);
 	while (preg_match("/\n\n\n/",$text))
