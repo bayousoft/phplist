@@ -1,4 +1,37 @@
-Changelog for PHPlist 2003-11-21 20:53
+Changelog for PHPlist 2003-11-24 15:49
+
+2003-11-24 15:45  mdethmers
+
+	updated some of the docs and readme-s
+
+2003-11-24 15:44  mdethmers
+
+	re-enabled attachments
+
+2003-11-24 14:41  mdethmers
+
+	removed old upgrade files
+
+2003-11-24 12:42  mdethmers
+
+	fixed bug 825, multiple database connections connects to wrong
+	database
+
+2003-11-24 12:20  mdethmers
+
+	added more security info and security checks
+
+2003-11-24 00:19  mdethmers
+
+	added ability to switch check for IP address in admin session off
+
+2003-11-23 23:47  mdethmers
+
+	fixed bug 799, import1 did not work with register globals off
+
+2003-11-23 23:42  mdethmers
+
+	added support for ADOdb
 
 2003-11-21 12:50  mdethmers
 
