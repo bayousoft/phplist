@@ -62,6 +62,7 @@ $strSendHTML           = 'Send HTML email';
 $strYes                = 'Yes';
 $strNo                 = 'No';
 $strUnsubscribe        = 'Unsubscribe';
+$strAllMailinglists    = 'All mailinglists';
 $strAttachmentIntro		 = 'This message contains attachments that can be viewed with a webbrowser:';
 $strLocation					 = 'Location';
 $strFrequency					 = 'How often do we send you messages';
