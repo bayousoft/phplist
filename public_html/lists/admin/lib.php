@@ -1,6 +1,9 @@
 <?php
-require_once "accesscheck.php";
-
+if (file_exists("accesscheck.php")) {
+  require_once "accesscheck.php";
+} else {
+  require_once "admin/accesscheck.php";
+}
 # library used for plugging into the webbler, instead of "connect"
 # depricated and should be removed
 
@@ -32,9 +35,7 @@ if (!defined("MAILQUEUE_BATCH_SIZE")) define("MAILQUEUE_BATCH_SIZE",0);
 if (!defined("MAILQUEUE_BATCH_PERIOD")) define("MAILQUEUE_BATCH_PERIOD",3600);
 if (!defined("NAME")) define("NAME",'PHPlist');
 if (!defined("USE_OUTLOOK_OPTIMIZED_HTML")) define("USE_OUTLOOK_OPTIMIZED_HTML",0);
-
-# keep it default to old behaviour for now
-if (!defined("USE_PREPARE")) define("USE_PREPARE",1);
+if (!defined("USE_PREPARE")) define("USE_PREPARE",0);
 
 if (!isset($GLOBALS["export_mimetype"])) $GLOBALS["export_mimetype"] = 'application/csv';
 

@@ -51,7 +51,12 @@ if (!isset($table_prefix))
 if (!isset($usertable_prefix))
   $usertable_prefix = $table_prefix;
 
-include "lib.php";
+if (file_exists("lib.php")) {
+  include_once "lib.php";
+} else {
+  include_once "admin/lib.php";
+}
+
 $tables = array(
   "user" => $usertable_prefix . "user",
   "user_history" => $usertable_prefix . "user_history",
