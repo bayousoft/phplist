@@ -205,6 +205,8 @@ if ($page != "login") {
     Warn("In safe mode, not everything will work as expected");
   if (!ini_get("magic_quotes_gpc") && WARN_ABOUT_PHP_SETTINGS)
     Warn("Things will work better when PHP magic_quotes_gpc = on");
+  if (ini_get("magic_quotes_runtime") && WARN_ABOUT_PHP_SETTINGS)
+    Warn("Things will work better when PHP magic_quotes_runtime = off");
   if (defined("ENABLE_RSS") && ENABLE_RSS && !function_exists("xml_parse") && WARN_ABOUT_PHP_SETTINGS)
     Warn("XML is not supported");
 
