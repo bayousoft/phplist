@@ -294,7 +294,7 @@ if (!$footer)
 
 echo $msg;
 if (!$done) {
-if (ALLOWATTACHMENTS) {
+if (ALLOW_ATTACHMENTS) {
 	$enctype = 'enctype="multipart/form-data"';
 } else {
 	$enctype = '';
