@@ -11,6 +11,9 @@ if ($_GET["action"] == "js") {
 		$attcodes .= ';['.strtoupper($row[0]).']';
 	}
 	
+  $imgdir = getenv("DOCUMENT_ROOT").$GLOBALS["pageroot"].'/'.FCKIMAGES_DIR.'/';
+  $enable_image_upload = is_dir($imgdir) && is_writeable ($imgdir) ? 'true':'false';
+
 	$smileypath = $_SERVER["DOCUMENT_ROOT"].$GLOBALS["pageroot"].'/images/smiley';
 	$smileyextensions = array('gif');
 	$smileys = '';
@@ -65,12 +68,12 @@ config.ToolbarFontNames = ';Arial;Comic Sans MS;Courier New;Tahoma;Times New Rom
 config.LinkShowTargets = true ;
 config.LinkTargets = '_blank;_parent;_self;_top' ;
 config.LinkDefaultTarget = '_blank' ;
-config.ImageBrowser = true ;
+config.ImageBrowser = <?=$enable_image_upload?> ;
 config.ImageBrowserURL = config.BasePath + "../?page=fckphplist&action=browseimage" ;
 config.ImageBrowserWindowWidth  = 600 ;
 config.ImageBrowserWindowHeight = 480 ;
 
-config.ImageUpload = true ;
+config.ImageUpload = <?=$enable_image_upload?> ;
 // Page that effectivelly upload the image.
 config.ImageUploadURL = config.BasePath + "../?page=fckphplist&action=uploadimage" ;
 config.ImageUploadWindowWidth	= 600 ;
