@@ -201,8 +201,8 @@ if (!ini_get("magic_quotes_gpc") && WARN_ABOUT_PHP_SETTINGS)
 if (defined("ENABLE_RSS") && ENABLE_RSS && !function_exists("xml_parse") && WARN_ABOUT_PHP_SETTINGS)
 	Warn("XML is not supported");
 
-if (ALLOW_ATTACHMENTS && (!is_dir($GLOBALS["attachment_repository"]) || !is_writeable ($GLOBALS["attachment_repository"]))) {
-	Warn("The attachment repository doesn't exist or isn't writable");
+if (ALLOW_ATTACHMENTS && WARN_ABOUT_PHP_SETTINGS && (!is_dir($GLOBALS["attachment_repository"]) || !is_writeable ($GLOBALS["attachment_repository"]))) {
+	Warn("The attachment repository ".$GLOBALS["attachment_repository"]." doesn't exist or isn't writable");
 }
 ;
 
