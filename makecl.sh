@@ -1,8 +1,12 @@
 #!/bin/bash
 DATE=`date +"%Y-%m-%d %H:%M"`;
 
-cvs2cl.pl --prune -r -t --hide-filenames > /dev/null 2>&1
+cvs2cl.pl --prune -r -t -b --hide-filenames > /dev/null 2>&1
 echo "Changelog for PHPlist $DATE" > cl
+echo Please note: the changelog shows all changes, including changes in the development branch >> cl
+echo that will be included in future releases, and are not necessarily part of the current >> cl
+echo stable release >> cl
+
 echo >> cl
 if [ -f ChangeLog ]; then
 cat ChangeLog changelog.presf >> cl
