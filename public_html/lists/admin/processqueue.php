@@ -26,6 +26,8 @@ if (!$GLOBALS["commandline"]) {
 if (TEST)
 	print '<font color=red size=5>Running in testmode, no emails will be sent. Check your config file.</font>';
 
+$num_per_batch = 0;
+$batch_period = 0;
 $script_stage = 0; # start
 if (ini_get("safe_mode")) {
 	# keep an eye on timeouts
@@ -36,8 +38,57 @@ if (ini_get("safe_mode")) {
 	print "Running in safe mode<br/>";
 }
 
+$maxbatch = -1;
+$minbatchperiod = -1;
+# check for batch limits 
+if ($fp = @fopen("/etc/phplist.conf","r")) {
+  $contents = fread($fp, filesize("/etc/phplist.conf"));
+  fclose($fp);
+  $lines = explode("\n",$contents);
+  foreach ($lines as $line) {
+    list($key,$val) = explode("=",$line);
+    switch ($key) {
+      case "maxbatch": $maxbatch = sprintf('%d',$val);break;
+      case "minbatchperiod": $minbatchperiod = sprintf('%d',$val);break;
+      case "lockfile": $ISPlockfile = $val;
+    }
+  }
+}
+
+if (MAILQUEUE_BATCH_SIZE) {
+  if ($maxbatch > 0) {
+    $num_per_batch = min(MAILQUEUE_BATCH_SIZE,$maxbatch);
+  } else {
+    $num_per_batch = sprintf('%d',MAILQUEUE_BATCH_SIZE);
+  }
+} else {
+  if ($maxbatch > 0) {
+    $num_per_batch = $maxbatch;
+  }
+}
+
+if (MAILQUEUE_BATCH_PERIOD) {
+  if ($minbatchperiod > 0) {
+    $batch_period = max(MAILQUEUE_BATCH_PERIOD,$minbatchperiod);
+  } else {
+    $batch_period = MAILQUEUE_BATCH_PERIOD;
+  }
+}
+if ($num_per_batch && $batch_period) {
+  # check how many were sent in the last batch period and take off that
+  # amount from this batch
+  $recently_sent = Sql_Fetch_Row_Query(sprintf('select count(*) from %s where date_add(entered,interval %d second) > now()',
+    $tables["usermessage"],$batch_period));
+  $num_per_batch -= $recently_sent[0];
+  
+  # if this ends up being 0 or less, don't send anything at all
+  if ($num_per_batch == 0) {
+    $num_per_batch = -1;
+  }
+}
+  
 print '<script language="Javascript" src="js/progressbar.js" type="text/javascript"></script>';
-print formStart('name="outputform"').'<textarea name="output" rows=20 cols=50></textarea></form>';
+print formStart('name="outputform"').'<textarea name="output" rows=20 cols=75></textarea></form>';
 
 # report keeps track of what is going on
 $report = "";
@@ -51,10 +102,10 @@ if (ENABLE_RSS) {
 
 function my_shutdown () {
 	global $script_stage,$reload;
-	output( "Script status: ".connection_status(),0); # with PHP 4.2.1 buggy. http://bugs.php.net/bug.php?id=17774
+#	output( "Script status: ".connection_status(),0); # with PHP 4.2.1 buggy. http://bugs.php.net/bug.php?id=17774
 	output( "Script stage: ".$script_stage,0);
-  global $report,$send_process_id,$tables,$nothingtodo,$invalid,$notsent,$sent,$unconfirmed;
-  $some = $sent || $invalid || $notsent;
+  global $report,$send_process_id,$tables,$nothingtodo,$invalid,$notsent,$sent,$unconfirmed,$num_per_batch,$batch_period;
+  $some = $sent;# || $invalid || $notsent;
 	if (!$some) {
 		output("Finished, Nothing to do",0);
 		$nothingtodo = 1;
@@ -63,7 +114,7 @@ function my_shutdown () {
 	if ($script_stage == 6)
 		output("Finished, All done",0);
 	else
-		output("Finished, Processing was interrupted, reload required");
+		output("Script finished, but not all messages have been sent yet.");
 
 	output(sprintf('%d messages sent and %d messages skipped',$sent,$notsent),$sent);
 	if ($invalid)
@@ -75,18 +126,34 @@ function my_shutdown () {
 
   finish("info",$report);
 	if ($script_stage < 5) {
-		output ("Warning: script never reached stage 5\nIt is likely that the selection process is too slow. You either need a new webserver or a new ISP!\n");
+		output ("Warning: script never reached stage 5\nThis may be caused by a too slow or too busy server \n");
 	} elseif( $script_stage == 5)	{
 		# if the script timed out in stage 5, reload the page to continue with the rest
     $reload++;
-		printf( '<script language="Javascript" type="text/javascript">
- 			var query = window.location.search;
-			query = query.replace(/&reload=\d+/,"");
-			query = query.replace(/&lastsent=\d+/,"");
-			query = query.replace(/&lastskipped=\d+/,"");
-			document.location = document.location.pathname + query + "&reload=%d&lastsent=%d&lastskipped=%d";
-     </script>',$reload,$sent,$notsent);
-	#	print '<script language="Javascript" type="text/javascript">alert(document.location)</script>';
+    if (!$GLOBALS["commandline"] && $num_per_batch && $batch_period) {
+      output("Waiting for $batch_period seconds before reloading");
+      output("Do not reload this page yourself, because that will cause processing to start from the beginning");
+      printf( '<script language="Javascript" type="text/javascript">
+        function reload() {
+          var query = window.location.search;
+          query = query.replace(/&reload=\d+/,"");
+          query = query.replace(/&lastsent=\d+/,"");
+          query = query.replace(/&lastskipped=\d+/,"");
+          document.location = document.location.pathname + query + "&reload=%d&lastsent=%d&lastskipped=%d";
+        }
+        setTimeout("reload()",%d);
+      </script>',$reload,$sent,$notsent,$batch_period * 1000);
+    } else {
+      printf( '<script language="Javascript" type="text/javascript">
+        var query = window.location.search;
+        query = query.replace(/&reload=\d+/,"");
+        query = query.replace(/&lastsent=\d+/,"");
+        query = query.replace(/&lastskipped=\d+/,"");
+        document.location = document.location.pathname + query + "&reload=%d&lastsent=%d&lastskipped=%d";
+      </script>',$reload,$sent,$notsent);
+      output("Reload required");
+	  }
+  #	print '<script language="Javascript" type="text/javascript">alert(document.location)</script>';
 	}
 }
 
@@ -103,14 +170,17 @@ function finish ($flag,$message) {
   } elseif ($flag == "info") {
     $subject = "Maillist Processing info";
   }
-  output("Finished");
+  output("Finished this run");
   if (!TEST && !$nothingtodo)
     sendReport($subject,$message);
 }
 
 function ProcessError ($message) {
+  global $report;
+  $report .= $message;
   output( "$message");
-  finish("error",$message);
+#  finish("error",$message);
+  include "footer.inc";
   exit;
 }
 
@@ -121,7 +191,7 @@ function output ($message,$logit = 1) {
     print $message . "\n";
     ob_start();
   } else {
-    $infostring = "[". date("D j M Y H:i",time()) . "] [" . getenv("REMOTE_HOST") ."] [" . getenv("REMOTE_ADDR") ."]";
+    $infostring = "[". date("D j M Y H:i",time()) . "] [" . $_SERVER["REMOTE_ADDR"] ."]";
     #print "$infostring $message<br>\n";
     print '<script language="Javascript" type="text/javascript">
       if (document.forms[0].name == "outputform") {
@@ -152,10 +222,19 @@ set_time_limit(600);
 flush();
 
 output("Started",0);
+if (is_file($ISPlockfile)) {
+  ProcessError("Processing has been suspended by your ISP, please try again later",1);
+}
+if ($num_per_batch > 0) {
+  output("Sending in batches of $num_per_batch emails",0);
+} elseif ($num_per_batch < 0) {
+  output("In the last $batch_period seconds more emails were sent than is currently allowed per batch.",0);
+}
 $rss_content_treshold = sprintf('%d',getConfig("rssthreshold"));
 if ($reload) {
-	output("Reload count: $reload");
-	output("Sent in last run: $lastsent");
+#	output("Reload count: $reload");
+	output("Total processed: ".$reload * $num_per_batch);
+  output("Sent in last run: $lastsent");
 	output("Skipped in last run: $lastskipped");
 }
 
@@ -224,25 +303,48 @@ while ($message = Sql_fetch_array($messages)) {
     }
   }
 	$script_stage = 3; # we know the users by attribute
+  
+  # when using commandline we need to exclude users who have already received
+  # the email
+  # we don't do this otherwise because it slows down the process, possibly
+  # causing us to not find anything at all
+  if ($GLOBALS["commandline"]) {
+    $doneusers = array();
+    $req = Sql_Query("select userid from {$tables["usermessage"]} where messageid = $messageid");
+    while ($row = Sql_Fetch_Row($req)) {
+      array_push($doneusers,$row[0]);
+    }
+    # also exclude unconfirmed users, otherwise they'll block the process
+    $req = Sql_Query("select id from {$tables["user"]} where !confirmed");
+    while ($row = Sql_Fetch_Row($req)) {
+      array_push($doneusers,$row[0]);
+    }
+    $exclusion = " and {$tables['listuser']}.userid not in (".join(",",$doneusers).")";
+  }
+  
   $query = "select distinct {$tables['listuser']}.userid
   	from {$tables['listuser']},{$tables['listmessage']} ";
   $query .= "where {$tables['listmessage']}.messageid = $messageid and
-		{$tables['listmessage']}.listid = {$tables['listuser']}.listid";
+		{$tables['listmessage']}.listid = {$tables['listuser']}.listid $exclusion ";
 
   $query .= " $user_attribute_query";
 
-  $userids = Sql_query("$query");
+  $userids = Sql_query($query);
   if (Sql_Has_Error($database_connection)) {  ProcessError(Sql_Error($database_connection)); }
 
   # now we have all our users to send the message to
   $num = Sql_affected_rows();
   output( "Found them: $num to process");
-  if ($safemode) {
+  if ($num_per_batch) {
   	# send in batches of $num_per_batch users
-    $safemode_total = $num;
-  	$query .= sprintf(' limit %d,%d',$reload * $num_per_batch,$num_per_batch);
-    $userids = Sql_query("$query");
-    if (Sql_Has_Error($database_connection)) {  ProcessError(Sql_Error($database_connection)); }
+    $batch_total = $num;
+    if ($num_per_batch > 0) {
+      $query .= sprintf(' limit %d,%d',$reload * $num_per_batch,$num_per_batch);
+      $userids = Sql_query("$query");
+      if (Sql_Has_Error($database_connection)) {  ProcessError(Sql_Error($database_connection)); }
+    } else {
+      $userids = Sql_Query(sprintf('select * from %s where id = 0',$tables["user"]));
+    }
   }
   while ($userdata = Sql_fetch_row($userids)) {
 	  $some = 1;
@@ -270,7 +372,7 @@ while ($message = Sql_fetch_array($messages)) {
 
 			# pick the first one
 			$user = Sql_fetch_row($users);
-			if ($user[5] && is_email($user[1])) {
+			if ($user[5]){# && is_email($user[1])) {
 				$userid = $user[0];    # id of the user
 				$useremail = $user[1]; # email of the user
 				$userhash = $user[2];  # unique string of the user
@@ -341,7 +443,7 @@ while ($message = Sql_fetch_array($messages)) {
 				output( "Not sending to $userdata[0], already sent ".$um[0]);
 		}
   }
-  if (!$safemode || $safemode_total < ($reload * $num_per_batch)) {
+  if (!$num_per_batch || $batch_total < ($reload * $num_per_batch)) {
     if (!$someusers)
       output( "Hmmm, No users found to send to");
     $someusers = 0;
@@ -359,7 +461,7 @@ while ($message = Sql_fetch_array($messages)) {
   }
 }
 
-if (!$safemode || $safemode_total < $reload * $num_per_batch)
+if (!$num_per_batch || $batch_total < $reload * $num_per_batch)
 	$script_stage = 6; # we are done
 #print "$safemode_total, ".$reload * $num_per_batch;
 # shutdown will take care of reporting
