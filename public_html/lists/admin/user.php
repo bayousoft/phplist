@@ -66,6 +66,11 @@ if ($change && ($access == "owner"|| $access == "all")) {
   # read the current values to compare changes
   $old_data = Sql_Fetch_Array_Query(sprintf('select * from %s where id = %d',$tables["user"],$id));
   $old_data = array_merge($old_data,getUserAttributeValues('',$id));
+	# and membership of lists
+	$req = Sql_Query("select * from {$tables["listuser"]} where userid = $id");
+	while ($row = Sql_Fetch_Array($req)) {
+		$old_listmembership[$row["listid"]] = listName($row["listid"]);
+	}
   while (list ($key,$val) = each ($struct)) {
     list($a,$b) = explode(":",$val[1]);
     if (!ereg("sys",$a) && $val[1]) {
@@ -118,6 +123,7 @@ if ($change && ($access == "owner"|| $access == "all")) {
     foreach ($subscribe as $ind => $lst) {
       Sql_Query("insert into {$tables["listuser"]} (userid,listid) values($id,$lst)");
       print "User added to ".ListName($lst)."<br/>";
+			
     }
   }
   $history_entry = '';
@@ -129,10 +135,42 @@ if ($change && ($access == "owner"|| $access == "all")) {
     	$history_entry .= "$key = $val\nchanged from $old_data[$key]\n";
    	}
   }
+	if (!$history_entry) {
+		$history_entry = "\nNo userdata changed";
+	}
+	# check lists
+	$req = Sql_Query("select * from {$tables["listuser"]} where userid = $id");
+	while ($row = Sql_Fetch_Array($req)) {
+		$listmembership[$row["listid"]] = listName($row["listid"]);
+	}
+	# i'll do this once I can test it on a 4.3 server
+	#if (function_exists("array_diff_assoc")) {
+	if (0) {
+		# it requires 4.3
+		$subscribed_to = array_diff_assoc($listmembership, $old_listmembership);
+		$unsubscribed_from = array_diff_assoc($old_listmembership,$listmembership);
+		foreach ($subscribed_to as $key => $desc) {
+			$history_entry .= "Subscribed to $desc\n";
+		}
+		foreach ($unsubscribed_to as $key => $desc) {
+			$history_entry .= "Unsubscribed from $desc\n";
+		}
+	} else {
+		$history_entry .= "\nList subscriptions:\n";
+		foreach ($old_listmembership as $key => $val) {
+			$history_entry .= "Was subscribed to: $val\n";
+		}
+		foreach ($listmembership as $key => $val) {
+			$history_entry .= "Is now subscribed to: $val\n";
+		}
+		if (!sizeof($listmembership)) {
+			$history_entry .= "Not subscribed to any lists\n";
+		}
+	}
+	
   addUserHistory($email,"Update by ".adminName($_SESSION["logindetails"]["id"]),$history_entry);
   Info("Changes saved");
-}
-
+} 
 
 if (isset($delete) && $delete && $access != "view") {
   # delete the index in delete

@@ -339,6 +339,7 @@ function confirmPage($id) {
       $html .= '<li class="list">'.$row["name"].'<div class="listdescription">'.stripslashes($row["description"]).'</div></li>';
 		}
     $html .= '</ul>';
+		addUserHistory($userdata["email"],"Confirmation","Lists: $lists");
 
     $spage = $userdata["subscribepage"];
 
@@ -350,6 +351,7 @@ function confirmPage($id) {
   	}
     $info = $GLOBALS["strConfirmInfo"];
   } else {
+		logEvent("Request for confirmation for invalid user ID: ".substr($_GET["uid"],0,150));
     $html .= 'Error: '.$GLOBALS["strUserNotFound"];
     $info = $GLOBALS["strConfirmFailInfo"];
   }
@@ -377,10 +379,13 @@ function unsubscribePage($id) {
         $availlists[$row["id"]] = $row["name"];
     }
 
-    $query = Sql_Fetch_Row_Query("select id from {$tables["user"]} where email = \"$email\"");
+    $query = Sql_Fetch_Row_Query("select id,email from {$tables["user"]} where email = \"$email\"");
     $userid = $query[0];
-
-    if ($_POST["list"] && !$_POST["list"]["none"]) {
+		$email = $query[1];
+		if (!$userid) {
+			$res .= 'Error: '.$GLOBALS["strUserNotFound"];
+			logEvent("Request to unsubscribe non-existent user: ".substr($_POST["email"],0,150));
+		} elseif ($_POST["list"] && !$_POST["list"]["none"]) {
       if ($_POST["list"]["all"]) {
         $result = Sql_query("delete from {$tables["listuser"]} where userid = \"$userid\"");
         $lists = "  * $strAllMailinglists\n";
@@ -392,12 +397,14 @@ function unsubscribePage($id) {
           }
         }
       }
+			addUserHistory($email,"Unsubscription","Unsubscribed from $lists");
       $unsubscribemessage = ereg_replace("\[LISTS\]", $lists,getUserConfig("unsubscribemessage",$userid));
       sendMail($email, getConfig("unsubscribesubject"), $unsubscribemessage, system_messageheaders($email));
       sendAdminCopy("List unsubscription",$email . " has unsubscribed from\n $lists");
     }
 
-    $res .= '<h1>'.$GLOBALS["strUnsubscribeDone"] ."</h1><P>";
+		if ($userid)
+	    $res .= '<h1>'.$GLOBALS["strUnsubscribeDone"] ."</h1><P>";
     $res .= $GLOBALS["PoweredBy"].'</p>';
     $res .= $pagedata["footer"];
     return $res;
@@ -439,6 +446,7 @@ function unsubscribePage($id) {
   }
 
   while ($row = Sql_fetch_array($result)) {
+		$out .=  '<input type=hidden name="listname['.$row["id"] . ']" value="'.$row["name"].'"/>';
   	if (!$hide) {
       $out .= "<li><input type=checkbox name=list[".$row["id"] . "] value=signoff>".$row["name"] ." \n";
       $desc = nl2br(StripSlashes($row["description"]));

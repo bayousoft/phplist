@@ -175,6 +175,18 @@ $usertable_prefix = "phplist_user_";
 $pageroot = '/lists';
 $adminpages = $pageroot . '/admin';
 
+# user history system info.
+# when logging the history of a user, you can specify which system variables you 
+# want to log. These are the ones that are found in the $_SERVER and the $_ENV
+# variables of PHP. check http://www.php.net/manual/en/language.variables.predefined.php
+# the values are different per system, but these ones are quite common.
+
+$userhistory_systeminfo = array(
+	'HTTP_USER_AGENT',
+	'HTTP_REFERER',
+	'REMOTE_ADDR'
+);
+
 # PHPlist can send RSS feeds to users. Feeds can be sent daily, weekly or
 # monthly. This feature is currently marked experimental.
 # To use the feature you need XML support in your PHP installation, and you need
@@ -191,7 +203,7 @@ define("USEFCK",1);
 # If you want to upload images to the FCKeditor, you need to specify the location
 # of the directory where the images go. This needs to be writable by the webserver,
 # and it needs to be in your public document (website) area
-# the directory is relative to the root of PHPlist as set below
+# the directory is relative to the root of PHPlist as set above
 # This is a potential security risk, so read README.security for more information
 define("FCKIMAGES_DIR","uploadimages");
 
