@@ -66,7 +66,7 @@ if (!isset($adminlanguage) || !is_array($adminlanguage)) {
 }
 
 # identify pages that can be run on commandline
-$commandline_pages = array("send","processqueue","processbounces");
+$commandline_pages = array("send","processqueue","processbounces","getrss");
 
 if (isset($message_envelope))
   $envelope = "-f$message_envelope";

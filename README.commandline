@@ -1,6 +1,8 @@
 
 Running PHPlist from the commandline
 
+Commandline processing requires PHP 4.3.0 or higher
+
 A few pages in the PHPlist system can now, as of version 2.7.0 be run with 
 a simple command from the commandline.
 

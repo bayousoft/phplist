@@ -1,11 +1,17 @@
 <?
 require_once "accesscheck.php";
-
-ob_end_flush();
-#if (!MANUALLY_PROCESS_RSS) {
-#	print "Error, getting RSS sources is set to be processed automatically. Loading of this page is not allowed");
-#  return;
-#}
+if (!$GLOBALS["commandline"]) {
+  ob_end_flush();
+  if (!MANUALLY_PROCESS_RSS) {
+    print "This page can only be called from the commandline";
+    return;
+  }
+} else {
+  ob_end_clean();
+  print ClineSignature();
+	print "Getting and Parsing the RSS sources\n";
+  ob_start();
+}
 
 function ProcessError ($message) {
   print "$message";
@@ -15,7 +21,13 @@ function ProcessError ($message) {
 }
 
 function output($line) {
-	print "$line<br/>\n";
+	if ($GLOBALS["commandline"]) {
+    ob_end_clean();
+		print strip_tags($line)."\n";
+    ob_start();
+	} else {
+		print "$line<br/>\n";
+	}
   flush();
 }
 
@@ -50,7 +62,7 @@ $process_id = getPageLock();
 $req = Sql_Query("select rssfeed,id from {$tables["list"]} where rssfeed != \"\" order by listorder");
 while ($feed = Sql_Fetch_Row($req)) {
 	$nothingtodo = 0;
-	print "<hr>Parsing $feed[0] ..\n";
+	output( "<hr>Parsing $feed[0] ..\n");
   flush();
   $report = "Parsing $feed[0]";
   $mailreport .= "\n$feed[0] ";

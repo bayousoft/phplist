@@ -53,7 +53,7 @@ function output ($message,$reset = 0) {
   #print "$infostring $message<br>\n";
   if ($GLOBALS["commandline"]) {
     ob_end_clean();
-    print $message . "\n";
+    print strip_tags($message) . "\n";
     ob_start();
   } else {
     if ($reset)
