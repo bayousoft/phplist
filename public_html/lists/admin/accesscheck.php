@@ -6,7 +6,7 @@ if (!function_exists("checkAccess")) {
 }
 
 function accessLevel($page) {
-  global $logindetails,$tables,$access_levels;
+  global $tables,$access_levels;
   if (!$GLOBALS["require_login"] || isSuperUser())
     return "all";
   # check whether it is a page to protect
@@ -14,7 +14,7 @@ function accessLevel($page) {
   if (!Sql_Affected_Rows())
     return "all";
   $req = Sql_Query(sprintf('select level from %s,%s where adminid = %d and page = "%s" and %s.taskid = %s.id',
-    $tables["task"],$tables["admin_task"],$logindetails["id"],$page,$tables["admin_task"],$tables["task"]));
+    $tables["task"],$tables["admin_task"],$_SESSION["logindetails"]["id"],$page,$tables["admin_task"],$tables["task"]));
   $row = Sql_Fetch_Row($req);
   return $access_levels[$row[0]];
 }

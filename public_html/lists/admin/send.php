@@ -32,7 +32,7 @@ if ($done) {
 
 <?php
 
-$result = Sql_Verbose_query("SELECT * FROM $tables[list] $subselect");
+$result = Sql_query("SELECT * FROM $tables[list] $subselect");
 while ($row = Sql_fetch_array($result)) {
   print "<li><input type=checkbox name=list[".$row["id"] . "] value=signup ";
   if ($_POST["list"][$row["id"]] == "signup")
