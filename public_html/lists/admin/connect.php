@@ -38,16 +38,6 @@ if (!isset($adminlanguage) || !is_array($adminlanguage)) {
 	);
 }
 
-function SaveConfig($item,$value,$editable=1) {
-	global $tables;
-  if ($value == "false" || $value == "no") {
-  	$value = 0;
-  } else if ($value == "true" || $value == "yes") {
-  	$value = 1;
-  }
- 	Sql_Query(sprintf('replace into %s (item,value,editable) values("%s","%s",%d)',
- 	  $tables["config"],$item,addslashes($value),$editable));
-}
 
 # identify pages that can be run on commandline
 $commandline_pages = array("send","processqueue","processbounces","getrss");
@@ -107,6 +97,17 @@ $rssfrequencies = array(
 $redfont = "<font color=\"red\">";
 $efont = "</font>";
 $GLOBALS["coderoot"] = "";
+
+function SaveConfig($item,$value,$editable=1) {
+	global $tables;
+  if ($value == "false" || $value == "no") {
+  	$value = 0;
+  } else if ($value == "true" || $value == "yes") {
+  	$value = 1;
+  }
+ 	Sql_Query(sprintf('replace into %s (item,value,editable) values("%s","%s",%d)',
+ 	  $tables["config"],$item,addslashes($value),$editable));
+}
 
 /*
 	We request you retain the $PoweredBy variable including the links.
