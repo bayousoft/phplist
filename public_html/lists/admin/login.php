@@ -1,7 +1,6 @@
 <?
 require_once "accesscheck.php";
 
-
 if (TEST)
   print "Default login is <b>admin</b>, with password <b>phplist</b>";
   
@@ -16,7 +15,7 @@ if ($_GET["page"]) {
 ?>
 <font class="error"><?=$msg?></font>
 <p>
-<form method=post action="./">
+<form method=post>
 <input type=hidden name="page" value="<?=$page?>">
 <table width=100% border=0 cellpadding=2 cellspacing=0>
 <tr><td><span class="general">Name:</span></td></tr>

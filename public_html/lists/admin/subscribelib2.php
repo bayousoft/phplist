@@ -298,7 +298,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
     if ($_POST["password"] != $curpwd[0]) {
     	$storepassword = 'password = "'.$newpassword.'",';
       Sql_query("update {$GLOBALS["tables"]["user"]} set passwordchanged = now() where id = $userid");
-      $history_entry .= "\nPassword changed";
+      $history_entry .= "\nUser has changed their password\n";
     } else {
     	$storepassword = "";
     }

@@ -273,7 +273,7 @@ if ($id) {
       $subs = "";
     }
     printf ('<td bgcolor="%s"><input type=checkbox name="subscribe[]" value="%d" %s> %s</td>',
-      $bgcol,$row["id"],$subs,PageLink2("editlist",$row["name"],"id=".$row["id"]));
+      $bgcol,$row["id"],$subs,PageLink2("editlist",stripslashes($row["name"]),"id=".$row["id"]));
     $c++;
     if ($c % 4 == 0)
       print '</tr><tr>';
