@@ -10,5 +10,7 @@
 CONFIG=/home/website/public_html/lists/config/config.php
 export CONFIG
 
+# alternatively you can use -c <path to config file> on the commandline
+
 # run the PHPlist index file with all parameters passed to this script
 /usr/bin/php /home/website/public_html/lists/admin/index.php $*
