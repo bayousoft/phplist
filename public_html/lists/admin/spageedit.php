@@ -32,7 +32,7 @@ if ($save || $activate || $deactivate) {
    	$id = Sql_Insert_id();
   }
   Sql_Query(sprintf('delete from %s where id = %d',$tables["subscribepage_data"],$id));
-  foreach (array("title","intro","header","footer","button","htmlchoice") as $item) {
+  foreach (array("title","intro","header","footer","thankyoupage","button","htmlchoice") as $item) {
   	Sql_Query(sprintf('insert into %s (name,id,data) values("%s",%d,"%s")',
     	$tables["subscribepage_data"],$item,$id,$_POST[$item]));
   }
@@ -112,6 +112,7 @@ if ($id) {
   $data["intro"] = $strSubscribeInfo;
   $data["header"] = $defaultheader;
   $data["footer"] = $defaultfooter;
+  $data["thankyoupage"] = '<h3>'.$GLOBALS["strThanks"].'</h3>'."\n". $GLOBALS["strEmailConfirmation"];
   $data["subscribemessage"] = getConfig("subscribemessage");
   $data["subscribesubject"] = getConfig("subscribesubject");
   $data["confirmationmessage"] = getConfig("confirmationmessage");
@@ -133,6 +134,8 @@ printf('<tr><td valign=top>Header</td><td><textarea name=header cols=60 rows=10 
 	htmlspecialchars($data["header"]));
 printf('<tr><td valign=top>Footer</td><td><textarea name=footer cols=60 rows=10 wrap=virtual>%s</textarea></td></tr>',
 	htmlspecialchars($data["footer"]));
+printf('<tr><td valign=top>Thank you page</td><td><textarea name=thankyoupage cols=60 rows=10 wrap=virtual>%s</textarea></td></tr>',
+	htmlspecialchars($data["thankyoupage"]));
 printf('<tr><td valign=top>Text for Button</td><td><input type=text name=button value="%s" size=60></td></tr>',
 	htmlspecialchars($data["button"]));
 printf('<tr><td valign=top>HTML Email choice</td><td>');
