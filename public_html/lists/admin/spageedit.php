@@ -34,11 +34,11 @@ if ($_POST["save"] || $_POST["activate"] || $_POST["deactivate"]) {
   Sql_Query(sprintf('delete from %s where id = %d',$tables["subscribepage_data"],$id));
   foreach (array("title","intro","header","footer","thankyoupage","button","htmlchoice") as $item) {
   	Sql_Query(sprintf('insert into %s (name,id,data) values("%s",%d,"%s")',
-    	$tables["subscribepage_data"],$item,$id,$_POST[$item]));
+    	$tables["subscribepage_data"],$item,$id,stripslashes($_POST[$item])));
   }
 
   foreach (array("subscribesubject","subscribemessage","confirmationsubject","confirmationmessage") as $item) {
-    SaveConfig("$item:$id",$_POST[$item],0);
+    SaveConfig("$item:$id",stripslashes($_POST[$item]),0);
 	}
 
   Sql_Query(sprintf('delete from %s where id = %d and name like "attribute___"',
@@ -73,7 +73,6 @@ if ($_POST["save"] || $_POST["activate"] || $_POST["deactivate"]) {
   	Sql_Query(sprintf('replace into %s (id,name,data) values(%d,"rssdefault","%s")',
 	   	$tables["subscribepage_data"],$id,$rssdefault));
 	}
-  return;
   if ($activate) {
   	Sql_Query(sprintf('update %s set active = 1 where id = %d',
     	$tables["subscribepage"],$id));
