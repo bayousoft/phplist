@@ -386,10 +386,10 @@ function addAttachments($msgid,&$mail,$type) {
     while ($att = Sql_Fetch_array($req)) {
     	switch ($type) {
       	case "HTML":
-        	if (is_file($attachment_repository."/".$att["filename"]) && filesize($attachment_repository."/".$att["filename"])) {
-            $fp = fopen($attachment_repository."/".$att["filename"],"r");
+        	if (is_file($GLOBALS["attachment_repository"]."/".$att["filename"]) && filesize($GLOBALS["attachment_repository"]."/".$att["filename"])) {
+            $fp = fopen($GLOBALS["attachment_repository"]."/".$att["filename"],"r");
             if ($fp) {
-              $contents = fread($fp,filesize($attachment_repository."/".$att["filename"]));
+              $contents = fread($fp,filesize($GLOBALS["attachment_repository"]."/".$att["filename"]));
               fclose($fp);
               $mail->add_attachment($contents,
                 basename($att["remotefile"]),
@@ -404,6 +404,16 @@ function addAttachments($msgid,&$mail,$type) {
               $mail->add_attachment($contents,
                 basename($att["remotefile"]),
                 $att["mimetype"]);
+		          list($name,$ext) = explode(".",basename($att["remotefile"]));
+              # create a temporary file to make sure to use a unique file name to store with
+              $newfile = tempnam($GLOBALS["attachment_repository"],$name);
+              $newfile .= ".".$ext;
+              $newfile = basename($newfile);
+              $fd = fopen( $GLOBALS["attachment_repository"]."/".$newfile, "w" );
+              fwrite( $fd, $contents );
+              fclose( $fd );
+              Sql_Query(sprintf('update %s set filename = "%s" where id = %d',
+              	$GLOBALS["tables"]["attachment"],$newfile,$att["attachmentid"]));
             }
 					} else {
           	logEvent("Attachment ".$att["remotefile"]." does not exist");
