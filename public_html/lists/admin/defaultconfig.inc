@@ -524,7 +524,7 @@ $access_levels =
   array(
     0 => "none",
     1 => "all",
- #   2 => "view",
+    2 => "view",
  #   3 => "edit",
     4 => "owner"
   );

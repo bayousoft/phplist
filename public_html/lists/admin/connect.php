@@ -187,7 +187,7 @@ function formStart($additional="") {
 }
 
 function checkAccess($page) {
-  global $logindetails,$tables;
+  global $tables;
   if (!$GLOBALS["require_login"] || isSuperUser())
     return 1;
   # check whether it Is a page to protect
@@ -506,6 +506,7 @@ function newMenu() {
     case "owner":
       $subselect = sprintf(' where owner = %d',$_SESSION["logindetails"]["id"]);break;
     case "all":
+    case "view":
       $subselect = "";break;
     case "none":
     default:
@@ -581,7 +582,7 @@ function PageLink2($name,$desc="",$url="") {
   if ($url)
     $url = "&".$url;
   $access = accessLevel($name);
-  if ($access == "owner" || $access == "all") {
+  if ($access == "owner" || $access == "all" || $access == "view") {
     if ($name == "processqueue" && !MANUALLY_PROCESS_QUEUE)
       return "";#'<!-- '.$desc.'-->';
     elseif ($name == "processbounces" && !MANUALLY_PROCESS_BOUNCES)

@@ -7,10 +7,11 @@
 <?php
 require_once "accesscheck.php";
 
-$access = accessLevel("list");
+$access = accessLevel("members");
+
 switch ($access) {
 	case "owner":
-		$subselect = " where owner = ".$logindetails["id"];
+		$subselect = " where owner = ".$_SESSION["logindetails"]["id"];
 		if ($id) {
 			Sql_Query("select id from ".$tables["list"]. $subselect . " and id = $id");
 			if (!Sql_Affected_Rows()) {
@@ -20,6 +21,7 @@ switch ($access) {
 		}
 		break;
 	case "all":
+  case "view":
 		$subselect = "";break;
 	case "none":
 	default:
@@ -49,7 +51,7 @@ if (isset($id)) {
   Fatal_Error("Please enter a listid");
 }
 
-if (isset($processtags)) {
+if (isset($processtags) && $access != "view") {
 	print "Processing .... <br/>";
 	if ($tagaction && is_array($user)) {
 		switch ($tagaction) {
@@ -197,8 +199,7 @@ if ($doadd) {
 if (isset($delete)) {
   # single delete the index in delete
   print "Deleting $delete ..\n";
-  $query = "delete from {$tables["listuser"]} where listid = $id and userid =
- $delete";
+  $query = "delete from {$tables["listuser"]} where listid = $id and userid = $delete";
   $result = Sql_query($query);
   print "..Done<br />\n";
 	Redirect("members&id=$id");
@@ -248,7 +249,9 @@ if (isset($id)) {
   while ($user = Sql_fetch_array($result)) {
  		$ls->addElement($user["email"],PageUrl2("user&id=".$user["id"]));
 		$ls->addColumn($user["email"],"confirmed",$user["confirmed"]?$GLOBALS["img_tick"]:$GLOBALS["img_cross"]);
+    if ($access != "view")
 		$ls->addColumn($user["email"],"tag",sprintf('<input type=checkbox name="user[%d]" value="1">',$user["id"]));
+    if ($access != "view")
  		$ls->addColumn($user["email"],"del",
 			sprintf('<a href="javascript:deleteRec(\'%s\');">Delete</a>',
 				PageURL2("members","","start=$start&id=$id&delete=".$user["id"])));
@@ -271,6 +274,7 @@ if (isset($id)) {
 	print $ls->display();
 }
 
+if ($access == "view") return;
 ?>
 
 <hr>

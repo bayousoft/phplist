@@ -22,7 +22,7 @@ $noaccess = 0;
 $accesslevel = accessLevel("admin");
 switch ($accesslevel) {
   case "owner":
-    $id = $logindetails["id"];break;
+    $id = $_SESSION["logindetails"]["id"];break;
   case "all":
     $subselect = "";break;
   case "none":
@@ -56,7 +56,7 @@ if ($change) {
         Sql_Query(sprintf('replace into %s (adminid,adminattributeid,value)
           values(%d,%d,"%s")',$tables["admin_attribute"],$id,$key,$val));
       }
-    Sql_Query(sprintf('update %s set modifiedby = "%s" where id = %d',$tables["admin"],adminName($logindetails["id"]),$id));
+    Sql_Query(sprintf('update %s set modifiedby = "%s" where id = %d',$tables["admin"],adminName($_SESSION["logindetails"]["id"]),$id));
 
     if ($accesslevel == "all" && is_array($_POST["access"])) {
       Sql_Query("delete from {$tables["admin_task"]} where adminid = $id");
@@ -157,6 +157,7 @@ print '<tr><td colspan=2><input type=submit name=change value="Save Changes"></t
 
 # what pages can this administrator see:
 if (!$data["superuser"] && $accesslevel == "all") {
+  print $strAccessExplain;
   print '<p>Access Details:</p><table border=1>';
   reset($access_levels);
   printf ('<tr><td colspan="%d" align=center>Access Privileges</td></tr>',sizeof($access_levels)+2);

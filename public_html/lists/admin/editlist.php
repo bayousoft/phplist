@@ -5,7 +5,7 @@ if ($GLOBALS["require_login"] && !isSuperUser()) {
   $access = accessLevel("list");
   switch ($access) {
     case "owner":
-      $subselect = " where owner = ".$logindetails["id"];
+      $subselect = " where owner = ".$_SESSION["logindetails"]["id"];
       if ($id) {
         Sql_Query("select id from ".$tables["list"]. $subselect . " and id = $id");
         if (!Sql_Affected_Rows()) {
@@ -33,7 +33,7 @@ echo "<hr />";
 
 if (isset($save) && isset($listname) && $listname) {
   if ($GLOBALS["require_login"] && !isSuperUser())
-    $owner = $logindetails["id"];
+    $owner = $_SESSION["logindetails"]["id"];
   if (!isset($active)) $active = 0;
   if (isset($id) && $id) {
     $query = sprintf('update %s set name="%s",description="%s",active=%d,listorder=%d,prefix = "%s", owner = %d, rssfeed = "%s" where id=%d',$tables["list"],addslashes($listname),addslashes($description),$active,$listorder,$prefix,$owner,$rssfeed,$id);

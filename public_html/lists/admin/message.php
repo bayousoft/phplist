@@ -14,7 +14,7 @@ if ($require_login && !isSuperUser()) {
   $access = accessLevel("message");
   switch ($access) {
     case "owner":
-      $subselect = " where owner = ".$logindetails["id"];
+      $subselect = " where owner = ".$_SESSION["logindetails"]["id"];
       break;
     case "all":
       $subselect = "";break;

@@ -9,7 +9,7 @@ if (!$_GET["embed"]) {
   print '<p>'.PageLink2("template&id=".$_GET["id"],"Back to edit template").'</p>';
 } else {
 	ob_end_clean();
-	print previewTemplate($id,$logindetails["id"],nl2br('
+	print previewTemplate($id,$_SESSION["logindetails"]["id"],nl2br('
 
 I understand, said Socrates, and quite accept your account.  But tell me,
 Zeno, do you not further think that there is an idea of likeness in itself,

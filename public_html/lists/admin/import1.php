@@ -217,7 +217,7 @@ if ($GLOBALS["require_login"] && !isSuperUser()) {
   $access = accessLevel("import1");
   switch ($access) {
     case "owner":
-      $subselect = " where owner = ".$logindetails["id"];break;
+      $subselect = " where owner = ".$_SESSION["logindetails"]["id"];break;
     case "all":
       $subselect = "";break;
     case "none":

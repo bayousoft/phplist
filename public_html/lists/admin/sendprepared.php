@@ -4,9 +4,10 @@ require_once "accesscheck.php";
 echo '<script language="Javascript" src="js/jslib.js" type="text/javascript"></script><hr><p>';
 
 $access = accessLevel("sendprepared");
+
 switch ($access) {
   case "owner":
-    $subselect = " where owner = ".$logindetails["id"];break;
+    $subselect = " where owner = ".$_SESSION["logindetails"]["id"];break;
   case "all":
     $subselect = "";break;
   case "none":

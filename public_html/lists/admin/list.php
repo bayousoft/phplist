@@ -25,7 +25,7 @@ if (is_array($listorder))
 $access = accessLevel("list");
 switch ($access) {
   case "owner":
-    $subselect = " where owner = ".$logindetails["id"];break;
+    $subselect = " where owner = ".$_SESSION["logindetails"]["id"];break;
   case "all":
     $subselect = "";break;
   case "none":
@@ -75,7 +75,7 @@ else
 <p><?
 
 if ($GLOBALS["require_login"] && !isSuperUser()) {
-  $numlists = Sql_Fetch_Row_query("select count(*) from {$tables["list"]} where owner = ".$logindetails["id"]);
+  $numlists = Sql_Fetch_Row_query("select count(*) from {$tables["list"]} where owner = ".$_SESSION["logindetails"]["id"]);
   if ($numlists[0] < MAXLIST) {
     print PageLink2("editlist","Add a list");
   }

@@ -20,7 +20,7 @@ $email_header_fields = array("to","from","cc","bcc","reply_to","sender","return_
 if ($require_login && !isSuperUser()) {
   $access = accessLevel("import3");
   if ($access == "owner")
-    $subselect = " where owner = ".$logindetails["id"];
+    $subselect = " where owner = ".$_SESSION["logindetails"]["id"];
   elseif ($access == "all")
     $subselect = "";
   elseif ($access == "none")

@@ -21,36 +21,36 @@ require_once "accesscheck.php";
   $html .= $spb.SidebarLink("users","Users").$spe;
   $html .= $spb.SidebarLink("messages","Messages").$spe;
   $html .= $spb.SidebarLink("send","Send a message").$spe;;
-  $html .= $spb.SidebarLink("import","Import Emails").$spe;
-  $html .= $spb.SidebarLink("export","Export Emails").$spe;
-  $html .= $spb.'<hr>'.$spe;
-	$req = Sql_Query(sprintf('select * from %s where active',$tables["subscribepage"]));
-  if (Sql_Affected_Rows()) {
-  	while ($row = Sql_Fetch_Array($req)) {
-			$html .= $spb.sprintf('<a href="%s&id=%d" target="phplistwindow">%s</a>',getConfig("subscribeurl"),$row["id"],$row["title"]).$spe;
-   	}
-	} else {
-	  $html .= $spb.sprintf('<a href="%s" target="phplistwindow">%s</a>',getConfig("subscribeurl"),$GLOBALS["strSubscribeTitle"]).$spe;
-	}
-	$url = getConfig("unsubscribeurl");
-	if ($url)
-		$html .= $spb.'<a href="'.$url.'" target="phplistwindow">Unsubscribe</a>'.$spe;
-	else
-	  $html .= $spb.'<a href="../?p=unsubscribe" target="phplistwindow">Sign Off</a>'.$spe;
+#  $html .= $spb.SidebarLink("import","Import Emails").$spe;
+#  $html .= $spb.SidebarLink("export","Export Emails").$spe;
+#  $html .= $spb.'<hr>'.$spe;
+#	$req = Sql_Query(sprintf('select * from %s where active',$tables["subscribepage"]));
+#  if (Sql_Affected_Rows()) {
+#  	while ($row = Sql_Fetch_Array($req)) {
+#			$html .= $spb.sprintf('<a href="%s&id=%d" target="phplistwindow">%s</a>',getConfig("subscribeurl"),$row["id"],$row["title"]).$spe;
+#   	}
+#	} else {
+#	  $html .= $spb.sprintf('<a href="%s" target="phplistwindow">%s</a>',getConfig("subscribeurl"),$GLOBALS["strSubscribeTitle"]).$spe;
+#	}
+#	$url = getConfig("unsubscribeurl");
+#	if ($url)
+#		$html .= $spb.'<a href="'.$url.'" target="phplistwindow">Unsubscribe</a>'.$spe;
+#	else
+#	  $html .= $spb.'<a href="../?p=unsubscribe" target="phplistwindow">Sign Off</a>'.$spe;
 
-  $html .= $spb.'<hr>'.$spe;
-  $html .= $spb.SidebarLink("attributes","Attributes").$spe;
-  if ($tables["attribute"] && Sql_Table_Exists($tables["attribute"])) {
-    $res = Sql_Query("select * from {$tables['attribute']}",1);
-    while ($row = Sql_Fetch_array($res)) {
-      if ($row["type"] != "checkbox" && $row["type"] != "textline" && $row["type"] != "hidden")
-        $html .= $spb.SidebarLink("editattributes",strip_tags($row["name"]),"id=".$row["id"]) .$spe;
-    }
-  }
-  $html .= $spb.'<hr>'.$spe;
+#  $html .= $spb.'<hr>'.$spe;
+#  $html .= $spb.SidebarLink("attributes","Attributes").$spe;
+#  if ($tables["attribute"] && Sql_Table_Exists($tables["attribute"])) {
+#    $res = Sql_Query("select * from {$tables['attribute']}",1);
+#    while ($row = Sql_Fetch_array($res)) {
+#      if ($row["type"] != "checkbox" && $row["type"] != "textline" && $row["type"] != "hidden")
+#        $html .= $spb.SidebarLink("editattributes",strip_tags($row["name"]),"id=".$row["id"]) .$spe;
+#    }
+#  }
+#  $html .= $spb.'<hr>'.$spe;
   $html .= $spb.SidebarLink("templates","Templates").$spe;
   $html .= $spb.SidebarLink("bounces","View Bounces").$spe;
-  $html .= $spb.'<hr>'.$spe;
+#  $html .= $spb.'<hr>'.$spe;
   $html .= $spb.SidebarLink("eventlog","Eventlog").$spe;
 	$some = 0;
 	if (checkAccess("getrss") && MANUALLY_PROCESS_RSS) {

@@ -178,7 +178,7 @@ if(isset($import)) {
           $query = sprintf('INSERT INTO %s
             (email,loginname,namelc,created,modifiedby,password,superuser,disabled)
             values("%s","%s","%s",now(),"%s","%s",0,0)',
-            $tables["admin"],$email,$loginname,normalize($loginname),adminName($logindetails["id"]),$data["password"]);
+            $tables["admin"],$email,$loginname,normalize($loginname),adminName($_SESSION["logindetails"]["id"]),$data["password"]);
           $result = Sql_query($query);
           $adminid = Sql_insert_id();
       	  $count_email_add++;
@@ -263,7 +263,7 @@ if(isset($import)) {
 if ($GLOBALS["require_login"] && !isSuperUser()) {
   $access = accessLevel("import2");
   if ($access == "owner")
-    $subselect = " where owner = ".$logindetails["id"];
+    $subselect = " where owner = ".$_SESSION["logindetails"]["id"];
   elseif ($access == "all")
     $subselect = "";
   elseif ($access == "none")

@@ -6,7 +6,7 @@ require_once "accesscheck.php";
 if ($require_login && !isSuperUser()) {
   $access = accessLevel("import4");
   if ($access == "owner")
-    $subselect = " where owner = ".$logindetails["id"];
+    $subselect = " where owner = ".$_SESSION["logindetails"]["id"];
   elseif ($access == "all")
     $subselect = "";
   elseif ($access == "none")

@@ -75,7 +75,7 @@ if ($require_login && !isSuperUser()) {
   switch ($access) {
     case "owner":
       $table_list = $tables["user"].','.$tables["listuser"].','.$tables["list"].$findtables;
-      $subselect = "{$tables["user"]}.id = {$tables["listuser"]}.userid and {$tables["listuser"]}.listid = {$tables["list"]}.id and {$tables["list"]}.owner = ".$logindetails["id"];
+      $subselect = "{$tables["user"]}.id = {$tables["listuser"]}.userid and {$tables["listuser"]}.listid = {$tables["list"]}.id and {$tables["list"]}.owner = ".$_SESSION["logindetails"]["id"];
       if ($find) {
         $listquery = "select {$tables["user"]}.email,{$tables["user"]}.id,$findfield,confirmed from ".$table_list." where $subselect and $findbyselect";
         $count = Sql_query("SELECT count({$tables["user"]}.id) FROM ".$table_list ." where $subselect and $findbyselect");
@@ -89,6 +89,7 @@ if ($require_login && !isSuperUser()) {
       	$listquery .= ' and !confirmed';
       break;
     case "all":
+    case "view":
       $table_list = $tables["user"].$findtables;
       if ($find) {
         $listquery = "select {$tables["user"]}.email,{$tables["user"]}.id,$findfield,{$tables["user"]}.confirmed from ".$table_list." where $findbyselect";
@@ -105,8 +106,8 @@ if ($require_login && !isSuperUser()) {
       break;
     case "none":
     default:
-      $table_list = $tables["user"];
-      $subselect = " where id = 0";break;
+      print Error("Your privileges for this page are insufficient");
+      return;
   }
   $delete_message = '<br />Delete will delete user from the list<br />';
 } else {
@@ -126,6 +127,7 @@ if ($require_login && !isSuperUser()) {
   }
   $delete_message = '<br />Delete will delete user and all listmemberships<br />';
 }
+
 $totalres = Sql_fetch_Row($unconfirmedcount);
 $totalunconfirmed = $totalres[0];
 $totalres = Sql_fetch_Row($count);

@@ -11,7 +11,7 @@ require_once "accesscheck.php";
 $access = accessLevel("spage");
 switch ($access) {
   case "owner":
-    $subselect = " where owner = ".$logindetails["id"];break;
+    $subselect = " where owner = ".$_SESSION["logindetails"]["id"];break;
   case "all":
     $subselect = "";break;
   case "none":

@@ -25,7 +25,7 @@ function requireAccessLevel($page,$level) {
 }
 
 function isSuperUser() {
-  global $logindetails,$tables;
+  global $tables;
   if (isset($_SESSION["logindetails"]["superuser"]))
     return $_SESSION["logindetails"]["superuser"];
   if ($GLOBALS["require_login"]) {

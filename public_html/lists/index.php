@@ -383,7 +383,7 @@ function unsubscribePage($id) {
     if ($_POST["list"] && !$_POST["list"]["none"]) {
       if ($_POST["list"]["all"]) {
         $result = Sql_query("delete from {$tables["listuser"]} where userid = \"$userid\"");
-        $lists = "  * All mailinglists\n";
+        $lists = "  * $strAllMailinglists\n";
       } else {
         while(list($key,$val)= each($_POST["list"])) {
           if ($val == "signoff") {

@@ -10,7 +10,7 @@ if ($message["htmlformatted"])
 else
   $content = nl2br(stripslashes($message["message"]));
 if ($message["template"]) {
-	print previewTemplate($message["template"],$logindetails["id"],$content,$message["footer"]);
+	print previewTemplate($message["template"],$_SESSION["logindetails"]["id"],$content,$message["footer"]);
 } else {
 	print nl2br($content."\n\n".$message["footer"]);
 }

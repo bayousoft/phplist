@@ -219,6 +219,10 @@ if (preg_match("#(.*?)/admin#i",$this_doc,$regs)) {
 clearstatcache();
 if (checkAccess($page,"")) {
   if (is_file($include) || is_link($include)) {
+    # check whether there is a language file to include
+    if (is_file("lan/".$adminlanguage["iso"]."/".$include)) {
+      include "lan/".$adminlanguage["iso"]."/".$include;
+    }
   #	print "Including $include<br/>";
     if (!@include "$include") {
       #print "Error including $include";

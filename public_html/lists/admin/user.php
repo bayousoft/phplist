@@ -22,9 +22,16 @@ if ($require_login && !isSuperUser()) {
   $access = accessLevel("user");
   switch ($access) {
     case "owner":
-      $subselect = " and ".$tables["list"].".owner = ".$logindetails["id"];break;
+      $subselect = " and ".$tables["list"].".owner = ".$_SESSION["logindetails"]["id"];break;
     case "all":
       $subselect = "";break;
+    case "view":
+      $subselect = "";
+      if (sizeof($_POST)) {
+        print Error("You only have privileges to view this page, not change any of the information");
+        return;
+      }
+      break;
     case "none":
     default:
       $subselect = " and ".$tables["list"].".id = 0";break;
@@ -51,9 +58,7 @@ if ($returnpage) {
   $returnurl = "returnpage=$returnpage&returnoption=$returnoption";
 }
 
-echo "<hr />$delete_message";
-
-if ($change) {
+if ($change && ($access == "owner"|| $access == "all")) {
   while (list ($key,$val) = each ($struct)) {
     list($a,$b) = explode(":",$val[1]);
     if (!ereg("sys",$a) && $val[1]) {
@@ -114,7 +119,7 @@ if ($change) {
 }
 
 
-if (isset($delete) && $delete) {
+if (isset($delete) && $delete && $access != "view") {
   # delete the index in delete
   print "Deleting $delete ..\n";
   if ($require_login && !isSuperUser()) {
@@ -140,7 +145,8 @@ if ($id) {
     }
     if (!$membership)
       $membership = "No Lists";
-    printf( "<br /><li><a href=\"javascript:deleteRec('%s');\">delete</a> %s\n",PageURL2("user","","delete=$id&$returnurl"),$user["email"]);
+    if ($access != "view")
+    printf( "<br /><hr/>%s<li><a href=\"javascript:deleteRec('%s');\">delete</a> %s\n",$delete_message,PageURL2("user","","delete=$id&$returnurl"),$user["email"]);
     printf('&nbsp;&nbsp;<a href="%s">update page</a>',getConfig("preferencesurl").'&uid='.$user["uniqid"]);
     printf('&nbsp;&nbsp;<a href="%s">unsubscribe page</a>',getConfig("unsubscribeurl").'&uid='.$user["uniqid"]);
     print "<p><h3>User Details</h3>".formStart()."<table border=1>";
@@ -184,7 +190,9 @@ if ($id) {
         printf('<tr><td>%s</td><td><input style="attributeinput" type=text name="attribute[%d]" value="%s" size=30></td></tr>'."\n",$row["name"],$row["id"],htmlspecialchars($row["value"]));
       }
     }
-    print '<tr><td colspan=2><input type=submit name=change value="Save Changes"></table>';
+    if ($access != "view")
+    print '<tr><td colspan=2><input type=submit name=change value="Save Changes"></td></tr>';
+    print '</table>';
  #   printf ("<p>Member of<ul> %s</ul></p><br />\n", $membership);
 
  		print "<h3>Mailinglist Membership:</h3>";
@@ -205,7 +213,12 @@ if ($id) {
       if ($c % 4 == 0)
       	print '</tr><tr>';
     }
-    print '</tr><tr><td><input type=submit name="change" value="Change Membership"></td></tr></table></form>';
+    print '</tr>';
+
+    if ($access != "view")    
+    print '<tr><td><input type=submit name="change" value="Change Membership"></td></tr>';
+    
+    print '</table></form>';
 
 #    $msgs = Sql_query("SELECT count(*) FROM ".$tables["usermessage"]." where userid = ".$user["id"]);
 #  	$nummsgs = Sql_fetch_row($msgs);
