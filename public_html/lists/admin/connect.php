@@ -41,6 +41,7 @@ if (!defined("MIMETYPES_FILE")) define("MIMETYPES_FILE","/etc/mime.types");
 if (!defined("DEFAULT_MIMETYPE")) define("DEFAULT_MIMETYPE","application/octet-stream");
 if (!defined("USE_REPETITION")) define("USE_REPETITION",0);
 if (!defined("USE_EDITMESSAGE")) define("USE_EDITMESSAGE",0);
+if (!defined("FCKIMAGES_DIR")) define("FCKIMAGES_DIR","uploadimages");
 # let's keep it default to old behaviour for now
 if (!defined("USE_PREPARE")) define("USE_PREPARE",1);
 

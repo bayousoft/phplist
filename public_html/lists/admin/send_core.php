@@ -2,7 +2,7 @@
 // 2004-1-7  This function really isn't quite ready for register globals.  
 require_once "accesscheck.php";
 
-if (file_exists("FCKeditor/fckeditor.php") && USEFCK) {
+if (file_exists("./FCKeditor/fckeditor.php") && USEFCK) {
 	include("./FCKeditor/fckeditor.php") ;
   
   // Create the editor object here so we can check to see if *it* wants us to use it (this 
@@ -117,6 +117,16 @@ if (!$_POST["embargo"]) {
 if (!$_POST["repeatuntil"]) {
 	$_POST["repeatuntil"] = $repeatuntil->getDate() ." ".$repeatuntil->getTime();
 }
+if (!isset($_SESSION["fckeditor_height"])) {
+	$_SESSION["fckeditor_height"] = getConfig("fckeditor_height");
+}
+if ($_POST["expand"]) {
+	// request to expand editor area
+//	$defaultheight = getConfig("fckeditor_height");
+//	SaveConfig("fckeditor_height",$curheight+100,1);
+	$_SESSION["fckeditor_height"] += 100;
+}
+	
 
 if ((($send && is_array($_POST["list"])) || $save || $sendtest || $prepare) && $subject && $_POST["message"] && $from && !$duplicate_attribute) {
 
@@ -577,13 +587,29 @@ if (ENABLE_RSS) {
 
 <? } else {
 	$oFCKeditor = new FCKeditor ;
-	$oFCKeditor->ToolbarSet = 'Accessibility' ;
-	$oFCKeditor->Value = $_POST["message"];
-	$oFCKeditor->CreateFCKeditor( 'message', '600px', '400px' ) ;
+	//$oFCKeditor->ToolbarSet = 'Accessibility' ;
+	$oFCKeditor->ToolbarSet = 'Default' ;
+	$oFCKeditor->Value = stripslashes($_POST["message"]);
+	$w = getConfig("fckeditor_width");
+	$h = getConfig("fckeditor_height");
+	if ($_SESSION["fckeditor_height"]) {
+		$h = sprintf('%d',$_SESSION["fckeditor_height"]);
+	}
+	$oFCKeditor->CreateFCKeditor( 'message', $w.'px', $h.'px' ) ;
+	print '</td></tr>';
+	
+	print '<script language="Javascript" type="text/javascript">
+	function expand() {
+		document.sendmessageform.expand.value = 1;
+		document.sendmessageform.save.value = 1
+		document.sendmessageform.submit();
+	}
+	</script>';
+	
+	
+	print '<tr><td colspan=2 align=right><a href="javascript:expand();" class="button">expand</a></td></tr>';
 }
-
 ?>
-
 </td></tr>
 <tr><td colspan=2>Message Footer. <br/>Use <b>[UNSUBSCRIBE]</b> to insert the personal unsubscribe URL for each user. <br/>Use <b>[PREFERENCES]</b> to insert the personal URL for a user to update their details.</td></tr>
 <tr><td colspan=2><textarea name=footer cols=45 rows=5><?php echo $footer ?></textarea></td></tr>
@@ -726,5 +752,6 @@ if (!$_POST["status"]) {
 print "<hr><table><tr><td><input type=submit name=\"save\" value=\"$savecaption\"></td></tr></table>\n<hr>\n";
 print "<input type=hidden name=id value=$id>\n";
 print "<input type=hidden name=status value=\"".$_POST["status"]."\">\n";
+print '<input type=hidden name=expand value="0">';
 
 ?>

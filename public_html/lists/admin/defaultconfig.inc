@@ -385,6 +385,11 @@ if (defined("ENABLE_RSS") && ENABLE_RSS) {
 
 }
 
+if (USEFCK) {
+	$default_config["fckeditor_width"] = array(600,"Width in px of FCKeditor Area","text");
+	$default_config["fckeditor_height"] = array(400,"Height in px of FCKeditor Area","text");
+}
+
 ########## certainly do not edit after this #########
 
 $redfont = "<font color=\"red\">";

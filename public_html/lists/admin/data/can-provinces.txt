@@ -5,7 +5,7 @@
 # if you have any useful contributions like this for PHPlist, send them to me, 
 # and I can include them in next versions. That will save others in collecting 
 # the information
-canprovince:Provinces in Canada
+Province:Provinces in Canada
 Alberta
 British Columbia
 Manitoba
