@@ -61,6 +61,11 @@ if (checkAccess("upgrade") && !$_GET["pi"] && $upgrade_required) {
   $ls->addElement("upgrade",PageURL2("upgrade"));
   $ls->addColumn("upgrade","&nbsp","Upgrade the ".NAME." system");
 }
+if (checkAccess("dbcheck")) {
+  $some = 1;
+  $ls->addElement("dbcheck",PageURL2("dbcheck"));
+  $ls->addColumn("dbcheck","&nbsp","Check Database structure");
+}
 
 if (checkAccess("eventlog")) {
   $some = 1;
