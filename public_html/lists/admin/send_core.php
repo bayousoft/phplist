@@ -51,6 +51,7 @@ if (((!$send) && (!$save) && (!$sendtest)) && ($id)) {
   // A bit of additional cleanup
   $_POST["from"] = $_POST["fromfield"];  // Database field name doesn't match form fieldname...
   $_POST["repeatinterval"] = $_POST["repeat"]; // same here
+  $_POST["msgsubject"] = $_POST["subject"];
 
   # not sure why this is here, but it breaks things when tables are used in the
   # message, so for now disable it.
@@ -69,7 +70,7 @@ if (((!$send) && (!$save) && (!$sendtest)) && ($id)) {
 // If we've got magic quotes on, then we need to get rid of the slashes - either 
 // from the database or from the previous $_POST
 if (get_magic_quotes_gpc()) {
-	$_POST["subject"] = stripslashes($_POST["subject"]);
+	$_POST["msgsubject"] = stripslashes($_POST["msgsubject"]);
 	$_POST["from"] = stripslashes($_POST["from"]);
 	$_POST["tofield"] = stripslashes($_POST["tofield"]);
 	$_POST["replyto"] = stripslashes($_POST["replyto"]);
@@ -105,10 +106,10 @@ if (preg_match("/\n|\r/",$_POST["from"])) {
 } else {
 	$from = $_POST["from"];
 }
-if (preg_match("/\n|\r/",$_POST["subject"])) {
+if (preg_match("/\n|\r/",$_POST["msgsubject"])) {
 	$subject = "";
 } else {
-	$subject = $_POST["subject"];
+	$subject = $_POST["msgsubject"];
 }
 
 // If the valiable isn't filled in, then the input fields don't default to the 
@@ -454,7 +455,7 @@ if ((($send && is_array($_POST["list"])) || $save || $sendtest || $prepare) && $
 	} elseif (!$message) {
 		$errormessage = "Please enter a message";
 	} elseif (!$subject) {
-		$errormessage = "Please enter a subject";
+		$errormessage = "Please enter a subject".$_POST["msgsubject"];
 	} elseif ($duplicate_attribute) {
 		$errormessage = "Error: you can use an attribute in one rule only";
 	} elseif ($send && !is_array($_POST["list"])) {
@@ -503,7 +504,20 @@ if (ALLOW_ATTACHMENTS) {
 #$tabs->addTab("Test","http://tincan.co.uk");
 #print $tabs->display();
 ?>
-<?=formStart($enctype . ' name="sendmessageform"');
+<script language="Javascript">
+// some debugging stuff to see what happens
+function checkForm() {
+	return true;
+  for (var i=0;i<document.sendmessageform.elements.length;i++) {
+ 		alert(document.sendmessageform.elements[i].name+" "+document.sendmessageform.elements[i].value);
+  }
+	return true;
+}
+</script>
+<?
+print formStart($enctype . ' name="sendmessageform"');
+#print '<form method="post" enctype="multipart/form-data" name="sendmessageform" onSubmit="return checkForm()">';
+print '<input type=hidden name="workaround_fck_bug" value="1">';
 
 if ($_GET["page"] == "preparemessage")
 	print Help("preparemessage","What is prepare a message");
@@ -515,7 +529,7 @@ if (!$from) {
 ?>
 
 <table>
-<tr><td><?=Help("subject")?> Subject:</td><td><input type=text name=subject value="<?php echo htmlentities($subject)?>" size=40></td></tr>
+<tr><td><?=Help("subject")?> Subject:</td><td><input type=text name="msgsubject" value="<?php echo htmlentities($subject)?>" size=40></td></tr>
 <tr><td colspan=2>
 </ul>
 </td></tr>
