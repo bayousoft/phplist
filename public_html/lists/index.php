@@ -153,6 +153,8 @@ if (preg_match("/(\w+)/",$_GET["p"],$regs)) {
 	$req = Sql_Query(sprintf('select * from %s where active',$tables["subscribepage"]));
   if (Sql_Affected_Rows()) {
   	while ($row = Sql_Fetch_Array($req)) {
+    	$intro = Sql_Fetch_Row_Query(sprintf('select data from %s where id = %d and name = "intro"',$tables["subscribepage_data"],$row["id"]));
+      print $intro[0];
 			printf('<p><a href="./?p=subscribe&id=%d">%s</a></p>',$row["id"],$row["title"]);
    	}
 	} else {
