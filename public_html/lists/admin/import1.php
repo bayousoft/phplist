@@ -11,6 +11,17 @@ ob_end_flush();
 
 <?php
 
+if (!isset($GLOBALS["tmpdir"])) {
+	$GLOBALS["tmpdir"] = ini_get("upload_tmp_dir");
+}
+if (!is_dir($GLOBALS["tmpdir"]) || !is_writable($GLOBALS["tmpdir"])) {
+	$GLOBALS["tmpdir"] = ini_get("upload_tmp_dir");
+}
+#if (ini_get("open_basedir")) {
+if (!is_dir($GLOBALS["tmpdir"]) || !is_writable($GLOBALS["tmpdir"])) {
+	Warn("The temporary directory for uploading (".$GLOBALS["tmpdir"].") is not writable, so import will fail");
+}
+
 if(isset($import)) {
 
   $test_import = (isset($_POST["import_test"]) && $_POST["import_test"] == "yes");
@@ -42,13 +53,18 @@ if(isset($import)) {
   }
   $notify = $_POST["notify"];
 
-  if ($_FILES["import_file"]) {
-    move_uploaded_file($_FILES['import_file']['tmp_name'], $GLOBALS['tmpdir'].'/'. $_FILES['import_file']['name']);
-    if( !($fp = fopen ($GLOBALS['tmpdir'].'/'. $_FILES['import_file']['name'], "r")))
-      Fatal_Error("The file ".$_FILES['import_file']['tmp_name']." is not readable !");
-    $email_list = fread($fp, filesize ($_FILES["import_file"]['tmp_name']));
+  if ($_FILES["import_file"] && filesize($_FILES["import_file"]['tmp_name']) > 10) {
+		$newfile = $GLOBALS['tmpdir'].'/'. $_FILES['import_file']['name'].time();
+		move_uploaded_file($_FILES['import_file']['tmp_name'], $newfile);
+		if( !($fp = fopen ($newfile, "r"))) {
+			Fatal_Error("Cannot read ".$newfile." is not readable !");
+      return;
+   	}
+    $email_list = fread($fp, filesize ($newfile));
     fclose($fp);
-    unlink($_FILES["import_file"]['tmp_name']);
+  } elseif ($_FILES["import_file"]) {
+    Fatal_Error("Something went wrong while uploading the file. Empty file received. Maybe the file is too big, or you have no permissions to read it.");
+    return;
   }
 
   // Clean up email file
@@ -120,6 +136,8 @@ if(isset($import)) {
     $count_email_exist = 0;
     $count_list_add = 0;
     $num_lists = sizeof($lists);
+    $todo = sizeof($user_list);
+    $done = 0;
     if ($hasinfo) {
       # we need to add an info attribute if it does not exist
       $req = Sql_Query("select id from ".$tables["attribute"]." where name = \"info\"");
@@ -134,14 +152,16 @@ if(isset($import)) {
     $res = Sql_Query("select * from ".$tables["attribute"]);
     $attributes = array();
     while ($row = Sql_Fetch_Array($res)) {
-      if ($row["tablename"] != "")
-        $fieldname = $row["tablename"];
-      else
-        $fieldname = "attribute" .$row["id"];
+      $fieldname = "attribute" .$row["id"];
       $attributes[$row["id"]] = $_POST[$fieldname];
     }
 
     while (list($email,$data) = each ($user_list)) {
+    	$done++;
+      if ($done % 50 ==0) {
+      	print "$done/$todo<br/>";
+        flush();
+      }
       if(strlen($email) > 4) {
         // Annoying hack => Much to time consuming. Solution => Set email in users to UNIQUE()
         $result = Sql_query("SELECT id,uniqid FROM ".$tables["user"]." WHERE email = '$email'");
