@@ -8,7 +8,11 @@ if (PHPMAILER) {
   # this is still very experimental
 	include $GLOBALS["coderoot"] . "class.phplistmailer.php";
 } else {
-	include $GLOBALS["coderoot"] .'class.html.mime.mail.inc';
+	if (USE_OUTLOOK_OPTIMIZED_HTML) {
+		require_once $GLOBALS["coderoot"] .'class.html.mime.mail-outlookfix.inc';
+  } else {
+		require_once $GLOBALS["coderoot"] .'class.html.mime.mail.inc';
+  }
 }
 
 if (!function_exists("output")) {

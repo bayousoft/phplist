@@ -253,6 +253,8 @@ define("USE_MANUAL_TEXT_PART",0);
 define("ALLOW_ATTACHMENTS",0);
 
 # if you use the above, how many would you want to add per message (max)
+# You can leave this 1, even if you want to attach more files, because
+# you will be able to add them sequentially
 define("NUMATTACHMENTS",1);
 
 # when using attachments you can upload them to the server
@@ -327,6 +329,15 @@ define("USE_REPETITION",0);
 # use it, or are a new user, it is better to leave it off. It has nothing to
 # do with being able to edit messages.
 define("USE_PREPARE",0);
+
+# James Storm has contributed a new version of the HTML email class that creates the
+# HTML emails. He claims that his class fixes all kinds of things for MS Outlook.
+# if you want to use his class instead of the standard one, set this to 1
+# if you do so, we'd appreciate feedback whether it works ok, so we can integrate it
+# properly into the system. We need some more test information before this can be done
+
+# this does currently not work, so do not use it!
+define("USE_OUTLOOK_OPTIMIZED_HTML",0);
 
 # If you want to use the PHPMailer class from phpmailer.sourceforge.net, set the following
 # to 1, this code is not finished yet, and it is highly experimental. Do not use on
