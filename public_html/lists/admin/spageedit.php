@@ -19,7 +19,7 @@ switch ($access) {
     $subselect = " where id = 0";break;
 }
 
-if ($save || $activate || $deactivate) {
+if ($_POST["save"] || $_POST["activate"] || $_POST["deactivate"]) {
 	$owner = $_POST["owner"];
   if (!$owner)
   	$owner = $_SESSION["logindetails"]["id"];
@@ -73,6 +73,7 @@ if ($save || $activate || $deactivate) {
   	Sql_Query(sprintf('replace into %s (id,name,data) values(%d,"rssdefault","%s")',
 	   	$tables["subscribepage_data"],$id,$rssdefault));
 	}
+  return;
   if ($activate) {
   	Sql_Query(sprintf('update %s set active = 1 where id = %d',
     	$tables["subscribepage"],$id));
@@ -84,6 +85,7 @@ if ($save || $activate || $deactivate) {
    	Redirect("spage");
     exit;
   }
+  
 }
 ob_end_flush();
 if ($id) {
