@@ -73,10 +73,14 @@ print "<table><tr><td></td><td>Message</td><td>User</td><td>Date</td></tr>";
 while ($bounce = Sql_fetch_array($result)) {
 	if (preg_match("#bounced list message ([\d]+)#",$bounce["status"],$regs)) {
   	$messageid = sprintf('<a href="./?page=message&id=%d">%d</a>',$regs[1],$regs[1]);
+	} elseif ($bounce["status"] == "bounced system message") {
+  	$messageid = "System Message";
 	} else {
   	$messageid = "Unknown";
  	}
   if (preg_match("#([\d]+) bouncecount increased#",$bounce["comment"],$regs)) {
+  	$userid = sprintf('<a href="./?page=user&id=%d">%d</a>',$regs[1],$regs[1]);
+  } elseif (preg_match("#([\d]+) marked unconfirmed#",$bounce["comment"],$regs)) {
   	$userid = sprintf('<a href="./?page=user&id=%d">%d</a>',$regs[1],$regs[1]);
   } else {
   	$userid = "Unknown";
