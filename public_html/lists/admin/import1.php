@@ -12,31 +12,40 @@ ob_end_flush();
 <?php
 
 if(isset($import)) {
-  $test_import = (isset($import_test) && $import_test == "yes");
-  if($import_file == "none") {
-    Fatal_Error("File is either to large or does not exist.");return;
-  }
 
-  if(empty($import_file)) {
-    Fatal_Error("No file was specified.");return;
-  }
-  if( !ereg("^[0-9A-Za-z_.-/ ]+$", $import_file_name) ) {
-    Fatal_Error("Use of wrong characters: $import_file_name");
+  $test_import = (isset($_POST["import_test"]) && $_POST["import_test"] == "yes");
+ /*
+  if (!is_array($_POST["lists"]) && !$test_import) {
+    Fatal_Error("Please select at least one list");
     return;
   }
-  if (!is_array($lists) && !$test_import) {
-    Fatal_Error("Please select at least one list");return;
+ */
+  if(!$_FILES["import_file"]) {
+    Fatal_Error("File is either too large or does not exist.");
+    return;
   }
-  if (!$notify && !$test_import) {
+  if(empty($_FILES["import_file"])) {
+    Fatal_Error("No file was specified. Maybe the file is too big? ");
+    return;
+  }
+  if (filesize($_FILES["import_file"]['tmp_name']) > 1000000) {
+  	Fatal_Error("File too big, please split it up into smaller ones");
+    return;
+  }
+  if( !preg_match("/^[0-9A-Za-z_\.\-\/\s \(\)]+$/", $_FILES["import_file"]["name"]) ) {
+    Fatal_Error("Use of wrong characters: ".$_FILES["import_file"]["name"]);
+    return;
+  }
+  if (!$_POST["notify"] && !$test_import) {
     Fatal_Error("Please choose whether to sign up immediately or to send a notification");
     return;
   }
 
-  if ($import_file && $import_file != "none") {
-    $fp = fopen ($import_file, "r");
-    $email_list = fread($fp, filesize ($import_file));
+  if ($_FILES["import_file"]) {
+    $fp = fopen ($_FILES["import_file"]['tmp_name'], "r");
+    $email_list = fread($fp, filesize ($_FILES["import_file"]['tmp_name']));
     fclose($fp);
-    unlink($import_file);
+    unlink($_FILES["import_file"]['tmp_name']);
   }
 
   // Clean up email file
