@@ -1,7 +1,7 @@
 <?php
 require_once "accesscheck.php";
 
-# $Id: export.php,v 1.2 2004-05-11 11:41:38 mdethmers Exp $
+# $Id: export.php,v 1.3 2004-06-02 10:07:23 mdethmers Exp $
 
 # export users from PHPlist
 
@@ -21,14 +21,19 @@ if ($process == "Export") {
 	ob_end_clean();
 	header("Content-type: ".$GLOBALS["export_mimetype"]);
 	header("Content-disposition:  attachment; filename=\"$filename\"");
+  $col_delim = "\t";
+  if (EXPORT_EXCEL) {
+	  $col_delim = ",";
+  }
+  $row_delim = "\n";
 
 	if (is_array($cols)) {
     while (list ($key,$val) = each ($DBstruct["user"])) {
       if (in_array($key,$cols)) {
         if (!ereg("sys",$val[1])) {
-          print $val[1]."\t";
+          print $val[1].$col_delim;
         } elseif (ereg("sysexp:(.*)",$val[1],$regs)) {
-          print $regs[1]."\t";
+          print $regs[1].$col_delim;
         }
       }
     }
@@ -38,21 +43,21 @@ if ($process == "Export") {
     $res = Sql_Query("select id,name,type from {$tables['attribute']}");
     while ($row = Sql_fetch_array($res)) {
       if (in_array($row["id"],$attrs)) {
-        print trim(stripslashes($row["name"])) ."\t";
+        print trim(stripslashes($row["name"])) .$col_delim;
         array_push($attributes,array("id"=>$row["id"],"type"=>$row["type"]));
       }
     }
   }
-  print 'List Membership'."\n";
+  print 'List Membership'.$row_delim;
   if ($list)
     $result = Sql_query(sprintf('SELECT %s.* FROM
-      %s,%s where %s.id = %s.userid and %s.listid = %s and %s.%s >= "%s" and %s.%s  <= "%s"
+      %s,%s where %s.id = %s.userid and %s.listid = %s and %s.%s >= "%s 00:00:00" and %s.%s  <= "%s 23:59:59"
       ',$tables['user'],$tables['user'],$tables['listuser'],
         $tables['user'],$tables['listuser'],$tables['listuser'],$list,$tables['user'],$column,$fromval,$tables['user'],$column,$toval)
       );
   else
     $result = Sql_query(sprintf('
-      SELECT * FROM %s where %s >= "%s" and %s  <= "%s"',
+      SELECT * FROM %s where %s >= "%s 00:00:00" and %s  <= "%s 23:59:59"',
       $tables['user'],$column,$fromval,$column,$toval));
 
 # print Sql_Affected_Rows()." users apply<br/>";
@@ -60,10 +65,25 @@ if ($process == "Export") {
     set_time_limit(500);
     reset($cols);
     while (list ($key,$val) = each ($cols))
-      print strtr($user[$val],"\t",",")."\t";
+      print strtr($user[$val],$col_delim,",").$col_delim;
     reset($attributes);
     while (list($key,$val) = each ($attributes)) {
-      print strtr(UserAttributeValue($user["id"],$val["id"]),"\t",",")."\t";
+    	$value = UserAttributeValue($user["id"],$val["id"]);
+      $enclose = 0;
+      if (ereg('"',$value)) {
+      	$value = ereg_replace('"','""',$value);
+        $enclose = 1;
+      }
+      if (ereg($col_delim,$value)) {
+        $enclose = 1;
+      }
+      if (ereg($row_delim,$value)) {
+        $enclose = 1;
+      }
+      if ($enclose) {
+      	$value = '"'.$value .'"';
+      }
+      print $value.$col_delim;
     }
     $lists = Sql_query("SELECT listid,name FROM
       {$tables['listuser']},{$tables['list']} where userid = ".$user["id"]." and
@@ -73,7 +93,7 @@ if ($process == "Export") {
     while ($list = Sql_fetch_array($lists)) {
       print $list["name"]." ";
     }
-    print "\n";
+    print $row_delim;
   }
   exit;
 }
