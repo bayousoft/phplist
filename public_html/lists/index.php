@@ -502,7 +502,7 @@ function unsubscribePage($id) {
   }
 
   if (!$some) {
-    $res .= "<b>".$GLOBALS["strNoListsFound"]."</b>";
+    $res .= "<b>".$GLOBALS["strNoListsFound"]."</b></ul>";
     $res .= '<p><input type=submit value="'.$GLOBALS["strResubmit"].'">';
   } else {
     $res .= $out;
