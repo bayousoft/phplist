@@ -439,6 +439,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
 	$mail->build_message(
   	array(
     	"html_charset" => $cached[$messageid]["html_charset"],
+      "html_encoding" => HTMLEMAIL_ENCODING,
       "text_charset" => $cached[$messageid]["text_charset"])
     );
 
