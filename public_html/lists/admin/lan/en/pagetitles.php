@@ -34,6 +34,7 @@ switch ($page) {
   case "adminattributes": $page_title = "Configure Administrator attributes";break;
   case "processbounces": $page_title = "Retrieve bounces from server";break;
   case "bounces": $page_title = "List bounces";break;
+  case "bounce": $page_title = 'View a bounce';break;
   case "spageedit": $page_title = "Edit a subscribe page";break;
   case "spage": $page_title = "Subscribe pages";break;
   case "eventlog": $page_title = "Log of events";break;
