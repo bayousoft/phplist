@@ -254,7 +254,10 @@ if (checkAccess($page,"")) {
 } else {
   Error("You do not have enough privileges to access this page");
 }
-if (!$_GET["omitall"]) {
+if ($GLOBALS["commandline"]) {
+  ob_clean();
+  exit;
+} elseif (!$_GET["omitall"]) {
   ob_end_flush();
   include "footer.inc";
 } 

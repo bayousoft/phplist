@@ -1,7 +1,8 @@
 
 Running PHPlist from the commandline
 
-Currently you can send messages to PHPlist by using the commandline
+A few pages in the PHPlist system can now, as of version 2.7.0 be run with 
+a simple command from the commandline.
 
 the script to use is called "phplist" in the "bin" directory. You will have to edit 
 this script to fit your system
@@ -11,7 +12,8 @@ allowed to run the script should be mentioned in the "commandline_users" config
 variable. The identity of a user is determined by the USER environment variable, which
 may not always match your system.
 
-The "p" parameter is the page that needs to be run. Currently only "send" is available.
+The "p" parameter is the page that needs to be run. 
+Currently you can use "send", "processqueue" and "processbounces"
 
 phplist -psend
 

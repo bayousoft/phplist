@@ -1,7 +1,17 @@
 <?
 require_once "accesscheck.php";
 
-ob_end_flush();
+if (!$GLOBALS["commandline"]) {
+  ob_end_flush();
+  if (!MANUALLY_PROCESS_BOUNCES) {
+    print "This page can only be called from the commandline";
+    return;
+  }
+} else {
+  ob_end_clean();
+  print ClineSignature();
+  ob_start();
+}
 print '<script language="Javascript" src="js/progressbar.js" type="text/javascript"></script>';
 flush();
 $outputdone =0;
@@ -41,20 +51,26 @@ function my_shutdown() {
 function output ($message,$reset = 0) {
   $infostring = "[". date("D j M Y H:i",time()) . "] [" . getenv("REMOTE_HOST") ."] [" . getenv("REMOTE_ADDR") ."]";
   #print "$infostring $message<br>\n";
-  if ($reset)
+  if ($GLOBALS["commandline"]) {
+    ob_end_clean();
+    print $message . "\n";
+    ob_start();
+  } else {
+    if ($reset)
+      print '<script language="Javascript" type="text/javascript">
+        if (document.forms[0].name == "outputform") {
+          document.outputform.output.value = "";
+          document.outputform.output.value += "\n";
+        }
+      </script>'."\n";
     print '<script language="Javascript" type="text/javascript">
       if (document.forms[0].name == "outputform") {
-        document.outputform.output.value = "";
+        document.outputform.output.value += "'.$message.'";
         document.outputform.output.value += "\n";
-      }
+      } else
+        document.writeln("'.$message.'");
     </script>'."\n";
-  print '<script language="Javascript" type="text/javascript">
-    if (document.forms[0].name == "outputform") {
-       document.outputform.output.value += "'.$message.'";
-       document.outputform.output.value += "\n";
-    } else
-       document.writeln("'.$message.'");
-  </script>'."\n";
+  }
 
   flush();
 }
@@ -344,12 +360,15 @@ while ($user = Sql_Fetch_Row($userid_req)) {
 			$cnt = 0;
 		}
 	}
-	if ($usercnt % 10 == 0)
-		output("\\nIdentifying consecutive bounces\\n$usercnt of $total users processed",1);
+	if ($usercnt % 10 == 0) {
+		output("Identifying consecutive bounces");
+    output("$usercnt of $total users processed",1);
+  }
 	$usercnt++;
 	flush();
 }
-output("\\nIdentifying consecutive bounces\\n$total users processed",1);
+output("Identifying consecutive bounces");
+output("$total users processed",1);
 
 if ($download_report) {
 	$report = "Report:\n$download_report\n";

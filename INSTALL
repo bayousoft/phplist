@@ -28,10 +28,18 @@ menu on the right.
 
 Now you're done.
 
-* Sending messages
-It's useful to make this automatic, so you don't need to think about it, but if that's not possible
-you can do it manually, by using the "Process Message Queue" link in the admin page.
+* Processing the message queue
+It's useful to make this automatic, so you don't need to think about it, 
+but if that's not possible you can do it manually, by using the 
+"Process Message Queue" link in the admin page.
 
+To set it up automatically, you can use the commandline option for PHPlist. Read
+the stuff in README.commandline to find out how to install the commandline. 
+Once it is set up, you can add a regular scheduled process like:
+
+# phplist -pprocessqueue
+
+* Windows and non apache issues
 The "trick" to post to the directory will not always work. Particularly users with Windows have
 found that they get "Method not allowed" errors, when using PHPlist. If you get this, you should
 try to tell your webserver to allow the "POST" method to any URL in the PHPlist tree, particularly

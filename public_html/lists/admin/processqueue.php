@@ -11,7 +11,17 @@ onerror = null;
 this.onerror = null;
 </script>
 <?
-ob_end_flush();
+if (!$GLOBALS["commandline"]) {
+  ob_end_flush();
+  if (!MANUALLY_PROCESS_QUEUE) {
+    print "This page can only be called from the commandline";
+    return;
+  }
+} else {
+  ob_end_clean();
+  print ClineSignature();
+  ob_start();
+}
 # once and for all get rid of those questions why they do not receive any emails :-)
 if (TEST)
 	print '<font color=red size=5>Running in testmode, no emails will be sent. Check your config file.</font>';
@@ -61,7 +71,6 @@ function my_shutdown () {
 	if ($unconfirmed)
 		output(sprintf('%d emails unconfirmed (not sent)',$unconfirmed));
 
-	print '<script language="Javascript" type="text/javascript"> finish(); </script>';
   releaseLock($send_process_id);
 
   finish("info",$report);
@@ -86,7 +95,9 @@ register_shutdown_function("my_shutdown");
 ## some general functions
 function finish ($flag,$message) {
 	global $nothingtodo;
-  print '<script language="Javascript" type="text/javascript"> finish(); </script>';
+  if (!$GLOBALS["commandline"]) {
+    print '<script language="Javascript" type="text/javascript"> finish(); </script>';
+  }
   if ($flag == "error") {
     $subject = "Maillist Errors";
   } elseif ($flag == "info") {
@@ -105,16 +116,22 @@ function ProcessError ($message) {
 
 function output ($message,$logit = 1) {
   global $report;
-  $infostring = "[". date("D j M Y H:i",time()) . "] [" . getenv("REMOTE_HOST") ."] [" . getenv("REMOTE_ADDR") ."]";
-  #print "$infostring $message<br>\n";
-  print '<script language="Javascript" type="text/javascript">
-    if (document.forms[0].name == "outputform") {
-       document.outputform.output.value += "'.$message.'";
-       document.outputform.output.value += "\n";
-    } else
-       document.writeln("'.$message.'");
-  </script>'."\n";
-
+  if ($GLOBALS["commandline"]) {
+    ob_end_clean();
+    print $message . "\n";
+    ob_start();
+  } else {
+    $infostring = "[". date("D j M Y H:i",time()) . "] [" . getenv("REMOTE_HOST") ."] [" . getenv("REMOTE_ADDR") ."]";
+    #print "$infostring $message<br>\n";
+    print '<script language="Javascript" type="text/javascript">
+      if (document.forms[0].name == "outputform") {
+        document.outputform.output.value += "'.$message.'";
+        document.outputform.output.value += "\n";
+      } else
+        document.writeln("'.$message.'");
+    </script>'."\n";
+  }
+  
   $report .= "\n$infostring $message";
   if ($logit)
   	logEvent($message);
@@ -132,7 +149,6 @@ function sendEmailTest ($messageid,$email) {
 # we don not want to timeout or abort
 $abort = ignore_user_abort(1);
 set_time_limit(600);
-ob_end_flush();
 flush();
 
 output("Started",0);

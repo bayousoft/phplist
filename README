@@ -67,12 +67,9 @@ Languages
 pages of PHPlist. You can use them in your config file to make the frontend of the system
 appear in the language of your choice.
 
-Some important notes:
-
-* I think you will need one of the latest versions of Mysql, but I'm not entirely sure. I use 3.23.xx, 
-so that one is most likely to work.
-* PHP 3 is not supported any more. Upgrade to PHP4 if you're still using 3.
-* I've made the DB calls and the User interface (not the admin) "abstract" in Database calls and language.
+In the config file there are a lot of choices to make about your particular 
+installation. Make sure to read it carefully and step by step work your way through
+it. A lot of information is provided with each step.
 
 You receive this software free of charge. The only thing that I would ask is to keep the copyright
 on the files intact and to keep the link and the image to PHPlist.com in your pages. That's not too much to 

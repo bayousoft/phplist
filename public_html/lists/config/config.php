@@ -37,7 +37,10 @@ $installation_name = 'PHPlist';
 # This can be 'pop' or 'mbox'
 $bounce_protocol = 'pop';
 
-# set this to 0, if you set up a cron to download bounces regularly
+# set this to 0, if you set up a cron to download bounces regularly by using the 
+# commandline option. If this is 0, users cannot run the page from the web
+# frontend. Read README.commandline to find out how to set it up on the
+# commandline
 define ("MANUALLY_PROCESS_BOUNCES",1);
 
 # when the protocol is pop, specify these three
@@ -116,6 +119,9 @@ define ("WARN_ABOUT_PHP_SETTINGS",1);
 
 # If you set up your system to send the message automatically, you can set this value
 # to 0, so "Process Queue" will disappear from the site
+# this will also stop users from loading the page on the web frontend, so you will
+# have to make sure that you run the queue from the commandline
+# check README.commandline how to do this
 define ("MANUALLY_PROCESS_QUEUE",1);
 
 # use Register to "register" to PHPlist.com. Once you set TEST to 0, the system will then
