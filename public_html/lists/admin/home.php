@@ -23,7 +23,7 @@ if (!isset($checkinterval)) {
 if ($checkinterval) {
   $needscheck = Sql_Fetch_Row_Query(sprintf('select date_add(value,interval %d day) < now() as needscheck from %s where item = "updatelastcheck"',$checkinterval,$tables["config"]));
   if ($needscheck[0]) {
-    ini_set("user_agent","PHPlist version ".VERSION);
+    ini_set("user_agent",NAME." (PHPlist version ".VERSION.")");
     ini_set("default_socket_timeout",5);
     if ($fp = @fopen ("http://www.phplist.com/files/LATESTVERSION","r")) {
       $latestversion = fgets ($fp);
@@ -54,12 +54,12 @@ $ls = new WebblerListing("System Functions");;
 if (checkAccess("initialise") && !$_GET["pi"]) {
   $some = 1;
   $ls->addElement("setup",PageURL2("setup"));
-  $ls->addColumn("setup","&nbsp","Setup PHPlist");
+  $ls->addColumn("setup","&nbsp","Setup ".NAME);
 }
 if (checkAccess("upgrade") && !$_GET["pi"] && $upgrade_required) {
   $some = 1;
   $ls->addElement("upgrade",PageURL2("upgrade"));
-  $ls->addColumn("upgrade","&nbsp","Upgrade the PHPlist system");
+  $ls->addColumn("upgrade","&nbsp","Upgrade the ".NAME." system");
 }
 
 if (checkAccess("eventlog")) {
@@ -80,7 +80,7 @@ $ls = new WebblerListing("Configuration functions");
 if (checkAccess("configure")) {
   $some = 1;
   $ls->addElement("configure",PageURL2("configure"));
-  $ls->addColumn("configure","&nbsp;","Configure PHPlist");
+  $ls->addColumn("configure","&nbsp;","Configure ".NAME);
 }
 if (checkAccess("attributes") && !$_GET["pi"]) {
   $some = 1;

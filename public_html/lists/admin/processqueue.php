@@ -121,7 +121,7 @@ function my_shutdown () {
   releaseLock($send_process_id);
 
   finish("info",$report);
-	if ($script_stage < 5) {
+	if ($script_stage < 5 && !$nothingtodo) {
 		output ("Warning: script never reached stage 5\nThis may be caused by a too slow or too busy server \n");
 	} elseif( $script_stage == 5)	{
 		# if the script timed out in stage 5, reload the page to continue with the rest
@@ -156,7 +156,7 @@ function my_shutdown () {
       output("Reload required");
 	  }
   #	print '<script language="Javascript" type="text/javascript">alert(document.location)</script>';
-	}	elseif ($script_stage == 6)
+	}	elseif ($script_stage == 6 || $nothingtodo)
 		output("Finished, All done",0);
 	else
 		output("Script finished, but not all messages have been sent yet.");

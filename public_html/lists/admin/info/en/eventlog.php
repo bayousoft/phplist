@@ -1,2 +1,2 @@
-<p>This page lists events that have happend in PHPlist that may be of interest to review.
+<p>This page lists events that have happend in <?=NAME?> that may be of interest to review.
 The entries are listed in reverse chronological order</p>

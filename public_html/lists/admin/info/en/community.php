@@ -3,7 +3,7 @@
 <p><b>Latest Version</b><br/>
 Please make sure you are using the latest version when submitting a bugreport.<br/>
 <?
-ini_set("user_agent","PHPlist version ".VERSION);
+ini_set("user_agent",NAME. " (PHPlist version ".VERSION.")");
 ini_set("default_socket_timeout",5);
 if ($fp = @fopen ("http://www.phplist.com/files/LATESTVERSION","r")) {
 	$latestversion = fgets ($fp);
@@ -37,7 +37,6 @@ used by new users to get acquainted with the system</a>.</p>
 <p>To facilitate the PHPlist community several options are available:
 <ul>
 <li>The <a href="http://www.phplist.com/forums/" target="_blank">Forums</a></li>
-<li>The <a href="#lists">Mailinglist</a></li>
 <li>The <a href="#bugtrack">Bug Tracker</a></li>
 </ul>
 </p><hr>
@@ -47,14 +46,14 @@ you can help out by answering the questions of other users.</p>
 <p>If you are <b>new to PHPlist</b> and you are having problems with setting it up to work for
 your site, you can help by trying to find the solution in the above locations first, before
 immediately posting a "it does not work" message. Often the problems you may have are related
-to the environment your PHPlist installation is running in. Only having one developer for 
-PHPlist has the disadvantage that the system cannot be tested thoroughly on every platform 
+to the environment your PHPlist installation is running in. Only having one developer for
+PHPlist has the disadvantage that the system cannot be tested thoroughly on every platform
 and every version of PHP.</p>
 <h1>Other things you can do to help</h1>
 <ul>
 <li><p>If you think PHPlist is a great help for you, why not help to let other people know about
 it's existence. You probably made quite an effort to find it and to decide to use if after
-having compared it to other similar appliations, so you could help other people benefit 
+having compared it to other similar applications, so you could help other people benefit
 from your experience.</p>
 
 <p>To do so, you can <?=PageLink2("vote","Vote")?> for PHPlist, or write reviews on the
@@ -71,7 +70,7 @@ Please post your findings on the <a href="http://www.phplist.com/forums/" target
 that the system is a great tool to achieve their goals. Then if they want some changes
 you can <b>commission new features</b> that are paid for by your clients. If you want to know
 how much it would be to add features to PHPlist, <a href="mailto:phplist@tincan.co.uk?subject=request for quote to change PHPlist">get in touch</a>.
-Most of the new features of PHPlist are added by request from paying clients. This will benefit 
+Most of the new features of PHPlist are added by request from paying clients. This will benefit
 you for paying a small price to achieve your aims, it will benefit the community for getting new
 features, and it will benefit the developers for getting paid for some of the work on PHPlist :-)</p></li>
 <li><p>If you use PHPlist regularly and you have a <b>fairly large amount of subscribers</b> (1000+), we are
@@ -85,16 +84,12 @@ how well PHPlist is performing.</p></li>
 
 <hr>
 <p><b><a name="lists"></a>Mailinglist</b><br/>
-To receive support, sign up for the phplist-users mailinglist:
-<ul>
-<li>Sign up by sending an email to <a href="mailto:phplist-users-subscribe@tincan.co.uk">phplist-users-subscribe@tincan.co.uk</a>
-<li>Send your emails to <a href="mailto:phplist-users@tincan.co.uk">phplist-users@tincan.co.uk</a>
-<li>Unsubscribe by sending an email to <a href="mailto:phplist-users-unsubscribe@tincan.co.uk">phplist-users-unsubscribe@tincan.co.uk</a>
+PHPlist used to have a mailinglist, but this has now been closed. You can still read the mailinglist archives. For support about PHPlist you can try the <a href="#forums">forums</a> instead.
 <li>To check the mailinglist archives go <a href="http://lists.cupboard.org/archive/tincan.co.uk" target="_blank">here</a>
 </ul>
 </p>
 <p><b><a name="bugtrack"></a>Bugtrack</b><br/>
-To report a bug, go to <a href="http://mantis.tincan.co.uk/" target="_blank">http://bugtrack.tincan.co.uk</a>
+To report a bug, go to <a href="http://mantis.tincan.co.uk/" target="_blank">http://mantis.tincan.co.uk</a>
 and create an account for yourself. You will get a password by email.<br/>
 You can then enter the "mantis" system and submit a bugreport.</p>
 <p>Your system details are:</p>
@@ -113,4 +108,4 @@ foreach($le as $module) {
 </ul></li>
 </ul>
 <p>You can also use this system to request new features.</p>
-<p>Please note, emails not using this system, or the phplist-users mailinglist will be ignored.</p>
+<p>Please note, emails not using this system, or the forums will be ignored.</p>

@@ -1,5 +1,5 @@
 <br/>
-<p>Thank you for using PHPlist.<br>We hope you achieved your aim.</p>
+<p>Thank you for using <?=NAME?>.<br>We hope you achieved your aim.</p>
 <p>You are now logged out.</p>
 <p>To log in again, click <a href='?page=home'>here</a>.</p>
 

@@ -60,6 +60,20 @@ a:link.phphead,
 a:hover.phphead,
 a:visited.phphead {font-size: 14px; color: #000000; font-style: normal; font-family: verdana, sans-serif; text-decoration: none; padding-left:20px;}
 
+.abouthead,
+a:active.abouthead,
+a:link.abouthead,
+a:hover.abouthead,
+a:visited.abouthead {
+	font-size: 18px;
+  color: #ff9900;
+  font-style: bold;
+  font-family: verdana, sans-serif;
+  text-decoration: none;
+  text-align: center;
+  border: 1px solid black;
+}
+
 .menulinkleft {margin : 0px; padding : 0px;}
 .menulinkleft a:link, 
 .menulinkleft a:active, 

@@ -252,26 +252,6 @@ function clineUsage($line = "") {
   exit;
 }
 
-function parseCline() {
-	$res = array();
-  $cur = "";
-  foreach ($GLOBALS["argv"] as $clinearg) {
-  	if (substr($clinearg,0,1) == "-") {
-    	$par = substr($clinearg,1,1);
-      $clinearg = substr($clinearg,2,strlen($clinearg));
-     # $res[$par] = "";
-      $cur = $par;
-	    $res[$cur] .= $clinearg;
-   	} elseif ($cur) {
-    	if ($res[$cur])
-		    $res[$cur] .= ' '.$clinearg;
-      else
-      	$res[$cur] .= $clinearg;
-    }
-  }
-  return $res;
-}
-
 function Error($msg) {
   if ($GLOBALS["commandline"]) {
     clineError($msg);
@@ -294,7 +274,7 @@ function Error($msg) {
   while (list($key,$val) = each ($_POST))
   	if ($key != "password")
 	    $message .= $key . "=" . $val . "\n";
-  sendMail(getConfig("report_address"),"Mail list error",$message,"");
+  sendMail(getConfig("report_address"),$GLOBALS["installation_name"]." Mail list error",$message,"");
 }
 
 function clean ($value) {
@@ -339,6 +319,7 @@ function Info($msg) {
 $main_menu = array(
   "setup" => "Configure",
   "community" => "Help",
+  "about" => "About",
   "div1" => "<hr />",
   "list" => "Lists",
   "send"=>"Send a message",
@@ -357,6 +338,11 @@ $main_menu = array(
 
 function newMenu() {
   if ($GLOBALS["firsttime"]) { return; }
+	$nm = strtolower(NAME);
+  if ($nm != "phplist") {
+  	$GLOBALS["main_menu"]["community"] = "";
+  }
+
   $access = accessLevel("spage");
   switch ($access) {
     case "owner":

@@ -3,7 +3,7 @@
 <p><b>Vote for PHPlist</b><br/>
 If you think PHPlist is great, and you would advice more people to use it, why not put your vote into some sites:
 </p>
-<p>If you found PHPlist on a different site, and think that site should be included here, <a href="mailto:phplist@tincan.co.uk?subject=New Directory">send us a quick email</a></p>
+<p>If you found PHPlist on a different site, and think that site should be included here, <a href="mailto:phplist2@tincan.co.uk?subject=New Directory">send us a quick email</a></p>
 <ul>
 <li><b>At freshmeat</b>
 <form method="post" action="http://freshmeat.net/rate/store/" target="_vote">

@@ -30,6 +30,7 @@ if (!defined("USE_MANUAL_TEXT_PART")) define("USE_MANUAL_TEXT_PART",0);
 if (!defined("ALLOW_NON_LIST_SUBSCRIBE")) define("ALLOW_NON_LIST_SUBSCRIBE",0);
 if (!defined("MAILQUEUE_BATCH_SIZE")) define("MAILQUEUE_BATCH_SIZE",0);
 if (!defined("MAILQUEUE_BATCH_PERIOD")) define("MAILQUEUE_BATCH_PERIOD",3600);
+if (!defined("NAME")) define("NAME",'PHPlist');
 
 # keep it default to old behaviour for now
 if (!defined("USE_PREPARE")) define("USE_PREPARE",1);
