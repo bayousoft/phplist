@@ -4,7 +4,7 @@ DATE=`date +"%Y-%m-%d %H:%M"`;
 cvs2cl.pl --prune -r -t --hide-filenames
 echo "Changelog for PHPlist $DATE" > cl
 echo >> cl
-cat ChangeLog changelog.old >> cl
+cat ChangeLog changelog.presf changelog.old >> cl
 mv cl changelog
 rm -f ChangeLog
 # make one for languages as well
