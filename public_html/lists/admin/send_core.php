@@ -10,6 +10,8 @@ if (file_exists("FCKeditor/fckeditor.php") && USEFCK) {
 include $GLOBALS["coderoot"] . "date.php";
 $embargo = new date("embargo");
 $embargo->useTime = true;
+$repeatuntil = new date("repeatuntil");
+$repeatuntil->useTime = true;
 
 echo '<script language="Javascript" src="js/jslib.js" type="text/javascript"></script><hr><p>';
 
@@ -63,14 +65,18 @@ if ($_POST["send"] && $subject && $_POST["message"] && $from && !$duplicate_attr
 			$tables["message"],$_POST["rsstemplate"],$_SESSION["logindetails"]["id"]));
 	}
 
-  $query = sprintf('insert into %s (subject,fromfield,tofield,replyto,embargo,message,footer,status,entered,htmlformatted,sendformat,template,rsstemplate,owner) values(
-      "%s","%s","%s","%s","%s","%s","%s","%s",%s,%d,"%s",%d,"%s",%d)',
+  $query = sprintf('insert into %s (subject,fromfield,tofield,
+  		replyto,embargo,repeat,repeatuntil,message,footer,status,entered,
+      htmlformatted,sendformat,template,rsstemplate,owner) values(
+      "%s","%s","%s","%s","%s",%d,"%s","%s","%s","%s",%s,%d,"%s",%d,"%s",%d)',
       $tables["message"],
       addslashes($subject),
       addslashes($from),
       addslashes($_POST["tofield"]),
       addslashes($_POST["replyto"]),
 			$embargo->getDate()." ".$embargo->getTime().":00",
+      $_POST["repeatinterval"],
+			$repeatuntil->getDate()." ".$repeatuntil->getTime().":00",
       addslashes($_POST["message"]),
       addslashes($_POST["footer"]),
       $status,"now()",
@@ -316,6 +322,24 @@ if (!$from) {
 </td></tr>
 <tr><td><?=Help("embargo")?> Embargoed until</td><td><?=$embargo->showInput("embargo","",$_POST["embargo"])?></td></tr>
 </td></tr>
+
+<? if (USE_REPETITION) { ?>
+
+<tr><td><?=Help("repetition")?> Repeat message every:</td><td>
+<select name="repeatinterval">
+<option value="0">-- no repetition</option>
+<option value="60">Hour</option>
+<option value="1440">Day</option>
+<option value="10080">Week</option>
+</select>
+
+</td></tr>
+</td></tr>
+<tr><td>  Repeat until:</td><td><?=$repeatuntil->showInput("repeatuntil","",$_POST["repeatuntil"])?></td></tr>
+</td></tr>
+
+<? } ?>
+
 <tr><td colspan=2><?=Help("format")?> Format: <b>Auto detect</b> <input type=radio name="htmlformatted" value="auto" <?=!isset($htmlformatted) || $htmlformatted == "auto"?"checked":""?>>
 <b>HTML</b> <input type=radio name="htmlformatted" value="1" <?=$htmlformatted == "1" ?"checked":""?>>
 <b>Text</b> <input type=radio name="htmlformatted" value="0" <?=$htmlformatted == "0" ?"checked":""?>>

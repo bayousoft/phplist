@@ -219,6 +219,8 @@ if ($doit == "yes") {
       }
     case "2.6.0":case "2.6.1":case "2.6.2":case "2.6.3":case "2.6.4":case "2.6.5":
 			Sql_Verbose_Query("alter table {$tables["message"]} add column embargo datetime");
+			Sql_Verbose_Query("alter table {$tables["message"]} add column repeat integer default 0");
+			Sql_Verbose_Query("alter table {$tables["message"]} add column repeatuntil datetime");
       # make sure that current queued messages are sent
       Sql_Verbose_Query("update {$tables["message"]} set embargo = now() where status = \"submitted\"");
     case "whatever versions we will get later":

@@ -223,11 +223,20 @@ $attachment_repository = '/tmp';
 
 # if you want to use \r\n for formatting messages set the 0 to 1
 # see also http://www.securityfocus.com/archive/1/255910
+# this is likely to break things for other mailreaders, so you should
+# only use it if all your users have Outlook (not Express)
 define("WORKAROUND_OUTLOOK_BUG",1);
 
 # the mime type for the export files. You can try changing this to
 # application/vnd.ms-excel to make it open automatically in excel
 $export_mimetype = 'application/csv';
+
+# Repetition. This adds the option to repeat the same message in the future.
+# After the message has been sent, this option will cause the system to automatically
+# create a new message with the same content. Be careful with it, because you may
+# send the same message to your users
+# the embargo of the message will be increased with the repetition interval you choose
+define("USE_REPETITION",0);
 
 # If you want to use the PHPMailer class from phpmailer.sourceforge.net, set the following
 # to 1, this code is not finished yet, and it is highly experimental. Do not use on

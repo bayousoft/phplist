@@ -1,7 +1,6 @@
 <?
 require_once "accesscheck.php";
 $access = accessLevel("send");
-print $access;
 switch ($access) {
   case "owner":
     $subselect = " where owner = ".$_SESSION["logindetails"]["id"];

@@ -332,6 +332,7 @@ while ($message = Sql_fetch_array($messages)) {
     if (ENABLE_RSS && $rssmessage) {
 	    $status = Sql_query("update {$tables['message']} set status = \"submitted\",sent = now() where id = \"$messageid\"");
     } else {
+    	repeatMessage($messageid);
 	    $status = Sql_query("update {$tables['message']} set status = \"sent\",sent = now() where id = \"$messageid\"");
     }
     $timetaken = Sql_Fetch_Row_query("select sent,sendstart from {$tables['message']} where id = \"$messageid\"");

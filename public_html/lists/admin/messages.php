@@ -46,11 +46,11 @@ if ($resend) {
 
 switch ($_GET["type"]) {
 	case "queue":
-		$subselect = ' status in ("submitted")';
+		$subselect = ' status in ("submitted") and (rsstemplate is NULL or rsstemplate = "") ';
 		$url_keep = '&type=queue';
 		break;
 	case "stat":
-		$subselect = ' status in ("prepared")';
+		$subselect = ' status in ("prepared") ';
 		$url_keep = '&type=stat';
 		break;
 	case "rss":
@@ -59,7 +59,7 @@ switch ($_GET["type"]) {
 		break;
 	case "sent":
 	default:
-		$subselect = ' (status in ("sent","inprocess") or (status = "submitted" and rsstemplate is NULL))';
+		$subselect = ' status in ("sent","inprocess") ';
 		$url_keep = '&type=sent';
 		break;
 }

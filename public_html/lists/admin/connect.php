@@ -37,6 +37,7 @@ if (!defined("CHECK_SESSIONIP")) define("CHECK_SESSIONIP",1);
 if (!defined("FILESYSTEM_ATTACHMENTS")) define("FILESYSTEM_ATTACHMENTS",0);
 if (!defined("MIMETYPES_FILE")) define("MIMETYPES_FILE","/etc/mime.types");
 if (!defined("DEFAULT_MIMETYPE")) define("DEFAULT_MIMETYPE","application/octet-stream");
+if (!defined("USE_REPETITION")) define("USE_REPETITION",0);
 
 if (!isset($GLOBALS["export_mimetype"])) $GLOBALS["export_mimetype"] = 'application/csv';
 
@@ -946,6 +947,66 @@ function findMime($filename) {
   }
   return DEFAULT_MIMETYPE;
 }
+
+function repeatMessage($msgid) {
+	if (!USE_REPETITION) return;
+  $msgdata = Sql_Fetch_Array_Query(
+  	sprintf('select *,date_add(embargo,interval repeat minute) as newembargo,
+    	date_add(now(),interval repeat minute) as newembargo2, date_add(embargo,interval repeat minute) > now() as isfuture
+    	from %s where id = %d and repeatuntil > now()',$GLOBALS["tables"]["message"],$msgid));
+  if (!$msgdata["id"] || !$msgdata["repeat"]) return;
+  
+  # copy the new message
+  Sql_Query(sprintf('
+  	insert into %s (entered) values(now())',$GLOBALS["tables"]["message"]));
+  $id = Sql_Insert_id();
+  require $GLOBALS["coderoot"]."structure.php";
+  if (!is_array($DBstruct["message"])) {
+		logEvent("Error including structure when trying to duplicate message $msgid");
+    return;
+ 	}
+  foreach ($DBstruct["message"] as $column => $rec) {
+  	if ($column != "id" && $column != "entered") {
+      Sql_Query(sprintf('update %s set %s = "%s" where id = %d',
+        $GLOBALS["tables"]["message"],$column,addslashes($msgdata[$column]),$id));
+   	}
+  }
+  # correct some values
+  if (!$msgdata["isfuture"]) {
+  	$msgdata["newembargo"] = $msgdata["newembargo2"];
+  }
+
+  Sql_Query(sprintf('update %s set embargo = "%s",status = "submitted",sent = "" where id = %d',
+			$GLOBALS["tables"]["message"],$msgdata["newembargo"],$id));
+  foreach (array("processed","astext","ashtml","astextandhtml","aspdf","astextandpdf","viewed", "bouncecount") as $item) {
+    Sql_Query(sprintf('update %s set %s = 0 where id = %d',
+        $GLOBALS["tables"]["message"],$item,$id));
+	}
+
+  # lists
+  $req = Sql_Query(sprintf('select listid from %s where messageid = %d',$GLOBALS["tables"]["listmessage"],$msgid));
+  while ($row = Sql_Fetch_Row($req)) {
+  	Sql_Query(sprintf('insert into %s (messageid,listid,entered) values(%d,%d,now())',
+    	$GLOBALS["tables"]["listmessage"],$id,$row[0]));
+  }
+
+  # attachments
+  $req = Sql_Query(sprintf('select * from %s,%s where %s.messageid = %d and %s.attachmentid = %s.id',
+		$GLOBALS["tables"]["message_attachment"],$GLOBALS["tables"]["attachment"],
+    $GLOBALS["tables"]["message_attachment"],$msgid,$GLOBALS["tables"]["message_attachment"],
+    $GLOBALS["tables"]["attachment"]));
+  while ($row = Sql_Fetch_Array($req)) {
+  	Sql_Query(sprintf('insert into %s (filename,remotefile,mimetype,description,size)
+    	values("%s","%s","%s","%s",%d)',
+      $GLOBALS["tables"]["attachment"],addslashes($row["filename"]),addslashes($row["remotefile"]),
+      addslashes($row["mimetype"]),addslashes($row["description"]),$row["size"]));
+    $attid = Sql_Insert_id();
+    Sql_Query(sprintf('insert into %s (messageid,attachmentid) values(%d,%d)',
+			$GLOBALS["tables"]["message_attachment"],$id,$attid));
+  }
+	logEvent("Message $msgid was successfully rescheduled");
+}
+
 
 function formatTime($time,$short = 0) {
 	return $time;

@@ -1,7 +1,6 @@
 <?
 require_once "accesscheck.php";
 
-if (is_object("date")) return;
 class date {
   var $type = "date";
   var $name = "";
