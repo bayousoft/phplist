@@ -134,7 +134,11 @@ if (preg_match("/(\w+)/",$_GET["p"],$regs)) {
 		   	print ConfirmPage($id);
       	break;
       case "unsubscribe":
-		   	print UnsubscribePage($id);
+        if (ASKFORPASSWORD && UNSUBSCRIBE_REQUIRES_PASSWORD && $passwordcheck && !$canlogin) {
+        	print LoginPage($id,$userid,$emailcheck);
+        } else {
+		   	  print UnsubscribePage($id);
+        }
       	break;
     	default:
         FileNotFound();
