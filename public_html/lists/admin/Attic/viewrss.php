@@ -84,7 +84,7 @@ if ($total) {
       <tr><td valign="top"><b>Date Added</b>:</td><td valign="top">%s</td></tr>
       </table>
       </td>',
-      $rss["title"],$rss["link"],$rss["link"],$rss["source"],$rss["added"]);
+      $rss["title"],$rss["link"],$rss["link"],ereg_replace("&","& ",$rss["source"]),$rss["added"]);
       
     $status = sprintf('<table border=1>
     	<tr><td>Processed</td><td>%d</td></tr>

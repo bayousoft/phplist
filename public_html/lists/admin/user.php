@@ -18,24 +18,24 @@ function niceDateTime($datetime) {
 if (!$id && !$delete)
   Fatal_Error("No such user");
 
-if ($require_login && !isSuperUser()) {
-  $access = accessLevel("user");
-  switch ($access) {
-    case "owner":
-      $subselect = " and ".$tables["list"].".owner = ".$_SESSION["logindetails"]["id"];break;
-    case "all":
-      $subselect = "";break;
-    case "view":
-      $subselect = "";
-      if (sizeof($_POST)) {
-        print Error("You only have privileges to view this page, not change any of the information");
-        return;
-      }
-      break;
-    case "none":
-    default:
-      $subselect = " and ".$tables["list"].".id = 0";break;
-  }
+$access = accessLevel("user");
+switch ($access) {
+  case "owner":
+    $subselect = " and ".$tables["list"].".owner = ".$_SESSION["logindetails"]["id"];break;
+  case "all":
+    $subselect = "";break;
+  case "view":
+    $subselect = "";
+    if (sizeof($_POST)) {
+      print Error("You only have privileges to view this page, not change any of the information");
+      return;
+    }
+    break;
+  case "none":
+  default:
+    $subselect = " and ".$tables["list"].".id = 0";break;
+}
+if ($access == "all") {
   $delete_message = '<br />Delete will delete user from the list<br />';
 } else {
   $delete_message = '<br />Delete will delete user and all listmemberships<br />';

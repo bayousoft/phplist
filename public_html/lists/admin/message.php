@@ -10,19 +10,17 @@ if (!$id) {
   exit;
 }
 
-if ($require_login && !isSuperUser()) {
-  $access = accessLevel("message");
-  switch ($access) {
-    case "owner":
-      $subselect = " where owner = ".$_SESSION["logindetails"]["id"];
-      break;
-    case "all":
-      $subselect = "";break;
-    case "none":
-    default:
-      $subselect = " where id = 0";
-      break;
-  }
+$access = accessLevel("message");
+switch ($access) {
+  case "owner":
+    $subselect = " where owner = ".$_SESSION["logindetails"]["id"];
+    break;
+  case "all":
+    $subselect = "";break;
+  case "none":
+  default:
+    $subselect = " where id = 0";
+    break;
 }
 
 if ($resend && is_array($list)) {

@@ -39,8 +39,12 @@ while ($row = Sql_fetch_array($result)) {
 	$count = Sql_Fetch_Row_Query("select count(*) from {$tables["listuser"]} where listid = {$row["id"]} ");
   $desc = stripslashes($row["description"]);
   if ($row["rssfeed"]) {
-  	$desc = "RSS source:".$row["rssfeed"]."  ".
-    PageLink2("viewrss&id=".$row["id"],"View Items").'<br/>'.
+    $feed = $row["rssfeed"];
+    # reformat string, so it wraps if it's very long
+    $feed = ereg_replace("/","/ ",$feed);
+    $feed = ereg_replace("&","& ",$feed);
+  	$desc = sprintf('RSS source: <a href="%s" target="_blank">%s</a><br/> ',$row["rssfeed"],$feed).
+    PageLink2("viewrss&id=".$row["id"],"(View Items)").'<br/>'.
     $desc;
   }
   $html .= sprintf('<tr><td valign=top>%d</td><td valign=top><b>

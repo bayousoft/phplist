@@ -11,6 +11,11 @@ if (PHPMAILER) {
 	include $GLOBALS["coderoot"] .'class.html.mime.mail.inc';
 }
 
+if (!function_exists("output")) {
+	function output($text) {
+ 	}
+}
+
 function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
   global $strThisLink,$PoweredByImage,$PoweredByText,$tables,$cached,$pageroot,$website;
   if ($email == "")

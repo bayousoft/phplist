@@ -29,16 +29,22 @@ class date {
   function getDate($value = "") {
   	if (!$value)
     	$value = $this->name;
-    if ($_REQUEST["year"] && $_REQUEST["month"] && $_REQUEST["day"])
+    if ($_REQUEST["year"] && $_REQUEST["month"] && $_REQUEST["day"]) {
       return sprintf("%04d-%02d-%02d",$_REQUEST["year"][$value],$_REQUEST["month"][$value],$_REQUEST["day"][$value]);
+   	} else {
+      return date("Y-m-d");
+    }
   }
 
   function getTime($value = "") {
   	if (!$value)
     	$value = $this->name;
-    if ($_REQUEST["hour"] && $_REQUEST["minute"])
+    if ($_REQUEST["hour"] && $_REQUEST["minute"]) {
       return sprintf("%02d:%02d",$_REQUEST["hour"][$value],$_REQUEST["minute"][$value]);
-	}
+    } else {
+    	return date("H:i");
+    }
+  }
 
   function showInput($name,$fielddata,$value,$document_id = 0) {
   	if (!$name)
@@ -47,6 +53,8 @@ class date {
     $year = substr($value,0,4);
     $month = substr($value,5,2);
     $day = substr($value,8,2);
+    $hour = substr($value,11,2);
+    $minute = substr($value,14,2);
 
     if (!$day && !$month && !$year) {
       $now = getdate(time());

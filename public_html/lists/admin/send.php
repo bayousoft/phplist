@@ -1,15 +1,19 @@
 <?
 require_once "accesscheck.php";
+
 $access = accessLevel("send");
 switch ($access) {
   case "owner":
     $subselect = " where owner = ".$_SESSION["logindetails"]["id"];
+    $ownership = ' and owner = '.$_SESSION["logindetails"]["id"];
     break;
   case "all":
     $subselect = "";break;
   case "none":
   default:
-    $subselect = " where id = 0";break;
+    $subselect = " where id = 0";
+    $ownership = " and id = 0";
+    break;
 }
 
 # handle commandline

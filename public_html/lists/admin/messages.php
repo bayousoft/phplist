@@ -7,6 +7,7 @@
 require_once "accesscheck.php";
 
 print '<p>'.PageLink2("messages&type=sent","Sent Messages").'&nbsp;&nbsp;&nbsp;';
+print PageLink2("messages&type=draft","Draft Messages").'&nbsp;&nbsp;&nbsp;';
 print PageLink2("messages&type=queue","Queued Messages").'&nbsp;&nbsp;&nbsp;';
 print PageLink2("messages&type=stat","Static Messages").'&nbsp;&nbsp;&nbsp;';
 if (ENABLE_RSS) {
@@ -56,6 +57,10 @@ switch ($_GET["type"]) {
 	case "rss":
 		$subselect = ' rsstemplate != ""';
 		$url_keep = '&type=sent';
+		break;
+	case "draft":
+		$subselect = ' status in ("draft") ';
+		$url_keep = '&type=draft';
 		break;
 	case "sent":
 	default:
@@ -111,6 +116,7 @@ if ($total) {
       %s<br />
       </td><td>
       %s<br />
+			%s<br />
       %s<br />
       <a href="javascript:deleteRec(\'%s\');">delete</a>
       </td>
@@ -144,6 +150,7 @@ if ($total) {
         : $msg["status"]."<br/>".$msg["rsstemplate"],
       PageLink2("message","View","id=".$msg["id"]),
       $msg["status"] != "inprocess" ? PageLink2("messages","Requeue","resend=".$msg["id"]) : $msg["processed"] . " done",
+      $msg["status"] != "prepared" ? PageLink2("send","Edit","id=".$msg["id"]) : PageLink2("preparesend","Edit","id=".$msg["id"]),
       PageURL2("messages$url_keep","","delete=".$msg["id"])
       );
   }

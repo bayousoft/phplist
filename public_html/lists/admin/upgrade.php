@@ -223,6 +223,8 @@ if ($doit == "yes") {
 			Sql_Verbose_Query("alter table {$tables["message"]} add column repeatuntil datetime");
       # make sure that current queued messages are sent
       Sql_Verbose_Query("update {$tables["message"]} set embargo = now() where status = \"submitted\"");
+      Sql_Query("alter table {$tables["message"]} change column status status enum('submitted','inprocess','sent','cancelled','prepared','draft')");
+    case "2.6.6":
     case "whatever versions we will get later":
       #Sql_Query("alter table table that altered");
       break;

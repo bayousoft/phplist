@@ -40,6 +40,7 @@ if (!defined("FILESYSTEM_ATTACHMENTS")) define("FILESYSTEM_ATTACHMENTS",0);
 if (!defined("MIMETYPES_FILE")) define("MIMETYPES_FILE","/etc/mime.types");
 if (!defined("DEFAULT_MIMETYPE")) define("DEFAULT_MIMETYPE","application/octet-stream");
 if (!defined("USE_REPETITION")) define("USE_REPETITION",0);
+if (!defined("USE_EDITMESSAGE")) define("USE_EDITMESSAGE",0);
 
 if (!isset($GLOBALS["export_mimetype"])) $GLOBALS["export_mimetype"] = 'application/csv';
 
