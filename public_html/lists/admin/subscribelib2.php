@@ -250,7 +250,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
   	$thankyoupage = $plugin->parseThankyou($id,$userid,$thankyoupage);
   }
 
-  if ($sendrequest) {
+  if ($sendrequest && is_array($_POST["list"])) {
   	if (sendMail($email, getConfig("subscribesubject:$id"), $subscribemessage,system_messageheaders($email),$envelope)) {
     	sendAdminCopy("Lists subscription","\n".$email . " has subscribed\n\n$history_entry");
       addUserHistory($email,$history_subject,$history_entry);
@@ -260,7 +260,9 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
 		}
   } else {
     print $thankyoupage;
-    print "<p>User has been added and confirmed</p>";
+    if ($_SESSION["adminloggedin"]) {
+	    print "<p>User has been added and confirmed</p>";
+    }
   }
 
   print "<P>".$PoweredBy.'</p>';

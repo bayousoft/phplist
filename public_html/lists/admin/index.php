@@ -184,6 +184,13 @@ if ($GLOBALS["require_login"] && $page != "login") {
   if ($_REQUEST["page"] != "logout")
   print '<div align="right">'.PageLink2("logout","Logout").'</div>';
 }
+if (ereg("dev",VERSION)) {
+	if ($GLOBALS["developer_email"]) {
+		print Info("Running CVS version. All emails will be sent to ".$GLOBALS["developer_email"]);
+  } else {
+  	print Info("Running CVS version, but developer email is not set");
+  }
+}
 
 # include some information
 if (is_file("info/".$adminlanguage["info"]."/$include")) {
