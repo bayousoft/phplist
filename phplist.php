@@ -195,6 +195,7 @@ class phplist extends DefaultPlugin {
       "spage" => "Configure Subscribe Pages",
       "spageedit" => "Edit a Subscribe Page",
       "editlist" => "Edit a list",
+      "members" => "View members of a list",
     );
     return $tasks;
   }
