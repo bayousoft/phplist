@@ -220,7 +220,7 @@ define("DEFAULT_MIMETYPE","application/octet-stream");
 # upgrading
 # there are some example plugins in the "plugins" directory inside the
 # admin directory
-# this directory needs to be absolute or relative to the admin directory
+# this directory needs to be absolute, or relative to the admin directory
 define("PLUGIN_ROOTDIR","plugins");
 
 # the attachment repository is the place where the files are stored (if you use
@@ -256,6 +256,7 @@ $export_mimetype = 'application/csv';
 # create a new message with the same content. Be careful with it, because you may
 # send the same message to your users
 # the embargo of the message will be increased with the repetition interval you choose
+# also read the README.repetition for more info
 define("USE_REPETITION",0);
 
 # Prepare a message. This system allows you to create messages as a super admin
@@ -295,7 +296,7 @@ $tmpdir = '/tmp';
 # very welcome!
 $database_module = "mysql.inc";
 
-# there is now support for the use of ADOdb
+# there is now support for the use of ADOdb http://php.weblogs.com/ADODB
 # this is still experimental, and any findings should be reported in the
 # bugtracker
 # in order to use it, define the following settings:

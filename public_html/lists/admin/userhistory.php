@@ -73,9 +73,11 @@ if ($num) {
 
 print $ls->display();
 print $bouncels->display();
-print "<h3>User Information</h3>";
+print "<h3>User Subscription History</h3>";
 $ls = new WebblerListing("Subscription History");
-$req = Sql_Verbose_Query(sprintf('select * from %s where userid = %d order by date desc',$tables["user_history"],$user["id"]));
+$req = Sql_Query(sprintf('select * from %s where userid = %d order by date desc',$tables["user_history"],$user["id"]));
+if (!Sql_Affected_Rows())
+  print "No details found";
 while ($row = Sql_Fetch_Array($req)) {
 	$ls->addElement($row["id"]);
   $ls->addColumn($row["id"],"ip",$row["ip"]);
