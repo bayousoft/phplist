@@ -235,13 +235,13 @@ if ((($send && is_array($_POST["list"])) || $save || $sendtest || $prepare) && $
       while($row = Sql_fetch_array($res))	{
         $listid	=	$row["id"];
         if ($row["active"])	{
-          $result	=	Sql_query("insert	into $tables[listmessage]	(messageid,listid,entered) values($messageid,$listid,now())");
+          $result	=	Sql_query("insert	ignore into $tables[listmessage]	(messageid,listid,entered) values($messageid,$listid,now())");
         }
       }
     }	else {
       while(list($key,$val)= each($_POST["list"])) {
         if ($val ==	"signup")
-          $result	=	Sql_query("insert	into $tables[listmessage]	(messageid,listid,entered) values($messageid,$key,now())");
+          $result	=	Sql_query("insert	ignore into $tables[listmessage]	(messageid,listid,entered) values($messageid,$key,now())");
       }
     }
   }	else {

@@ -23,12 +23,12 @@ if (PHP_SAPI == "cli") {
 if ($_SERVER["ConfigFile"] && is_file($_SERVER["ConfigFile"])) {
 	print '<!-- using '.$_SERVER["ConfigFile"].'-->'."\n";
   include $_SERVER["ConfigFile"];
-} elseif ($_ENV["CONFIG"] && is_file($_ENV["CONFIG"])) {
-#	print '<!-- using '.$_ENV["CONFIG"].'-->'."\n";
-  include $_ENV["CONFIG"];
 } elseif (is_file($cline["c"])) {
 	print '<!-- using '.$cline["c"].' -->'."\n";
   include $cline["c"];
+} elseif ($_ENV["CONFIG"] && is_file($_ENV["CONFIG"])) {
+#	print '<!-- using '.$_ENV["CONFIG"].'-->'."\n";
+  include $_ENV["CONFIG"];
 } elseif (is_file("../config/config.php")) {
 	print '<!-- using ../config/config.php -->'."\n";
   include "../config/config.php";

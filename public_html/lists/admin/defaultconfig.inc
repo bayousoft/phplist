@@ -413,9 +413,9 @@ if (!function_exists("getconfig")) {
     if (!Sql_Affected_Rows() || !$hasconf) {
       $value = $default_config[$item][0];
       # save the dafault value to the database, so we can obtain
-      # the information when running off commandline
+      # the information when running from commandline
       if (Sql_Table_Exists($tables["config"]))
-	      saveConfig($item,addslashes($value));
+	      saveConfig($item,$value);
   #  	print "$item => $value<br/>";
     } else {
       $row = Sql_fetch_Row($req);

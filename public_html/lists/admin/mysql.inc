@@ -91,6 +91,11 @@ function Sql_Check_error($dbconnection,$errno = 0) {
 function Sql_Query($query,$ignore = 0) {
 #  if (preg_match("/dev$/",VERSION))
 #    print "<b>$query</b><br>\n";
+#  if ($GLOBALS["commandline"]) {
+#    ob_end_clean();
+#    print "Sql: $query\n";
+#    ob_start();
+#  }
   $result = mysql_query($query,$GLOBALS["database_connection"]);
   if (!$ignore) {
     if (Sql_Check_Error($GLOBALS["database_connection"]))
@@ -110,6 +115,11 @@ function Sql_Verbose_Query($query) {
   if (preg_match("/dev$/",VERSION))
     print "<b>$query</b><br>\n";
   flush();
+  if ($GLOBALS["commandline"]) {
+    ob_end_clean();
+    print "Sql: $query\n";
+    ob_start();
+  }
   return Sql_Query($query);
 }
 
