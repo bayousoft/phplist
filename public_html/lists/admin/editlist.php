@@ -88,3 +88,4 @@ if (ENABLE_RSS) {
 <tr><td colspan=2><textarea name=description cols=55 rows=15><?php echo htmlspecialchars(StripSlashes($list["description"])) ?></textarea></td></tr>
 <tr><td align=center><input type=submit name=save value="Save"></td><td align=right><input type=reset></td></tr>
 </table>
+</form>
