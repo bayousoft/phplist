@@ -317,7 +317,7 @@ function Info($msg) {
 
 
 $main_menu = array(
-  "setup" => "Configure",
+  "configure" => "Configure",
   "community" => "Help",
   "about" => "About",
   "div1" => "<hr />",
@@ -325,6 +325,7 @@ $main_menu = array(
   "send"=>"Send a message",
   "users" => "Users",
   "usermgt" => "Manage Users",
+  "spage" => "Subscribe Pages",
   "messages" => "Messages",
   "div2" => "<hr />",
   "templates" => "Templates",
