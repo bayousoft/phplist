@@ -94,7 +94,7 @@ To receive support, sign up for the phplist-users mailinglist:
 </ul>
 </p>
 <p><b><a name="bugtrack"></a>Bugtrack</b><br/>
-To report a bug, go to <a href="http://bugtrack.tincan.co.uk/" target="_blank">http://bugtrack.tincan.co.uk</a>
+To report a bug, go to <a href="http://mantis.tincan.co.uk/" target="_blank">http://bugtrack.tincan.co.uk</a>
 and create an account for yourself. You will get a password by email.<br/>
 You can then enter the "mantis" system and submit a bugreport.</p>
 <p>Your system details are:</p>

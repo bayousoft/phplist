@@ -332,7 +332,7 @@ while ($user = Sql_Fetch_Row($userid_req)) {
       ProcessError("Process Killed by other process");
 		if (sprintf('%d',$bounce["bounce"]) == $bounce["bounce"]) {
 			$cnt++;
-      if ($cnt > $bounce_unsubscribe_treshold) {
+      if ($cnt >= $bounce_unsubscribe_treshold) {
         $removed = 1;
         output(sprintf('unsubscribing %d -> %d bounces',$user[0],$cnt));
         $userurl = PageLink2("user&id=$user[0]",$user[0]);

@@ -66,7 +66,9 @@ if ($success) {
    ' Url: '.getConfig("website").$pageroot."\r\n";
   printf('<p>Success: <a href="mailto:phplist@tincan.co.uk?subject=Successful installation of PHPlist&body=%s">Tell us about it</a>. </p>', $body);
   printf('<p>
-  	Please make sure to 
+  	Please make sure to read the file README.security that can be found in the zip file.</p>');
+  printf('<p>
+  	Please make sure to
     <a href="mailto:phplist-announce-subscribe@tincan.co.uk?subject=Subscribe"> subscribe to the announcements list</a> to make sure you are updated when new versions come out.
   	Sometimes security bugs are found which make it important to upgrade. Traffic on the list is very low. </p>');
   print "<p>Continue with ".PageLink2("setup","PHPlist Setup")."</p>";
