@@ -231,6 +231,9 @@ if ($doit == "yes") {
     	Sql_Create_Table($tables["user_history"],$DBstruct["user_history"]);
     case "2.8.0":
     	Sql_Query("alter table {$tables["message"]} add column textmessage text");
+    case "2.8.1": case "2.8.2": case "2.8.3":
+    case "2.8.4": case "2.8.5": case "2.8.6":
+    	Sql_Query("alter table {$tables["user"]} add index index_uniqid (uniqid)");
     case "whatever versions we will get later":
       #Sql_Query("alter table table that altered");
       break;
