@@ -81,12 +81,16 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
 #  $msg = ereg_replace("\[[A-Z ]+\]","",$msg);
 
   $url = getConfig("unsubscribeurl");$sep = ereg('\?',$url)?'&':'?';
-  $text["unsubscribe"] = sprintf('%s%suid=%s',$url,$sep,$hash);
   $html["unsubscribe"] = sprintf('<a href="%s%suid=%s">%s</a>',$url,$sep,$hash,$strThisLink);
+  $text["unsubscribe"] = sprintf('%s%suid=%s',$url,$sep,$hash);
+  $html["unsubscribeurl"] = sprintf('%s%suid=%s',$url,$sep,$hash);
+  $text["unsubscribeurl"] = sprintf('%s%suid=%s',$url,$sep,$hash);
   $text["signature"] = "\n\n--\nPowered by PHPlist, www.phplist.com --\n\n";
   $url = getConfig("preferencesurl");$sep = ereg('\?',$url)?'&':'?';
   $html["preferences"] = sprintf('<a href="%s%suid=%s">%s</a>',$url,$sep,$hash,$strThisLink);
   $text["preferences"] = sprintf('%s%suid=%s',$url,$sep,$hash);
+  $html["preferencesurl"] = sprintf('%s%suid=%s',$url,$sep,$hash);
+  $text["preferencesurl"] = sprintf('%s%suid=%s',$url,$sep,$hash);
 /*
 	We request you retain the signature below in your emails including the links.
 	This not only gives respect to the large amount of time given freely
@@ -128,14 +132,17 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
     }
     $htmlcontent = parseText($content);
   }
-  $style = getConfig("html_email_style");
+  $defaultstyle = getConfig("html_email_style");
+  $adddefaultstyle = 0;
 
   if ($cached[$messageid]["template"])
     # template used
     $htmlmessage = eregi_replace("\[CONTENT\]",$htmlcontent,$cached[$messageid]["template"]);
-  else
+  else {
     # no template used
-    $htmlmessage = $style.$htmlcontent;
+    $htmlmessage = $htmlcontent;
+    $adddefaultstyle = 1;
+  }
   $textmessage = $textcontent;
 
   foreach (array("preferences","unsubscribe","signature") as $item) {
@@ -148,6 +155,14 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
       unset($text[$item]);
     }
   }
+  foreach (array("preferencesurl","unsubscribeurl") as $item) {
+    if (eregi('\['.$item.'\]',$htmlmessage,$regs)) {
+      $htmlmessage = eregi_replace('\['.$item.'\]',$html[$item],$htmlmessage);
+    }
+    if (eregi('\['.$item.'\]',$textmessage,$regs)) {
+      $textmessage = eregi_replace('\['.$item.'\]',$text[$item],$textmessage);
+    }
+  }
   $text["footer"] = eregi_replace("\[UNSUBSCRIBE\]",$text["unsubscribe"],$cached[$messageid]["footer"]);
   $html["footer"] = eregi_replace("\[UNSUBSCRIBE\]",$html["unsubscribe"],$cached[$messageid]["footer"]);
   $text["footer"] = eregi_replace("\[PREFERENCES\]",$text["preferences"],$text["footer"]);
@@ -156,11 +171,11 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
 
   if (eregi("\[FOOTER\]",$htmlmessage))
     $htmlmessage = eregi_replace("\[FOOTER\]",$html["footer"],$htmlmessage);
-  else
+  elseif ($html["footer"])
     $htmlmessage .= '<br /><br />'.$html["footer"];
   if (eregi("\[SIGNATURE\]",$htmlmessage))
     $htmlmessage = eregi_replace("\[SIGNATURE\]",$html["signature"],$htmlmessage);
-  else
+  elseif ($html["signature"])
     $htmlmessage .= '<br />'.$html["signature"];
   if (eregi("\[FOOTER\]",$textmessage))
     $textmessage = eregi_replace("\[FOOTER\]",$text["footer"],$textmessage);
@@ -228,21 +243,46 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
     }
   }
 
+  $user_system_values = Sql_Fetch_Array_Query(sprintf('select * from %s where email = "%s"',$tables["user"],$email));
+  while (list($name,$value) = each ($user_system_values)) {
+    if (eregi("\[".$name."\]",$htmlmessage,$regs)) {
+      $htmlmessage = eregi_replace("\[".$name."\]",$value,$htmlmessage);
+    }
+    if (eregi("\[".$name."\]",$textmessage,$regs)) {
+      $textmessage = eregi_replace("\[".$name."\]",$value,$textmessage);
+    }
+  }
+  #
+  if (eregi("\[LISTS\]",$htmlmessage)) {
+  	$lists = "";$listsarr = array();
+  	$req = Sql_Verbose_Query(sprintf('select list.name from %s as list,%s as listuser where list.id = listuser.listid and listuser.userid = %d',$tables["list"],$tables["listuser"],$user_system_values["id"]));
+    while ($row = Sql_Fetch_Row($req)) {
+    	array_push($listsarr,$row[0]);
+    }
+    $lists_html = join('<br/>',$listsarr);
+    $lists_text = join("\n",$listsarr);
+    $htmlmessage = ereg_replace("\[LISTS\]",$lists_html,$htmlmessage);
+    $textmessage = ereg_replace("\[LISTS\]",$lists_text,$textmessage);
+	}
+
   # remove any existing placeholders
   $htmlmessage = ereg_replace("\[[A-Z\. ]+\]","",$htmlmessage);
   $textmessage = ereg_replace("\[[A-Z\. ]+\]","",$textmessage);
-	
+
 	# check that the HTML message has proper <head> </head> and <body> </body> tags
 	# some readers fail when it doesn't
-	if (!preg_match("#<body>.*</body>#i",$htmlmessage)) {
+	if (!preg_match("#<body.*</body>#ims",$htmlmessage)) {
 		$htmlmessage = '<body>'.$htmlmessage.'</body>';
-	}	
-	if (!preg_match("#<head>.*</head>#i",$htmlmessage)) {
+	}
+	if (!preg_match("#<head>.*</head>#ims",$htmlmessage)) {
+  	if (!$adddefaultstyle) {
+     $defaultstyle = "";
+    }
 		$htmlmessage = '<head>
         <meta content="text/html;charset='.$cached[$messageid]["html_charset"].'" http-equiv="Content-Type">
-        <title></title></head>'.$htmlmessage;
+        <title></title>'.$defaultstyle.'</head>'.$htmlmessage;
 	}
-	if (!preg_match("#<html>.*</html>#i",$htmlmessage)) {
+	if (!preg_match("#<html>.*</html>#ims",$htmlmessage)) {
 		$htmlmessage = '<html>'.$htmlmessage.'</html>';
 	}
 
@@ -506,10 +546,7 @@ function replaceChars($text) {
 // and white space. It will also convert some
 // common HTML entities to their text equivalent.
 
-$search = array ("'<script[^>]*?>.*?</script>'si",  // Strip out javascript
-                 "'<[\/\!]*?[^<>]*?>'si",  // Strip out html tags
- #                "'([\r\n])[\s]+'",  // Strip out white space
-                 "'&(quot|#34);'i",  // Replace html entities
+$search = array ("'&(quot|#34);'i",  // Replace html entities
                  "'&(amp|#38);'i",
                  "'&(lt|#60);'i",
                  "'&(gt|#62);'i",
@@ -520,10 +557,7 @@ $search = array ("'<script[^>]*?>.*?</script>'si",  // Strip out javascript
                  "'&(copy|#169);'i",
                  "'&#(\d+);'e");  // evaluate as php
 
-$replace = array ("",
-                  "",
-  #                "\\1",
-                  "\"",
+$replace = array ("\"",
                   "&",
                   "<",
                   ">",
@@ -542,7 +576,7 @@ function stripHTML($text) {
 	# strip HTML, and turn links into the full URL
 	$text = preg_replace("/\r/","",$text);
 
-	$text = preg_replace("/\n/","###NL###",$text);
+	#$text = preg_replace("/\n/","###NL###",$text);
  	$text = preg_replace("/<script[^>]*>(.*?)<\/script\s*>/is","",$text);
  	$text = preg_replace("/<style[^>]*>(.*?)<\/style\s*>/is","",$text);
 
