@@ -13,7 +13,7 @@ PHPlist, wishlist and future plans, not in order of priority
 - allow choice for multiple send processes
 - "preview" of messages to send, so you can check whether the layout is ok
 - editing of messages that have been sent
-- checkbox group needs updating to make it selectable for sending
+* checkbox group needs updating to make it selectable for sending
 - flexible translation interface
 - make system multilingual and allow user to choose language
 - placeholder parsing in subscribe, confirm and unsubscribe messages
@@ -24,7 +24,7 @@ PHPlist, wishlist and future plans, not in order of priority
 - send to users of a list, who are *not* on another list
 - scheduled sending
 - allow html in footer
-- be able to run in safe_mode
+* be able to run in safe_mode
 * start working towards register_globals = off
 - add input box to sign up multiple users in one go with import
 - seperate message for signing up people from import

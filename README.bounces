@@ -16,7 +16,7 @@ most cases they will bounce to this address.
 
 In the config file, configure the following to be valid to access the mailbox
 $bounce_mailbox_host = 'localhost';
-$bounce_mailbox_user = $message_envelope;
+$bounce_mailbox_user = 'login';
 $bounce_mailbox_password = 'password';
 
 In the admin pages, you can now load the bounces in the PHPlist database. Some bounces are not

@@ -184,6 +184,7 @@ define("USEFCK",0);
 # acceptable to send a URL for download to users
 # if you try it, it will be appreciated to give feedback to the
 # users mailinglist, so we can learn whether it is working ok
+# using attachments requires PHP 4.1.0 and up
 define("ALLOW_ATTACHMENTS",0);
 
 # if you use the above, how many would you want to add per message (max)
@@ -193,6 +194,8 @@ define("NUMATTACHMENTS",1);
 # ALLOW_ATTACHMENTS)
 # this needs to be writable to your webserver user
 # it also needs to be a full path, not a relative one
+# for secutiry reasons it is best if this directory is not public (ie below
+# your website document root)
 $attachment_repository = '/tmp';
 
 # if you want to be able to send your messages as PDF attachments, you need to install

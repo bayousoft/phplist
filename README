@@ -49,14 +49,19 @@ be replaced by the appropriate values for the person who receives the email.
 ###
 
 Requirements
-To use PHPlist you need a webserver which supports PHP version 4, a Mysql database and possibly 
+To use PHPlist you need a webserver which supports PHP version 4, a Mysql database and possibly
 Perl with the Mysql modules installed.
+
+Recommended version of PHP is version 4.3 or higher.
 
 Installation
 - See file: INSTALLATION
 
 Upgrade
 - See file: UPGRADE
+
+Security
+- See file: README.security
 
 Languages
 - In the directory "phplists/lists/texts" you will find existing translations of the public
@@ -75,6 +80,6 @@ on the files intact and to keep the link and the image to PHPlist.com in your pa
 ask is it? Thanks.
 
 Any contributions in other Database calls and translations are very welcome. Send your contribution to
-michiel@kipu.co.uk.
+phplist@tincan.co.uk.
 
-Comments, questions and suggestions: michiel@kipu.co.uk
+Comments, questions and suggestions: phplist@tincan.co.uk

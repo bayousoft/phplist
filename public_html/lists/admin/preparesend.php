@@ -1,6 +1,8 @@
 <?
 require_once "accesscheck.php";
 
+print Help("preparemessage","What is prepare a message");
+
 include "send_core.php";
 ?>
 
