@@ -144,7 +144,7 @@ function CheckImgExt($filename) {
 	}
 	return FALSE;
 }
-
+$files = array();
 foreach (walk_dir($IMAGES_BASE_DIR) as $file) {
 	$file = preg_replace("#//+#", '/', $file);
 	$IMAGES_BASE_DIR = preg_replace("#//+#", '/', $IMAGES_BASE_DIR);
