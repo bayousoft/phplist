@@ -49,6 +49,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
     $cached[$messageid]["subject"] = stripslashes($message["subject"]);
     $cached[$messageid]["replyto"] = stripslashes($message["replyto"]);
     $cached[$messageid]["content"] = stripslashes($message["message"]);
+    $cached[$messageid]["textcontent"] = stripslashes($message["textmessage"]);
     $cached[$messageid]["footer"] = stripslashes($message["footer"]);
     $cached[$messageid]["htmlformatted"] = $message["htmlformatted"];
     $cached[$messageid]["sendformat"] = $message["sendformat"];
@@ -114,7 +115,11 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
   }
 
 	if ($cached[$messageid]["htmlformatted"]) {
-  	$textcontent = stripHTML($msg);
+  	if (!$cached[$messageid]["textcontent"]) {
+	  	$textcontent = stripHTML($msg);
+    } else {
+    	$textcontent = $cached[$messageid]["textcontent"];
+    }
     $htmlcontent = $msg;
   } else {
   	$textcontent = $msg;

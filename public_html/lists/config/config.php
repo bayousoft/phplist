@@ -207,6 +207,10 @@ define("USEFCK",1);
 # This is a potential security risk, so read README.security for more information
 define("FCKIMAGES_DIR","uploadimages");
 
+# Manual text part, will give you an input box for the text version of the message
+# instead of trying to create it by parsing the HTML version into plain text
+define("USE_MANUAL_TEXT_PART",0);
+
 # attachments is a new feature and is currently still experimental
 # set this to 1 if you want to try it
 # caution, message may become very large. it is generally more

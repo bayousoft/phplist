@@ -25,9 +25,7 @@ if ($_GET["action"] == "js") {
 				$smileys .= '"'.$file.'",';
 			}
 		}
-	} else {
-		print "Cannot open $smileypath";
-	}
+	} 
 	$smileys = substr($smileys,0,-1);
 
 ?>

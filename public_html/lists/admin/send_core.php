@@ -72,6 +72,7 @@ if (get_magic_quotes_gpc()) {
 	$_POST["tofield"] = stripslashes($_POST["tofield"]);
 	$_POST["replyto"] = stripslashes($_POST["replyto"]);
 	$_POST["message"] = stripslashes($_POST["message"]);
+  $_POST["textmessage"] = stripslashes($_POST["textmessage"]);
 	$_POST["footer"] = stripslashes($_POST["footer"]);
 }
 
@@ -173,6 +174,7 @@ if ((($send && is_array($_POST["list"])) || $save || $sendtest || $prepare) && $
 				'repeat	=	%d,	'.
 				'repeatuntil = "%s", '.
 				'message = "%s", '.
+				'textmessage = "%s", '.
 				'footer	=	"%s",	'.
 			  'status = "%s", '.
 				'htmlformatted = %d, '.
@@ -189,6 +191,7 @@ if ((($send && is_array($_POST["list"])) || $save || $sendtest || $prepare) && $
 				$_POST["repeatinterval"],
 				$repeatuntil->getDate()."	".$repeatuntil->getTime().":00",
 				addslashes($_POST["message"]),
+				addslashes($_POST["textmessage"]),
 				addslashes($_POST["footer"]),
 			  $status,
 				$htmlformatted,
@@ -200,9 +203,9 @@ if ((($send && is_array($_POST["list"])) || $save || $sendtest || $prepare) && $
 		$messageid = $id;
 	}	else {
 		$query = sprintf('insert into	%s (subject,fromfield,tofield,
-				replyto,embargo,repeat,repeatuntil,message,footer,status,entered,
+				replyto,embargo,repeat,repeatuntil,message,textmessage,footer,status,entered,
 				htmlformatted,sendformat,template,rsstemplate,owner) values(
-				"%s","%s","%s","%s","%s",%d,"%s","%s","%s","%s",%s,%d,"%s",%d,"%s",%d)',
+				"%s","%s","%s","%s","%s",%d,"%s","%s","%s","%s","%s",%s,%d,"%s",%d,"%s",%d)',
 				$tables["message"],
 				addslashes($subject),
 				addslashes($from),
@@ -212,6 +215,7 @@ if ((($send && is_array($_POST["list"])) || $save || $sendtest || $prepare) && $
 				$_POST["repeatinterval"],
 				$repeatuntil->getDate()."	".$repeatuntil->getTime().":00",
 				addslashes($_POST["message"]),
+				addslashes($_POST["textmessage"]),
 				addslashes($_POST["footer"]),
 				$status,"now()",
 				$htmlformatted,
@@ -597,7 +601,7 @@ if (ENABLE_RSS) {
 	}
 	$oFCKeditor->CreateFCKeditor( 'message', $w.'px', $h.'px' ) ;
 	print '</td></tr>';
-	
+
 	print '<script language="Javascript" type="text/javascript">
 	function expand() {
 		document.sendmessageform.expand.value = 1;
@@ -605,12 +609,21 @@ if (ENABLE_RSS) {
 		document.sendmessageform.submit();
 	}
 	</script>';
-	
-	
+
+
 	print '<tr><td colspan=2 align=right><a href="javascript:expand();" class="button">expand</a></td></tr>';
 }
 ?>
 </td></tr>
+
+<? if (USE_MANUAL_TEXT_PART) { ?>
+<tr><td colspan=2>
+	Plain Text version of message
+</td></tr>
+<tr><td colspan=2>
+	<textarea name=textmessage cols=45 rows=20><?php echo $_POST["textmessage"] ?></textarea>
+</td></tr>
+<? } ?>
 <tr><td colspan=2>Message Footer. <br/>Use <b>[UNSUBSCRIBE]</b> to insert the personal unsubscribe URL for each user. <br/>Use <b>[PREFERENCES]</b> to insert the personal URL for a user to update their details.</td></tr>
 <tr><td colspan=2><textarea name=footer cols=45 rows=5><?php echo $footer ?></textarea></td></tr>
 

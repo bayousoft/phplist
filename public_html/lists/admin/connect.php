@@ -42,7 +42,8 @@ if (!defined("DEFAULT_MIMETYPE")) define("DEFAULT_MIMETYPE","application/octet-s
 if (!defined("USE_REPETITION")) define("USE_REPETITION",0);
 if (!defined("USE_EDITMESSAGE")) define("USE_EDITMESSAGE",0);
 if (!defined("FCKIMAGES_DIR")) define("FCKIMAGES_DIR","uploadimages");
-# let's keep it default to old behaviour for now
+if (!defined("USE_MANUAL_TEXT_PART")) define("USE_MANUAL_TEXT_PART",0);
+# keep it default to old behaviour for now
 if (!defined("USE_PREPARE")) define("USE_PREPARE",1);
 
 if (!isset($GLOBALS["export_mimetype"])) $GLOBALS["export_mimetype"] = 'application/csv';

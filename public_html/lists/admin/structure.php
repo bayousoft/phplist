@@ -79,6 +79,7 @@ $DBstruct = array( # order of tables is essential for smooth upgrade
         "tofield" => array("varchar(255) not null","tofield"),
         "replyto" => array("varchar(255) not null","reply-to"),
         "message" => array("Text","Message"),
+        "textmessage" => array("Text","Text version of Message"),
         "footer" => array("text","Footer for a message"),
         "entered" => array("datetime","Entered"),
         "modified" => array("timestamp", "Modified"),

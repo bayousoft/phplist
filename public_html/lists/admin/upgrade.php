@@ -229,7 +229,8 @@ if ($doit == "yes") {
       Sql_Query("alter table {$tables["message"]} change column status status enum('submitted','inprocess','sent','cancelled','prepared','draft')");
     case "2.6.6":case "2.7.0": case "2.7.1": case "2.7.2":
     	Sql_Create_Table($tables["user_history"],$DBstruct["user_history"]);
-
+    case "2.8.0":
+    	Sql_Query("alter table {$tables["message"]} add column textmessage text");
     case "whatever versions we will get later":
       #Sql_Query("alter table table that altered");
       break;
