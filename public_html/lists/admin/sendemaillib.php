@@ -9,9 +9,9 @@ if (PHPMAILER) {
 	include $GLOBALS["coderoot"] . "class.phplistmailer.php";
 } else {
 	if (USE_OUTLOOK_OPTIMIZED_HTML) {
-		require_once $GLOBALS["coderoot"] .'class.html.mime.mail-outlookfix.inc';
+		require_once dirname(__FILE__)."/class.html.mime.mail-outlookfix.inc";
   } else {
-		require_once $GLOBALS["coderoot"] .'class.html.mime.mail.inc';
+		require_once dirname(__FILE__)."/class.html.mime.mail.inc";
   }
 }
 
@@ -197,11 +197,13 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
       $htmlmessage = preg_replace("#\[LISTOWNER.".strtoupper(preg_quote($att["name"]))."\]#",$att["value"],$htmlmessage);
   }
 
-  if (is_array($GLOBALS["default_config"]))
-  while (list($key,$val) = each($GLOBALS["default_config"])) {
-    if (is_array($val)) {
-		  $htmlmessage = eregi_replace("\[$key\]",getConfig($key),$htmlmessage);
-		  $textmessage = eregi_replace("\[$key\]",getConfig($key),$textmessage);
+  if (is_array($GLOBALS["default_config"])) {
+  	reset($GLOBALS["default_config"]);
+    while (list($key,$val) = each($GLOBALS["default_config"])) {
+      if (is_array($val)) {
+        $htmlmessage = eregi_replace("\[$key\]",getConfig($key),$htmlmessage);
+        $textmessage = eregi_replace("\[$key\]",getConfig($key),$textmessage);
+      }
     }
   }
 

@@ -717,6 +717,10 @@ if (!isset($_POST["testtarget"])) {
 
 	$_POST["testtarget"] = $row["email"];
 }
+// if there isn't one, load the developer one, just being lazy here :-)
+if (!$_POST["testtarget"]) {
+	$_POST["testtarget"] = $GLOBALS["developer_email"];
+}
 
 // Display the HTML for the "Send Test" button, and the input field for the email addresses
 print "<hr><table><tr><td valign=\"top\"><input type=submit name=sendtest value=\"Send Test Message\"> to email address(es): </td><td><input type=text name=\"testtarget\" size=40 value=\"".$_POST["testtarget"]."\"><br />(comma separate addresses - all must be users)</td></tr></table>\n<hr>\n";
