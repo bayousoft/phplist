@@ -1,4 +1,154 @@
-Changelog for PHPlist 2004-01-16 22:34
+Changelog for PHPlist 2004-03-04 18:47
+
+2004-03-04 18:21  mdethmers
+
+	added regular check for update to PHPlist, to deal with people who
+	don't subscribe to the announcements mailinglist, so they are still
+	informed when security alert happen
+
+2004-03-04 18:20  mdethmers
+
+	changed fckeditor to not show image upload and browse if images
+	directory is not writable
+
+2004-03-04 17:51  mdethmers
+
+	removed some silly smileys
+
+2004-03-04 11:21  mdethmers
+
+	added smiley images in public directory
+
+2004-03-04 11:14  mdethmers
+
+	updated integration of FCKeditor into PHPlist
+
+2004-03-04 11:06  mdethmers
+
+	updated integration of FCKeditor into PHPlist
+
+2004-03-02 21:26  mdethmers
+
+	added latest version of FCKeditor in it's own location to
+	facilitate updating it more easily when new releases come out
+
+2004-03-01 01:26  mdethmers
+
+	update to dutch.inc
+
+2004-02-25 14:20  mdethmers
+
+	fixed issue where edited messages did not remember the lists they
+	were sent to
+
+2004-02-25 11:35  mdethmers
+
+	added logging of the history of a user record, identifying initial
+	subscription and all other changes the user makes to their record.
+	Also added more information in the email to the administrator of
+	the details of the user that change
+
+2004-02-25 11:30  mdethmers
+
+	added mexican states, canadian provinces and spanish gender
+
+2004-02-13 20:22  mdethmers
+
+	updated javascript progressbar to new one
+
+2004-02-13 20:21  mdethmers
+
+	updated link to feed validator
+
+2004-02-13 20:16  mdethmers
+
+	fixed bug command line was not detected correctly
+
+2004-01-28 21:30  mdethmers
+
+	changed way no selection of attributes is applied to database to
+	avoid users not being found if they don't have any attributes and
+	updated sanitisation of from and subject to allow | character
+
+2004-01-28 21:28  mdethmers
+
+	updated upgrade to take any extra info off the db version before
+	applying upgrade code
+
+2004-01-28 14:43  mdethmers
+
+	updated repetition feature to allow exclusion of dates, and added
+	docs to explain it all
+
+2004-01-28 14:43  mdethmers
+
+	file README.repetition was initially added on branch version-2-7.
+
+2004-01-27 23:22  mdethmers
+
+	new version 2.7.2
+
+2004-01-27 23:13  mdethmers
+
+	changed default config for prepare message system to require
+	defining it 1 to use it
+
+2004-01-27 23:10  mdethmers
+
+	update to preparesend
+
+2004-01-27 23:06  mdethmers
+
+	fixed some typos in the description of the test list that is
+	created at init time
+
+2004-01-27 23:06  mdethmers
+
+	fixed notification of number of users copied when copying from one
+	list to another
+
+2004-01-27 23:05  mdethmers
+
+	added pre-selecting existing lists a message has been sent to when
+	editing it
+
+2004-01-27 23:04  mdethmers
+
+	added some extra checks for validity of attachment at send time
+
+2004-01-27 23:03  mdethmers
+
+	fixed forcing selection of list(s) when normally sending a message,
+	added some extra checks for validity of attachments uploaded and
+	updated interface of listing of existing attachments for a message
+
+2004-01-26 12:18  mdethmers
+
+	fixed magic quotes bug in send core
+
+2004-01-23 11:36  mdethmers
+
+	update to danish.inc
+
+2004-01-20 00:24  mdethmers
+
+	new version 2.7.1
+
+2004-01-20 00:23  mdethmers
+
+	fixed bug when not loading footer correctly
+
+2004-01-19 23:09  mdethmers
+
+	fixed bug where footer of edited message wasn't loaded properly
+
+2004-01-16 22:53  mdethmers
+
+	updated url to validate RSS feeds
+
+2004-01-16 22:39  mdethmers
+
+	new version 2.7.0
 
 2004-01-16 22:26  mdethmers
 

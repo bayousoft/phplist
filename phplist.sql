@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: phplistdb
 ---------------------------------------------------------
--- Server version	4.0.14-standard
+-- Server version	4.0.14-standard-log
 
 --
 -- Table structure for table 'eventlog'
@@ -273,7 +273,7 @@ CREATE TABLE phplist_config (
 -- Dumping data for table 'phplist_config'
 --
 
-INSERT INTO phplist_config VALUES ('version','2.5.8-dev',0,NULL);
+INSERT INTO phplist_config VALUES ('version','2.7.2-dev',0,NULL);
 INSERT INTO phplist_config VALUES ('subscribesubject:3','Request for confirmation',0,NULL);
 INSERT INTO phplist_config VALUES ('subscribemessage:3','\r\n  Almost welcome to our mailinglist(s) ...\r\n\r\n  Someone, hopefully you, has subscribed your email address to the following mailinglists:\r\n\r\n[LISTS]\r\n\r\n  If this is correct, please click this URL to confirm your subscription:\r\n\r\n[CONFIRMATIONURL]\r\n\r\n  If this is not correct, you do not need to do anything, simply delete this message.\r\n\r\n  Thank you\r\n\r\n  ',0,NULL);
 INSERT INTO phplist_config VALUES ('confirmationsubject:3','Welcome to our Mailinglist',0,NULL);
@@ -299,6 +299,9 @@ INSERT INTO phplist_config VALUES ('confirmationsubject','Welcome to our Mailing
 INSERT INTO phplist_config VALUES ('confirmationurl','http://[WEBSITE]/lists/?p=confirm',1,NULL);
 INSERT INTO phplist_config VALUES ('message_from_name','Webmaster',1,NULL);
 INSERT INTO phplist_config VALUES ('message_from_address','noreply@[DOMAIN]',1,NULL);
+INSERT INTO phplist_config VALUES ('report_address','listreports@[DOMAIN]',1,NULL);
+INSERT INTO phplist_config VALUES ('check_new_version','7',1,NULL);
+INSERT INTO phplist_config VALUES ('updatelastcheck','2004-03-04 19:03:22',0,NULL);
 
 --
 -- Table structure for table 'phplist_eventlog'
@@ -946,7 +949,7 @@ CREATE TABLE phplist_message (
   footer text,
   entered datetime default NULL,
   modified timestamp(14) NOT NULL,
-  status enum('submitted','inprocess','sent','cancelled','prepared') default NULL,
+  status enum('submitted','inprocess','sent','cancelled','prepared','draft') default NULL,
   processed mediumint(8) unsigned default '0',
   userselection text,
   sent datetime default NULL,
@@ -963,6 +966,9 @@ CREATE TABLE phplist_message (
   astextandpdf int(11) default '0',
   rsstemplate varchar(100) default NULL,
   owner int(11) default NULL,
+  embargo datetime default NULL,
+  repeat int(11) default '0',
+  repeatuntil datetime default NULL,
   PRIMARY KEY  (id)
 ) TYPE=MyISAM;
 
@@ -970,11 +976,11 @@ CREATE TABLE phplist_message (
 -- Dumping data for table 'phplist_message'
 --
 
-INSERT INTO phplist_message VALUES (2,'Demo','Demo','','','\r\n<b>Hello [NAME]</b><br/><br/>\r\nThis is a test message</br>\r\n\r\n','--\r\nTo unsubscribe from this list visit [UNSUBSCRIBE]\r\n\r\nTo update your preferences visit [PREFERENCES]\r\n','2002-05-31 09:57:18',20020531095723,'sent',4,'select distinct userid from user_attribute','2002-05-31 09:57:23',1,'HTML',1,1,3,0,0,0,NULL,0,0,NULL,NULL);
-INSERT INTO phplist_message VALUES (3,'Prepared Message','Prepared Message Demo','','','\r\n<b>Hello [NAME]</b><br/>\r\n<br/>\r\n\r\nThis is a Demo message',' ','2002-05-31 11:57:44',20020531115744,'prepared',0,'select distinct userid from phplist_user_user_attribute',NULL,1,'both',1,0,0,0,0,0,NULL,0,0,NULL,NULL);
-INSERT INTO phplist_message VALUES (11,'message 2','me','','','hi\n##LISTOWNER=4','--\r\nTo unsubscribe from this list visit [UNSUBSCRIBE]\r\n\r\nTo update your preferences visit [PREFERENCES]\r\n','2002-05-31 12:26:44',20020809173845,'sent',1,NULL,'2002-08-09 17:38:45',0,'both',1,0,0,1,0,0,NULL,0,0,NULL,NULL);
-INSERT INTO phplist_message VALUES (14,'Demo Message','Demo User','','','\r\nHi [NAME]\r\n\r\nIt is now possible to add configuration variables to the messages. Something like this:\r\n\r\nthe reports go to [report_address]\r\n\r\nour website is at [website]\r\n\r\nour domain is [domain]\r\n\r\n','--\r\nTo unsubscribe from this list visit [UNSUBSCRIBE]\r\n\r\nTo update your preferences visit [PREFERENCES]\r\n','2003-03-21 12:45:01',20030321124540,'sent',3,'select distinct userid from phplist_user_user_attribute','2003-03-21 12:45:06',0,'both',2,0,0,3,5,0,'2003-03-21 12:45:04',0,0,NULL,NULL);
-INSERT INTO phplist_message VALUES (15,'Your daily email','Webmaster noreply@phplist.michiel','','','\r\nThese are the latest entries:\r\n[RSS]','--\r\nTo unsubscribe from this list visit [UNSUBSCRIBE]\r\n\r\nTo update your preferences visit [PREFERENCES]\r\n','2003-10-20 01:11:55',20031020011155,'submitted',0,'select distinct userid from phplist_user_user_attribute',NULL,0,'text and HTML',2,0,0,0,0,0,NULL,0,0,'daily',1);
+INSERT INTO phplist_message VALUES (2,'Demo','Demo','','','\r\n<b>Hello [NAME]</b><br/><br/>\r\nThis is a test message</br>\r\n\r\n','--\r\nTo unsubscribe from this list visit [UNSUBSCRIBE]\r\n\r\nTo update your preferences visit [PREFERENCES]\r\n','2002-05-31 09:57:18',20020531095723,'sent',4,'select distinct userid from user_attribute','2002-05-31 09:57:23',1,'HTML',1,1,3,0,0,0,NULL,0,0,NULL,NULL,NULL,0,NULL);
+INSERT INTO phplist_message VALUES (3,'Prepared Message','Prepared Message Demo','','','\r\n<b>Hello [NAME]</b><br/>\r\n<br/>\r\n\r\nThis is a Demo message',' ','2002-05-31 11:57:44',20020531115744,'prepared',0,'select distinct userid from phplist_user_user_attribute',NULL,1,'both',1,0,0,0,0,0,NULL,0,0,NULL,NULL,NULL,0,NULL);
+INSERT INTO phplist_message VALUES (11,'message 2','me','','','hi\n##LISTOWNER=4','--\r\nTo unsubscribe from this list visit [UNSUBSCRIBE]\r\n\r\nTo update your preferences visit [PREFERENCES]\r\n','2002-05-31 12:26:44',20020809173845,'sent',1,NULL,'2002-08-09 17:38:45',0,'both',1,0,0,1,0,0,NULL,0,0,NULL,NULL,NULL,0,NULL);
+INSERT INTO phplist_message VALUES (14,'Demo Message','Demo User','','','\r\nHi [NAME]\r\n\r\nIt is now possible to add configuration variables to the messages. Something like this:\r\n\r\nthe reports go to [report_address]\r\n\r\nour website is at [website]\r\n\r\nour domain is [domain]\r\n\r\n','--\r\nTo unsubscribe from this list visit [UNSUBSCRIBE]\r\n\r\nTo update your preferences visit [PREFERENCES]\r\n','2003-03-21 12:45:01',20030321124540,'sent',3,'select distinct userid from phplist_user_user_attribute','2003-03-21 12:45:06',0,'both',2,0,0,3,5,0,'2003-03-21 12:45:04',0,0,NULL,NULL,NULL,0,NULL);
+INSERT INTO phplist_message VALUES (15,'Your daily email','Webmaster noreply@phplist.michiel','','','\r\nThese are the latest entries:\r\n[RSS]','--\r\nTo unsubscribe from this list visit [UNSUBSCRIBE]\r\n\r\nTo update your preferences visit [PREFERENCES]\r\n','2003-10-20 01:11:55',20040304190322,'submitted',0,'select distinct userid from phplist_user_user_attribute',NULL,0,'text and HTML',2,0,0,0,0,0,NULL,0,0,'daily',1,'2004-03-04 19:03:22',0,NULL);
 
 --
 -- Table structure for table 'phplist_message_attachment'
@@ -1241,9 +1247,9 @@ INSERT INTO phplist_task VALUES (50,'reconcileusers','system');
 INSERT INTO phplist_task VALUES (51,'getrss','system');
 INSERT INTO phplist_task VALUES (52,'viewrss','system');
 INSERT INTO phplist_task VALUES (53,'setup','system');
-INSERT INTO phplist_task VALUES (115,'none','admin');
-INSERT INTO phplist_task VALUES (116,'owner','admin');
-INSERT INTO phplist_task VALUES (112,'all','message');
+INSERT INTO phplist_task VALUES (155,'none','admin');
+INSERT INTO phplist_task VALUES (156,'owner','admin');
+INSERT INTO phplist_task VALUES (152,'all','message');
 
 --
 -- Table structure for table 'phplist_template'
@@ -1494,6 +1500,27 @@ INSERT INTO phplist_user_user_attribute VALUES (10,8,'4');
 INSERT INTO phplist_user_user_attribute VALUES (9,8,'1');
 INSERT INTO phplist_user_user_attribute VALUES (11,8,'What a nice app. Cool!');
 INSERT INTO phplist_user_user_attribute VALUES (12,8,'on');
+
+--
+-- Table structure for table 'phplist_user_user_history'
+--
+
+DROP TABLE IF EXISTS phplist_user_user_history;
+CREATE TABLE phplist_user_user_history (
+  id int(11) NOT NULL auto_increment,
+  userid int(11) NOT NULL default '0',
+  ip varchar(255) default NULL,
+  date datetime default NULL,
+  summary varchar(255) default NULL,
+  detail text,
+  systeminfo text,
+  PRIMARY KEY  (id)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'phplist_user_user_history'
+--
+
 
 --
 -- Table structure for table 'phplist_usermessage'

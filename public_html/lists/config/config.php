@@ -186,7 +186,7 @@ define("MANUALLY_PROCESS_RSS",1);
 
 # the FCKeditor is now included in PHPlist, but the use of it is experimental
 # if you want to try it, set this to 1
-define("USEFCK",0);
+define("USEFCK",1);
 
 # If you want to upload images to the FCKeditor, you need to specify the location
 # of the directory where the images go. This needs to be writable by the webserver,
