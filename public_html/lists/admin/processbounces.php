@@ -193,7 +193,10 @@ function processBounce ($link,$num,$header) {
 }
 
 function processPop ($server,$user,$password) {
-  $port =  "110/pop3/notls";
+  $port =  $GLOBALS["bounce_mailbox_port"];
+  if (!$port) {
+  	$port = '110/pop3/notls';
+  }
   set_time_limit(6000);
 
   if (!TEST) {

@@ -48,6 +48,14 @@ $bounce_mailbox_host = 'localhost';
 $bounce_mailbox_user = 'popuser';
 $bounce_mailbox_password = 'password';
 
+# the "port" is the remote port of the connection to retrieve the emails
+# the default should be fine but if it doesn't work, you can try the second
+# one. To do that, add a # before the first line and take off the one before the
+# second line
+
+$bounce_mailbox_port = "110/pop3/notls";
+#$bounce_mailbox_port = "110/pop3";
+
 # when the protocol is mbox specify this one
 # it needs to be a local file in mbox format, accessible to your webserver user
 $bounce_mailbox = '/var/spool/mail/listbounces';
