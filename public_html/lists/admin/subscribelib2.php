@@ -89,6 +89,23 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
     # they do exist, so update the existing record
 	  # read the current values to compare changes
     $old_data = Sql_fetch_array($result);
+    if (ASKFORPASSWORD && $old_data["password"]) {
+      if (ENCRYPTPASSWORD) {
+        $canlogin = md5($_POST["password"]) == $old_data["password"];
+      } else {
+        $canlogin = $_POST["password"] == $old_data["password"];
+      }
+      if (!$canlogin) {
+        $msg = $GLOBALS["strUserExists"];
+        $msg .= '<p>'.$GLOBALS["strUserExistsExplanationStart"].
+          sprintf('<a href="%s&email=%s">%s</a>',getConfig("preferencesurl"),$email,
+          $GLOBALS["strUserExistsExplanationLink"]).
+          $GLOBALS["strUserExistsExplanationEnd"];
+        return;
+      }
+    }     
+    
+    
     $userid = $old_data["id"];
 	  $old_data = array_merge($old_data,getUserAttributeValues('',$userid));
   	$history_entry = 'http://'.getConfig("website").$GLOBALS["adminpages"].'/?page=user&id='.$userid."\n\n";

@@ -93,5 +93,9 @@ $strPersonalLocationInfo = '
   Please enter your email in the box and click "Continue"
 ';
 $strPersonalLocationSent = '<h1>Success! You should receive a message with your personal location shortly</h1>';
+$strUserExists   = '<br/>A user with that email already exists, and our records contain a different password';
+$strUserExistsExplanationStart = '<br/>In order to obtain your password, click ';
+$strUserExistsExplanationLink = 'here';
+$strUserExistsExplanationEnd = ' to go to the page where you can request your personal location';
 
 ?>
