@@ -25,7 +25,8 @@ $delete = sprintf('%d',$_GET["delete"]);
 $access = accessLevel("user");
 switch ($access) {
   case "owner":
-    $subselect = " and ".$tables["list"].".owner = ".$_SESSION["logindetails"]["id"];break;
+    $subselect = " and ".$tables["list"].".owner = ".$_SESSION["logindetails"]["id"];
+    $subselect_where = " where ".$tables["list"].".owner = ".$_SESSION["logindetails"]["id"];break;
   case "all":
     $subselect = "";break;
   case "view":
@@ -37,7 +38,8 @@ switch ($access) {
     break;
   case "none":
   default:
-    $subselect = " and ".$tables["list"].".id = 0";break;
+    $subselect = " and ".$tables["list"].".id = 0";
+    $subselect_where = " where ".$tables["list"].".owner = 0";break;
 }
 if ($access == "all") {
   $delete_message = '<br />Delete will delete user from the list<br />';
@@ -118,7 +120,15 @@ if ($change && ($access == "owner"|| $access == "all")) {
 		}
   }
   # submitting page now saves everything, so check is not necessary
-  Sql_Query("delete from {$tables["listuser"]} where userid = $id");
+  if ($subselect == "") {
+    Sql_Query("delete from {$tables["listuser"]} where userid = $id");
+  } else {
+    # only unsubscribe from the lists of this admin
+    $req = Sql_Query("select id from {$tables["list"]} $subselect_where");
+    while ($row = Sql_Fetch_Row($req)) {
+      Sql_Query("delete from {$tables["listuser"]} where userid = $id and listid = $row[0]");
+    }
+  }    
   if (is_array($subscribe)) {
     foreach ($subscribe as $ind => $lst) {
       Sql_Query("insert into {$tables["listuser"]} (userid,listid) values($id,$lst)");
@@ -252,7 +262,7 @@ if ($id) {
 
   print "<h3>Mailinglist Membership:</h3>";
   print "<table border=1><tr>";
-  $req = Sql_Query("select * from {$tables["list"]} order by listorder,name");
+  $req = Sql_Query("select * from {$tables["list"]} $subselect_where order by listorder,name");
   $c = 0;
   while ($row = Sql_Fetch_Array($req)) {
     if (in_array($row["id"],$subscribed)) {
