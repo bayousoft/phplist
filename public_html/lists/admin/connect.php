@@ -8,6 +8,8 @@ if (is_file(getenv("DOCUMENT_ROOT") ."/../VERSION")) {
       $version = $val . "-";
   }
   fclose($fd);
+} else {
+  $version = "dev";
 }
 
 define("VERSION",$version."dev");
@@ -365,7 +367,29 @@ function normalize($var) {
   return $var;
 }
 
+function ClineSignature() {
+  return "PHPlist version ".VERSION." (c) 2000-".date("Y")." Tincan Ltd, http://www.phplist.com\n";
+}  
+
+function ClineError($msg) {
+  ob_end_clean();
+  print ClineSignature();
+  $cline = getopt("s:l:");
+  print "\n$msg\n";
+}
+
+function clineUsage($line = "") {
+  ob_end_clean();
+  print clineSignature();
+  print "Usage: ".$_SERVER["SCRIPT_FILENAME"]." -p page $line\n\n";
+  exit;
+}  
+
 function Error($msg) {
+  if ($GLOBALS["commandline"]) {
+    clineError($msg);
+    return;
+  }
   print "<div class=\"error\" align=center>Error: $msg </div>";
   $message = '
 

@@ -1,0 +1,4 @@
+#!/bin/bash
+CONFIG=/home/phplist/configs/configdev.php
+export CONFIG
+php /home/michiel/projects/phplist/public_html/lists/admin/index.php $*

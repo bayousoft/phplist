@@ -1,13 +1,29 @@
 <?
 ob_start();
 $er = error_reporting(0);
+# setup commandline
+if ($_SERVER["USER"]) {
+  for ($i=0; $i<$_SERVER['argc']; $i++) {
+    $my_args = array();
+    if (ereg("(.*)=(.*)",$_SERVER['argv'][$i], $my_args)) {
+      $_GET[$my_args[1]] = $my_args[2];
+      $_REQUEST[$my_args[1]] = $my_args[2];
+    }
+  }
+  $GLOBALS["commandline"] = 1;
+  $dir = dirname($_SERVER["SCRIPT_FILENAME"]);
+  chdir($dir);
+} else {
+  $GLOBALS["commandline"] = 0;
+}
+
 header("Cache-Control: no-cache, must-revalidate");           // HTTP/1.1
 header("Pragma: no-cache");                                   // HTTP/1.0
 if ($_SERVER["ConfigFile"] && is_file($_SERVER["ConfigFile"])) {
 	print '<!-- using '.$_SERVER["ConfigFile"].'-->'."\n";
   include $_SERVER["ConfigFile"];
 } elseif ($_ENV["CONFIG"] && is_file($_ENV["CONFIG"])) {
-	print '<!-- using '.$_ENV["CONFIG"].'-->'."\n";
+#	print '<!-- using '.$_ENV["CONFIG"].'-->'."\n";
   include $_ENV["CONFIG"];
 } elseif (is_file("../config/config.php")) {
 	print '<!-- using ../config/config.php -->'."\n";
@@ -18,13 +34,18 @@ if ($_SERVER["ConfigFile"] && is_file($_SERVER["ConfigFile"])) {
 }
 error_reporting($er);
 
-# make sure parameters get passed when run on command line
-global $HTTP_SERVER_VARS;
-for ($i=0; $i<$HTTP_SERVER_VARS['argc']; $i++) {
-  $my_args = array();
-  if (ereg("(.*)=(.*)",$HTTP_SERVER_VARS['argv'][$i], $my_args)) {
-    $_GET[$my_args[1]] = $my_args[2];
-    $_REQUEST[$my_args[1]] = $my_args[2];
+if ($GLOBALS["commandline"]) {
+  if (!in_array($_SERVER["USER"],$GLOBALS["commandline_users"])) {
+    clineError("Sorry, You do not have sufficient permissions to run this script");
+    exit;
+  }
+  $GLOBALS["require_login"] = 0;
+  $opt = getopt("p:");
+  if ($opt["p"]) {
+    $_GET["page"] = $opt["p"];
+  } else {
+    clineUsage(" [other parameters]");
+    exit;
   }
 }
 
@@ -215,6 +236,11 @@ if (checkAccess($page,"")) {
       #print $plugin->coderoot . "$include";
     }
   } else {
+    if ($GLOBALS["commandline"]) {  
+      clineError("Sorry, that module does not exist");
+      exit;
+    }
+
     print "$page -&gt; Sorry not Implemented yet";
   }
 } else {

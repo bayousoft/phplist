@@ -12,6 +12,22 @@ switch ($access) {
     $subselect = " where id = 0";break;
 }
 
+# handle commandline
+if ($GLOBALS["commandline"]) {
+#  error_reporting(63);
+  $cline = getopt("s:l:"); # does not actually work well, so only used for checking that all required are there
+  foreach ($cline as $key => $val) {
+    print "Option: $key = $val\n";
+  }
+  if (!$cline || !$cline["s"] || !$cline["l"]) {
+    clineUsage("-s Subject -l list < message");
+    exit;
+  }
+  print "Sending message with subject ".$cline["s"]. " to list ". $cline["l"]."\n";
+  exit;
+  
+}
+
 include "send_core.php";
 
 if ($done) {
