@@ -25,7 +25,8 @@ $findby = $_SESSION["userlistfilter"]["findby"];
 if ($findby && !$find)
 	$find = '%';
 
-if ($findby && $find) {
+$system_findby = array("email","foreignkey");
+if ($findby && $find && !in_array($findby,$system_findby) ) {
 	$find_url = '&find='.urlencode($find)."&findby=".urlencode($findby);
 	$findatt = Sql_Fetch_Array_Query("select id,tablename,type,name from {$tables["attribute"]} where id = $findby");
   switch ($findatt["type"]) {
@@ -64,7 +65,7 @@ if ($findby && $find) {
   }
 } else {
 	$findtables = '';
-	$findbyselect = sprintf(' email like "%%%s%%"',$find);;
+	$findbyselect = sprintf(' %s like "%%%s%%"',$findby,$find);;
   $findfield = $tables["user"].".bouncecount,".$tables["user"].".rssfrequency,".$tables["user"].".foreignkey";
   $findfieldname = "Email";
 	$find_url = '&find='.urlencode($find);
@@ -244,7 +245,8 @@ if ($total > MAX_USER_PP) {
 <table border=0>
 <tr><td colspan=4><input type=hidden name=id value="<?php echo $listid?>">
 Find a user: <input type=text name=find value="<?php echo $find != '%' ? $find : ""?>" size=30>
-<select name="findby"><option value="">Email</option>
+<select name="findby"><option value="email" <?php echo $findby == "email"? "selected":""?>>Email</option>
+<select name="findby"><option value="foreignkey" <?php echo $findby == "foreignkey"? "selected":""?>>Foreign Key</option>
 <?php
   $att_req = Sql_Query("select id,name from ".$tables["attribute"]." where type = \"hidden\" or type = \"textline\" or type = \"select\"");
   while ($row = Sql_Fetch_Array($att_req)) {
