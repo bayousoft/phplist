@@ -174,10 +174,7 @@ if ($doadd) {
     # remember the users attributes
     $res = Sql_Query("select * from $tables[attribute]");
     while ($row = Sql_Fetch_Array($res)) {
-      if ($row["tablename"] != "")
-        $fieldname = $row["tablename"];
-      else
-        $fieldname = "attribute" .$row["id"];
+      $fieldname = "attribute" .$row["id"];
       $value = $_POST[$fieldname];
       if (is_array($value)) {
         $newval = array();
