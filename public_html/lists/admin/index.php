@@ -11,6 +11,7 @@ if (PHP_SAPI == "cli") {
     }
   }
   $GLOBALS["commandline"] = 1;
+  $cline = parseCLine();
   $dir = dirname($_SERVER["SCRIPT_FILENAME"]);
   chdir($dir);
 } else {
@@ -25,6 +26,9 @@ if ($_SERVER["ConfigFile"] && is_file($_SERVER["ConfigFile"])) {
 } elseif ($_ENV["CONFIG"] && is_file($_ENV["CONFIG"])) {
 #	print '<!-- using '.$_ENV["CONFIG"].'-->'."\n";
   include $_ENV["CONFIG"];
+} elseif (is_file($cline["c"])) {
+	print '<!-- using '.$cline["c"].' -->'."\n";
+  include $cline["c"];
 } elseif (is_file("../config/config.php")) {
 	print '<!-- using ../config/config.php -->'."\n";
   include "../config/config.php";
@@ -36,16 +40,18 @@ error_reporting($er);
 
 if ($GLOBALS["commandline"]) {
   if (!in_array($_SERVER["USER"],$GLOBALS["commandline_users"])) {
-    clineError("Sorry, You do not have sufficient permissions to run this script");
+    clineError("Sorry, You (".$_SERVER["USER"].") do not have sufficient permissions to run this script");
     exit;
   }
   $GLOBALS["require_login"] = 0;
-  $opt = getopt("p:");
-  if ($opt["p"]) {
-		if (!in_array($opt["p"],$GLOBALS["commandline_pages"])) {
-			clineError($opt["p"]." does not process commandline");
+
+  # getopt is actually useless :-)
+  #$opt = getopt("p:");
+  if ($cline["p"]) {
+		if (!in_array($cline["p"],$GLOBALS["commandline_pages"])) {
+			clineError($cline["p"]." does not process commandline");
     } else {
-	    $_GET["page"] = $opt["p"];
+	    $_GET["page"] = $cline["p"];
     }
   } else {
     clineUsage(" [other parameters]");
@@ -83,13 +89,13 @@ if (!Sql_Table_Exists($tables["admin"])) {
     $GLOBALS["require_login"] = 0;
 }
 
-$page_title = 'PHPlist';
+$page_title = NAME;
 include "lan/".$adminlanguage["iso"]."/pagetitles.php";
 
 print '<script language="javascript" type="text/javascript" src="js/select_style.js"></script>';
 print '<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">';           // HTTP/1.1
 print '<meta http-equiv="Pragma" content="no-cache">';           // HTTP/1.1
-print "<title>PHPlist :: ";
+print "<title>".NAME." :: ";
 if (isset($GLOBALS["installation_name"]))
 	print $GLOBALS["installation_name"] .' :: ';
 print "$page_title</title>";
@@ -165,7 +171,7 @@ if ($page != "") {
 	$include = "home.php";
 }
 
-print '<p class="leaftitle">PHPlist - '.strtolower($page_title).'</p>';
+print '<p class="leaftitle">'.NAME.' - '.strtolower($page_title).'</p>';
 
 if ($GLOBALS["require_login"] && $page != "login") {
 	if ($_GET["page"] == "logout") {
@@ -183,13 +189,6 @@ if ($GLOBALS["require_login"] && $page != "login") {
   print '<div><font style="font-size : 12px;font-family : Arial, Helvetica, sans-serif;	font-weight : bold;"> '.$greeting." ".adminName($_SESSION["logindetails"]["id"]). "</font></div>";
   if ($_REQUEST["page"] != "logout")
   print '<div align="right">'.PageLink2("logout","Logout").'</div>';
-}
-
-# include some information
-if (is_file("info/".$adminlanguage["info"]."/$include")) {
-	@include "info/".$adminlanguage["info"]."/$include";
-} else {
-#	print "Not a file: "."info/".$adminlanguage["info"]."/$include";
 }
 
 if ($page != "login") {
@@ -220,6 +219,14 @@ if ($page != "login") {
     }
   }
 }
+
+# include some information
+if (is_file("info/".$adminlanguage["info"]."/$include")) {
+	@include "info/".$adminlanguage["info"]."/$include";
+} else {
+#	print "Not a file: "."info/".$adminlanguage["info"]."/$include";
+}
+
 
 /*
 if (USEFCK) {
@@ -279,6 +286,7 @@ if (checkAccess($page,"")) {
 } else {
   Error("You do not have enough privileges to access this page");
 }
+
 if ($GLOBALS["commandline"]) {
   ob_clean();
   exit;
@@ -286,3 +294,27 @@ if ($GLOBALS["commandline"]) {
   ob_end_flush();
   include "footer.inc";
 } 
+
+function parseCline() {
+	$res = array();
+  $cur = "";
+  foreach ($GLOBALS["argv"] as $clinearg) {
+  	if (substr($clinearg,0,1) == "-") {
+    	$par = substr($clinearg,1,1);
+      $clinearg = substr($clinearg,2,strlen($clinearg));
+     # $res[$par] = "";
+      $cur = strtolower($par);
+	    $res[$cur] .= $clinearg;
+   	} elseif ($cur) {
+    	if ($res[$cur])
+		    $res[$cur] .= ' '.$clinearg;
+      else
+      	$res[$cur] .= $clinearg;
+    }
+  }
+  foreach ($res as $key => $val) {
+  	print "$key = $val\n";
+  }
+  return $res;
+}
+
