@@ -13,6 +13,13 @@ if (file_exists("./FCKeditor/fckeditor.php") && USEFCK) {
 } else {
 	$usefck = 0;
 }
+
+// Verify that TinyMCE is available
+$useTinyMCE = 0;
+if (file_exists(TINYMCEPATH) && USETINYMCE) {
+	$useTinyMCE = 1;
+}
+
 include $GLOBALS["coderoot"] . "date.php";
 $embargo = new date("embargo");
 $embargo->useTime = true;
@@ -605,11 +612,7 @@ if (ENABLE_RSS) {
 
 <tr><td colspan=2>
 
-<?php if (!$usefck) { ?>
-
-	<textarea name=message cols=45 rows=20><?php echo $_POST["message"] ?></textarea>
-
-<?php } else {
+<?php  if ($usefck) {
 	$oFCKeditor = new FCKeditor ;
 	//$oFCKeditor->ToolbarSet = 'Accessibility' ;
 	$oFCKeditor->ToolbarSet = 'Default' ;
@@ -632,8 +635,32 @@ if (ENABLE_RSS) {
 
 
 	print '<tr><td colspan=2 align=right><a href="javascript:expand();" class="button">expand</a></td></tr>';
-}
-?>
+
+} elseif ($useTinyMCE) {
+
+	$tinyMCE_path = TINYMCEPATH;
+	$tinyMCE_lang = TINYMCELANG;
+	$tinyMCE_theme = TINYMCETHEME;
+	$tinyMCE_opts = TINYMCEOPTS;
+
+	$maincontent .= "<script language='javascript' type='text/javascript' src='{$tinyMCE_path}'></script>\n"
+				."<script language='javascript' type='text/javascript'>\n"
+				."   tinyMCE.init({\n"
+				."      mode : 'exact',\n"
+				."	  elements : 'message',\n"
+				."	  language : '{$tinyMCE_lang}',\n"
+				."	  theme : '{$tinyMCE_theme}'\n"
+				."	  {$tinyMCE_opts}\n"
+				."   });\n"
+				."</script>\n"
+				."<textarea name='message' id='message' cols='65' rows='20'>{$_POST['message']}</textarea>";
+
+} else { ?>
+
+	<textarea name=message cols=45 rows=20><?php echo $_POST["message"] ?></textarea>
+
+<?php } ?>
+
 </td></tr>
 
 <?php if (USE_MANUAL_TEXT_PART) { ?>

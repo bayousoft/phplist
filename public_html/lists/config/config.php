@@ -313,6 +313,7 @@ define("MANUALLY_PROCESS_RSS",1);
 
 # the FCKeditor is now included in PHPlist, but the use of it is experimental
 # if it's not working for you, set this to 0
+# NOTE: If you enable TinyMCE please disable FCKeditor and vice-versa.
 define("USEFCK",1);
 
 # If you want to upload images to the FCKeditor, you need to specify the location
@@ -321,6 +322,24 @@ define("USEFCK",1);
 # the directory is relative to the root of PHPlist as set above
 # This is a potential security risk, so read README.security for more information
 define("FCKIMAGES_DIR","uploadimages");
+
+# TinyMCE Support (http://tinymce.moxiecode.com/)
+# It is suggested to copy the tinymce/jscripts/tiny_mce directory from the
+# standard TinyMCE distribution into the public_html/lists/admin/plugins
+# directory in order to keep the install clean.
+# NOTE: If you enable TinyMCE please disable FCKeditor and vice-versa.
+# Set this to 1 to turn on TinyMCE:
+define("USETINYMCE", 0);
+# Set this to path of the TinyMCE script, relative to the admin directory:
+define("TINYMCEPATH", "plugins/tiny_mce/tiny_mce.js");
+# Set this to the language you wish to use for TinyMCE:
+define("TINYMCELANG", "en");
+# Set this to the theme you wish to use.  Default options are: simple, default and advanced.
+define("TINYMCETHEME", "advanced");
+# Set this to any additional options you wish.  Please be careful with this as you can
+# inadvertantly break TinyMCE.  Rever to the TinyMCE documentation for full details.
+# Should be in the format: ',option1:"value",option2:"value"'   <--- note comma at beginning
+define("TINYMCEOPTS", "");
 
 # Manual text part, will give you an input box for the text version of the message
 # instead of trying to create it by parsing the HTML version into plain text
