@@ -266,12 +266,26 @@ function sendMail ($to,$subject,$message,$header = "",$parameters = "") {
 }
 
 function sendAdminCopy($subject,$message) {
-	global $envelope;
 	$sendcopy = getConfig("send_admin_copies");
   if ($sendcopy == "true") {
   	$admin_mail = getConfig("admin_address");
-  	sendMail($admin_mail,$subject,$message,system_messageheaders($admin_mail));
+    $mails = explode(",",getConfig("admin_addresses"));
+    array_push($mails,$admin_mail);
+    $sent = array();
+    foreach ($mails as $admin_mail) {
+    	if (!$sent[$admin_mail]) {
+	  	  sendMail($admin_mail,$subject,$message,system_messageheaders($admin_mail));
+        $sent[$admin_mail] = 1;
+     	}
+   	}
   }
+}
+
+function sendReport($subject,$message) {
+	$report_addresses = explode(",",getConfig("report_address"));
+	foreach ($report_addresses as $address) {
+  	sendMail($address,$GLOBALS["installation_name"]." ".$subject,$message);
+ 	}
 }
 
 function timeDiff($time1,$time2) {
@@ -318,7 +332,7 @@ function sendMessageStats($msgid) {
   	$msg .= "\n".'Time taken: '.$diff;
   	foreach (array('entered','processed',
     	'sendstart','sent','htmlformatted','sendformat','template','astext',
-		  'ashtml','asboth') as $item) {
+		  'ashtml','astextandhtml','aspdf','astextandpdf') as $item) {
       	$msg .= "\n".$item.' => '.$data[$item];
     }
     if ($stats_collection_address == 'phplist-stats@tincan.co.uk' && $data["processed"] > 500) {

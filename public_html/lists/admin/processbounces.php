@@ -16,14 +16,13 @@ function prepareOutput() {
 $report = "";
 ## some general functions
 function finish ($flag,$message) {
-	global $envelope;
   if ($flag == "error") {
     $subject = "Bounce processing error";
   } elseif ($flag == "info") {
     $subject = "Bounce Processing info";
   }
   if (!TEST && $message)
-    sendMail(getConfig("report_address"),$GLOBALS["installation_name"]." ".$subject,$message,"",$envelope);
+    sendReport($subject,$message);
 }
 
 function ProcessError ($message) {

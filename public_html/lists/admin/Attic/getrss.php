@@ -22,7 +22,7 @@ function output($line) {
 register_shutdown_function("finish");
 
 function finish ($flag = "info",$message = "finished") {
-	global $nothingtodo,$failreport,$mailreport,$envelope,$process_id;
+	global $nothingtodo,$failreport,$mailreport,$process_id;
   if ($flag == "error") {
     $subject = "Rss Errors";
   } else {
@@ -31,9 +31,9 @@ function finish ($flag = "info",$message = "finished") {
   releaseLock($process_id);
   if (!TEST && !$nothingtodo) {
   	if ($mailreport)
-	    sendMail(getConfig("report_address"),$GLOBALS["installation_name"]." ".$subject,$mailreport,"",$envelope);
+      sendReport($subject,$mailreport);
     if ($failreport)
-	    sendMail(getConfig("report_address"),$GLOBALS["installation_name"]." Rss Failure report",$failreport,"",$envelope);
+	    sendReport("Rss Failure report",$failreport);
   }
 }
 

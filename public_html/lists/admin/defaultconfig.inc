@@ -129,11 +129,15 @@ $default_config = array (
 
 # admin address is the person who is in charge of this system
 "admin_address" => array('webmaster@[DOMAIN]',
-		"Person in charge of this system (email address)","text"),
+		"Person in charge of this system (one email address)","text"),
+
+# admin addresses are other people who receive copies of subscriptions
+"admin_addresses" => array('',
+		"List of people to CC in system emails (separate by commas)","text",1),
 
 # report address is the person who gets the reports
 "report_address" => array('listreports@[DOMAIN]',
-		"Who gets the reports (email address)","text"),
+		"Who gets the reports (email address, separate multiple emails with a comma)","text"),
 
 # where will messages appear to come from
 "message_from_address" => array("noreply@[DOMAIN]",

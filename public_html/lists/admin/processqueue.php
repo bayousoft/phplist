@@ -85,7 +85,7 @@ register_shutdown_function("my_shutdown");
 
 ## some general functions
 function finish ($flag,$message) {
-	global $nothingtodo,$envelope;
+	global $nothingtodo;
   print '<script language="Javascript" type="text/javascript"> finish(); </script>';
   if ($flag == "error") {
     $subject = "Maillist Errors";
@@ -94,7 +94,7 @@ function finish ($flag,$message) {
   }
   output("Finished");
   if (!TEST && !$nothingtodo)
-    sendMail(getConfig("report_address"),$GLOBALS["installation_name"]." ".$subject,$message);
+    sendReport($subject,$message);
 }
 
 function ProcessError ($message) {

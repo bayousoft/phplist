@@ -11,7 +11,7 @@ if ($save && $id) {
       $_POST["values"][$id] = str_replace("[WEBSITE]","",$_POST["values"][$id]);
       $_POST["values"][$id] = str_replace("[DOMAIN]","",$_POST["values"][$id]);
     }
-    if ($_POST["values"][$id] == "")
+    if ($_POST["values"][$id] == "" && !$info[3])
       Error("$info[1] cannot be empty");
     else {
       SaveConfig($id,$_POST["values"][$id],0);
@@ -53,7 +53,7 @@ if (!$id) {
     printf('<textarea name="values[%s]" rows=25 cols=55>%s</textarea><br/>',
       $id,htmlspecialchars($value));
   else if ($val[2] == "text")
-    printf('<input type="text" name="values[%s]" size="50" value="%s"><br/>',
+    printf('<input type="text" name="values[%s]" size="70" value="%s"><br/>',
     $id,htmlspecialchars($value));
   else if ($val[2] == "boolean")
     printf('<input type="text" name="values[%s]" size="10" value="%s"><br/>',
