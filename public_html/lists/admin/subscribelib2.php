@@ -91,7 +91,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
     	htmlemail,subscribepage,rssfrequency) values("%s",now(),"%s",0,%d,%d,"%s")',
 		$GLOBALS["tables"]["user"],addslashes($email),getUniqid(),$htmlemail,$id,
     $_POST["rssfrequency"]);
-	  $result = Sql_verbose_query($query);
+	  $result = Sql_query($query);
   } else {
     # they do exist, so update the existing record
 	  # read the current values to compare changes
@@ -117,7 +117,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
 	  $old_data = array_merge($old_data,getUserAttributeValues('',$userid));
   	$history_entry = 'http://'.getConfig("website").$GLOBALS["adminpages"].'/?page=user&id='.$userid."\n\n";
     $query = sprintf('update %s set email = "%s",htmlemail = %d,subscribepage = %d,rssfrequency = "%s" where id = %d',$GLOBALS["tables"]["user"],addslashes($email),$htmlemail,$id,$_POST["rssfrequency"],$userid);
-	  $result = Sql_verbose_query($query);
+	  $result = Sql_query($query);
   }
 
   # if we do not know the userid, retrieve it

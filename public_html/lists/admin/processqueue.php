@@ -421,7 +421,7 @@ while ($message = Sql_fetch_array($messages)) {
 		          $status = Sql_query("update {$tables['rssitem']} set processed = processed +1 where id = $rssitemid");
     		      $um = Sql_query("replace into {$tables['rssitem_user']} (userid,itemid) values($userid,$rssitemid)");
             }
-            Sql_Query("replace into {$tables["user_rss"]} (userid,last) values($userid,now())");
+            Sql_Query("replace into {$tables["user_rss"]} (userid,last) values($userid,date_sub(now(),interval 15 minute))");
          	}
           $script_stage = 5; # we have actually sent one user
         }
