@@ -78,6 +78,8 @@ ob_end_flush();
   while ($row = Sql_Fetch_Array($req))
     printf ('<option value="%d" %s>%s</option>',$row["id"],$row["id"] == $list["owner"]? "selected":"",$row["loginname"]);
   print '</select></td></tr>';
+} else {
+	printf('<input type=hidden name="owner" value="%d">',$list["owner"]);
 }
 if (ENABLE_RSS) {
  if ($list["rssfeed"]) {
