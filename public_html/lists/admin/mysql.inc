@@ -89,12 +89,11 @@ function Sql_Check_error($dbconnection,$errno = 0) {
 }
 
 function Sql_Query($query,$ignore = 0) {
-  global $database_connection;
 #  if (preg_match("/dev$/",VERSION))
 #    print "<b>$query</b><br>\n";
-  $result = mysql_query($query);
+  $result = mysql_query($query,$GLOBALS["database_connection"]);
   if (!$ignore)
-    if (Sql_Check_Error($database_connection))
+    if (Sql_Check_Error($GLOBALS["database_connection"]))
     	dbg("Sql error in $query");
   return $result;
 }
