@@ -32,7 +32,7 @@ if ($_POST["save"] || $_POST["activate"] || $_POST["deactivate"]) {
    	$id = Sql_Insert_id();
   }
   Sql_Query(sprintf('delete from %s where id = %d',$tables["subscribepage_data"],$id));
-  foreach (array("title","intro","header","footer","thankyoupage","button","htmlchoice") as $item) {
+  foreach (array("title","intro","header","footer","thankyoupage","button","htmlchoice","emaildoubleentry") as $item) {
   	Sql_Query(sprintf('insert into %s (name,id,data) values("%s",%d,"%s")',
     	$tables["subscribepage_data"],$item,$id,$_POST[$item]));
   }
@@ -119,6 +119,7 @@ if ($id) {
   $data["confirmationmessage"] = getConfig("confirmationmessage");
   $data["confirmationsubject"] = getConfig("confirmationsubject");
   $data["htmlchoice"] = "checkforhtml";
+  $data["emaildoubleentry"] = "yes";
   $data["rssdefault"] = "daily";
   $data["rssintro"] = 'Please indicate how often you want to receive messages';
   $rss = array_keys($rssfrequencies);
@@ -147,6 +148,12 @@ printf ('<input type=radio name="htmlchoice" value="checkforhtml" %s> Offer chec
 printf ('<input type=radio name="htmlchoice" value="radiotext" %s> Radio buttons, default to text <br/>',$data["htmlchoice"] == "radiotext"?"checked":"");
 printf ('<input type=radio name="htmlchoice" value="radiohtml" %s> Radio buttons, default to HTML <br/>',$data["htmlchoice"] == "radiohtml"?"checked":"");
 print "</td></tr>";
+
+printf('<tr><td valign=top>Display Email confirmation</td><td>');
+printf ('<input type=radio name="emaildoubleentry" value="yes" %s>Display email confirmation<br/>',$data["emaildoubleentry"]=="yes"?"checked":"");#'
+printf ('<input type=radio name="emaildoubleentry" value="no" %s>Don\'t display email confirmation<br/>',$data["emaildoubleentry"]=="no"?"checked":"");#'
+
+
 print "<tr><td colspan=2><h1>Message they receive when they subscribe</h1></td></tr>";
 printf('<tr><td valign=top>Subject</td><td><input type=text name=subscribesubject value="%s" size=60></td></tr>',
 	htmlspecialchars(stripslashes($data["subscribesubject"])));

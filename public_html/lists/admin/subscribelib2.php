@@ -49,6 +49,19 @@ if (is_array($attributes)) {
   $allthere = 1;
 }
 
+#
+# If need to check for double entry of email address
+#
+if ($subscribepagedata['emaildoubleentry'] == 'yes')
+{
+  if (!(isset($_POST['email']) && isset($_POST['emailconfirm']) && $_POST['email'] == $_POST['emailconfirm']))
+  {
+    $allthere=0;
+    $missing = "Email Addresses you entered do not match";
+  }
+}
+
+
 if ($allthere && ASKFORPASSWORD && ($_POST["passwordreq"] || $_POST["password"])) {
 	if (!$_POST["password"] || $_POST["password"] != $_POST["password_check"]) {
   	$allthere = 0;
@@ -498,7 +511,7 @@ function ListAvailableLists($userid = 0,$lists_to_show = "") {
 	}
 }
 
-function ListAttributes($attributes,$attributedata,$htmlchoice = 0,$userid = 0) {
+function ListAttributes($attributes,$attributedata,$htmlchoice = 0,$userid = 0,$emaildoubleentry='no' ) {
   global $strPreferHTMLEmail,$strPreferTextEmail,
   	$strEmail,$tables,$table_prefix,$strPreferredFormat,$strText,$strHTML;
 /*	if (!sizeof($attributes)) {
@@ -539,6 +552,17 @@ function ListAttributes($attributes,$attributedata,$htmlchoice = 0,$userid = 0) 
   <td class="attributeinput"><input type=text name=email value="%s" size="%d">
   <script language="Javascript" type="text/javascript">addFieldToCheck("email","%s");</script></td></tr>',
   $GLOBALS["strEmail"],htmlspecialchars($email),$textlinewidth,$GLOBALS["strEmail"]);
+
+// BPM 12 May 2004 - Begin
+if ($emaildoubleentry=='yes')
+{
+$html .= sprintf('
+  <tr><td><div class="required">%s</div></td>
+  <td class="attributeinput"><input type=text name=emailconfirm value="%s" size="%d">
+  <script language="Javascript" type="text/javascript">addFieldToCheck("emailconfirm","%s");</script></td></tr>',
+ 'Confirm email',htmlspecialchars($_REQUEST["emailconfirm"]),$textlinewidth,'Confirm email');
+}
+// BPM 12 May 2004 - Finish
 
   if ($_GET["page"] != "import1")
   if (ASKFORPASSWORD) {

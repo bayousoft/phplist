@@ -244,17 +244,36 @@ function checkform() {
       return false;
     }
   }
+';
+if ($data['emaildoubleentry']=='yes')
+{
+$html .='
+  if(! compareEmail())
+  {
+    alert("Email addresses you entered do not match");
+    return false;
+  }';
+}
+
+$html .='
   return true;
 }
+
 function addFieldToCheck(value,name) {
   fieldstocheck[fieldstocheck.length] = value;
   fieldnames[fieldnames.length] = name;
 }
 
+function compareEmail()
+{
+  return (document.subscribeform.elements["email"].value == document.subscribeform.elements["emailconfirm"].value);
+}
+
+
 </script>';
 	$html .= formStart('name="subscribeform"');
 	$html .= '<table border=0>';
-  $html .= ListAttributes($attributes,$attributedata,$data["htmlchoice"],$userid);
+  $html .= ListAttributes($attributes,$attributedata,$data["htmlchoice"],$userid,$data['emaildoubleentry']);
 	$html .= '</table>';
   if (ENABLE_RSS) {
 		$html .= RssOptions($data,$userid);
@@ -294,11 +313,30 @@ function checkform() {
       return false;
     }
   }
+';
+if ($data['emaildoubleentry']=='yes')
+{
+$html .='
+  if(! compareEmail())
+  {
+    alert("Email addresses you entered do not match");
+    return false;
+  }';
+}
+
+$html .='
   return true;
 }
+
+
 function addFieldToCheck(value,name) {
   fieldstocheck[fieldstocheck.length] = value;
   fieldnames[fieldnames.length] = name;
+}
+
+function compareEmail()
+{
+  return (document.subscribeform.elements["email"].value == document.subscribeform.elements["emailconfirm"].value);
 }
 
 </script>';
@@ -309,7 +347,7 @@ function addFieldToCheck(value,name) {
     	<br/><input type=radio name="makeconfirmed" value="0"> Send request for confirmation email </p>';
   }
 	$html .= '<table border=0>';
-  $html .= ListAttributes($attributes,$attributedata,$data["htmlchoice"]);
+  $html .= ListAttributes($attributes,$attributedata,$data["htmlchoice"],0,$data['emaildoubleentry']);
 	$html .= '</table>';
   if (ENABLE_RSS) {
 		$html .= RssOptions($data);
