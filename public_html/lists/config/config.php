@@ -83,6 +83,11 @@ $commandline_users = array("admin");
 # to 1. See README.passwords for more information
 define("ASKFORPASSWORD",0);
 
+# if you also want to force people who unsubscribe to provide a password before
+# processing their unsubscription, set this to 1. You need to have the above one set
+# to 1 for this to have an effect
+define("UNSUBSCRIBE_REQUIRES_PASSWORD",0);
+
 # if you do not require users to actually sign up to lists, but only want to 
 # use the subscribe page as a kind of registration system, you can set this to 1 and 
 # users will not receive an error when they do not check a list to subscribe to
@@ -115,7 +120,7 @@ define ("TEST",1);
 
 # if you set verbose to 1, it will show the messages that will be sent. Do not do this
 # if you have a lot of users, because it is likely to crash your browser
-# (it does mine, Mozilla 0.9.2, well 1.4 now, but I would still keep it off :-)
+# (it does mine, Mozilla 0.9.2, well 1.6 now, but I would still keep it off :-)
 define ("VERBOSE",0);
 
 # some warnings may show up about your PHP settings. If you want to get rid of them
@@ -128,6 +133,20 @@ define ("WARN_ABOUT_PHP_SETTINGS",1);
 # have to make sure that you run the queue from the commandline
 # check README.commandline how to do this
 define ("MANUALLY_PROCESS_QUEUE",1);
+
+# batch processing
+# if you are on a shared host, it will probably be appreciated if you don't send
+# out loads of emails in one go. To do this, you can configure batch processing.
+# Please note, the following two values can be overridden by your ISP by using
+# a server wide configuration. So if you notice these values to be different
+# in reality, that may be the case
+
+# define the amount of emails you want to send per period. If 0, batch processing
+# is disabled
+define("MAILQUEUE_BATCH_SIZE",0);
+
+# define the length of one batch processing period, in seconds (3600 is an hour)
+define("MAILQUEUE_BATCH_PERIOD",3600);
 
 # use Register to "register" to PHPlist.com. Once you set TEST to 0, the system will then
 # request the "Powered By" image from www.phplist.com, instead of locally. This will give me
@@ -202,7 +221,7 @@ define("ENABLE_RSS",0);
 define("MANUALLY_PROCESS_RSS",1);
 
 # the FCKeditor is now included in PHPlist, but the use of it is experimental
-# if you want to try it, set this to 1
+# if it's not working for you, set this to 0
 define("USEFCK",1);
 
 # If you want to upload images to the FCKeditor, you need to specify the location
