@@ -6,15 +6,34 @@
 <?php
 require_once "accesscheck.php";
 
-print '<p>'.PageLink2("messages&type=sent","Sent Messages").'&nbsp;&nbsp;&nbsp;';
-print PageLink2("messages&type=draft","Draft Messages").'&nbsp;&nbsp;&nbsp;';
-print PageLink2("messages&type=queue","Queued Messages").'&nbsp;&nbsp;&nbsp;';
-print PageLink2("messages&type=stat","Static Messages").'&nbsp;&nbsp;&nbsp;';
-if (ENABLE_RSS) {
-	print PageLink2("messages&type=rss","RSS Messages").'&nbsp;&nbsp;&nbsp;';
+# remember last one listed
+if (!$_GET["type"] && $_SESSION["lastmessagetype"]) {
+  $_GET["type"] = $_SESSION["lastmessagetype"];
+} elseif ($_GET["type"]) {
+  $_SESSION["lastmessagetype"] = $_GET["type"];
 }
-print '</p>';
 
+#print '<p>'.PageLink2("messages&type=sent","Sent Messages").'&nbsp;&nbsp;&nbsp;';
+#print PageLink2("messages&type=draft","Draft Messages").'&nbsp;&nbsp;&nbsp;';
+#print PageLink2("messages&type=queue","Queued Messages").'&nbsp;&nbsp;&nbsp;';
+#print PageLink2("messages&type=stat","Static Messages").'&nbsp;&nbsp;&nbsp;';
+#if (ENABLE_RSS) {
+#	print PageLink2("messages&type=rss","RSS Messages").'&nbsp;&nbsp;&nbsp;';
+#}
+#print '</p>';
+$tabs = new WebblerTabs();
+$tabs->addTab("sent",PageUrl2("messages&type=sent"));
+$tabs->addTab("draft",PageUrl2("messages&type=draft"));
+$tabs->addTab("queued",PageUrl2("messages&type=queued"));#
+if (USE_PREPARE) {
+  $tabs->addTab("static",PageUrl2("messages&type=static"));
+}
+if (ENABLE_RSS) {
+  $tabs->addTab("rss",PageUrl2("messages&type=rss"));
+}
+$tabs->setCurrent($_GET["type"]);
+  
+print $tabs->display();
 
 if ($delete) {
   # delete the index in delete
@@ -46,13 +65,13 @@ if ($resend) {
 }
 
 switch ($_GET["type"]) {
-	case "queue":
+	case "queued":
 		$subselect = ' status in ("submitted") and (rsstemplate is NULL or rsstemplate = "") ';
-		$url_keep = '&type=queue';
+		$url_keep = '&type=queued';
 		break;
-	case "stat":
+	case "static":
 		$subselect = ' status in ("prepared") ';
-		$url_keep = '&type=stat';
+		$url_keep = '&type=static';
 		break;
 	case "rss":
 		$subselect = ' rsstemplate != ""';
