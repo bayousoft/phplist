@@ -49,7 +49,7 @@ class phplist extends DefaultPlugin {
     if (!$this->isInitialised()) {
       $this->initialise();
     }
-    $this->addDataType("phplist_1","Mailinglist Pages");
+    $this->addDataType("phplist_1","Mailinglist Subscribe Page");
   }
 
   function name() {
@@ -65,7 +65,7 @@ class phplist extends DefaultPlugin {
   }
 
   function codelib() {
-    return array("public_html/lists/admin/lib.php","public_html/lists/admin/defaultconfig.php","public_html/lists/admin/english.inc");
+    return array("public_html/lists/admin/lib.php","public_html/lists/admin/defaultconfig.inc","public_html/lists/texts/english.inc");
   }
 
   function parseText($data,$leaf,$branch) {
@@ -115,11 +115,13 @@ class phplist extends DefaultPlugin {
   function adminTasks() {
     $tasks = array(
       "home" => "Administer Mailinglists",
+      "configure" => "Configure Mailinglists",
       "list" => "Lists",
       "messages" => "Messages",
       "reconcileusers" => "Reconcile",
       "export" => "Export Emails",
       "attributes" => "Attributes",
+      "spage" => "Configure Subscribe Pages",
     );
     if ($this->tables["attribute"] && Sql_Table_Exists($this->tables["attribute"])) {
       $res = Sql_Query("select * from {$this->tables['attribute']}",1);
@@ -132,6 +134,25 @@ class phplist extends DefaultPlugin {
     $tasks["send"] = "Send a message";
     $tasks["bounces"] = "View Bounces";
     $tasks["eventlog"] = "Eventlog";
+    return $tasks;
+  }
+  
+  function adminPages() {
+    $tasks = array(
+      "home" => "Administer Mailinglists",
+      "list" => "Lists",
+      "messages" => "Messages",
+      "reconcileusers" => "Reconcile",
+      "export" => "Export Emails",
+      "attributes" => "Attributes",
+      "editattributes" => "Edit Attributes",
+      "templates" => "Templates",
+      "send" => "Send a message",
+      "bounces" => "View Bounces",
+      "eventlog" => "Eventlog",
+      "spage" => "Configure Subscribe Pages",
+      "spageedit" => "Edit a Subscribe Page",
+    );
     return $tasks;
   }
 
