@@ -18,6 +18,7 @@ class phplist extends DefaultPlugin {
 
     $this->tables = array(
       "user" => $usertable_prefix . "user",
+  		"user_history" => $usertable_prefix . "user_history",
       "list" => $table_prefix . "list",
       "listuser" => $table_prefix . "listuser",
       "message" => $table_prefix . "message",
@@ -49,7 +50,7 @@ class phplist extends DefaultPlugin {
     if (!$this->isInitialised()) {
       $this->initialise();
     }
-    $this->addDataType("phplist_1","Mailinglist Subscribe Page");
+    $this->addDataType("phplist_1","Mailinglist Pages");
   }
 
   function name() {
@@ -65,7 +66,19 @@ class phplist extends DefaultPlugin {
   }
 
   function codelib() {
-    return array("public_html/lists/admin/lib.php","public_html/lists/admin/defaultconfig.inc","public_html/lists/texts/english.inc");
+    return array(
+    	"public_html/lists/admin/lib.php",
+    	"public_html/lists/admin/defaultconfig.inc",
+      "public_html/lists/texts/english.inc");
+  }
+
+  function frontendlib() {
+  	return array(
+    	"public_html/lists/admin/lib.php",
+    	"public_html/lists/admin/frontendlib.php",
+    	"public_html/lists/admin/defaultconfig.inc",
+      "public_html/lists/texts/english.inc"
+		);
   }
 
   function parseText($data,$leaf,$branch) {
@@ -97,15 +110,18 @@ class phplist extends DefaultPlugin {
 
   function display($subtype,$name,$value,$docid = 0) {
     global $config;
+    $data = parseDelimitedData($value);
     $html = sprintf('<input type=hidden name="%s"
        value="%d">',$name,$subtype,$subtype);
     switch ($subtype) {
       case "1":
         $html .= '<p>Select the form to use for users to subscribe</p>';
-        $html .= '<p>Select the lists to offer for subscription:</p>';
-        $req = Sql_Query(sprintf('select * from %s order by listorder',$this->tables["list"]));
+        $req = Sql_Query(sprintf('select * from %s where active',$this->tables["subscribepage"]));
+        $html .= sprintf('<select name="%s_spage">',$name);
+        $html .= sprintf('<option value="0"> -- select one</option>');
         while ($row = Sql_Fetch_Array($req)) {
-          $html .= sprintf('<input type=checkbox name="%s_lists[]" value="%s"> %s <br/>',$name,$row["id"],$row["name"]);
+        	$selected = $data["spage"] == $row["id"] ? "selected":"";
+          $html .= sprintf('<option value="%s" %s> %s</option>',$row["id"],$selected,$row["title"]);
         }
         return $html;
     }
@@ -156,27 +172,39 @@ class phplist extends DefaultPlugin {
     return $tasks;
   }
 
+  function selectPage($id) {
+  	if (!$id) return '<!-- no subscribe page defined -->';
+    $html = '';
+#    if (preg_match("/(\w+)/",$_GET["p"],$regs)) {
+    switch ($_GET["p"]) {
+      case "preferences":
+        if (!$_GET["id"]) $_GET["id"] = $id;
+        require $this->coderoot()."/subscribelib2.php";
+        $html = PreferencesPage($id,$userid);
+        break;
+      case "confirm":
+        $html = ConfirmPage($id);
+        break;
+      case "unsubscribe":
+        $html = UnsubscribePage($id);
+        break;
+      default:
+      case "subscribe":
+        require $this->coderoot() ."/subscribelib2.php";
+        $html = SubscribePage($id);
+        break;
+    }
+    return $html;
+	}
+
   function show($dbdata,$leaf,$branch,$fielddata) {
     global $config;
     $data = parseDelimitedData($dbdata);
-    switch ($fielddata["type"]) {
-      case "phplist_1":
-        if (preg_match("/(\w+)/",$GET["p"],$regs)) {
-          if (is_file($regs[1].".php")) {
-            include $regs[1].".php";
-          } else {
-            print "Error: no such page: $p";
-          }
-        }
-        else {
-          $html .= sprintf('<p><a href="./?p=subscribe">%s</a></p>',$strSubscribeTitle);
-          $html .= sprintf('<p><a href="./?p=unsubscribe">%s</a></p>',$strUnsubscribeTitle);
-          $html .= $PoweredBy;
-        }
-        return $html;
+    switch ($data["subtype"]) {
+      case "1":
+        return $this->selectPage($data["spage"]);break;
       default: return "";
     }
-    return $html;
   }
 
   function initialise() {
@@ -213,6 +241,16 @@ class phplist extends DefaultPlugin {
   }
 
   function store($itemid,$fielddata,$value,$table) {
+    global $config;
+    $data["name"] = $fielddata["name"];
+    $data["subtype"] = $_POST[$value];
+    if ($data["subtype"] == 1) {
+    	# save link info
+      $data["spage"] = $_POST[$fielddata["name"]."_spage"];
+      $data["subtype"] = 1;
+    }
+
+    Sql_query(sprintf('replace into %s values("%s",%d,"%s")',$table,$fielddata["name"],$itemid,delimited($data)));
   }
 
 }

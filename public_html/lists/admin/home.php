@@ -5,7 +5,7 @@ require_once "accesscheck.php";
 ob_end_flush();
 if (Sql_Table_exists($tables["config"])) {
   $dbversion = getConfig("version");
-  if ($dbversion != VERSION) {
+  if ($dbversion != VERSION && !defined("IN_WEBBLER")) {
     Error("Your database is out of date: $dbversion, please make sure to upgrade");
     $upgrade_required = 1;
   }

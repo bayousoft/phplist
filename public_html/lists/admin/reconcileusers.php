@@ -194,6 +194,7 @@ if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
       	$c=0;
         while ($row = Sql_Fetch_Array($req)) {
 					set_time_limit(60);
+      #    if (checkMemoryAvail()) 
         	if (!is_email($row["email"])) {
           	$c++;
             $fixemail = fixEmail($row["email"]);

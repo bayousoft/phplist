@@ -179,22 +179,6 @@ function checkAccess($page) {
   return 1;
 }
 
-function sendAdminCopy($subject,$message) {
-	$sendcopy = getConfig("send_admin_copies");
-  if ($sendcopy == "true") {
-  	$admin_mail = getConfig("admin_address");
-    $mails = explode(",",getConfig("admin_addresses"));
-    array_push($mails,$admin_mail);
-    $sent = array();
-    foreach ($mails as $admin_mail) {
-    	if (!$sent[$admin_mail]) {
-	  	  sendMail($admin_mail,$subject,$message,system_messageheaders($admin_mail));
-        $sent[$admin_mail] = 1;
-     	}
-   	}
-  }
-}
-
 function sendReport($subject,$message) {
 	$report_addresses = explode(",",getConfig("report_address"));
 	foreach ($report_addresses as $address) {
@@ -424,17 +408,6 @@ function newMenu() {
   }  
 
   return $html . $pixel;
-}
-
-function SaveConfig($item,$value,$editable=1) {
-	global $tables;
-  if ($value == "false" || $value == "no") {
-  	$value = 0;
-  } else if ($value == "true" || $value == "yes") {
-  	$value = 1;
-  }
- 	Sql_Query(sprintf('replace into %s (item,value,editable) values("%s","%s",%d)',
- 	  $tables["config"],$item,$value,$editable));
 }
 
 function debug($text) {

@@ -112,11 +112,6 @@ function my_shutdown () {
 		$nothingtodo = 1;
 	}
 
-	if ($script_stage == 6)
-		output("Finished, All done",0);
-	else
-		output("Script finished, but not all messages have been sent yet.");
-
 	output(sprintf('%d messages sent and %d messages skipped',$sent,$notsent),$sent);
 	if ($invalid)
 		output(sprintf('%d invalid emails',$invalid));
@@ -161,7 +156,10 @@ function my_shutdown () {
       output("Reload required");
 	  }
   #	print '<script language="Javascript" type="text/javascript">alert(document.location)</script>';
-	}
+	}	elseif ($script_stage == 6)
+		output("Finished, All done",0);
+	else
+		output("Script finished, but not all messages have been sent yet.");
 }
 
 register_shutdown_function("my_shutdown");

@@ -43,8 +43,19 @@ if (!defined("WORKAROUND_OUTLOOK_BUG") && defined("USE_CARRIAGE_RETURNS")) {
 $domain = getConfig("domain");
 $website = getConfig("website");
 if (defined("IN_WEBBLER") && is_object($GLOBALS["config"]["plugins"]["phplist"])) {
-	$tables = $GLOBALS["config"]["plugins"]["phplist"]->tables;
-  $table_prefix = $GLOBALS["config"]["plugins"]["phplist"]->table_prefix;
+	$GLOBALS["tables"] = $GLOBALS["config"]["plugins"]["phplist"]->tables;
+  $GLOBALS["table_prefix"] = $GLOBALS["config"]["plugins"]["phplist"]->table_prefix;
+}
+
+function SaveConfig($item,$value,$editable=1) {
+	global $tables;
+  if ($value == "false" || $value == "no") {
+  	$value = 0;
+  } else if ($value == "true" || $value == "yes") {
+  	$value = 1;
+  }
+ 	Sql_Query(sprintf('replace into %s (item,value,editable) values("%s","%s",%d)',
+ 	  $tables["config"],$item,addslashes($value),$editable));
 }
 
 function listName($id) {
@@ -122,6 +133,23 @@ function sendMail ($to,$subject,$message,$header = "",$parameters = "") {
   }
 }
 
+function sendAdminCopy($subject,$message) {
+	$sendcopy = getConfig("send_admin_copies");
+  if ($sendcopy == "true") {
+  	$admin_mail = getConfig("admin_address");
+    $mails = explode(",",getConfig("admin_addresses"));
+    array_push($mails,$admin_mail);
+    $sent = array();
+    foreach ($mails as $admin_mail) {
+    	if (!$sent[$admin_mail]) {
+	  	  sendMail($admin_mail,$subject,$message,system_messageheaders($admin_mail));
+        $sent[$admin_mail] = 1;
+     	}
+   	}
+  }
+}
+
+
 function safeImageName($name) {
   $name = "image".ereg_replace("\.","DOT",$name);
   $name = ereg_replace("-","DASH",$name);
@@ -143,50 +171,6 @@ function clean2 ($value) {
 
 if (TEST && REGISTER)
   $pixel = '<img src="http://phplist.tincan.co.uk/images/pixel.gif" width=1 height=1>';
-
-function Menu() {
-  global $pixel,$tables;
-  $html = "";
-  if ($GLOBALS["require_login"])
-    $html .= PageLink2("logout","Logout").'&nbsp;<br /><br />';
-  $html .= PageLink2("home","Main Page")."&nbsp;<br />";
-  $html .= PageLink2("configure","Configure")."&nbsp;<br />";
-  $html .= '&nbsp;=====<br />';
-  $html .= PageLink2("list","Lists").'&nbsp;<br />';
-  $html .= PageLink2("users","Users").'&nbsp;<br />';
-  $html .= PageLink2("messages","Messages").'&nbsp;<br />';
-  $html .= PageLink2("import","Import Emails").'&nbsp;<br />';
-  $html .= '&nbsp;=====<br />';
-	$url = getConfig("subscribeurl");
-	if ($url)
-		$html .= '<a href="'.$url.'">Subscribe</a>&nbsp;<br/>';
-	else
-	  $html .= '<a href="../?p=subscribe">Signup</a>&nbsp;<br/>';
-	$url = getConfig("unsubscribeurl");
-	if ($url)
-		$html .= '<a href="'.$url.'">Unsubscribe</a>&nbsp;<br/>';
-	else
-	  $html .= '<a href="../?p=unsubscribe">Sign Off</a>&nbsp;<br/>';
-
-  $html .= '&nbsp;=====<br />';
-  $html .= PageLink2("attributes","Attributes").'&nbsp;<br />';
-  if ($tables["attribute"] && Sql_Table_Exists($tables["attribute"])) {
-    $res = Sql_Query("select * from {$tables['attribute']}",1);
-    while ($row = Sql_Fetch_array($res)) {
-      if ($row["type"] != "checkbox" && $row["type"] != "textline" && $row["type"] != "hidden")
-        $html .= PageLink2("editattributes",$row["name"],"id=".$row["id"]) ."&nbsp;<br />";
-    }
-  }
-  $html .= '&nbsp;=====<br />';
-  $html .= PageLink2("messages","All Messages").'&nbsp;<br />';
-  $html .= PageLink2("templates","Templates").'&nbsp;<br />';
-  $html .= PageLink2("send","Send a message").'&nbsp;<br />';
-  $html .= PageLink2("preparesend","Prepare a message").'&nbsp;<br />';
-  $html .= PageLink2("sendprepared","Send a message").'&nbsp;<br />';
-  $html .= '&nbsp;=====<br />';
-  $html .= PageLink2("processqueue","Process Queue").'&nbsp;<br />';
-  return $html . $pixel;
-}
 
 function timeDiff($time1,$time2) {
 	if (!$time1 || !$time2) {
@@ -293,7 +277,6 @@ function logEvent($msg) {
   	$GLOBALS["page"],addslashes($msg)));
 }
 
-
 ### process locking stuff
 function getPageLock() {
 	global $tables;
@@ -357,4 +340,6 @@ if (!function_exists("dbg")) {
   function dbg($msg) {
   }
 }
+
+
 ?>
