@@ -2,7 +2,7 @@
 ob_start();
 $er = error_reporting(0);
 # setup commandline
-if ($_SERVER["USER"]) {
+if (PHP_SAPI == "cli") {
   for ($i=0; $i<$_SERVER['argc']; $i++) {
     $my_args = array();
     if (ereg("(.*)=(.*)",$_SERVER['argv'][$i], $my_args)) {
@@ -15,10 +15,10 @@ if ($_SERVER["USER"]) {
   chdir($dir);
 } else {
   $GLOBALS["commandline"] = 0;
+  header("Cache-Control: no-cache, must-revalidate");           // HTTP/1.1
+  header("Pragma: no-cache");                                   // HTTP/1.0
 }
 
-header("Cache-Control: no-cache, must-revalidate");           // HTTP/1.1
-header("Pragma: no-cache");                                   // HTTP/1.0
 if ($_SERVER["ConfigFile"] && is_file($_SERVER["ConfigFile"])) {
 	print '<!-- using '.$_SERVER["ConfigFile"].'-->'."\n";
   include $_SERVER["ConfigFile"];
