@@ -318,6 +318,7 @@ while ($row = Sql_Fetch_Row($req)) {
 <option>20</option>
 <option>50</option>
 </select> bounces <input type=submit value="Click here"></form>
+<p>Note: this will use the total count of bounces on a user, not consecutive bounces</p>
 <hr>
 <form method=get>
 <table><tr><td colspan=2>

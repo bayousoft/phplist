@@ -45,7 +45,7 @@ if (isset($id)) {
 	print "<h3>Members of ".ListName($id)."</h3>";
   echo "<br />".PageLink2("editlist","back to this list","id=$id");
   echo "<br />".PageLink2("export&list=$id","Download users on this list as a CSV
- file","list=$id");
+ file");
   print addUserForm($id);
 } else {
   Fatal_Error("Please enter a listid");
