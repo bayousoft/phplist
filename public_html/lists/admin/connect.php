@@ -290,6 +290,17 @@ function clean ($value) {
   return $value;
 }
 
+function join_clean($sep,$array) {
+	# join values without leaving a , at the end
+	$arr2 = array();
+  foreach ($array as $key => $val) {
+  	if ($val) {
+    	$arr2[$key] = $val;
+    }
+  }
+  return join($sep,$arr2);
+}
+
 function Fatal_Error($msg) {
   print "<div align=\"center\" class=\"error\">Fatal Error: $msg </div>";
   $message = '

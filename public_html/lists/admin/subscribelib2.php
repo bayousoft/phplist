@@ -155,8 +155,8 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
   # remember the users attributes
   # make sure to only remember the ones from this subscribe page
   $history_entry .= 'Subscribe page: '.$id;
-  $attids = join(',',$attributes);
-  $attids = substr($attids,0,-1);
+  array_push($attributes,0);
+  $attids = join_clean(',',$attributes);
   if ($attids && $attids != "") {
     $res = Sql_Query("select * from ".$GLOBALS["tables"]["attribute"]." where id in ($attids)");
     while ($row = Sql_Fetch_Array($res)) {
@@ -347,8 +347,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
   }
 
   # remember the users attributes
-  $attids = join(',',$attributes);
-  $attids = substr($attids,0,-1);
+  $attids = join_clean(',',$attributes);
   if ($attids && $attids != "") {
     $res = Sql_Query("select * from ".$GLOBALS["tables"]["attribute"] ." where id in ($attids)");
     while ($attribute = Sql_Fetch_Array($res)) {
