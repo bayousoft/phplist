@@ -12,7 +12,7 @@ if (is_file(getenv("DOCUMENT_ROOT") ."/../VERSION")) {
   $version = "dev";
 }
 
-define("VERSION",$version."dev");
+define("VERSION",$version."dev2.8");
 
 if (file_exists("commonlib/lib/userlib.php")) {
 	include_once ("commonlib/lib/userlib.php");
