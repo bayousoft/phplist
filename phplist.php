@@ -75,7 +75,7 @@ class phplist extends DefaultPlugin {
     	"public_html/lists/admin/lib.php",
       "public_html/lists/texts/english.inc",
  //   	"public_html/lists/admin/subscribelib2.php",
-    	"public_html/lists/admin/phplistObj.php",
+#    	"public_html/lists/admin/phplistObj.php",
 #    	"public_html/lists/admin/defaultconfig.inc",
 		);
   }
