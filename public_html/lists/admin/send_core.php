@@ -52,7 +52,9 @@ if (((!$send) && (!$save) && (!$sendtest)) && ($id)) {
   $_POST["from"] = $_POST["fromfield"];  // Database field name doesn't match form fieldname...
   $_POST["repeatinterval"] = $_POST["repeat"]; // same here
 
-	if ($usefck) {
+  # not sure why this is here, but it breaks things when tables are used in the
+  # message, so for now disable it.
+	if (0) {#$usefck) {
     $_POST["message"] = nl2br($_POST["message"]);
 	}
 
@@ -496,9 +498,10 @@ if (ALLOW_ATTACHMENTS) {
 	$enctype = '';
 }
 
-$tabs = new WebblerTabs();
-$tabs->addTab("Test","http://tincan.co.uk");
-print $tabs->display();
+# just playing aroudn with new tabs widget
+#$tabs = new WebblerTabs();
+#$tabs->addTab("Test","http://tincan.co.uk");
+#print $tabs->display();
 ?>
 <?=formStart($enctype . ' name="sendmessageform"');
 
