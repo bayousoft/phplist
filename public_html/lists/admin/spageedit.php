@@ -186,7 +186,7 @@ print '</td></tr>';
 if (ENABLE_RSS) {
 	print '<tr><td colspan=2><h1>RSS settings</h1></td></tr>';
   printf('<tr><td valign=top>Intro Text</td><td><textarea name=rssintro rows=3 cols=60>%s</textarea></td></tr>',
-    htmlspecialchars($data["rssintro"]));
+    htmlspecialchars(stripslashes($data["rssintro"])));
   foreach ($rssfrequencies as $key => $val) {
   	printf('<tr><td colspan=2><input type=checkbox name="rss[]" value="%s" %s> Offer option to receive %s
     (default <input type=radio name="rssdefault" value="%s" %s>)
@@ -199,7 +199,7 @@ if (ENABLE_RSS) {
 
 print '<tr><td colspan=2><h1>Select the lists to offer</h1></td></tr>';
 
-$req = Sql_query("SELECT * FROM $tables[list] $subselect order by listorder");
+$req = Sql_query("SELECT * FROM {$tables["list"]} $subselect order by listorder");
 if (!Sql_Affected_Rows())
 	print "<tr><td colspan=2>No lists available, please create one first</td></tr>";
 while ($row = Sql_Fetch_Array($req)) {
