@@ -94,6 +94,7 @@ and create an account for yourself. You will get a password by email.<br/>
 You can then enter the "mantis" system and submit a bugreport.</p>
 <p>Your system details are:</p>
 <ul>
+<li>PHPlist version: <?=VERSION?></li>
 <li>PHP version: <?=phpversion()?></li>
 <li>Webserver: <?=getenv("SERVER_SOFTWARE")?></li>
 <li>Website: <a href="http://<?=getConfig("website")."$pageroot"?>"><?=getConfig("website")."$pageroot"?></a></li>
