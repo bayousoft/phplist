@@ -92,9 +92,10 @@ function Sql_Query($query,$ignore = 0) {
 #  if (preg_match("/dev$/",VERSION))
 #    print "<b>$query</b><br>\n";
   $result = mysql_query($query,$GLOBALS["database_connection"]);
-  if (!$ignore)
+  if (!$ignore) {
     if (Sql_Check_Error($GLOBALS["database_connection"]))
     	dbg("Sql error in $query");
+  }
   return $result;
 }
 

@@ -22,7 +22,9 @@ if ($doit == "yes") {
   while (list($table,$value) = each ($DBstruct)) {
     set_time_limit(500);
     if (isset($table_prefix)) {
-      Sql_Query("alter table $table rename $tables[$table]",1);
+      if (Sql_Table_exists($table) && !Sql_Table_Exists($tables[$table])) {
+        Sql_Verbose_Query("alter table $table rename $tables[$table]",1);
+      }
     }
   }
   ob_end_flush();
@@ -216,9 +218,9 @@ if ($doit == "yes") {
         Sql_Query("update {$tables["user_attribute"]} set value = \"\" where attributeid = $row[0] and value=\"Empty\"");
       }
     case "2.6.0":case "2.6.1":case "2.6.2":case "2.6.3":case "2.6.4":case "2.6.5":
-			Sql_Query("alter table {$tables["message"]} add column embargo (datetime)");
+			Sql_Verbose_Query("alter table {$tables["message"]} add column embargo datetime");
       # make sure that current queued messages are sent
-      Sql_Query("update {$tables["message"]} set embargo = now() where status = \"submitted\"");
+      Sql_Verbose_Query("update {$tables["message"]} set embargo = now() where status = \"submitted\"");
     case "whatever versions we will get later":
       #Sql_Query("alter table table that altered");
       break;

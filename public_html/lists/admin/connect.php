@@ -38,7 +38,7 @@ if (!defined("FILESYSTEM_ATTACHMENTS")) define("FILESYSTEM_ATTACHMENTS",0);
 if (!defined("MIMETYPES_FILE")) define("MIMETYPES_FILE","/etc/mime.types");
 if (!defined("DEFAULT_MIMETYPE")) define("DEFAULT_MIMETYPE","application/octet-stream");
 
-if (!$GLOBALS["export_mimetype"]) $GLOBALS["export_mimetype"] = 'application/csv';
+if (!isset($GLOBALS["export_mimetype"])) $GLOBALS["export_mimetype"] = 'application/csv';
 
 if (!defined("WORKAROUND_OUTLOOK_BUG") && defined("USE_CARRIAGE_RETURNS")) {
 	define("WORKAROUND_OUTLOOK_BUG",USE_CARRIAGE_RETURNS);
@@ -58,7 +58,7 @@ if (!isset($adminlanguage) || !is_array($adminlanguage)) {
 	);
 }
 
-if ($message_envelope)
+if (isset($message_envelope))
   $envelope = "-f$message_envelope";
 $database_connection = Sql_Connect($database_host,$database_user,$database_password,$database_name);
 

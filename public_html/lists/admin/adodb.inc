@@ -95,9 +95,11 @@ function Sql_Insert_id() {
 }
 
 function Sql_Table_exists($table) {
-  if (isset($GLOBALS["dbtables"][$table]))
-    return 1;
-  if (!is_array($GLOBALS["dbtables"])) {
+  if (isset($GLOBALS["dbtables"]) && is_array($GLOBALS["dbtables"])) {
+    if (isset($GLOBALS["dbtables"][$table]))
+      return 1;
+  }
+  if (!isset($GLOBALS["dbtables"]) || !is_array($GLOBALS["dbtables"])) {
     $GLOBALS["dbtables"] = array();
     $req = Sql_Query("show tables");
     while ($row = Sql_Fetch_Row($req)) {
