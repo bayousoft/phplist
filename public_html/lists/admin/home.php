@@ -253,6 +253,12 @@ if (checkAccess("viewrss")) {
   $ls->addElement($element,PageURL2("viewrss"));
   $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('View RSS items'));
 }
+if (checkAccess("purgerss")) {
+  $some = 1;
+  $element = $GLOBALS['I18N']->get('purgerss');
+  $ls->addElement($element,PageURL2("purgerss"));
+  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Purge RSS items'));
+}
 
 if ($some && ENABLE_RSS)
   print $ls->display();

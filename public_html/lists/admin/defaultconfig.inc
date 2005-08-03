@@ -579,6 +579,7 @@ $system_pages = array (
     "reconcileusers" => "none",
     "getrss" => "owner",
     "viewrss" => "owner",
+    "purgerss" => "none",
     "setup" => "none",
     "dbcheck" => "none"
   ),

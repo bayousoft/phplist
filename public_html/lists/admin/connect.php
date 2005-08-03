@@ -12,7 +12,7 @@ if (is_file(dirname(__FILE__) .'/../../../VERSION')) {
   $version = "dev";
 }
 
-define("VERSION",$version."dev29");
+define("VERSION",$version.'dev');
 
 include_once dirname(__FILE__)."/commonlib/lib/userlib.php";
 include_once dirname(__FILE__)."/pluginlib.php";
