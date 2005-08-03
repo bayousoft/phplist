@@ -1,6 +1,10 @@
-
 <?php
-require_once "accesscheck.php";
+require_once dirname(__FILE__).'/accesscheck.php';
+if ($_GET["firstinstall"] || $_SESSION["firstinstall"]) {
+  $_SESSION["firstinstall"] = 1;
+  print "<p>" . $GLOBALS['I18N']->get('checklist for installation') . "</p>";
+  require "setup.php";
+}
 
 # configure options
 reset($default_config);
@@ -12,7 +16,7 @@ if ($save && $id) {
       $_POST["values"][$id] = str_replace("[DOMAIN]","",$_POST["values"][$id]);
     }
     if ($_POST["values"][$id] == "" && !$info[3])
-      Error("$info[1] cannot be empty");
+      Error("$info[1] " . $GLOBALS['I18N']->get('cannot be empty'));
     else {
       SaveConfig($id,$_POST["values"][$id],0);
       Redirect("configure");
@@ -29,13 +33,13 @@ if (!$id) {
         $value = $dbval;
       else
         $value = $val[0];
-      printf('<p><a href="%s">edit</a> <b>%s</b><br/>',PageURL2("configure","","id=$key"),$val[1]);
+      printf('<p><a href="%s">%s</a> <b>%s</b><br/>',PageURL2("configure","","id=$key"),$GLOBALS['I18N']->get('edit'),$val[1]);
       print nl2br(htmlspecialchars(stripslashes($value))) . "<br/><hr/>";
     }
   }
 } else {
   $val = $default_config[$id];
-  printf('%s<p>Editing <b>%s</b><br/>',formStart(),$val[1]);
+  printf('%s<p>' . $GLOBALS['I18N']->get('editing') . ' <b>%s</b><br/>',formStart(),$val[1]);
   printf ('<input type=hidden name="id" value="%s">',$id);
   $dbval = getConfig($id);
 #  print $dbval.'<br/>';
@@ -47,7 +51,7 @@ if (!$id) {
   if ($id != "website" && $id != "domain") {
     $value = preg_replace('/'.$website.'/i','[WEBSITE]', $value);
     $value = preg_replace('/'.$domain.'/i','[DOMAIN]', $value);
-	}
+  }
 #  print $value . '<br/>';
   if ($val[2] == "textarea")
     printf('<textarea name="values[%s]" rows=25 cols=55>%s</textarea><br/>',
@@ -58,7 +62,6 @@ if (!$id) {
   else if ($val[2] == "boolean")
     printf('<input type="text" name="values[%s]" size="10" value="%s"><br/>',
     $id,htmlspecialchars(stripslashes($value)));
-  print '<br/><input type="hidden" name="save" value="1"><input type="submit" name="savebutton" value="Save Changes"></form>';
+  print '<br/><input type="hidden" name="save" value="1"><input type="submit" name="savebutton" value="' . $GLOBALS['I18N']->get('save changes') . '"></form>';
 }
 ?>
-

@@ -1,39 +1,38 @@
 <?php
-require_once "accesscheck.php";
+require_once dirname(__FILE__).'/accesscheck.php';
 
-# this file is shared between the webbler and PHPlist
-# $Id: editattributes.php,v 1.2 2004-05-11 11:41:38 mdethmers Exp $
+# $Id: editattributes.php,v 1.3 2005-08-03 02:36:58 mdethmers Exp $
 
 
 ob_end_flush();
 function adminMenu() {
-	global $adminlevel,$config;
+  global $adminlevel,$config;
 
   if ($adminlevel == "superuser"){
-		$html .= menuLink("admins","administrators");
-		$html .= menuLink("groups","groups");
-		$html .= menuLink("users","users");
-		$html .= menuLink("userattributes","user attributes");
+    $html .= menuLink("admins","administrators");
+    $html .= menuLink("groups","groups");
+    $html .= menuLink("users","users");
+    $html .= menuLink("userattributes","user attributes");
     $req = Sql_Query('select * from attribute where type = "select" or type = "radio" or type = "checkboxgroup"');
     while ($row = Sql_Fetch_Array($req)) {
-    	$html .= menuLink("editattributes&id=".$row["id"],"&gt;&nbsp;".$row["name"]);
+      $html .= menuLink("editattributes&id=".$row["id"],"&gt;&nbsp;".$row["name"]);
     }
 
-		$html .= menuLink("branches","branch fields","option=branchfields");
-		$html .= menuLink("templates","templates");
+    $html .= menuLink("branches","branch fields","option=branchfields");
+    $html .= menuLink("templates","templates");
   }
   return $html;
 }
 
 if (!$id)
-  Fatal_Error("No such attribute: $id");
+  Fatal_Error($GLOBALS['I18N']->get('NoAttr')." $id");
 
 if (!isset($tables["attribute"])) {
-	$tables["attribute"] = "attribute";
+  $tables["attribute"] = "attribute";
   $tables["user_attribute"]  = "user_attribute";
 }
 if (!isset($table_prefix )) {
-	$table_prefix = 'phplist_';
+  $table_prefix = 'phplist_';
 }
 
 $res = Sql_Query("select * from $tables[attribute] where id = $id");
@@ -42,9 +41,8 @@ $table = $table_prefix ."listattr_".$data["tablename"];
 ?>
 <script language="Javascript" src="js/jslib.js" type="text/javascript"></script>
 
-<br><?php echo PageLink2("editattributes","add new","id=$id&action=new")?> <?=$data["name"]?>
-<br><a href="javascript:deleteRec2('Are you sure you want to delete all
- records?','<?php echo PageURL2("editattributes","delete all","id=$id&deleteall=yes")?>');">delete all</a>
+<br><?php echo PageLink2("editattributes",$GLOBALS['I18N']->get('AddNew'),"id=$id&action=new")?> <?=$data["name"]?>
+<br><a href="javascript:deleteRec2('<?php echo $GLOBALS['I18N']->get('SureToDeleteAll');?>','<?php echo PageURL2("editattributes",$GLOBALS['I18N']->get('DelAll'),"id=$id&deleteall=yes")?>');"><?=$GLOBALS['I18N']->get('DelAll');?></a>
 <hr><p>
 <?php echo formStart()?>
 <input type=hidden name="action" value="add">
@@ -54,8 +52,8 @@ $table = $table_prefix ."listattr_".$data["tablename"];
 
 <?php
 
-if (isset($action) && $action == "add") {
-  $items = explode("\n", $itemlist);
+if (isset($_POST["addnew"])) {
+  $items = explode("\n", $_POST["itemlist"]);
   while (list($key,$val) = each($items)) {
     $val = clean($val);
     if ($val != "") {
@@ -65,21 +63,23 @@ if (isset($action) && $action == "add") {
   }
 }
 
-if (is_array($listorder))
-  while (list($key,$val) = each ($listorder))
-    Sql_Query("update $table set listorder = $val where id = $key");
+if (isset($_POST["listorder"]) && is_array($_POST["listorder"])) {
+  foreach ($_POST["listorder"] as $key => $val) {
+    Sql_Verbose_Query("update $table set listorder = $val where id = $key");
+  }
+}
 
 function giveAlternative($table,$delete,$attributeid) {
-  print "Alternatively you can replace all values with another one:".formStart();
-  print '<select name=replace><option value="0">-- Replace with</option>';
+  print $GLOBALS['I18N']->get('ReplaceAllWith').formStart();
+  print '<select name=replace><option value="0">-- '.$GLOBALS['I18N']->get('ReplaceWith').'</option>';
   $req = Sql_Query("select * from $table order by listorder,name");
   while ($row = Sql_Fetch_array($req))
-    if ($row[id] != $delete)
-      printf('<option value="%d">%s</option>',$row[id],$row[name]);
+    if ($row["id"] != $delete)
+      printf('<option value="%d">%s</option>',$row["id"],$row["name"]);
   print "</select>";
   printf('<input type=hidden name="delete" value="%d">',$delete);
   printf('<input type=hidden name="id" value="%d">',$attributeid);
-  print '<input type=submit name="action" value="Delete and Replace"></form>';
+  printf('<input type=submit name="deleteandreplace" value="%s"></form>',$GLOBALS['I18N']->get('deleteandreplace'));
 }
 
 function deleteItem($table,$attributeid,$delete) {
@@ -102,16 +102,14 @@ function deleteItem($table,$attributeid,$delete) {
     $result = Sql_Query("update $tables[user_attribute] set value = $replace where value = $delete");
     $result = Sql_query("delete from $table where id = $delete");
   } else {
-    ?>
-    Cannot delete <b><?php echo $val?></b><br />
-    The Following record(s) are dependent on this value<br />
-    Update the record(s) to not use this attribute value and try again<p>
-    <?php
+    print $GLOBALS["I18N"]->get("cannotdelete");
+    print " <b>$val</b><br />";
+    print $GLOBALS["I18N"]->get("dependentrecords").'<p></p>';
 
     for ($i=0;$i<sizeof($dependencies);$i++) {
-      print PageLink2("user","User ".$dependencies[$i],"id=$dependencies[$i]")."<br />\n";
+      print PageLink2("user",$GLOBALS["I18N"]->get("user")." ".$dependencies[$i],"id=$dependencies[$i]")."<br />\n";
       if ($i>10) {
-        print "* Too many to list, total dependencies:
+        print $GLOBALS['I18N']->get('TooManyToList')."
  ".sizeof($dependencies)."<br /><br />";
         giveAlternative($table,$delete,$attributeid);
         return 0;
@@ -124,9 +122,9 @@ function deleteItem($table,$attributeid,$delete) {
   return 1;
 }
 
-if (isset($delete)) {
-  deleteItem($table,$id,$delete);
-} elseif(isset($deleteall)) {
+if (isset($_GET["delete"])) {
+  deleteItem($table,$id,$_GET["delete"]);
+} elseif(isset($_GET["deleteall"])) {
   $count = 0;
   $errcount = 0;
   $res = Sql_Query("select id from $table");
@@ -136,38 +134,37 @@ if (isset($delete)) {
     } else {
       $errcount++;
       if ($errcount > 10) {
-        print "* Too many errors, quitting<br /><br /><br />\n";
+        print $GLOBALS['I18N']->get('TooManyErrors')."<br /><br /><br />\n";
         break;
       }
     }
   }
 }
 
-if (isset($action) && $action == "new") {
+if (isset($_GET["action"]) && $_GET["action"] == "new") {
 
   // ??
   ?>
 
-  <p>add new <?php echo $data["name"] ?>, one per line<br />
+  <p><?php echo $GLOBALS["I18N"]->get("addnew")." ".$data["name"].', '.$GLOBALS["I18N"]->get("oneperline") ?><br />
   <textarea name="itemlist" rows=20 cols=50></textarea><br />
-  <input type="Submit" name="submit" value="add new <?php echo $data["name"] ?>s"><br />
-
+  <input type="Submit" name="addnew" value="<?php echo $GLOBALS["I18N"]->get("addnew")." ".$data["name"] ?>"><br />
 <?php
 }
 
 $result = Sql_query("SELECT * FROM $table order by listorder,name");
 $num = Sql_Affected_Rows();
 if ($num < 100 && $num > 25)
-  print '<input type=submit name=action value="change order"><br />';
+  printf('<input type=submit name=action value="%s"><br />',$GLOBALS["I18N"]->get("changeorder"));
 
 while ($row = Sql_Fetch_array($result)) {
-  printf( '<a href="javascript:deleteRec(\'%s\');">delete</a> |',PageURL2("editattributes","","id=$id&delete=".$row["id"]));
+  printf( '<a href="javascript:deleteRec(\'%s\');">'.$GLOBALS['I18N']->get('Delete').'</a> |',PageURL2("editattributes","","id=$id&delete=".$row["id"]));
   if ($num < 100)
-    printf(' <input type=text name="listorder[%d]" value="%s" size=5>',$row[id],$row[listorder]);
-  printf(' %s %s <br />', $row[name],($row[name] == $data["default_value"]) ? "(default)":"");
+    printf(' <input type=text name="listorder[%d]" value="%s" size=5>',$row["id"],$row["listorder"]);
+  printf(' %s %s <br />', $row["name"],($row["name"] == $data["default_value"]) ? $GLOBALS['I18N']->get('Default'):"");
 }
 if ($num && $num < 100)
-  print '<input type=submit name=action value="change order">';
+  printf('<input type=submit name=action value="%s">',$GLOBALS["I18N"]->get("changeorder"));
 
 ?>
 </form>

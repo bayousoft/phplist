@@ -1,5 +1,9 @@
 <?php
-require_once "accesscheck.php";
+require_once dirname(__FILE__).'/accesscheck.php';
+if (!ALLOW_IMPORT) {
+  print '<p>'.$GLOBALS['I18N']->get('import is not available').'</p>';
+  return;
+}
 
 # import from a different PHPlist installation
 
@@ -14,15 +18,15 @@ if ($require_login && !isSuperUser()) {
 }
 
 function connectLocal() {
-	$database_connection = Sql_Connect(
-  	$GLOBALS["database_host"],
+  $database_connection = Sql_Connect(
+    $GLOBALS["database_host"],
     $GLOBALS["database_user"],
     $GLOBALS["database_password"],
     $GLOBALS["database_name"]);
- 	return $database_connection;
+   return $database_connection;
 }
 function connectRemote() {
-	return Sql_Connect($_POST["remote_host"],
+  return Sql_Connect($_POST["remote_host"],
   $_POST["remote_user"],
   $_POST["remote_password"],
   $_POST["remote_database"]);
@@ -30,34 +34,35 @@ function connectRemote() {
 
 $result = Sql_query("SELECT id,name FROM ".$tables["list"]." $subselect ORDER BY listorder");
 while ($row = Sql_fetch_array($result)) {
-	$available_lists[$row["id"]] = $row["name"];
+  $available_lists[$row["id"]] = $row["name"];
   $some = 1;
 }
 if (!$some)
-	echo 'No lists available, '.PageLink2("editlist","Add a list");
+ # @@@@ not sure about this one:
+ echo $GLOBALS['I18N']->get('No lists available').', '.PageLink2("editlist",$GLOBALS['I18N']->get('add_list'));
 #foreach ($_POST as $key => $val) {
-#	print "$key => $val<br/>";
+#  print "$key => $val<br/>";
 #}
 
 if (!$_POST["remote_host"] ||
-	!$_POST["remote_user"] || 
+  !$_POST["remote_user"] ||
   !$_POST["remote_password"] || !$_POST["remote_database"]) {
-	printf( '
-  <p>Please enter details of the remote Server</p>
+  printf( '
+  <p>'.$GLOBALS['I18N']->get('remote_server').'</p>
   <form method=post>
   <table>
-  <tr><td>Server:</td><td><input type=text name="remote_host" value="%s" size=30></td></tr>
-  <tr><td>User:</td><td><input type=text name="remote_user" value="%s" size=30></td></tr>
-  <tr><td>Password:</td><td><input type=text name="remote_password" value="%s" size=30></td></tr>
-  <tr><td>Database Name:</td><td><input type=text name="remote_database" value="%s" size=30></td></tr>
-  <tr><td>Table prefix:</td><td><input type=text name="remote_prefix" value="%s" size=30></td></tr>
-  <tr><td>Usertable prefix:</td><td><input type=text name="remote_userprefix" value="%s" size=30></td></tr>
+  <tr><td>'.$GLOBALS['I18N']->get('server').'</td><td><input type=text name="remote_host" value="%s" size=30></td></tr>
+  <tr><td>'.$GLOBALS['I18N']->get('user').'</td><td><input type=text name="remote_user" value="%s" size=30></td></tr>
+  <tr><td>'.$GLOBALS['I18N']->get('passwd').'</td><td><input type=text name="remote_password" value="%s" size=30></td></tr>
+  <tr><td>'.$GLOBALS['I18N']->get('database').'</td><td><input type=text name="remote_database" value="%s" size=30></td></tr>
+  <tr><td>'.$GLOBALS['I18N']->get('table_prefix').'</td><td><input type=text name="remote_prefix" value="%s" size=30></td></tr>
+  <tr><td>'.$GLOBALS['I18N']->get('usertable_prefix').'</td><td><input type=text name="remote_userprefix" value="%s" size=30></td></tr>
   ',$_POST["remote_server"],$_POST["remote_user"],$_POST["remote_password"],
   $_POST["remote_database"],$_POST["remote_prefix"],$_POST["remote_userprefix"]);
   $c = 0;
   print '<tr><td colspan=2>';
   if (sizeof($available_lists) > 1)
-    print 'Select the lists to add the emails to<br/>';
+    print $GLOBALS['I18N']->get('select_lists').'<br/>';
   print '<ul>';
   foreach ($available_lists as $index => $name) {
     printf('<li><input type=checkbox name="lists[%d]" value="%d" %s>%s</li>',
@@ -65,24 +70,24 @@ if (!$_POST["remote_host"] ||
     $c++;
   }
   printf('
-  <li><input type=checkbox name="copyremotelists" value="yes" %s>Copy lists from remote server (lists are matched by name)</li>
+  <li><input type=checkbox name="copyremotelists" value="yes" %s>'.$GLOBALS['I18N']->get('copy_lists').'</li>
   </ul></td></tr>
-<tr><td>Mark new users as HTML:</td><td><input type="checkbox" name="markhtml" value="yes" %s></td></tr>
-<tr><td colspan=2>If you check "Overwrite Existing", information about a user in the database will be replaced by the imported information. Users are matched by email.</td></tr>
-<tr><td>Overwrite Existing:</td><td><input type="checkbox" name="overwrite" value="yes" %s></td></tr>
-	<tr><td colspan=2><input type=submit value="Continue"></td></tr>
+<tr><td>'.$GLOBALS['I18N']->get('users_as_html').'</td><td><input type="checkbox" name="markhtml" value="yes" %s></td></tr>
+<tr><td colspan=2>'.$GLOBALS['I18N']->get('info_overwrite_existing').'</td></tr>
+<tr><td>'.$GLOBALS['I18N']->get('overwrite_existing').'</td><td><input type="checkbox" name="overwrite" value="yes" %s></td></tr>
+  <tr><td colspan=2><input type=submit value="'.$GLOBALS['I18N']->get('continue').'"></td></tr>
   </table></form>
   ',$_POST["copyremotelists"] == "yes"?"checked":"",$_POST["markhtml"] == "yes"?"checked":"",$_POST["overwrite"] == "yes"?"checked":""
   );
 } else {
   set_time_limit(600);
   ob_end_flush();
-	include_once("structure.php");
-	print "Making connection with remote database<br/>";
+  include_once("structure.php");
+  print $GLOBALS['I18N']->get('connecting_remote')."<br/>";
   flush();
-	$remote = connectRemote();
+  $remote = connectRemote();
   if (!$remote) {
-  	Fatal_Error("cannot connect to remote database");
+    Fatal_Error($GLOBALS['I18N']->get('cant_connect'));
     return;
   }
   $remote_tables = array(
@@ -93,79 +98,79 @@ if (!$_POST["remote_host"] ||
     "user_attribute" => $_POST["remote_userprefix"] . "user_attribute",
     "config" => $_POST["remote_prefix"] . "config",
   );
-  print "Getting data from ".$_POST["remote_database"]."@".$_POST["remote_host"]."<br/>";
+  print $GLOBALS['I18N']->get('getting_data').$_POST["remote_database"]."@".$_POST["remote_host"]."<br/>";
 
   $version = Sql_Fetch_Row_Query("select value from {$remote_tables["config"]} where item = \"version\"");
-  print "Remote version is $version[0]<br/>\n";
+  print $GLOBALS['I18N']->get('remote_version')." $version[0]<br/>\n";
   $usercnt = Sql_Fetch_Row_Query("select count(*) from {$remote_tables["user"]}");
-  print "Remote version has $usercnt[0] users<br/>";
+  print $GLOBALS['I18N']->get('remote_has')." $usercnt[0] ".$GLOBALS['I18N']->get('users')."<br/>";
   if (!$usercnt[0]) {
-  	Fatal_Error("No users to copy, is the prefix correct?");
+    Fatal_Error($GLOBALS['I18N']->get('no_users_to_copy'));
     return;
   }
   $totalusers = $usercnt[0];
   $listcnt = Sql_Fetch_Row_Query("select count(*) from {$remote_tables["list"]}");
-  print "Remote version has $listcnt[0] lists<br/>";
+  print $GLOBALS['I18N']->get('remote_has')." $listcnt[0] ".$GLOBALS['I18N']->get('lists')."<br/>";
 
   flush();
-  print '<h1>Copying lists</h1>';
+  print '<h1>'.$GLOBALS['I18N']->get('copying_lists').'</h1>';
   # first copy the lists across
   $listmap = array();
   $remote_lists = array();
   $lists_req = Sql_Query("select * from {$remote_tables["list"]}");
   while ($row = Sql_Fetch_Array($lists_req)) {
-  	array_push($remote_lists,$row);
+    array_push($remote_lists,$row);
   }
 
-	connectLocal();
+  connectLocal();
   foreach ($remote_lists as $list) {
     $localid_req = Sql_Fetch_Row_Query(sprintf('select id from %s where name = "%s"',
-    	$tables["list"],$list["name"]));
+      $tables["list"],$list["name"]));
     if ($localid_req[0]) {
-    	$listmap[$list["id"]] = $localid_req[0];
-     	print "List ".$list["name"] . " exists locally<br/>\n";
+      $listmap[$list["id"]] = $localid_req[0];
+       print $GLOBALS['I18N']->get('list').' '.$list["name"] .$GLOBALS['I18N']->get('exists_locally')." <br/>\n";
     } elseif ($_POST["copyremotelists"]) {
-    	$query = "";
-    	foreach ($DBstruct["list"] as $colname => $colspec) {
-      	if ($colname != "id" && $colname != "index" && $colname != "unique" && $colname != "primary key") {
-        	$query .= sprintf('%s = "%s",',$colname,addslashes($list[$colname]));
-       	}
-     	}
+      $query = "";
+      foreach ($DBstruct["list"] as $colname => $colspec) {
+        if ($colname != "id" && $colname != "index" && $colname != "unique" && $colname != "primary key") {
+          $query .= sprintf('%s = "%s",',$colname,addslashes($list[$colname]));
+         }
+       }
       $query = substr($query,0,-1);
-     	print "List ".$list["name"] . " created locally<br/>\n";
+       print $GLOBALS['I18N']->get('list')." ".$list["name"] .$GLOBALS['I18N']->get('created_locally')." <br/>\n";
       Sql_Query("insert into {$tables["list"]} set $query");
       $listmap[$list["id"]] = Sql_Insert_id();
     } else {
-     	print "Remote List ".$list["name"] . " not created<br/>\n";
+       print $GLOBALS['I18N']->get('remote_list')." ".$list["name"] .$GLOBALS['I18N']->get('not_created')." <br/>\n";
     }
   }
 
   connectRemote();
-  print '<h1>Copying attributes</h1>';
+  print '<h1>'.$GLOBALS['I18N']->get('copying_attribs').'</h1>';
   # now copy the attributes
   $attributemap = array();
   $remote_atts = array();
   $att_req = Sql_Query("select * from {$remote_tables["attribute"]}");
   while ($row = Sql_Fetch_Array($att_req)) {
-  	array_push($remote_atts,$row);
+    array_push($remote_atts,$row);
   }
 
-	connectLocal();
+  connectLocal();
   foreach ($remote_atts as $att) {
     $localid_req = Sql_Fetch_Row_Query(sprintf('select id from %s where name = "%s"',
-    	$tables["attribute"],stripslashes($att["name"])));
+      $tables["attribute"],stripslashes($att["name"])));
     if ($localid_req[0]) {
-    	$attributemap[$att["id"]] = $localid_req[0];
-     	print "Attribute ".$att["name"] . " exists locally<br/>\n";
+      $attributemap[$att["id"]] = $localid_req[0];
+       print $GLOBALS['I18N']->get('attrib')." ".$att["name"] .$GLOBALS['I18N']->get('exists_locally')." <br/>\n";
     } else {
-    	$query = "";
-    	foreach ($DBstruct["attribute"] as $colname => $colspec) {
-      	if ($colname != "id" && $colname != "index" && $colname != "unique" && $colname != "primary key") {
-        	$query .= sprintf('%s = "%s",',$colname,addslashes($att[$colname]));
-       	}
-     	}
+      $query = "";
+      foreach ($DBstruct["attribute"] as $colname => $colspec) {
+        if ($colname != "id" && $colname != "index" && $colname != "unique" && $colname != "primary key") {
+          $query .= sprintf('%s = "%s",',$colname,addslashes($att[$colname]));
+         }
+       }
       $query = substr($query,0,-1);#
-     	print "Attribute ".$att["name"] . " created locally<br/>\n";
+       print $GLOBALS['I18N']->get('attrib')." ".$att["name"].$GLOBALS['I18N']->get('created_locally')." <br/>\n";
       Sql_Query("insert into {$tables["attribute"]} set $query");
       $attributemap[$att["id"]] = Sql_Insert_id();
       if ($att["type"] == "select" || $att["type"] == "radio" || $att["type"] == "checkboxgroup") {
@@ -177,65 +182,65 @@ if (!$_POST["remote_host"] ||
         $attvalue_req = Sql_Query("select id,name,listorder from ".$_POST["remote_prefix"]."listattr_".$att["tablename"]);
         $values = array();
         while ($value = Sql_Fetch_Array($attvalue_req)) {
-        	array_push($values,$value);
+          array_push($values,$value);
         }
         connectLocal();
         foreach ($values as $value) {
           Sql_Query(sprintf('replace into %slistattr_%s (name,id,listorder)
-          	values("%s",%d,"%s")',$table_prefix,$att["tablename"],addslashes($value["name"]),$value["id"],$value["listorder"]));
-				}
-    	}
+            values("%s",%d,"%s")',$table_prefix,$att["tablename"],addslashes($value["name"]),$value["id"],$value["listorder"]));
+        }
+      }
     }
   }
 
-  print '<h1>Copying users</h1>';
+  print '<h1>'.$GLOBALS['I18N']->get('copying_users').'</h1>';
   # copy the users
   $usercnt = 0;
   $existcnt = 0;
   $newcnt = 0;
   while ($usercnt < $totalusers) {
-	  set_time_limit(60);
-  	connectRemote();
-  	$req = Sql_Query("select * from {$remote_tables["user"]} limit $usercnt,1");
+    set_time_limit(60);
+    connectRemote();
+    $req = Sql_Query("select * from {$remote_tables["user"]} limit $usercnt,1");
     $user = Sql_Fetch_Array($req);
     $usercnt++;
     $new = 0;
     if ($usercnt % 20 == 0) {
-    	print "$usercnt / $totalusers<br/>";
+      print "$usercnt / $totalusers<br/>";
       flush();
     }
     connectLocal();
     $query = "";
     $exists = Sql_Fetch_Row_Query(sprintf('select id from %s where email = "%s"',$tables["user"],$user["email"]));
     if ($exists[0]) {
-    	$existcnt++;
-  #  	print $user["email"] ." exists locally ..";
+      $existcnt++;
+  #    print $user["email"] .$GLOBALS['I18N']->get('exists_locally')." ..";
       if ($_POST["overwrite"]) {
-	#			print " .. overwriting local data<br/>";
+  #      print " .. ".$GLOBALS['I18N']->get('overwrite_local')."<br/>";
         $query = "replace into ".$tables["user"] . " set id = ".$exists[0].", ";
       } else {
-	#			print " .. keeping local data<br/>";
-    	}
+  #      print " .. ".$GLOBALS['I18N']->get('keep_local')."<br/>";
+      }
       $userid = $exists[0];
     } else {
-    	$newcnt++;
+      $newcnt++;
       $new = 1;
-  #  	print $user["email"] ." is a new user<br/>";
+  #    print $user["email"] .$GLOBALS['I18N']->get('new_user')."<br/>";
       $query = "insert into ".$tables["user"]. " set ";
     }
     if ($query) {
-    	foreach ($DBstruct["user"] as $colname => $colspec) {
-      	if ($colname != "id" && $colname != "index" && $colname != "unique" && $colname != "primary key") {
-        	$query .= sprintf('%s = "%s",',$colname,addslashes($user[$colname]));
-       	}
-     	}
+      foreach ($DBstruct["user"] as $colname => $colspec) {
+        if ($colname != "id" && $colname != "index" && $colname != "unique" && $colname != "primary key") {
+          $query .= sprintf('%s = "%s",',$colname,addslashes($user[$colname]));
+         }
+       }
       $query = substr($query,0,-1);
       #print $query . "<br/>";
       Sql_Query("$query");
-			$userid = Sql_Insert_id();
-		}
+      $userid = Sql_Insert_id();
+    }
     if ($userid && $_POST["markhtml"]) {
-    	Sql_Query("update {$tables["user"]} set htmlemail = 1 where id = $userid");
+      Sql_Query("update {$tables["user"]} set htmlemail = 1 where id = $userid");
     }
 
     if ($new || (!$new && $_POST["overwrite"])) {
@@ -272,32 +277,32 @@ if (!$_POST["remote_host"] ||
           {$remote_tables["list"]} where {$remote_tables["listuser"]}.listid =
           {$remote_tables["list"]}.id and {$remote_tables["listuser"]}.userid = $user[0]");
         while ($list = Sql_Fetch_Array($req)) {
-        #	print $list["name"]."<br/>";
+        #  print $list["name"]."<br/>";
           array_push($userlists,$list);
         }
       }
       connectLocal();
       foreach ($useratt as $att) {
-      	$localattid = $attributemap[$att["attributeid"]];
+        $localattid = $attributemap[$att["attributeid"]];
         if (!localattid) {
-        	print "Error, no mapped attribute for ".$att["name"]."<br/>";
+          print $GLOBALS['I18N']->get('no_mapped_attrib')." ".$att["name"]."<br/>";
         } else {
           $tname = Sql_Fetch_Row_Query("select tablename from {$tables["attribute"]} where id = $localattid");
           switch ($att["type"]) {
-          	case "select":
+            case "select":
             case "radio":
-            	$valueid = Sql_Fetch_Row_Query(sprintf('select id from %slistattr_%s where name = "%s"',
-	              $table_prefix,$tname[0],$att["displayvalue"]));
+              $valueid = Sql_Fetch_Row_Query(sprintf('select id from %slistattr_%s where name = "%s"',
+                $table_prefix,$tname[0],$att["displayvalue"]));
               if (!$valueid[0]) {
-              	Sql_Query(sprintf('insert into %slistattr_%s set name = "%s"',
-	              $table_prefix,$tname[0],$att["displayvalue"]));
+                Sql_Query(sprintf('insert into %slistattr_%s set name = "%s"',
+                $table_prefix,$tname[0],$att["displayvalue"]));
                 $att["value"] = Sql_Insert_id();
               } else {
-              	$att["value"] = $valueid[0];
+                $att["value"] = $valueid[0];
               }
               break;
             case "checkboxgroup":
-            	$vals = explode(",",$att["displayvalue"]);
+              $vals = explode(",",$att["displayvalue"]);
               array_pop($vals);
               $att["value"] = "";
               foreach ($vals as $val) {
@@ -324,19 +329,22 @@ if (!$_POST["remote_host"] ||
     }
     if (is_array($userlists))
     foreach ($userlists as $list) {
-    	if ($listmap[$list["listid"]]) {
+      if ($listmap[$list["listid"]]) {
         Sql_Query(sprintf('replace into %s (listid,userid) values(%d,%d)',
           $tables["listuser"],$listmap[$list["listid"]],$userid));
-     	} else {
-      	print "Error, no local list defined for ".$list["name"]."<br/>";
+       } else {
+        print $GLOBALS['I18N']->get('no_local_list')." ".$list["name"]."<br/>";
       }
     }
   }
   print "$totalusers / $totalusers<br/>";
   flush();
-  printf('Done %d new users and %d existing users<br/>',$newcnt,$existcnt);
+ # @@@@ Not sure about this one:
+   printf('%s %d %s %s %d %s<br/>',$GLOBALS['I18N']->get('Done'),$newcnt,
+   $GLOBALS['I18N']->get('new users'),
+   $GLOBALS['I18N']->get('and'),
+   $existcnt,$GLOBALS['I18N']->get('existing users'));
 }
 ?>
-
 
 

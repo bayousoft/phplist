@@ -2,54 +2,67 @@
 
 
 <?php
-require_once "accesscheck.php";
+require_once 'accesscheck.php';
 
-if ($_GET["filter"]) {
-	if ($_GET["exclude"])
-		$where = ' where page not like "%'.$_GET["filter"].'%" and entry not like "%'.$_GET["filter"].'%"';
-  else
-		$where = ' where page like "%'.$_GET["filter"].'%" or entry like "%'.$_GET["filter"].'%"';
-  $find_url = '&filter='.urlencode($_GET["filter"]).'&exclude='.$_GET["exclude"];
+$find_url = '';
+$where = '';
+$filter = '';
+$exclude = '';
+$s = 0;
+if (isset($_GET['s'])) {
+  $s = sprintf('%d',$_GET['s']);
+}
+if (isset($_GET['filter'])) {
+  $filter = $_GET['filter'];
+  if (isset($_GET['exclude'])) {
+    $exclude = $_GET['exclude'];
+    $where = ' where page not like "%'.$_GET["filter"].'%" and entry not like "%'.$_GET["filter"].'%"';
+    $exclude_url = '&exclude='.$_GET["exclude"];
+  } else {
+    $where = ' where page like "%'.$_GET["filter"].'%" or entry like "%'.$_GET["filter"].'%"';
+    $exclude_url = '';
+  }
+  $find_url = '&filter='.urlencode($_GET["filter"]).$exclude_url;
 }
 $order = ' order by entered desc';
 
-if (isset($delete) && $delete) {
+if (isset($_GET['delete']) && $_GET['delete']) {
   # delete the index in delete
-  print "Deleting $delete ..\n";
+  print $GLOBALS['I18N']->get('Deleting') . ' ' . $_GET['delete'] . "..\n";
   if ($require_login && !isSuperUser()) {
   } else {
-    Sql_query("delete from {$tables["eventlog"]} where id = $delete");
+    Sql_query(sprintf('delete from %s where id = %d',$tables['eventlog'],$_GET['delete']));
   }
-  print "..Done<br /><hr><br />\n";
+  print '..' . $GLOBALS['I18N']->get('Done') . "<br /><hr><br />\n";
 }
 
-if ($action) {
-	switch($action) {
-  	case "deleteprocessed":
-    	Sql_Query(sprintf('delete from %s where date_add(entered,interval 2 month) < now()',$tables["eventlog"]));
+if (isset($_GET['action']) && $_GET['action']) {
+  switch($_GET['action']) {
+    case 'deleteprocessed':
+      Sql_Query(sprintf('delete from %s where date_add(entered,interval 2 month) < now()',$tables["eventlog"]));
       break;
-  	case "deleteall":
-    	Sql_Query(sprintf('delete from %s %s',$tables["eventlog"],$where));
+    case 'deleteall':
+      Sql_Query(sprintf('delete from %s %s',$tables["eventlog"],$where));
       break;
- 	}
+  }
 }
 
 # view events
-$count = Sql_Query("select count(*) from {$tables["eventlog"]} $where");
+$count = Sql_Query("select count(*) from {$tables['eventlog']} $where");
 $totalres = Sql_fetch_Row($count);
 $total = $totalres[0];
 
-print $total . " events<br/>";
+print $total . ' ' .  $GLOBALS['I18N']->get('events') . '<br/>';
 if ($total > MAX_USER_PP) {
   if (isset($start) && $start) {
-    $listing = "Listing $start to " . ($start + MAX_USER_PP);
-    $limit = "limit $start,".MAX_USER_PP;
+    $listing = $GLOBALS['I18N']->get('Listing') . ' ' . $start . ' '.$GLOBALS['I18N']->get('to') . ' ' . ($start + MAX_USER_PP);
+    $limit = "limit $start," . MAX_USER_PP;
   } else {
-    $listing = "Listing 1 to 50";
+    $listing = $GLOBALS['I18N']->get('Listing 1 to 50');
     $limit = "limit 0,50";
     $start = 0;
   }
-  printf ('<table border=1><tr><td colspan=4 align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
+  printf ('<table border="1"><tr><td colspan="4" align="center">%s</td></tr><tr><td>%s</td><td>%s</td><td>
           %s</td><td>%s</td></tr></table><p><hr>',
           $listing,
           PageLink2("eventlog","&lt;&lt;","start=0".$find_url),
@@ -61,29 +74,43 @@ if ($total > MAX_USER_PP) {
   $result = Sql_Query(sprintf('select * from %s %s order by entered desc',$tables["eventlog"],$where));
 }
 
-printf("[ <a href=\"javascript:deleteRec2('Are you sure you want to delete all events older than 2 months?','%s');\">Delete all (&gt; 2 months old)</a> |
-   <a href=\"javascript:deleteRec2('Are you sure you want to delete all events matching this filter?','%s');\">Delete all</a> ] ",
+printf("[ <a href=\"javascript:deleteRec2('%s','%s');\">%s</a> |
+   <a href=\"javascript:deleteRec2('%s','%s');\">%s</a> ] ",
+   $GLOBALS['I18N']->get('Are you sure you want to delete all events older than 2 months?'),
    PageURL2("eventlog","Delete","start=$start&action=deleteprocessed"),
-   PageURL2("eventlog","Delete","start=$start&action=deleteall$find_url"));
+   $GLOBALS['I18N']->get('Delete all (&gt; 2 months old)'),
 
-if (!Sql_Affected_Rows())
-	print "<p>No events available</p>";
+   $GLOBALS['I18N']->get('Are you sure you want to delete all events matching this filter?'),
+   PageURL2("eventlog","Delete","start=$start&action=deleteall$find_url"),
+   $GLOBALS['I18N']->get('Delete all'));
 
+   if (!Sql_Affected_Rows()) {
+     print '<p>' . $GLOBALS['I18N']->get('No events available') . '</p>';
+   }
 print '<br/><br/>';
-printf('<form method=get>
-<input type=hidden name="page" value="eventlog">
-<input type=hidden name="s" value="%d">
-Filter: <input type=text name="filter" value="%s"> Exclude filter <input type=checkbox name="exclude" value="1" %s>
-</form><br/>',$_GET["s"],$_GET["filter"],$_GET["exclude"] == 1? "checked":"");
-$ls = new WebblerListing("Events");
+printf('<form method="get">
+<input type="hidden" name="page" value="eventlog">
+<input type="hidden" name="s" value="%d">
+%s: <input type=text name="filter" value="%s"> %s <input type="checkbox" name="exclude" value="1" %s>
+</form><br/>',$s,
+$GLOBALS['I18N']->get('Filter'),
+$filter,
+$GLOBALS['I18N']->get('Exclude filter'),
+$exclude == 1 ? 'checked':'');
+
+$ls = new WebblerListing($GLOBALS['I18N']->get('events'));
+
+# @@@@ Looks like there are a few del, page, date, message which may not be i18nable.
+
 while ($event = Sql_fetch_array($result)) {
   $ls->addElement($event["id"]);
-  $ls->addColumn($event["id"],"del",
-    sprintf('<a href="javascript:deleteRec(\'%s\');">del</a>',
-      PageURL2("eventlog","delete","start=$start&delete=".$event["id"])));
-  $ls->addColumn($event["id"],"page",$event["page"]);
-  $ls->addColumn($event["id"],"date",$event["entered"]);
-  $ls->addColumn($event["id"],"message",$event["entry"]);
+  $ls->addColumn($event["id"],$GLOBALS['I18N']->get('del'),
+    sprintf('<a href="javascript:deleteRec(\'%s\');">%s</a>',
+      PageURL2("eventlog","delete","start=$start&delete=".$event["id"]),$GLOBALS['I18N']->get('del')));
+  $ls->addColumn($event["id"],$GLOBALS['I18N']->get('page'),$event["page"]);
+  $ls->addColumn($event["id"],$GLOBALS['I18N']->get('date'),$event["entered"]);
+  $ls->addColumn($event["id"],$GLOBALS['I18N']->get('message'),$event["entry"]);
 }
 print $ls->display();
+
 ?>

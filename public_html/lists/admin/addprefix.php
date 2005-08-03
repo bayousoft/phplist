@@ -1,9 +1,11 @@
 <?php
-require_once "accesscheck.php";
-# convert the database to add the prefix
+require_once dirname(__FILE__).'/accesscheck.php';
 
-if (!$table_prefix) {
-	print "No prefix defined, nothing to do";
+# convert the database to add the prefix
+# dangerous, should not be used, particularly not if the prefix already exists
+
+if (!$GLOBALS["table_prefix"]) {
+  print "No prefix defined, nothing to do";
   return;
 }
 
@@ -12,7 +14,7 @@ include "structure.php";
 while (list($table,$value) = each ($DBstruct)) {
   if ($table != $tables[$table]) {
     Sql_Verbose_Query("drop table if exists $tables[$table]",0);
-	  Sql_Verbose_Query("alter table $table rename $tables[$table]",0);
+    Sql_Verbose_Query("alter table $table rename $tables[$table]",0);
   }
 }
 

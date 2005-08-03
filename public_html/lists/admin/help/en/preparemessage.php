@@ -1,5 +1,5 @@
 <p>In this page you can prepare a message to be sent at a later date.
- You can specify all information required for the message, except for the actual 
+ You can specify all information required for the message, except for the actual
 list(s) it has to go to. Then, at moment of sending (of a prepared message) you can
 identify the list(s) and the prepared message will be sent.</p>
 <p>
@@ -27,7 +27,7 @@ The format of the [LISTOWNER] placeholders is <b>[LISTOWNER.ATTRIBUTE]</b><br/>
 <?php
 $req = Sql_query("select name from {$tables["adminattribute"]} order by listorder");
 if (!Sql_Affected_Rows())
-	print '<tr><td colspan=2>None</td></tr>';
+  print '<tr><td colspan=2>None</td></tr>';
 
 while ($row = Sql_Fetch_Row($req))
   if (strlen($row[0]) < 20)

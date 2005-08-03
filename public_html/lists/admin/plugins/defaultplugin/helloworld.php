@@ -6,7 +6,7 @@ if ($_POST["info"]) {
   print "<b>Thanks for that.</b>";
   return;
 }
-  
+
 ?>
 
 Default plugin Hello World page
@@ -16,4 +16,6 @@ Enter some info: <input type=text name="info" value="Hello World" size=30>
 <br/>
 <input type=submit>
 </form>
+
+
 

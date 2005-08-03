@@ -1,18 +1,19 @@
 <?php
-require_once "accesscheck.php";
-if (!$GLOBALS["commandline"]) {
+require_once 'accesscheck.php';
+if (!$GLOBALS['commandline']) {
   ob_end_flush();
   if (!MANUALLY_PROCESS_RSS) {
-    print "This page can only be called from the commandline";
+    print $GLOBALS['I18N']->get('This page can only be called from the commandline');
     return;
   }
 } else {
   ob_end_clean();
   print ClineSignature();
-	print "Getting and Parsing the RSS sources\n";
+	print $GLOBALS['I18N']->get('Getting and Parsing the RSS sources') . "\n";
   ob_start();
 }
 
+# @@@@ Not sure if this is 118nable.
 function ProcessError ($message) {
   print "$message";
   logEvent("Error: $message");
@@ -21,7 +22,7 @@ function ProcessError ($message) {
 }
 
 function output($line) {
-	if ($GLOBALS["commandline"]) {
+	if ($GLOBALS['commandline']) {
     ob_end_clean();
 		print strip_tags($line)."\n";
     ob_start();
@@ -31,21 +32,24 @@ function output($line) {
   flush();
 }
 
-register_shutdown_function("finish");
+register_shutdown_function('finish');
 
-function finish ($flag = "info",$message = "finished") {
-	global $nothingtodo,$failreport,$mailreport,$process_id;
-  if ($flag == "error") {
-    $subject = "Rss Errors";
+function finish ($flag = "info",$message = 'finished') {
+  global $nothingtodo,$failreport,$mailreport,$process_id;
+
+  if ($flag == 'error') {
+    $subject = $GLOBALS['I18N']->get('Rss Errors');
   } else {
-    $subject = "Rss Results";
+    $subject = $GLOBALS['I18N']->get('Rss Results');
   }
+
   releaseLock($process_id);
+
   if (!TEST && !$nothingtodo) {
   	if ($mailreport)
       sendReport($subject,$mailreport);
     if ($failreport)
-	    sendReport("Rss Failure report",$failreport);
+	    sendReport($GLOBALS['I18N']->get('Rss Failure report'),$failreport);
   }
 }
 
@@ -56,15 +60,15 @@ set_time_limit(600);
 include 'onyxrss/onyx-rss.php';
 error_reporting(0);
 $nothingtodo = 1;
-$mailreport = "";
+$mailreport = '';
 $process_id = getPageLock();
 
-$req = Sql_Query("select rssfeed,id from {$tables["list"]} where rssfeed != \"\" order by listorder");
+$req = Sql_Query("select rssfeed,id from {$tables['list']} where rssfeed != \"\" order by listorder");
 while ($feed = Sql_Fetch_Row($req)) {
 	$nothingtodo = 0;
-	output( "<hr>Parsing $feed[0] ..");
+	output( '<hr>' . $GLOBALS['I18N']->get('Parsing') . ' ' . $feed[0] . '..');
   flush();
-  $report = "Parsing $feed[0]";
+  $report = $GLOBALS['I18N']->get('Parsing') . ' ' . $feed[0];
   $mailreport .= "\n$feed[0] ";
   $itemcount = 0;
   $newitemcount = 0;
@@ -75,15 +79,15 @@ while ($feed = Sql_Fetch_Row($req)) {
 
   $parseresult = $rss->parse($feed[0],"rss-cache".$GLOBALS["database_name"].$feed[1]);
   if ($parseresult) {
-  	$report .= " ok\n";
-    $mailreport .= " ok ";
-  	output( "..ok<br/>");
+  	$report .= ' ' . $GLOBALS['I18N']->get('ok') . "\n";
+   $mailreport .= " 'ok ";
+  	output( '..' . $GLOBALS['I18N']->get('ok') . '<br />');
   } else {
-  	$report .= " failed\n";
-  	output( "..failed<br/>");
-    $mailreport .= " failed\n";
+   $report .= ' ' . $GLOBALS['I18N']->get('failed') . "\n";
+   output( '..' . $GLOBALS['I18N']->get('failed') . '<br />');
+    $mailreport .= ' ' . $GLOBALS['I18N']->get('failed') . "\n";
     $mailreport .= $rss->lasterror;
-    $failreport .= "\n".$feed[0] . " failed \n". $rss->lasterror;
+    $failreport .= "\n" . $feed[0] . ' ' . $GLOBALS['I18N']->get('failed') . "\n" . $rss->lasterror;
   }
   flush();
   if ($parseresult) {
@@ -93,7 +97,7 @@ while ($feed = Sql_Fetch_Row($req)) {
       if ($alive)
         keepLock($process_id);
       else
-        ProcessError("Process Killed by other process");
+        ProcessError($GLOBALS['I18N']->get('Process Killed by other process'));
     	$itemcount++;
     	Sql_Query(sprintf('select * from %s where title = "%s" and link = "%s"',
       	$tables["rssitem"],addslashes(substr($item["title"],0,100)),addslashes(substr($item["link"],0,100))));
@@ -101,10 +105,10 @@ while ($feed = Sql_Fetch_Row($req)) {
       	$newitemcount++;
         Sql_Query(sprintf('insert into %s (title,link,source,list,added)
         	values("%s","%s","%s",%d,now())',
-          $tables["rssitem"],addslashes($item["title"]),addslashes($item["link"]),addslashes($feed[0]),$feed[1]));
+          $tables["rssitem"],addslashes($item["title"]),addslashes($item['link']),addslashes($feed[0]),$feed[1]));
         $itemid = Sql_Insert_Id();
         foreach ($item as $key => $val) {
-        	if ($item != "title" && $item != "link") {
+        	if ($item != 'title' && $item != 'link') {
             Sql_Query(sprintf('insert into %s (itemid,tag,data)
               values("%s","%s","%s")',
               $tables["rssitem_data"],$itemid,$key,addslashes($val)));
@@ -112,7 +116,7 @@ while ($feed = Sql_Fetch_Row($req)) {
         }
       }
     }
-    output(sprintf('<br/>%d items, %d new items',$itemcount,$newitemcount));
+    output(sprintf('<br/>%d %s, %d %s',$itemcount,$GLOBALS['I18N']->get('items'),$newitemcount,$GLOBALS['I18N']->get('new items')));
     $report .= sprintf('%d items, %d new items'."\n",$itemcount,$newitemcount);
     $mailreport .= sprintf('-> %d items, %d new items'."\n",$itemcount,$newitemcount);
   }
@@ -122,7 +126,7 @@ while ($feed = Sql_Fetch_Row($req)) {
   logEvent($report);
 }
 if ($nothingtodo) {
-	print "Nothing to do";
+	print $GLOBALS['I18N']->get('Nothing to do');
 }
 
 

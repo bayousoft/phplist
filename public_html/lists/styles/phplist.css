@@ -1,5 +1,6 @@
 body {
 scrollbar-base-color: #DEDEB6; 
+
 scrollbar-face-color: #CCCC99;; 
 scrollbar-track-color: #DEDEB6; 
 scrollbar-arrow-color: #000000;
@@ -7,6 +8,21 @@ scrollbar-arrow-color: #000000;
 
 a:link {
 	font-size: 11px; color: #ff6600; font-style: normal; font-family: verdana, sans-serif; text-decoration: none;
+div#menutable div#menuheader {
+  position:absolute;
+  top:-20px;
+  left:-1px;
+  width: 50px;
+  font-family:verdana, sans-serif;
+  font-size: 11px; 
+  color: white;
+  text-align: center;
+  padding:2px 0px 2px 0px;
+  background-color: #ff9900;
+  border: 1px solid black;
+}
+
+
 }
 a:active {
 	font-size: 11px; color: #ff6600; font-style: normal; font-family: verdana, sans-serif; text-decoration: none;
@@ -15,6 +31,7 @@ a:visited {
 	font-size: 11px; color: #ff6600; font-style: normal; font-family: verdana, sans-serif; text-decoration: none;
 }
 a:hover {
+   min-height:400px;
 	text-decoration: underline;
 }
 p {
@@ -34,6 +51,7 @@ h2 {font-weight: bold; font-size: 11px; color: #666666; font-style: normal; font
 
 h3 {font-weight: bold; font-size: 12px; color: #666666; font-style: normal; font-family: verdana, sans-serif; text-decoration: none; margin:0px; padding:0px;}
 
+   margin: 0px;
 hr {width : 100%; height : 1px; color: #ff9900; size:1px;}
 
 .leaftitle {font-weight: bold; font-size: 16px; color: #ff9900; font-style: normal; font-family: verdana, sans-serif; text-decoration: none;}
@@ -54,7 +72,7 @@ a:visited.phphead {font-size: 14px; color: #000000; font-style: normal; font-fam
 
 
 .menutable {background-color : white; border-left : 1px black solid; border-right : 1px black solid; display : block; width : 132px;}
-.menutableright {background-color : white; border-left : 1px black solid;  border-bottom : 1px black solid; display : block; width : 132px;}
+
 
 .menuhd {font-family: verdana, sans-serif;font-size : 11px; color : black;background-color : #CCCC99; font-weight: normal; border-top: 1px black solid;  border-bottom: 1px black solid;display : block; text-align : left; text-decoration : none; padding: 2px;vertical-align : top; padding-left : 3px;}
 

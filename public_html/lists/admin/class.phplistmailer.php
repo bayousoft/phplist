@@ -1,69 +1,76 @@
 <?php
-require_once "accesscheck.php";
-
+require_once dirname(__FILE__).'/accesscheck.php';
 
 require( $GLOBALS["coderoot"] . "phpmailer/class.phpmailer.php");
 
 class PHPlistMailer extends PHPMailer {
-		var $isText = false;
+    var $isText = false;
     var $WordWrap = 75;
     var $encoding = 'base64';
-		var $image_types = array(
-									'gif'	=> 'image/gif',
-									'jpg'	=> 'image/jpeg',
-									'jpeg'	=> 'image/jpeg',
-									'jpe'	=> 'image/jpeg',
-									'bmp'	=> 'image/bmp',
-									'png'	=> 'image/png',
-									'tif'	=> 'image/tiff',
-									'tiff'	=> 'image/tiff',
-									'swf'	=> 'application/x-shockwave-flash'
-								  );
+    var $image_types = array(
+                  'gif'  => 'image/gif',
+                  'jpg'  => 'image/jpeg',
+                  'jpeg'  => 'image/jpeg',
+                  'jpe'  => 'image/jpeg',
+                  'bmp'  => 'image/bmp',
+                  'png'  => 'image/png',
+                  'tif'  => 'image/tiff',
+                  'tiff'  => 'image/tiff',
+                  'swf'  => 'application/x-shockwave-flash'
+                  );
 
     function PHPlistMailer($messageid,$email) {
-    #	parent::PHPMailer();
+    #  parent::PHPMailer();
       $this->addCustomHeader("X-Mailer: PHPlist v".VERSION);
-    	$this->addCustomHeader("X-MessageID: $messageid");
+      $this->addCustomHeader("X-MessageID: $messageid");
       $this->addCustomHeader("X-ListMember: $email");
-    	$this->addCustomHeader("Precedence: bulk");
-      $this->Host = SMTPHOST;
+      $this->addCustomHeader("Precedence: bulk");
+      $this->Host = PHPMAILERHOST;
       $this->Helo = getConfig("website");
       $this->CharSet = getConfig("html_charset");
+      if (isset($GLOBALS['phpmailer_smtpuser']) && $GLOBALS['phpmailer_smtpuser'] != '') {
+        $this->SMTPAuth = true;
+        $this->Username = $GLOBALS['phpmailer_smtpuser'];
+        $this->Password = $GLOBALS['phpmailer_smtppassword'];
+#        logEvent('Sending authenticated email via '.PHPMAILERHOST);
+      }
       $ip = gethostbyname($this->Host);
       if ($GLOBALS["message_envelope"]) {
-      	$this->Sender = $GLOBALS["message_envelope"];
+        $this->Sender = $GLOBALS["message_envelope"];
         $this->addCustomHeader("Errors-To: ".$GLOBALS["message_envelope"]);
       }
       if (!$this->Host || $ip == $this->Host) {
-       	$this->Mailer = "mail";
+        $this->Mailer = "mail";
+#        logEvent('Sending via mail');
       } else {
-      	$this->Mailer = "smtp";
+        $this->Mailer = "smtp";
+#        logEvent('Sending via smtp');
       }
-		}
+    }
 
     function add_html($html,$text = '',$templateid = 0) {
-    	$this->Body = $html;
-			$this->IsHTML(true);
+      $this->Body = $html;
+      $this->IsHTML(true);
       if ($text) {
-      	$this->add_text($text);
+        $this->add_text($text);
       }
       $this->find_html_images($templateid);
     }
 
     function add_text($text) {
-    	if (!$this->Body) {
+      if (!$this->Body) {
         $this->IsHTML(false);
         $this->Body = $text;
-     	} else {
+       } else {
         $this->AltBody = $text;
       }
     }
-    
+
     function append_text($text) {
-    	if ($this->AltBody) {
-	    	$this->AltBody .= $text;
+      if ($this->AltBody) {
+        $this->AltBody .= $text;
       } else {
-      	$this->Body .= $text;
+        $this->Body .= $text;
       }
     }
 
@@ -71,14 +78,14 @@ class PHPlistMailer extends PHPMailer {
     }
 
     function send($to_name = "", $to_addr, $from_name, $from_addr, $subject = '', $headers = '',$envelope = '') {
-    	$this->From = $from_addr;
-			$this->FromName = $from_name;
-      if (ereg("dev",VERSION)) {
-      	# make sure we are not sending out emails to real users
+      $this->From = $from_addr;
+      $this->FromName = $from_name;
+      if (strstr(VERSION, "dev")) {
+        # make sure we are not sending out emails to real users
         # when developing
-      	$this->AddAddress('michiel@tincan.co.uk');
+        $this->AddAddress($GLOBALS["developer_email"]);
       } else {
-      	$this->AddAddress($to_addr);
+        $this->AddAddress($to_addr);
       }
       $this->Subject = $subject;
       if(!parent::Send()) {
@@ -102,8 +109,8 @@ class PHPlistMailer extends PHPMailer {
       $this->attachment[$cur][7] = 0;
     }
 
-   	function find_html_images($templateid) {
-    	if (!$templateid) return;
+     function find_html_images($templateid) {
+      #if (!$templateid) return;
       // Build the list of image extensions
       while(list($key,) = each($this->image_types))
         $extensions[] = $key;
@@ -125,8 +132,8 @@ class PHPlistMailer extends PHPMailer {
           if($image = $this->get_template_image($templateid,$html_images[$i])){
             $content_type = $this->image_types[substr($html_images[$i], strrpos($html_images[$i], '.') + 1)];
             $cid = $this->add_html_image($image, basename($html_images[$i]), $content_type);
-	          $this->Body = str_replace(basename($html_images[$i]), "cid:$cid", $this->Body);#@@@
-	        }
+            $this->Body = str_replace(basename($html_images[$i]), "cid:$cid", $this->Body);#@@@
+          }
         }
       }
     }
@@ -136,7 +143,7 @@ class PHPlistMailer extends PHPMailer {
       $cid = md5(uniqid(time()));
       $cur = count($this->attachment);
       $this->attachment[$cur][0] = $contents;
-      $this->attachment[$cur][1] = $filename;
+      $this->attachment[$cur][1] = '';#$filename;
       $this->attachment[$cur][2] = $name;
       $this->attachment[$cur][3] = $this->encoding;
       $this->attachment[$cur][4] = $content_type;
@@ -145,22 +152,22 @@ class PHPlistMailer extends PHPMailer {
       $this->attachment[$cur][7] = $cid;
 
       return $cid;
-		}
-    
+    }
+
     function image_exists($templateid,$filename) {
       $req = Sql_Query(sprintf('select * from %s where template = %d and (filename = "%s" or filename = "%s")',
         $GLOBALS["tables"]["templateimage"],$templateid,$filename,basename($filename)));
       return Sql_Affected_Rows();
     }
 
-   	function get_template_image($templateid,$filename){
+     function get_template_image($templateid,$filename){
       $req = Sql_Fetch_Row_Query(sprintf('select data from %s where template = %d and (filename = "%s" or filename = "%s")',
         $GLOBALS["tables"]["templateimage"],$templateid,$filename,basename($filename)));
       return $req[0];
     }
 
     function EncodeFile ($path, $encoding = "base64") {
-    	# as we already encoded the contents in $path, return $path
+      # as we already encoded the contents in $path, return $path
       return chunk_split($path, 76, $this->LE);
     }
 }

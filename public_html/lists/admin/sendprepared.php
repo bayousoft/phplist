@@ -1,5 +1,5 @@
 <?php
-require_once "accesscheck.php";
+require_once dirname(__FILE__).'/accesscheck.php';
 
 echo '<script language="Javascript" src="js/jslib.js" type="text/javascript"></script><hr><p>';
 
@@ -38,12 +38,12 @@ if ($message && $list) {
       $listowners[$owner] = array();
     array_push($listowners[$owner],$list);
   }
-  
-	while (list($owner,$lists) = each ($listowners)) {
+
+  while (list($owner,$lists) = each ($listowners)) {
     $query = sprintf('insert into %s
       (subject,fromfield,tofield,replyto,message,footer,status,
       entered,userselection,htmlformatted,sendformat,template,owner)
-			values("%s","%s","%s","%s","%s","%s","submitted",now(),"%s",%d,"%s",%d,%d)',
+      values("%s","%s","%s","%s","%s","%s","submitted",now(),"%s",%d,"%s",%d,%d)',
         $tables["message"],
         addslashes($msg["subject"]),
         addslashes($msg["fromfield"]),
@@ -51,7 +51,7 @@ if ($message && $list) {
         addslashes($msg["replyto"]),
         addslashes($msg["message"]."\n##LISTOWNER=".$owner),
         addslashes($msg["footer"]),
-				$msg["userselection"],
+        $msg["userselection"],
         $msg["htmlformatted"],
         $msg["sendformat"],
         $msg["template"],$owner
@@ -88,8 +88,8 @@ while ($message = Sql_Fetch_Array($req)) {
   print "From: <b>".$message["fromfield"]."</b> <br/>";
   print 'Send this message <input type=radio name="message" value="'.$message["id"].'"><br/><br/>';
   print '<p>[start of message]</p>';
- 	print '<iframe src="?page=viewmessage&embed=yes&omitall=yes&id='.$message["id"].'"
-  	scrolling="auto" width=100% height=450 margin=0 frameborder=0>
+   print '<iframe src="?page=viewmessage&embed=yes&omitall=yes&id='.$message["id"].'"
+    scrolling="auto" width=100% height=450 margin=0 frameborder=0>
   </iframe>';
   print '<p>[end of message]</p>';
 }

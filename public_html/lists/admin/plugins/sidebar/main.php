@@ -1,7 +1,7 @@
 
 <SCRIPT LANGUAGE="JavaScript">
 function addNetscapePanel() {
-	if ((typeof window.sidebar == "object") && (typeof window.sidebar.addPanel == "function")) {
+  if ((typeof window.sidebar == "object") && (typeof window.sidebar.addPanel == "function")) {
       window.sidebar.addPanel ("PHPlist <?php echo $GLOBALS["installation_name"]?>",
       "http://<?php echo $website?><?=$adminpages?>/?page=sidebar&view=mozilla&max=5&d=0","");
     } else {

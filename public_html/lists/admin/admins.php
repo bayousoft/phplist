@@ -3,49 +3,64 @@
 <hr>
 
 <?php
-require_once "accesscheck.php";
+require_once dirname(__FILE__).'/accesscheck.php';
+$external = $require_login && $GLOBALS["admin_auth_module"] != 'phplist_auth.inc';
 
+# with external admins we simply display information
+if (!$external) {
+  print PageLink2("admin",$GLOBALS['I18N']->get('Add new admin'),"start=$start".$remember_find);
 
-print PageLink2("admin","Add new admin","start=$start".$remember_find);
-
-if (isset($delete)) {
-  # delete the index in delete
-  print "Deleting $delete ..\n";
-  Sql_query("delete from {$tables["admin"]} where id = $delete");
-  Sql_query("delete from {$tables["admin_attribute"]} where adminid = $delete");
-  Sql_query("delete from {$tables["admin_task"]} where adminid = $delete");
-  print "..Done<br><hr><br>\n";
-  Redirect("admins&start=$start");
-}
-
-ob_end_flush();
-
-if (isset($add)) {
-  if (isset($new)) {
-    $query = "insert into ".$tables["admin"]." (email,entered) values(\"$new\",now())";
-    $result = Sql_query($query);
-    $userid = Sql_insert_id();
-    $query = "insert into ".$tables["listuser"]." (userid,listid,entered) values($userid,$id,now())";
-    $result = Sql_query($query);
+  if (isset($_GET["delete"]) && $_GET["delete"]) {
+    # delete the index in delete
+    print $GLOBALS['I18N']->get('Deleting')." $delete ..\n";
+    Sql_query(sprintf('delete from %s where id = %d',$GLOBALS["tables"]["admin"],$_GET["delete"]));
+    Sql_query(sprintf('delete from %s where adminid = %d',$GLOBALS["tables"]["admin_attribute"],$_GET["delete"]));
+    Sql_query(sprintf('delete from %s where adminid = %d',$GLOBALS["tables"]["admin_task"],$_GET["delete"]));
+    print '..'.$GLOBALS['I18N']->get('Done')."<br /><hr><br />\n";
+    Redirect("admins&start=$start");
   }
-  echo "<br><font color=red size=+2>User added</font><br>";
+  
+  ob_end_flush();
+  
+  if (isset($add)) {
+    if (isset($new)) {
+      $query = "insert into ".$tables["admin"]." (email,entered) values(\"$new\",now())";
+      $result = Sql_query($query);
+      $userid = Sql_insert_id();
+      $query = "insert into ".$tables["listuser"]." (userid,listid,entered) values($userid,$id,now())";
+      $result = Sql_query($query);
+    }
+    echo '<br><font color=red size=+2>'.$GLOBALS['I18N']->get('Admin added').'</font><br>';
+  }
+}
+  
+if ($external) {
+  $admins = $GLOBALS["admin_auth"]->listAdmins();
+  $total = sizeof($admins);
+  $found = $total;
+  $ls = new WebblerListing($GLOBALS['I18N']->get('Administrators'));
+  foreach ($admins as $adminid => $adminname) {
+    $ls->addElement($adminname,PageUrl2("admin",$GLOBALS['I18N']->get('Show'),"id=".$adminid));
+  }
+  print $ls->display();
+  return;
+} else {
+  if (!$find)
+    $result = Sql_query("SELECT count(*) FROM ".$tables["admin"]);
+  else
+    $result = Sql_query("SELECT count(*) FROM ".$tables["admin"]." where loginname like \"%$find%\" or email like \"%$find%\"");
+  $totalres = Sql_fetch_Row($result);
+  $total = $totalres[0];
 }
 
-if (!$find)
-  $result = Sql_query("SELECT count(*) FROM ".$tables["admin"]);
-else
-  $result = Sql_query("SELECT count(*) FROM ".$tables["admin"]." where loginname like \"%$find%\" or email like \"%$find%\"");
-$totalres = Sql_fetch_Row($result);
-$total = $totalres[0];
-
-print "<p>$total Administrators";
-print $find ? " found</p>": "</p>";
+print "<p>$total ".$GLOBALS['I18N']->get('Administrators');
+print $find ? ' '.$GLOBALS['I18N']->get('found').'</p>': '</p>';
 if ($total > MAX_USER_PP) {
   if (isset($start) && $start) {
-    $listing = "Listing admin $start to " . ($start + MAX_USER_PP);
+    $listing = $GLOBALS['I18N']->get('Listing admin')." $start ".$GLOBALS['I18N']->get('to'). ' '. ($start + MAX_USER_PP);
     $limit = "limit $start,".MAX_USER_PP;
   } else {
-    $listing = "Listing admin 1 to 50";
+    $listing = $GLOBALS['I18N']->get('Listing admin 1 to 50');
     $limit = "limit 0,50";
     $start = 0;
   }
@@ -70,20 +85,21 @@ if ($total > MAX_USER_PP) {
 ?>
 <table>
 <tr><td colspan=4><?php echo formStart()?><input type=hidden name=id value="<?=$listid?>">
-Find an admin: <input type=text name=find value="<?php echo $find?>" size=40><input type=submit value="Go">
+<?php echo $GLOBALS['I18N']->get('Find an admin')?>: <input type=text name=find value="<?php echo $find?>" size=40><input type=submit value="Go">
 </form></td></tr></table>
 <?php
-$ls = new WebblerListing("Administrators");
+$ls = new WebblerListing($GLOBALS['I18N']->get('Administrators'));
 while ($admin = Sql_fetch_array($result)) {
   if ($find)
     $remember_find = "&find=".urlencode($find);
   $delete_url = sprintf("<a href=\"javascript:deleteRec('%s');\">del</a>",PageURL2("admins","Delete","start=$start&delete=".$admin["id"]));
-  $ls->addElement($admin["loginname"],PageUrl2("admin","Show","start=$start&id=".$admin["id"].$remember_find));
-  $ls->addColumn($admin["loginname"],"del",$delete_url);
+  $ls->addElement($admin["loginname"],PageUrl2("admin",$GLOBALS['I18N']->get('Show'),"start=$start&id=".$admin["id"].$remember_find));
+  if (!$external)
+    $ls->addColumn($admin["loginname"],"del",$delete_url);
 }
 print $ls->display();
 print '<br/><hr/>';
-print PageLink2("admin","Add new admin","start=$start".$remember_find);
-print '<p>'.PageLink2("importadmin","Import list of admins").'</p>';
+print PageLink2("admin",$GLOBALS['I18N']->get('Add new admin'),"start=$start".$remember_find);
+print '<p>'.PageLink2("importadmin",$GLOBALS['I18N']->get('Import list of admins')).'</p>';
 
 ?>

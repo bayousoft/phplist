@@ -215,7 +215,7 @@ class ONYX_RSS
                break;
             case 'item':
                (!isset($this->data['items'][$this->rss['index']-1][$this->rss['current_tag']]) ||
-                !strlen($this->data['items'][$this->rss['index']-1][$this->rss['current_tag']])) ? 
+                !strlen($this->data['items'][$this->rss['index']-1][$this->rss['current_tag']])) ?
                   $this->data['items'][$this->rss['index']-1][$this->rss['current_tag']] = $cdata :
                   $this->data['items'][$this->rss['index']-1][$this->rss['current_tag']].= $cdata;
                break;
@@ -309,7 +309,7 @@ class ONYX_RSS
       if ($this->conf['debug_mode'])
          printf($this->conf['error'], $line, $err);
       else
-      	$this->lasterror = $err;
+        $this->lasterror = $err;
    }
 
    function setCachePath($path)

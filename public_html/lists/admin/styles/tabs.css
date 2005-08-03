@@ -9,7 +9,7 @@ UNKNOWN {
 	BACKGROUND: url(../images/tabs/bgrightfade.gif) #fff 50% 0%; background-repeat: no-repeat; FLOAT: right; WIDTH: 50%;
 }
 #webblertabs {
-	FONT-SIZE: 75%; BACKGROUND: url(../images/tabs/bgwhite.gif) #fff bottom; FLOAT: left; WIDTH: 70%; LINE-HEIGHT: normal; 
+	FONT-SIZE: 75%; BACKGROUND: url(../images/tabs/bgwhite.gif) #fff bottom; FLOAT: left; WIDTH: 95%; LINE-HEIGHT: normal; 
 }
 #webblertabs UL {
 	PADDING-RIGHT: 10px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 10px; LIST-STYLE-TYPE: none

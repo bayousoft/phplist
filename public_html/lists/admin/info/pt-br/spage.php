@@ -1,0 +1,3 @@
+<h1>Crie m&uacuteltiplas p&aacuteginas de inscri&ccedile&atildeo.</h1>
+<p>Esta p&aacutegina permite que voc&ecirc crie as p&aacuteginas de inscri&ccedil&atildeo dos usu&arios de suas listas.</p>
+<p>Voc&ecirc pode selecionar qualquer conjunto de atributos e listas definidas em seu sistema. Desde valores para atributos padr&atildeo at&eacute valores de atributos globais, mas voc&ecirc pode reorden&aacute-los e adicionar outros valores padr&ao. Voc&ecirc tamb&eacutem pode alterar se um atributo deve ser obrigat&oacuterio ou n&atildeo. A obrigatoriedade de atributos s&oacute ter&aacute efeito quando o usu&aacuterio usa uma p&aacutegina para entrar.</p>

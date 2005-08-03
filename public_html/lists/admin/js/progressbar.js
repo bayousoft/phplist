@@ -47,7 +47,7 @@ txt+='</ilayer>';
 txt+='</td></tr></table>';
 }else{
 txt+='<div id="PBouter" style="position:relative; visibility:hidden; background-color:'+bordercolor+'; width:'+barwidth+'px; height:'+barheight+'px;">';
-txt+='<div style="position:absolute; top:1px; left:1px; width:'+(barwidth-2)+'px; height:'+(barheight-2)+'px; background-color:'+unloadedcolor+'; font-size:12px; color:black; text-align:center;">Processing please wait</div>';
+txt+='<div style="position:absolute; top:1px; left:1px; width:'+(barwidth-2)+'px; height:'+(barheight-2)+'px; background-color:'+unloadedcolor+'; font-size:12px; color:black; text-align:center;">Processing please wait. Do not interrupt!</div>';
 txt+='<div id="PBdone" style="position:absolute; top:1px; left:1px; width:0px; height:'+(barheight-2)+'px; background-color:'+loadedcolor+'; font-size:12px; color:white"></div>';
 txt+='</div>';
 }

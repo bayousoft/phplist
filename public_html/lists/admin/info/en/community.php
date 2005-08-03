@@ -6,26 +6,26 @@ Please make sure you are using the latest version when submitting a bugreport.<b
 ini_set("user_agent",NAME. " (PHPlist version ".VERSION.")");
 ini_set("default_socket_timeout",5);
 if ($fp = @fopen ("http://www.phplist.com/files/LATESTVERSION","r")) {
-	$latestversion = fgets ($fp);
+  $latestversion = fgets ($fp);
   $latestversion = preg_replace("/[^\.\d]/","",$latestversion);
   $v = VERSION;
   $v = str_replace("-dev","",$v);
-  if (!strcmp($v,$latestversion)) {
-  	print "<font color=green size=2>Congratulations, you are using the latest version</font>";
+  if ($v >= $latestversion) {
+    print "<font color=green size=2>Congratulations, you are using the latest version</font>";
   } else {
-  	print "<font color=green size=2>You are not using the latest version</font>";
-  	print "<br/>Your version: <b>".$v."</b>";
-  	print "<br/>Latest version: <b>".$latestversion."</b>  ";
+    print "<font color=green size=2>You are not using the latest version</font>";
+    print "<br/>Your version: <b>".$v."</b>";
+    print "<br/>Latest version: <b>".$latestversion."</b>  ";
     print '<a href="http://www.phplist.com/files/changelog">View what has changed</a>&nbsp;&nbsp;';
     print '<a href="http://www.phplist.com/files/phplist-'.$latestversion.'.tgz">Download</a>';
-	}
+  }
 } else {
-	print "<br/>Check for the latest version: <a href=http://www.phplist.com/files>here</a>";
+  print "<br/>Check for the latest version: <a href=http://www.phplist.com/files>here</a>";
 }
 ?>
 <p>PHPlist started early 2000 as a small application for the
 <a href="http://www.nationaltheatre.org.uk" target="_blank">National Theatre</a>. Over time it has
-grown into a fairly comprehensive Customer Relationship Management system and the 
+grown into a fairly comprehensive Customer Relationship Management system and the
 number of sites using it has grown rapidly. Even though the codebase is primarily
 maintained by one person, it is starting to become very complex, and ensuring the
 quality will require the input of many other people.</p>

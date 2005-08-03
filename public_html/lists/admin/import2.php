@@ -1,7 +1,11 @@
 <?php
 
-require_once "accesscheck.php";
+require_once dirname(__FILE__).'/accesscheck.php';
+if (!ALLOW_IMPORT) {
+  print '<p>'.$GLOBALS['I18N']->get('import is not available').'</p>';
+  return;
+}
 
-include "commonlib/pages/importcsv.php";
+require 'commonlib/pages/importcsv.php';
 
 ?>

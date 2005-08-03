@@ -2,7 +2,7 @@
 <script language="Javascript" src="js/jslib.js" type="text/javascript"></script>
 
 <?php
-require_once "accesscheck.php";
+require_once dirname(__FILE__).'/accesscheck.php';
 
 if ($delete) {
   # delete the index in delete
@@ -12,9 +12,9 @@ if ($delete) {
   $result = Sql_query("delete from ".$tables["rssitem_data"]." where itemid = $delete");
   $result = Sql_query("delete from ".$tables["rssitem_user"]." where itemid = $delete");
   if ($suc6)
-	  print "..Done";
+    print "..Done";
   else
-  	print "..failed";
+    print "..failed";
   print "<br /><hr /><br />\n";
 }
 
@@ -29,7 +29,7 @@ if ($GLOBALS["require_login"] && !isSuperUser()) {
         $subselect .= " and ". $tables["rssitem"].".list = ".$_GET["id"];
         print "RSS items for ".ListName($_GET["id"])."<br/>";
       }
-			break;
+      break;
     case "all":
       $subselect = "";break;
     case "none":
@@ -37,7 +37,7 @@ if ($GLOBALS["require_login"] && !isSuperUser()) {
       $subselect = "where ". $tables["rssitem"].".list = ". $tables["list"].".id and ".$tables["list"].".owner = 0";break;
   }
 } else {
-	$querytables = $tables["rssitem"];
+  $querytables = $tables["rssitem"];
   $subselect = "";
   if ($_GET["id"]) {
     $pagingurl = '&id='.$_GET["id"];
@@ -57,7 +57,7 @@ if (isset($start) && $start > 0) {
   $limit = "limit 0,".MAX_MSG_PP;
   $start = 0;
 }
-	print $total. " RSS Items</p>";
+  print $total. " RSS Items</p>";
 if ($total)
   printf ('<table border=1><tr><td colspan=4 align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
           %s</td><td>%s</td></tr></table><p><hr>',
@@ -76,7 +76,7 @@ if ($total) {
   print "<td>Item info</td><td>Status</td><td>More</td></tr>";
   $result = Sql_query("SELECT * FROM $querytables $subselect order by added desc $limit");
   while ($rss = Sql_fetch_array($result)) {
- # 	$uniqueviews = Sql_Fetch_Row_Query("select count(userid) from {$tables["usermessage"]} where viewed is not null and messageid = ".$msg["id"]);
+ #   $uniqueviews = Sql_Fetch_Row_Query("select count(userid) from {$tables["usermessage"]} where viewed is not null and messageid = ".$msg["id"]);
     printf ('<tr><td valign="top"><table>
       <tr><td valign="top"><b>Title</b>:</td><td valign="top">%s</td></tr>
       <tr><td valign="top"><b>Link</b>:</td><td valign="top"><a href="%s" target="_blank">%s</a></td></tr>
@@ -85,19 +85,19 @@ if ($total) {
       </table>
       </td>',
       $rss["title"],$rss["link"],$rss["link"],ereg_replace("&","& ",$rss["source"]),$rss["added"]);
-      
+
     $status = sprintf('<table border=1>
-    	<tr><td>Processed</td><td>%d</td></tr>
+      <tr><td>Processed</td><td>%d</td></tr>
       <tr><td>Text</td><td>%d</td></tr>
       <tr><td>HTML</td><td>%d</td></tr>
-			</table>',
-			$rss["processed"],$rss["astext"],$rss["ashtml"]);
+      </table>',
+      $rss["processed"],$rss["astext"],$rss["ashtml"]);
     print '<td valign="top">'.$status.'</td>';
     print '<td valign=top><table>';
     $data_req = Sql_Query(sprintf('select * from %s where tag != "title" and tag != "link" and itemid = %d',
-    	$tables["rssitem_data"],$rss["id"]));
+      $tables["rssitem_data"],$rss["id"]));
     while ($data = Sql_Fetch_ArraY($data_req)) {
-    	printf('<tr><td valign=top><b>%s</b></td></td></tr><tr><td valign=top>%s</td></tr>',$data["tag"],$data["data"]);
+      printf('<tr><td valign=top><b>%s</b></td></td></tr><tr><td valign=top>%s</td></tr>',$data["tag"],$data["data"]);
     }
     print '</table></td>';
     print '</tr>';

@@ -25,7 +25,7 @@ $strThanks              = 'Gracias por suscribirse a nuestras listas.';
 # the EmailConfirmation message can contain placeholders
 #$strEmailConfirmation   = 'Su dirección de email [email] ha sido ingresada en nuestro sistema. En unos minutos recibirá un email de confirmación con las listas a las cuales se suscribió.';
 $strEmailConfirmation   = 'Su dirección de email ha sido ingresada en nuestro sistema. En pocos minutos usted recibirá un email en el cuál deberá confimar su suscripción. Asegúrese, por favor, de hacer clic en el vínculo allí incluído para que su suscripción quede confirmada.';
-$strEmailFailed					= 'Los sentimos, el envio del Email para solicitar su confirmación falló.  Por favor, haga clic en el botón "Actualizar" de su navegador para intentarlo nuévamente.';
+$strEmailFailed          = 'Los sentimos, el envio del Email para solicitar su confirmación falló.  Por favor, haga clic en el botón "Actualizar" de su navegador para intentarlo nuévamente.';
 $strUnsubscribeTitle    = 'Cancelar su suscripción a nuestra(s) lista(s)';
 $strUnsubscribeDone     = 'Su suscripción a las listas seleccionadas ha sido cancelada.  Pronto recibirá confirmación de esto.';
 $strBack                = 'Atrás';
@@ -45,9 +45,9 @@ $strUserAlreadyInitialised = 'Lo sentimos, su contraseña ya fue configurada';
 $strConfirmFailInfo     = 'Los sentimos, un error ocurrió al tratar de confirmar su suscrición. El mensaje de error aparece a continuación.';
 $strPreferHTMLEmail     = 'Prefiero recibir email en formato HTML';
 $strPreferTextEmail     = 'Prefiero recigir email en formato de Sólo Texto';
-$strPreferredFormat			= 'Formato preferido para sus email:';
-$strText 								= 'Texto';
-$strHTML								= 'HTML';
+$strPreferredFormat      = 'Formato preferido para sus email:';
+$strText                 = 'Texto';
+$strHTML                = 'HTML';
 $strPreferencesTitle    = 'Actualizar sus preferencias';
 $strPreferencesInfo     = 'Por favor, confirme que la información siguiente es correcta y haga clic en el botón "Actualizar"';
 $strUpdatePreferences   = 'Actualizar';
@@ -62,15 +62,19 @@ $strSendHTML           = 'Enviar mensaje HTML';
 $strYes                = 'Si';
 $strNo                 = 'No';
 $strUnsubscribe        = 'Cancelar suscripción';
-$strAttachmentIntro		 = 'Este mensaje contiene documentos anexos que puede ver con un Navegador:';
-$strLocation					 = 'Ubicación';
-$strFrequency					 = 'Con que frecuencia le enviamos mensajes';
-$strHourly						 = 'Cada hora';
-$strDaily						 = 'Diariamente';
-$strWeekly						 = 'Semanalmente';
-$strMonthly						 = 'Mensualmente';
-$strChoosePassword 		 = 'Por favor, escriba una contraseña';
-$strConfirmPassword 	 = 'Confirme su contraseña';
+$strAttachmentIntro     = 'Este mensaje contiene documentos anexos que puede ver con un Navegador:';
+$strLocation           = 'Ubicación';
+$strFrequency           = 'Con que frecuencia le enviamos mensajes';
+$strHourly             = 'Cada hora';
+$strDaily             = 'Diariamente';
+$strWeekly             = 'Semanalmente';
+$strMonthly             = 'Mensualmente';
+$strChoosePassword      = 'Por favor, escriba una contraseña';
+$strConfirmPassword    = 'Confirme su contraseña';
+
+
+?>
+a';
 
 
 ?>

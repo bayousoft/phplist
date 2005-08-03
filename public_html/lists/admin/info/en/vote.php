@@ -13,7 +13,7 @@ If you think PHPlist is great, and you would advice more people to use it, why n
     <td valign="middle" width="15%">
   <b>Rating:</b>
     </td>
-	<td valign="top" width="85%">
+  <td valign="top" width="85%">
   <select name="rating" onchange="submit()">
 
   <option value="">-
@@ -37,16 +37,16 @@ If you think PHPlist is great, and you would advice more people to use it, why n
 </li>
 <li><b>At codetransit</b>
 <form action="http://www.codetransit.com/index.php" method=post name=rate531 target="_vote"><input type=hidden name=action value=rate><input type=hidden name=id value=531>
-					<select name=score size=1 style="font-family: Verdana, Tahoma, Arial, Helvetica; font-size: 10pt; color: #000000" onchange="document.rate531.submit()">
-						<option>Select
-						<option value="1">Poor
-						<option value="2">Fair
-						<option value="3">Good
-						<option value="4">Very Good
-						<option value="5" selected>Excellent
-					</select>
+          <select name=score size=1 style="font-family: Verdana, Tahoma, Arial, Helvetica; font-size: 10pt; color: #000000" onchange="document.rate531.submit()">
+            <option>Select
+            <option value="1">Poor
+            <option value="2">Fair
+            <option value="3">Good
+            <option value="4">Very Good
+            <option value="5" selected>Excellent
+          </select>
   <input type="submit" value="set rating">
-					</form> or write a <a href="http://www.codetransit.com/comments/index.php?action=addcommentsform&id=531&title=PHPlist&version=1.8.0" target="_review">Review</a>
+          </form> or write a <a href="http://www.codetransit.com/comments/index.php?action=addcommentsform&id=531&title=PHPlist&version=1.8.0" target="_review">Review</a>
 <br/><br/></li>
 <li><b>At PHPWelt</b> (german)
 <form action="http://www.phpwelt.de/archiv/arcscript.php" method="post" target="_vote">
@@ -110,7 +110,7 @@ If you think PHPlist is great, and you would advice more people to use it, why n
 <li><b>At webscript.ru</b> (russian)<br/>
 <form name="rate" method="post" action="http://webscript.ru/action.php?sid=598201422&action=rate&linkid=22&having=753">
 5 <input type="radio" value="5" name="form_rate_radio_vote" checked>
-4	<input type="radio" value="4" name="form_rate_radio_vote">
+4  <input type="radio" value="4" name="form_rate_radio_vote">
 3 <input type="radio" value="3" name="form_rate_radio_vote">
 2 <input type="radio" value="2" name="form_rate_radio_vote">
 1 <input type="radio" value="1" name="form_rate_radio_vote">
@@ -129,8 +129,8 @@ If you think PHPlist is great, and you would advice more people to use it, why n
       <option VALUE="4">4
       <option VALUE="5">5 - Average
       <option VALUE="6">6
-      <option VALUE="7">7 
-      <option VALUE="8">8 
+      <option VALUE="7">7
+      <option VALUE="8">8
       <option VALUE="9">9
       <option VALUE="10" selected>10 - Excellent
       <input Type="Hidden" Name="ID" Value="151">

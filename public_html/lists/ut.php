@@ -9,6 +9,13 @@ if ($_SERVER["ConfigFile"] && is_file($_SERVER["ConfigFile"])) {
   include "config/config.php";
 }
 error_reporting($er);
+require_once dirname(__FILE__).'/admin/init.php';
+require_once dirname(__FILE__).'/admin/'.$GLOBALS["database_module"];
+require_once dirname(__FILE__)."/texts/english.inc";
+include_once dirname(__FILE__)."/texts/".$GLOBALS["language_module"];
+require_once dirname(__FILE__)."/admin/defaultconfig.inc";
+require_once dirname(__FILE__).'/admin/connect.php';
+include_once dirname(__FILE__)."/admin/languages.php";
 
 if ($_GET["u"] && $_GET["m"]) {
   $userid = Sql_Fetch_Row_Query(sprintf('select id from %s where uniqid = "%s"',

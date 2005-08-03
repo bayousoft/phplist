@@ -1,5 +1,5 @@
 <?php
-require_once "accesscheck.php";
+require_once dirname(__FILE__).'/accesscheck.php';
 
 define ("STRUCTUREVERSION","dev");
 
@@ -17,17 +17,22 @@ $DBstruct = array( # order of tables is essential for smooth upgrade
         "attributeid" => array("integer not null","attribute"),
         "userid" => array("integer not null","user"),
         "value" => array("varchar(255)","Value of this attribute for this user"),
-        "primary key" => array("(attributeid,userid)","PKey")
+        "primary key" => array("(attributeid,userid)","PKey"),
+        "index" => array("userindex (userid)",""),
+        "index" => array("attindex (attributeid)",""),
+        "index" => array("userattid (attributeid,userid)",""),
+        "index" => array("attuserid (userid,attributeid)",""),
     ),
     "user" => array ( # a user in the system
-        "id" => array("integer not null primary key auto_increment","sys:ID"),
+        "id" => array("integer not null primary key auto_increment","sysexp:ID"),
         "email" => array("varchar(255) not null","Email"),
         "confirmed" => array("tinyint default 0","sys:Is this user confirmed"),
+        "blacklisted" => array("tinyint default 0","sys:Is this user blacklisted"),
         "bouncecount" => array("integer default 0","sys:Number of bounces on this user"),
         "entered" => array("datetime", "sysexp:Entered"),
         "modified" => array("timestamp", "sysexp:Last Modified"),
         "uniqid" => array("varchar(255)","sys:Unique ID for User"),
-	      "unique" => array("(email)","sys:unique"),
+        "unique" => array("(email)","sys:unique"),
         "htmlemail" => array("tinyint default 0","Send this user HTML emails"),
         "subscribepage" => array("integer","sysexp:Which page was used to subscribe"),
         "rssfrequency" => array("varchar(100)","RSS Frequency"),
@@ -47,6 +52,15 @@ $DBstruct = array( # order of tables is essential for smooth upgrade
         "summary" => array("varchar(255)",""),
         "detail" => array("text",""),
         "systeminfo" => array("text",""),
+    ),
+    "user_blacklist" => array(
+        "email" => array("varchar(255) not null unique","Email"),
+        "added" => array("datetime","When added to blacklist"),
+    ),
+    "user_blacklist_data" => array(
+        "email" => array("varchar(255) not null unique","Email"),
+        "name" => array("varchar(100)","Name of Dataitem"),
+        "data" => array("text",""),
     ),
     "list" => array ( # a list in the system
         "id" => array("integer not null primary key auto_increment","ID"),
@@ -85,9 +99,10 @@ $DBstruct = array( # order of tables is essential for smooth upgrade
         "entered" => array("datetime","Entered"),
         "modified" => array("timestamp", "Modified"),
         "embargo" => array("datetime","Time to send message"),
-        "repeat" => array("integer default 0","Number of seconds to repeat the message"),
+        "repeatinterval" => array("integer default 0","Number of seconds to repeat the message"),
         "repeatuntil" => array("datetime","Final time to stop repetition"),
-        "status" => array("enum('submitted','inprocess','sent','cancelled','prepared','draft')","Status"),
+#        "status" => array("enum('submitted','inprocess','sent','cancelled','prepared','draft')","Status"),
+        "status" => array("varchar(255)","Status"),
         "userselection" => array("text","query to select the users for this message"),
         "sent" => array("datetime", "sent"),
         "htmlformatted" => array("tinyint default 0","Is this message HTML formatted"),
@@ -103,7 +118,13 @@ $DBstruct = array( # order of tables is essential for smooth upgrade
         "bouncecount" => array("integer default 0","How many bounces on this message"),
         "sendstart" => array("datetime","When did sending of this message start"),
         "rsstemplate" => array("varchar(100)","if used as a RSS template, what frequency"),
-        "owner" => array("integer","Admin who is owner of this list")
+        "owner" => array("integer","Admin who is owner")
+    ),
+    "messagedata" => array(
+        "name" => array("varchar(100) not null","Name of field"),
+        "id" => array("integer not null", "Message ID"),
+        "data" => array("text","Data"),
+        "primary key" => array("(name,id)",""),
     ),
     "listmessage" => array ( # linking messages to a list
         "id" => array("integer not null primary key auto_increment","ID"),
@@ -114,7 +135,7 @@ $DBstruct = array( # order of tables is essential for smooth upgrade
         "unique" => array("(messageid,listid)","")
     ),
     "rssitem" => array(
-    		"id" => array("integer not null primary key auto_increment","ID"),
+        "id" => array("integer not null primary key auto_increment","ID"),
         "title" => array("varchar(100) not null","Title"),
         "link" => array("varchar(100) not null","Link"),
         "source" => array("varchar(255)",""),
@@ -126,13 +147,13 @@ $DBstruct = array( # order of tables is essential for smooth upgrade
         "ashtml" => array("integer default 0","Sent as HTML"),
     ),
     "rssitem_data" => array(
-     		"itemid" => array("integer not null","rss item id"),
+         "itemid" => array("integer not null","rss item id"),
         "tag" => array("varchar(100) not null",""),
         "primary key" => array("(itemid,tag)",""),
         "data" => array("text","")
     ),
     "rssitem_user" => array(
-    		"itemid" => array("integer not null","rss item id"),
+        "itemid" => array("integer not null","rss item id"),
         "userid" => array("integer not null","user id"),
         "entered" => array("timestamp", "Entered"),
         "primary key" => array("(itemid,userid)","")
@@ -145,7 +166,7 @@ $DBstruct = array( # order of tables is essential for smooth upgrade
         "id" => array("integer not null primary key auto_increment","ID"),
         "messageid" => array("integer not null","Message ID"),
         "attachmentid" => array("integer not null","Attachment ID")
-		),
+    ),
     "attachment" => array (
       "id" => array("integer not null primary key auto_increment","ID"),
       "filename" => array("varchar(255)","file"),
@@ -158,9 +179,13 @@ $DBstruct = array( # order of tables is essential for smooth upgrade
         #"id" => array("integer not null primary key auto_increment","ID"),
         "messageid" => array("integer not null","Message ID"),
         "userid" => array("integer not null","User ID"),
-        "entered" => array("timestamp", "Entered"),
+        "entered" => array("datetime", "Entered"),
         "viewed" => array("datetime","When viewed"),
-        "primary key" => array("(userid,messageid)","Primary key")
+        "status" => array("varchar(255)","Status of message"),
+        "primary key" => array("(userid,messageid)","Primary key"),
+        "index" => array("messageidindex (messageid)",""),
+        "index" => array("useridindex (userid)",""),
+        "index" => array("enteredindex (entered)",""),
     ),
     "sendprocess" => array( # keep track of running send processes to avoid to many running concurrently
         "id" => array("integer not null primary key auto_increment","ID"),
@@ -203,6 +228,15 @@ $DBstruct = array( # order of tables is essential for smooth upgrade
         "bounce" => array("integer not null","Bounce ID"),
         "time" => array("timestamp","When did it bounce"),
         "index" => array("(user,message,bounce)","index")
+    ),
+    "user_message_forward" => array(
+        "id" => array("integer not null primary key auto_increment","ID"),
+        "user" => array("integer not null","User ID"),
+        "message" => array("integer not null","Message ID"),
+        "forward" => array("varchar(255)","Forward email"),
+        "status" => array("varchar(255)","Status of forward"),
+        "time" => array("timestamp","When was it forwarded"),
+        "index" => array("(user,message)","index")
     ),
     "config" => array(
         "item" => array("varchar(35) not null primary key","ID"),
@@ -268,20 +302,91 @@ $DBstruct = array( # order of tables is essential for smooth upgrade
        "entered" => array("datetime",""),
        "page" => array("varchar(100)","page this log was for"),
        "entry" => array("text","")
-		),
+    ),
+    "urlcache" => array(
+       "id" => array("integer not null primary key auto_increment","ID"),
+       "url" => array("varchar(255) not null",""),
+       "lastmodified" => array("integer",""),
+       "added" => array("datetime",""),
+       "content" => array("mediumtext",""),
+       "index" => array("urlindex (url)",""),
+    ),
+    "linktrack" => array (
+        "linkid" => array("integer not null primary key auto_increment", "Link ID"),
+        "messageid" => array("integer not null","Message ID"),
+        "userid" => array("integer not null","User ID"),
+        "url" => array("varchar(255)", "URL to log"),
+        "forward" => array("text","URL to forward to"),
+        "firstclick" => array("datetime","When first clicked"),
+        "latestclick" => array("timestamp", "When last clicked"),
+        "clicked" => array("integer default 0", "Number of clicks"),
+        "index" => array("midindex (messageid)",""),
+        "index" => array("uidindex (userid)",""),
+        "index" => array("urlindex (url)",""),
+        "index" => array("miduidindex (messageid,userid)",""),
+        "index" => array("miduidurlindex (messageid,userid,url)",""),
+        "unique" => array("(messageid,userid,url)","")
+    ),
+    "linktrack_userclick" => array (
+        "linkid" => array("integer not null",""),
+        "userid" => array("integer not null",""),
+        "messageid" => array("integer not null",""),
+        "name" => array("varchar(255)","Name of data"),
+        "data" => array("text",""),
+        "date" => array("datetime",""),
+        "index" => array("linkindex (linkid)",""),
+        "index" => array("uidindex (userid)",""),
+        "index" => array("midindex (messageid)",""),
+        "index" => array("linkuserindex (linkid,userid)",""),
+        "index" => array("linkusermessageindex (linkid,userid,messageid)",""),
+    ),
+    "userstats" => array(
+        "id" => array("integer not null primary key auto_increment",""),
+        "unixdate" => array("integer","date in unix format"),
+        "item" => array("varchar(255)",""),
+        "listid" => array("integer default 0",""),
+        "value" => array("integer default 0",""),
+        "index" => array("dateindex (unixdate)",""),
+        "index" => array("itemindex (item)",""),
+        "index" => array("listindex (listid)",""),
+        "index" => array("listdateindex (listid,unixdate)",""),
+        "unique" => array("entry (unixdate,item,listid)",""),
+    ),
+    # session table structure, table is created as the name identified in the config file
+#   "sessiontable" => array(
+#      "sessionid" => array("CHAR(32) NOT NULL PRIMARY KEY",""),
+#      "lastactive" => array("INTEGER NOT NULL",""),
+#      "data" => array("LONGTEXT",""),
+#    ),
+    "bounceregex" => array(
+        "id" => array("integer not null primary key auto_increment","ID"),
+        "regex" => array("varchar(255)","Regex"),
+        "action" => array("varchar(255)","Action on rule"),
+        "listorder" => array("integer default 0",""),
+        "admin" => array("integer",""),
+        "comment" => array("text",""),
+        "status" => array("varchar(255)",""),
+        "count" => array("integer default 0","Count of matching bounces on this rule"),
+        "unique" => array("regex (regex)",""),
+     ),
+     "bounceregex_bounce" => array(
+        "regex" => array("integer not null","Related regex"),
+        "bounce" => array("integer not null","Related bounce"),
+        "primary key" => array("(regex,bounce)",""),
+      ),
 /*    "translation" => array(
-    	"id" => array("integer not null primary key auto_increment",""),
+      "id" => array("integer not null primary key auto_increment",""),
       "translator" => array("varchar(255)","Name of translator"),
       "email" => array("varchar(255)","email of translator"),
       "pass" => array("varchar(255)","encrypted password for translation"),
       "ident" => array("varchar(255)","Translation identifier")
     ),
     "translation_data" => array(
-    	"id" => array("integer not null","Translation ID"),
+      "id" => array("integer not null","Translation ID"),
       "item" => array("varchar(100)","Item to translate"),
       "primary key" => array("(id,item)","")
     )
 */
-	);
+);
 
 ?>

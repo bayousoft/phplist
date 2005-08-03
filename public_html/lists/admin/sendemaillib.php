@@ -1,32 +1,32 @@
 <?php
-require_once "accesscheck.php";
+require_once dirname(__FILE__).'/accesscheck.php';
 
 # send an email library
 
-if (PHPMAILER) {
-	# phplistmailer, extended of the popular phpmail class
+if (PHPMAILER && is_file(dirname(__FILE__).'/phpmailer/class.phpmailer.php')) {
+  # phplistmailer, extended of the popular phpmail class
   # this is still very experimental
-	include $GLOBALS["coderoot"] . "class.phplistmailer.php";
+  include_once $GLOBALS["coderoot"] . "class.phplistmailer.php";
 } else {
-	if (USE_OUTLOOK_OPTIMIZED_HTML) {
-		require_once dirname(__FILE__)."/class.html.mime.mail-outlookfix.inc";
+  if (USE_OUTLOOK_OPTIMIZED_HTML) {
+    require_once dirname(__FILE__)."/class.html.mime.mail-outlookfix.inc";
   } else {
-		require_once dirname(__FILE__)."/class.html.mime.mail.inc";
+    require_once dirname(__FILE__)."/class.html.mime.mail.inc";
   }
 }
 
 if (!function_exists("output")) {
-	function output($text) {
- 	}
+  function output($text) {
+   }
 }
 
-function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
-  global $strThisLink,$PoweredByImage,$PoweredByText,$tables,$cached,$pageroot,$website;
+function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$forwardedby = array()) {
+  global $strThisLink,$PoweredByImage,$PoweredByText,$cached,$website;
   if ($email == "")
-    return;
+    return 0;
   if (!$cached[$messageid]) {
-  	$domain = getConfig("domain");
-    $message = Sql_query("select * from {$tables["message"]} where id = $messageid");
+    $domain = getConfig("domain");
+    $message = Sql_query("select * from {$GLOBALS["tables"]["message"]} where id = $messageid");
     $cached[$messageid] = array();
     $message = Sql_fetch_array($message);
     if (ereg("([^ ]+@[^ ]+)",$message["fromfield"],$regs)) {
@@ -40,51 +40,74 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
       $cached[$messageid]["fromname"] = ereg_replace('"',"",ltrim(rtrim($message["fromfield"])));
     } elseif (ereg(" ",$message["fromfield"],$regs)) {
       # if there is a space, we need to add the email
-      $cached[$messageid]["fromname"] = stripslashes($message["fromfield"]);
+      $cached[$messageid]["fromname"] = $message["fromfield"];
       $cached[$messageid]["fromemail"] = "listmaster@$domain";
     } else {
-      $cached[$messageid]["fromemail"] = stripslashes($message["fromfield"]) . "@$domain";
-      $cached[$messageid]["fromname"] = stripslashes($message["fromfield"]) . "@$domain";
+      $cached[$messageid]["fromemail"] = $message["fromfield"] . "@$domain";
+      $cached[$messageid]["fromname"] = $message["fromfield"] . "@$domain";
     }
     # erase double spacing
     while (ereg("  ",$cached[$messageid]["fromname"]))
-    $cached[$messageid]["fromname"] = eregi_replace("  "," ",$cached[$messageid]["fromname"]);
-    $cached[$messageid]["to"] = stripslashes($message["tofield"]);
-    $cached[$messageid]["subject"] = stripslashes($message["subject"]);
-    $cached[$messageid]["replyto"] = stripslashes($message["replyto"]);
-    $cached[$messageid]["content"] = stripslashes($message["message"]);
-    $cached[$messageid]["textcontent"] = stripslashes($message["textmessage"]);
-    $cached[$messageid]["footer"] = stripslashes($message["footer"]);
+      $cached[$messageid]["fromname"] = eregi_replace("  "," ",$cached[$messageid]["fromname"]);
+    $cached[$messageid]["fromname"] = eregi_replace("@","",$cached[$messageid]["fromname"]);
+    $cached[$messageid]["fromname"] = trim($cached[$messageid]["fromname"]);
+    $cached[$messageid]["to"] = $message["tofield"];
+    $cached[$messageid]["subject"] = $message["subject"];
+    $cached[$messageid]["replyto"] =$message["replyto"];
+    $cached[$messageid]["content"] = $message["message"];
+    $cached[$messageid]["textcontent"] = $message["textmessage"];
+    $cached[$messageid]["footer"] = $message["footer"];
     $cached[$messageid]["htmlformatted"] = $message["htmlformatted"];
     $cached[$messageid]["sendformat"] = $message["sendformat"];
     if ($message["template"]) {
-      $req = Sql_Fetch_Row_Query("select template from {$tables["template"]} where id = {$message["template"]}");
+      $req = Sql_Fetch_Row_Query("select template from {$GLOBALS["tables"]["template"]} where id = {$message["template"]}");
       $cached[$messageid]["template"] = stripslashes($req[0]);
       $cached[$messageid]["templateid"] = $message["template"];
    #   dbg("TEMPLATE: ".$req[0]);
+    } else {
+      $cached[$messageid]["template"] = '';
+      $cached[$messageid]["templateid"] = 0;
     }
-    
+
     ## @@ put this here, so it can become editable per email sent out at a later stage
     $cached[$messageid]["html_charset"] = getConfig("html_charset");
     ## @@ need to check on validity of charset
     if (!$cached[$messageid]["html_charset"])
-    	$cached[$messageid]["html_charset"] = 'iso-8859-1';
+      $cached[$messageid]["html_charset"] = 'iso-8859-1';
     $cached[$messageid]["text_charset"] = getConfig("text_charset");
     if (!$cached[$messageid]["text_charset"])
-    	$cached[$messageid]["text_charset"] = 'iso-8859-1';
+      $cached[$messageid]["text_charset"] = 'iso-8859-1';
   }# else
-  #	dbg("Using cached {$cached[$messageid]["fromemail"]}");
+  #  dbg("Using cached {$cached[$messageid]["fromemail"]}");
   if (VERBOSE)
-    output("Sending message $messageid with subject{$cached[$messageid]["subject"]} to $email");
+    output($GLOBALS['I18N']->get('sendingmessage').' '.$messageid.' '.$GLOBALS['I18N']->get('withsubject').' '.
+      $cached[$messageid]["subject"].' '.$GLOBALS['I18N']->get('to').' '.$email);
 
   # erase any placeholders that were not found
 #  $msg = ereg_replace("\[[A-Z ]+\]","",$msg);
+  $user_att_values = getUserAttributeValues($email);
+  $userdata = Sql_Fetch_Array_Query(sprintf('select * from %s where email = "%s"',
+    $GLOBALS["tables"]["user"],$email));
 
   $url = getConfig("unsubscribeurl");$sep = ereg('\?',$url)?'&':'?';
   $html["unsubscribe"] = sprintf('<a href="%s%suid=%s">%s</a>',$url,$sep,$hash,$strThisLink);
   $text["unsubscribe"] = sprintf('%s%suid=%s',$url,$sep,$hash);
   $html["unsubscribeurl"] = sprintf('%s%suid=%s',$url,$sep,$hash);
   $text["unsubscribeurl"] = sprintf('%s%suid=%s',$url,$sep,$hash);
+  $url = getConfig("subscribeurl");$sep = ereg('\?',$url)?'&':'?';
+  $html["subscribe"] = sprintf('<a href="%s">%s</a>',$url,$strThisLink);
+  $text["subscribe"] = sprintf('%s',$url);
+  $html["subscribeurl"] = sprintf('%s',$url);
+  $text["subscribeurl"] = sprintf('%s',$url);
+  #?mid=1&id=1&uid=a9f35f130593a3d6b89cfe5cfb32a0d8&p=forward&email=michiel%40tincan.co.uk&
+  $url = getConfig("forwardurl");$sep = ereg('\?',$url)?'&':'?';
+  $html["forward"] = sprintf('<a href="%s%suid=%s&mid=%d">%s</a>',$url,$sep,$hash,$messageid,$strThisLink);
+  $text["forward"] = sprintf('%s%suid=%s&mid=%d',$url,$sep,$hash,$messageid);
+  $html["forwardurl"] = $text["forward"];
+  $text["forwardurl"] = $text["forward"];
+  $url = getConfig("public_baseurl");
+  # make sure there are no newlines, otherwise they get turned into <br/>s
+  $html["forwardform"] = sprintf('<form method="get" action="%s" name="forwardform" class="forwardform"><input type=hidden name="uid" value="%s" /><input type=hidden name="mid" value="%d" /><input type=hidden name="p" value="forward" /><input type=text name="email" value="" class="forwardinput" /><input name="Send" type="submit" value="%s" class="forwardsubmit"/></form>',$url,$hash,$messageid,$GLOBALS['strForward']);
   $text["signature"] = "\n\n--\nPowered by PHPlist, www.phplist.com --\n\n";
   $url = getConfig("preferencesurl");$sep = ereg('\?',$url)?'&':'?';
   $html["preferences"] = sprintf('<a href="%s%suid=%s">%s</a>',$url,$sep,$hash,$strThisLink);
@@ -92,43 +115,63 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
   $html["preferencesurl"] = sprintf('%s%suid=%s',$url,$sep,$hash);
   $text["preferencesurl"] = sprintf('%s%suid=%s',$url,$sep,$hash);
 /*
-	We request you retain the signature below in your emails including the links.
-	This not only gives respect to the large amount of time given freely
-  by the developers	but also helps build interest, traffic and use of
+  We request you retain the signature below in your emails including the links.
+  This not only gives respect to the large amount of time given freely
+  by the developers  but also helps build interest, traffic and use of
   PHPlist, which is beneficial to it's future development.
-  
+
   You can configure how the credits are added to your pages and emails in your
   config file.
 
-	Michiel Dethmers, Tincan Ltd 2003, 2004
+  Michiel Dethmers, Tincan Ltd 2003, 2004
 */
   if (!EMAILTEXTCREDITS) {
-  	$html["signature"] = $PoweredByImage;#'<div align="center" id="signature"><a href="http://www.phplist.com"><img src="powerphplist.png" width=88 height=31 title="Powered by PHPlist" alt="Powered by PHPlist" border="0"></a></div>';
+    $html["signature"] = $PoweredByImage;#'<div align="center" id="signature"><a href="http://www.phplist.com"><img src="powerphplist.png" width=88 height=31 title="Powered by PHPlist" alt="Powered by PHPlist" border="0"></a></div>';
     # oops, accidentally became spyware, never intended that, so take it out again :-)
-  	$html["signature"] = preg_replace('/src=".*power-phplist.png"/','src="powerphplist.png"',$html["signature"]);
+    $html["signature"] = preg_replace('/src=".*power-phplist.png"/','src="powerphplist.png"',$html["signature"]);
   } else {
-		$html["signature"] = $PoweredByText;
-  }
-
-  if (preg_match("/##LISTOWNER=(.*)/",$msg,$regs)) {
-    $listowner = $regs[1];
-    $msg = ereg_replace($regs[0],"",$msg);
+    $html["signature"] = $PoweredByText;
   }
 
   $content = $cached[$messageid]["content"];
-	if ($cached[$messageid]["htmlformatted"]) {
-  	if (!$cached[$messageid]["textcontent"]) {
-	  	$textcontent = stripHTML($content);
+  if (preg_match("/##LISTOWNER=(.*)/",$content,$regs)) {
+    $listowner = $regs[1];
+    $content = ereg_replace($regs[0],"",$content);
+  } else {
+    $listowner = 0;
+  }
+
+  if ($GLOBALS["has_pear_http_request"] && preg_match("/\[URL:([^\s]+)\]/i",$content,$regs)) {
+    while (strlen($regs[1])) {
+      $url = $regs[1];
+      if (!preg_match('/^http/i',$url)) {
+        $url = 'http://'.$url;
+      }
+      $remote_content = fetchUrl($url,$userdata);
+      if ($remote_content) {
+        $content = eregi_replace(preg_quote($regs[0]),$remote_content,$content);
+        $cached[$messageid]["htmlformatted"] = strip_tags($content) != $content;
+      } else {
+        logEvent("Error fetching URL: $regs[1] to send to $email");
+        return 0;
+      }
+      preg_match("/\[URL:([^\s]+)\]/i",$content,$regs);
+    }
+  }
+
+  if ($cached[$messageid]["htmlformatted"]) {
+    if (!$cached[$messageid]["textcontent"]) {
+      $textcontent = stripHTML($content);
     } else {
-    	$textcontent = $cached[$messageid]["textcontent"];
+      $textcontent = $cached[$messageid]["textcontent"];
     }
     $htmlcontent = $content;
   } else {
-#  	$textcontent = $content;
-  	if (!$cached[$messageid]["textcontent"]) {
-	  	$textcontent = $content;
+#    $textcontent = $content;
+    if (!$cached[$messageid]["textcontent"]) {
+      $textcontent = $content;
     } else {
-    	$textcontent = $cached[$messageid]["textcontent"];
+      $textcontent = $cached[$messageid]["textcontent"];
     }
     $htmlcontent = parseText($content);
   }
@@ -145,7 +188,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
   }
   $textmessage = $textcontent;
 
-  foreach (array("preferences","unsubscribe","signature") as $item) {
+  foreach (array("forwardform","forward","subscribe","preferences","unsubscribe","signature") as $item) {
     if (eregi('\['.$item.'\]',$htmlmessage,$regs)) {
       $htmlmessage = eregi_replace('\['.$item.'\]',$html[$item],$htmlmessage);
       unset($html[$item]);
@@ -155,7 +198,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
       unset($text[$item]);
     }
   }
-  foreach (array("preferencesurl","unsubscribeurl") as $item) {
+  foreach (array("forwardurl","subscribeurl","preferencesurl","unsubscribeurl") as $item) {
     if (eregi('\['.$item.'\]',$htmlmessage,$regs)) {
       $htmlmessage = eregi_replace('\['.$item.'\]',$html[$item],$htmlmessage);
     }
@@ -163,16 +206,34 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
       $textmessage = eregi_replace('\['.$item.'\]',$text[$item],$textmessage);
     }
   }
-  $text["footer"] = eregi_replace("\[UNSUBSCRIBE\]",$text["unsubscribe"],$cached[$messageid]["footer"]);
-  $html["footer"] = eregi_replace("\[UNSUBSCRIBE\]",$html["unsubscribe"],$cached[$messageid]["footer"]);
+  if ($hash != 'forwarded') {
+    $text['footer'] = $cached[$messageid]["footer"];
+    $html['footer'] = $cached[$messageid]["footer"];
+  } else {
+    $text['footer'] = getConfig('forwardfooter');
+    $html['footer'] = $text['footer'];
+  }
+
+  $text["footer"] = eregi_replace("\[UNSUBSCRIBE\]",$text["unsubscribe"],$text['footer']);
+  $html["footer"] = eregi_replace("\[UNSUBSCRIBE\]",$html["unsubscribe"],$html['footer']);
+  $text["footer"] = eregi_replace("\[SUBSCRIBE\]",$text["subscribe"],$text['footer']);
+  $html["footer"] = eregi_replace("\[SUBSCRIBE\]",$html["subscribe"],$html['footer']);
   $text["footer"] = eregi_replace("\[PREFERENCES\]",$text["preferences"],$text["footer"]);
   $html["footer"] = eregi_replace("\[PREFERENCES\]",$html["preferences"],$html["footer"]);
-  $html["footer"] = nl2br($html["footer"]);
+  $text["footer"] = eregi_replace("\[FORWARD\]",$text["forward"],$text["footer"]);
+  $html["footer"] = eregi_replace("\[FORWARD\]",$html["forward"],$html["footer"]);
+  $html["footer"] = eregi_replace("\[FORWARDFORM\]",$html["forwardform"],$html["footer"]);
+  if (sizeof($forwardedby) && isset($forwardedby['email'])) {
+    $html["footer"] = eregi_replace("\[FORWARDEDBY]",$forwardedby["email"],$html["footer"]);
+    $html["footer"] = eregi_replace("\[FORWARDEDBY]",$forwardedby["email"],$html["footer"]);
+  }
+
+  $html["footer"] = '<div class="emailfooter">'.nl2br($html["footer"]).'</div>';
 
   if (eregi("\[FOOTER\]",$htmlmessage))
     $htmlmessage = eregi_replace("\[FOOTER\]",$html["footer"],$htmlmessage);
   elseif ($html["footer"])
-    $htmlmessage .= '<br /><br />'.$html["footer"];
+    $htmlmessage = addHTMLFooter($htmlmessage,'<br /><br />'.$html["footer"]);
   if (eregi("\[SIGNATURE\]",$htmlmessage))
     $htmlmessage = eregi_replace("\[SIGNATURE\]",$html["signature"],$htmlmessage);
   elseif ($html["signature"])
@@ -187,12 +248,12 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
     $textmessage .= "\n".$text["signature"];
 
 #  $req = Sql_Query(sprintf('select filename,data from %s where template = %d',
-#    $tables["templateimage"],$cached[$messageid]["templateid"]));
+#    $GLOBALS["tables"]["templateimage"],$cached[$messageid]["templateid"]));
 
   $htmlmessage = eregi_replace("\[USERID\]",$hash,$htmlmessage);
-  $htmlmessage = eregi_replace("\[USERTRACK\]",'<img src="http://'.$website.$pageroot.'/ut.php?u='.$hash.'&m='.$messageid.'" width="1" height="1" border="0">',$htmlmessage);
+  $htmlmessage = eregi_replace("\[USERTRACK\]",'<img src="http://'.$website.$GLOBALS["pageroot"].'/ut.php?u='.$hash.'&m='.$messageid.'" width="1" height="1" border="0">',$htmlmessage);
   if ($listowner) {
-    $att_req = Sql_Query("select name,value from {$tables["adminattribute"]},{$tables["admin_attribute"]} where {$tables["adminattribute"]}.id = {$tables["admin_attribute"]}.adminattributeid and {$tables["admin_attribute"]}.adminid = $listowner");
+    $att_req = Sql_Query("select name,value from {$GLOBALS["tables"]["adminattribute"]},{$GLOBALS["tables"]["admin_attribute"]} where {$GLOBALS["tables"]["adminattribute"]}.id = {$GLOBALS["tables"]["admin_attribute"]}.adminattributeid and {$GLOBALS["tables"]["admin_attribute"]}.adminid = $listowner");
     while ($att = Sql_Fetch_Array($att_req))
       $htmlmessage = preg_replace("#\[LISTOWNER.".strtoupper(preg_quote($att["name"]))."\]#",$att["value"],$htmlmessage);
   }
@@ -207,40 +268,147 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
   }
 
   if (ENABLE_RSS && sizeof($rssitems)) {
-  	$rssentries = array();
-  	$request = join(",",$rssitems);
+    $rssentries = array();
+    $request = join(",",$rssitems);
     $texttemplate = getConfig("rsstexttemplate");
     $htmltemplate = getConfig("rsshtmltemplate");
-		$textseparatortemplate = getConfig("rsstextseparatortemplate");
-		$htmlseparatortemplate = getConfig("rsshtmlseparatortemplate");
-    $req = Sql_Query("select * from {$tables["rssitem"]} where id in ($request) order by list,added");
-		$curlist = "";
+    $textseparatortemplate = getConfig("rsstextseparatortemplate");
+    $htmlseparatortemplate = getConfig("rsshtmlseparatortemplate");
+    $req = Sql_Query("select * from {$GLOBALS["tables"]["rssitem"]} where id in ($request) order by list,added");
+    $curlist = "";
     while ($row = Sql_Fetch_array($req)) {
-			if ($curlist != $row["list"]) {
-				$row["listname"] = ListName($row["list"]);
-				$curlist = $row["list"];
-				$rssentries["text"] .= parseRSSTemplate($textseparatortemplate,$row);
-				$rssentries["html"] .= parseRSSTemplate($htmlseparatortemplate,$row);
-			}
+      if ($curlist != $row["list"]) {
+        $row["listname"] = ListName($row["list"]);
+        $curlist = $row["list"];
+        $rssentries["text"] .= parseRSSTemplate($textseparatortemplate,$row);
+        $rssentries["html"] .= parseRSSTemplate($htmlseparatortemplate,$row);
+      }
 
-    	$data_req = Sql_Query("select * from {$tables["rssitem_data"]} where itemid = {$row["id"]}");
+      $data_req = Sql_Query("select * from {$GLOBALS["tables"]["rssitem_data"]} where itemid = {$row["id"]}");
       while ($data = Sql_Fetch_Array($data_req))
-      	$row[$data["tag"]] = $data["data"];
+        $row[$data["tag"]] = $data["data"];
 
-    	$rssentries["text"] .= stripHTML(parseRSSTemplate($texttemplate,$row));
-    	$rssentries["html"] .= parseRSSTemplate($htmltemplate,$row);
+      $rssentries["text"] .= stripHTML(parseRSSTemplate($texttemplate,$row));
+      $rssentries["html"] .= parseRSSTemplate($htmltemplate,$row);
     }
     $htmlmessage = eregi_replace("\[RSS\]",$rssentries["html"],$htmlmessage);
     $textmessage = eregi_replace("\[RSS\]",$rssentries["text"],$textmessage);
   }
 
-  $user_att = getUserAttributeValues($email);
-  while (list($att_name,$att_value) = each ($user_att)) {
-    if (eregi("\[".$att_name."\]",$htmlmessage,$regs)) {
-      $htmlmessage = eregi_replace("\[".$att_name."\]",$att_value,$htmlmessage);
+  $user_system_values = Sql_Fetch_Array_Query(sprintf('select * from %s where email = "%s"',$GLOBALS["tables"]["user"],$email));
+  if (is_array($user_system_values)) {
+    foreach ($user_system_values as $name => $value) {
+      if (eregi("\[".$name."\]",$htmlmessage,$regs)) {
+        $htmlmessage = eregi_replace("\[".$name."\]",$value,$htmlmessage);
+      }      if (eregi("\[".$name."\]",$textmessage,$regs)) {
+        $textmessage = eregi_replace("\[".$name."\]",$value,$textmessage);
+      }
     }
-    if (eregi("\[".$att_name."\]",$textmessage,$regs)) {
-      $textmessage = eregi_replace("\[".$att_name."\]",$att_value,$textmessage);
+  }
+
+  $destinationemail = '';
+  if (is_array($user_att_values)) {
+    foreach ($user_att_values as $att_name => $att_value) {
+      if (eregi("\[".$att_name."\]",$htmlmessage,$regs)) {
+        $htmlmessage = eregi_replace("\[".$att_name."\]",$att_value,$htmlmessage);
+      }
+      if (eregi("\[".$att_name."\]",$textmessage,$regs)) {
+        $textmessage = eregi_replace("\[".$att_name."\]",$att_value,$textmessage);
+      }
+      # @@@ undocumented, use alternate field for real email to send to
+      if (isset($GLOBALS["alternate_email"]) && strtolower($att_name) == strtolower($GLOBALS["alternate_email"])) {
+        $destinationemail = $att_value;
+      }
+    }
+  }
+  if (!$destinationemail) {
+    $destinationemail = $email;
+  }
+  if (!ereg('@',$destinationemail) && isset($GLOBALS["expand_unqualifiedemail"])) {
+    $destinationemail .= $GLOBALS["expand_unqualifiedemail"];
+  }
+
+  if (eregi("\[LISTS\]",$htmlmessage)) {
+    $lists = "";$listsarr = array();
+    $req = Sql_Query(sprintf('select list.name from %s as list,%s as listuser where list.id = listuser.listid and listuser.userid = %d',$GLOBALS["tables"]["list"],$GLOBALS["tables"]["listuser"],$user_system_values["id"]));
+    while ($row = Sql_Fetch_Row($req)) {
+      array_push($listsarr,$row[0]);
+    }
+    $lists_html = join('<br/>',$listsarr);
+    $lists_text = join("\n",$listsarr);
+    $htmlmessage = ereg_replace("\[LISTS\]",$lists_html,$htmlmessage);
+    $textmessage = ereg_replace("\[LISTS\]",$lists_text,$textmessage);
+  }
+
+  ## click tracking
+  # for now we won't click track forwards, as they are not necessarily users, so everything would fail
+
+  if (CLICKTRACK && $hash != 'forwarded') {
+
+    # let's leave this for now
+    /*
+    if (preg_match('/<base href="(.*)"([^>]*)>/Umis',$htmlmessage,$regs)) {
+      $urlbase = $regs[1];
+    } else {
+      $urlbase = '';
+    }
+#    print "URLBASE: $urlbase<br/>";
+    */
+
+    # convert html message
+#    preg_match_all('/<a href="?([^> "]*)"?([^>]*)>(.*)<\/a>/Umis',$htmlmessage,$links);
+    preg_match_all('/<a(.*)href="(.*)"([^>]*)>(.*)<\/a>/Umis',$htmlmessage,$links);
+
+    # to process the Yahoo webpage with base href and link like <a href=link> we'd need this one
+#    preg_match_all('/<a href=([^> ]*)([^>]*)>(.*)<\/a>/Umis',$htmlmessage,$links);
+    for($i=0; $i<count($links[2]); $i++){
+      $link = cleanUrl($links[2][$i]);
+      $link = str_replace('"','',$link);
+      $linkid = 0;
+#      print "LINK: $link<br/>";
+      if ((preg_match('/^http|ftp/',$link) || preg_match('/^http|ftp/',$urlbase)) && $link != 'http://www.phplist.com') {
+        # take off personal uids
+        $url = cleanUrl($link,array('PHPSESSID','uid'));
+
+#        $url = preg_replace('/&uid=[^\s&]+/','',$link);
+
+#        if (!strpos('http:',$link)) {
+#          $link = $urlbase . $link;
+#        }
+
+        $req = Sql_Query(sprintf('insert ignore into %s (messageid,userid,url,forward)
+          values(%d,%d,"%s","%s")',$GLOBALS['tables']['linktrack'],$messageid,$userdata['id'],$url,addslashes($link)));
+        $req = Sql_Fetch_Row_Query(sprintf('select linkid from %s where messageid = %s and userid = %d and forward = "%s"
+        ',$GLOBALS['tables']['linktrack'],$messageid,$userdata['id'],$link));
+        $linkid = $req[0];
+
+        $masked = "H|$linkid|$messageid|".$userdata['id'] ^ XORmask;
+        $masked = urlencode(base64_encode($masked));
+        $newlink = sprintf('<a%shref="http://%s/lt.php?id=%s" %s>%s</a>',$links[1][$i],$website.$GLOBALS["pageroot"],$masked,$links[3][$i],$links[4][$i]);
+        $htmlmessage = str_replace($links[0][$i], $newlink, $htmlmessage);
+      }
+    }
+
+    # convert Text message
+    preg_match_all('#(http://[^\s\}]+)#mis',$textmessage,$links);
+    for($i=0; $i<count($links[1]); $i++){
+      $link = cleanUrl($links[1][$i]);
+      $linkid = 0;
+      if (preg_match('/^http|ftp/',$link) && $link != 'http://www.phplist.com') {
+ #       $url = preg_replace('/&uid=[^\s&]+/','',$link);
+        $url = cleanUrl($link,array('PHPSESSID','uid'));
+
+        $req = Sql_Query(sprintf('insert ignore into %s (messageid,userid,url,forward)
+          values(%d,%d,"%s","%s")',$GLOBALS['tables']['linktrack'],$messageid,$userdata['id'],$url,$link));
+        $req = Sql_Fetch_Row_Query(sprintf('select linkid from %s where messageid = %s and userid = %d and forward = "%s"
+        ',$GLOBALS['tables']['linktrack'],$messageid,$userdata['id'],$link));
+        $linkid = $req[0];
+
+        $masked = "T|$linkid|$messageid|".$userdata['id'] ^ XORmask;
+        $masked = urlencode(base64_encode($masked));
+        $newlink = sprintf('http://%s/lt.php?id=%s',$website.$GLOBALS["pageroot"],$masked);
+        $textmessage = str_replace($links[0][$i], $newlink, $textmessage);
+      }
     }
   }
 
@@ -267,33 +435,33 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
 	}
 
   # remove any existing placeholders
-  $htmlmessage = ereg_replace("\[[A-Z\. ]+\]","",$htmlmessage);
-  $textmessage = ereg_replace("\[[A-Z\. ]+\]","",$textmessage);
+  $htmlmessage = eregi_replace("\[[A-Z\. ]+\]","",$htmlmessage);
+  $textmessage = eregi_replace("\[[A-Z\. ]+\]","",$textmessage);
 
-	# check that the HTML message has proper <head> </head> and <body> </body> tags
-	# some readers fail when it doesn't
-	if (!preg_match("#<body.*</body>#ims",$htmlmessage)) {
-		$htmlmessage = '<body>'.$htmlmessage.'</body>';
-	}
-	if (!preg_match("#<head>.*</head>#ims",$htmlmessage)) {
-  	if (!$adddefaultstyle) {
+  # check that the HTML message as proper <head> </head> and <body> </body> tags
+  # some readers fail when it doesn't
+  if (!preg_match("#<body.*</body>#ims",$htmlmessage)) {
+    $htmlmessage = '<body>'.$htmlmessage.'</body>';
+  }
+  if (!preg_match("#<head>.*</head>#ims",$htmlmessage)) {
+    if (!$adddefaultstyle) {
      $defaultstyle = "";
     }
-		$htmlmessage = '<head>
+    $htmlmessage = '<head>
         <meta content="text/html;charset='.$cached[$messageid]["html_charset"].'" http-equiv="Content-Type">
         <title></title>'.$defaultstyle.'</head>'.$htmlmessage;
-	}
-	if (!preg_match("#<html>.*</html>#ims",$htmlmessage)) {
-		$htmlmessage = '<html>'.$htmlmessage.'</html>';
-	}
+  }
+  if (!preg_match("#<html>.*</html>#ims",$htmlmessage)) {
+    $htmlmessage = '<html>'.$htmlmessage.'</html>';
+  }
 
   # particularly Outlook seems to have trouble if it is not \r\n
   # reports have come that instead this creates lots of trouble
-	# this is now done in the global sendMail function, so it is not
+  # this is now done in the global sendMail function, so it is not
   # necessary here
 #  if (USE_CARRIAGE_RETURNS) {
-#		$htmlmessage = preg_replace("/\r?\n/", "\r\n", $htmlmessage);
-#		$textmessage = preg_replace("/\r?\n/", "\r\n", $textmessage);
+#    $htmlmessage = preg_replace("/\r?\n/", "\r\n", $htmlmessage);
+#    $textmessage = preg_replace("/\r?\n/", "\r\n", $textmessage);
 #  }
 
   # build the email
@@ -303,14 +471,22 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
             "X-MessageId: $messageid",
             "X-ListMember: $email",
             "Precedence: bulk",
-						"List-Help: <".$text["preferences"].">",
-						"List-Unsubscribe: <".$text["unsubscribe"].">",
-						"List-Subscribe: <".getConfig("subscribeurl").">",
-						"List-Owner: <mailto:".getConfig("admin_address").">"
+            "List-Help: <".$text["preferences"].">",
+            "List-Unsubscribe: <".$text["unsubscribe"].">",
+            "List-Subscribe: <".getConfig("subscribeurl").">",
+            "List-Owner: <mailto:".getConfig("admin_address").">"
     ));
   } else {
-	  $mail = new PHPlistMailer($messageid,$email);
-		##$mail->IsSMTP();
+    $mail = new PHPlistMailer($messageid,$destinationemail);
+    ##$mail->IsSMTP();
+  }
+
+  list($dummy,$domaincheck) = split('@',$destinationemail);
+  $text_domains = explode("\n",trim(getConfig("alwayssendtextto")));
+  if (in_array($domaincheck,$text_domains)) {
+    $htmlpref = 0;
+    if (VERBOSE)
+      output($GLOBALS['I18N']->get('sendingtextonlyto')." $domaincheck");
   }
 
   list($dummy,$domaincheck) = split('@',$email);
@@ -326,17 +502,17 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
     case "HTML":
       # send html to users who want it and text to everyone else
       if ($htmlpref) {
-      	Sql_Query("update {$tables["message"]} set ashtml = ashtml + 1 where id = $messageid");
-  			if (ENABLE_RSS && sizeof($rssitems))
-	        updateRSSStats($rssitems,"ashtml");
+        Sql_Query("update {$GLOBALS["tables"]["message"]} set ashtml = ashtml + 1 where id = $messageid");
+        if (ENABLE_RSS && sizeof($rssitems))
+          updateRSSStats($rssitems,"ashtml");
       #  dbg("Adding HTML ".$cached[$messageid]["templateid"]);
-				$mail->add_html($htmlmessage,"",$cached[$messageid]["templateid"]);
+        $mail->add_html($htmlmessage,"",$cached[$messageid]["templateid"]);
         addAttachments($messageid,$mail,"HTML");
       } else {
-      	Sql_Query("update {$tables["message"]} set astext = astext + 1 where id = $messageid");
-  			if (ENABLE_RSS && sizeof($rssitems))
-	        updateRSSStats($rssitems,"astext");
-      	$mail->add_text($textmessage);
+        Sql_Query("update {$GLOBALS["tables"]["message"]} set astext = astext + 1 where id = $messageid");
+        if (ENABLE_RSS && sizeof($rssitems))
+          updateRSSStats($rssitems,"astext");
+        $mail->add_text($textmessage);
         addAttachments($messageid,$mail,"text");
       }
       break;
@@ -344,17 +520,17 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
     case "text and HTML":
       # send one big file to users who want html and text to everyone else
       if ($htmlpref) {
-      	Sql_Query("update {$tables["message"]} set astextandhtml = astextandhtml + 1 where id = $messageid");
-  			if (ENABLE_RSS && sizeof($rssitems))
-	        updateRSSStats($rssitems,"ashtml");
+        Sql_Query("update {$GLOBALS["tables"]["message"]} set astextandhtml = astextandhtml + 1 where id = $messageid");
+        if (ENABLE_RSS && sizeof($rssitems))
+          updateRSSStats($rssitems,"ashtml");
       #  dbg("Adding HTML ".$cached[$messageid]["templateid"]);
-    		$mail->add_html($htmlmessage,$textmessage,$cached[$messageid]["templateid"]);
+        $mail->add_html($htmlmessage,$textmessage,$cached[$messageid]["templateid"]);
         addAttachments($messageid,$mail,"HTML");
       } else {
-      	Sql_Query("update {$tables["message"]} set astext = astext + 1 where id = $messageid");
-  			if (ENABLE_RSS && sizeof($rssitems))
-	        updateRSSStats($rssitems,"astext");
-      	$mail->add_text($textmessage);
+        Sql_Query("update {$GLOBALS["tables"]["message"]} set astext = astext + 1 where id = $messageid");
+        if (ENABLE_RSS && sizeof($rssitems))
+          updateRSSStats($rssitems,"astext");
+        $mail->add_text($textmessage);
         addAttachments($messageid,$mail,"text");
       }
       break;
@@ -363,7 +539,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
       if (ENABLE_RSS && sizeof($rssitems))
         updateRSSStats($rssitems,"astext");
       if ($htmlpref) {
-      	Sql_Query("update {$tables["message"]} set aspdf = aspdf + 1 where id = $messageid");
+        Sql_Query("update {$GLOBALS["tables"]["message"]} set aspdf = aspdf + 1 where id = $messageid");
         $pdffile = createPdf($textmessage);
         if (is_file($pdffile) && filesize($pdffile)) {
           $fp = fopen($pdffile,"r");
@@ -381,7 +557,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
               </body>
               </html>';
 #            $mail->add_html($html,$textmessage);
-#						$mail->add_text($textmessage);
+#            $mail->add_text($textmessage);
             $mail->add_attachment($contents,
               "message.pdf",
               "application/pdf");
@@ -389,8 +565,8 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
         }
         addAttachments($messageid,$mail,"HTML");
       } else {
-      	Sql_Query("update {$tables["message"]} set astext = astext + 1 where id = $messageid");
-      	$mail->add_text($textmessage);
+        Sql_Query("update {$GLOBALS["tables"]["message"]} set astext = astext + 1 where id = $messageid");
+        $mail->add_text($textmessage);
         addAttachments($messageid,$mail,"text");
       }
       break;
@@ -399,7 +575,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
         updateRSSStats($rssitems,"astext");
       # send a PDF file to users who want html and text to everyone else
       if ($htmlpref) {
-      	Sql_Query("update {$tables["message"]} set astextandpdf = astextandpdf + 1 where id = $messageid");
+        Sql_Query("update {$GLOBALS["tables"]["message"]} set astextandpdf = astextandpdf + 1 where id = $messageid");
         $pdffile = createPdf($textmessage);
         if (is_file($pdffile) && filesize($pdffile)) {
           $fp = fopen($pdffile,"r");
@@ -417,7 +593,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
               </body>
               </html>';
  #           $mail->add_html($html,$textmessage);
- 						$mail->add_text($textmessage);
+             $mail->add_text($textmessage);
             $mail->add_attachment($contents,
               "message.pdf",
               "application/pdf");
@@ -425,8 +601,8 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
         }
         addAttachments($messageid,$mail,"HTML");
       } else {
-      	Sql_Query("update {$tables["message"]} set astext = astext + 1 where id = $messageid");
-      	$mail->add_text($textmessage);
+        Sql_Query("update {$GLOBALS["tables"]["message"]} set astext = astext + 1 where id = $messageid");
+        $mail->add_text($textmessage);
         addAttachments($messageid,$mail,"text");
       }
       break;
@@ -435,31 +611,47 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array()) {
       # send as text
       if (ENABLE_RSS && sizeof($rssitems))
         updateRSSStats($rssitems,"astext");
-    	Sql_Query("update {$tables["message"]} set astext = astext + 1 where id = $messageid");
-     	$mail->add_text($textmessage);
+      Sql_Query("update {$GLOBALS["tables"]["message"]} set astext = astext + 1 where id = $messageid");
+       $mail->add_text($textmessage);
       addAttachments($messageid,$mail,"text");
       break;
   }
-	$mail->build_message(
-  	array(
-    	"html_charset" => $cached[$messageid]["html_charset"],
-      "html_encoding" => HTMLEMAIL_ENCODING,
-      "text_charset" => $cached[$messageid]["text_charset"])
-    );
+  $mail->build_message(
+      array(
+        "html_charset" => $cached[$messageid]["html_charset"],
+        "html_encoding" => HTMLEMAIL_ENCODING,
+        "text_charset" => $cached[$messageid]["text_charset"],
+        "text_encoding" => TEXTEMAIL_ENCODING)
+      );
+
 
   if (!TEST) {
-  	if (!$mail->send("", $email, $cached[$messageid]["fromname"], $cached[$messageid]["fromemail"],$cached[$messageid]["subject"])) {
-			logEvent("Error sending message $messageid to $email");
-  	}
+    if ($hash != 'forwarded' || !sizeof($forwardedby)) {
+      $fromname = $cached[$messageid]["fromname"];
+      $fromemail = $cached[$messageid]["fromemail"];
+      $subject = $cached[$messageid]["subject"];
+    } else {
+      $fromname = '';
+      $fromemail = $forwardedby['email'];
+      $subject = $GLOBALS['strFwd'].': '.$cached[$messageid]["subject"];
+    }
+
+    if (!$mail->send("", $destinationemail, $fromname, $fromemail, $subject)) {
+      logEvent("Error sending message $messageid to $email ($destinationemail)");
+      return 0;
+    } else {
+      return 1;
+    }
   }
+  return 0;
 }
 
 function addAttachments($msgid,&$mail,$type) {
-	global $attachment_repository,$website,$pageroot,$tables;
+  global $attachment_repository,$website;
   if (ALLOW_ATTACHMENTS) {
-    $req = Sql_Query("select * from {$tables["message_attachment"]},{$tables["attachment"]}
-      where {$tables["message_attachment"]}.attachmentid = {$tables["attachment"]}.id and
-      {$tables["message_attachment"]}.messageid = $msgid");
+    $req = Sql_Query("select * from {$GLOBALS["tables"]["message_attachment"]},{$GLOBALS["tables"]["attachment"]}
+      where {$GLOBALS["tables"]["message_attachment"]}.attachmentid = {$GLOBALS["tables"]["attachment"]}.id and
+      {$GLOBALS["tables"]["message_attachment"]}.messageid = $msgid");
     if (!Sql_Affected_Rows())
       return;
     if ($type == "text") {
@@ -467,9 +659,9 @@ function addAttachments($msgid,&$mail,$type) {
     }
 
     while ($att = Sql_Fetch_array($req)) {
-    	switch ($type) {
-      	case "HTML":
-        	if (is_file($GLOBALS["attachment_repository"]."/".$att["filename"]) && filesize($GLOBALS["attachment_repository"]."/".$att["filename"])) {
+      switch ($type) {
+        case "HTML":
+          if (is_file($GLOBALS["attachment_repository"]."/".$att["filename"]) && filesize($GLOBALS["attachment_repository"]."/".$att["filename"])) {
             $fp = fopen($GLOBALS["attachment_repository"]."/".$att["filename"],"r");
             if ($fp) {
               $contents = fread($fp,filesize($GLOBALS["attachment_repository"]."/".$att["filename"]));
@@ -479,7 +671,7 @@ function addAttachments($msgid,&$mail,$type) {
                 $att["mimetype"]);
             }
           } elseif (is_file($att["remotefile"]) && filesize($att["remotefile"])) {
-          	# handle local filesystem attachments
+            # handle local filesystem attachments
             $fp = fopen($att["remotefile"],"r");
             if ($fp) {
               $contents = fread($fp,filesize($att["remotefile"]));
@@ -487,7 +679,7 @@ function addAttachments($msgid,&$mail,$type) {
               $mail->add_attachment($contents,
                 basename($att["remotefile"]),
                 $att["mimetype"]);
-		          list($name,$ext) = explode(".",basename($att["remotefile"]));
+              list($name,$ext) = explode(".",basename($att["remotefile"]));
               # create a temporary file to make sure to use a unique file name to store with
               $newfile = tempnam($GLOBALS["attachment_repository"],$name);
               $newfile .= ".".$ext;
@@ -512,15 +704,15 @@ function addAttachments($msgid,&$mail,$type) {
             } else {
               logEvent("failed to open attachment ".$att["remotefile"]." to add to message $msgid ");
             }
-					} else {
-          	logEvent("Attachment ".$att["remotefile"]." does not exist");
+          } else {
+            logEvent("Attachment ".$att["remotefile"]." does not exist");
             $msg = "Error, when trying to send message $msgid the attachment
-            	".$att["remotefile"]." could not be found";
+              ".$att["remotefile"]." could not be found";
             sendMail(getConfig("report_address"),"Mail list error",$msg,"");
-					}
-         	break;
-       	case "text":
-        	$viewurl = "http://".$website.$pageroot.'/dl.php?id='.$att["id"];
+          }
+           break;
+         case "text":
+          $viewurl = "http://".$website.$GLOBALS["pageroot"].'/dl.php?id='.$att["id"];
           $mail->append_text($att["description"]."\n".$GLOBALS["strLocation"].": ".$viewurl);
           break;
       }
@@ -529,17 +721,17 @@ function addAttachments($msgid,&$mail,$type) {
 }
 
 function createPDF($text) {
-	if (!isset($GLOBALS["pdf_font"])) {
-  	$GLOBALS["pdf_font"] = 'Arial';
-  	$GLOBALS["pdf_fontsize"] = 12;
- 	}
+  if (!isset($GLOBALS["pdf_font"])) {
+    $GLOBALS["pdf_font"] = 'Arial';
+    $GLOBALS["pdf_fontsize"] = 12;
+   }
   $pdf=new FPDF();
   $pdf->SetCreator("PHPlist version ".VERSION);
   $pdf->Open();
   $pdf->AliasNbPages();
   $pdf->AddPage();
   $pdf->SetFont($GLOBALS["pdf_font"],$GLOBALS["pdf_fontstyle"],$GLOBALS["pdf_fontsize"]);
-	$pdf->Write((int)$GLOBALS["pdf_fontsize"]/2,$text);
+  $pdf->Write((int)$GLOBALS["pdf_fontsize"]/2,$text);
   $fname = tempnam($GLOBALS["tmpdir"],"pdf");
   $pdf->Output($fname,false);
   return $fname;
@@ -578,17 +770,17 @@ $text = preg_replace ($search, $replace, $text);
 }
 
 function stripHTML($text) {
-	# strip HTML, and turn links into the full URL
-	$text = preg_replace("/\r/","",$text);
+  # strip HTML, and turn links into the full URL
+  $text = preg_replace("/\r/","",$text);
 
-	#$text = preg_replace("/\n/","###NL###",$text);
- 	$text = preg_replace("/<script[^>]*>(.*?)<\/script\s*>/is","",$text);
- 	$text = preg_replace("/<style[^>]*>(.*?)<\/style\s*>/is","",$text);
+  #$text = preg_replace("/\n/","###NL###",$text);
+   $text = preg_replace("/<script[^>]*>(.*?)<\/script\s*>/is","",$text);
+   $text = preg_replace("/<style[^>]*>(.*?)<\/style\s*>/is","",$text);
 
   $text = preg_replace("/<a href=\"(.*?)\"[^>]*>(.*?)<\/a>/is","\\2\n{\\1}",$text,100);
 
-	$text = preg_replace("/<b>(.*?)<\/b\s*>/is","*\\1*",$text);
-	$text = preg_replace("/<h[\d]>(.*?)<\/h[\d]\s*>/is","**\\1**\n",$text);
+  $text = preg_replace("/<b>(.*?)<\/b\s*>/is","*\\1*",$text);
+  $text = preg_replace("/<h[\d]>(.*?)<\/h[\d]\s*>/is","**\\1**\n",$text);
   $text = preg_replace("/\s+/"," ",$text);
   $text = preg_replace("/<i>(.*?)<\/i\s*>/is","/\\1/",$text);
   $text = preg_replace("/<\/tr\s*?>/i","<\/tr>\n\n",$text);
@@ -596,14 +788,14 @@ function stripHTML($text) {
   $text = preg_replace("/<br\s*?>/i","<br>\n",$text);
   $text = preg_replace("/<br\s*?\/>/i","<br\/>\n",$text);
   $text = preg_replace("/<table/i","\n\n<table",$text);
-	$text = strip_tags($text);
+  $text = strip_tags($text);
   $text = replaceChars($text);
-	$text = preg_replace("/###NL###/","\n",$text);
+  $text = preg_replace("/###NL###/","\n",$text);
   # reduce whitespace
-	while (preg_match("/  /",$text))
-		$text = preg_replace("/  /"," ",$text);
-	while (preg_match("/\n\n\n/",$text))
-		$text = preg_replace("/\n\n\n/","\n\n",$text);
+  while (preg_match("/  /",$text))
+    $text = preg_replace("/  /"," ",$text);
+  while (preg_match("/\n\s*\n\s*\n/",$text))
+    $text = preg_replace("/\n\s*\n\s*\n/","\n\n",$text);
   $text = wordwrap($text,70);
   return $text;
 }
@@ -662,13 +854,22 @@ function parseText($text) {
   return $text;
 }
 
+function addHTMLFooter($message,$footer) {
+  if (preg_match('#</body>#imUx',$message)) {
+    $message = preg_replace('#</body>#',$footer.'</body>',$message);
+  } else {
+    $message .= $footer;
+  }
+  return $message;
+}
+
 # make sure the 0 template has the powered by image
 Sql_Query(sprintf('select * from %s where filename = "%s" and template = 0',
-  $tables["templateimage"],"powerphplist.png"));
+  $GLOBALS["tables"]["templateimage"],"powerphplist.png"));
 if (!Sql_Affected_Rows())
   Sql_Query(sprintf('insert into %s (template,mimetype,filename,data,width,height)
   values(0,"%s","%s","%s",%d,%d)',
-  $tables["templateimage"],"image/png","powerphplist.png",
+  $GLOBALS["tables"]["templateimage"],"image/png","powerphplist.png",
   $newpoweredimage,
   70,30));
 

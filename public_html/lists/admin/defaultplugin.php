@@ -1,5 +1,5 @@
 <?php
-require_once "accesscheck.php";
+require_once dirname(__FILE__).'/accesscheck.php';
 
 class phplistPlugin {
   var $name = "Default Plugin";
@@ -17,7 +17,7 @@ class phplistPlugin {
   #  text -> current text of the page
   # returns parsed text
   function parseThankyou($pageid = 0,$userid = 0,$text = "") {
-  	return $text;
+    return $text;
   }
 
   function adminmenu() {

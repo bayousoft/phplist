@@ -3,57 +3,64 @@
 <hr>
 
 <?php
-require_once "accesscheck.php";
+require_once dirname(__FILE__).'/accesscheck.php';
+
+$columns = array("messages","lists","bounces","rss","blacklist");
+
+include dirname(__FILE__).'/commonlib/pages/users.php';
+return;
+
+
 
 if (!$_SESSION["userlistfilter"]) {
-	$_SESSION["userlistfilter"] = array();
+  $_SESSION["userlistfilter"] = array();
 }
 
 if (isset($_GET["find"])) {
-	if ($_GET["find"] == "NULL") {
+  if ($_GET["find"] == "NULL") {
     $_SESSION["userlistfilter"]["find"] = "";
     $_SESSION["userlistfilter"]["findby"] = "";
-	} else {
+  } else {
     $_SESSION["userlistfilter"]["find"] = $_GET["find"];
     $_SESSION["userlistfilter"]["findby"] = $_GET["findby"];
- 	}
+   }
 }
 $find = $_SESSION["userlistfilter"]["find"];
 $findby = $_SESSION["userlistfilter"]["findby"];
 if (!$findby) {
-	$findby = "email";
+  $findby = "email";
 }
 # hmm interesting, if they select a findby but not a find, use the Sql wildcard:
 if ($findby && !$find)
-	$find = '%';
+  $find = '%';
 
 $system_findby = array("email","foreignkey");
 if ($findby && $find && !in_array($findby,$system_findby) ) {
-	$find_url = '&find='.urlencode($find)."&findby=".urlencode($findby);
-	$findatt = Sql_Fetch_Array_Query("select id,tablename,type,name from {$tables["attribute"]} where id = $findby");
+  $find_url = '&find='.urlencode($find)."&findby=".urlencode($findby);
+  $findatt = Sql_Fetch_Array_Query("select id,tablename,type,name from {$tables["attribute"]} where id = $findby");
   switch ($findatt["type"]) {
-  	case "textline":
-  	case "hidden":
-    	$findtables = ','.$tables["user_attribute"];
+    case "textline":
+    case "hidden":
+      $findtables = ','.$tables["user_attribute"];
       $findbyselect = sprintf(' %s.userid = %s.id and
-      	%s.attributeid = %d and %s.value like "%%%s%%"',
-				$tables["user_attribute"],
+        %s.attributeid = %d and %s.value like "%%%s%%"',
+        $tables["user_attribute"],
         $tables["user"],
         $tables["user_attribute"],
         $findby,
         $tables["user_attribute"],
         $find
-    	);
+      );
       $findfield = $tables["user_attribute"].".value as display, ".$tables["user"].".bouncecount";
       $findfieldname = $findatt["name"];
-    	break;
-  	case "select":
+      break;
+    case "select":
     case "radio":
-    	$findtables = ','.$tables["user_attribute"].','.$table_prefix.'listattr_'.$findatt["tablename"];
+      $findtables = ','.$tables["user_attribute"].','.$table_prefix.'listattr_'.$findatt["tablename"];
       $findbyselect = sprintf(' %s.userid = %s.id and
-      	%s.attributeid = %d and %s.value = %s.id and
+        %s.attributeid = %d and %s.value = %s.id and
         %s.name like "%%%s%%"',
-				$tables["user_attribute"],
+        $tables["user_attribute"],
         $tables["user"],
         $tables["user_attribute"],
         $findby,
@@ -63,14 +70,14 @@ if ($findby && $find && !in_array($findby,$system_findby) ) {
         $find);
       $findfield = $table_prefix.'listattr_'.$findatt["tablename"].".name as display, ".$tables["user"].".bouncecount";
       $findfieldname = $findatt["name"];
-    	break;
+      break;
   }
 } else {
-	$findtables = '';
-	$findbyselect = sprintf(' %s like "%%%s%%"',$findby,$find);;
+  $findtables = '';
+  $findbyselect = sprintf(' %s like "%%%s%%"',$findby,$find);;
   $findfield = $tables["user"].".bouncecount,".$tables["user"].".rssfrequency,".$tables["user"].".foreignkey";
   $findfieldname = "Email";
-	$find_url = '&find='.urlencode($find);
+  $find_url = '&find='.urlencode($find);
 }
 
 if ($require_login && !isSuperUser()) {
@@ -86,10 +93,12 @@ if ($require_login && !isSuperUser()) {
       } else {
         $listquery = "select {$tables["user"]}.email,{$tables["user"]}.id,$findfield,confirmed from ".$table_list." where $subselect";
         $count = Sql_query("SELECT count({$tables["user"]}.id) FROM ".$table_list ." where $subselect");
-				$unconfirmedcount = Sql_query("SELECT count({$tables["user"]}.id) FROM ".$table_list ." where !confirmed and $subselect");
+        $unconfirmedcount = Sql_query("SELECT count({$tables["user"]}.id) FROM ".$table_list ." where !confirmed and $subselect");
       }
       if ($_GET["unconfirmed"])
-      	$listquery .= ' and !confirmed';
+        $listquery .= ' and !confirmed ';
+      if ($_GET["blacklisted"])
+        $listquery .= ' and blacklisted ';
       break;
     case "all":
     case "view":
@@ -99,7 +108,9 @@ if ($require_login && !isSuperUser()) {
         $count = Sql_query("SELECT count(*) FROM ".$table_list ." where $findbyselect");
         $unconfirmedcount = Sql_query("SELECT count(*) FROM ".$table_list ." where !confirmed && $findbyselect");
         if ($_GET["unconfirmed"])
-          $listquery .= ' and !confirmed';
+          $listquery .= ' and !confirmed ';
+        if ($_GET["blacklisted"])
+          $listquery .= ' and blacklisted ';
       } else {
         $listquery = "select {$tables["user"]}.email,{$tables["user"]}.id,$findfield,{$tables["user"]}.confirmed from ".$table_list;
         $count = Sql_query("SELECT count(*) FROM ".$table_list);
@@ -120,13 +131,17 @@ if ($require_login && !isSuperUser()) {
     $count = Sql_query("SELECT count(*) FROM ".$table_list ." where $findbyselect");
     $unconfirmedcount = Sql_query("SELECT count(*) FROM ".$table_list ." where !confirmed and $findbyselect");
     if ($_GET["unconfirmed"])
-    	$listquery .= ' and !confirmed';
+      $listquery .= ' and !confirmed ';
+    if ($_GET["blacklisted"])
+      $listquery .= ' and blacklisted ';
   } else {
     $listquery = "select {$tables["user"]}.email,{$tables["user"]}.id,$findfield,{$tables["user"]}.confirmed from ".$table_list;
     $count = Sql_query("SELECT count(*) FROM ".$table_list);
     $unconfirmedcount = Sql_query("SELECT count(*) FROM ".$table_list." where !confirmed");
     if ($_GET["unconfirmed"])
-    	$listquery .= ' where !confirmed';
+      $listquery .= ' where !confirmed';
+    if ($_GET["blacklisted"])
+      $listquery .= ' and blacklisted ';
   }
   $delete_message = '<br />Delete will delete user and all listmemberships<br />';
 }
@@ -160,63 +175,68 @@ if (isset($add)) {
 print "$total Users";
 print $find ? " found": "";
 if ($find && !$findby && !$total) { # a search for an email has been done and not found
-	print "<hr><h2>Add this user</h2>";
-	$req = Sql_Query(sprintf('select * from %s where active',$tables["subscribepage"]));
+  print "<hr><h2>Add this user</h2>";
+  $req = Sql_Query(sprintf('select * from %s where active',$tables["subscribepage"]));
   if (Sql_Affected_Rows()) {
-  	print "Click on a link to use the corresponding public subscribe page to add this user:";
-  	while ($row = Sql_Fetch_Array($req)) {
-			printf('<p><a href="%s&id=%d&email=%s">%s</a></p>',getConfig("subscribeurl"),$row["id"],$find,$row["title"]);
-   	}
-	} else {
-  	print "Click this link to use the public subscribe page to add this user:";
-	  printf('<p><a href="%s&email=%s">%s</a></p>',getConfig("subscribeurl"),$find,$GLOBALS["strSubscribeTitle"]);
-	}
+    print "Click on a link to use the corresponding public subscribe page to add this user:";
+    while ($row = Sql_Fetch_Array($req)) {
+      printf('<p><a href="%s&id=%d&email=%s">%s</a></p>',getConfig("subscribeurl"),$row["id"],$find,$row["title"]);
+     }
+  } else {
+    print "Click this link to use the public subscribe page to add this user:";
+    printf('<p><a href="%s&email=%s">%s</a></p>',getConfig("subscribeurl"),$find,$GLOBALS["strSubscribeTitle"]);
+  }
   print '<hr>';
 }
 
 print "<br/>Users marked <font color=red>red</font> are unconfirmed ($totalunconfirmed)<br/>";
 
+$url = getenv("REQUEST_URI");
 if ($_GET["unconfirmed"]) {
-	$ch = "checked";
-  $url = getenv("REQUEST_URI");
+  $unc = "checked";
 } else {
-	$ch = "unchecked";
-  $url = getenv("REQUEST_URI");
+  $unc = "unchecked";
+}
+if ($_GET["blacklisted"]) {
+  $bll = "checked";
+} else {
+  $bll = "unchecked";
 }
 
 print '<table><tr><td valign=top>';
 printf ('<form method="get" name="listcontrol">
-	<input type=hidden name="page" value="users">
-	<input type=hidden name="start" value="%s">
-	<input type=hidden name="find" value="%s">
-	<input type=hidden name="findby" value="%s"><br/>Show only unconfirmed users:
-	<input type="checkbox" name="unconfirmed" value="on" %s>',
-	$start,$find,$findby,$ch);
+  <input type=hidden name="page" value="users">
+  <input type=hidden name="start" value="%s">
+  <input type=hidden name="find" value="%s">
+  <input type=hidden name="findby" value="%s"><br/>Show only unconfirmed users:
+  <input type="checkbox" name="unconfirmed" value="on" %s><br/>Show only blacklisted users:
+  <input type="checkbox" name="blacklisted" value="on" %s>',
+  $start,$find,$findby,$unc,$bll);
 print '</td><td valign=top>';
 foreach (array("email","bouncecount","entered","modified","foreignkey") as $item) {
-	$select .= sprintf('<option value="%s" %s>%s</option>',
-  	$item,$item == $sortby ? "selected":"",$item);
+  $select .= sprintf('<option value="%s" %s>%s</option>',
+    $item,$item == $sortby ? "selected":"",$item);
 }
 
 printf ('
   <br/>Sort by:
-	<select name="sortby" onChange="document.listcontrol.submit();">
+  <select name="sortby" onChange="document.listcontrol.submit();">
   <option value="0">-- default</option>
   %s
-	</select>
+  </select>
   D: <input type=radio name="sortorder" value="desc" %s>
   A: <input type=radio name="sortorder" value="asc" %s>
   <input type=submit name="change" value="Go">
   ',
-	$select,$sortorder == "desc"? "checked":"",$sortorder == "asc"? "checked":"");
+  $select,$sortorder == "desc"? "checked":"",$sortorder == "asc"? "checked":"");
 print '</td></tr></table>';
 
 if ($sortby) {
-	$order = ' order by '.$sortby;
+  $order = ' order by '.$sortby;
   if ($sortorder == "asc") {
-  	$order .= ' asc';
+    $order .= ' asc';
   } else {
-  	$order .= ' desc';
+    $order .= ' desc';
   }
   $find_url .= "&sortby=$sortby&sortorder=$sortorder&unconfirmed=$unconfirmed";
 }
@@ -231,7 +251,7 @@ if ($total > MAX_USER_PP) {
     $start = 0;
   }
   if ($_GET["unconfirmed"])
-   	$find_url .= "&unconfirmed=".$_GET["unconfirmed"];
+     $find_url .= "&unconfirmed=".$_GET["unconfirmed"];
   printf ('<table border=1><tr><td colspan=4 align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
           %s</td><td>%s</td></tr></table><p><hr>',
           $listing,
@@ -252,7 +272,7 @@ Find a user: <input type=text name=find value="<?php echo $find != '%' ? $find :
 <?php
   $att_req = Sql_Query("select id,name from ".$tables["attribute"]." where type = \"hidden\" or type = \"textline\" or type = \"select\"");
   while ($row = Sql_Fetch_Array($att_req)) {
-  	printf('<option value="%d" %s>%s</option>',$row["id"],$row["id"] == $findby ? "selected":"",substr($row["name"],0,20));
+    printf('<option value="%d" %s>%s</option>',$row["id"],$row["id"] == $findby ? "selected":"",substr($row["name"],0,20));
   }
 ?></select><input type=submit value="Go">&nbsp;&nbsp;<a href="./?page=users&find=NULL">reset</a>
 </form></td></tr>
@@ -268,35 +288,39 @@ Find a user: <input type=text name=find value="<?php echo $find != '%' ? $find :
 $some = 0;
 $ls = new WebblerListing("users");
 while ($user = Sql_fetch_array($result)) {
-	$some = 1;
+  $some = 1;
   $lists = Sql_query("SELECT count(*) FROM ".$tables["listuser"].",".$tables["list"]." where userid = ".$user["id"]." and ".$tables["listuser"].".listid = ".$tables["list"].".id");
   $membership = Sql_fetch_row($lists);
   $msgs = Sql_query("SELECT count(*) FROM ".$tables["usermessage"]." where userid = ".$user["id"]);
   $nummsgs = Sql_fetch_row($msgs);
+  $onblacklist = isBlackListed($user["email"]);
   $ls->addElement($user["email"],PageURL2("user&start=$start&id=".$user["id"].$find_url));
-	$ls->addColumn($user["email"],"confirmed",$user["confirmed"]?$GLOBALS["img_tick"]:$GLOBALS["img_cross"]);
-	$ls->addColumn($user["email"],"del",sprintf("<a href=\"javascript:deleteRec('%s');\">del</a>",
-	   PageURL2("users","delete","start=$start&delete=".$user["id"])));
- 	$ls->addColumn($user["email"],"key",$user["foreignkey"]);
- 	$ls->addColumn($user["email"],"&nbsp;",$user["display"]);
-	$ls->addColumn($user["email"],"lists",$membership[0]);
-	$ls->addColumn($user["email"],"msgs",$nummsgs[0]);
-	if (ENABLE_RSS) {
-	  $rss = Sql_query("SELECT count(*) FROM ".$tables["rssitem_user"]." where userid = ".$user["id"]);
-  	$nummsgs = Sql_fetch_row($rss);
-		$ls->addColumn($user["email"],"rss",$nummsgs[0]);
-		if ($user["rssfrequency"])
-			$ls->addColumn($user["email"],"rss freq",$user["rssfrequency"]);
-		$last = Sql_Fetch_Row_Query("select last from {$tables["user_rss"]} where userid = ".$user["id"]);
-		if ($last[0])
-			$ls->addColumn($user["email"],"last sent",$last[0]);
-	}
+  $ls->addColumn($user["email"],"confirmed",
+    $user["confirmed"]?$GLOBALS["img_tick"]:$GLOBALS["img_cross"]);
+  $ls->addColumn($user["email"],"bl l",
+    $onblacklist?$GLOBALS["img_tick"]:$GLOBALS["img_cross"]);
+  $ls->addColumn($user["email"],"del",sprintf("<a href=\"javascript:deleteRec('%s');\">del</a>",
+     PageURL2("users","delete","start=$start&delete=".$user["id"])));
+   $ls->addColumn($user["email"],"key",$user["foreignkey"]);
+   $ls->addColumn($user["email"],"&nbsp;",$user["display"]);
+  $ls->addColumn($user["email"],"lists",$membership[0]);
+  $ls->addColumn($user["email"],"msgs",$nummsgs[0]);
+  if (ENABLE_RSS) {
+    $rss = Sql_query("SELECT count(*) FROM ".$tables["rssitem_user"]." where userid = ".$user["id"]);
+    $nummsgs = Sql_fetch_row($rss);
+    $ls->addColumn($user["email"],"rss",$nummsgs[0]);
+    if ($user["rssfrequency"])
+      $ls->addColumn($user["email"],"rss freq",$user["rssfrequency"]);
+    $last = Sql_Fetch_Row_Query("select last from {$tables["user_rss"]} where userid = ".$user["id"]);
+    if ($last[0])
+      $ls->addColumn($user["email"],"last sent",$last[0]);
+  }
 
-	$ls->addColumn($user["email"],"bncs",$user["bouncecount"]);
+  $ls->addColumn($user["email"],"bncs",$user["bouncecount"]);
 }
 print $ls->display();
 if (!$some) {
-	print "<p>No users apply</p>";
+  print "<p>No users apply</p>";
 }
 ?>
 

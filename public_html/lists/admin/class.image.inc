@@ -1,9 +1,9 @@
 <?php
-require_once "accesscheck.php";
+require_once dirname(__FILE__).'/accesscheck.php';
 
 
 class imageUpload {
-	# crude class to handle an image, partly taken from the easyuploader (http://tincan.co.uk)
+  # crude class to handle an image, partly taken from the easyuploader (http://tincan.co.uk)
   var $type = "image";
   var $description = "Image";
 
@@ -11,8 +11,8 @@ class imageUpload {
   }
 
   function viewImageLink($id,$width,$height,$text) {
-	  return sprintf('<a href="javascript:viewImage(\'?page=image&id=%d\',%d,%d);">%s</a>',$id,$width,$height,$text);
-	}
+    return sprintf('<a href="javascript:viewImage(\'?page=image&id=%d\',%d,%d);">%s</a>',$id,$width,$height,$text);
+  }
 
   function showInput($name,$value,$template_id = 0) {
     # find image in database
@@ -31,36 +31,36 @@ class imageUpload {
     <script language="Javascript">
        function unCheck'.$name.'() {
         if (this.document.forms[0].'.$name.') {
-	        if ((this.document.forms[0].'.$name.'_keep.checked) && (this.document.forms[0].'.$name.'.value != ""))
-	     this.document.forms[0].'.$name.'_keep.checked = false;
-       	}
+          if ((this.document.forms[0].'.$name.'_keep.checked) && (this.document.forms[0].'.$name.'.value != ""))
+       this.document.forms[0].'.$name.'_keep.checked = false;
+         }
        }
     </script>
     ';
     if ($imdata["data"] && $imdata["width"] && $imdata["height"]) {
-      $html .= '<tr><td colspan=3><!-- '.$imageid .'-->An image exists on the server, check this box to keep the existing one <input type="checkbox" name="'.$name.'_keep" value="yes" checked>&nbsp;';
-      $html .= sprintf('%s</td></tr>',$this->viewImageLink($imdata["id"],$imdata["width"],$imdata["height"],"View Image"));
+      $html .= '<tr><td colspan=3><!-- '.$imageid .'-->'.$GLOBALS['I18N']->get('An image exists on the server, check this box to keep the existing one').' <input type="checkbox" name="'.$name.'_keep" value="yes" checked>&nbsp;';
+      $html .= sprintf('%s</td></tr>',$this->viewImageLink($imdata["id"],$imdata["width"],$imdata["height"],$GLOBALS['I18N']->get('View Image')));
     }
     else
-    $html .= '<tr><td colspan=3><font color=red><input type="hidden" name="'.$name.'_keep" value="no">No Image was found</font></td></tr>';
-    $html .= '<tr><td colspan=2>Upload new image:</td><td><input type="hidden" name="'.$name.'_originalname" value="'.$originalname.'"><input type=file name="'.$name.'" onChange="unCheck'.$name.'();"></td></tr>';
+    $html .= '<tr><td colspan=3><font color=red><input type="hidden" name="'.$name.'_keep" value="no">'.$GLOBALS['I18N']->get('No Image was found').'</font></td></tr>';
+    $html .= '<tr><td colspan=2>'.$GLOBALS['I18N']->get('Upload new image').':</td><td><input type="hidden" name="'.$name.'_originalname" value="'.$originalname.'"><input type=file name="'.$name.'" onChange="unCheck'.$name.'();"></td></tr>';
 #    $html .= '<tr><td colspan=2>Caption: </td><td><input type=text name="'.$name.'_caption" size="40" value="'.$imdata["caption"].'"></td></tr>';
 #    $html .= '<tr><td colspan=2>Alt Tag: </td><td><input type=text name="'.$name.'_alttag" size="40" value="'.$imdata["alttag"].'"></td></tr>';
     return $html . '</table>';
   }
 
   function getSubData($parent,$fielddata) {
-  	if ($fielddata[type] != "image" || !$fielddata[data])
-    	# invalid call
+    if ($fielddata[type] != "image" || !$fielddata[data])
+      # invalid call
       return "";
 
     $result = array();
     $req = Sql_Query(sprintf('select * from image where id = %d',$fielddata[data]));
     $att = Sql_Fetch_Array($req);
     while (list($key,$val) = each ($att))
-    	$result[$fielddata[name].".".$key] = $val;
-		return $result;
-	}
+      $result[$fielddata[name].".".$key] = $val;
+    return $result;
+  }
 
   function fix_php_upload_bug($tmp) {
     global $config;
@@ -106,20 +106,20 @@ class imageUpload {
   }
 
   function uploadImage($imagename,$templateid) {
-  	global $tables;
-  	$imagename = safeImageName($imagename);
-    global $$imagename,$config;
-    $tmpimagefile = $$imagename;
-    $filename = "$imagename"."_name";
-    $originalname = "$imagename"."_originalname";
-    $type = "$imagename"."_type";
-    $keep = "$imagename"."_keep";
-    global $$originalname,$$filename,$$type,$$keep;
+    global $tables;
+    global $config;
+    $imagename = safeImageName($imagename);
+    $tmpimagefile = $_FILES[$imagename]['tmp_name'];
+    $originalname =  $_POST[$imagename.'_originalname'];
+    $filename = $_FILES[$imagename]["name"];
+    $type = $_FILES[$imagename]["type"];
+    $keep = $_REQUEST[$imagename."_keep"];
+
 #    dbg("Uploading Name $imagename, File $tmpimagefile, Location $location, Type $type, ". $$type . " Location ". $$location);
 #    dbg("existing $existingid - $keep => ".$$keep);
-    if ($$filename && $tmpimagefile && $tmpimagefile != "none" && ltrim($$keep) != "yes") {
+    if ($filename && $tmpimagefile && $tmpimagefile != "none" && ltrim($keep) != "yes") {
 #      dbg("Uploading $tmpimagefile");
-      if (!$$type && $$type = $this->detect_php_upload_bug($tmpimagefile))
+      if (!$type && $type = $this->detect_php_upload_bug($tmpimagefile))
         $this->fix_php_upload_bug($tmpimagefile);
         list($width,$height) = GetImageSize($tmpimagefile);
 
@@ -132,15 +132,15 @@ class imageUpload {
         copy($tmpimagefile,"/tmp/invalidUpload.jpg");
       }
       Sql_Query(sprintf('delete from %s where template = %d and filename = "%s"',
-      	$tables["templateimage"],$templateid,$$originalname));
+        $tables["templateimage"],$templateid,$$originalname));
       Sql_query(sprintf('insert into %s (template,filename,mimetype,width,height,data)
        values(%d,"%s","%s",%d,%d,"%s")',
        $tables["templateimage"],$templateid,
-	     $$originalname,$$type,$width,$height,base64_encode($contents))
-  	);
+       $originalname,$type,$width,$height,base64_encode($contents))
+    );
       return Sql_insert_id();
-    } elseif (trim($$keep) == "yes") {
-    	# do nothing...
+    } elseif (trim($keep) == "yes") {
+      # do nothing...
     }
     return 0;
   }

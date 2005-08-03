@@ -143,6 +143,16 @@ define("ASKFORPASSWORD",0);
 # to 1 for this to have an effect
 define("UNSUBSCRIBE_REQUIRES_PASSWORD",0);
 
+# if a user should immediately be unsubscribed, when using their personal URL, instead of
+# the default way, which will ask them for a reason, set this to 1
+define("UNSUBSCRIBE_JUMPOFF",0);
+
+# when a user unsubscribes they are sent one final email informing them of
+# their unsubscription. In order for that email to actually go out, a gracetime
+# needs to be set otherwise it will never go out. The default of 5 minutes should
+# be fine, but you can increase it if you experience problems
+$blacklist_gracetime = 5;
+
 # to increase security the session of a user is checked for the IP address
 # this needs to be the same for every request. This may not work with
 # network situations where you connect via multiple proxies, so you can
@@ -204,9 +214,9 @@ define("WORKAROUND_OUTLOOK_BUG",0);
 # variables of PHP. check http://www.php.net/manual/en/language.variables.predefined.php
 # the values are different per system, but these ones are quite common.
 $userhistory_systeminfo = array(
-	'HTTP_USER_AGENT',
-	'HTTP_REFERER',
-	'REMOTE_ADDR'
+  'HTTP_USER_AGENT',
+  'HTTP_REFERER',
+  'REMOTE_ADDR'
 );
 
 /*
@@ -229,7 +239,7 @@ define ("REGISTER",1);
 # We request you retain some form of credits on the public elements of
 # PHPlist. These are the subscribe pages and the emails.
 # This not only gives respect to the large amount of time given freely
-# by the developers	but also helps build interest, traffic and use of
+# by the developers but also helps build interest, traffic and use of
 # PHPlist, which is beneficial to future developments.
 # By default the webpages and the HTML emails will include an image and
 # the text emails will include a powered by line
@@ -280,11 +290,157 @@ define("ALLOW_NON_LIST_SUBSCRIBE",0);
 # in reality, that may be the case
 
 # define the amount of emails you want to send per period. If 0, batch processing
-# is disabled
+# is disabled and messages are sent out as fast as possible
 define("MAILQUEUE_BATCH_SIZE",0);
 
 # define the length of one batch processing period, in seconds (3600 is an hour)
 define("MAILQUEUE_BATCH_PERIOD",3600);
+
+# to avoid overloading the server that sends your email, you can add a little delay
+# between messages that will spread the load of sending
+# you will need to find a good value for your own server
+# value is in seconds (or you can play with the autothrottle below)
+define('MAILQUEUE_THROTTLE',0);
+
+# year ranges. If you use dates, by default the drop down for year will be from
+# three years before until 10 years after this the current value for year. If there
+# is no current value the current year will be used.
+# if you want to use a bigger range you can set the start and end year here
+# be aware that the drop down may become very large.
+# if set to 0 they will use the default behaviour. So I'm afraid you can't start with
+# year 0. Also be aware not to set the end year to something relatively soon in the
+# future, or it will stop working when you reach that year.
+define('DATE_START_YEAR',0);
+define('DATE_END_YEAR',0);
+
+# empty value prefix. This can be used to identify values in select attributes
+# that are not allowed to be selected and cause an error "Please enter your ..."
+# by using a top value that starts with this string, you can make sure that the
+# selects do not have a default value, that may be accidentally selected
+# eg. "-- choose your country"
+define('EMPTY_VALUE_PREFIX','--');
+
+# admin details for messages
+# if this is enabled phplist will initialise the From in new messages to be the
+# details of the logged in administrator who is sending the message
+# otherwise it will default to the values set in the configure page that identify
+# the From for system messages
+define('USE_ADMIN_DETAILS_FOR_MESSAGES',1);
+
+/*
+
+=========================================================================
+
+Experimental Features
+
+=========================================================================
+
+*/
+
+# list exclude will add the option to send a message to users who are on a list
+# except when they are on another list.
+# this is currently marked experimental
+
+define("USE_LIST_EXCLUDE",0);
+
+# admin authentication module.
+# to validate the login for an administrator, you can define your own authentication module
+# this is not finished yet, so don't use it unless you're happy to play around with it
+# if you have modules to contribute, send them to phplist2@tincan.co.uk
+# the default module is phplist_auth.inc, which you can find in the "auth" subdirectory of the
+# admin directory. It will tell you the functions that need to be defined for phplist to
+# retrieve it's information.
+# phplist will look for a file in that directory, or you can enter the full path to the file
+
+# eg
+#$admin_auth_module = 'phplist_auth.inc';
+
+# or
+#$admin_auth_module = '/usr/local/etc/auth.inc';
+
+# stacked attribute selection
+# this is a new method of making a selection of attributes to send your messages to
+# to start with, it doesn't seem to work very well in Internet Explorer, but it works fine
+# using Mozilla, Firefox, Opera (haven't tried any other browsers)
+# so if you use IE, you may not want to try this.
+
+# stacked attribute selection allows you to continuously add a selection of attributes
+# to your message. This is quite a bit more powerful than the old method, but it can also
+# cause very complex queries to be constructed that may take too long to calculate
+# If you want to try this, set the value to 1, and give us feedback on how it's going
+
+# if you want to use dates for attribute selections, you need to use this one
+
+define("STACKED_ATTRIBUTE_SELECTION",0);
+
+
+# send a webpage. You can send the contents of a webpage, by adding
+# [URL:http://website/file.html] as the content of a message. This can also be personalised
+# for users by using eg
+# [URL:http://website/file.html?email=[email]]
+# the timeout for refetching a URL can be defined here. When the last time a URL has been
+# fetched exceeds this time, the URL will be refetched. This is in seconds, 3600 is an hour
+# this only affects sending within the same "process queue". If a new process queue is started
+# the URL will be fetched the first time anyway. Therefore this is only useful is processing
+# your queue takes longer than the time identified here.
+define('REMOTE_URL_REFETCH_TIMEOUT',3600);
+
+# Mailqueue autothrottle. This will try to automatically change the delay
+# between messages to make sure that the MAILQUEUE_BATCH_SIZE (above) is spread evently over
+# MAILQUEUE_BATCH_PERIOD, instead of firing the Batch in the first few minutes of the period
+# and then waiting for the next period. This only works with mailqueue_throttle off
+# it still needs tweaking, so send your feedback to mantis.tincan.co.uk if you find
+# any issues with it
+define('MAILQUEUE_AUTOTHROTTLE',0);
+
+# Click tracking
+# If you set this to 1, all links in your emails will be converted to links that
+# go via phplist. This will make sure that clicks are tracked. This is experimental and
+# all your findings when using this feature should be reported to mantis
+# for now it's off by default until we think it works correctly
+define('CLICKTRACK',0);
+
+# Click track, list detail
+# if you enable this, you will get some extra statistics about unique users who have clicked the
+# links in your messages, and the breakdown between clicks from text or html messages.
+# However, this will slow down the process to view the statistics, so it is
+# recommended to leave it off, but if you're very curious, you can enable it
+define('CLICKTRACK_SHOWDETAIL',0);
+
+# Domain Throttling
+# You can activate domain throttling, by setting USE_DOMAIN_THROTTLE to 1
+# define the maximum amount of emails you want to allow sending to any domain and the number
+# of seconds for that amount. This will make sure you don't send too many emails to one domain
+# which may cause blacklisting. Particularly the big ones are tricky about this.
+# it may cause a dramatic increase in the amount of time to send a message, depending on how
+# many users you have that have the same domain (eg hotmail.com)
+# if too many failures for throttling occur, the send process will automatically add an extra
+# delay to try to improve that. The example sends 1 message every 2 minutes.
+
+define('USE_DOMAIN_THROTTLE',0);
+define('DOMAIN_BATCH_SIZE',1);
+define('DOMAIN_BATCH_PERIOD',120);
+
+# if you have very large numbers of users on the same domains, this may result in the need
+# to run processqueue many times, when you use domain throttling. You can also tell phplist
+# to simply delay a bit between messages to increase the number of messages sent per queue run
+# if you want to use that set this to 1, otherwise simply run the queue many times. A cron
+# process every 10 or 15 minutes is recommended.
+define('DOMAIN_AUTO_THROTTLE',0);
+
+# admin language
+# if you want to disable the language switch for the admin interface (and run all in english)
+# set this one to 0
+define('LANGUAGE_SWITCH',1);
+
+# advanced bounce processing
+# with advanced bounce handling you are able to define regular expressions that match bounces and the
+# action that needs to be taken when an expression matches. This will improve getting rid of bad emails in
+# your system, which will be a good thing for making sure you are not being blacklisted by other
+# mail systems
+# if you use this, you will need to teach your system regularly about patterns in new bounces
+define('USE_ADVANCED_BOUNCEHANDLING',0);
+
 
 /*
 
@@ -296,16 +452,16 @@ Advanced Features, HTML editor, RSS, Attachments, Plugins. PDF creation
 
 */
 
-# you can specify the encoding for HTML messages here. This only works if you do
-# not use the phpmailer (see below)
+# you can specify the encoding for HTML and plaintext messages here. This only
+# works if you do not use the phpmailer (see below)
 # the default should be fine. Valid options are 7bit, quoted-printable and base64
 define("HTMLEMAIL_ENCODING","quoted-printable");
+define("TEXTEMAIL_ENCODING",'7bit');
 
 
 # PHPlist can send RSS feeds to users. Feeds can be sent daily, weekly or
-# monthly. This feature is currently marked experimental.
-# To use the feature you need XML support in your PHP installation, and you need
-# to set this constant to 1
+# monthly. To use the feature you need XML support in your PHP installation, and you
+# need to set this constant to 1
 define("ENABLE_RSS",0);
 
 # if you have set up a cron to download the RSS entries, you can set this to be 0
@@ -328,8 +484,10 @@ define("FCKIMAGES_DIR","uploadimages");
 # standard TinyMCE distribution into the public_html/lists/admin/plugins
 # directory in order to keep the install clean.
 # NOTE: If you enable TinyMCE please disable FCKeditor and vice-versa.
-# Set this to 1 to turn on TinyMCE:
-define("USETINYMCE", 0);
+# Set this to 1 to turn on TinyMCE for writing messages:
+define("USETINYMCEMESG", 0);
+# Set this to 1 to turn on TinyMCE for editing templates:
+define("USETINYMCETEMPL", 0);
 # Set this to path of the TinyMCE script, relative to the admin directory:
 define("TINYMCEPATH", "plugins/tiny_mce/tiny_mce.js");
 # Set this to the language you wish to use for TinyMCE:
@@ -361,7 +519,7 @@ define("NUMATTACHMENTS",1);
 
 # when using attachments you can upload them to the server
 # if you want to use attachments from the local filesystem (server) set this to 1
-# filesystem attachments are attached at real send time of the message, not at 
+# filesystem attachments are attached at real send time of the message, not at
 # the time of creating the message
 define("FILESYSTEM_ATTACHMENTS",0);
 
@@ -383,7 +541,7 @@ define("DEFAULT_MIMETYPE","application/octet-stream");
 
 define("PLUGIN_ROOTDIR","/home/me/phplistplugins");
 
-# uncomment this one to see the examples in the system (and then comment the 
+# uncomment this one to see the examples in the system (and then comment the
 # one above)
 #define("PLUGIN_ROOTDIR","plugins");
 
@@ -429,31 +587,24 @@ define("USE_REPETITION",0);
 # do with being able to edit messages.
 define("USE_PREPARE",0);
 
-# James Storm has contributed a new version of the HTML email class that creates the
-# HTML emails. He claims that his class fixes all kinds of things for MS Outlook.
-# if you want to use his class instead of the standard one, set this to 1
-# if you do so, we'd appreciate feedback whether it works ok, so we can integrate it
-# properly into the system. We need some more test information before this can be done
-
-# this does currently not work, so do not use it!
-define("USE_OUTLOOK_OPTIMIZED_HTML",0);
-
 # If you want to use the PHPMailer class from phpmailer.sourceforge.net, set the following
-# to 1, this code is not finished yet, and it is highly experimental. Do not use on
-# live installations, only to play around with, and for testing.
-# if you want to use this, put the phpmailer files in lists/admin/phpmailer
-# I will include it in a future release, but for now, you will have to add it yourself
-define("PHPMAILER",0);
+# to 1. If you tend to send out html emails, it is recommended to do so.
+define("PHPMAILER",1);
 
-# If you do the above, and you want to send with SMTP, give your SMTP server here:
-# otherwise the normal mail() function will be used
-define("SMTPHOST","mail");
+# To use a SMTP please give your server hostname here, leave it blank to use the standard
+# PHP mail() command.
+define("PHPMAILERHOST",'');
 
-# if you upgrade we need to be able to write temporary files somewhere
-# indicate where this can be done. Make sure it is writable by your webserver
-# user. Linux users can leave it as it is.
-# If you send messages as PDF, you will need to use this as well
-# also the RSS class will create cache files in this directory
+# if you want to use smtp authentication when sending the email uncomment the following
+# two lines and set the username and password to be the correct ones
+#$phpmailer_smtpuser = 'smtpuser';
+#$phpmailer_smtppassword = 'smtppassword';
+
+# tmpdir. A location where phplist can write some temporary files if necessary
+# Make sure it is writable by your webserver user, and also check that you have
+# open_basedir set to allow access to this directory. Linux users can leave it as it is.
+# this directory is used for all kinds of things, mostly uploading of files (like in
+# import), creating PDFs and more
 $tmpdir = '/tmp';
 
 # if you are on Windoze, and/or you are not using apache, in effect when you are getting
@@ -467,6 +618,11 @@ $tmpdir = '/tmp';
 # very welcome!
 $database_module = "mysql.inc";
 
+# you can store sessions in the database instead of the default place by assigning
+# a tablename to this value. The table will be created and will not use any prefixes
+# this only works when using mysql and only for administrator sessions
+# $SessionTableName = "phplistsessions";
+
 # there is now support for the use of ADOdb http://php.weblogs.com/ADODB
 # this is still experimental, and any findings should be reported in the
 # bugtracker
@@ -477,70 +633,5 @@ $database_module = "mysql.inc";
 
 # if you want more trouble, make this 63 (very unlikely you will like the result)
 $error_level = error_reporting(0);
-
-################################################################################################
-# you should not need to edit below, but if things go wrong you can try to play around with it #
-################################################################################################
-
-if (file_exists($database_module)) {
-  include $database_module;
-} elseif (file_exists("admin/$database_module")) {
-  include "admin/$database_module";
-} elseif (file_exists("../$database_module")) { # help is one level up
-  include "../$database_module";
-} else {
-	print "Cannot load $database_module, exit";
-	exit;
-}
-if (file_exists("../texts/english.inc")) { # first load english and then the translation
-  include "../texts/english.inc";
-} elseif(file_exists("texts/english.inc")) {
-  include "texts/english.inc";
-} elseif (file_exists("../../texts/english.inc")) {
-  include "../../texts/english.inc";
-} else {
-	print "Cannot load english.inc, exit;";
-	exit;
-}
-if (file_exists("../texts/$language_module")) {
-  include "../texts/$language_module";
-} elseif (file_exists("texts/$language_module")) {
-  include "texts/$language_module";
-} elseif (file_exists("../../texts/$language_module")) {
-  include "../../texts/$language_module";
-} else {
-	print "Cannot load $language_module, exit";
-	exit;
-}
-if (file_exists("defaultconfig.inc")) {
-  include "defaultconfig.inc";
-} elseif (file_exists("admin/defaultconfig.inc")) {
-  include "admin/defaultconfig.inc";
-} elseif (file_exists("../defaultconfig.inc")) {
-  include "../defaultconfig.inc";
-} else {
-  print "cannot load defaultconfig, exit";
-	exit;
-}
-if (file_exists("connect.php")) {
-  include "connect.php";
-} elseif (file_exists("admin/connect.php")) {
-  include "admin/connect.php";
-} elseif (file_exists("../connect.php")) {
-  include "../connect.php";
-} else {
-	print "Cannot load libraries connect, exit";
-	exit;
-}
-if (file_exists("languages.php")) {
-  include "languages.php";
-} elseif (file_exists("admin/languages.php")) {
-  include "admin/languages.php";
-} elseif (file_exists("../languages.php")) {
-  include "../languages.php";
-} else {
-	print "Cannot load language libraries, exit";
-	exit;
-}#ob_start(); # useful to be able to redirect after outputting
 
 ?>

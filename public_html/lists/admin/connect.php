@@ -1,7 +1,7 @@
 <?php
 
-if (is_file(getenv("DOCUMENT_ROOT") ."/../VERSION")) {
-  $fd = fopen (getenv("DOCUMENT_ROOT") ."/../VERSION", "r");
+if (is_file(dirname(__FILE__) .'/../../../VERSION')) {
+  $fd = fopen (dirname(__FILE__) .'/../../../VERSION', "r");
   while ($line = fscanf ($fd, "%[a-zA-Z0-9,. ]=%[a-zA-Z0-9,. ]")) {
     list ($key, $val) = $line;
     if ($key == "VERSION")
@@ -12,10 +12,13 @@ if (is_file(getenv("DOCUMENT_ROOT") ."/../VERSION")) {
   $version = "dev";
 }
 
-define("VERSION",$version."dev2.8");
+define("VERSION",$version."dev29");
 
 include_once dirname(__FILE__)."/commonlib/lib/userlib.php";
 include_once dirname(__FILE__)."/pluginlib.php";
+
+# set some variables
+if (!isset($_GET["pi"])) $_GET["pi"] = "";
 
 # make sure magic quotes are on. Try to switch it on, this may fail
 ini_set("magic_quotes_gpc","on");
@@ -26,15 +29,6 @@ $GLOBALS["img_cross"] = '<img src="images/cross.gif" alt="No">';
 # if keys need expanding with 0-s
 $checkboxgroup_storesize = 1; # this will allow 10000 options for checkboxes
 
-if (!isset($adminlanguage) || !is_array($adminlanguage)) {
-	$adminlanguage = array(
-		"info" => "en",
-    "iso" => "en",
-  	"charset" => "iso-8859-1",
-	);
-}
-
-
 # identify pages that can be run on commandline
 $commandline_pages = array("send","processqueue","processbounces","getrss");
 
@@ -42,19 +36,24 @@ if (isset($message_envelope))
   $envelope = "-f$message_envelope";
 $database_connection = Sql_Connect($database_host,$database_user,$database_password,$database_name);
 
+if (!empty($GLOBALS["SessionTableName"])) {
+  include_once dirname(__FILE__)."/sessionlib.php";
+}
+
 if (!isset($table_prefix))
-	$table_prefix = "";
+  $table_prefix = "";
 if (!isset($usertable_prefix))
   $usertable_prefix = $table_prefix;
-
-include_once dirname(__FILE__)."/lib.php";
 
 $tables = array(
   "user" => $usertable_prefix . "user",
   "user_history" => $usertable_prefix . "user_history",
   "list" => $table_prefix . "list",
   "listuser" => $table_prefix . "listuser",
+  "user_blacklist" => $table_prefix . "user_blacklist",
+  "user_blacklist_data" => $table_prefix . "user_blacklist_data",
   "message" => $table_prefix . "message",
+  "messagedata" => $table_prefix. "messagedata",
   "listmessage" => $table_prefix . "listmessage",
   "usermessage" => $table_prefix . "usermessage",
   "attribute" => $usertable_prefix . "attribute",
@@ -64,6 +63,7 @@ $tables = array(
   "templateimage" => $table_prefix . "templateimage",
   "bounce" => $table_prefix ."bounce",
   "user_message_bounce" => $table_prefix . "user_message_bounce",
+  "user_message_forward" => $table_prefix . 'user_message_forward',
   "config" => $table_prefix . "config",
   "admin" => $table_prefix . "admin",
   "adminattribute" => $table_prefix . "adminattribute",
@@ -79,50 +79,62 @@ $tables = array(
   "rssitem_data" => $table_prefix . "rssitem_data",
   "user_rss" => $table_prefix . "user_rss",
   "rssitem_user" => $table_prefix . "rssitem_user",
-  "listrss" => $table_prefix . "listrss"
+  "listrss" => $table_prefix . "listrss",
+  "urlcache" => $table_prefix . "urlcache",
+  'linktrack' => $table_prefix.'linktrack',
+  'linktrack_userclick' => $table_prefix.'linktrack_userclick',
+  'userstats' => $table_prefix .'userstats',
+  'bounceregex' => $table_prefix.'bounceregex',
+  'bounceregex_bounce' => $table_prefix.'bounceregex_bounce',
 );
 $domain = getConfig("domain");
 $website = getConfig("website");
+$xormask = getConfig('xormask');
+if (!$xormask) {
+  $xormask = md5(uniqid(rand(), true));
+  SaveConfig("xormask",$xormask,0,1);
+}
+define('XORmask',$xormask);
 
 $rssfrequencies = array(
-#	"hourly" => $strHourly, # to be added at some other point
-	"daily" => $strDaily,
+#  "hourly" => $strHourly, # to be added at some other point
+  "daily" => $strDaily,
   "weekly" => $strWeekly,
   "monthly" => $strMonthly
 );
 
 $redfont = "<font color=\"red\">";
 $efont = "</font>";
-$GLOBALS["coderoot"] = "";
+$GLOBALS["coderoot"] = dirname(__FILE__).'/';
 $GLOBALS["mail_error"] = "";
 $GLOBALS["mail_error_count"] = 0;
 
-function SaveConfig($item,$value,$editable=1) {
-	global $tables;
+function SaveConfig($item,$value,$editable=1,$ignore_errors = 0) {
+  global $tables;
   if ($value == "false" || $value == "no") {
-  	$value = 0;
+    $value = 0;
   } else if ($value == "true" || $value == "yes") {
-  	$value = 1;
+    $value = 1;
   }
- 	Sql_Query(sprintf('replace into %s (item,value,editable) values("%s","%s",%d)',
- 	  $tables["config"],$item,addslashes($value),$editable));
+   Sql_Query(sprintf('replace into %s (item,value,editable) values("%s","%s",%d)',
+     $tables["config"],$item,addslashes($value),$editable),$ignore_errors);
 }
 
 /*
-	We request you retain the $PoweredBy variable including the links.
-	This not only gives respect to the large amount of time given freely
-  by the developers	but also helps build interest, traffic and use of
+  We request you retain the $PoweredBy variable including the links.
+  This not only gives respect to the large amount of time given freely
+  by the developers  but also helps build interest, traffic and use of
   PHPlist, which is beneficial to it's future development.
 
   You can configure your PoweredBy options in your config file
 
-	Michiel Dethmers, Tincan Ltd 2003
+  Michiel Dethmers, Tincan Ltd 2001,2004
 */
 if (ereg("dev",VERSION)) $v = "dev"; else $v = VERSION;
 if (REGISTER) {
-	$PoweredByImage = '<p align=left><a href="http://www.phplist.com"><img src="http://phplist.tincan.co.uk/images/'.$v.'/power-phplist.png" width=70 height=30 title="Powered by PHPlist version '.$v.', &copy; tincan ltd" alt="Powered by PHPlist'.$v.', &copy tincan ltd" border="0"></a></p>';
+  $PoweredByImage = '<p align=left><a href="http://www.phplist.com"><img src="http://phplist.tincan.co.uk/images/'.$v.'/power-phplist.png" width=70 height=30 title="Powered by PHPlist version '.$v.', &copy; tincan ltd" alt="Powered by PHPlist'.$v.', &copy tincan ltd" border="0"></a></p>';
 } else {
-	$PoweredByImage = '<p align=left><a href="http://www.phplist.com"><img src="images/power-phplist.png" width=70 height=30 title="Powered by PHPlist version '.$v.', &copy; tincan ltd" alt="Powered by PHPlist'.$v.', &copy tincan ltd" border="0"></a></p>';
+  $PoweredByImage = '<p align=left><a href="http://www.phplist.com"><img src="images/power-phplist.png" width=70 height=30 title="Powered by PHPlist version '.$v.', &copy; tincan ltd" alt="Powered by PHPlist'.$v.', &copy tincan ltd" border="0"></a></p>';
 }
 $PoweredByText = '
     <style type="text/css">
@@ -135,42 +147,42 @@ a:hover.poweredphplist {color : #7D7B7B;}
     <span class="poweredphplist">powered by <a href="http://www.phplist.com" class="poweredphplist" target="_blank">phplist</a> v '.$v.', &copy; <a href="http://tincan.co.uk/powered" target="_blank" class="poweredphplist">tincan ltd</a></span>';
 if (!TEST && REGISTER) {
   if (!PAGETEXTCREDITS) {;
-  	$PoweredBy = $PoweredByImage;
+    $PoweredBy = $PoweredByImage;
   } else {
-  	$PoweredBy = $PoweredByText;
-	}
+    $PoweredBy = $PoweredByText;
+  }
 } else {
   if (!PAGETEXTCREDITS) {;
-  	$PoweredBy = $PoweredByImage;
+    $PoweredBy = $PoweredByImage;
   } else {
-  	$PoweredBy = $PoweredByText;
-	}
+    $PoweredBy = $PoweredByText;
+  }
 }
 # some other configuration variables, which need less tweaking
 # number of users to show per page if there are more
 define ("MAX_USER_PP",50);
-define("MAX_MSG_PP",10);
+define("MAX_MSG_PP",5);
 
 function formStart($additional="") {
-	global $form_action,$page,$p;
-	# depending on server software we can post to the directory, or need to pass on the page
+  global $form_action,$page,$p;
+  # depending on server software we can post to the directory, or need to pass on the page
   if ($form_action) {
-		$html = sprintf('<form method=post action="%s" %s>',$form_action,$additional);
-		# retain all get variables as hidden ones
+    $html = sprintf('<form method=post action="%s" %s>',$form_action,$additional);
+    # retain all get variables as hidden ones
     foreach ( array("p","page") as $key) {
-    	$val = $_REQUEST[$key];
+      $val = $_REQUEST[$key];
       if ($val)
-	    	$html .= sprintf('<input type=hidden name="%s" value="%s">',
-	      	$key,$val);
+        $html .= sprintf('<input type=hidden name="%s" value="%s">',
+          $key,$val);
     }
- 	}
+   }
   else
-  	$html = sprintf('<form method=post %s>',$additional);
-/*		$html = sprintf('<form method=post action="./" %s>
-		%s',$additional,isset($page) ?
-		'<input type=hidden name="page" value="'.$page.'">':(
-		isset($p)?'<input type=hidden name="p" value="'.$p.'">':"")
-		);
+    $html = sprintf('<form method=post %s>',$additional);
+/*    $html = sprintf('<form method=post action="./" %s>
+    %s',$additional,isset($page) ?
+    '<input type=hidden name="page" value="'.$page.'">':(
+    isset($p)?'<input type=hidden name="p" value="'.$p.'">':"")
+    );
 */
   return $html;
 }
@@ -192,36 +204,36 @@ function checkAccess($page) {
 }
 
 function sendReport($subject,$message) {
-	$report_addresses = explode(",",getConfig("report_address"));
-	foreach ($report_addresses as $address) {
-  	sendMail($address,$GLOBALS["installation_name"]." ".$subject,$message);
- 	}
+  $report_addresses = explode(",",getConfig("report_address"));
+  foreach ($report_addresses as $address) {
+    sendMail($address,$GLOBALS["installation_name"]." ".$subject,$message);
+   }
 }
 
 function sendMessageStats($msgid) {
-	global $stats_collection_address,$tables;
-	if (defined("NOSTATSCOLLECTION") && NOSTATSCOLLECTION) {
-  	return;
- 	}
+  global $stats_collection_address,$tables;
+  if (defined("NOSTATSCOLLECTION") && NOSTATSCOLLECTION) {
+    return;
+   }
   if (!isset($stats_collection_address)) {
-  	$stats_collection_address = 'phplist-stats@tincan.co.uk';
+    $stats_collection_address = 'phplist-stats@tincan.co.uk';
   }
   $data = Sql_Fetch_Array_Query(sprintf('select * from %s where id = %d',
-  	$tables["message"],$msgid));
+    $tables["message"],$msgid));
   $msg .= "PHPlist version ".VERSION . "\n";
   $diff = timeDiff($data["sendstart"],$data["sent"]);
 
   if ($data["id"] && $data["processed"] > 10 && $diff != "very little time") {
-  	$msg .= "\n".'Time taken: '.$diff;
-  	foreach (array('entered','processed',
-    	'sendstart','sent','htmlformatted','sendformat','template','astext',
-		  'ashtml','astextandhtml','aspdf','astextandpdf') as $item) {
-      	$msg .= "\n".$item.' => '.$data[$item];
+    $msg .= "\n".'Time taken: '.$diff;
+    foreach (array('entered','processed',
+      'sendstart','sent','htmlformatted','sendformat','template','astext',
+      'ashtml','astextandhtml','aspdf','astextandpdf') as $item) {
+        $msg .= "\n".$item.' => '.$data[$item];
     }
     if ($stats_collection_address == 'phplist-stats@tincan.co.uk' && $data["processed"] > 500) {
-			mail($stats_collection_address,"PHPlist stats",$msg);
+      mail($stats_collection_address,"PHPlist stats",$msg);
     } else {
-			mail($stats_collection_address,"PHPlist stats",$msg);
+      mail($stats_collection_address,"PHPlist stats",$msg);
     }
   }
 }
@@ -234,7 +246,7 @@ function normalize($var) {
 
 function ClineSignature() {
   return "PHPlist version ".VERSION." (c) 2000-".date("Y")." Tincan Ltd, http://www.phplist.com\n";
-}  
+}
 
 function ClineError($msg) {
   ob_end_clean();
@@ -244,8 +256,8 @@ function ClineError($msg) {
 }
 
 function clineUsage($line = "") {
-#	if (!ereg("dev",VERSION))
-	  ob_end_clean();
+#  if (!ereg("dev",VERSION))
+    ob_end_clean();
   print clineSignature();
   print "Usage: ".$_SERVER["SCRIPT_FILENAME"]." -p page $line\n\n";
   exit;
@@ -256,8 +268,8 @@ function Error($msg) {
     clineError($msg);
     return;
   }
-  print "<div class=\"error\" align=center>Error: $msg </div>";
-  
+  print '<div class="error" align=center>'.$GLOBALS["I18N"]->get("error").": $msg </div>";
+
   $GLOBALS["mail_error"] .= 'Error: '.$msg."\n";
   $GLOBALS["mail_error_count"]++;
   if (is_array($_POST) && sizeof($_POST)) {
@@ -265,7 +277,7 @@ function Error($msg) {
     while (list($key,$val) = each ($_POST)) {
       if ($key != "password")
         $GLOBALS["mail_error"] .= $key . "=" . $val . "\n";
-      else 
+      else
         $GLOBALS["mail_error"] .= "password=********\n";
     }
   }
@@ -283,31 +295,37 @@ function clean ($value) {
 }
 
 function join_clean($sep,$array) {
-	# join values without leaving a , at the end
-	$arr2 = array();
+  # join values without leaving a , at the end
+  $arr2 = array();
   foreach ($array as $key => $val) {
-  	if ($val) {
-    	$arr2[$key] = $val;
+    if ($val) {
+      $arr2[$key] = $val;
     }
   }
   return join($sep,$arr2);
 }
 
 function Fatal_Error($msg) {
-  print "<div align=\"center\" class=\"error\">Fatal Error: $msg </div>";
+  if (isset($GLOBALS['I18N']) && is_object($GLOBALS['I18N'])) {
+    print '<div align="center" class="error">'.$GLOBALS["I18N"]->get("fatalerror").": $msg </div>";
+  } else {
+    print '<div align="center" class="error">'."Fatal Error: $msg </div>";
+  }
   $message = '
 
   An error has occurred in the Mailinglist System
   URL: '.$_SERVER["REQUEST_URI"].'
   Error: ' . $msg;
-  sendMail(getConfig("report_address"),"Mail list error",$message,"");
+  if (function_exists("sendMail")) {
+    sendMail(getConfig("report_address"),"Mail list error",$message,"");
+  }
  # include "footer.inc";
  # exit;
   return 0;
 }
 
 function Warn($msg) {
-  print "<div align=center class=\"error\">Warning: $msg </div>";
+  print '<div align=center class="error">'.$GLOBALS["I18N"]->get("warning").": $msg </div>";
   $message = '
 
   An warning has occurred in the Mailinglist System
@@ -317,7 +335,7 @@ function Warn($msg) {
 }
 
 function Info($msg) {
-  print "<center><table border=1><tr><td class=\"error\">Information: $msg </td></tr></table></center>";
+  print '<center><table border=1><tr><td class="error">'.$GLOBALS["I18N"]->get("information").": $msg </td></tr></table></center>";
 }
 
 
@@ -332,22 +350,37 @@ $main_menu = array(
   "usermgt" => "Manage Users",
   "spage" => "Subscribe Pages",
   "messages" => "Messages",
+  'statsmgt' => 'Statistics',
   "div2" => "<hr />",
   "templates" => "Templates",
   "preparesend"=>"Prepare a message",
   "sendprepared"=>"Send a prepared message",
   "processqueue"=>"Process Queue",
   "processbounces"=>"Process Bounces",
+  "bouncemgt" => 'Manage Bounces',
   "bounces"=>"View Bounces",
   "eventlog"=>"Eventlog"
 );
 
 function newMenu() {
-  if ($GLOBALS["firsttime"]) { return; }
-	$nm = strtolower(NAME);
-  if ($nm != "phplist") {
-  	$GLOBALS["main_menu"]["community"] = "";
+  if (isset($GLOBALS["firsttime"])) { return; }
+  if (!CLICKTRACK) {
+    unset($GLOBALS["main_menu"]['statsmgt']);
   }
+  $spb ='<span class="menulinkleft">';
+  $spe = '</span>';
+  $nm = strtolower(NAME);
+  if ($nm != "phplist") {
+    $GLOBALS["main_menu"]["community"] = "";
+  }
+  if (USE_ADVANCED_BOUNCEHANDLING) {
+    $GLOBALS["main_menu"]["bounces"] = "";
+    $GLOBALS["main_menu"]["processbounces"] = "";
+  } else {
+    $GLOBALS["main_menu"]["bouncemgt"] = '';
+  }
+
+  if ($GLOBALS["require_login"] && (!isset($_SESSION["adminloggedin"]) || !$_SESSION["adminloggedin"])) return $spb.PageLink2('home',$GLOBALS["I18N"]->get('Main Page')).'<br />'.$spe.$spb.PageLink2('about',$GLOBALS["I18N"]->get('about').' phplist').'<br />'.$spe;
 
   $access = accessLevel("spage");
   switch ($access) {
@@ -362,15 +395,17 @@ function newMenu() {
   }
   if (TEST && REGISTER)
     $pixel = '<img src="http://phplist.tincan.co.uk/images/pixel.gif" width=1 height=1>';
+  else
+    $pixel = "";
   global $tables;
   $html = "";
-	$spb ='<span class="menulinkleft">';
-	$spe = '</span>';
   if ($GLOBALS["require_login"])
-    $html .= $spb.PageLink2("logout","Logout").'<br />'.$spe;
-    
-  $_GET["pi"] = "";
-  $html .= $spb.PageLink2("home","Main Page").$spe;
+    $html .= $spb.PageLink2("logout",$GLOBALS["I18N"]->get("logout")).'<br />'.$spe;
+
+  $_GET["pi"] = '';
+  $html .= $spb.PageLink2("home",$GLOBALS["I18N"]->get("Main Page")).$spe;
+
+  /*
   $req = Sql_Query(sprintf('select * from %s %s',$tables["subscribepage"],$subselect));
   $spages = array();
   if (Sql_Affected_Rows()) {
@@ -382,7 +417,7 @@ function newMenu() {
     if ($url)
       $spages[$url] = 'Unsubscribe';
   } else {
-#	  $html .= $spb.sprintf('<a href="%s">%s</a>',getConfig("subscribeurl"),$GLOBALS["strSubscribeTitle"]).$spe;
+#    $html .= $spb.sprintf('<a href="%s">%s</a>',getConfig("subscribeurl"),$GLOBALS["strSubscribeTitle"]).$spe;
     $spages["spage"] = "Create Subscribe Pages";
   }
   if ($tables["attribute"] && Sql_Table_Exists($tables["attribute"])) {
@@ -393,8 +428,10 @@ function newMenu() {
         $attrmenu["editattributes&id=".$row["id"]] = strip_tags($row["name"]);
     }
   }
+  */
+
   foreach ($GLOBALS["main_menu"] as $page => $desc) {
-    $link = PageLink2($page,$desc);
+    $link = PageLink2($page,$GLOBALS["I18N"]->get($desc));
     if ($link) {
       if ($page == "preparesend" || $page == "sendprepared") {
         if (USE_PREPARE) {
@@ -410,7 +447,7 @@ function newMenu() {
     foreach ($GLOBALS["plugins"] as $pluginName => $plugin) {
       $html .= $spb.PageLink2("main&pi=$pluginName",$pluginName).$spe;
     }
-  }  
+  }
 
   return $html . $pixel;
 }
@@ -431,12 +468,12 @@ function PageLink2($name,$desc="",$url="") {
     elseif ($name == "processbounces" && !MANUALLY_PROCESS_BOUNCES)
       return "";#'<!-- '.$desc.'-->';
     else {
-    	if (!preg_match("/&pi=/i",$name) && $_GET["pi"] && is_object($GLOBALS["plugins"][$_GET["pi"]])) {
-      	$pi = '&pi='.$_GET["pi"];
+      if (!preg_match("/&pi=/i",$name) && $_GET["pi"] && is_object($GLOBALS["plugins"][$_GET["pi"]])) {
+        $pi = '&pi='.$_GET["pi"];
       } else {
-      	$pi = "";
+        $pi = "";
       }
-    	return sprintf('<a href="./?page=%s%s%s">%s</a>',$name,$url,$pi,strtolower($desc));
+      return sprintf('<a href="./?page=%s%s%s">%s</a>',$name,$url,$pi,strtolower($desc));
     }
   } else return "";
 #    return "\n<!--$name disabled $access -->\n";
@@ -453,7 +490,7 @@ function SidebarLink($name,$desc,$url="") {
     elseif ($name == "processbounces" && !MANUALLY_PROCESS_BOUNCES)
       return '<!-- '.$desc.'-->';
     else
-    	return sprintf('<a href="./?page=%s%s" target="phplistwindow">%s</a>',$name,$url,strtolower($desc));
+      return sprintf('<a href="./?page=%s%s" target="phplistwindow">%s</a>',$name,$url,strtolower($desc));
   } else
     return "\n<!--$name disabled $access -->\n";
 #    return "\n$name disabled $access\n";
@@ -471,26 +508,26 @@ function PageURL2($name,$desc = "",$url="") {
 }
 
 function Redirect($page) {
-	global $website,$adminpages;
-	Header("Location: http://".$website."$adminpages/?page=$page");
+  $website = getConfig("website");
+  Header("Location: http://".$website.$GLOBALS["adminpages"]."/?page=$page");
   exit;
 }
 
 function formatBytes ($value) {
-	$gb = 1024 * 1024 * 1024;
+  $gb = 1024 * 1024 * 1024;
   $mb = 1024 * 1024;
   $kb = 1024;
-	$gbs = $value / $gb;
-	if ($gbs > 1)
-		return sprintf('%2.2fGb',$gbs);
+  $gbs = $value / $gb;
+  if ($gbs > 1)
+    return sprintf('%2.2fGb',$gbs);
   $mbs = $value / $mb;
   if ($mbs > 1)
-		return sprintf('%2.2fMb',$mbs);
+    return sprintf('%2.2fMb',$mbs);
   $kbs = $value / $kb;
   if ($kbs > 1)
-		return sprintf('%dKb',$kbs);
-	else
-  	return sprintf('%dBytes',$value);
+    return sprintf('%dKb',$kbs);
+  else
+    return sprintf('%dBytes',$value);
 }
 
 # I would prefer not to use this version, as it is very heavy on memory, loading the content
@@ -637,7 +674,7 @@ function upgradeTable2($table,$tablestructure) {
 
 
 function Help($topic,$text = '?') {
-	return sprintf('<a href="javascript:help(\'help/?topic=%s\')">%s</a>',$topic,$text);
+  return sprintf('<a href="javascript:help(\'help/?topic=%s\')">%s</a>',$topic,$text);
 }
 
 
@@ -647,50 +684,130 @@ if (!function_exists("dbg")) {
 }
 
 function PageData($id) {
-	global $tables;
+  global $tables;
   $req = Sql_Query(sprintf('select * from %s where id = %d',$tables["subscribepage_data"],$id));
   if (!Sql_Affected_Rows()) {
-  	FileNotFound();
-    exit;
+    $data = array();
+    $data["header"] = getConfig("pageheader");
+    $data["footer"] = getConfig("pagefooter");
+    $data["button"] = 'Subscribe';
+    $data['attributes'] = '';
+    $req = Sql_Query(sprintf('select * from %s order by listorder',$GLOBALS['tables']['attribute']));
+    while ($row = Sql_Fetch_Array($req)) {
+      $data['attributes'] .= $row['id'].'+';
+      $data[sprintf('attribute%03d',$row['id'])] = '';
+      foreach (array('id','default_value','listorder','required') as $key) {
+        $data[sprintf('attribute%03d',$row['id'])] .= $row[$key].'###';
+      }
+    }
+    $data['attributes'] = substr($data['attributes'],0,-1);
+    $data['htmlchoice'] = 'checkforhtml';
+    $lists = array();
+    $req = Sql_Query(sprintf('select * from %s where active order by listorder',$GLOBALS['tables']['list']));
+    while ($row = Sql_Fetch_Array($req)) {
+      array_push($lists,$row['id']);
+    }
+    $data['lists'] = join(',',$lists);
+    $data['intro'] = $GLOBALS['strSubscribeInfo'];
+    $data['emaildoubleentry'] = 'yes';
+    $data['rssdefault'] = 'daily';
+    $data['thankyoupage'] = '';
+    $data['rssintro'] = $GLOBALS['I18N']->get('Please indicate how often you want to receive messages');
+    $data['rss'] = join(',',array_keys($GLOBALS['rssfrequencies']));
+    return $data;
   }
   while ($row = Sql_Fetch_Array($req))
     $data[$row["name"]] = preg_replace('/<\?=VERSION\?>/i', VERSION, $row["data"]);
-	return $data;
+  return $data;
 }
 
 function PageAttributes($data) {
   $attributes = explode('+',$data["attributes"]);
+  $attributedata = array();
   if (is_array($attributes)) {
     foreach ($attributes as $attribute) {
-      if ($data[sprintf('attribute%03d',$attribute)]) {
+      if (isset($data[sprintf('attribute%03d',$attribute)])) {
           list($attributedata[$attribute]["id"],
           $attributedata[$attribute]["default_value"],
           $attributedata[$attribute]["listorder"],
           $attributedata[$attribute]["required"]) = explode('###',$data[sprintf('attribute%03d',$attribute)]);
+        if (!isset($sorted) || !is_array($sorted)) {
+          $sorted = array();
+        }
         $sorted[$attributedata[$attribute]["id"]] = $attributedata[$attribute]["listorder"];
       }
     }
-    if (is_array($sorted)) {
-	    $attributes = $sorted;
-	    asort($attributes);
+    if (isset($sorted) && is_array($sorted)) {
+      $attributes = $sorted;
+      asort($attributes);
     }
   }
-	return array($attributes,$attributedata);
+  return array($attributes,$attributedata);
+}
+
+function parseDate($strdate,$format = 'Y-m-d') {
+  # parse a string date into a date
+  $strdate = trim($strdate);
+  if (strlen($strdate) < 6) {
+    $newvalue = 0;
+  } elseif  (preg_match("#(\d{2,2}).(\d{2,2}).(\d{4,4})#",$strdate,$regs)) {
+    $newvalue = mktime(0,0,0,$regs[2],$regs[1],$regs[3]);
+  } elseif (preg_match("#(\d{4,4}).(\d{2,2}).(\d{2,2})#",$value,$regs)) {
+    $newvalue = mktime(0,0,0,$regs[3],$regs[1],$regs[1]);
+  } elseif (preg_match("#(\d{2,2}).(\w{3,3}).(\d{2,4})#",$value,$regs)) {
+    $newvalue = strtotime($value);
+  } elseif (preg_match("#(\d{2,4}).(\w{3,3}).(\d{2,2})#",$value,$regs)) {
+    $newvalue = strtotime($value);
+  } else {
+    $newvalue = strtotime($value);
+    if ($newvalue < 0) {
+      $newvalue = 0;
+    }
+  }
+  if ($newvalue) {
+    return date($format,$newvalue);
+  } else {
+    return "";
+  }
 }
 
 function formatDate ($date,$short = 0) {
-  $months = array("","January","February","March","April","May","June","July","August","September","October","November","December");
-  $shortmonths = array("","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec");
+  $months = array("",
+     $GLOBALS['I18N']->get("January"),
+     $GLOBALS['I18N']->get("February"),
+     $GLOBALS['I18N']->get("March"),
+     $GLOBALS['I18N']->get("April"),
+     $GLOBALS['I18N']->get("May"),
+     $GLOBALS['I18N']->get("June"),
+     $GLOBALS['I18N']->get("July"),
+     $GLOBALS['I18N']->get("August"),
+     $GLOBALS['I18N']->get("September"),
+     $GLOBALS['I18N']->get("October"),
+     $GLOBALS['I18N']->get("November"),
+     $GLOBALS['I18N']->get("December"));
+  $shortmonths = array("",
+     $GLOBALS['I18N']->get("Jan"),
+     $GLOBALS['I18N']->get("Feb"),
+     $GLOBALS['I18N']->get("Mar"),
+     $GLOBALS['I18N']->get("Apr"),
+     $GLOBALS['I18N']->get("May"),
+     $GLOBALS['I18N']->get("Jun"),
+     $GLOBALS['I18N']->get("Jul"),
+     $GLOBALS['I18N']->get("Aug"),
+     $GLOBALS['I18N']->get("Sep"),
+     $GLOBALS['I18N']->get("Oct"),
+     $GLOBALS['I18N']->get("Nov"),
+     $GLOBALS['I18N']->get("Dec"));
   $year = substr($date,0,4);
   $month = substr($date,5,2);
   $day = substr($date,8,2);
   $day = ereg_replace("^0","",$day);
 
   if ($date) {
-  	if ($short)
-	    return $day . "&nbsp;" . $shortmonths[intval($month)] . "&nbsp;" . $year;
+    if ($short)
+      return $day . "&nbsp;" . $shortmonths[intval($month)] . "&nbsp;" . $year;
     else
-	    return $day . "&nbsp;" . $months[intval($month)] . "&nbsp;" . $year;
+      return $day . "&nbsp;" . $months[intval($month)] . "&nbsp;" . $year;
    }
 }
 
@@ -699,7 +816,7 @@ $oldnewpoweredimage = 'iVBORw0KGgoAAAANSUhEUgAAAFgAAAAfCAYAAABjyArgAAAABmJLR0QA/
 $newpoweredimage = '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';
 
 function FileNotFound() {
-	ob_end_clean();
+  ob_end_clean();
   header("404, File Not Found");
   printf('<html><head><title>404 Not Found</title></head><body><h1>Not Found</h1>The requested document was not found on this server<br/>Please contact the <a href="mailto:%s?subject=File not Found: %s">Administrator</a><p><hr><address><a href="http://tincan.co.uk/phplist" target="_tincan">phplist</a> version %s</address></body></html>',getConfig("admin_address"),$_SERVER["REQUEST_URI"],VERSION);
   exit;
@@ -716,7 +833,7 @@ function findMime($filename) {
   $lines = explode("\n",$contents);
   foreach ($lines as $line) {
     if (!ereg("#",$line) && !preg_match("/^\s*$/",$line)) {
-    	$line = preg_replace("/\t/"," ",$line);
+      $line = preg_replace("/\t/"," ",$line);
       $items = explode(" ",$line);
       $mime = array_shift($items);
       foreach ($items as $extension) {
@@ -743,45 +860,65 @@ function excludedDateForRepetition($date) {
   return 0;
 }
 
+function delimited($data){
+  $delimitedData="";
+  reset($data);
+  while (list ($key, $val) = each ($data)) {
+    $delimitedData .= $key.'KEYVALSEP'.$val.'ITEMSEP';
+  }
+  $length = strlen($delimitedData);
+  return substr($delimitedData, 0, -7);
+}
+
+function parseDelimitedData($value) {
+  $data = array();
+  $rawdata = explode('ITEMSEP',$value);
+  foreach ($rawdata as $item) {
+    list($key,$val) = split('KEYVALSEP',$item);
+    $data[$key] = ltrim($val);
+  }
+  return $data;
+}
+
 function repeatMessage($msgid) {
-	if (!USE_REPETITION) return;
-  
+#  if (!USE_REPETITION && !USE_RSS) return;
+
   # get the future embargo, either "repeat" minutes after the old embargo
-  # or "repeat" after this very moment to make sure that we're not sending the 
+  # or "repeat" after this very moment to make sure that we're not sending the
   # message every time running the queue when there's no embargo set.
   $msgdata = Sql_Fetch_Array_Query(
-  	sprintf('select *,date_add(embargo,interval repeat minute) as newembargo,
-    	date_add(now(),interval repeat minute) as newembargo2, date_add(embargo,interval repeat minute) > now() as isfuture
-    	from %s where id = %d and repeatuntil > now()',$GLOBALS["tables"]["message"],$msgid));
-  if (!$msgdata["id"] || !$msgdata["repeat"]) return;
-  
+    sprintf('select *,date_add(embargo,interval repeatinterval minute) as newembargo,
+      date_add(now(),interval repeatinterval minute) as newembargo2, date_add(embargo,interval repeatinterval minute) > now() as isfuture
+      from %s where id = %d and repeatuntil > now()',$GLOBALS["tables"]["message"],$msgid));
+  if (!$msgdata["id"] || !$msgdata["repeatinterval"]) return;
+
   # copy the new message
   Sql_Query(sprintf('
-  	insert into %s (entered) values(now())',$GLOBALS["tables"]["message"]));
+    insert into %s (entered) values(now())',$GLOBALS["tables"]["message"]));
   $id = Sql_Insert_id();
-  require $GLOBALS["coderoot"]."structure.php";
+  require $GLOBALS["3"]."structure.php";
   if (!is_array($DBstruct["message"])) {
-		logEvent("Error including structure when trying to duplicate message $msgid");
+    logEvent("Error including structure when trying to duplicate message $msgid");
     return;
- 	}
+   }
   foreach ($DBstruct["message"] as $column => $rec) {
-  	if ($column != "id" && $column != "entered") {
+    if ($column != "id" && $column != "entered") {
       Sql_Query(sprintf('update %s set %s = "%s" where id = %d',
         $GLOBALS["tables"]["message"],$column,addslashes($msgdata[$column]),$id));
-   	}
+     }
   }
-  
+
   # check whether the new embargo is not on an exclusion
   if (is_array($GLOBALS["repeat_exclude"])) {
-    $repeat = $msgdata["repeat"];
+    $repeatinterval = $msgdata["repeatinterval"];
     $loopcnt = 0;
     while (excludedDateForRepetition($msgdata["newembargo"])) {
-      $repeat += $msgdata["repeat"];
+      $repeat += $msgdata["repeatinterval"];
       $loopcnt++;
       $msgdata = Sql_Fetch_Array_Query(
           sprintf('select *,date_add(embargo,interval %d minute) as newembargo,
             date_add(now(),interval %d minute) as newembargo2, date_add(embargo,interval %d minute) > now() as isfuture
-            from %s where id = %d and repeatuntil > now()',$repeat,$repeat,$repeat,
+            from %s where id = %d and repeatuntil > now()',$repeatinterval,$repeatinterval,$repeatinterval,
             $GLOBALS["tables"]["message"],$msgid));
       if ($loopcnt > 15) {
         logEvent("Unable to find new embargo date too many exclusions? for message $msgid");
@@ -791,49 +928,49 @@ function repeatMessage($msgid) {
   }
   # correct some values
   if (!$msgdata["isfuture"]) {
-  	$msgdata["newembargo"] = $msgdata["newembargo2"];
+    $msgdata["newembargo"] = $msgdata["newembargo2"];
   }
 
   Sql_Query(sprintf('update %s set embargo = "%s",status = "submitted",sent = "" where id = %d',
-			$GLOBALS["tables"]["message"],$msgdata["newembargo"],$id));
+      $GLOBALS["tables"]["message"],$msgdata["newembargo"],$id));
   foreach (array("processed","astext","ashtml","astextandhtml","aspdf","astextandpdf","viewed", "bouncecount") as $item) {
     Sql_Query(sprintf('update %s set %s = 0 where id = %d',
         $GLOBALS["tables"]["message"],$item,$id));
-	}
+  }
 
   # lists
   $req = Sql_Query(sprintf('select listid from %s where messageid = %d',$GLOBALS["tables"]["listmessage"],$msgid));
   while ($row = Sql_Fetch_Row($req)) {
-  	Sql_Query(sprintf('insert into %s (messageid,listid,entered) values(%d,%d,now())',
-    	$GLOBALS["tables"]["listmessage"],$id,$row[0]));
+    Sql_Query(sprintf('insert into %s (messageid,listid,entered) values(%d,%d,now())',
+      $GLOBALS["tables"]["listmessage"],$id,$row[0]));
   }
 
   # attachments
   $req = Sql_Query(sprintf('select * from %s,%s where %s.messageid = %d and %s.attachmentid = %s.id',
-		$GLOBALS["tables"]["message_attachment"],$GLOBALS["tables"]["attachment"],
+    $GLOBALS["tables"]["message_attachment"],$GLOBALS["tables"]["attachment"],
     $GLOBALS["tables"]["message_attachment"],$msgid,$GLOBALS["tables"]["message_attachment"],
     $GLOBALS["tables"]["attachment"]));
   while ($row = Sql_Fetch_Array($req)) {
-  	if (is_file($row["remotefile"])) {
-    	# if the "remote file" is actually local, we want to refresh the attachment, so we set
+    if (is_file($row["remotefile"])) {
+      # if the "remote file" is actually local, we want to refresh the attachment, so we set
       # filename to nothing
       $row["filename"] = "";
     }
 
-  	Sql_Query(sprintf('insert into %s (filename,remotefile,mimetype,description,size)
-    	values("%s","%s","%s","%s",%d)',
+    Sql_Query(sprintf('insert into %s (filename,remotefile,mimetype,description,size)
+      values("%s","%s","%s","%s",%d)',
       $GLOBALS["tables"]["attachment"],addslashes($row["filename"]),addslashes($row["remotefile"]),
       addslashes($row["mimetype"]),addslashes($row["description"]),$row["size"]));
     $attid = Sql_Insert_id();
     Sql_Query(sprintf('insert into %s (messageid,attachmentid) values(%d,%d)',
-			$GLOBALS["tables"]["message_attachment"],$id,$attid));
+      $GLOBALS["tables"]["message_attachment"],$id,$attid));
   }
-	logEvent("Message $msgid was successfully rescheduled");
+  logEvent("Message $msgid was successfully rescheduled as message $id");
 }
 
 
 function formatTime($time,$short = 0) {
-	return $time;
+  return $time;
 }
 
 function formatDateTime ($datetime,$short = 0) {
@@ -843,15 +980,14 @@ function formatDateTime ($datetime,$short = 0) {
 }
 
 function phplist_shutdown () {
-#	output( "Script status: ".connection_status(),0); # with PHP 4.2.1 buggy. http://bugs.php.net/bug.php?id=17774
+#  output( "Script status: ".connection_status(),0); # with PHP 4.2.1 buggy. http://bugs.php.net/bug.php?id=17774
   $status = connection_status();
   if ($GLOBALS["mail_error_count"]) {
-    $message = '
+   $message = "Some errors occurred in the PHPlist Mailinglist System\n"
+    ."URL: {$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}\n"
+    ."Error message(s):\n\n"
 
-    Some errors occurred in the PHPlist Mailinglist System
-    URL: '.$_SERVER["REQUEST_URI"].'
-    Error message(s): ' . "\n".$GLOBALS["mail_error"];
-
+    .$GLOBALS["mail_error"];
     $message .= "\n==== debugging information\n\nSERVER Vars\n";
     if (is_array($_SERVER))
     while (list($key,$val) = each ($_SERVER))
@@ -859,6 +995,9 @@ function phplist_shutdown () {
         $message .= $key . "=" . $val . "\n";
     sendMail(getConfig("report_address"),$GLOBALS["installation_name"]." Mail list error",$message,"");
   }
+
+#  print "Phplist shutdown $status";
+#  exit;
 }
 
 register_shutdown_function("phplist_shutdown");

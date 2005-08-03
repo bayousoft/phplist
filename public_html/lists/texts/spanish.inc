@@ -58,4 +58,38 @@ $strYes                = 'Sí';
 $strNo                 = 'No';
 $strUnsubscribe        = 'Dar de baja';
 
+$strAllMailinglists    = 'Todas las listas';
+$strAttachmentIntro		 = 'Este mensaje contiene caracteres que pueden ser vistos con un navegador:';
+$strLocation					 = 'Ubicación';
+$strFrequency					 = 'Que tan frecuente le mandamos mensajes';
+$strHourly						 = 'Cada Hora';
+$strDaily							 = 'Diariamente';
+$strWeekly						 = 'Semanalmente';
+$strMonthly						 = 'Mensualmente';
+$strChoosePassword 		 = 'Por favor elija una contraseña';
+$strConfirmPassword 	 = 'Confirme su contraseña';
+$strEnterPassword			 = 'Por favor ingrese su contraseña';
+$strForgotPassword		 = 'Olvido su contraseña?';
+$strPassword					 = 'Contraseña';
+$strPassword2					 = 'Confirme su contraseña';
+$strPasswordsNoMatch 	 = 'Las contraseñas no son iguales ';
+$strInvalidPassword		 = 'Error: email o contraseña incorrectos';
+$strPasswordSent 		   = 'Si contraseña ha sido enviado a su correo. Deberia recibirla en los proximos minutos.';
+$strPasswordRemindSubject = 'Su contraseña en nuestra lista';
+$strPasswordRemindMessage = 'Su contraseña es ';
+$strPasswordRemindInfo = 'para recibir su contraseña por email, por favor ingrese su email y haga clic en el boton de "'.$strForgotPassword.'".';
+$strLogin							 = 'Ingresar';
+$strLoginTitle 				 = 'Por favor ingrese su email y contraseña.';
+$strLoginInfo					 = 'Esta Pagina requiere una contraseña. Por favor ingrese su email y contraseña.';
+$strPersonalLocationInfo = '
+	<p>Esta pagina requiere una identificacion personal que puede ser encontrada en cada email que le enviamos.<br/>
+  Si usted ve este mensaje, por favor revise que copio y pego TODO el vínculo que recibio por email. Algunas veces el vínculo se salta de linea y no es copiado en su TOTALIDAD.</p>
+  <p>Si usted perdio el correo, puede solicitar uno nuevo.
+  Por favor ingrese su email y haga clic en  "Continuar"
+';
+$strPersonalLocationSent = '<h1>Exito! Usted pronto recibira un correo con su ubicación personal</h1>';
+$strUserExists   = '<br/>Un usuario con ese e-mail existe, pero tiene una cotraseña distinta.';
+$strUserExistsExplanationStart = '<br/>para obtener su password, haga clic ';
+$strUserExistsExplanationLink = 'aquí';
+$strUserExistsExplanationEnd = ' para ir a la página donde puede pedir su ubicación personal';
 ?>

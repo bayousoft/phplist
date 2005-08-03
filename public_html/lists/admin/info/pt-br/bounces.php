@@ -1,0 +1,3 @@
+<p>Esta &eacute a lista de emails recebidos com problema. Na maior parte dos casos eles v&ecircm identificados com o nome do usu&aacuterio e com a mensagem. Se voc&ecirc est&aacute usando um sistema on-line, n&atildeo apague estes emails, pois o sistema n&atildeo ser&aacute capaz de identificar emails consecutivos com problemas e eles voltar&atildeo de novo. Atualmente, voc&ecirc pode somente visualizar os emails com problema, (ainda) n&atildeo h&aacute como automatizar o sistema de identifica&ccedil&atildeo deste tipo email. Em alguns casos um email pode estar marcado como problem&aacutetico, mas &eacute somente um erro tempor&aacuterio de "Caixa Postal Lotada".</p>
+
+

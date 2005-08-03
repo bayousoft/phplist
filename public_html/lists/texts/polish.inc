@@ -1,4 +1,4 @@
-<?
+<?php
 
 # language dependent text used in the interface for users (not admin)
 # Polish translation by Agata Szczesniak

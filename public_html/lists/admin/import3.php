@@ -1,20 +1,24 @@
 <script language="Javascript" type="text/javascript">
 function checkSubFolders(folder) {
-	var element = document.getElementById(folder);
-	var isset = element.checked;
+  var element = document.getElementById(folder);
+  var isset = element.checked;
   for (var i=0;i<document.folderlist.length;i++) {
-  	var name = document.folderlist.elements[i].value;
+    var name = document.folderlist.elements[i].value;
     if (name.indexOf(element.name) >= 0)
-     	document.folderlist.elements[i].checked = isset;
+       document.folderlist.elements[i].checked = isset;
   }
 }
 </script>
 
 <?php
-require_once "accesscheck.php";
+require_once dirname(__FILE__).'/accesscheck.php';
+if (!ALLOW_IMPORT) {
+  print '<p>'.$GLOBALS['I18N']->get('import is not available').'</p>';
+  return;
+}
 
 ob_end_flush();
-print "<p>Import emails from IMAP folders</p>";
+print '<p>'.$GLOBALS['I18N']->get('Import emails from IMAP folders').'</p>';
 $email_header_fields = array("to","from","cc","bcc","reply_to","sender","return_path");
 
 if ($require_login && !isSuperUser()) {
@@ -29,18 +33,18 @@ if ($require_login && !isSuperUser()) {
 
 $result = Sql_query("SELECT id,name FROM ".$tables["list"]." $subselect ORDER BY listorder");
 while ($row = Sql_fetch_array($result)) {
-	$available_lists[$row["id"]] = $row["name"];
+  $available_lists[$row["id"]] = $row["name"];
   $some = 1;
 }
 if (!$some)
-	echo 'No lists available, '.PageLink2("editlist","Add a list");
+  echo $GLOBALS['I18N']->get('No lists available').", ".PageLink2("editlist",$GLOBALS['I18N']->get('Add a list'));
 
 function mailBoxName($mailbox,$delimiter,$level) {
   $folder_path = explode($delimiter,$mailbox);
   if ($level > sizeof($folder_path)) {
-  	return 0;
+    return 0;
   } else {
-  	return $folder_path[$level];
+    return $folder_path[$level];
   }
 }
 
@@ -48,28 +52,28 @@ function mailBoxParent($mailbox,$delimiter,$level) {
   $folder_path = explode($delimiter,$mailbox);
   $parent = "";
   for ($i = 0;$i<$level;$i++) {
-  	if ($folder_path[$i] == "") {
-    	$parent .= 'INBOX';
+    if ($folder_path[$i] == "") {
+      $parent .= 'INBOX';
     } else {
-			$parent .= ".".$folder_path[$i];
-   	}
-	}
+      $parent .= ".".$folder_path[$i];
+     }
+  }
   return $parent;
 }
 
 $nodesdone = array();
 
 function printTree($tree,$root,$delim) {
-	reset($tree);
+  reset($tree);
 #  print "<hr>ROOT: $root<br/>";
   foreach ($tree as $node => $rec) {
-  	if (!in_array($node,$GLOBALS["nodesdone"])) {
+    if (!in_array($node,$GLOBALS["nodesdone"])) {
       if (preg_match("#".preg_quote($root)."#i",$node)) {
         print '<li style="{list-style-type : none;}">';
         printf ('<input type=checkbox name="checkfolder[]" value="%s">&nbsp;',$node);
         print "<b>$node</b>\n";
         printf ('<input type=checkbox name="%s" id="%s" value="1"
-        	onChange="checkSubFolders(\'%s\');"> (add subfolders)',$node,$node,$node);
+          onChange="checkSubFolders(\'%s\');"> (add subfolders)',$node,$node,$node);
         print "</li>";
         print "<ul>\n";
         foreach ($tree[$node]["children"] as $leaf) {
@@ -78,82 +82,82 @@ function printTree($tree,$root,$delim) {
             printTree($tree,$node.$delim.$leaf,$delim);
   #          print "</ul>";
           } else {
-          #	print "NO $node$delim$leaf <br/>";
+          #  print "NO $node$delim$leaf <br/>";
             print '<li style="{list-style-type : none;}">';
-		        printf ('<input type=checkbox name="checkfolder[]" value="%s">&nbsp;',$node.$delim.$leaf);
+            printf ('<input type=checkbox name="checkfolder[]" value="%s">&nbsp;',$node.$delim.$leaf);
 #            print "$node.$delim";
             print "$leaf</li>\n";
-	        }
-		      array_push($GLOBALS["nodesdone"],$node);
+          }
+          array_push($GLOBALS["nodesdone"],$node);
         }
        print "</ul>";
       } else {
   #     print "<li>$node</li>";
-  #    	print $root ."===". $node . "<br/>";
+  #      print $root ."===". $node . "<br/>";
       }
-  	} else {
-  # 	print "<br/>Done: $node";
-   	}
+    } else {
+  #   print "<br/>Done: $node";
+     }
   }
 }
 
 function fetchEmailsFromHeader($header,$folder,$fieldlist = array()) {
-	$res = array();
+  $res = array();
 #  print "<br/>Processing $header";
-	if (!sizeof($fieldlist))
-  	$fieldlist = $GLOBALS["email_header_fields"];
+  if (!sizeof($fieldlist))
+    $fieldlist = $GLOBALS["email_header_fields"];
   $GLOBALS["messagecount"]++;
 
 #  foreach (array("to","from","cc","bcc","reply_to","sender","return_path") as $item) {
   foreach ($fieldlist as $item) {
-  	if (is_array($header->$item)) {
-#    	print "<br/><b>Values in $item<br/>";
-    	foreach ($header->$item as $object) {
-#      	print "Personal: ".$object->personal."<br/>";
-#      	print "Adl: ".$object->adl."<br/>";
-#      	print "Mailbox: ".$object->mailbox."<br/>";
-#      	print "Host: ".$object->host."<br/>";
-				#"$object->personal <".$object->mailbox.'@'.$object->host.">"
+    if (is_array($header->$item)) {
+#      print "<br/><b>Values in $item<br/>";
+      foreach ($header->$item as $object) {
+#        print "Personal: ".$object->personal."<br/>";
+#        print "Adl: ".$object->adl."<br/>";
+#        print "Mailbox: ".$object->mailbox."<br/>";
+#        print "Host: ".$object->host."<br/>";
+        #"$object->personal <".$object->mailbox.'@'.$object->host.">"
         if (!is_array($res[strtolower($object->mailbox.'@'.$object->host)]))
-					$res[strtolower($object->mailbox.'@'.$object->host)] = array();
+          $res[strtolower($object->mailbox.'@'.$object->host)] = array();
         array_push($res[strtolower($object->mailbox.'@'.$object->host)],
           array(
-            "personal" => $object->personal,
-            "email" => $object->mailbox.'@'.$object->host,
-            "folder" => $folder,
-            "date" => $header->udate,
+            'personal' => $object->personal,
+            'email' => $object->mailbox.'@'.$object->host,
+            'folder' => $folder,
+            'date' => $header->udate,
           ));
-     	}
-   	}
+       }
+     }
   }
   return $res;
 }
 
 function processImapFolder($server,$user,$password,$folder,$fieldlist = array()) {
-	$result = array();
+  $result = array();
   $port =  "143/imap/notls";
   $mbox = imap_open("{".$server.":".$port."}$folder",$user,$password, OP_READONLY);
-	if (!$mbox) {
-  	Fatal_Error("can't connect: ".imap_last_error());
+  if (!$mbox) {
+    Fatal_Error($GLOBALS['I18N']->get("can't connect").": ".imap_last_error());
     return 0;
- 	}
-  print "Processing $folder ";
+   }
+  print $GLOBALS['I18N']->get('Processing')." ".$folder ;
   $GLOBALS["foldercount"]++;
   $num = imap_num_msg($mbox);
-  print "(".$num . " messages)";
+  print ("(".$num . " ".$GLOBALS['I18N']->get('messages').")");
   for($x=1; $x <= $num; $x++) {
-	  set_time_limit(60);
-  	$header = imap_headerinfo($mbox,$x);
+    set_time_limit(60);
+    $header = imap_headerinfo($mbox,$x);
     $emails = fetchEmailsFromHeader($header,$folder,$fieldlist);
 #    $result = array_merge($result,$emails);
-		foreach ($emails as $email => $list) {
-    	if (!is_array($result[$email]))
-      	$result[$email] = array();
-     	foreach ($list as $key => $rec)
-	     	array_push($result[$email],$rec);
-  	}
+    foreach ($emails as $email => $list) {
+      if (!is_array($result[$email]))
+        $result[$email] = array();
+       foreach ($list as $key => $rec)
+         array_push($result[$email],$rec);
+    }
     if ($x % 25 == 0)
-  		print $x . "/$num done<br/>";
+      print $x . "/$num ".$GLOBALS['I18N']->get('done')."<br/>";
     print "\n";
     flush();
   }
@@ -163,16 +167,16 @@ function processImapFolder($server,$user,$password,$folder,$fieldlist = array())
 function getImapFolders($server,$user,$password) {
   $port =  "143/imap/notls";
   $mbox = @imap_open("{".$server.":".$port."}",$user,$password,OP_HALFOPEN);
-	if (!$mbox) {
-  	Fatal_Error("can't connect: ".imap_last_error());
+  if (!$mbox) {
+    Fatal_Error($GLOBALS['I18N']->get("can't connect").": ".imap_last_error());
     return 0;
- 	}
+   }
 
   $list = imap_getmailboxes($mbox,"{".$server."}","*");
   if(is_array($list)) {
-  	return $list;
+    return $list;
   } else {
-    Fatal_Error("imap_getmailboxes failed: ".imap_last_error()."\n");
+    Fatal_Error($GLOBALS['I18N']->get("imap_getmailboxes failed").": ".imap_last_error()."\n");
     return 0;
   }
   imap_close($mbox);
@@ -183,111 +187,109 @@ function sortbydate ($a, $b) {
 }
 
 function getBestVersion($emails) {
-	# to start with order in reverse time order
-	usort($emails,"sortbydate");
+  # to start with order in reverse time order
+  usort($emails,"sortbydate");
   foreach ($emails as $email) {
-  	# now check how good the "personal" is
+    # now check how good the "personal" is
     # if it is only the email repeated we do not want it
-  	if (!ereg("@",$email["personal"])) {
-    	return $email;
-   	}
+    if (!ereg("@",$email["personal"])) {
+      return $email;
+     }
     # we possibly want to search for better ones, but leave it here
-#		print $email["date"] . '=>'.$email["email"]."<br/>";
-	}
+#    print $email["date"] . '=>'.$email["email"]."<br/>";
+  }
   # if we did not return anything return the latest version by date
   return $emails[0];
 }
 
 if (!$_POST["server"] || !$_POST["user"] || !$_POST["password"] || !is_array($_POST["lists"])) {
-	print '
-  <p>Please enter details of the IMAP account</p>
+  print '
+  <p>'.$GLOBALS['I18N']->get('Please enter details of the IMAP account').'</p>
   <form method=post>
   <table>
-  <tr><td>Server:</td><td><input type=text name="server" value="" size=30></td></tr>
-  <tr><td>User:</td><td><input type=text name="user" value="" size=30></td></tr>
-  <tr><td>Password:</td><td><input type=password name="password" value="" size=30></td></tr>
-  <tr><td colspan=2>Select the headers fields to search:</td></tr>
+  <tr><td>'.$GLOBALS['I18N']->get('Server').':</td><td><input type=text name="server" value="" size=30></td></tr>
+  <tr><td>'.$GLOBALS['I18N']->get('User').':</td><td><input type=text name="user" value="" size=30></td></tr>
+  <tr><td>'.$GLOBALS['I18N']->get('Password').':</td><td><input type=password name="password" value="" size=30></td></tr>
+  <tr><td colspan=2>'.$GLOBALS['I18N']->get('Select the headers fields to search').':</td></tr>
   ';
   foreach ($email_header_fields as $header_field) {
-  	printf('
+    printf('
     <tr><td>%s</td><td><input type="checkbox" name="selected_header_fields[]" value="%s"',$header_field,$header_field);
-	}
+  }
   $c = 0;
   print '<tr><td>';
   if (sizeof($available_lists) > 1)
-    print 'Select the lists to add the emails to<br/>';
+    print $GLOBALS['I18N']->get('Select the lists to add the emails to').'<br/>';
   print '<ul>';
   foreach ($available_lists as $index => $name) {
     if (sizeof($available_lists) == 1) {
       printf('<input type=hidden name="lists[0]" value="%d">
-        <li>Adding users to list <b>%s</b>',$index,$name);
+        <li>'.$GLOBALS['I18N']->get("Adding users to list").'. <b>%s</b>',$index,$name);
     } else {
       printf('<li><input type=checkbox name="lists[%d]" value="%d">%s',
         $c,$index,$name);
       $c++;
     }
   }
+
   print '
   </ul></td></tr>
-<tr><td>Mark new users as HTML:</td><td><input type="checkbox" name="markhtml" value="yes"></td></tr>
-<tr><td colspan=2>If you check "Overwrite Existing", information about a user in the database will be replaced by the imported information. Users are matched by email.</td></tr>
-<tr><td>Overwrite Existing:</td><td><input type="checkbox" name="overwrite" value="yes"></td></tr>
-<tr><td colspan=2>If you check "Only use complete addresses". addresses that do not have a real name will be ignored. Otherwise all emails will be imported.</td></tr>
-<tr><td>Only use complete addresses:</td><td><input type="checkbox" name="onlyfull" value="yes"></td></tr>
-<tr><td colspan=2>If you choose "send notification email" the users you are adding will be sent the request for confirmation of subscription to which they will have to reply. This is recommended, because it will identify invalid emails.</td></tr>
-<tr><td>Send&nbsp;Notification&nbsp;email&nbsp;<input type="radio" name="notify" value="yes"></td><td>Make confirmed immediately&nbsp;<input type="radio" name="notify" value="no"></td></tr>
-<tr><td colspan=2>There are two ways to add the names of the users,
- either one attribute for the entire name or two attributes, one for first name and one for last name.
-If you use "two attributes", the name will be split after the first space.
+<tr><td>'.$GLOBALS['I18N']->get('Mark new users as HTML').':</td><td><input type="checkbox" name="markhtml" value="yes"></td></tr>
+<tr><td colspan=2>'.$GLOBALS['I18N']->get('If you check')." '".$GLOBALS['I18N']->get('Overwrite Existing')."', ".$GLOBALS['I18N']->get("information about a user in the database will be replaced by the imported information. Users are matched by email.").'</td></tr>
+<tr><td>'.$GLOBALS['I18N']->get('Overwrite Existing').':</td><td><input type="checkbox" name="overwrite" value="yes"></td></tr>
+<tr><td colspan=2>'.$GLOBALS['I18N']->get('If you check')." '".$GLOBALS['I18N']->get('Only use complete addresses')."' ".$GLOBALS['I18N']->get("addresses that do not have a real name will be ignored. Otherwise all emails will be imported.").'</td></tr>
+<tr><td>'.$GLOBALS['I18N']->get("Only use complete addresses").':</td><td><input type="checkbox" name="onlyfull" value="yes"></td></tr>
+<tr><td colspan=2>'.$GLOBALS['I18N']->get('If you choose')." '".$GLOBALS['I18N']->get('send notification email')."' ".$GLOBALS['I18N']->get("the users you are adding will be sent the request for confirmation of subscription to which they will have to reply. This is recommended, because it will identify invalid emails.").'</td></tr>
+<tr><td>'.$GLOBALS['I18N']->get("Send&nbsp;Notification&nbsp;email&nbsp;").'<input type="radio" name="notify" value="yes"></td><td>'.$GLOBALS['I18N']->get("Make confirmed immediately").'&nbsp;<input type="radio" name="notify" value="no"></td></tr>
+<tr><td colspan=2>'.$GLOBALS['I18N']->get('import3info').'
 </td></tr>
-<tr><td>Use one attribute for name<input type="radio" name="nameattributes" value="one"></td><td>Use two attributes for the name&nbsp;<input type="radio" name="nameattributes" value="two"></td></tr>
-<tr><td>Attribute one: </td><td><select name="attributeone">
-<option value="create">Create Attribute</option>
+<tr><td>'.$GLOBALS['I18N']->get("Use one attribute for name").'<input type="radio" name="nameattributes" value="one"></td><td>'.$GLOBALS['I18N']->get('Use two attributes for the name').'&nbsp;<input type="radio" name="nameattributes" value="two"></td></tr>
+<tr><td>'.$GLOBALS['I18N']->get('Attribute one').': </td><td><select name="attributeone">
+<option value="create">'.$GLOBALS['I18N']->get('Create Attribute').'</option>
 ';
-	$req = Sql_Query("select * from {$tables["attribute"]} where type=\"textline\"");
+  $req = Sql_Query("select * from {$tables["attribute"]} where type=\"textline\"");
   while ($att = Sql_Fetch_array($req)) {
-  	printf('<option value="%d">%s</option>',$att["id"],$att["name"]);
+    printf('<option value="%d">%s</option>',$att["id"],$att["name"]);
   }
   print '</select></td></tr>
-  <tr><td>Attribute two: </td><td><select name="attributetwo">
-  <option value="create">Create Attribute</option>';
-	$req = Sql_Query("select * from {$tables["attribute"]} where type=\"textline\"");
+  <tr><td>'.$GLOBALS['I18N']->get('Attribute two').': </td><td><select name="attributetwo">
+  <option value="create">'.$GLOBALS['I18N']->get('Create Attribute').'</option>';
+  $req = Sql_Query("select * from {$tables["attribute"]} where type=\"textline\"");
   while ($att = Sql_Fetch_array($req)) {
-  	printf('<option value="%d">%s</option>',$att["id"],$att["name"]);
+    printf('<option value="%d">%s</option>',$att["id"],$att["name"]);
   }
   print '</select></td></tr>
-	<tr><td colspan=2><input type=submit value="Continue"></td></tr>
+  <tr><td colspan=2><input type=submit value="'.$GLOBALS['I18N']->get('Continue').'"></td></tr>
   </table></form>
   ';
 } elseif (!is_array($_POST["checkfolder"])) {
   $folders = getImapFolders($server,$user,$password);
   if (!$folders) {
-  	Error("Cannot continue");
+    Error($GLOBALS['I18N']->get('Cannot continue'));
     return;
   }
 
-	printf( '
+  printf( '
   <form method=post name="folderlist">
   <input type=hidden name="parsefolders" value="1">
-	',$_POST["server"],$_POST["user"],$_POST["password"]);
-	if (is_array($_POST["selected_header_fields"])) {
-  	foreach ($_POST["selected_header_fields"] as $field) {
-    	printf('<input type=hidden name="selected_header_fields[]" value="%s">',$field);
-   	}
+  ',$_POST["server"],$_POST["user"],$_POST["password"]);
+  if (is_array($_POST["selected_header_fields"])) {
+    foreach ($_POST["selected_header_fields"] as $field) {
+      printf('<input type=hidden name="selected_header_fields[]" value="%s">',$field);
+     }
   }
-	if (is_array($_POST["lists"])) {
-  	foreach ($_POST["lists"] as $key => $val) {
-    	printf('<input type=hidden name="lists[%d]" value="%s">',$key,$val);
-   	}
+  if (is_array($_POST["lists"])) {
+    foreach ($_POST["lists"] as $key => $val) {
+      printf('<input type=hidden name="lists[%d]" value="%s">',$key,$val);
+     }
   }
-  
   foreach (array("server","user","password","markhtml",
-  	"overwrite","onlyfull","notify",
+    "overwrite","onlyfull","notify",
     "nameattributes","attributeone","attributetwo") as $item) {
-  	printf('<input type="hidden" name="%s" value="%s">',$item,$_POST[$item]);
+    printf('<input type="hidden" name="%s" value="%s">',$item,$_POST[$item]);
   }
 
- 	$done = 0;
+   $done = 0;
   $level = 0;
   $foldersdone = array();
   $tree = array();
@@ -297,123 +299,124 @@ If you use "two attributes", the name will be split after the first space.
     while (list($key, $val) = each($folders))  {
       $delim = $val->delimiter;
       $name = str_replace("{".$server."}INBOX","",imap_utf7_decode($val->name));
-			$parent = mailBoxParent($name,$delim,$level);
-			$folder = mailBoxName($name,$delim,$level);
+      $parent = mailBoxParent($name,$delim,$level);
+      $folder = mailBoxName($name,$delim,$level);
       if ($folder) {
-      	if (!is_array($tree[$parent])) {
-        	$tree[$parent] = array(
-          	"node" => $parent,
-          	"children" => array()
-	        );
-       	}
+        if (!is_array($tree[$parent])) {
+          $tree[$parent] = array(
+            "node" => $parent,
+            "children" => array()
+          );
+         }
         if (!in_array($folder,$tree[$parent]["children"]))
-					array_push($tree[$parent]["children"],$folder);
-	   #   print $parent . " ".$folder."<br/>";
+          array_push($tree[$parent]["children"],$folder);
+     #   print $parent . " ".$folder."<br/>";
         flush();
       } else {
-      	array_push($foldersdone,$name);
+        array_push($foldersdone,$name);
       }
-   	}
+     }
     $level++;
   }
   ksort($tree);
   print '<ul>'.printTree($tree,"INBOX",".").'</ul>';
-  print '<input type=submit value="Process Selected Folders"></form>';
+  print '<input type=submit value="'.$GLOBALS['I18N']->get('Process Selected Folders').'"></form>';
 } else {
-	$all_emails = array();
-	while (list($key,$folder) = each($_POST["checkfolder"])) {
-  	print '<br/>';
+  $all_emails = array();
+  while (list($key,$folder) = each($_POST["checkfolder"])) {
+    print '<br/>';
     flush();
+
     $emails = processImapFolder($_POST["server"],$_POST["user"],$_POST["password"]
-    	,$folder,$_POST["selected_header_fields"]);
+      ,$folder,$_POST["selected_header_fields"]);
     if (is_array($emails)) {
       foreach ($emails as $email => $list) {
         if (!is_array($all_emails[$email]))
           $all_emails[$email] = array();
-  #	    $emaillist = array_merge($emaillist,$emails);
+  #      $emaillist = array_merge($emaillist,$emails);
         foreach ($list as $key => $rec)
           array_push($all_emails[$email],$rec);
       }
-      print ".. ok";
+      print "... ".$GLOBALS['I18N']->get('ok');
     } else {
-    	print ".. failed";
+      print "... ".$GLOBALS['I18N']->get('failed');
     }
     flush();
- 	}
-	if (is_array($all_emails)) {
-  	$num = sizeof($all_emails);
-    print "<p>Processed:".$GLOBALS["foldercount"]. " folders and ".$GLOBALS["messagecount"]." messages</p>";
-  	print "<h1>".sizeof($all_emails)." unique emails found</h1>";
+   }
+  if (is_array($all_emails)) {
+    $num = sizeof($all_emails);
+    print "<p>".$GLOBALS['I18N']->get('Processed').":".$GLOBALS["foldercount"]. " ".$GLOBALS['I18N']->get('folders and')." ".$GLOBALS["messagecount"]." ".$GLOBALS['I18N']->get('messages')."</p>";
+    print "<h1>".sizeof($all_emails)." ".$GLOBALS['I18N']->get('unique emails found')."</h1>";
     flush();
 
     $usetwo = 0;
     # prepare the attributes
     if ($_POST["nameattributes"] == "two") {
       $usetwo = 1;
-    	if ($_POST["attributeone"] == "create") {
-      	$req = Sql_Query(sprintf('insert into %s (name,type)
-        	values("First Name","textline")',$tables["attribute"]));
-       	$firstname_att_id = Sql_Insert_id();
-     	} else {
-      	$firstname_att_id = $_POST["attributeone"];
+      if ($_POST["attributeone"] == "create") {
+        $req = Sql_Query(sprintf('insert into %s (name,type)
+          values("First Name","textline")',$tables["attribute"]));
+         $firstname_att_id = Sql_Insert_id();
+       } else {
+        $firstname_att_id = $_POST["attributeone"];
       }
-    	if ($_POST["attributetwo"] == "create") {
-      	$req = Sql_Query(sprintf('insert into %s (name,type)
-        	values("Last Name","textline")',$tables["attribute"]));
-       	$lastname_att_id = Sql_Insert_id();
-     	} else {
-      	$lastname_att_id = $_POST["attributetwo"];
+      if ($_POST["attributetwo"] == "create") {
+        $req = Sql_Query(sprintf('insert into %s (name,type)
+          values("Last Name","textline")',$tables["attribute"]));
+         $lastname_att_id = Sql_Insert_id();
+       } else {
+        $lastname_att_id = $_POST["attributetwo"];
       }
     } else {
-    	if ($_POST["attributeone"] == "create") {
-      	$req = Sql_Query(sprintf('insert into %s (name,type)
-        	values("Name","textline")',$tables["attribute"]));
-       	$name_att_id = Sql_Insert_id();
-     	} else {
-      	$name_att_id = $_POST["attributeone"];
+      if ($_POST["attributeone"] == "create") {
+        $req = Sql_Query(sprintf('insert into %s (name,type)
+          values("Name","textline")',$tables["attribute"]));
+         $name_att_id = Sql_Insert_id();
+       } else {
+        $name_att_id = $_POST["attributeone"];
       }
-		}
+    }
 
-		$x = 0;
+    $x = 0;
     $count_email_add = 0;
     $count_exist = 0;
     $count_list_add = 0;
 
     foreach ($all_emails as $key => $versions) {
-		  set_time_limit(60);
+      set_time_limit(60);
        $importuser = getBestVersion($versions);
  #     print $importuser["personal"]." &lt;".$importuser["email"]."&gt;<br/>";
       printf('<input type=hidden name="importemail[%s] value="%s">',
-      	 $importuser["email"],$importuser["personal"]);
+      $importuser["email"],$importuser["personal"]);
 
-			# split personal in first and last name
+      # split personal in first and last name
       list($importuser["firstname"],$importuser["lastname"]) = explode(" ",$importuser["personal"],2);
 
       $x++;
       if ($x % 25 == 0) {
-	  		print $x . "/$num done<br/>";
+        print $x . "/$num ".$GLOBALS['I18N']->get('done')."<br/>";
         flush();
-     	}
+       }
 
       # check for full email
       if ($_POST["onlyfull"] != "yes" ||
-      	($_POST["onlyfull"] == "yes" && !ereg("@",$importuser["personal"])) &&
-				strlen($importuser["email"]) > 4
+        ($_POST["onlyfull"] == "yes" && !ereg("@",$importuser["personal"])) &&
+        strlen($importuser["email"]) > 4
         ) {
 
-				$new = 0;
+        $new = 0;
         $result = Sql_query(sprintf('SELECT id,uniqid FROM %s
-        	WHERE email = "%s"',$tables["user"],$importuser["email"]));
+          WHERE email = "%s"',$tables["user"],$importuser["email"]));
         if (Sql_affected_rows()) {
           // Email exist, remember some values to add them to the lists
           $count_exist++;
-  	      $user = Sql_fetch_array($result);
+          $user = Sql_fetch_array($result);
           $userid = $user["id"];
           $uniqid = $user["uniqid"];
           Sql_Query(sprintf('update %s set htmlemail = %d where id = %d',$tables["user"],$_POST["markhtml"]?"1":"0",$userid));
         } else {
           // Email does not exist
-					$new = 1;
+          $new = 1;
 
           // Create unique number
           mt_srand((double)microtime()*1000000);
@@ -426,12 +429,12 @@ If you use "two attributes", the name will be split after the first space.
           $result = Sql_query($query);
           $userid = Sql_insert_id();
 
-	        $count_email_add++;
+          $count_email_add++;
           $some = 1;
         }
 
         if ($_POST["overwrite"] == "yes") {
-        	if ($usetwo) {
+          if ($usetwo) {
             Sql_query(sprintf('replace into %s (attributeid,userid,value) values(%d,%d,"%s")',
               $tables["user_attribute"],$firstname_att_id,$userid,$importuser["firstname"]));
             Sql_query(sprintf('replace into %s (attributeid,userid,value) values(%d,%d,"%s")',
@@ -439,8 +442,8 @@ If you use "two attributes", the name will be split after the first space.
           } else {
             Sql_query(sprintf('replace into %s (attributeid,userid,value) values(%d,%d,"%s")',
               $tables["user_attribute"],$name_att_id,$userid,$importuser["personal"]));
-				  }
-      	}
+          }
+        }
         #add this user to the lists identified
         reset($lists);
         $addition = 0;
@@ -460,32 +463,32 @@ If you use "two attributes", the name will be split after the first space.
         }
       }; // end if
     }; // end foreach
-    
+
     $num_lists = sizeof($lists);
 
-    # be gramatically correct :-)
-    $displists = ($num_lists == 1) ? "list": "lists";
-    $dispemail = ($count_email_add == 1) ? "new email was ": "new emails were ";
-    $dispemail2 = ($additional_emails == 1) ? "email was ":"emails were ";
+    # be grammatically correct :-)
+    $displists = ($num_lists == 1) ? $GLOBALS['I18N']->get('list'): $GLOBALS['I18N']->get('lists');
+    $dispemail = ($count_email_add == 1) ? $GLOBALS['I18N']->get('new email was')." ": $GLOBALS['I18N']->get('new emails were')." ";
+    $dispemail2 = ($additional_emails == 1) ? $GLOBALS['I18N']->get('email was')." ":$GLOBALS['I18N']->get('emails were')." ";
 
     if(!$some && !$additional_emails) {
-      print "<br>All the emails already exist in the database and are member of the $displists.";
+      print "<br>".$GLOBALS['I18N']->get("All the emails already exist in the database and are members of the")." $displists.";
     } else {
-      print "$count_email_add $dispemail succesfully imported to the database and added to $num_lists $displists.<br>$additional_emails $dispemail2 subscribed to the $displists";
+      print "$count_email_add $dispemail ".$GLOBALS['I18N']->get("succesfully imported to the database and added to")." $num_lists $displists.<br>$additional_emails $dispemail2 ".$GLOBALS['I18N']->get("subscribed to the")." $displists";
       if ($count_exist)
-      	print "<br/>$count_exist emails already existed in the database";
+        print "<br/>$count_exist ".$GLOBALS['I18N']->get("emails already existed in the database");
       if ($invalid_email_count) {
-        print "<br>$invalid_email_count Invalid Emails found.";
+        print "<br>$invalid_email_count ".$GLOBALS['I18N']->get("Invalid Emails found.");
         if (!$omit_invalid)
-          print " These records were added, but the email has been made up. You can find them by doing a search on \"Invalid Email\"";
+        print " ".$GLOBALS['I18N']->get("These records were added, but the email has been made up. You can find them by doing a search on")." \"Invalid Email\"";
         else
-          print " These records were deleted. Check your source and reimport the data. Duplicates will be identified.";
+          print " ".$GLOBALS['I18N']->get("These records were deleted. Check your source and reimport the data. Duplicates will be identified.");
       }
     }
   } else {
-  	print "No emails found";
+    print $GLOBALS['I18N']->get("No emails found");
   }
-	print '<p>'.PageLink2("import","Import some more emails");
+  print '<p>'.PageLink2("import",$GLOBALS['I18N']->get('Import some more emails'));
 }
 
 ?>

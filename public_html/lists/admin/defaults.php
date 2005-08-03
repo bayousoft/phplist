@@ -1,5 +1,5 @@
 <?php
-require_once "accesscheck.php";
+require_once dirname(__FILE__).'/accesscheck.php';
 
 
 $attributes = array();
@@ -19,7 +19,7 @@ function readentry($file) {
   fclose ($fp);
   return "";
 }
-      
+
 $dir = opendir("data");
 while ($file = readdir($dir)) {
   if (is_file("data/$file")) {
@@ -33,13 +33,13 @@ if (is_array($selected)) {
   while(list($key,$val) = each($selected)) {
     $entry = readentry("data/$val");
     list($name,$desc) = explode(":",$entry);
-    print "<br/><br/>Loading $desc<br>\n";
+    print "<br/><br/>".$GLOBALS['I18N']->get('loading')." $desc<br>\n";
     $lc_name = str_replace(" ","", strtolower(str_replace(".txt","",$val)));
     $lc_name = ereg_replace("[^[:alnum:]]","",$lc_name);
 
-    if ($lc_name == "") Fatal_Error("Name cannot be empty: $lc_name");
+    if ($lc_name == "") Fatal_Error($GLOBALS['I18N']->get('name_empty')." $lc_name");
     Sql_Query("select * from {$tables['attribute']} where tablename = \"$lc_name\"");
-    if (Sql_Affected_Rows()) Fatal_Error("Name is not unique enough");
+    if (Sql_Affected_Rows()) Fatal_Error($GLOBALS['I18N']->get('name_not_unique'));
 
     $query = sprintf('insert into %s (name,type,required,tablename) values("%s","%s",%d,"%s")',
     $tables["attribute"],addslashes($name),"select",1,$lc_name);
@@ -61,8 +61,8 @@ if (is_array($selected)) {
     }
     fclose ($fp);
   }
-  print "Done<br/><br/>";
-  print '<p>'.PageLink2("attributes","Continue").'</p>';
+  print $GLOBALS['I18N']->get('done')."<br/><br/>";
+#@@@@ not sure about this one:  print '<p>'.PageLink2("attributes",$GLOBALS['I18N']->get('continue')).'</p>';
 
 } else {
 
@@ -74,9 +74,11 @@ if (is_array($selected)) {
 reset($attributes);
 while (list($key,$attribute) = each ($attributes)) {
   list($name,$desc) = explode(":",$key);
-  printf('<input type=checkbox name="selected[]" value="%s">%s<br>', $attribute,$desc);
+  if ($name && $desc) {
+    printf('<input type=checkbox name="selected[]" value="%s">%s<br>', $attribute,$desc);
+  }
 }
-print "<input type=submit value=Add></form>";
+print '<input type=submit value="'.$GLOBALS['I18N']->get('add').'"></form>';
 
 }
 ?>

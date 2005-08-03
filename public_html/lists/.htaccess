@@ -5,9 +5,9 @@ DirectoryIndex index.php
 Order allow,deny
 deny from all
 </FilesMatch>
-<FilesMatch "(index.php|dl.php|ut.php|download.php)$">
+<FilesMatch "(index.php|dl.php|ut.php|lt.php|download.php)$">
 Order allow,deny
 allow from all
 </FilesMatch>
-php_value magic_quotes_gpc on
+php_flag magic_quotes_gpc on
 

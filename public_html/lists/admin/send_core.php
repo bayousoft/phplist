@@ -1,90 +1,155 @@
 <?php
-// 2004-1-7  This function really isn't quite ready for register globals.  
-require_once "accesscheck.php";
+// 2004-1-7  This function really isn't quite ready for register globals.
+require_once dirname(__FILE__).'/accesscheck.php';
 
-if (file_exists("./FCKeditor/fckeditor.php") && USEFCK) {
-	include("./FCKeditor/fckeditor.php") ;
-  
-  // Create the editor object here so we can check to see if *it* wants us to use it (this 
-	// does a browser check, etc.
-	$oFCKeditor = new FCKeditor ;
-	$usefck = $oFCKeditor->IsCompatible();
-	unset($oFCKeditor); // This object is *very* short-lived.  Thankfully, it's also light-weight
+#initialisation###############
+
+// Verify that FCKeditor is available
+if (USEFCK && file_exists("./FCKeditor/fckeditor.php")) {
+  include("./FCKeditor/fckeditor.php") ;
+
+  // Create the editor object here so we can check to see if *it* wants us to use it (this
+  // does a browser check, etc.
+  $oFCKeditor = new FCKeditor ;
+  $usefck = $oFCKeditor->IsCompatible();
+  unset($oFCKeditor); // This object is *very* short-lived.  Thankfully, it's also light-weight
 } else {
-	$usefck = 0;
+  $usefck = 0;
 }
 
 // Verify that TinyMCE is available
 $useTinyMCE = 0;
-if (file_exists(TINYMCEPATH) && USETINYMCE) {
-	$useTinyMCE = 1;
+if (USETINYMCEMESG && file_exists(TINYMCEPATH)) {
+  $useTinyMCE = 1;
 }
 
 include $GLOBALS["coderoot"] . "date.php";
+
+$errormsg = '';
+$rss_content = '';
+$done = 0;
+$messageid = 0;
 $embargo = new date("embargo");
 $embargo->useTime = true;
 $repeatuntil = new date("repeatuntil");
 $repeatuntil->useTime = true;
+$baseurl = PageURL2($_GET["page"].'&id='.$_GET["id"]);
 
 echo '<script language="Javascript" src="js/jslib.js" type="text/javascript"></script><hr><p>';
 
 // load some variables in a register globals-safe fashion
-$send = $_POST["send"]; // Only get this from the POST variable (not session or anywhere else)
-$prepare = $_POST["prepare"];
-$id = $_GET["id"];  // Only get this from the GET variable
-$save = $_POST["save"]; // Save button pressed?
-$sendtest = $_POST["sendtest"];
+if (isset($_POST['send'])) {
+  $send = $_POST["send"]; // Only get this from the POST variable (not session or anywhere else)
+} else {
+  $send = '';
+}
+if (isset($_POST['prepare'])) {
+  $prepare = $_POST["prepare"];
+} else {
+  $prepage = '';
+}
+if (isset($_GET['id'])) {
+  $id = sprintf('%d',$_GET["id"]);  // Only get this from the GET variable
+} else {
+  $id = 0;
+}
+if (isset($_POST['save'])) {
+  $save = $_POST["save"]; // Save button pressed?
+} else {
+  $save = '';
+}
+if (isset($_POST['sendtest'])) {
+  $sendtest = $_POST["sendtest"];
+} else {
+  $sendtest = '';
+}
+if (!isset($_GET['tab'])) $_GET['tab'] = '';
+
+if (!$id) {
+  $defaulttemplate = getConfig('defaultmessagetemplate');
+  Sql_Query(sprintf('insert into %s (subject,status,entered,sendformat,embargo,repeatuntil,owner,template)
+    values("(no subject)","draft",now(),"text and HTML",now(),now(),%d,%d)',$GLOBALS["tables"]["message"],$_SESSION["logindetails"]["id"],$defaulttemplate));
+  $id = Sql_Insert_id();
+  Redirect($_GET["page"]."&id=$id");
+  exit;
+
+}
+if (isset($_GET['deleterule']) && $_GET["deleterule"]) {
+  Sql_Query(sprintf('delete from %s where name = "criterion%d" and id = %d',$GLOBALS["tables"]["messagedata"],$_GET["deleterule"],$_GET["id"]));
+  Redirect($_GET["page"]."&id=$id&tab=".$_GET["tab"]);
+}
+ob_end_flush();
+
+#load database data###########################
 
 // If we were passed an ID in the get, and we *weren't* posted a send, then
 // initialize the variables from the database.
-if (((!$send) && (!$save) && (!$sendtest)) && ($id)) {
+#if (((!$send) && (!$save) && (!$sendtest)) && ($id)) {
+if ($id) {
   // Load message attributes / values
 
   require $GLOBALS["coderoot"] . "structure.php";  // This gets the database structures into DBStruct
 
   $result = Sql_query("SELECT * FROM {$tables["message"]} where id = $id $ownership");
   if (!Sql_Affected_Rows()) {
-  	print "No such message, or you do not have access to it";
+    print $GLOBALS['I18N']->get("noaccess");
     $done = 1;
     return;
   }
   while ($msg = Sql_fetch_array($result)) {
-    while (list($field,$val) = each($DBstruct["message"])) {
-      $_POST[$field] = $msg[$field];
+    foreach ($DBstruct["message"] as $field => $rec) {
+      if (!isset($_POST[$field])) {
+  #      print "Db: $field = $msg[$field]<br/>";
+        $_POST[$field] = $msg[$field];
+      }
+    }
+  }
+  if (!isset($_POST['targetlist']) || !is_array($_POST["targetlist"])) {
+    $_POST["targetlist"] = array();
+    // Load lists that were targetted with message...
+    $result = Sql_Query("select $tables[list].name,$tables[list].id from $tables[listmessage],$tables[list] where $tables[listmessage].messageid = $id and $tables[listmessage].listid = $tables[list].id");
+    while ($lst = Sql_fetch_array($result)) {
+      $_POST["targetlist"][$lst["id"]] = 1;
     }
   }
 
-
   // A bit of additional cleanup
-  $_POST["from"] = $_POST["fromfield"];  // Database field name doesn't match form fieldname...
-  $_POST["repeatinterval"] = $_POST["repeat"]; // same here
-  $_POST["msgsubject"] = $_POST["subject"];
+  if (!isset($_POST["from"]))
+    $_POST["from"] = $_POST["fromfield"];  // Database field name doesn't match form fieldname...
+  if (!isset($_POST["msgsubject"])) {
+    $_POST["msgsubject"] = $_POST["subject"];
+  } else {
+    $_POST['subject'] = $_POST['msgsubject'];
+  }
+  if ((!isset($_POST["year"]) || !is_array($_POST["year"])) && $_POST["embargo"] && $_POST["embargo"] != "0000-00-00 00:00:00") {
+     $embargo->setDateTime($_POST["embargo"]);
+  }
+  if ((!isset($_POST["year"]) || !is_array($_POST["year"])) && $_POST["repeatuntil"] && $_POST["repeatuntil"] != "0000-00-00 00:00:00") {
+    $repeatuntil->setDateTime($_POST["repeatuntil"]);
+  }
 
   # not sure why this is here, but it breaks things when tables are used in the
   # message, so for now disable it.
-	if (0) {#$usefck) {
+  if (0) {#$usefck) {
     $_POST["message"] = nl2br($_POST["message"]);
-	}
-
-  // Load lists that were targetted with message...
-  $result = Sql_Query("select $tables[list].name,$tables[list].id from $tables[listmessage],$tables[list] where $tables[listmessage].messageid = $id and $tables[listmessage].listid = $tables[list].id");
-  while ($lst = Sql_fetch_array($result)) {
-    array_push($lists_done,$lst[id]);
   }
-	// Load the criteria settings...
-} 
 
-// If we've got magic quotes on, then we need to get rid of the slashes - either 
+  // Load the criteria settings...
+}
+
+// If we've got magic quotes on, then we need to get rid of the slashes - either
 // from the database or from the previous $_POST
 #if (get_magic_quotes_gpc()) {
-	$_POST["msgsubject"] = stripslashes($_POST["msgsubject"]);
-	$_POST["from"] = stripslashes($_POST["from"]);
-	$_POST["tofield"] = stripslashes($_POST["tofield"]);
-	$_POST["replyto"] = stripslashes($_POST["replyto"]);
-	$_POST["message"] = stripslashes($_POST["message"]);
+  $_POST["msgsubject"] = stripslashes($_POST["msgsubject"]);
+  $_POST["from"] = stripslashes($_POST["from"]);
+  $_POST["tofield"] = stripslashes($_POST["tofield"]);
+  $_POST["replyto"] = stripslashes($_POST["replyto"]);
+  $_POST["message"] = stripslashes($_POST["message"]);
   $_POST["textmessage"] = stripslashes($_POST["textmessage"]);
-	$_POST["footer"] = stripslashes($_POST["footer"]);
+  $_POST["footer"] = stripslashes($_POST["footer"]);
 #}
+
+#input checking#######################
 
 # check the criterias, one attribute can only exist once
 if ($send) {
@@ -102,159 +167,167 @@ if ($send) {
 
 if (!isset($id)) { $id = $_POST["id"]; }; // Pull in the id value from the post if it wasnt in the get
 
-if ($_POST["htmlformatted"] == "auto")
-	$htmlformatted = strip_tags($_POST["message"]) != $_POST["message"];
-else 
-	$htmlformatted = $_POST["htmlformatted"];
-  
+#if ($_POST["htmlformatted"] == "auto")
+  $htmlformatted = strip_tags($_POST["message"]) != $_POST["message"];
+#else
+#  $htmlformatted = $_POST["htmlformatted"];
+
 # sanitise the header fields, what else do we need to check on?
 if (preg_match("/\n|\r/",$_POST["from"])) {
-	$from = "";
+  $from = "";
 } else {
-	$from = $_POST["from"];
+  $from = $_POST["from"];
 }
 if (preg_match("/\n|\r/",$_POST["msgsubject"])) {
-	$subject = "";
+  $subject = "";
 } else {
-	$subject = $_POST["msgsubject"];
+  $subject = $_POST["msgsubject"];
 }
+$message = $_POST["message"];
 
-// If the valiable isn't filled in, then the input fields don't default to the 
+// If the variable isn't filled in, then the input fields don't default to the
 // values selected.  Need to fill it in so a post will correctly display.
-if (!$_POST["embargo"]) {
-	$_POST["embargo"] = $embargo->getDate() ." ".$embargo->getTime();
+if ((isset($_POST['year']) && is_array($_POST["year"])) || $_POST["embargo"] || $_POST["embargo"] == "0000-00-00 00:00:00") {
+  $_POST["embargo"] = $embargo->getDate() ." ".$embargo->getTime().':00';
 }
 
-if (!$_POST["repeatuntil"]) {
-	$_POST["repeatuntil"] = $repeatuntil->getDate() ." ".$repeatuntil->getTime();
+if ((isset($_POST['year']) && is_array($_POST["year"])) || !$_POST["repeatuntil"] || $_POST["repeatuntil"] == "0000-00-00 00:00:00") {
+  $_POST["repeatuntil"] = $repeatuntil->getDate() ." ".$repeatuntil->getTime().':00';
 }
+
 if (!isset($_SESSION["fckeditor_height"])) {
-	$_SESSION["fckeditor_height"] = getConfig("fckeditor_height");
+  $_SESSION["fckeditor_height"] = getConfig("fckeditor_height");
 }
-if ($_POST["expand"]) {
-	// request to expand editor area
-//	$defaultheight = getConfig("fckeditor_height");
-//	SaveConfig("fckeditor_height",$curheight+100,1);
-	$_SESSION["fckeditor_height"] += 100;
+if (isset($_POST['expand']) && $_POST["expand"]) {
+  // request to expand editor area
+//  $defaultheight = getConfig("fckeditor_height");
+//  SaveConfig("fckeditor_height",$curheight+100,1);
+  $_SESSION["fckeditor_height"] += 100;
 }
-	
+if (isset($_REQUEST['prepare'])) {
+  $prepare = $_REQUEST['prepare'];
+} else {
+  $prepare = '';
+}
 
-if ((($send && is_array($_POST["list"])) || $save || $sendtest || $prepare) && $subject && $_POST["message"] && $from && !$duplicate_attribute) {
+#actions and store in database#######################
+
+if ($send || $sendtest || $prepare || $save) {
 
   if ($save || $sendtest) {
-		// We're just saving, not sending.
-		if ($_POST["status"] == "") {
-			// No status - move to draft state
-	    $status = "draft";
-		} else {
-			// Keep the status the same
-			$status = $_POST["status"];
-		}
-	} elseif ($send) {
-		// We're sending - change state to "send-it" status!
-	  if (is_array($_POST["list"])) {
-			$status = "submitted";
-		} else {
-			$status = "prepared";
-		}
-	}
+    // We're just saving, not sending.
+    if (!isset($_POST['status']) || $_POST["status"] == "") {
+      // No status - move to draft state
+      $status = "draft";
+    } else {
+      // Keep the status the same
+      $status = $_POST["status"];
+    }
+  } elseif ($send) {
+    // We're sending - change state to "send-it" status!
+    if (is_array($_POST["targetlist"]) && sizeof($_POST["targetlist"]) && $subject && $from && $message && !$duplicate_attribute) {
+      $status = "submitted";
+    } else {
+      if (USE_PREPARE) {
+        $status = "prepared";
+      } else {
+        $status = "draft";
+      }
+    }
+  }
 
-	if (ENABLE_RSS && $_POST["rsstemplate"]) {
-  	# mark previous RSS templates with this frequency and owner as sent
+  if (ENABLE_RSS && $_POST["rsstemplate"]) {
+    # mark previous RSS templates with this frequency and owner as sent
     # this should actually be much more complex than this:
     # templates should be allowed by list and therefore a subset of lists, but
     # for now we leave it like this
     # the trouble is that this may duplicate RSS messages to users, because
     # it can cause multiple template for lists. The user_rss should handle that, but it is
     # not guaranteed which message will be used.
-  	Sql_Query(sprintf('update %s set status = "sent" where rsstemplate = "%s" and owner = %d',
-			$tables["message"],$_POST["rsstemplate"],$_SESSION["logindetails"]["id"]));
-	}
+#    Sql_Query(sprintf('update %s set status = "sent" where rsstemplate = "%s" and owner = %d',
+#      $tables["message"],$_POST["rsstemplate"],$_SESSION["logindetails"]["id"]));
 
-	if (!$htmlformatted	&& strip_tags($_POST["message"]) !=	$_POST["message"])
-		$msg = '<span	class="error">Warning: You indicated the content was not HTML, but there were	some HTML	tags in it. This	may	cause	errors</span>';
 
-	if ($_POST["id"] <> 0)	{
-		$query = sprintf('update %s	set	'.
-				'subject = "%s", '.
-				'fromfield = "%s", '.
-				'tofield = "%s", '.
-				'replyto = "%s", '.
-				'embargo = "%s", '.
-				'repeat	=	%d,	'.
-				'repeatuntil = "%s", '.
-				'message = "%s", '.
-				'textmessage = "%s", '.
-				'footer	=	"%s",	'.
-			  'status = "%s", '.
-				'htmlformatted = %d, '.
-				'sendformat	=	"%s",	'.
-				'template	=	%d,	'.
-				'rsstemplate = "%s"	'.
-				'where id	=	%d',
-				$tables["message"],
-				addslashes($subject),
-				addslashes($from),
-				addslashes($_POST["tofield"]),
-				addslashes($_POST["replyto"]),
-				$embargo->getDate()."	".$embargo->getTime().":00",
-				$_POST["repeatinterval"],
-				$repeatuntil->getDate()."	".$repeatuntil->getTime().":00",
-				addslashes($_POST["message"]),
-				addslashes($_POST["textmessage"]),
-				addslashes($_POST["footer"]),
-			  $status,
-				$htmlformatted,
-				$_POST["sendformat"],
-				$_POST["template"],
-				$_POST["rsstemplate"],
-				$id);
-		$result	=	Sql_query($query);
-		$messageid = $id;
-	}	else {
-		$query = sprintf('insert into	%s (subject,fromfield,tofield,
-				replyto,embargo,repeat,repeatuntil,message,textmessage,footer,status,entered,
-				htmlformatted,sendformat,template,rsstemplate,owner) values(
-				"%s","%s","%s","%s","%s",%d,"%s","%s","%s","%s","%s",%s,%d,"%s",%d,"%s",%d)',
-				$tables["message"],
-				addslashes($subject),
-				addslashes($from),
-				addslashes($_POST["tofield"]),
-				addslashes($_POST["replyto"]),
-				$embargo->getDate()."	".$embargo->getTime().":00",
-				$_POST["repeatinterval"],
-				$repeatuntil->getDate()."	".$repeatuntil->getTime().":00",
-				addslashes($_POST["message"]),
-				addslashes($_POST["textmessage"]),
-				addslashes($_POST["footer"]),
-				$status,"now()",
-				$htmlformatted,
-				$_POST["sendformat"],
-				$_POST["template"],$_POST["rsstemplate"],$_SESSION["logindetails"]['id']
-			);
-		$result	=	Sql_query($query);
-		$messageid = Sql_insert_id();
-	}
+    # with RSS message we enforce repeat
+    switch ($_POST["rsstemplate"]) {
+      case "weekly": $_POST["repeatinterval"] = 10080; break;
+      case "monthly": $_POST["repeatinterval"] = 40320; break;
+      case "daily":
+      default: $_POST["repeatinterval"] = 1440; break;
+    }
+    $_POST["repeatuntil"] = date("Y-m-d H:i:00",mktime(0,0,0,date("m"),date("d"),date("Y")+1));
+  }
 
-  // More	"Insert	only"	stuff	here (no need	to change	it on	an edit!)
-  if (is_array($_POST["list"]))	{
-    if ($_POST["list"]["all"]) {
-      $res = Sql_query("select * from	$tables[list]	$subselect");
-      while($row = Sql_fetch_array($res))	{
-        $listid	=	$row["id"];
-        if ($row["active"])	{
-          $result	=	Sql_query("insert	ignore into $tables[listmessage]	(messageid,listid,entered) values($messageid,$listid,now())");
+  if (!$htmlformatted  && strip_tags($_POST["message"]) !=  $_POST["message"])
+    $errormsg = '<span  class="error">'.$GLOBALS['I18N']->get("htmlusedwarning").'</span>';
+
+  $query = sprintf('update %s  set  '.
+      'subject = "%s", '.
+      'fromfield = "%s", '.
+      'tofield = "%s", '.
+      'replyto = "%s", '.
+      'embargo = "%s", '.
+      'repeatinterval  =  %d,  '.
+      'repeatuntil = "%s", '.
+      'message = "%s", '.
+      'textmessage = "%s", '.
+      'footer  =  "%s",  '.
+      'status = "%s", '.
+      'htmlformatted = %d, '.
+      'sendformat  =  "%s",  '.
+      'template  =  %d,  '.
+      'rsstemplate = "%s"  '.
+      'where id  =  %d',
+      $tables["message"],
+      addslashes($subject),
+      addslashes($from),
+      addslashes($_POST["tofield"]),
+      addslashes($_POST["replyto"]),
+      $_POST["embargo"],
+      $_POST["repeatinterval"],
+      $_POST["repeatuntil"],
+      addslashes($_POST["message"]),
+      addslashes($_POST["textmessage"]),
+      addslashes($_POST["footer"]),
+      $status,
+      $htmlformatted,
+      $_POST["sendformat"],
+      $_POST["template"],
+      $_POST["rsstemplate"],
+      $id);
+#    print $query;
+    $result  =  Sql_query($query);
+    $messageid = $id;
+#    print "Message ID: $id";
+    #    exit;
+    if (!$GLOBALS["has_pear_http_request"] && preg_match("/\[URL:/i",$_POST["message"])) {
+      print Warn($GLOBALS['I18N']->get('warnnopearhttprequest'));
+    }
+
+  // More  "Insert  only"  stuff  here (no need  to change  it on  an edit!)
+  if (isset($_POST["targetlist"]) && is_array($_POST["targetlist"]))  {
+    Sql_query("delete from {$tables["listmessage"]} where messageid = $messageid");
+    if (isset($_POST["targetlist"]["all"]) && $_POST["targetlist"]["all"] == "on") {
+      $res = Sql_query("select * from  $tables[list] $subselect");
+      while($row = Sql_fetch_array($res))  {
+        $listid  =  $row["id"];
+        if ($row["active"])  {
+          $result  =  Sql_query("insert ignore into $tables[listmessage]  (messageid,listid,entered) values($messageid,$listid,now())");
         }
       }
-    }	else {
-      while(list($key,$val)= each($_POST["list"])) {
-        if ($val ==	"signup")
-          $result	=	Sql_query("insert	ignore into $tables[listmessage]	(messageid,listid,entered) values($messageid,$key,now())");
+    } else {
+      foreach($_POST["targetlist"] as $listid => $val) {
+        $result = Sql_query("insert ignore into $tables[listmessage]  (messageid,listid,entered) values($messageid,$listid,now())");
       }
     }
-  }	else {
-    #	mark this	message	as listmessage for list	0
-    $result	=	Sql_query("insert ignore into $tables[listmessage]	(messageid,listid,entered) values($messageid,0,now())");
+  } else {
+    #  mark this  message  as listmessage for list  0
+    $result  =  Sql_query("insert ignore into $tables[listmessage]  (messageid,listid,entered) values($messageid,0,now())");
+  }
+
+  if (isset($_POST["excludelist"]) && is_array($_POST["excludelist"])) {
+    $exclude = join(",",$_POST["excludelist"]);
+    Sql_Query(sprintf('replace into %s (name,id,data) values("excludelist",%d,"%s")',$tables["messagedata"],$messageid,$exclude));
   }
 
 # we want to create a join on tables as follows, in order to find users who have their attributes to the values chosen
@@ -277,8 +350,9 @@ if ((($send && is_array($_POST["list"])) || $save || $sendtest || $prepare) && $
       $attribute = $_POST["criteria"][$i];
       $type = $_POST["attrtype"][$attribute];
       switch($type) {
-      	case "checkboxgroup":
+        case "checkboxgroup":
           $values = "attr$attribute$i";
+          $or_clause = '';
           if (isset($where_clause)) {
             $where_clause .= " and ";
             $select_clause .= " left join $tables[user_attribute] as table$i on table$first.userid = table$i.userid ";
@@ -290,7 +364,7 @@ if ((($send && is_array($_POST["list"])) || $save || $sendtest || $prepare) && $
           $where_clause .= "table$i.attributeid = $attribute and (";
           if (is_array($_POST[$values])) {
             foreach ($_POST[$values] as $val) {
-              if (isset($or_clause)) {
+              if ($or_clause != '') {
                 $or_clause .= " or ";
               }
               $or_clause .= "find_in_set('$val',table$i.value) > 0";
@@ -312,12 +386,12 @@ if ((($send && is_array($_POST["list"])) || $save || $sendtest || $prepare) && $
 
           $where_clause .= "table$i.attributeid = $attribute and ";
           if ($value) {
-          	$where_clause .= "( length(table$i.value) and table$i.value != \"off\" and table$i.value != \"0\") ";
+            $where_clause .= "( length(table$i.value) and table$i.value != \"off\" and table$i.value != \"0\") ";
           } else {
-          	$where_clause .= "( table$i.value = \"\" or table$i.value = \"0\" or table$i.value = \"off\") ";
+            $where_clause .= "( table$i.value = \"\" or table$i.value = \"0\" or table$i.value = \"off\") ";
           }
           break;
-       	default:
+         default:
           $values = "attr$attribute$i";
           if (isset($where_clause)) {
             $where_clause .= " and ";
@@ -344,21 +418,66 @@ if ((($send && is_array($_POST["list"])) || $save || $sendtest || $prepare) && $
 #    $count_query = addslashes("select distinct userid from $tables[user_attribute]");
   } else {
     $count_query = addslashes("select $select_clause where $where_clause");
+    Sql_query("update $tables[message] set userselection = \"$count_query\" where id = $messageid");
   }
-
-  Sql_query("update $tables[message] set userselection = \"$count_query\" where id = $messageid");
  # commented, because this could take too long
  # Sql_Query($count_query);
  # $num = Sql_Affected_rows();
 
+  # new criteria system, add one by one:
+  if (isset($_POST["criteria_attribute"]) && $_POST["criteria_attribute"]) {
+    $operator = $_POST["criteria_operator"];
+    if (is_array($_POST["criteria_values"])) {
+      $values = join(", ",$_POST["criteria_values"]);
+    } else {
+      $values = $_POST["criteria_values"];
+    }
+    foreach ($_POST["attribute_names"] as $key => $val) {
+      $att_names[$key] = $val;
+    }
+    $newcriterion = array(
+      "attribute" => sprintf('%d',$_POST["criteria_attribute"]),
+      "attribute_name" => $att_names[$_POST["criteria_attribute"]],
+      "operator" => $operator,
+      "values" => $values,
+    );
+    # find out what number we are
+    $numarr = Sql_Fetch_Row_Query(sprintf('select data from %s where id = %d and name = "numcriteria"',
+      $tables["messagedata"],$messageid));
+    $num = sprintf('%d',$numarr[0]+1);
+    # store this one
+#    print $att_names[$_POST["criteria_attribute"]];
+#    print $_POST["attribute_names[".$_POST["criteria_attribute"]."]"];
+    print "<p>".$GLOBALS['I18N']->get("adding")." ".$newcriterion["attribute_name"]." ".$newcriterion["operator"]." ".$newcriterion["values"]."</p>";
+    Sql_Query(sprintf('insert into %s (name,id,data) values("criterion%d",%d,"%s")',
+      $tables["messagedata"],$num,$messageid,delimited($newcriterion)));
+    # increase number
+    Sql_Query(sprintf('replace into %s (name,id,data) values("numcriteria",%d,"%s")',
+      $tables["messagedata"],$messageid,$num));
+    # save overall operator
+  }
+  if (isset($_POST["criteria_match"])) {
+    Sql_Query(sprintf('replace into %s (name,id,data) values("criteria_overall_operator",%d,"%s")',
+      $tables["messagedata"],$messageid,$_POST["criteria_match"]));
+  }
+  if (isset($_POST['notify_start']) && $_POST['notify_start']) {
+    Sql_Query(sprintf('replace into %s set name = "notify_start",id = %d,data = "%s"',
+      $GLOBALS['tables']['messagedata'],$id,$_POST['notify_start']));
+  }
+  if (isset($_POST['notify_end']) && $_POST['notify_end']) {
+    Sql_Query(sprintf('replace into %s set name = "notify_end",id = %d,data = "%s"',
+      $GLOBALS['tables']['messagedata'],$id,$_POST['notify_end']));
+  }
+
+
   if (ALLOW_ATTACHMENTS) {
     for ($att_cnt = 1;$att_cnt <= NUMATTACHMENTS;$att_cnt++) {
-    	$fieldname = "attachment".$att_cnt;
+      $fieldname = "attachment".$att_cnt;
       $tmpfile = $_FILES[$fieldname]['tmp_name'];
       $remotename = $_FILES[$fieldname]["name"];
       $type = $_FILES[$fieldname]["type"];
       if (strlen($_POST[$type]) > 255)
-      	print Warn("Mime Type is longer than 255 characters, this is trouble");
+        print Warn($GLOBALS['I18N']->get("longmimetype"));
       $description = $_POST[$fieldname."_description"];
       if ($tmpfile && filesize($tmpfile) && $tmpfile != "none") {
         list($name,$ext) = explode(".",basename($remotename));
@@ -371,7 +490,7 @@ if ((($send && is_array($_POST["list"])) || $save || $sendtest || $prepare) && $
         $contents = fread( $fd, filesize( $tmpfile ) );
         fclose( $fd );
         if ($file_size) {
-        	# this may seem odd, but it allows for a remote (ftp) repository
+          # this may seem odd, but it allows for a remote (ftp) repository
           # also, "copy" does not work across filesystems
           $fd = fopen($GLOBALS["attachment_repository"]."/".$newfile, "w" );
           fwrite( $fd, $contents );
@@ -383,17 +502,17 @@ if ((($send && is_array($_POST["list"])) || $save || $sendtest || $prepare) && $
           $attachmentid = Sql_Insert_id();
           Sql_query(sprintf('insert into %s (messageid,attachmentid) values(%d,%d)',
           $tables["message_attachment"],$messageid,$attachmentid));
-          
+
           # do a final check
           if (filesize($GLOBALS["attachment_repository"]."/".$newfile))
-            print Info("Added attachment ".$att_cnt . " .. ok");
+            print Info($GLOBALS['I18N']->get("addingattachment")." ".$att_cnt . " .. ok");
           else
-            print Info("Adding attachment ".$att_cnt." .. failed");
+            print Info($GLOBALS['I18N']->get("addingattachment")." ".$att_cnt." .. failed");
         } else {
-        	print Warn("Uploaded file $att_cnt not properly received, empty file");
+          print Warn($GLOBALS['I18N']->get("uploadfailed"));
         }
       } elseif ($_POST["localattachment".$att_cnt]) {
-      	$type = findMime(basename($_POST["localattachment".$att_cnt]));
+        $type = findMime(basename($_POST["localattachment".$att_cnt]));
         Sql_query(sprintf('insert into %s (remotefile,mimetype,description,size) values("%s","%s","%s",%d)',
           $tables["attachment"],
           $_POST["localattachment".$att_cnt],$type,$description,filesize($_POST["localattachment".$att_cnt]))
@@ -401,417 +520,924 @@ if ((($send && is_array($_POST["list"])) || $save || $sendtest || $prepare) && $
         $attachmentid = Sql_Insert_id();
         Sql_query(sprintf('insert into %s (messageid,attachmentid) values(%d,%d)',
         $tables["message_attachment"],$messageid,$attachmentid));
-        print Info("Added attachment ".$att_cnt. " mime: $type");
+        print Info($GLOBALS['I18N']->get("addingattachment")." ".$att_cnt. " mime: $type");
       }
     }
   }
 
-	if ($_POST["id"]) {
-		print "<h3>Message saved</H3><br>";
-	} else {
-		$id = $messageid; // New ID - need to set it for later use (test email).
-		print "<h3>Message added</H3><br>";
-	}
+  if ($_POST["id"]) {
+    print "<h3>".$GLOBALS['I18N']->get("saved")."</H3><br/>";
+  } else {
+    $id = $messageid; // New ID - need to set it for later use (test email).
+    print "<h3>".$GLOBALS['I18N']->get("added")."</H3><br/>";
+  }
 
   // If we're sending the message, just return now to the calling script
-	if ($send) {
-		if ($status == "submitted") {
-			print "<h3>Message queued for send</h3>";
-		}
-		$done = 1;
-		return;
-	}
 
-	// OK, the message has been saved, now check to see if we need to send a test message
-	if ($sendtest) {
-
-		echo "<HR>";
-		// Let's send test messages to everyone that was specified in the 
-		if ($_POST["testtarget"] == "") {
-			print "<font color=red size=+2>No target email addresses listed for testing.</font><br>";
-		} 
-
-		unset($cached[$id]);
-
-		include "sendemaillib.php";
-
-		// OK, let's get to sending!
-		$emailaddresses = split('[/,,/;]', $_POST["testtarget"]);
-
-		foreach ($emailaddresses as $address) {
-    	$address = trim($address);
-			$result = Sql_query(sprintf('select id,email,uniqid,htmlemail,rssfrequency,confirmed from %s where email = "%s"',$tables["user"],$address));
-			if ($user = Sql_fetch_array($result)) {
-				sendEmail($id, $address, $user["uniqid"], $user["htmlemail"]);
-				print "Sent test mail to: $address<br>";
-			} else {
-				print "<font color=red>Email address $address not found to send test message.</font><br>";
-			}
-		}
-		echo "<HR>";
-	}
-} elseif ($send || $sendtest || $save || $prepare) {
-	// We *didn't* send or save because some value was missing...  We're in an error condition here...
-
-	$errormessage = "";
-	if ($subject != $_POST["subject"]) {
-	} elseif ($from != $_POST["from"]) {
-		$errormessage = "Sorry, you used invalid characters in the From field.";
-	} elseif (!$from) {
-		$errormessage = "Please enter a from line.";
-	} elseif (!$message) {
-		$errormessage = "Please enter a message";
-	} elseif (!$subject) {
-		$errormessage = "Please enter a subject".$_POST["msgsubject"];
-	} elseif ($duplicate_attribute) {
-		$errormessage = "Error: you can use an attribute in one rule only";
-	} elseif ($send && !is_array($_POST["list"])) {
-    $errormessage = "Please select the list(s) to send the message to";
+  # we only need to check that everything is there, once we actually want to send
+  if ($send && $subject && $from && $message && !$duplicate_atribute && sizeof($_POST["targetlist"])) {
+    if ($status == "submitted") {
+      print "<h3>".$GLOBALS['I18N']->get("queued")."</h3>";
+      print '<p>'.PageLink2("processqueue",$GLOBALS['I18N']->get("processqueue")).'</p>';
+    }
+    $done = 1;
+    return;
+  } elseif ($send || $sendtest) {
+    $errormessage = "";
+    if ($subject != stripslashes($_POST["subject"])) {
+      $errormessage = $GLOBALS['I18N']->get("errorsubject"). "S: $subject, P".$_POST["subject"];
+    } elseif ($from != $_POST["from"]) {
+      $errormessage = $GLOBALS['I18N']->get("errorfrom");
+    } elseif (!$from) {
+      $errormessage = $GLOBALS['I18N']->get("enterfrom");
+    } elseif (!$message) {
+      $errormessage = $GLOBALS['I18N']->get("entermessage");
+    } elseif (!$subject) {
+      $errormessage = $GLOBALS['I18N']->get("entersubject");
+    } elseif ($duplicate_attribute) {
+      $errormessage = $GLOBALS['I18N']->get("duplicateattribute");
+    } elseif ($send && !is_array($_POST["targetlist"])) {
+      $errormessage = $GLOBALS['I18N']->get("selectlist");
+    }
+    echo "<font color=red size=+2>$errormessage</font><br>\n";
   }
-	echo "<font color=red size=+2>$errormessage</font><br>\n";
-} elseif (is_array($_POST["deleteattachments"]) && $id) {
-	if (ALLOW_ATTACHMENTS) {
-		// Delete Attachment button hit...
-		$deleteattachments = $_POST["deleteattachments"];
-		foreach($deleteattachments as $attid)
-		{
-			$result = Sql_Query(sprintf("Delete from %s where id = %d and messageid = %d",
-				$tables["message_attachment"],
-				$attid,
-				$id));
-      print Info("Removed Attachment ".$att_cnt);
-			// NOTE THAT THIS DOESN'T ACTUALLY DELETE THE ATTACHMENT FROM THE DATABASE, OR
-			// FROM THE FILE SYSTEM - IT ONLY REMOVES THE MESSAGE / ATTACHMENT LINK.  THIS
-			// SHOULD PROBABLY BE CORRECTED, BUT I (Pete Ness) AM NOT SURE WHAT OTHER IMPACTS
-			// THIS MAY HAVE.
-			// (My thoughts on this are to check for any orphaned attachment records and if
-			//  there are any, to remove it from the disk and then delete it from the database).
-		} 
-	}
+
+  // OK, the message has been saved, now check to see if we need to send a test message
+  if ($sendtest) {
+
+    echo "<HR>";
+    // Let's send test messages to everyone that was specified in the
+    if ($_POST["testtarget"] == "") {
+      print "<font color=red size=+2>".$GLOBALS['I18N']->get("notargetemail")."</font><br>";
+    }
+
+    unset($cached[$id]);
+
+    include "sendemaillib.php";
+
+    // OK, let's get to sending!
+    $emailaddresses = split('[/,,/;]', $_POST["testtarget"]);
+
+    foreach ($emailaddresses as $address) {
+      $address = trim($address);
+      $result = Sql_query(sprintf('select id,email,uniqid,htmlemail,rssfrequency,confirmed from %s where email = "%s"',$tables["user"],$address));
+      if ($user = Sql_fetch_array($result)) {
+        $success = sendEmail($id, $address, $user["uniqid"], 1) && sendEmail($id, $address, $user["uniqid"], 0);
+;
+        print $GLOBALS['I18N']->get("sentemailto").": $address ";
+        if (!$success) {
+          print $GLOBALS['I18N']->get('failed');
+        } else {
+          print $GLOBALS['I18N']->get('success');
+        }
+        print '<br/>';
+      } else {
+        print "<font color=red>".$GLOBALS['I18N']->get("emailnotfound").": $address</font><br>";
+      }
+    }
+    echo "<HR>";
+  }
+} elseif (isset($_POST["deleteattachments"]) && is_array($_POST["deleteattachments"]) && $id) {
+  if (ALLOW_ATTACHMENTS) {
+    // Delete Attachment button hit...
+    $deleteattachments = $_POST["deleteattachments"];
+    foreach($deleteattachments as $attid)
+    {
+      $result = Sql_Query(sprintf("Delete from %s where id = %d and messageid = %d",
+        $tables["message_attachment"],
+        $attid,
+        $id));
+      print Info($GLOBALS['I18N']->get("removedattachment")." ".$att_cnt);
+      // NOTE THAT THIS DOESN'T ACTUALLY DELETE THE ATTACHMENT FROM THE DATABASE, OR
+      // FROM THE FILE SYSTEM - IT ONLY REMOVES THE MESSAGE / ATTACHMENT LINK.  THIS
+      // SHOULD PROBABLY BE CORRECTED, BUT I (Pete Ness) AM NOT SURE WHAT OTHER IMPACTS
+      // THIS MAY HAVE.
+      // (My thoughts on this are to check for any orphaned attachment records and if
+      //  there are any, to remove it from the disk and then delete it from the database).
+    }
+  }
 }
-// Pull in $footer variable from post 
-$footer = $_POST["footer"]; 
+
+# load all message data
+$messagedata = loadMessageData($id);
+
+##############################
+# Stacked attributes, processing and calculation
+##############################
+
+if (STACKED_ATTRIBUTE_SELECTION) {
+
+# read criteria and parse it into a user query
+$num = sprintf('%d',isset($messagedata['numcriteria']) ? $messagedata['numcriteria']: 0);
+  #  print '<br/>'.$num . " criteria already defined";
+$ls = new WebblerListing($GLOBALS['I18N']->get("existingcriteria"));
+$used_attributes = array();
+$delete_base = sprintf('%s&amp;id=%d&amp;tab=%s',$_GET["page"],$_GET["id"],$_GET["tab"]);
+$tc = 0; # table counter
+if (!isset($messagedata['criteria_overall_operator'])) {
+  $messagedata['criteria_overall_operator'] = '';
+}
+$mainoperator = $messagedata['criteria_overall_operator'] == "all"? ' and ':' or ';
+
+for ($i = 1; $i<=$num;$i++) {
+  $crit_data = parseDelimitedData($messagedata[sprintf('criterion%d',$i)]);
+  if ($crit_data["attribute"]) {
+    array_push($used_attributes,$crit_data["attribute"]);
+    $ls->addElement('<!--'.$crit_data["attribute"].'-->'.$crit_data["attribute_name"]);
+    $ls->addColumn('<!--'.$crit_data["attribute"].'-->'.$crit_data["attribute_name"],$GLOBALS['I18N']->get('operator'),$GLOBALS['I18N']->get($crit_data["operator"]));
+    $ls->addColumn('<!--'.$crit_data["attribute"].'-->'.$crit_data["attribute_name"],$GLOBALS['I18N']->get('values'),$crit_data["values"]);
+    $ls->addColumn('<!--'.$crit_data["attribute"].'-->'.$crit_data["attribute_name"],$GLOBALS['I18N']->get('remove'),PageLink2($delete_base."&amp;deleterule=".$i,$GLOBALS['I18N']->get("remove")));
+    $attribute = $_POST["criteria"][$i];
+
+    # hmm, rather get is some other way, this is a bit unnecessary
+    $type = Sql_Fetch_Row_Query("select type from {$tables["attribute"]} where id = ".$crit_data["attribute"]);
+    $operator = "";
+    switch($type[0]) {
+      case "checkboxgroup":
+        $or_clause = '';
+        if ($tc) {
+          $where_clause .= " $mainoperator ";
+          $select_clause .= " left join $tables[user_attribute] as table$tc on table0.userid = table$tc.userid ";
+        } else {
+          $select_clause = "table$tc.userid from $tables[user_attribute] as table$tc ";
+        }
+
+        $where_clause .= " ( table$tc.attributeid = ".$crit_data["attribute"]." and (";
+        if ($crit_data["operator"] == "is") {
+          $operator = ' or ';
+          $compare = ' > ';
+        } else {
+          $operator = ' and ';
+          $compare = ' <  ';
+        }
+        foreach (explode(",",$crit_data["values"]) as $val) {
+          if ($or_clause != '') {
+            $or_clause .= " $operator ";
+          }
+          $or_clause .= "find_in_set('$val',table$tc.value) $compare 0";
+        }
+        $where_clause .= $or_clause . ") ) ";
+        break;
+      case "checkbox":
+        $value = $crit_data["values"][0];
+
+        if ($tc) {
+          $where_clause .= " $mainoperator ";
+          $select_clause .= " left join $tables[user_attribute] as table$tc on table0.userid = table$tc.userid ";
+        } else {
+          $select_clause = "table$tc.userid from $tables[user_attribute] as table$tc";
+        }
+
+        $where_clause .= " ( table$tc.attributeid = ".$crit_data["attribute"]." and ";
+        if ($crit_data["operator"] == "isnot") {
+          $where_clause .= ' not ';
+        }
+        if ($value) {
+          $where_clause .= "( length(table$tc.value) and table$tc.value != \"off\" and table$tc.value != \"0\") ";
+        } else {
+          $where_clause .= "( table$tc.value = \"\" or table$tc.value = \"0\" or table$tc.value = \"off\") ";
+        }
+        $where_clause .= ' ) ';
+        break;
+      case "date":
+        $date_value = parseDate($crit_data["values"]);
+        if (!$date_value) {
+          break;
+        }
+        if (isset($where_clause)) {
+          $where_clause .= " $mainoperator ";
+          $select_clause .= " left join $tables[user_attribute] as table$tc on table0.userid = table$tc.userid ";
+        } else {
+          $select_clause = " table$tc.userid from $tables[user_attribute] as table$tc ";
+        }
+
+        $where_clause .= ' ( table'.$tc.'.attributeid = '.$crit_data["attribute"].' and table'.$tc.'.value != "" and table'.$tc.'.value ';
+
+        switch ($crit_data["operator"]) {
+          case "is":
+            $where_clause .= ' = "'.$date_value . '" )';break;
+          case "isnot":
+            $where_clause .= ' != "'.$date_value . '" )';break;
+          case "isbefore":
+            $where_clause .= ' <= "'.$date_value . '" )';break;
+          case "isafter":
+            $where_clause .= ' >= "'.$date_value . '" )';break;
+        }
+#        $where_clause .= " )";
+        break;
+      default:
+        if (isset($where_clause)) {
+          $where_clause .= " $mainoperator ";
+          $select_clause .= " left join $tables[user_attribute] as table$tc on table0.userid = table$tc.userid ";
+        } else {
+          $select_clause = " table$tc.userid from $tables[user_attribute] as table$tc ";
+        }
+
+        $where_clause .= " ( table$tc.attributeid = ".$crit_data["attribute"]." and table$tc.value ";
+        if ($crit_data["operator"] == "isnot") {
+          $where_clause .= ' not in (';
+        } else {
+          $where_clause .= ' in (';
+        }
+        $where_clause .= $crit_data["values"] . ") )";
+    }
+    $tc++;
+  }
+}
+$existing_criteria = '';
+if ($num) {
+    $count_query = "select distinct $select_clause where $where_clause";
+#    $count_query = addslashes($count_query);
+  if ($_GET["calculate"]) {
+    ob_end_flush();
+    print "<h1>$count_query</h1>";
+    print "<p>".$GLOBALS['I18N']->get("calculating")." ...";
+    flush();
+
+    $req = Sql_Query($count_query);
+    $num = Sql_Num_Rows($req);
+    printf('.. '.$GLOBALS['I18N']->get('%d users apply'),$num).'</p>';
+  }
+
+  if ($messageid) {
+    Sql_query(sprintf('update %s set userselection = "%s" where id = %d',
+      $tables["message"],addslashes($count_query),$messageid));
+  }
+
+  $ls->addButton($GLOBALS['I18N']->get("calculate"),$baseurl.'&amp;tab='.$_GET["tab"].'&amp;calculate=1');
+  $existing_criteria = $ls->display();
+}
+
+} // end of define STACKED_ATTRIBUTES
+
+##############################
+# Stacked attributes, end
+##############################
+
+
+// Pull in $footer variable from post
+if (isset($_POST["footer"]))
+  $footer = $_POST["footer"];
 
 // If $id wasn't passed in (if it was passed, then $_POST should have
 // the database value in it already, and if it's empty, then we should
 // leave it empty) and $footer is blank, load the default.
-if ((!$id) && (!$footer))
+if (!$footer)
   $footer = getConfig("messagefooter");
 
-echo $msg;
+echo $errormsg;
 if (!$done) {
-if (ALLOW_ATTACHMENTS) {
-	$enctype = 'enctype="multipart/form-data"';
-} else {
-	$enctype = '';
-}
-
-# just playing aroudn with new tabs widget
-#$tabs = new WebblerTabs();
-#$tabs->addTab("Test","http://tincan.co.uk");
-#print $tabs->display();
-?>
-<script language="Javascript">
-// some debugging stuff to see what happens
-function checkForm() {
-	return true;
-  for (var i=0;i<document.sendmessageform.elements.length;i++) {
- 		alert(document.sendmessageform.elements[i].name+" "+document.sendmessageform.elements[i].value);
+  if (ALLOW_ATTACHMENTS) {
+    $enctype = 'enctype="multipart/form-data"';
+  } else {
+    $enctype = '';
   }
-	return true;
-}
-</script>
-<?php
-print formStart($enctype . ' name="sendmessageform"');
-#print '<form method="post" enctype="multipart/form-data" name="sendmessageform" onSubmit="return checkForm()">';
-print '<input type=hidden name="workaround_fck_bug" value="1">';
 
-if ($_GET["page"] == "preparemessage")
-	print Help("preparemessage","What is prepare a message");
+  #$baseurl = sprintf('./?page=%s&amp;id=%d',$_GET["page"],$_GET["id"]);
+  if ($_GET["id"]) {
+    $tabs = new WebblerTabs();
+    $tabs->addTab($GLOBALS['I18N']->get("Content"),"$baseurl&amp;tab=Content");
+    $tabs->addTab($GLOBALS['I18N']->get("Format"),"$baseurl&amp;tab=Format");
+    if (ALLOW_ATTACHMENTS) {
+      $tabs->addTab($GLOBALS['I18N']->get("Attach"),"$baseurl&amp;tab=Attach");
+    }
+    $tabs->addTab($GLOBALS['I18N']->get("Scheduling"),"$baseurl&amp;tab=Scheduling");
+#    if (USE_RSS) {
+#      $tabs->addTab("RSS","$baseurl&amp;tab=RSS");
+#    }
+    $tabs->addTab($GLOBALS['I18N']->get("Criteria"),"$baseurl&amp;tab=Criteria");
+    $tabs->addTab($GLOBALS['I18N']->get("Lists"),"$baseurl&amp;tab=Lists");
+#    $tabs->addTab("Review and Send","$baseurl&amp;tab=Review");
+    $tabs->addTab($GLOBALS['I18N']->get("Misc"),"$baseurl&amp;tab=Misc");
 
-if (!$from) {
-	$from = getConfig("message_from_name") . ' '.getConfig("message_from_address");
-}
-
-?>
-
-<table>
-<tr><td><?php echo Help("subject")?> Subject:</td><td><input type=text name="msgsubject" value="<?php echo htmlentities($subject)?>" size=40></td></tr>
-<tr><td colspan=2>
-</ul>
-</td></tr>
-<tr><td><?php echo Help("from")?> From line:</td><td><input type=text name=from value="<?php echo htmlentities($from)?>" size=40></td></tr>
-<tr><td colspan=2>
-
-</td></tr>
-<tr><td><?php echo Help("embargo")?> Embargoed until</td><td><?=$embargo->showInput("embargo","",$_POST["embargo"])?></td></tr>
-</td></tr>
-
-<?php if (USE_REPETITION) { 
-
-	$repeatinterval = $_POST["repeatinterval"];
-	?>
-
-<tr><td><?php echo Help("repetition")?> Repeat message every:</td><td>
-<select name="repeatinterval">
-<option value="0"<?php if ($repeatinterval == 0) { echo " SELECTED"; } ?>>-- no repetition</option>
-<option value="60"<?php if ($repeatinterval == 60) { echo " SELECTED"; } ?>>Hour</option>
-<option value="1440"<?php if ($repeatinterval == 1440) { echo " SELECTED"; } ?>>Day</option>
-<option value="10080"<?php if ($repeatinterval == 10080) { echo " SELECTED"; } ?>>Week</option>
-</select>
-
-</td></tr>
-</td></tr>
-<tr><td>  Repeat until:</td><td><?php echo $repeatuntil->showInput("repeatuntil","",$_POST["repeatuntil"])?></td></tr>
-</td></tr>
-
-<?php } ?>
-
-<tr><td colspan=2><?php echo Help("format")?> Format: <b>Auto detect</b> <input type=radio name="htmlformatted" value="auto" <?=!isset($htmlformatted) || $htmlformatted == "auto"?"checked":""?>>
-<b>HTML</b> <input type=radio name="htmlformatted" value="1" <?php echo $htmlformatted == "1" ?"checked":""?>>
-<b>Text</b> <input type=radio name="htmlformatted" value="0" <?php echo $htmlformatted == "0" ?"checked":""?>>
-</td></tr>
-<tr><td colspan=2><?php echo Help("sendformat")?> Send as:
-HTML <input type=radio name="sendformat" value="HTML" <?php echo $_POST["sendformat"]=="HTML"?"checked":""?>>
-text <input type=radio name="sendformat" value="text" <?php echo $_POST["sendformat"]=="text"?"checked":""?>>
-<?php if (USE_PDF) { ?>
-PDF <input type=radio name="sendformat" value="PDF" <?php echo $_POST["sendformat"]=="PDF"?"checked":""?>>
-<?php } ?>
-text and HTML <input type=radio name="sendformat" value="text and HTML" <?php echo $_POST["sendformat"]=="text and HTML" || !isset($_POST["sendformat"]) ?"checked":""?>>
-<?php if (USE_PDF) { ?>
-text and PDF <input type=radio name="sendformat" value="text and PDF" <?php echo $_POST["sendformat"]=="text and PDF" ?"checked":""?>>
-<?php } ?>
-</td></tr>
-<?php
-$req = Sql_Query("select id,title from {$tables["template"]} order by listorder");
-if (Sql_affected_Rows()) {
-?>
-<tr><td><?php echo Help("usetemplate")?> Use template: </td><td><select name="template"><option value=0>-- select one</option>
-<?php
-$req = Sql_Query("select id,title from {$tables["template"]} order by listorder");
-while ($row = Sql_Fetch_Array($req)) {
-  printf('<option value="%d" %s>%s</option>',$row["id"], $row["id"]==$_POST["template"]?'SELECTED':'',$row["title"]);
-}
-?>
-</select></td></tr>
-<?php }
-
-if (ENABLE_RSS) {
-	print '<tr><td colspan=2>If you want to use this message as the template for sending RSS feeds
- 	select the frequency it should be used for and use [RSS] in your message to indicate where the list of items needs to go.
-  </td></tr>';
-  print '<tr><td colspan=2><input type=radio name="rsstemplate" value="none">None ';
-  foreach ($rssfrequencies as $key => $val) {
-		printf('<input type=radio name="rsstemplate" value="%s" %s>%s ',$key,$_POST["rsstemplate"] == $key ? "checked":"",$val);
+    if ($_GET["tab"]) {
+      $tabs->setCurrent($GLOBALS['I18N']->get($_GET["tab"]));
+    } else {
+      $tabs->setCurrent($GLOBALS['I18N']->get("Content"));
+    }
+    if (defined("WARN_SAVECHANGES")) {
+      $tabs->addLinkCode(' onClick="return savechanges();" ');
+    }
+    print $tabs->display();
   }
-  print '</td></tr>';
-}
-?>
 
-<tr><td colspan=2><?php echo Help("message")?> Message. </td></tr>
+  ?>
+  <p></p>
+  <script language="Javascript">
+  // some debugging stuff to see what happens
+  function checkForm() {
+    return true;
+    for (var i=0;i<document.sendmessageform.elements.length;i++) {
+      alert(document.sendmessageform.elements[i].name+" "+document.sendmessageform.elements[i].value);
+    }
+    return true;
+  }
 
-<tr><td colspan=2>
+  // detection of unsaved changes,
+  var browser = navigator.appName.substring ( 0, 9 );
+  var changed = 0; function haschanged() {changed = 1; }
+  function savechanges() { if (changed) { if (confirm("<?php echo str_replace('"','&quot',reverse_htmlentities($GLOBALS['I18N']->get("unsavedchanges")))?>")) return false; else return true; return true;}}
+  //'
+  var event_number = 0;if (browser=="Microsoft") {  document.onkeydown=haschanged;  document.onchange=haschanged;} else if (browser=="Netscape") {  document.captureEvents(Event.KEYDOWN);  document.captureEvents(Event.CHANGE); document.onkeydown=haschanged;document.onchange=haschanged;}
+  function submitform() { document.sendmessageform.submit() }
+  </script>
+  <?php
+  print formStart($enctype . ' name="sendmessageform"');
+  #print '<form method="post" enctype="multipart/form-data" name="sendmessageform" onSubmit="return checkForm()">';
+  print '<input type=hidden name="workaround_fck_bug" value="1">';
 
-<?php  if ($usefck) {
-	$oFCKeditor = new FCKeditor ;
-	//$oFCKeditor->ToolbarSet = 'Accessibility' ;
-	$oFCKeditor->ToolbarSet = 'Default' ;
-	$oFCKeditor->Value = stripslashes($_POST["message"]);
-	$w = getConfig("fckeditor_width");
-	$h = getConfig("fckeditor_height");
-	if ($_SESSION["fckeditor_height"]) {
-		$h = sprintf('%d',$_SESSION["fckeditor_height"]);
-	}
-	$oFCKeditor->CreateFCKeditor( 'message', $w.'px', $h.'px' ) ;
-	print '</td></tr>';
+  if ($_GET["page"] == "preparemessage")
+    print Help("preparemessage",$GLOBALS['I18N']->get("whatisprepare"));
 
-	print '<script language="Javascript" type="text/javascript">
-	function expand() {
-		document.sendmessageform.expand.value = 1;
-		document.sendmessageform.save.value = 1
-		document.sendmessageform.submit();
-	}
-	</script>';
-
-
-	print '<tr><td colspan=2 align=right><a href="javascript:expand();" class="button">expand</a></td></tr>';
-
-} elseif ($useTinyMCE) {
-
-	$tinyMCE_path = TINYMCEPATH;
-	$tinyMCE_lang = TINYMCELANG;
-	$tinyMCE_theme = TINYMCETHEME;
-	$tinyMCE_opts = TINYMCEOPTS;
-
-	$maincontent .= "<script language='javascript' type='text/javascript' src='{$tinyMCE_path}'></script>\n"
-				."<script language='javascript' type='text/javascript'>\n"
-				."   tinyMCE.init({\n"
-				."      mode : 'exact',\n"
-				."	  elements : 'message',\n"
-				."	  language : '{$tinyMCE_lang}',\n"
-				."	  theme : '{$tinyMCE_theme}'\n"
-				."	  {$tinyMCE_opts}\n"
-				."   });\n"
-				."</script>\n"
-				."<textarea name='message' id='message' cols='65' rows='20'>{$_POST['message']}</textarea>";
-
-} else { ?>
-
-	<textarea name=message cols=45 rows=20><?php echo $_POST["message"] ?></textarea>
-
-<?php } ?>
-
-</td></tr>
-
-<?php if (USE_MANUAL_TEXT_PART) { ?>
-<tr><td colspan=2>
-	Plain Text version of message
-</td></tr>
-<tr><td colspan=2>
-	<textarea name=textmessage cols=45 rows=20><?php echo $_POST["textmessage"] ?></textarea>
-</td></tr>
-<?php } ?>
-<tr><td colspan=2>Message Footer. <br/>Use <b>[UNSUBSCRIBE]</b> to insert the personal unsubscribe URL for each user. <br/>Use <b>[PREFERENCES]</b> to insert the personal URL for a user to update their details.</td></tr>
-<tr><td colspan=2><textarea name=footer cols=45 rows=5><?php echo $footer ?></textarea></td></tr>
-
-</table>
-<?php
-
-if (ALLOW_ATTACHMENTS) {
-	// If we have a message id saved, we want to query the attachments that are associated with this
-	// message and display that (and allow deletion of!)
-
-	print "<table><tr><td colspan=2>".Help("attachments")." Add Attachments to your message</td></tr>";
-  print '<tr><td colspan=2>
-    The upload has the following limits set by the server:<br/>
-    Maximum size of a total data sent to server: '.ini_get("post_max_size")."<br/>".
-    'Maximum size of each individual file: '.ini_get("upload_max_filesize")."</td></tr>";
-
-	if ($id) {
-		$result = Sql_Query(sprintf("Select Att.id, Att.filename, Att.remotefile, Att.mimetype, Att.description, Att.size, MsgAtt.id linkid".
-			                 " from %s Att, %s MsgAtt where Att.id = MsgAtt.attachmentid and MsgAtt.messageid = %d",
-			$tables["attachment"],
-			$tables["message_attachment"],
-			$id));
-
-
-		$tabletext = "";
-    $ls = new WebblerListing("Current Attachments");
-
-		while ($row = Sql_fetch_array($result)) {
-#			$tabletext .= "<tr><td>".$row["remotefile"]."</td><td>".$row["description"]."&nbsp;</td><td>".$row["size"]."</td>";
-      $ls->addElement($row["id"]);
-      $ls->addColumn($row["id"],"filename",$row["remotefile"]);
-      $ls->addColumn($row["id"],"desc",$row["description"]);
-      $ls->addColumn($row["id"],"size",$row["size"]);
-      $phys_file = $GLOBALS["attachment_repository"]."/".$row["filename"]; 
-      if (is_file($phys_file) && filesize($phys_file)) {
-        $ls->addColumn($row["id"],"file",$GLOBALS["img_tick"]);
+  if (!defined("IN_WEBBLER")) {
+    if (!$from) {
+      $adminemail = $GLOBALS["admin_auth"]->adminEmail($_SESSION["logindetails"]["id"]);
+      if ($adminemail && USE_ADMIN_DETAILS_FOR_MESSAGES) {
+        $from = $GLOBALS["admin_auth"]->adminName($_SESSION["logindetails"]["id"]).' '.$adminemail;
       } else {
-        $ls->addColumn($row["id"],"file",$GLOBALS["img_cross"]);
+        $from = getConfig("message_from_name") . ' '.getConfig("message_from_address");
       }
-      $ls->addColumn($row["id"],"del",sprintf('<input type=checkbox name="deleteattachments[]" value="%s">',$row["linkid"]));
-        
-			// Probably need to check security rights here...
-#			$tabletext .= "<td><input type=checkbox name=\"deleteattachments[]\" value=\"".$row["linkid"]."\"></td>";
-#			$tabletext .= "</tr>\n";
-		}
-    $ls->addButton("Delete Checked","javascript:document.sendmessageform.submit()");
-    print '<tr><td colspan=2>'.$ls->display().'</td></tr>';
-
-#		if ($tabletext) {
-#			print "<tr><td colspan=2><table border=1><tr><td>Filename</td><td>Description</td><td>Size</td><td>&nbsp;</td></tr>\n";
-#			print "$tabletext";
-#			print "<tr><td colspan=4 align=\"center\"><input type=submit name=deleteatt value=\"Delete Checked\"></td></tr>";
-#			print "</table></td></tr>\n";
-#		}
-	}
-	for ($att_cnt = 1;$att_cnt <= NUMATTACHMENTS;$att_cnt++) {
-  	printf ('<tr><td>New Attachment</td><td><input type=file name="attachment%d">&nbsp;&nbsp;<input type=submit name="save" value="Add (and save)"></td></tr>',$att_cnt);
-    if (FILESYSTEM_ATTACHMENTS) {
-	    printf('<tr><td><b>or</b> path to file on server:</td><td><input type=text name="localattachment%d" size="50"></td></tr>',$att_cnt,$att_cnt);
-  	}
-    printf ('<tr><td colspan=2>Description of attachment:</td></tr>
-    	<tr><td colspan=2><textarea name="attachment%d_description" cols=45 rows=3 wrap="virtual"></textarea></td></tr>',$att_cnt);
- 	}
-	print '</table>';
-}
-
-// Load the email address for the admin user so we can use that as the default value in the testtarget field
-if (!isset($_POST["testtarget"])) {
-  $res = Sql_Query(sprintf("Select email from %s where id = %d", $tables["admin"], $_SESSION["logindetails"]["id"]));
-  $row = Sql_Fetch_Array($res);
-
-	$_POST["testtarget"] = $row["email"];
-}
-// if there isn't one, load the developer one, just being lazy here :-)
-if (!$_POST["testtarget"]) {
-	$_POST["testtarget"] = $GLOBALS["developer_email"];
-}
-
-// Display the HTML for the "Send Test" button, and the input field for the email addresses
-print "<hr><table><tr><td valign=\"top\"><input type=submit name=sendtest value=\"Send Test Message\"> to email address(es): </td><td><input type=text name=\"testtarget\" size=40 value=\"".$_POST["testtarget"]."\"><br />(comma separate addresses - all must be users)</td></tr></table>\n<hr>\n";
-
-$html = '
-<p><b>Select the criteria for this message:</b>
-<ol>
-<li>to use a criteria, check the box next to it
-<li>then check the radio button next to the attribute you want to use
-<li>then choose the values of the attributes you want to send the message to
-<i>Note:</i> Messages will be sent to people who fit to <i>Criteria 1</i> <b>AND</b> <i>Criteria 2</i> etc
-<table>
-';
-
-$any = 0;
-for ($i=1;$i<=NUMCRITERIAS;$i++) {
-  $html .= "<tr><td colspan=2><hr><h3>Criteria $i</h3></td><td>Use this one <input type=checkbox name=\"use[$i]\"></tr>";
-  $attributes_request = Sql_Query("select * from $tables[attribute]");
-  while ($attribute = Sql_Fetch_array($attributes_request)) {
-  	$html .= "\n\n";
-  	$html .= sprintf('<input type=hidden name="attrtype[%d]" value="%s">',$attribute["id"],$attribute["type"]);
-    switch ($attribute["type"]) {
-      case "checkbox":
-      	$any = 1;
-        $html .= sprintf ('<tr><td><input type="radio" name="criteria[%d]" value="%d"> %s</td><td><b>IS</b></td><td><select name="attr%d%d[]">
-                <option value="0">Not checked
-                <option value="1">Checked</select></td></tr>',$i,$attribute["id"],$attribute["name"],$attribute["id"],$i);
-        break;
-      case "select":
-      case "radio":
-      case "checkboxgroup":
-			  $some = 0;
-      	$thisone = "";
-        $values_request = Sql_Query("select * from $table_prefix"."listattr_".$attribute["tablename"]);
-        $thisone .= sprintf ('<tr><td valign=top><input type="radio" name="criteria[%d]" value="%d"> %s</td>
-                <td valign=top><b>IS</b></td><td><select name="attr%d%d[]" size=4 multiple>',$i,$attribute["id"],strip_tags($attribute["name"]),$attribute["id"],$i);
-        while ($value = Sql_Fetch_array($values_request)) {
- 				  $some =1;
-          $thisone .= sprintf ('<option value="%d">%s',$value["id"],$value["name"]);
-        }
-        $thisone .= "</select></td></tr>";
-        if ($some)
-        	$html .= $thisone;
-        $any = $any || $some;
-        break;
-      default:
-        $html .= "\n<!-- error: huh, unknown type ".$attribute["type"]." -->\n";
     }
   }
+
+  $formatting_content = '<table>';
+  $maincontent = '<table>';
+  $scheduling_content = '<table>';
+  $maincontent .= '
+  <tr><td>'.Help("subject").' '.$GLOBALS['I18N']->get("Subject").':</td>
+    <td><input type=text name="msgsubject"
+    value="'.htmlentities($subject).'" size=40></td></tr>
+  <tr>
+    <td colspan=2>
+    </td></tr>
+  <tr><td>'.Help("from").' '.$GLOBALS['I18N']->get("fromline").':</td>
+    <td><input type=text name=from
+    value="'.htmlentities($from).'" size=40></td></tr>
+  <tr><td colspan=2>
+
+  </td></tr>';
+
+  $scheduling_content .= '
+  <tr><td>'.Help("embargo").' '.$GLOBALS['I18N']->get("embargoeduntil").':</td>
+    <td>'.$embargo->showInput("embargo","",$_POST["embargo"]).'</td></tr>
+  </td></tr>';
+
+  if (USE_REPETITION) {
+    $repeatinterval = $_POST["repeatinterval"];
+
+    $scheduling_content .= '
+    <tr><td>'.Help("repetition").' '.$GLOBALS['I18N']->get("repeatevery").':</td><td>
+    <select name="repeatinterval">
+    <option value="0"';
+      if ($repeatinterval == 0) { $scheduling_content .= " SELECTED"; }
+      $scheduling_content .= '>-- '.$GLOBALS['I18N']->get("norepetition").'</option>
+      <option value="60"';
+      if ($repeatinterval == 60) { $scheduling_content .= " SELECTED"; }
+      $scheduling_content .= '>'.$GLOBALS['I18N']->get("hour").'</option>
+      <option value="1440"';
+      if ($repeatinterval == 1440) { $scheduling_content .= " SELECTED"; }
+      $scheduling_content .= '>'.$GLOBALS['I18N']->get("day").'</option>
+      <option value="10080"';
+      if ($repeatinterval == 10080) { $scheduling_content .= " SELECTED"; }
+      $scheduling_content .= '>'.$GLOBALS['I18N']->get("week").'</option>
+      </select>
+
+    </td></tr>
+    </td></tr>
+    <tr><td>  '.$GLOBALS['I18N']->get("repeatuntil").':</td><td>'.$repeatuntil->showInput("repeatuntil","",$_POST["repeatuntil"]).'</td></tr>
+    </td></tr>';
+  }
+
+/*
+  $formatting_content .= '
+    <tr><td colspan=2>'.Help("format").' '.$GLOBALS['I18N']->get("format").': <b>'.$GLOBALS['I18N']->get("autodetect").'</b>
+    <input type=radio name="htmlformatted" value="auto" ';
+    $formatting_content .= !isset($htmlformatted) || $htmlformatted == "auto"?"checked":"";
+    $formatting_content .= '>
+  <b>'.$GLOBALS['I18N']->get("html").'</b> <input type=radio name="htmlformatted" value="1" ';
+    $formatting_content .= $htmlformatted == "1" ?"checked":"";
+    $formatting_content .= '>
+  <b>'.$GLOBALS['I18N']->get("text").'</b> <input type=radio name="htmlformatted" value="0" ';
+    $formatting_content .= $htmlformatted == "0" ?"checked":"";
+    $formatting_content .= '></td></tr>';
+*/
+  $formatting_content .= '<input type=hidden name="htmlformatted" value="auto">';
+
+  $formatting_content .= '
+    <tr><td colspan=2>'.Help("sendformat").' '.$GLOBALS['I18N']->get("sendas").':
+  '.$GLOBALS['I18N']->get("html").' <input type=radio name="sendformat" value="HTML" ';
+    $formatting_content .= $_POST["sendformat"]=="HTML"?"checked":"";
+    $formatting_content .= '>
+  '.$GLOBALS['I18N']->get("text").' <input type=radio name="sendformat" value="text" ';
+    $formatting_content .= $_POST["sendformat"]=="text"?"checked":"";
+    $formatting_content .= '>
+  ';
+
+  if (USE_PDF) {
+    $formatting_content .= $GLOBALS['I18N']->get("pdf").' <input type=radio name="sendformat" value="PDF" ';
+    $formatting_content .= $_POST["sendformat"]=="PDF"?"checked":"";
+    $formatting_content .= '>';
+  }
+
+  $formatting_content .= $GLOBALS['I18N']->get("textandhtml").' <input type=radio name="sendformat" value="text and HTML" ';
+  $formatting_content .= $_POST["sendformat"]=="text and HTML" || !isset($_POST["sendformat"]) ?"checked":"";
+  $formatting_content .= '>';
+
+  if (USE_PDF) {
+    $formatting_content .= $GLOBALS['I18N']->get("textandpdf").' <input type=radio name="sendformat" value="text and PDF" ';
+    $formatting_content .= $_POST["sendformat"]=="text and PDF" ?"checked":"";
+    $formatting_content .= ' >';
+  }
+  $formatting_content .= '</td></tr>';
+
+  $req = Sql_Query("select id,title from {$tables["template"]} order by listorder");
+  if (Sql_affected_Rows()) {
+    $formatting_content .= '<tr><td>'.Help("usetemplate").' '.$GLOBALS['I18N']->get("usetemplate").': </td>
+      <td><select name="template"><option value=0>-- '.$GLOBALS['I18N']->get("selectone").'</option>';
+    $req = Sql_Query("select id,title from {$tables["template"]} order by listorder");
+    while ($row = Sql_Fetch_Array($req)) {
+      $formatting_content .= sprintf('<option value="%d" %s>%s</option>',$row["id"], $row["id"]==$_POST["template"]?'SELECTED':'',$row["title"]);
+    }
+    $formatting_content .= '</select></td></tr>';
+  }
+
+  if (ENABLE_RSS) {
+    $rss_content .= '<tr><td colspan=2>'.$GLOBALS['I18N']->get("rssintro").'
+    </td></tr>';
+    $rss_content .= '<tr><td colspan=2><input type=radio name="rsstemplate" value="none">'.$GLOBALS['I18N']->get("none").' ';
+    foreach ($rssfrequencies as $key => $val) {
+      $rss_content .= sprintf('<input type=radio name="rsstemplate" value="%s" %s>%s ',$key,$_POST["rsstemplate"] == $key ? "checked":"",$val);
+    }
+    $rss_content .= '</td></tr>';
+  }
+
+  $maincontent .= '<tr><td colspan=2>'.Help("message").' '.$GLOBALS['I18N']->get("message").'. </td></tr>
+
+  <tr><td colspan=2>';
+
+  if ($usefck) {
+    $oFCKeditor = new FCKeditor('message') ;
+    $oFCKeditor->BasePath = './FCKeditor/';
+    //$oFCKeditor->ToolbarSet = 'Accessibility' ;
+    $oFCKeditor->ToolbarSet = 'Default' ;
+    $oFCKeditor->Value = stripslashes($_POST["message"]);
+    $w = getConfig("fckeditor_width");
+    $h = getConfig("fckeditor_height");
+    if ($_SESSION["fckeditor_height"]) {
+      $h = sprintf('%d',$_SESSION["fckeditor_height"]);
+    }
+    $maincontent .= $oFCKeditor->ReturnFCKeditor( 'message', $w.'px', $h.'px' ) ;
+
+    # for version 2.0
+#    $oFCKeditor->Height = $h;
+#    $maincontent .= $oFCKeditor->CreateHtml() ;
+    $maincontent .= '</td></tr>';
+
+    $maincontent .= '<script language="Javascript" type="text/javascript">
+    function expand() {
+      document.sendmessageform.expand.value = 1;
+      document.sendmessageform.save.value = 1
+      document.sendmessageform.submit();
+    }
+    </script>';
+
+    $maincontent .= '<tr><td colspan=2 align=right><a href="javascript:expand();" class="button">'.$GLOBALS['I18N']->get("expand").'</a></td></tr>';
+
+  } elseif ($useTinyMCE) {
+
+  $tinyMCE_path = TINYMCEPATH;
+  $tinyMCE_lang = TINYMCELANG;
+  $tinyMCE_theme = TINYMCETHEME;
+  $tinyMCE_opts = TINYMCEOPTS;
+
+  $maincontent .= "<script language='javascript' type='text/javascript' src='{$tinyMCE_path}'></script>\n"
+        ."<script language='javascript' type='text/javascript'>\n"
+        ."   tinyMCE.init({\n"
+        ."      mode : 'exact',\n"
+        ."    elements : 'message',\n"
+        ."    language : '{$tinyMCE_lang}',\n"
+        ."    theme : '{$tinyMCE_theme}'\n"
+        ."    {$tinyMCE_opts}\n"
+        ."   });\n"
+        ."</script>\n"
+        ."<textarea name='message' id='message' cols='65' rows='20'>{$_POST['message']}</textarea>";
+
+  } else {
+
+    $maincontent .= '<textarea name=message cols=65 rows=20>'.htmlspecialchars($_POST["message"]).'</textarea>';
+
+  }
+
+  $maincontent .= '
+  </td></tr>
+  ';
+
+  if (USE_MANUAL_TEXT_PART) {
+  $maincontent .= '<tr><td colspan=2>
+    '.$GLOBALS['I18N']->get("plaintextversion").'
+  </td></tr>
+  <tr><td colspan=2>
+    <textarea name=textmessage cols=65 rows=20>'.$_POST["textmessage"].'</textarea>
+  </td></tr>';
+  }
+
+  $maincontent .= '<tr><td colspan=2>'.$GLOBALS['I18N']->get("messagefooter").'. <br/>
+    '.$GLOBALS['I18N']->get("messagefooterexplanation").'.</td></tr>
+  <tr><td colspan=2><textarea name=footer cols=65 rows=5>'.$footer.'</textarea></td></tr>
+  </table>';
+
+  if (ALLOW_ATTACHMENTS) {
+    // If we have a message id saved, we want to query the attachments that are associated with this
+    // message and display that (and allow deletion of!)
+
+    $att_content = '<table><tr><td colspan=2>'.Help("attachments").' '.$GLOBALS['I18N']->get("addattachments").' </td></tr>';
+    $att_content .= '<tr><td colspan=2>
+      '.$GLOBALS['I18N']->get("uploadlimits").':<br/>
+      '.$GLOBALS['I18N']->get("maxtotaldata").': '.ini_get("post_max_size").'<br/>
+      '.$GLOBALS['I18N']->get("maxfileupload").': '.ini_get("upload_max_filesize").'</td></tr>';
+
+    if ($id) {
+      $result = Sql_Query(sprintf("Select Att.id, Att.filename, Att.remotefile, Att.mimetype, Att.description, Att.size, MsgAtt.id linkid".
+                        " from %s Att, %s MsgAtt where Att.id = MsgAtt.attachmentid and MsgAtt.messageid = %d",
+        $tables["attachment"],
+        $tables["message_attachment"],
+        $id));
+
+
+      $tabletext = "";
+      $ls = new WebblerListing($GLOBALS['I18N']->get('currentattachments'));
+
+      while ($row = Sql_fetch_array($result)) {
+  #      $tabletext .= "<tr><td>".$row["remotefile"]."</td><td>".$row["description"]."&nbsp;</td><td>".$row["size"]."</td>";
+        $ls->addElement($row["id"]);
+        $ls->addColumn($row["id"],$GLOBALS['I18N']->get('filename'),$row["remotefile"]);
+        $ls->addColumn($row["id"],$GLOBALS['I18N']->get('desc'),$row["description"]);
+        $ls->addColumn($row["id"],$GLOBALS['I18N']->get('size'),$row["size"]);
+        $phys_file = $GLOBALS["attachment_repository"]."/".$row["filename"];
+        if (is_file($phys_file) && filesize($phys_file)) {
+          $ls->addColumn($row["id"],$GLOBALS['I18N']->get('file'),$GLOBALS["img_tick"]);
+        } else {
+          $ls->addColumn($row["id"],$GLOBALS['I18N']->get('file'),$GLOBALS["img_cross"]);
+        }
+        $ls->addColumn($row["id"],$GLOBALS['I18N']->get('del'),sprintf('<input type=checkbox name="deleteattachments[]" value="%s">',$row["linkid"]));
+
+        // Probably need to check security rights here...
+  #      $tabletext .= "<td><input type=checkbox name=\"deleteattachments[]\" value=\"".$row["linkid"]."\"></td>";
+  #      $tabletext .= "</tr>\n";
+      }
+      $ls->addButton($GLOBALS['I18N']->get('delchecked'),"javascript:document.sendmessageform.submit()");
+      $att_content .= '<tr><td colspan=2>'.$ls->display().'</td></tr>';
+
+  #    if ($tabletext) {
+  #      print "<tr><td colspan=2><table border=1><tr><td>Filename</td><td>Description</td><td>Size</td><td>&nbsp;</td></tr>\n";
+  #      print "$tabletext";
+  #      print "<tr><td colspan=4 align=\"center\"><input type=submit name=deleteatt value=\"Delete Checked\"></td></tr>";
+  #      print "</table></td></tr>\n";
+  #    }
+    }
+    for ($att_cnt = 1;$att_cnt <= NUMATTACHMENTS;$att_cnt++) {
+      $att_content .=sprintf ('<tr><td>%s</td><td><input type=file name="attachment%d">&nbsp;&nbsp;<input type=submit name="save" value="%s"></td></tr>',$GLOBALS['I18N']->get('newattachment'),$att_cnt,$GLOBALS['I18N']->get('addandsave'));
+      if (FILESYSTEM_ATTACHMENTS) {
+        $att_content .= sprintf('<tr><td><b>%s</b> %s:</td><td><input type=text name="localattachment%d" size="50"></td></tr>',$GLOBALS['I18N']->get('or'),$GLOBALS['I18N']->get('pathtofile'),$att_cnt,$att_cnt);
+      }
+      $att_content .= sprintf ('<tr><td colspan=2>%s:</td></tr>
+        <tr><td colspan=2><textarea name="attachment%d_description" cols=65 rows=3 wrap="virtual"></textarea></td></tr>',$GLOBALS['I18N']->get('attachmentdescription'),$att_cnt);
+    }
+    $att_content .= '</table>';
+    # $shader = new WebblerShader("Attachments");
+    # $shader->addContent($att_content);
+    # $shader->initialstate = 'closed';
+    # print $shader->display();
+  }
+
+  // Load the email address for the admin user so we can use that as the default value in the testtarget field
+  if (!isset($_POST["testtarget"])) {
+    $res = Sql_Query(sprintf("Select email from %s where id = %d", $tables["admin"], $_SESSION["logindetails"]["id"]));
+    $row = Sql_Fetch_Array($res);
+
+    $_POST["testtarget"] = $row["email"];
+  }
+  // if there isn't one, load the developer one, just being lazy here :-)
+  if (!$_POST["testtarget"]) {
+    $_POST["testtarget"] = $GLOBALS["developer_email"];
+  }
+
+  // Display the HTML for the "Send Test" button, and the input field for the email addresses
+  $sendtest_content = sprintf('<hr /><table><tr><td valign="top">
+    <input type=submit name=sendtest value="%s"> %s: </td>
+    <td><input type=text name="testtarget" size=40 value="'.$_POST["testtarget"].'"><br />%s
+    </td></tr></table><hr />',
+    $GLOBALS['I18N']->get('sendtestmessage'),$GLOBALS['I18N']->get('toemailaddresses'),
+    $GLOBALS['I18N']->get('sendtestexplain'));
+
+  $criteria_content = $GLOBALS['I18N']->get('criteriaexplanation').'
+  <table>
+  ';
+
+  $any = 0;
+  for ($i=1;$i<=NUMCRITERIAS;$i++) {
+    $criteria_content .= sprintf('<tr><td colspan=2><hr><h3>%s %d</h3></td>
+    <td>%s <input type=checkbox name="use[%d]"></tr>',$GLOBALS['I18N']->get('criterion'),$i,
+    $GLOBALS['I18N']->get('usethisone'),$i);
+    $attributes_request = Sql_Query("select * from $tables[attribute]");
+    while ($attribute = Sql_Fetch_array($attributes_request)) {
+      $criteria_content .= "\n\n";
+      $criteria_content .= sprintf('<input type=hidden name="attrtype[%d]" value="%s">',
+        $attribute["id"],$attribute["type"]);
+      switch ($attribute["type"]) {
+        case "checkbox":
+          $any = 1;
+          $criteria_content .= sprintf ('<tr><td><input type="radio" name="criteria[%d]" value="%d">
+             %s</td><td><b>%s</b></td><td><select name="attr%d%d[]">
+                  <option value="0">Not checked
+                  <option value="1">Checked</select></td></tr>',
+                  $i,$attribute["id"],
+                  $attribute["name"],$GLOBALS['I18N']->get('is'),$attribute["id"],$i);
+          break;
+        case "select":
+        case "radio":
+        case "checkboxgroup":
+          $some = 0;
+          $thisone = "";
+          $values_request = Sql_Query("select * from $table_prefix"."listattr_".$attribute["tablename"]);
+          $thisone .= sprintf ('<tr><td valign=top><input type="radio" name="criteria[%d]" value="%d"> %s</td>
+                  <td valign=top><b>%s</b></td><td><select name="attr%d%d[]" size=4 multiple>',
+                  $i,$attribute["id"],strip_tags($attribute["name"]),$GLOBALS['I18N']->get('is'),$attribute["id"],$i);
+          while ($value = Sql_Fetch_array($values_request)) {
+            $some =1;
+            $thisone .= sprintf ('<option value="%d">%s',$value["id"],$value["name"]);
+          }
+          $thisone .= "</select></td></tr>";
+          if ($some)
+            $criteria_content .= $thisone;
+          $any = $any || $some;
+          break;
+        default:
+          $criteria_content .= "\n<!-- error: huh, unknown type ".$attribute["type"]." -->\n";
+      }
+    }
+  }
+
+  if (!$any) {
+    $criteria_content = "<p>".$GLOBALS['I18N']->get('nocriteria')."</p>";
+  } else {
+  #  $shader = new WebblerShader("Message Criteria");
+  #  $shader->addContent($criteria_content.'</table>');
+  #  $shader->hide();
+  #  print $shader->display();
+  }
+
+  ##############################
+  # Stacked attributes, display
+  ##############################
+
+  if (STACKED_ATTRIBUTE_SELECTION) {
+
+  /* new criteria content system */
+  # list existing defined ones:
+  # find out how many there are
+  if ($messageid) {
+    $id = $messageid;
+  }
+
+  $att_js = '
+  <script language="Javascript" type="text/javascript">
+    var values = Array();
+    var operators = Array();
+    var value_divs = Array();
+    var value_default = Array();
+  ';
+  if (sizeof($used_attributes)) {
+    $already_used = ' and id not in ('.join(',',$used_attributes).')';
+  } else {
+    $already_used = "";
+  }
+  $att_drop = '';
+  $attreq = Sql_Query(sprintf('select * from %s where type in ("select","radio","date","checkboxgroup","checkbox") %s',$tables["attribute"],$already_used));
+  while ($att = Sql_Fetch_array($attreq)) {
+    $att_drop .= sprintf('<option value="%d" %s>%s</option>',
+      $att["id"],"",$att["name"]);
+    $num = Sql_Affected_Rows();
+    switch ($att["type"]) {
+      case "select":case "radio":case "checkboxgroup":
+        $att_js .= sprintf('value_divs[%d] = "criteria_values_select";'."\n",$att["id"]);
+        $att_js .= sprintf('value_default[%d] = "";'."\n",$att["id"]);
+        $value_req = Sql_Query(sprintf('select * from %s order by listorder,name',
+          $GLOBALS["table_prefix"]."listattr_".$att["tablename"]));
+        $num = Sql_Num_Rows($value_req);
+        $att_js .= sprintf('values[%d] = new Array(%d);'."\n",$att["id"],$num+1);
+        #$att_js .= sprintf('values[%d][0] =  new Option("[choose]","0",false,true);'."\n",$att["id"]);
+        $c = 0;
+        while ($value = Sql_Fetch_Array($value_req)) {
+          $att_js .= sprintf('values[%d][%d] =  new Option("%s","%d",false,false);'."\n",$att["id"],
+            $c,$value["name"],$value["id"]);
+          $c++;
+        }
+        $att_js .= sprintf('operators[%d] = new Array(2);'."\n",$att["id"]);
+        $att_js .= sprintf('operators[%d][0] =  new Option("%s","is",false,true);'."\n",$att["id"],$GLOBALS['I18N']->get('is'));
+        $att_js .= sprintf('operators[%d][1] =  new Option("%s","isnot",false,true);'."\n",$att["id"],$GLOBALS['I18N']->get('isnot'));
+        break;
+      case "checkbox":
+        $att_js .= sprintf('value_divs[%d] = "criteria_values_select";'."\n",$att["id"]);
+        $att_js .= sprintf('value_default[%d] = "";'."\n",$att["id"]);
+        $att_js .= sprintf('values[%d] = new Array(%d);'."\n",$att["id"],2);
+        $att_js .= sprintf('values[%d][0] =  new Option("%s",0,false,true);'."\n",$att["id"],$GLOBALS['I18N']->get('unchecked'));
+        $att_js .= sprintf('values[%d][1] =  new Option("%s",1,false,true);'."\n",$att["id"],$GLOBALS['I18N']->get('checked'));
+        $att_js .= sprintf('operators[%d] = new Array(2);'."\n",$att["id"]);
+        $att_js .= sprintf('operators[%d][0] =  new Option("%s","is",false,true);'."\n",$att["id"],$GLOBALS['I18N']->get('is'));
+        $att_js .= sprintf('operators[%d][1] =  new Option("%s","isnot",false,true);'."\n",$att["id"],$GLOBALS['I18N']->get('isnot'));
+        break;
+      case "date":
+        $att_js .= sprintf('value_divs[%d] = "criteria_values_text";'."\n",$att["id"]);
+        $att_js .= sprintf('value_default[%d] = "%s";'."\n",$att["id"],$GLOBALS['I18N']->get('dd-mm-yyyy'));
+        $att_js .= sprintf('values[%d] = new Array(%d);'."\n",$att["id"],1);
+        $att_js .= sprintf('values[%d][%d] =  new Option("%s","%d",false,false);'."\n",$att["id"],$c,
+          "Date","dd-mm-yyyy"); # just to avoid javascript errors, not actually used
+        $att_js .= sprintf('operators[%d] = new Array(4);'."\n",$att["id"]);
+        $att_js .= sprintf('operators[%d][0] =  new Option("%s","is",false,true);'."\n",$att["id"],$GLOBALS['I18N']->get('is'));
+        $att_js .= sprintf('operators[%d][1] =  new Option("%s","isnot",false,true);'."\n",$att["id"],$GLOBALS['I18N']->get('isnot'));
+        $att_js .= sprintf('operators[%d][2] =  new Option("%s","isbefore",false,true);'."\n",$att["id"],$GLOBALS['I18N']->get('isbefore'));
+        $att_js .= sprintf('operators[%d][3] =  new Option("%s","isafter",false,true);'."\n",$att["id"],$GLOBALS['I18N']->get('isafter'));
+    }
+  }
+  $att_js .= '
+
+  var browser = navigator.appName.substring ( 0, 9 );
+  var warned = browser != "Microsoft";
+
+  function findEl(name) {
+    var div;
+    if (document.getElementById){
+      div = document.getElementById(name);
+    } else if (document.all){
+      div = document.all[name];
+    }
+    return div;
+  }
+
+  function changeDropDowns() {
+    var choice = document.sendmessageform.criteria_attribute.options[document.sendmessageform.criteria_attribute.selectedIndex].value;
+    if (choice == "")
+      return;
+    if (!warned) {
+      alert("'.$GLOBALS['I18N']->get('buggywithie').'");
+      warned = 1;
+    }
+    var value_el_select = findEl("criteria_values_select");
+    var value_el_text = findEl("criteria_values_text");
+    for (i=0;i<value_el_select.length;) {
+      value_el_select.options[i] = null;
+    }
+    for (i=0;i<values[choice].length;i++) {
+      value_el_select.options[i] = values[choice][i];
+    }
+    value_el_select.selectedIndex = 0;
+    value_el_text.value = value_default[choice];
+
+    for (i=0;i<document.sendmessageform.criteria_operator.length;) {
+      document.sendmessageform.criteria_operator.options[i] = null;
+    }
+    for (i=0;i<operators[choice].length;i++) {
+      document.sendmessageform.criteria_operator.options[i] = operators[choice][i];
+    }
+    document.sendmessageform.criteria_operator.selectedIndex = 0;
+    var div1 = findEl("criteria_values_select");
+    var div2 = findEl("criteria_values_text");
+    var div3 = findEl(value_divs[choice]);
+    div1.style.visibility = "hidden";
+    div2.style.visibility = "hidden";
+    div3.style.visibility = "visible";
+
+  }
+  </script>
+
+  ';
+
+  $att_drop = '<select name="criteria_attribute" onChange="changeDropDowns()" class="criteria_element" >';
+  $att_drop .= '<option value="">['.$GLOBALS['I18N']->get('selectattribute').']</option>';
+  $att_names = '';# to remember them later
+  $attreq = Sql_Query(sprintf('select * from %s where type in ("select","radio","date","checkboxgroup","checkbox") %s',$tables["attribute"],$already_used));
+  while ($att = Sql_Fetch_array($attreq)) {
+    $att_drop .= sprintf('<option value="%d" %s>%s</option>',
+      $att["id"],"",substr(stripslashes($att["name"]),0,30).' ('.$GLOBALS['I18N']->get($att["type"]).')');
+    $att_names .= sprintf('<input type=hidden name="attribute_names[%d]" value="%s">',$att["id"],stripslashes($att["name"]));
+  }
+  $att_drop .= '</select>'.$att_names;
+
+  $operator_drop = '
+    <select name="criteria_operator" class="criteria_element" >
+    <option value="is">'.$GLOBALS['I18N']->get('is').'</option>
+    <option value="isnot">'.$GLOBALS['I18N']->get('isnot').'</option>
+    <option value="isbefore">'.$GLOBALS['I18N']->get('isbefore').'</option>
+    <option value="isafter">'.$GLOBALS['I18N']->get('isafter').'</option>
+  </select>
+  ';
+
+  $values_drop = '
+  <style type="text/css">
+  #criteria_values_select {
+    visibility : hidden;
+    background-color: #ffffff;
+  }
+  #criteria_values_select > option {
+    background-color: #ffffff;
+  }
+  #criteria_values_text {
+    visibility : hidden;
+  }
+  span.values_span {
+    vertical-align: top;
+    display: block;
+  }
+  input.criteria_element {
+    vertical-align: top;
+  }
+  select.criteria_element {
+    vertical-align: top;
+  }
+
+  </style>';
+  $values_drop .= '<span id="values_span" class="values_span">';
+  $values_drop .= '<input class="criteria_element" name="criteria_values" id="criteria_values_text" size=15 type=text>';
+#  $values_drop .= '</span>';
+#  $values_drop .= '<span id="values_select">';
+  $values_drop .= '<select class="criteria_element" name="criteria_values[]" id="criteria_values_select" multiple size=10></select>';
+  $values_drop .= '</span>';
+
+  $existing_overall_operator = $messagedata['criteria_overall_operator'] == "any" ? "any":"all";
+  $criteria_overall_operator =
+    sprintf('%s <input type="radio" name="criteria_match" value="all" %s>
+      %s <input type="radio" name="criteria_match" value="any" %s>',
+      $GLOBALS['I18N']->get('matchallrules'),
+      $existing_overall_operator == "all"? "checked":"",
+      $GLOBALS['I18N']->get('matchanyrules'),
+      $existing_overall_operator == "any"? "checked":"");
+
+  $criteria_styles = '
+  <style type="text/css">
+
+  div.criteria_container {
+    /*border: 1px solid black;
+    background-color: #ffeeee;*/
+    width: 100%;
+    z-index: 8;
+  }
+  span.criteria_element {
+    vertical-align: top;
+    display: inline;
+  }
+  </style>';
+
+
+
+  $criteria_content = $criteria_overall_operator.$existing_criteria.$criteria_styles.$att_js.
+  '<div class="criteria_container">'.
+  '<span class="criteria_element">'.$att_drop.'</span>'.
+  '<span class="criteria_element">'.$operator_drop.'</span>'.
+  '<span class="criteria_element">'.$values_drop.'</span>'.
+  '<span class="criteria_element"><input type=submit name="save" value="'.$GLOBALS['I18N']->get('addcriterion').'"></span>';
+  '</div>';
+  } // end of if (STACKED_ATTRIBUTE_SELECTION)
+
+  ##############################
+  # Stacked attributes, display end
+  ##############################
+
+  # notification of progress of message sending
+  $notify_start = isset($messagedata['notify_start'])?$messagedata['notify_start']:'';
+  $notify_end = isset($messagedata['notify_end'])?$messagedata['notify_end']:'';
+
+  $notification_content = sprintf('
+    <table>
+    <tr valign="top"><td>%s<br/>%s</td><td><input type=text name="notify_start" value="%s" size="35"></td></tr>
+    <tr valign="top"><td>%s<br/>%s</td><td><input type=text name="notify_end" value="%s" size="35"></td></tr>
+    </table>',
+    $GLOBALS['I18N']->get('email to alert when sending of this message starts'),
+    $GLOBALS['I18N']->get('separate multiple with a comma'),$notify_start,
+    $GLOBALS['I18N']->get('email to alert when sending of this message has finished'),
+    $GLOBALS['I18N']->get('separate multiple with a comma'),$notify_end);
+  $show_lists = 0;
+  switch ($_GET["tab"]) {
+    case "Attach": print $att_content; break;
+    case "Criteria": print $criteria_content; break;
+    case "Format": print $formatting_content;break;
+    case "Scheduling": print $scheduling_content;
+    case "RSS": print $rss_content;break;
+    case "Lists": $show_lists = 1;break;
+    case "Review": print $review_content; break;
+    case "Misc": print $notification_content; break;
+    default:
+      print $maincontent;
+      break;
+  }
 }
-
-if ($any)
-	print $html .'</table>';
-else
-	print "<p>There are currently no attributes available to use for sending a message. The message will go to any user on the lists selected</p>";
-
-?>
-</ol>
-<?php } 
+print $sendtest_content;
 
 if (!$_POST["status"]) {
-	$savecaption = "Save message as draft";
+  $savecaption = $GLOBALS['I18N']->get('saveasdraft');
 } else {
-	$savecaption = "Save &quot;".$_POST["status"]."&quot; message edits";
+  $savecaption = $GLOBALS['I18N']->get('savechanges');#"Save &quot;".$_POST["status"]."&quot; message edits";
+
 }
 print "<hr><table><tr><td><input type=submit name=\"save\" value=\"$savecaption\"></td></tr></table>\n<hr>\n";
 print "<input type=hidden name=id value=$id>\n";

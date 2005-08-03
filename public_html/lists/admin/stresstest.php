@@ -1,19 +1,19 @@
 <?php
-require_once "accesscheck.php";
+require_once dirname(__FILE__).'/accesscheck.php';
 
 print "Sorry, stresstest is out of date";
 return;
 
 function my_shutdown () {
-	global $tables;
-	print "Script status: ".connection_status(); # unfortunately buggy in 4.2.1
-	$res = Sql_query("select count(*) from $tables[user]");
-	$row = Sql_fetch_row($res);
+  global $tables;
+  print "Script status: ".connection_status(); # unfortunately buggy in 4.2.1
+  $res = Sql_query("select count(*) from $tables[user]");
+  $row = Sql_fetch_row($res);
 
-	print '<script language="Javascript" type="text/javascript"> finish(); </script>';
-	print '<script language="Javascript" type="text/javascript"> document.forms[0].output.value="Done. Now there are '.$row[0].' users in the database";</script>'."\n";
+  print '<script language="Javascript" type="text/javascript"> finish(); </script>';
+  print '<script language="Javascript" type="text/javascript"> document.forms[0].output.value="Done. Now there are '.$row[0].' users in the database";</script>'."\n";
  # register_shutdown_function("");
-	exit;
+  exit;
 }
 
 register_shutdown_function("my_shutdown");
@@ -61,7 +61,7 @@ function fill($prefix,$listid) {
   if (!$total) {
     print '<script language="Javascript" type="text/javascript"> finish(); </script>';
     Fatal_Error("Can only do stress test when some attributes exist");
-		return 0;
+    return 0;
   }
 
   for ($i = 0;$i< $total;$i++) {
@@ -77,17 +77,17 @@ function fill($prefix,$listid) {
     }
 
     $query = sprintf('insert into %s (email,entered,confirmed) values("testuser%s",now(),1)',
-			$tables["user"], $prefix . '-' . $i . '@' . $domain);
+      $tables["user"], $prefix . '-' . $i . '@' . $domain);
     $result = Sql_query($query,0);
 
     $userid = Sql_insert_id();
-		if ($userid) {
-			$result = Sql_query("replace into $tables[listuser] (userid,listid,entered) values($userid,$listid,now())");
-			reset($data);
-			while (list($key,$val) = each ($data))
-				if ($key && $val)
-					Sql_query("replace into $tables[user_attribute] (attributeid,userid,value) values(".$key.",$userid,".$val.")");
-		}
+    if ($userid) {
+      $result = Sql_query("replace into $tables[listuser] (userid,listid,entered) values($userid,$listid,now())");
+      reset($data);
+      while (list($key,$val) = each ($data))
+        if ($key && $val)
+          Sql_query("replace into $tables[user_attribute] (attributeid,userid,value) values(".$key.",$userid,".$val.")");
+    }
   }
   return 1;
 }
@@ -116,7 +116,7 @@ if (!ini_get("safe_mode")) {
       reset($testlists);
       while (list($key,$val) = each ($testlists))
         if (!fill(getmypid().$i,$val))
-        	return;
+          return;
     }
   } else {
     $req = Sql_Query("select id from $tables[user] where email like \"testuser%\"");
@@ -132,7 +132,7 @@ if (!ini_get("safe_mode")) {
     }
   }
 } else {
-	print Error("Cannot do stresstest in safe mode");
+  print Error("Cannot do stresstest in safe mode");
 }
 
 ?>

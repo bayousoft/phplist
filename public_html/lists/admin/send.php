@@ -1,5 +1,5 @@
 <?php
-require_once "accesscheck.php";
+require_once dirname(__FILE__).'/accesscheck.php';
 
 $access = accessLevel("send");
 switch ($access) {
@@ -8,7 +8,9 @@ switch ($access) {
     $ownership = ' and owner = '.$_SESSION["logindetails"]["id"];
     break;
   case "all":
-    $subselect = "";break;
+    $subselect = "";
+    $ownership = '';
+    break;
   case "none":
   default:
     $subselect = " where id = 0";
@@ -26,34 +28,34 @@ if ($GLOBALS["commandline"]) {
     exit;
   }
 
-	$listnames = explode(" ",$cline["l"]);
+  $listnames = explode(" ",$cline["l"]);
   $listids = array();
   foreach ($listnames as $listname) {
-  	if (!is_numeric($listname)) {
+    if (!is_numeric($listname)) {
       $listid = Sql_Fetch_Array_Query(sprintf('select * from %s where name = "%s"',
         $tables["list"],$listname));
       if ($listid["id"]) {
         $listids[$listid["id"]] = $listname;
       }
-   	} else {
+     } else {
       $listid = Sql_Fetch_Array_Query(sprintf('select * from %s where id = %d',
         $tables["list"],$listname));
       if ($listid["id"]) {
-	    	$listids[$listid["id"]] = $listid["name"];
-    	}
+        $listids[$listid["id"]] = $listid["name"];
+      }
     }
   }
 
-  $_POST["list"] = array();
+  $_POST["targetlist"] = array();
   foreach ($listids as $key => $val) {
-  	$_POST["list"][$key] = "signup";
+    $_POST["targetlist"][$key] = "signup";
     $lists .= '"'.$val.'"' . " ";
   }
 
   if ($cline["f"]) {
-	  $_POST["from"] = $cline["f"];
+    $_POST["from"] = $cline["f"];
   } else {
-  	$_POST["from"] = getConfig("message_from_name") . ' '.getConfig("message_from_address");
+    $_POST["from"] = getConfig("message_from_name") . ' '.getConfig("message_from_address");
   }
   $_POST["subject"] = $cline["s"];
   $_POST["send"] = "1";
@@ -65,31 +67,34 @@ if ($GLOBALS["commandline"]) {
 #  print clineSignature();
 #  print "Sending message with subject ".$_POST["subject"]. " to ". $lists."\n";
 }
-
+ob_start();
 include "send_core.php";
 
 if ($done) {
-	if ($GLOBALS["commandline"]) {
-  	ob_end_clean();
+  if ($GLOBALS["commandline"]) {
+    ob_end_clean();
     print clineSignature();
     print "Message with subject ".$_POST["subject"]. " was sent to ". $lists."\n";
     exit;
   }
-	return;
+  return;
 }
 
-?>
-<p>Please select the lists you want to send it to:
+/*if (!$_GET["id"]) {
+  Sql_Query(sprintf('insert into %s (subject,status,entered) 
+    values("(no subject)","draft",now())',$GLOBALS["tables"]["message"]));
+  $id = Sql_Insert_id();
+  Redirect("send&id=$id");
+}
+*/
+$list_content = '
+<p>'.$GLOBALS['I18N']->get('selectlists').':</p>
 <ul>
-<li><input type=checkbox name="list[all]" value=signup
-<?php
-  if ($_POST["list"]["all"] == "signup")
-    print "checked";
-?>
-
->All Lists</li>
-
-<?php
+<li><input type=checkbox name="targetlist[all]"
+';
+  if (isset($_POST["targetlist"]["all"]) && $_POST["targetlist"]["all"])
+    $list_content .= "checked";
+$list_content .= '>'.$GLOBALS['I18N']->get('alllists').'</li>';
 
 $result = Sql_query("SELECT * FROM $tables[list] $subselect");
 while ($row = Sql_fetch_array($result)) {
@@ -100,28 +105,63 @@ while ($row = Sql_fetch_array($result)) {
       messageid = %d and listid = %d',$tables["listmessage"],$_GET["id"],$row["id"]));
     $checked = Sql_Affected_Rows();
   }
-  print "<li><input type=checkbox name=list[".$row["id"] . "] value=signup ";
-  if ($checked || $_POST["list"][$row["id"]] == "signup")
-    print "checked";
-  print ">".stripslashes($row["name"]);
+  $list_content .= sprintf('<li><input type=checkbox name="targetlist[%d]" value="%d" ',$row["id"],$row["id"]);
+  if ($checked || (isset($_POST["targetlist"][$row["id"]]) && $_POST["targetlist"][$row["id"]]))
+    $list_content .= "checked";
+  $list_content .= ">".stripslashes($row["name"]);
   if ($row["active"])
-    print " (<font color=red>List is Active</font>)";
+    $list_content .= ' (<font color=red>'.$GLOBALS['I18N']->get('listactive').'</font>)';
   else
-    print " (<font color=red>List is not Active</font>)";
+    $list_content .= ' (<font color=red>'.$GLOBALS['I18N']->get('listnotactive').'</font>)';
 
-  $desc = nl2br(StripSlashes($row["description"]));
+  $desc = nl2br(stripslashes($row["description"]));
 
-  echo "<br>$desc</li>";
+  $list_content .= "<br>$desc</li>";
   $some = 1;
+}
+$list_content .= '</ul>';
+
+if (USE_LIST_EXCLUDE) {
+  $list_content .= '
+    <hr/><h1>'.$GLOBALS['I18N']->get('selectexcludelist').'</h1><p>'.$GLOBALS['I18N']->get('excludelistexplain').'</p>
+    <ul>';
+    
+  $dbdata = Sql_Fetch_Row_Query(sprintf('select data from %s where name = "excludelist" and id = %d',
+    $GLOBALS["tables"]["messagedata"],$_GET["id"]));
+  $excluded_lists = explode(",",$dbdata[0]);
+
+  $result = Sql_query(sprintf('SELECT * FROM %s %s',$GLOBALS["tables"]["list"],$subselect));
+  while ($row = Sql_fetch_array($result)) {
+    $checked = in_array($row["id"],$excluded_lists);
+    $list_content .= sprintf('<li><input type=checkbox name="excludelist[%d]" value="%d" ',$row["id"],$row["id"]);
+    if ($checked || isset($_POST["excludelist"][$row["id"]]))
+      $list_content .= "checked";
+    $list_content .= ">".stripslashes($row["name"]);
+    if ($row["active"])
+      $list_content .= ' (<font color=red>'.$GLOBALS['I18N']->get('listactive').'</font>)';
+    else
+      $list_content .= ' (<font color=red>'.$GLOBALS['I18N']->get('listnotactive').'</font>)';
+  
+    $desc = nl2br(stripslashes($row["description"]));
+  
+    $list_content .= "<br>$desc</li>";
+  }
+  $list_content .= '</ul>';
 }
 
 if (!$some)
-  echo "Sorry there are currently no lists available";
+  $list_content = $GLOBALS['I18N']->get('nolistsavailable');
 
-?>
-</ul>
+$list_content .= '
 
 
-<p><input type=submit name=send value="Send Message to the Selected Mailinglists">
+<p><input type=submit name=send value="'.$GLOBALS['I18N']->get('sendmessage').'">
 </form>
 
+';
+
+if (isset($show_lists) && $show_lists) {
+  print $list_content;
+} else {
+  print '</form>';
+}

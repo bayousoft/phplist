@@ -1,6 +1,6 @@
 
 <?php
-require_once "accesscheck.php";
+require_once dirname(__FILE__).'/accesscheck.php';
 
 # just make sure the file is not called directly
 if (function_exists("system_messageheaders")) {
@@ -14,12 +14,12 @@ if (function_exists("system_messageheaders")) {
   ob_end_clean();
   if ($previous_buffer){
     ob_start();
-	  print $previous_buffer;
+    print $previous_buffer;
   }
-	$parseresults = preg_replace("#<style.*/style>#sim","",$parseresults);
+  $parseresults = preg_replace("#<style.*/style>#sim","",$parseresults);
   $parseresults = preg_replace("#<!DOCTYPE.*<body>#sim","",$parseresults);
-	$parseresults = preg_replace("/ width=\"600\"/",' width="300"',$parseresults);
-	$parseresults = preg_replace('/class="v"/','class="listinghdname"',$parseresults);
+  $parseresults = preg_replace("/ width=\"600\"/",' width="300"',$parseresults);
+  $parseresults = preg_replace('/class="v"/','class="listinghdname"',$parseresults);
   $parseresults = preg_replace("/;/",'; ',$parseresults);
   $parseresults = preg_replace("/:/",': ',$parseresults);
   $parseresults = preg_replace("/,/",', ',$parseresults);

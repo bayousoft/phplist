@@ -1,0 +1,14 @@
+<?php
+
+$lan = array(
+  'existingusers' => "Existing Users",
+  'nonexistingusers' => "Non Existing Users",
+  'existcheckintro' => '<p>Page to check the existance of users in the database</p>',
+  'whatistype' => 'What is the type of information you want to check',
+  "foreignkey" => "Foreign Key",
+  "email" => "Email",
+  "continue" => "Continue",
+  "pastevalues" => "Paste the values to check in this box, one per line",
+);
+
+?>

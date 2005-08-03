@@ -2,7 +2,7 @@
 <?php
 
 # language dependent text used in the interface for users (not admin)
-# translation by Gijsbert Rochat 
+# translation by Gijsbert Rochat
 # update by Mike Rijken, 18/11/2002
 # review by Rudi Van Overloop, ruda@skynet.be 27/2/2004
 
@@ -57,23 +57,23 @@ $strYes                = 'Ja';
 $strNo                 = 'Nee';
 $strUnsubscribe        = 'Afmelden';
 $strAllMailinglists    = 'Alle nieuwsbrieven';
-$strChoosePassword 	   = 'Kies een paswoord aub';
+$strChoosePassword      = 'Kies een paswoord aub';
 $strConfirmPassword    = 'Bevestig uw paswoord aub';
-$strEnterPassword	   = 'Vul je paswoord in aub';
-$strForgotPassword	   = 'Paswoord vergeten';
-$strPassword		   = 'Paswoord';
-$strPassword2		   = 'Bevestig paswoord';
+$strEnterPassword     = 'Vul je paswoord in aub';
+$strForgotPassword     = 'Paswoord vergeten';
+$strPassword       = 'Paswoord';
+$strPassword2       = 'Bevestig paswoord';
 $strPasswordsNoMatch   = 'Paswoorden komen niet overeen';
-$strInvalidPassword	   = 'FOUT: ongeldig e-mail of paswoord';
-$strPasswordSent 	   = 'Uw paswoord is naar uw e-mail verzonden. U zal het over enkele ogenblikken ontvangen';
+$strInvalidPassword     = 'FOUT: ongeldig e-mail of paswoord';
+$strPasswordSent      = 'Uw paswoord is naar uw e-mail verzonden. U zal het over enkele ogenblikken ontvangen';
 $strPasswordRemindSubject = 'Uw paswoord voor onze nieuwsbrieven';
 $strPasswordRemindMessage = 'Uw paswoord is ';
 $strPasswordRemindInfo    = 'Om het paswoord via e-mail te ontvangen, vul je e-mail adres in en klik op het "'.$strForgotPassword.'" knopje.';
-$strLogin				  = 'Inloggen';
-$strLoginTitle 			  = 'Vul Uw e-mail adres en paswoord in aub';
-$strLoginInfo			  = 'Deze pagina vereist een paswoord. Vul Uw e-mail adres en paswoord in aub';
+$strLogin          = 'Inloggen';
+$strLoginTitle         = 'Vul Uw e-mail adres en paswoord in aub';
+$strLoginInfo        = 'Deze pagina vereist een paswoord. Vul Uw e-mail adres en paswoord in aub';
 $strPersonalLocationInfo = '
-	<p>Deze pagina vereist een persoonlijke identificatie dewelke u kan terugvinden in elke e-mail dat we u sturen.<br/>
+  <p>Deze pagina vereist een persoonlijke identificatie dewelke u kan terugvinden in elke e-mail dat we u sturen.<br/>
   Kijk nog eens goed de juiste URL in je browser na wanneer u een foutmelding ontvangt.
   De URL kan soms over 2 tekstlijnen verdeeld zijn.</p>
   <p>Wanneer U de URL niet kan terugvinden, kan je deze eenvoudig per e-mail aanvragen.

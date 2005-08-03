@@ -1,33 +1,40 @@
 <?php
-require_once "accesscheck.php";
+require_once dirname(__FILE__).'/accesscheck.php';
 
-# $Id: export.php,v 1.4 2004-07-19 15:42:51 mdethmers Exp $
+# $Id: export.php,v 1.5 2005-08-03 02:36:58 mdethmers Exp $
 
 # export users from PHPlist
 
-include "date.php";
+include dirname(__FILE__) .'/date.php';
 
 $from = new date("from");
 $to = new date("to");
+if (isset($_GET['list'])) {
+  $list = sprintf('%d',$_GET['list']);
+} else {
+  $list = 0;
+}
 
-include $GLOBALS["coderoot"] . "structure.php";
-if ($process == "Export") {
-	$fromval= $from->getDate("from");
+include dirname(__FILE__). '/structure.php';
+if ($process == $GLOBALS['I18N']->get('Export')) {
+  $fromval= $from->getDate("from");
   $toval =  $to->getDate("to");
   if ($list)
-	  $filename = "PHPList Export on ".ListName($list)." from $fromval to $toval (".date("Y-M-d").").csv";
-	else
-	  $filename = "PHPList Export from $fromval to $toval (".date("Y-M-d").").csv";
-	ob_end_clean();
-	header("Content-type: ".$GLOBALS["export_mimetype"]);
-	header("Content-disposition:  attachment; filename=\"$filename\"");
+    $filename = sprintf($GLOBALS['I18N']->get('ExportOnList'),ListName($list),$fromval,$toval,date("Y-M-d"));
+  else
+    $filename = sprintf($GLOBALS['I18N']->get('ExportFromval'),$fromval,$toval,date("Y-M-d"));
+  ob_end_clean();
+  $filename = trim(strip_tags($filename));
+
+  header("Content-type: ".$GLOBALS["export_mimetype"]);
+  header("Content-disposition:  attachment; filename=\"$filename\"");
   $col_delim = "\t";
   if (EXPORT_EXCEL) {
-	  $col_delim = ",";
+    $col_delim = ",";
   }
   $row_delim = "\n";
 
-	if (is_array($cols)) {
+  if (is_array($cols)) {
     while (list ($key,$val) = each ($DBstruct["user"])) {
       if (in_array($key,$cols)) {
         if (!ereg("sys",$val[1])) {
@@ -37,7 +44,7 @@ if ($process == "Export") {
         }
       }
     }
- 	}
+   }
   $attributes = array();
   if (is_array($attrs)) {
     $res = Sql_Query("select id,name,type from {$tables['attribute']}");
@@ -48,7 +55,7 @@ if ($process == "Export") {
       }
     }
   }
-  print 'List Membership'.$row_delim;
+  print $GLOBALS['I18N']->get('ListMembership').$row_delim;
   if ($list)
     $result = Sql_query(sprintf('SELECT %s.* FROM
       %s,%s where %s.id = %s.userid and %s.listid = %s and %s.%s >= "%s 00:00:00" and %s.%s  <= "%s 23:59:59"
@@ -68,10 +75,10 @@ if ($process == "Export") {
       print strtr($user[$val],$col_delim,",").$col_delim;
     reset($attributes);
     while (list($key,$val) = each ($attributes)) {
-    	$value = UserAttributeValue($user["id"],$val["id"]);
+      $value = UserAttributeValue($user["id"],$val["id"]);
       $enclose = 0;
       if (ereg('"',$value)) {
-      	$value = ereg_replace('"','""',$value);
+        $value = ereg_replace('"','""',$value);
         $enclose = 1;
       }
       if (ereg($col_delim,$value)) {
@@ -81,7 +88,7 @@ if ($process == "Export") {
         $enclose = 1;
       }
       if ($enclose) {
-      	$value = '"'.$value .'"';
+        $value = '"'.$value .'"';
       }
       print $value.$col_delim;
     }
@@ -99,7 +106,7 @@ if ($process == "Export") {
 }
 
 if ($list)
-	print "<h2>Export users on ".ListName($list)."</h2>";
+  print sprintf($GLOBALS['I18N']->get('ExportOn'),ListName($list));
 
 
 ?>
@@ -108,13 +115,13 @@ if ($list)
 <br/><br/>
 <table>
 
-<tr><td>Date From:</td><td><?php echo $from->showInput("","",$fromval);?></td></tr>
-<tr><td>Date To: </td><td><?php echo $to->showInput("","",$toval);?></td></tr>
-<tr><td colspan=2>What date needs to be used:</td></tr>
-<tr><td><input type=radio name="column" value="entered" checked></td><td>When they signed up</td></tr>
-<tr><td><input type=radio name="column" value="modified"></td><td>When the record was changed</td></tr>
+<tr><td><?php echo $GLOBALS['I18N']->get('DateFrom');?></td><td><?php echo $from->showInput("","",$fromval);?></td></tr>
+<tr><td><?php echo $GLOBALS['I18N']->get('DateTo');?> </td><td><?php echo $to->showInput("","",$toval);?></td></tr>
+<tr><td colspan=2><?php echo $GLOBALS['I18N']->get('DateToUsed');?></td></tr>
+<tr><td><input type=radio name="column" value="entered" checked></td><td><?php echo $GLOBALS['I18N']->get('WhenSignedUp');?></td></tr>
+<tr><td><input type=radio name="column" value="modified"></td><td><?php echo $GLOBALS['I18N']->get('WhenRecordChanged');?></td></tr>
 </td></tr>
-<tr><td colspan=2>Select the columns to include in the export</td></tr>
+<tr><td colspan=2><?php echo $GLOBALS['I18N']->get('SelectColToIn');?></td></tr>
 
 <?php
   $cols = array();
@@ -133,5 +140,5 @@ if ($list)
 
 ?>
 </table>
-<input type=submit name="process" value="Export"></form>
+<input type=submit name="process" value="<?php echo $GLOBALS['I18N']->get('Export'); ?>"></form>
 

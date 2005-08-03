@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__FILE__).'/accesscheck.php';
 
 # configuration to make PHPlist work via AdoDB
 # which will make it work with any database supported by AdoDB
@@ -9,14 +10,14 @@ if (is_file($GLOBALS["adodb_inc_file"])) {
   print("ADOdb specified, but inc file cannot be found");
   exit;
 }
-  
+
 $GLOBALS["adodb_connection"] = ADONewConnection($GLOBALS["adodb_driver"]);
 #$GLOBALS["adodb_connection"]->debug = true;
 
 $GLOBALS["adodb_lastresult"] = "";
 
 function Sql_Connect($host,$user,$password,$database) {
-	if ($host && $user) {
+  if ($host && $user) {
     $GLOBALS["adodb_connection"]->Connect($host, $user, $password, $database);
     return 1;
   }
@@ -30,7 +31,7 @@ function Sql_has_error ($dbconnection) {
 function Sql_Error ($errno = 0) {
   $msg = $GLOBALS["adodb_connection"]->ErrorMsg();
   return '<div id="dberror" style="position: relative;
-    	background-color: #aa0000;
+      background-color: #aa0000;
       border: 2px solid #000000;
       color: #ffffff;
       ">Database error '. $errno.' '.$msg.'</div>';
@@ -47,7 +48,7 @@ function Sql_Query($query,$ignore = 0) {
   } else {
     Sql_Error($GLOBALS["adodb_connection"]->ErrNo());
     return 0;
-  }    
+  }
 }
 
 function Sql_Verbose_Query($query) {
@@ -84,7 +85,19 @@ function Sql_Affected_Rows() {
 #    print '<hr/>';
 #    print_r($GLOBALS["adodb_lastresult"]);
 #    print '<hr/>';
-    if ($GLOBALS["adodb_lastresult"]->RecordCount()) 
+    if ($GLOBALS["adodb_lastresult"]->RecordCount())
+      return $GLOBALS["adodb_lastresult"]->RecordCount();
+  }
+  return $GLOBALS["adodb_connection"]->affected_rows();
+}
+
+function Sql_Num_Rows($result="") {
+  if (is_object($GLOBALS["adodb_lastresult"])) {
+#    print "is object".$GLOBALS["adodb_lastresult"]->RecordCount();
+#    print '<hr/>';
+#    print_r($GLOBALS["adodb_lastresult"]);
+#    print '<hr/>';
+    if ($GLOBALS["adodb_lastresult"]->RecordCount())
       return $GLOBALS["adodb_lastresult"]->RecordCount();
   }
   return $GLOBALS["adodb_connection"]->affected_rows();
@@ -137,5 +150,8 @@ function Sql_create_Table ($table,$structure) {
   # submit it to the database
   $res = Sql_Verbose_Query($query);
 }
+
+?>
+
 
 ?>
