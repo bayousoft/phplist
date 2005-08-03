@@ -295,9 +295,8 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     $textmessage = eregi_replace("\[RSS\]",$rssentries["text"],$textmessage);
   }
 
-  $user_system_values = Sql_Fetch_Array_Query(sprintf('select * from %s where email = "%s"',$GLOBALS["tables"]["user"],$email));
-  if (is_array($user_system_values)) {
-    foreach ($user_system_values as $name => $value) {
+  if (is_array($userdata)) {
+    foreach ($userdata as $name => $value) {
       if (eregi("\[".$name."\]",$htmlmessage,$regs)) {
         $htmlmessage = eregi_replace("\[".$name."\]",$value,$htmlmessage);
       }      if (eregi("\[".$name."\]",$textmessage,$regs)) {
@@ -412,27 +411,18 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     }
   }
 
-  $user_system_values = Sql_Fetch_Array_Query(sprintf('select * from %s where email = "%s"',$tables["user"],$email));
-  while (list($name,$value) = each ($user_system_values)) {
-    if (eregi("\[".$name."\]",$htmlmessage,$regs)) {
-      $htmlmessage = eregi_replace("\[".$name."\]",$value,$htmlmessage);
-    }
-    if (eregi("\[".$name."\]",$textmessage,$regs)) {
-      $textmessage = eregi_replace("\[".$name."\]",$value,$textmessage);
-    }
-  }
   #
   if (eregi("\[LISTS\]",$htmlmessage)) {
-  	$lists = "";$listsarr = array();
-  	$req = Sql_Verbose_Query(sprintf('select list.name from %s as list,%s as listuser where list.id = listuser.listid and listuser.userid = %d',$tables["list"],$tables["listuser"],$user_system_values["id"]));
+    $lists = "";$listsarr = array();
+    $req = Sql_Verbose_Query(sprintf('select list.name from %s as list,%s as listuser where list.id = listuser.listid and listuser.userid = %d',$tables["list"],$tables["listuser"],$user_system_values["id"]));
     while ($row = Sql_Fetch_Row($req)) {
-    	array_push($listsarr,$row[0]);
+      array_push($listsarr,$row[0]);
     }
     $lists_html = join('<br/>',$listsarr);
     $lists_text = join("\n",$listsarr);
     $htmlmessage = ereg_replace("\[LISTS\]",$lists_html,$htmlmessage);
     $textmessage = ereg_replace("\[LISTS\]",$lists_text,$textmessage);
-	}
+  }
 
   # remove any existing placeholders
   $htmlmessage = eregi_replace("\[[A-Z\. ]+\]","",$htmlmessage);
@@ -494,7 +484,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   if (in_array($domaincheck,$text_domains)) {
     $htmlpref = 0;
     if (VERBOSE)
-		  output("Sending text only to $domaincheck");
+      output("Sending text only to $domaincheck");
   }
 
   # so what do we actually send?

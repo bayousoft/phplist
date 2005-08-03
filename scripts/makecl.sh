@@ -2,8 +2,12 @@
 DATE=`date +"%Y-%m-%d %H:%M"`;
 
 #cvs2cl.pl --prune -r -t --hide-filenames
-. BRANCH
-cvs log -r$BRANCH >> cvslog
+if [ -f BRANCH ]; then
+  . BRANCH
+  cvs log -r$BRANCH >> cvslog
+else 
+  cvs log >> cvslog
+fi
 cvs2cl.pl --prune -t --hide-filenames --stdin < cvslog
 echo "Changelog for PHPlist $BRANCH $DATE" > cl
 echo >> cl

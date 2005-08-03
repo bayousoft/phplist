@@ -1,999 +1,1833 @@
-Changelog for PHPlist 2004-07-19 16:47
-Please note: the changelog shows all changes, including changes in the development branch
-that will be included in future releases, and are not necessarily part of the current
-stable release
+Changelog for PHPlist  2005-08-03 00:36
 
-2004-07-19 16:42  mdethmers
+2005-08-03 00:30  mdethmers
 
-	fixed bugs when using commandline and number of invalid or
-	unconfirmed users is larger than the batch size, causing the
-	message never to complete
+	* fixed bug in header of emails when not using phpmailer
 
-2004-07-19 15:27  mdethmers
+2005-08-02 23:36  mdethmers
 
-	fixed bug not always sending text to domains marked text
+	* merged development branch 2.9 into main branch
 
-2004-07-16 00:36  mdethmers
+2005-08-02 22:37  mdethmers
 
-	added fckeditor to template editing page
+	* merged development branch 2.9 into main branch
 
-2004-07-16 00:35  mdethmers
+2005-07-29 12:32  mdethmers
 
-	added check on existence of black list table to avoid database
-	errors when installing fresh install
+	* added option to upload a template from file
 
-2004-07-16 00:34  mdethmers
+2005-07-22 08:51  mdethmers
 
-	added link to correct unsubscribe page from public pages
+	* update of french translation
 
-2004-07-16 00:08  mdethmers
+2005-07-20 22:51  mdethmers
 
-	fixed #1378, usertrack not working in some cases
+	* new version 2.9.5
 
-2004-07-16 00:07  mdethmers
+2005-07-20 21:26  mdethmers
 
-	fixed #1417, javascript error in sendemail
+	* converted short php tags to long ones
 
-2004-07-09 12:41  mdethmers
+2005-07-20 20:38  mdethmers
 
-	added configurable grace time for black listing
+	* split config values for public pages into individual pages again
+	  (ie reversed earlier change)
 
-2004-07-05 18:20  mdethmers
+2005-07-20 16:05  mdethmers
 
-	merged fixes from bugfix branch into 2.9 branch
+	* updated upgrade to latest db structure and to display output as
+	  soon as possible
 
-2004-07-05 18:02  mdethmers
+2005-07-15 22:08  mdethmers
 
-	moved useful scripts into their own subdirectory
+	* fixed bug in phpmailer loading language files from wrong location
 
-2004-07-02 15:05  mdethmers
+2005-07-14 22:15  mdethmers
 
-	new version 2.8.9
+	* updated explanation of tmpdir variable in the config file
 
-2004-07-02 15:00  mdethmers
+2005-07-14 22:13  mdethmers
 
-	removed some confusing old commandline files
+	* fixed #3602, when not using require_login, the session is not
+	  started correctly
 
-2004-07-02 14:30  mdethmers
+2005-07-14 22:12  mdethmers
 
-	fixed #1385, import not sending notifications and updated import to
-	work better in restrictive environments, like open_basedir and a
-	non system upload_temp_dir
+	* fixed #3600, removed some old session code from logout page
 
-2004-07-02 14:13  mdethmers
+2005-07-14 22:10  mdethmers
 
-	made page root config less confusing
+	* updated Sql request for tables to always refresh when called from
+	  a plugin
 
-2004-06-24 21:32  mdethmers
+2005-07-14 21:28  mdethmers
 
-	fixed bug #1385 import doesn't send request for confirmation
+	* fixed #3599, wrong declaration of magic quotes in the .htaccess
+	  file
 
-2004-06-24 21:06  mdethmers
+2005-07-14 21:13  mdethmers
 
-	fixed #1390, wrongly placed comments in config file
+	* added option to use smtp authentication when using phpmailer for
+	  sending
 
-2004-06-23 12:08  mdethmers
+2005-07-14 21:10  mdethmers
 
-	added method to set unsubscribe to jump-off, which means the users
-	is immediately unsubscribed when loading the page with the personal
-	URL
+	* updated config when using phpmailer to use it for all emails,
+	  also the system messages for request for confirmation etc.
 
-2004-06-22 19:31  mdethmers
+2005-07-14 21:08  mdethmers
 
-	fixed bug #1375 and #1312
+	* fixed click tracking to parse links better
 
-2004-06-17 00:34  mdethmers
+2005-07-14 12:58  mdethmers
 
-	added option in reconcile users to delete all blacklisted users
+	* updated regex for click through tracking
 
-2004-06-17 00:34  mdethmers
+2005-07-14 12:57  mdethmers
 
-	added blacklist information to history of user, and the option to
-	remove the user from the blacklist
+	* updated phpmailer to 1.73
 
-2004-06-17 00:33  mdethmers
+2005-07-14 01:05  mdethmers
 
-	added show blacklisted users to list of users
+	* added #3544, method to suspend messages, while in progress of
+	  sending
 
-2004-06-17 00:33  mdethmers
+2005-07-13 23:54  mdethmers
 
-	updated script to change short php tags into long ones
+	* fixed #3428, local images in templates (that are embedded in the
+	  emails) are not saved properly
 
-2004-06-17 00:31  mdethmers
+2005-07-13 22:30  mdethmers
 
-	added link to process queue after submission of message
+	* fixed #3543, added option to choose whether to initialise the
+	  From in a new message with the (logged in) admin details or the
+	  globally configured From details
 
-2004-06-17 00:31  mdethmers
+2005-07-13 17:07  mdethmers
 
-	updated process queue to remember correct start time of sending an
-	email
+	* fixed #3280, values for select drop downs can now have a value
+	  that is identified as no value, so that you can force the user to
+	  select one, without them selecting the top one by default.
 
-2004-06-16 15:54  mdethmers
+2005-07-13 12:00  mdethmers
 
-	new version 2.8.8
+	* added config to switch off import functionality
 
-2004-06-16 15:40  mdethmers
+2005-07-09 18:30  mdethmers
 
-	made getrss a bit more verbose on commandline
+	* fixed #3294, avoid auto adding of "invalid attribute index"
 
-2004-06-16 15:37  mdethmers
+2005-07-09 18:27  mdethmers
 
-	update in editlist to use super variables
+	* fixed #3568, incorrectly formatted emails block finishing of
+	  sending a message
 
-2004-06-16 15:03  mdethmers
+2005-07-08 14:37  mdethmers
 
-	fixed issue, not sending rss messages to users who had already
-	received one
+	* fixed #2299, more information in user check page
 
-2004-06-15 22:52  mdethmers
+2005-07-08 12:28  mdethmers
 
-	fixed bug #1314, slashes in configure
+	* fixed #2881, html encoded characters are replaced with the actual
+	  character, when saving a message and reloading it.
 
-2004-06-14 13:33  mdethmers
+2005-07-08 11:34  mdethmers
 
-	renamed wording of mailinglist to newsletter
+	* added system placeholders to parsing of messages, which means
+	  that you can now use eg [email] in a message to add the email of
+	  the user to the message #845
 
-2004-06-02 11:35  mdethmers
+2005-07-08 11:10  mdethmers
 
-	new version 2.8.7
+	* fixed #2917, Mysql 4.1 returns timestamp in different format
 
-2004-06-02 11:09  mdethmers
+2005-07-08 11:09  mdethmers
 
-	added index to uniqid to speed up import
+	* bit of optimisation of sql in users page
 
-2004-06-02 11:07  mdethmers
+2005-07-08 10:44  mdethmers
 
-	added excel compatible export format
+	* reduced number of messages listed per page to 5
 
-2004-06-02 10:56  mdethmers
+2005-07-08 09:46  mdethmers
 
-	added intro to listing of subscribe pages
+	* renamed second May into "shortMay" for translation, to
+	  distinguish between short month name and long monthname (#3338)
 
-2004-06-01 20:09  mdethmers
+2005-07-07 23:50  mdethmers
 
-	fixed bug #1297, attributes not saved when adding user in members
-	page
+	* fixed #3327 invalid use of hash for Mysql 4.1
 
-2004-06-01 20:04  mdethmers
+2005-07-07 23:15  mdethmers
 
-	fixed bug #1307, config variables only get replaced in first email
+	* updated import to be translateable
 
-2004-05-25 12:59  mdethmers
+2005-07-07 16:56  mdethmers
 
-	added option for double entry of email, contributed by Bruce
-	Morrison
+	* fixed problem with export filenames, caused by translation
+	  conversion
 
-2004-05-24 18:45  mdethmers
+2005-07-07 16:38  mdethmers
 
-	added configurable option for encoding of HTML part of email
+	* fixed #2770, add internal ID to export
 
-2004-05-24 18:44  mdethmers
+2005-07-07 16:24  mdethmers
 
-	added headers to config file to split the options into sections
+	* updated subscribe mechanism to remove user from blacklist when
+	  they specifically go through the entire opt-in process again
 
-2004-05-24 18:21  mdethmers
+2005-07-06 23:02  mdethmers
 
-	updated includes to refer to file location of file that includes
-	them
+	* updated translation of send
 
-2004-05-24 17:30  mdethmers
+2005-07-06 22:46  mdethmers
 
-	fixed bug #1286, attributes not saved
+	* added initial frontend extension to translation class
 
-2004-05-24 16:42  mdethmers
+2005-07-06 22:33  mdethmers
 
-	fixed bug that added HTML headers to an email that already had them
-	added unsubscribeurl and preferencesurl as placeholders in an email
-	returning only the url updated html to text formatting added
-	[LISTS] as possible placeholder that will list the names of the
-	lists a users is a member of
+	* fixed bug, preferences page on Macs, checkboxes for list
+	  membership were not checked, even when a user is a member
 
-2004-05-21 23:01  mdethmers
+2005-07-06 22:29  mdethmers
 
-	added option to find users by foreign key
+	* added more translation to homepage
 
-2004-05-21 22:39  mdethmers
+2005-07-06 22:27  mdethmers
 
-	changed error reporting by email to collate all errors in one email
-	and took off sending error by email in case of warning
+	* added percentages to domain statistics
 
-2004-05-21 22:20  mdethmers
+2005-07-06 22:27  mdethmers
 
-	fixed bug not including lib.php correctly, causing all kinds of
-	problems
+	* updated initialisation of random xor mask to not give an error on
+	  an uninitialised database
 
-2004-05-21 22:19  mdethmers
+2005-07-06 22:23  mdethmers
 
-	updated interface in list of messages to use tabs
+	* changed texts in files to be translateable
 
-2004-05-21 15:18  mdethmers
+2005-07-06 22:22  mdethmers
 
-	added abnormal shutdown detection
+	* updated language files
 
-2004-05-18 16:33  mdethmers
+2005-06-17 17:05  mdethmers
 
-	small fixes to make the code validate better
+	* fixed issue clean database not initialising
 
-2004-05-17 17:08  mdethmers
+2005-06-14 10:53  mdethmers
 
-	added simple check of database structure
+	* updates and fixes to portuguese
 
-2004-05-11 16:36  mdethmers
+2005-06-14 10:09  mdethmers
 
-	updated tabs for interface
+	* language update of spanish and addition of brazilian portuguese
 
-2004-05-11 12:41  mdethmers
+2005-06-03 15:18  mdethmers
 
-	added script to convert short php tags to long ones and ran it
-	across all files
+	* fixed bug in view bounces
 
-2004-05-10 15:27  mdethmers
+2005-06-02 22:17  mdethmers
 
-	new version 2.8.6
+	* added romanian frontend translation
 
-2004-05-10 15:21  mdethmers
+2005-06-02 22:16  mdethmers
 
-	added stripslashes to import pages
+	* fixed bug blacklisted users blocking send process
 
-2004-05-10 15:12  mdethmers
+2005-06-02 22:14  mdethmers
 
-	added experimental code to optimize HTML email for outlook
+	* fixed #566 generic subscribe page
 
-2004-05-10 13:17  mdethmers
+2005-06-02 16:52  mdethmers
 
-	small reorganisation of the main menu
+	* fixed #2756, bug in Outlook causes notification emails to be
+	  corrupted
 
-2004-05-10 13:17  mdethmers
+2005-05-31 15:05  mdethmers
 
-	fixed some more stripslashes
+	* fixed #3257, criteria combined incorrectly
 
-2004-05-10 12:32  mdethmers
+2005-05-23 16:09  mdethmers
 
-	added warning to have magic quotes runtime off
+	* added ability to specify a default template for sending messages
 
-2004-05-10 12:32  mdethmers
+2005-05-23 13:37  mdethmers
 
-	fixed bug where helpwindow would not re-open when closed after
-	first time
+	* update to french translation
 
-2004-05-06 18:25  mdethmers
+2005-05-23 11:17  mdethmers
 
-	added gg as a valid top domain
+	* updated header, footer and style
 
-2004-05-06 12:52  mdethmers
+2005-05-21 15:43  mdethmers
 
-	updated all kinds of pages to use stripslashes
+	* more fixes for uninited vars
 
-2004-05-06 12:50  mdethmers
+2005-05-21 15:42  mdethmers
 
-	updated re-subscription to not create a completely new user record,
-	but update the existing one
+	* removed unneeded and potentially message corrupting stripslashes
+	  in send email
 
-2004-05-06 11:38  mdethmers
+2005-05-21 12:05  mdethmers
 
-	updated info in configure
+	* updated french translation
 
-2004-05-06 10:52  mdethmers
+2005-05-20 21:16  mdethmers
 
-	added option to create uniqid for users who do not have one
+	* fixed #2685, the start and end year for a date can be configured
 
-2004-05-05 17:57  mdethmers
+2005-05-20 20:38  mdethmers
 
-	added workaround for FCK bug, when using FCKeditor. Caused an error
-	please enter subject even when a subject was entered
+	* added logging of login failures
 
-2004-05-05 15:04  mdethmers
+2005-05-20 20:20  mdethmers
 
-	added PHPlist version to system details report in help
+	* uninited var updates
 
-2004-04-22 18:31  mdethmers
+2005-05-20 20:01  mdethmers
 
-	updated shaders to remember states between switching pages
+	* added more indexes to user_attribute
 
-2004-04-21 21:38  mdethmers
+2005-05-20 19:57  mdethmers
 
-	fixed bug in processqueue when using commandline
+	* fixed #3257
 
-2004-04-20 14:03  mdethmers
+2005-05-20 17:42  mdethmers
 
-	updated commandline to allow specification of config file on
-	commandline
+	* update of uninited vars
 
-2004-04-20 13:44  mdethmers
+2005-05-20 17:39  mdethmers
 
-	added about page
+	* update of uninited vars
 
-2004-04-19 16:18  mdethmers
+2005-05-20 17:33  mdethmers
 
-	new version 2.5.8
+	* typo in regex in phplist_auth
 
-2004-04-19 11:29  mdethmers
+2005-05-20 17:32  mdethmers
 
-	updated collapsing div to be able to default to closed
+	* fixed attribute listing when adding new user
 
-2004-04-16 21:39  mdethmers
+2005-05-20 16:33  mdethmers
 
-	added shader styles
+	* fixed #2786
 
-2004-04-16 21:37  mdethmers
+2005-05-20 15:06  mdethmers
 
-	added shader widget to interface library and made listing object
-	contained in it
+	* updated commandline examples
 
-2004-04-15 21:04  mdethmers
+2005-05-20 14:50  mdethmers
 
-	fixed bug that caused <BR>s to be added to a table when using the
-	FCKeditor
+	* cleanup of vars
 
-2004-04-15 20:42  mdethmers
+2005-05-20 14:49  mdethmers
 
-	made pop port for processing bounces configurable
+	* fixed #3120, manually added user doesn't get a uniqid
 
-2004-04-15 09:34  mdethmers
+2005-05-19 16:45  mdethmers
 
-	added tabs interface object
+	* set default text encoding to 7bit
 
-2004-04-09 18:16  mdethmers
+2005-05-19 15:26  mdethmers
 
-	new version 2.8.5
+	* fixed #3092 untranslated text
 
-2004-04-09 18:14  mdethmers
+2005-05-17 23:42  mdethmers
 
-	fixed bug blank page after initialisation
+	* updated language check to allow viewing changes only
 
-2004-04-07 17:58  mdethmers
+2005-05-17 11:21  mdethmers
 
-	new version 2.8.4
+	* added shell script to generate language packs
 
-2004-04-07 17:22  mdethmers
+2005-04-28 09:22  mdethmers
 
-	some small fixes and changes
+	* added new language files for bounce management
 
-2004-04-07 11:37  mdethmers
+2005-04-28 09:22  mdethmers
 
-	fixed thank you page not parsing some placeholders
+	* updated language files
 
-2004-04-07 11:34  mdethmers
+2005-04-28 09:19  mdethmers
 
-	fixed commandline detection
+	* added advanced bounce management
 
-2004-04-07 11:33  mdethmers
+2005-04-26 10:05  mdethmers
 
-	fixed second email to send test to not found
+	* some tweaks on auto domain throttling
 
-2004-04-07 11:32  mdethmers
+2005-04-26 10:04  mdethmers
 
-	fixed placeholder not parsed in text version of email
+	* added in between page for statistics
 
-2004-04-04 15:38  mdethmers
+2005-04-26 10:03  mdethmers
 
-	added option to mark all users with invalid emails as unconfirmed
+	* added viewing opens by message
 
-2004-04-04 15:37  mdethmers
+2005-04-08 19:00  mdethmers
 
-	updated batch system to reload quickly when no emails were sent,
-	but only skipped
+	* update to spanish translation
 
-2004-04-04 14:57  mdethmers
+2005-04-08 17:53  mdethmers
 
-	changed built-in example plugins to disappear with simple install,
-	because it seems to confuse people
+	* added automatic language detection
 
-2004-04-03 23:19  mdethmers
+2005-04-08 13:09  mdethmers
 
-	added doc explaining about batch processing
+	* added traditional chinese
 
-2004-04-03 23:08  mdethmers
+2005-04-08 00:51  mdethmers
 
-	updated config file to reflect recent changes added system for ISPs
-	to have server wide configuration to force batch processing and set
-	limits to it added system for ISPs to (temporarily) suspend sending
-	of emails completely
+	* added spanish and french languages
 
-2004-04-03 23:03  mdethmers
+2005-04-07 21:50  mdethmers
 
-	updated integration with the webbler
+	* update to domain throttling, and addition of domain auto
+	  throttling
 
-2004-04-03 23:02  mdethmers
+2005-04-07 21:24  mdethmers
 
-	added batch processing of messages to send out
+	* added phpmailer to the repository and defaulted to use it
 
-2004-04-03 23:01  mdethmers
+2005-04-07 00:19  mdethmers
 
-	added configurable requirement for password when unsubscribing
+	* added more and more accurate info about message in progress
 
-2004-04-03 23:00  mdethmers
+2005-04-07 00:16  mdethmers
 
-	added more identification of user and type of bounce in list of
-	bounces when a bounce is to a system message
+	* added domain throttling
 
-2004-04-03 22:57  mdethmers
+2005-04-07 00:15  mdethmers
 
-	fixed bug, no form ending in editlist
+	* added ability to enter seperate emails to be alerted when sending
+	  of a message starts and finishes
 
-2004-04-03 22:57  mdethmers
+2005-03-30 13:43  mdethmers
 
-	fixed bug default plugin not referring to correct plugin directory
+	* added viewing of open rates per message and user
 
-2004-04-03 22:55  mdethmers
+2005-03-30 13:41  mdethmers
 
-	fixed problem with open_basedir in import1
+	* updated forwarding to log actions and avoid double forwarding
 
-2004-04-03 22:54  mdethmers
+2005-03-30 01:42  damienmckenna
 
-	moved common stuff from connect to lib
+	* MOD: Renamed one variable to make it easier to understand.  MOD:
+	  Improved the documentation for PHPMAILERHOST.
 
-2004-04-03 22:50  mdethmers
+2005-03-29 14:36  mdethmers
 
-	fixed clash between webbler and phplist
+	* added forward this email to someone else feature
 
-2004-04-03 22:48  mdethmers
+2005-03-25 00:07  damienmckenna
 
-	added user history entry when user is unconfirmed for a bounced
-	system message
+	* MOD: Renamed the main TinyMCE variable.  NEW: TinyMCE support for
+	  template editing.
 
-2004-04-03 22:46  mdethmers
+2005-03-24 00:48  damienmckenna
 
-	added feature mark all users as html or text or confirmed in
-	reconcile users
+	* NEW: TinyMCE support. (#2658)
 
-2004-04-03 22:45  mdethmers
+2005-03-23 02:51  damienmckenna
 
-	fixed bug database error when saving a message as draft after it
-	had been loaded for editing
+	* NEW: TinyMCE support. (#2658)
 
-2004-04-03 22:44  mdethmers
+2005-03-10 21:04  mdethmers
 
-	fixed bug requiring a password when a user re-subscribes with an
-	email and a password has already been set for that user. If the
-	password used is correct it is allowed
+	* fixed #2704
 
-2004-04-03 22:35  mdethmers
+2005-03-03 14:15  mdethmers
 
-	fixed, admins are able to subscribe users to lists they do not own
+	* added click tracking
 
-2004-03-25 22:40  mdethmers
+2005-03-01 21:12  mdethmers
 
-	added hebrew translation
+	* updated send test message to send both an HTML and a text message
 
-2004-03-24 13:14  mdethmers
+2005-02-24 13:52  mdethmers
 
-	added configurable thank-you page for subscribe pages and added
-	method for plugins to add content to this
+	* new version 2.9.4
 
-2004-03-22 11:58  mdethmers
+2005-02-24 13:20  mdethmers
 
-	added configurable option to not require signing up to any lists
+	* fix when adding user in list of members of a list
 
-2004-03-22 11:57  mdethmers
+2005-02-22 22:36  mdethmers
 
-	added configurable thank you page that is displayed after signing
-	up
+	* fixed #2593, duplicate emails when importing with a space
 
-2004-03-22 10:01  mdethmers
+2005-02-22 22:31  mdethmers
 
-	added method to 'unrequire' fields in a form, when eg ticking a
-	checkbox
+	* updated processqueue to work better, and added throttling
 
-2004-03-16 13:05  mdethmers
+2005-02-22 22:30  mdethmers
 
-	new version 2.8.3
+	* update of list of messages interface
 
-2004-03-11 14:51  mdethmers
+2005-02-21 13:42  mdethmers
 
-	fixed bug in csv import not finding email in CSV file
+	* fixed #2114
 
-2004-03-10 21:21  mdethmers
+2005-02-21 11:51  mdethmers
 
-	new version 2.8.2
+	* fixed #2305
 
-2004-03-10 21:10  mdethmers
+2005-02-19 21:20  mdethmers
 
-	fixed bug in HTML to text parsing
+	* fixed #2620, owner of subscribe page not remembered when editing
 
-2004-03-09 00:28  mdethmers
+2005-02-19 02:49  damienmckenna
 
-	added history for auto unsubscribing in process bounces
+	* FIX: Bug #2618, system emails were not using the text encoding
+	  configuration.
 
-2004-03-08 17:33  mdethmers
+2005-02-18 13:58  mdethmers
 
-	new version 2.8.1
+	* fixed #2472
 
-2004-03-08 17:32  mdethmers
+2005-02-18 13:54  mdethmers
 
-	added simple method of inputting text part of multi part email
-	manually
+	* fixed #2508, unable to add existing member to another list
 
-2004-03-06 14:09  mdethmers
+2005-02-18 13:41  mdethmers
 
-	enabled getrss for commandline processing
+	* fixed #2591
 
-2004-03-05 23:24  mdethmers
+2005-02-18 13:29  mdethmers
 
-	updated user history functionality, by also logging confirmation,
-	unsubscription and admin changes to list membership
+	* fixed #2548
 
-2004-03-05 23:23  mdethmers
+2005-02-17 23:22  mdethmers
 
-	added basic check on validity of html in email
+	* added #2569
 
-2004-03-04 19:06  mdethmers
+2005-02-17 00:17  mdethmers
 
-	new version 2.8.0
+	* added file to check translations
 
-2004-03-04 18:21  mdethmers
+2005-02-15 21:24  mdethmers
 
-	added regular check for update to PHPlist, to deal with people who
-	don't subscribe to the announcements mailinglist, so they are still
-	informed when security alert happen
+	* update to spanish
 
-2004-03-04 18:20  mdethmers
+2005-02-15 13:23  mdethmers
 
-	changed fckeditor to not show image upload and browse if images
-	directory is not writable
+	* more I18N
 
-2004-03-04 17:51  mdethmers
+2005-01-20 19:46  mdethmers
 
-	removed some silly smileys
+	* mass changes for I18N
 
-2004-03-04 11:21  mdethmers
+2005-01-20 19:39  mdethmers
 
-	added smiley images in public directory
+	* added more language files
 
-2004-03-04 11:14  mdethmers
+2004-12-10 11:35  mdethmers
 
-	updated integration of FCKeditor into PHPlist
+	* added greek.inc
 
-2004-03-04 11:06  mdethmers
+2004-11-26 20:26  mdethmers
 
-	updated integration of FCKeditor into PHPlist
+	* added detection of send failure, which will cause the email to be
+	  resent the next processqueue
 
-2004-03-02 21:26  mdethmers
+2004-11-26 20:24  mdethmers
 
-	added latest version of FCKeditor in it's own location to
-	facilitate updating it more easily when new releases come out
+	* made url fetching more robust and added a little timer to use on
+	  different processes
 
-2004-03-01 01:26  mdethmers
+2004-11-17 21:54  mdethmers
 
-	update to dutch.inc
+	* added caching to send a remote webpage requests
 
-2004-02-25 14:20  mdethmers
+2004-11-17 21:51  mdethmers
 
-	fixed issue where edited messages did not remember the lists they
-	were sent to
+	* more i18n files
 
-2004-02-25 12:06  mdethmers
+2004-11-16 07:12  mdethmers
 
-	improved user import by requesting confirmation of mapping of
-	columns to existing attributes if they are not found
+	* added rough initial version of send-a-webpage
 
-2004-02-25 12:01  mdethmers
+2004-11-15 08:57  mdethmers
 
-	updated userlib to provide userhistory logging
+	* more i18n updates
 
-2004-02-25 12:00  mdethmers
+2004-11-09 13:51  mdethmers
 
-	updated interfacelib to allow rows for an item in a listing
+	* added option to use alternate attribute for actual real email and
+	  to expand unqualified emails with a domain
 
-2004-02-25 11:35  mdethmers
+2004-11-07 07:09  mdethmers
 
-	added logging of the history of a user record, identifying initial
-	subscription and all other changes the user makes to their record.
-	Also added more information in the email to the administrator of
-	the details of the user that change
+	* added states in India
 
-2004-02-25 11:30  mdethmers
+2004-11-06 20:18  mdethmers
 
-	added mexican states, canadian provinces and spanish gender
+	* added page to check for the existance of users
 
-2004-02-13 20:22  mdethmers
+2004-11-06 20:07  mdethmers
 
-	updated javascript progressbar to new one
+	* I18N conversions
 
-2004-02-13 20:21  mdethmers
+2004-11-06 19:08  mdethmers
 
-	updated link to feed validator
+	* fixed issue with textareas not correctly displaying information
 
-2004-02-13 20:16  mdethmers
+2004-11-03 21:44  mdethmers
 
-	fixed bug command line was not detected correctly
+	* fixed problem with unsubscribe not working
 
-2004-01-28 21:30  mdethmers
+2004-11-03 15:27  mdethmers
 
-	changed way no selection of attributes is applied to database to
-	avoid users not being found if they don't have any attributes and
-	updated sanitisation of from and subject to allow | character
+	* moved users to commonlib
 
-2004-01-28 21:28  mdethmers
+2004-11-02 13:52  mdethmers
 
-	updated upgrade to take any extra info off the db version before
-	applying upgrade code
+	* added new attribute selection system that allows stacking of
+	  selection rules
 
-2004-01-28 14:43  mdethmers
+2004-11-01 13:01  mdethmers
 
-	updated repetition feature to allow exclusion of dates, and added
-	docs to explain it all
+	* added initial simple I18N class to handle internationalisation
 
-2004-01-28 14:43  mdethmers
+2004-10-28 12:52  mdethmers
 
-	file README.repetition was initially added on branch version-2-7.
+	* added warning for unsaved changes when switching tabs in send a
+	  message page
 
-2004-01-27 23:22  mdethmers
+2004-10-28 10:21  mdethmers
 
-	new version 2.7.2
+	* new version 2.9.3
 
-2004-01-27 23:13  mdethmers
+2004-10-28 10:19  mdethmers
 
-	changed default config for prepare message system to require
-	defining it 1 to use it
+	* updates to texts and fixed bug in admin authentication as
+	  superuser
 
-2004-01-27 23:10  mdethmers
+2004-10-27 14:30  mdethmers
 
-	update to preparesend
+	* new version 2.9.2
 
-2004-01-27 23:06  mdethmers
+2004-10-27 12:05  mdethmers
 
-	fixed some typos in the description of the test list that is
-	created at init time
+	* added date type for attributes
 
-2004-01-27 23:06  mdethmers
+2004-10-26 09:17  mdethmers
 
-	fixed notification of number of users copied when copying from one
-	list to another
+	* new version 2.8.12
 
-2004-01-27 23:05  mdethmers
+2004-10-24 11:36  mdethmers
 
-	added pre-selecting existing lists a message has been sent to when
-	editing it
+	* fixed #1581, wrong use of tables
 
-2004-01-27 23:04  mdethmers
+2004-10-23 18:15  mdethmers
 
-	added some extra checks for validity of attachment at send time
+	* fixed #1617 add empty entry to user attribute when importing a
+	  empty value for a user
 
-2004-01-27 23:03  mdethmers
+2004-10-23 12:15  mdethmers
 
-	fixed forcing selection of list(s) when normally sending a message,
-	added some extra checks for validity of attachments uploaded and
-	updated interface of listing of existing attachments for a message
+	* more updates for external admin authentication
 
-2004-01-26 12:18  mdethmers
+2004-10-23 11:12  mdethmers
 
-	fixed magic quotes bug in send core
+	* updated redirect to reload value for website before redirecting
 
-2004-01-23 11:36  mdethmers
+2004-10-23 11:12  mdethmers
 
-	update to danish.inc
+	* changed config to only use one base-url for all public pages,
+	  instead of having a value for each page seperately
 
-2004-01-20 00:24  mdethmers
+2004-10-23 11:09  mdethmers
 
-	new version 2.7.1
+	* updated frontend system to remember login for user
 
-2004-01-20 00:23  mdethmers
+2004-10-23 09:55  mdethmers
 
-	fixed bug when not loading footer correctly
+	* added info for new send page layout and use
 
-2004-01-19 23:09  mdethmers
+2004-10-21 21:00  mdethmers
 
-	fixed bug where footer of edited message wasn't loaded properly
+	* added some more clarification about the message on the frontend
+	  when an admin is logged in
 
-2004-01-16 22:53  mdethmers
+2004-10-21 14:40  mdethmers
 
-	updated url to validate RSS feeds
+	* split admin authentication into its own files so it's easier to
+	  implement different systems
 
-2004-01-16 22:39  mdethmers
+2004-10-20 12:15  mdethmers
 
-	new version 2.7.0
+	* fixed #1986
 
-2004-01-16 22:26  mdethmers
+2004-10-20 11:46  mdethmers
 
-	merged editmessage branch into main branch
+	* added option to allow sending to members of a list, except when
+	  they are member of another list
 
-2004-01-16 21:36  mdethmers
+2004-10-20 08:26  mdethmers
 
-	added loginname to password reminder email
+	* added magic quotes setting to htaccess (may not always work)
 
-2004-01-16 21:22  mdethmers
+2004-10-20 08:25  mdethmers
 
-	fixed some parse errors
+	* updated default config to reflect new unsubscibe policy
 
-2004-01-15 15:26  mdethmers
+2004-10-20 08:20  mdethmers
 
-	missing bracket
+	* fixed #1861, subadmins do not own the list they create
 
-2004-01-14 14:12  mdethmers
+2004-10-20 08:19  mdethmers
 
-	updated loadUser to optionally find user from session
+	* added deletion of all draft messages, as with the new interface
+	  system, it creates them rather quickly
 
-2004-01-14 13:51  mdethmers
+2004-10-20 08:16  mdethmers
 
-	updated form handling to deal with changed attribute type
+	* fixed #1989 wrong date in list of messages for a user
 
-2004-01-13 13:07  mdethmers
+2004-10-20 08:14  mdethmers
 
-	added default stylesheet for HTML messages that are sent without a
-	template
+	* updated interface of send a message page, to split it into
+	  several tabs
 
-2004-01-13 10:56  mdethmers
+2004-10-20 08:13  mdethmers
 
-	fixed issue in attributes when merging attributes
+	* fixed #1852, subscribe pages do not load default header and
+	  footer
 
-2004-01-12 16:18  mdethmers
+2004-10-20 08:07  mdethmers
 
-	some tiny fixes
+	* added polish translation
 
-2004-01-12 16:18  mdethmers
+2004-10-20 08:07  mdethmers
 
-	fixed typo
+	* updated default text to reflect changed unsubscribe behaviour
 
-2004-01-12 09:13  mdethmers
+2004-10-18 10:10  mdethmers
 
-	more wrapping of long RSS urls
+	* fixed #1861, ownership of list is not remembered
 
-2004-01-10 15:38  mdethmers
+2004-10-18 10:07  mdethmers
 
-	fixed listing of lists to wrap better if the source of an RSS is
-	very long
+	* update to import to append instead of prepend new values
 
-2004-01-10 13:57  mdethmers
+2004-10-13 17:55  mdethmers
 
-	added URI to error messages, for real now
+	* update to german translation
 
-2004-01-10 13:51  mdethmers
+2004-10-09 09:25  mdethmers
 
-	added URI to error messages
+	* fixed #1789
 
-2004-01-09 20:00  mdethmers
+2004-09-15 12:20  mdethmers
 
-	added security and access checks for editing messages
+	* added sorting of webblerlistings
 
-2004-01-09 20:00  mdethmers
+2004-09-02 11:21  mdethmers
 
-	added draft status as status that should not be sent when
-	processing queue
+	* added option to save sessions in the database
 
-2004-01-09 19:32  mdethmers
+2004-09-02 09:13  mdethmers
 
-	fixed issue when using VERBOSE in edit message mode
+	* new version 2.9.1
 
-2004-01-09 19:32  mdethmers
+2004-09-02 09:11  mdethmers
 
-	updated upgrade for new version
+	* updated import to append new values to selects instead of
+	  prepending them
 
-2004-01-09 19:31  mdethmers
+2004-08-30 20:00  mdethmers
 
-	edited access mechanism in user
+	* changed way to identify user-message to reflect the status of the
+	  message per user
 
-2004-01-09 19:30  mdethmers
+2004-08-30 11:53  mdethmers
 
-	fixed date to initialise with time when passed a value
+	* update for includes when using commandline
 
-2004-01-09 19:30  mdethmers
+2004-08-30 11:52  mdethmers
 
-	fixed send_core to remember repeat interval
+	* updates to processqueue to handle batches better
 
-2004-01-09 18:42  mdethmers
+2004-08-30 07:06  mdethmers
 
-	fixed send_core to remember RSS frequency
+	* updated reconcile users for globals off
 
-2004-01-09 18:40  mdethmers
+2004-08-20 10:04  mdethmers
 
-	added default date to date object
+	* updated references to include accesscheck to use
+	  dirname(__FILE__) so there is no confusion about file locations
+	  (ie blank page errors)
 
-2004-01-09 13:22  mdethmers
+2004-08-20 10:01  mdethmers
 
-	added filesize guideline to cvs upload
+	* moved included from the config file into the system and updated
+	  includes to derive location of included files from the file that
+	  includes them
 
-2004-01-09 09:38  peteness
+2004-08-20 10:00  mdethmers
 
-	Link to edit opens a different page for prepared messages.
+	* fixed #0001574
 
-2004-01-09 09:32  peteness
+2004-08-19 17:32  mdethmers
 
-	All message types were showing that they'd been queued (= instead
-	of ==).
+	* fixed issue with is_email where older php versions choked on the
+	  regex
 
-2004-01-09 09:07  peteness
+2004-08-17 07:43  mdethmers
 
-	Fixed several variables that were not being loaded consistently (or
-	not being filled in on the form consistently).
+	* added polish translation
 
-2004-01-09 07:32  peteness
+2004-08-16 12:17  mdethmers
 
-	Restructured error message area just a touch.  Added logic to
-	display / remove attachments (previously, you could only)	 
-	*add* attachements, and the edit logic pretty much needed a way    
-	    to maintain them.
+	* updated frontend pages to display default header and footer
+	  instead of 404 not found when no default subscribe page is set
 
-2004-01-08 12:40  mdethmers
+2004-08-05 07:10  mdethmers
 
-	removed verbose from csv import
+	* new version 2.8.11
 
-2004-01-08 12:38  mdethmers
+2004-08-05 07:01  mdethmers
 
-	updated the commandline to allow processqueue and processbounces,
-	without too much output
+	* fixed bug #1531, list owner is reset when an owner edits it
 
-2004-01-08 12:32  mdethmers
+2004-07-31 10:24  mdethmers
 
-	added warning if running in CVS mode and developer email is not set
+	* temporary commit of unfinished changes in process queue
 
-2004-01-08 09:46  peteness
+2004-07-27 13:49  mdethmers
 
-	Database updated to add "draft" type to enum on status field in
-	messages.  *NOTE: I don't know what I'm doing with this area -
-	*particularly* in the	     upgrade.php area.	I modified it to
-	make sure we don't forget to	    update it, but it's probably
-	not right.
+	* updated processqueue to exclude invalid and unconfirmed users, so
+	  batch processing doesn't choke on them, when there are more than
+	  batch size unconfirmed users. Change RSS messages to use the
+	  repeat method for sending messages instead of leaving one message
+	  for ever
 
-2004-01-08 09:44  peteness
+2004-07-27 13:44  mdethmers
 
-	Basic functionality for editing messages, including:	All edit
-	controls in send_core  Draft list in messages  "Edit" link in
-	messages	 Update logic in send_core to update database	
-	Test Email logic in send_core to send tests.  * The load/save logic
-	isn't fully complete yet - criteria and attachments   aren't ready
-	to go.
+	* fixed #1465, use of repeat as column name will clash with later
+	  versions of Sql
 
-2004-01-08 09:41  mdethmers
+2004-07-27 13:44  mdethmers
 
-	added update to portuguese (portugal)
+	* fixed #1444 database upgrade problem
 
-2004-01-07 22:38  mdethmers
+2004-07-26 19:35  mdethmers
 
-	updated plugin system to allow plugins to reside outside the
-	PHPlist tree, so they can be configured without interfering after
-	upgrades
+	* added dependency check with webbler forms
 
-2004-01-07 09:26  peteness
+2004-07-26 18:35  mdethmers
 
-	Added HTML input fields and submit buttons for "Send Test Message"
-	and "Save Draft".
+	* added option to merge duplicate users (after a clash in import)
+	  to reconcile users
 
-2004-01-07 08:06  peteness
+2004-07-22 09:41  mdethmers
 
-	Added default setting for USE_EDITMESSAGE.
+	* applied tabs 2 spaces for easier code sharing
 
-2004-01-06 23:46  mdethmers
+2004-07-22 09:40  mdethmers
 
-	fixed bug in languages file for frontend not requiring the correct
-	file
+	* added basic method to store sessions in database
 
-2004-01-05 17:10  mdethmers
+2004-07-22 08:35  mdethmers
 
-	fixed some typos in CSV user import
+	* added script to convert tabs to spaces
 
-2003-12-22 19:24  mdethmers
+2004-07-21 18:52  mdethmers
 
-	modifications to handle register globals off
+	* merged bugfixes from version 2.8.10 into clicktrack branch
 
-2003-12-12 17:15  mdethmers
+2004-07-19 12:49  mdethmers
 
-	added another italian translation :-), italian3.inc
+	* new version 2.8.10
 
-2003-12-10 21:51  mdethmers
+2004-07-19 12:42  mdethmers
 
-	added 'view' capacity for admin, who can only view user data but
-	not change it, and changed all instances of  to it's  equivalent to
-	work toward proper register globals off
+	* fixed bugs when using commandline and number of invalid or
+	  unconfirmed users is larger than the batch size, causing the
+	  message never to complete
 
-2003-12-10 21:48  mdethmers
+2004-07-19 11:27  mdethmers
 
-	added All Mailinglists to language file
+	* fixed bug not always sending text to domains marked text
 
-2003-12-04 11:35  mdethmers
+2004-07-15 20:36  mdethmers
 
-	added format checking of UK postcodes and switch auto create
-	attributes off
+	* added fckeditor to template editing page
 
-2003-12-03 15:38  mdethmers
+2004-07-15 20:35  mdethmers
 
-	finished initial stages for sending messages via the commandline
+	* added check on existence of black list table to avoid database
+	  errors when installing fresh install
 
-2003-12-03 15:37  mdethmers
+2004-07-15 20:34  mdethmers
 
-	added commandline README
+	* added link to correct unsubscribe page from public pages
 
-2003-12-01 09:19  mdethmers
+2004-07-15 20:08  mdethmers
 
-	added commandline mechanism, stage 1
+	* fixed #1378, usertrack not working in some cases
 
-2003-11-26 16:12  mdethmers
+2004-07-15 20:07  mdethmers
 
-	updated rescheduling of messages to forget about previous local
-	attachments
+	* fixed #1417, javascript error in sendemail
 
-2003-11-26 16:10  mdethmers
+2004-07-09 08:41  mdethmers
 
-	fixed error reporting to not send a password
+	* added configurable grace time for black listing
 
-2003-11-26 15:27  mdethmers
+2004-07-05 14:20  mdethmers
 
-	added repetition of messages. Messages can automatically be
-	re-submitted based on an interval
+	* merged fixes from bugfix branch into 2.9 branch
 
-2003-11-26 00:34  mdethmers
+2004-07-05 14:02  mdethmers
 
-	fixed issue where listowner could see more than their own list when
-	sending a message
+	* moved useful scripts into their own subdirectory
 
-2003-11-25 21:07  mdethmers
+2004-07-02 11:05  mdethmers
 
-	updated upgrade for database changes
+	* new version 2.8.9
 
-2003-11-25 17:20  mdethmers
+2004-07-02 11:00  mdethmers
 
-	updated some formatting of help
+	* removed some confusing old commandline files
 
-2003-11-25 16:56  mdethmers
+2004-07-02 10:30  mdethmers
 
-	added embargo to a message to send, which means a message will not
-	be sent before this date (and time)
+	* fixed #1385, import not sending notifications and updated import
+	  to work better in restrictive environments, like open_basedir and
+	  a non system upload_temp_dir
 
-2003-11-25 16:55  mdethmers
+2004-07-02 10:13  mdethmers
 
-	added ability to use local (server side) attachments
+	* made page root config less confusing
 
-2003-11-25 16:54  mdethmers
+2004-06-24 17:32  mdethmers
 
-	added use of time in date object
+	* fixed bug #1385 import doesn't send request for confirmation
 
-2003-11-24 18:34  mdethmers
+2004-06-24 17:06  mdethmers
 
-	updated system to allow multiple persons to receive admin messages
-	and reports
+	* fixed #1390, wrongly placed comments in config file
 
-2003-11-24 15:50  mdethmers
+2004-06-23 08:08  mdethmers
 
-	new version 2.6.5
+	* added method to set unsubscribe to jump-off, which means the
+	  users is immediately unsubscribed when loading the page with the
+	  personal URL
 
-2003-11-24 15:45  mdethmers
+2004-06-22 15:31  mdethmers
 
-	updated some of the docs and readme-s
+	* fixed bug #1375 and #1312
 
-2003-11-24 15:44  mdethmers
+2004-06-16 20:34  mdethmers
 
-	re-enabled attachments
+	* added option in reconcile users to delete all blacklisted users
 
-2003-11-24 14:41  mdethmers
+2004-06-16 20:34  mdethmers
 
-	removed old upgrade files
+	* added blacklist information to history of user, and the option to
+	  remove the user from the blacklist
 
-2003-11-24 12:42  mdethmers
+2004-06-16 20:33  mdethmers
 
-	fixed bug 825, multiple database connections connects to wrong
-	database
+	* added show blacklisted users to list of users
 
-2003-11-24 12:20  mdethmers
+2004-06-16 20:33  mdethmers
 
-	added more security info and security checks
+	* updated script to change short php tags into long ones
 
-2003-11-24 00:19  mdethmers
+2004-06-16 20:31  mdethmers
 
-	added ability to switch check for IP address in admin session off
+	* added link to process queue after submission of message
 
-2003-11-23 23:47  mdethmers
+2004-06-16 20:31  mdethmers
 
-	fixed bug 799, import1 did not work with register globals off
+	* updated process queue to remember correct start time of sending
+	  an email
 
-2003-11-23 23:42  mdethmers
+2004-06-16 11:54  mdethmers
 
-	added support for ADOdb
+	* new version 2.8.8
 
-2003-11-21 21:11  mdethmers
+2004-06-16 11:40  mdethmers
 
-	Initial revision
+	* made getrss a bit more verbose on commandline
 
-2003-11-21 21:11  mdethmers
+2004-06-16 11:37  mdethmers
 
-	commonlib init
+	* update in editlist to use super variables
 
-2003-11-21 12:50  mdethmers
+2004-06-16 11:03  mdethmers
 
-	initial import
+	* fixed issue, not sending rss messages to users who had already
+	  received one
 
-2003-11-21 12:50  mdethmers
+2004-06-15 18:52  mdethmers
 
-	Initial revision
+	* fixed bug #1314, slashes in configure
+
+2004-06-14 09:33  mdethmers
+
+	* renamed wording of mailinglist to newsletter
+
+2004-06-02 07:35  mdethmers
+
+	* new version 2.8.7
+
+2004-06-02 07:09  mdethmers
+
+	* added index to uniqid to speed up import
+
+2004-06-02 07:07  mdethmers
+
+	* added excel compatible export format
+
+2004-06-02 06:56  mdethmers
+
+	* added intro to listing of subscribe pages
+
+2004-06-01 16:09  mdethmers
+
+	* fixed bug #1297, attributes not saved when adding user in members
+	  page
+
+2004-06-01 16:04  mdethmers
+
+	* fixed bug #1307, config variables only get replaced in first
+	  email
+
+2004-05-25 08:59  mdethmers
+
+	* added option for double entry of email, contributed by Bruce
+	  Morrison
+
+2004-05-24 14:45  mdethmers
+
+	* added configurable option for encoding of HTML part of email
+
+2004-05-24 14:44  mdethmers
+
+	* added headers to config file to split the options into sections
+
+2004-05-24 14:21  mdethmers
+
+	* updated includes to refer to file location of file that includes
+	  them
+
+2004-05-24 13:30  mdethmers
+
+	* fixed bug #1286, attributes not saved
+
+2004-05-24 12:42  mdethmers
+
+	* fixed bug that added HTML headers to an email that already had
+	  them added unsubscribeurl and preferencesurl as placeholders in
+	  an email returning only the url updated html to text formatting
+	  added [LISTS] as possible placeholder that will list the names of
+	  the lists a users is a member of
+
+2004-05-21 19:01  mdethmers
+
+	* added option to find users by foreign key
+
+2004-05-21 18:39  mdethmers
+
+	* changed error reporting by email to collate all errors in one
+	  email and took off sending error by email in case of warning
+
+2004-05-21 18:20  mdethmers
+
+	* fixed bug not including lib.php correctly, causing all kinds of
+	  problems
+
+2004-05-21 18:19  mdethmers
+
+	* updated interface in list of messages to use tabs
+
+2004-05-21 11:18  mdethmers
+
+	* added abnormal shutdown detection
+
+2004-05-18 12:33  mdethmers
+
+	* small fixes to make the code validate better
+
+2004-05-17 13:08  mdethmers
+
+	* added simple check of database structure
+
+2004-05-11 12:36  mdethmers
+
+	* updated tabs for interface
+
+2004-05-11 08:41  mdethmers
+
+	* added script to convert short php tags to long ones and ran it
+	  across all files
+
+2004-05-10 11:27  mdethmers
+
+	* new version 2.8.6
+
+2004-05-10 11:21  mdethmers
+
+	* added stripslashes to import pages
+
+2004-05-10 11:12  mdethmers
+
+	* added experimental code to optimize HTML email for outlook
+
+2004-05-10 09:17  mdethmers
+
+	* small reorganisation of the main menu
+
+2004-05-10 09:17  mdethmers
+
+	* fixed some more stripslashes
+
+2004-05-10 08:32  mdethmers
+
+	* added warning to have magic quotes runtime off
+
+2004-05-10 08:32  mdethmers
+
+	* fixed bug where helpwindow would not re-open when closed after
+	  first time
+
+2004-05-06 14:25  mdethmers
+
+	* added gg as a valid top domain
+
+2004-05-06 08:52  mdethmers
+
+	* updated all kinds of pages to use stripslashes
+
+2004-05-06 08:50  mdethmers
+
+	* updated re-subscription to not create a completely new user
+	  record, but update the existing one
+
+2004-05-06 07:38  mdethmers
+
+	* updated info in configure
+
+2004-05-06 06:52  mdethmers
+
+	* added option to create uniqid for users who do not have one
+
+2004-05-05 13:57  mdethmers
+
+	* added workaround for FCK bug, when using FCKeditor. Caused an
+	  error please enter subject even when a subject was entered
+
+2004-05-05 11:04  mdethmers
+
+	* added PHPlist version to system details report in help
+
+2004-04-22 14:31  mdethmers
+
+	* updated shaders to remember states between switching pages
+
+2004-04-21 17:38  mdethmers
+
+	* fixed bug in processqueue when using commandline
+
+2004-04-20 10:03  mdethmers
+
+	* updated commandline to allow specification of config file on
+	  commandline
+
+2004-04-20 09:44  mdethmers
+
+	* added about page
+
+2004-04-19 12:18  mdethmers
+
+	* new version 2.5.8
+
+2004-04-19 07:29  mdethmers
+
+	* updated collapsing div to be able to default to closed
+
+2004-04-16 17:39  mdethmers
+
+	* added shader styles
+
+2004-04-16 17:37  mdethmers
+
+	* added shader widget to interface library and made listing object
+	  contained in it
+
+2004-04-15 17:04  mdethmers
+
+	* fixed bug that caused <BR>s to be added to a table when using the
+	  FCKeditor
+
+2004-04-15 16:42  mdethmers
+
+	* made pop port for processing bounces configurable
+
+2004-04-15 05:34  mdethmers
+
+	* added tabs interface object
+
+2004-04-09 14:16  mdethmers
+
+	* new version 2.8.5
+
+2004-04-09 14:14  mdethmers
+
+	* fixed bug blank page after initialisation
+
+2004-04-07 13:58  mdethmers
+
+	* new version 2.8.4
+
+2004-04-07 13:22  mdethmers
+
+	* some small fixes and changes
+
+2004-04-07 07:37  mdethmers
+
+	* fixed thank you page not parsing some placeholders
+
+2004-04-07 07:34  mdethmers
+
+	* fixed commandline detection
+
+2004-04-07 07:33  mdethmers
+
+	* fixed second email to send test to not found
+
+2004-04-07 07:32  mdethmers
+
+	* fixed placeholder not parsed in text version of email
+
+2004-04-04 11:38  mdethmers
+
+	* added option to mark all users with invalid emails as unconfirmed
+
+2004-04-04 11:37  mdethmers
+
+	* updated batch system to reload quickly when no emails were sent,
+	  but only skipped
+
+2004-04-04 10:57  mdethmers
+
+	* changed built-in example plugins to disappear with simple
+	  install, because it seems to confuse people
+
+2004-04-03 19:19  mdethmers
+
+	* added doc explaining about batch processing
+
+2004-04-03 19:08  mdethmers
+
+	* updated config file to reflect recent changes added system for
+	  ISPs to have server wide configuration to force batch processing
+	  and set limits to it added system for ISPs to (temporarily)
+	  suspend sending of emails completely
+
+2004-04-03 19:03  mdethmers
+
+	* updated integration with the webbler
+
+2004-04-03 19:02  mdethmers
+
+	* added batch processing of messages to send out
+
+2004-04-03 19:01  mdethmers
+
+	* added configurable requirement for password when unsubscribing
+
+2004-04-03 19:00  mdethmers
+
+	* added more identification of user and type of bounce in list of
+	  bounces when a bounce is to a system message
+
+2004-04-03 18:57  mdethmers
+
+	* fixed bug, no form ending in editlist
+
+2004-04-03 18:57  mdethmers
+
+	* fixed bug default plugin not referring to correct plugin
+	  directory
+
+2004-04-03 18:55  mdethmers
+
+	* fixed problem with open_basedir in import1
+
+2004-04-03 18:54  mdethmers
+
+	* moved common stuff from connect to lib
+
+2004-04-03 18:50  mdethmers
+
+	* fixed clash between webbler and phplist
+
+2004-04-03 18:48  mdethmers
+
+	* added user history entry when user is unconfirmed for a bounced
+	  system message
+
+2004-04-03 18:46  mdethmers
+
+	* added feature mark all users as html or text or confirmed in
+	  reconcile users
+
+2004-04-03 18:45  mdethmers
+
+	* fixed bug database error when saving a message as draft after it
+	  had been loaded for editing
+
+2004-04-03 18:44  mdethmers
+
+	* fixed bug requiring a password when a user re-subscribes with an
+	  email and a password has already been set for that user. If the
+	  password used is correct it is allowed
+
+2004-04-03 18:35  mdethmers
+
+	* fixed, admins are able to subscribe users to lists they do not
+	  own
+
+2004-03-25 19:40  mdethmers
+
+	* added hebrew translation
+
+2004-03-24 10:14  mdethmers
+
+	* added configurable thank-you page for subscribe pages and added
+	  method for plugins to add content to this
+
+2004-03-22 08:58  mdethmers
+
+	* added configurable option to not require signing up to any lists
+
+2004-03-22 08:57  mdethmers
+
+	* added configurable thank you page that is displayed after signing
+	  up
+
+2004-03-22 07:01  mdethmers
+
+	* added method to 'unrequire' fields in a form, when eg ticking a
+	  checkbox
+
+2004-03-16 10:05  mdethmers
+
+	* new version 2.8.3
+
+2004-03-11 11:51  mdethmers
+
+	* fixed bug in csv import not finding email in CSV file
+
+2004-03-10 18:21  mdethmers
+
+	* new version 2.8.2
+
+2004-03-10 18:10  mdethmers
+
+	* fixed bug in HTML to text parsing
+
+2004-03-08 21:28  mdethmers
+
+	* added history for auto unsubscribing in process bounces
+
+2004-03-08 14:33  mdethmers
+
+	* new version 2.8.1
+
+2004-03-08 14:32  mdethmers
+
+	* added simple method of inputting text part of multi part email
+	  manually
+
+2004-03-06 11:09  mdethmers
+
+	* enabled getrss for commandline processing
+
+2004-03-05 20:24  mdethmers
+
+	* updated user history functionality, by also logging confirmation,
+	  unsubscription and admin changes to list membership
+
+2004-03-05 20:23  mdethmers
+
+	* added basic check on validity of html in email
+
+2004-03-04 16:06  mdethmers
+
+	* new version 2.8.0
+
+2004-03-04 15:21  mdethmers
+
+	* added regular check for update to PHPlist, to deal with people
+	  who don't subscribe to the announcements mailinglist, so they are
+	  still informed when security alert happen
+
+2004-03-04 15:20  mdethmers
+
+	* changed fckeditor to not show image upload and browse if images
+	  directory is not writable
+
+2004-03-04 14:51  mdethmers
+
+	* removed some silly smileys
+
+2004-03-04 08:28  mdethmers
+
+	* removed old version of FCKeditor
+
+2004-03-04 08:21  mdethmers
+
+	* added smiley images in public directory
+
+2004-03-04 08:14  mdethmers
+
+	* updated integration of FCKeditor into PHPlist
+
+2004-02-29 22:26  mdethmers
+
+	* update to dutch.inc
+
+2004-02-25 11:20  mdethmers
+
+	* fixed issue where edited messages did not remember the lists they
+	  were sent to
+
+2004-02-25 09:06  mdethmers
+
+	* improved user import by requesting confirmation of mapping of
+	  columns to existing attributes if they are not found
+
+2004-02-25 09:01  mdethmers
+
+	* updated userlib to provide userhistory logging
+
+2004-02-25 09:00  mdethmers
+
+	* updated interfacelib to allow rows for an item in a listing
+
+2004-02-25 08:35  mdethmers
+
+	* added logging of the history of a user record, identifying
+	  initial subscription and all other changes the user makes to
+	  their record. Also added more information in the email to the
+	  administrator of the details of the user that change
+
+2004-02-25 08:30  mdethmers
+
+	* added mexican states, canadian provinces and spanish gender
+
+2004-02-13 17:22  mdethmers
+
+	* updated javascript progressbar to new one
+
+2004-02-13 17:21  mdethmers
+
+	* updated link to feed validator
+
+2004-02-13 17:16  mdethmers
+
+	* fixed bug command line was not detected correctly
+
+2004-01-28 18:30  mdethmers
+
+	* changed way no selection of attributes is applied to database to
+	  avoid users not being found if they don't have any attributes and
+	  updated sanitisation of from and subject to allow | character
+
+2004-01-28 18:28  mdethmers
+
+	* updated upgrade to take any extra info off the db version before
+	  applying upgrade code
+
+2004-01-28 11:43  mdethmers
+
+	* updated repetition feature to allow exclusion of dates, and added
+	  docs to explain it all
+
+2004-01-27 20:22  mdethmers
+
+	* new version 2.7.2
+
+2004-01-27 20:13  mdethmers
+
+	* changed default config for prepare message system to require
+	  defining it 1 to use it
+
+2004-01-27 20:10  mdethmers
+
+	* update to preparesend
+
+2004-01-27 20:06  mdethmers
+
+	* fixed some typos in the description of the test list that is
+	  created at init time
+
+2004-01-27 20:06  mdethmers
+
+	* fixed notification of number of users copied when copying from
+	  one list to another
+
+2004-01-27 20:05  mdethmers
+
+	* added pre-selecting existing lists a message has been sent to
+	  when editing it
+
+2004-01-27 20:04  mdethmers
+
+	* added some extra checks for validity of attachment at send time
+
+2004-01-27 20:03  mdethmers
+
+	* fixed forcing selection of list(s) when normally sending a
+	  message, added some extra checks for validity of attachments
+	  uploaded and updated interface of listing of existing attachments
+	  for a message
+
+2004-01-26 09:18  mdethmers
+
+	* fixed magic quotes bug in send core
+
+2004-01-23 08:36  mdethmers
+
+	* update to danish.inc
+
+2004-01-19 21:24  mdethmers
+
+	* new version 2.7.1
+
+2004-01-19 21:23  mdethmers
+
+	* fixed bug when not loading footer correctly
+
+2004-01-19 20:09  mdethmers
+
+	* fixed bug where footer of edited message wasn't loaded properly
+
+2004-01-16 19:53  mdethmers
+
+	* updated url to validate RSS feeds
+
+2004-01-16 19:39  mdethmers
+
+	* new version 2.7.0
+
+2004-01-16 19:26  mdethmers
+
+	* merged editmessage branch into main branch
+
+2004-01-16 18:36  mdethmers
+
+	* added loginname to password reminder email
+
+2004-01-16 18:22  mdethmers
+
+	* fixed some parse errors
+
+2004-01-15 12:26  mdethmers
+
+	* missing bracket
+
+2004-01-14 11:12  mdethmers
+
+	* updated loadUser to optionally find user from session
+
+2004-01-14 10:51  mdethmers
+
+	* updated form handling to deal with changed attribute type
+
+2004-01-13 10:07  mdethmers
+
+	* added default stylesheet for HTML messages that are sent without
+	  a template
+
+2004-01-13 07:56  mdethmers
+
+	* fixed issue in attributes when merging attributes
+
+2004-01-12 13:18  mdethmers
+
+	* some tiny fixes
+
+2004-01-12 13:18  mdethmers
+
+	* fixed typo
+
+2004-01-12 06:13  mdethmers
+
+	* more wrapping of long RSS urls
+
+2004-01-10 12:38  mdethmers
+
+	* fixed listing of lists to wrap better if the source of an RSS is
+	  very long
+
+2004-01-10 10:57  mdethmers
+
+	* added URI to error messages, for real now
+
+2004-01-10 10:51  mdethmers
+
+	* added URI to error messages
+
+2004-01-09 17:00  mdethmers
+
+	* added security and access checks for editing messages
+
+2004-01-09 17:00  mdethmers
+
+	* added draft status as status that should not be sent when
+	  processing queue
+
+2004-01-09 16:32  mdethmers
+
+	* fixed issue when using VERBOSE in edit message mode
+
+2004-01-09 16:32  mdethmers
+
+	* updated upgrade for new version
+
+2004-01-09 16:31  mdethmers
+
+	* edited access mechanism in user
+
+2004-01-09 16:30  mdethmers
+
+	* fixed date to initialise with time when passed a value
+
+2004-01-09 16:30  mdethmers
+
+	* fixed send_core to remember repeat interval
+
+2004-01-09 15:42  mdethmers
+
+	* fixed send_core to remember RSS frequency
+
+2004-01-09 15:40  mdethmers
+
+	* added default date to date object
+
+2004-01-09 10:22  mdethmers
+
+	* added filesize guideline to cvs upload
+
+2004-01-09 06:38  peteness
+
+	* Link to edit opens a different page for prepared messages.
+
+2004-01-09 06:32  peteness
+
+	* All message types were showing that they'd been queued (= instead
+	  of ==).
+
+2004-01-09 06:07  peteness
+
+	* Fixed several variables that were not being loaded consistently
+	  (or not being filled in on the form consistently).
+
+2004-01-09 04:32  peteness
+
+	* Restructured error message area just a touch.  Added logic to
+	  display / remove attachments (previously, you could only)
+	  *add* attachements, and the edit logic pretty much needed a way
+		to maintain them.
+
+2004-01-08 09:40  mdethmers
+
+	* removed verbose from csv import
+
+2004-01-08 09:38  mdethmers
+
+	* updated the commandline to allow processqueue and processbounces,
+	  without too much output
+
+2004-01-08 09:32  mdethmers
+
+	* added warning if running in CVS mode and developer email is not
+	  set
+
+2004-01-08 06:46  peteness
+
+	* Database updated to add "draft" type to enum on status field in
+	  messages.  *NOTE: I don't know what I'm doing with this area -
+	  *particularly* in the        upgrade.php area.  I modified it to
+	  make sure we don't forget to	      update it, but it's probably
+	  not right.
+
+2004-01-08 06:44  peteness
+
+	* Basic functionality for editing messages, including:	All edit
+	  controls in send_core  Draft list in messages  "Edit" link in
+	  messages	   Update logic in send_core to update database
+	  Test Email logic in send_core to send tests.	* The load/save
+	  logic isn't fully complete yet - criteria and attachments
+	  aren't ready to go.
+
+2004-01-08 06:41  mdethmers
+
+	* added update to portuguese (portugal)
+
+2004-01-07 19:38  mdethmers
+
+	* updated plugin system to allow plugins to reside outside the
+	  PHPlist tree, so they can be configured without interfering after
+	  upgrades
+
+2004-01-07 06:26  peteness
+
+	* Added HTML input fields and submit buttons for "Send Test
+	  Message" and "Save Draft".
+
+2004-01-07 05:06  peteness
+
+	* Added default setting for USE_EDITMESSAGE.
+
+2004-01-06 20:46  mdethmers
+
+	* fixed bug in languages file for frontend not requiring the
+	  correct file
+
+2004-01-05 14:10  mdethmers
+
+	* fixed some typos in CSV user import
+
+2003-12-22 16:24  mdethmers
+
+	* modifications to handle register globals off
+
+2003-12-12 14:15  mdethmers
+
+	* added another italian translation :-), italian3.inc
+
+2003-12-10 18:51  mdethmers
+
+	* added 'view' capacity for admin, who can only view user data but
+	  not change it, and changed all instances of  to it's	equivalent
+	  to work toward proper register globals off
+
+2003-12-10 18:48  mdethmers
+
+	* added All Mailinglists to language file
+
+2003-12-04 08:35  mdethmers
+
+	* added format checking of UK postcodes and switch auto create
+	  attributes off
+
+2003-12-03 12:38  mdethmers
+
+	* finished initial stages for sending messages via the commandline
+
+2003-12-03 12:37  mdethmers
+
+	* added commandline README
+
+2003-12-01 06:19  mdethmers
+
+	* added commandline mechanism, stage 1
+
+2003-11-26 13:12  mdethmers
+
+	* updated rescheduling of messages to forget about previous local
+	  attachments
+
+2003-11-26 13:10  mdethmers
+
+	* fixed error reporting to not send a password
+
+2003-11-26 12:27  mdethmers
+
+	* added repetition of messages. Messages can automatically be
+	  re-submitted based on an interval
+
+2003-11-25 21:34  mdethmers
+
+	* fixed issue where listowner could see more than their own list
+	  when sending a message
+
+2003-11-25 18:07  mdethmers
+
+	* updated upgrade for database changes
+
+2003-11-25 14:20  mdethmers
+
+	* updated some formatting of help
+
+2003-11-25 13:56  mdethmers
+
+	* added embargo to a message to send, which means a message will
+	  not be sent before this date (and time)
+
+2003-11-25 13:55  mdethmers
+
+	* added ability to use local (server side) attachments
+
+2003-11-25 13:54  mdethmers
+
+	* added use of time in date object
+
+2003-11-24 15:34  mdethmers
+
+	* updated system to allow multiple persons to receive admin
+	  messages and reports
+
+2003-11-24 12:50  mdethmers
+
+	* new version 2.6.5
+
+2003-11-24 12:45  mdethmers
+
+	* updated some of the docs and readme-s
+
+2003-11-24 12:44  mdethmers
+
+	* re-enabled attachments
+
+2003-11-24 11:41  mdethmers
+
+	* removed old upgrade files
+
+2003-11-24 09:42  mdethmers
+
+	* fixed bug 825, multiple database connections connects to wrong
+	  database
+
+2003-11-24 09:20  mdethmers
+
+	* added more security info and security checks
+
+2003-11-23 21:19  mdethmers
+
+	* added ability to switch check for IP address in admin session off
+
+2003-11-23 20:47  mdethmers
+
+	* fixed bug 799, import1 did not work with register globals off
+
+2003-11-23 20:42  mdethmers
+
+	* added support for ADOdb
+
+2003-11-21 18:11  mdethmers
+
+	* Initial revision
+
+2003-11-21 18:11  mdethmers
+
+	* commonlib init
+
+2003-11-21 09:50  mdethmers
+
+	* Initial revision
+
+2003-11-21 09:50  mdethmers
+
+	* initial import
 
 
 #### ChangeLog before move to SourceForge

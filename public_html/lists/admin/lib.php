@@ -160,7 +160,7 @@ function sendMail ($to,$subject,$message,$header = "",$parameters = "",$skipblac
   if ($GLOBALS['usephpmailer']) {
     return sendMailPhpMailer($to,$subject,$message);
   } else {
-    return sendMailOriginal($to,$subject,$message,$header = "",$parameters = "");
+    return sendMailOriginal($to,$subject,$message,$header,$parameters);
   }
   return 0;
 }
