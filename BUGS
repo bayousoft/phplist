@@ -1,33 +1,35 @@
+PHPlist Bug Policy
 
 If you think you have found a bug,
 
-- make sure you have the latest version of PHPlist (check http://www.phplist.com/files)
-  I don't always update the website, but the files directory will always have the latest
-  version.
+- Make sure you have the latest version of PHPlist.  Check our public
+  website at http://www.phplist.com/files/.  While the PHPlist website may not
+  always list the latest version, this directory will.
 
-- go to http://bugtrack.tincan.co.uk and check whether someone else
-has already reported the same thing. If so, add your comments, and anything
-that can be helpful to find and fix the bug to the existing report
+- Go to http://mantis.tincan.co.uk/ and check whether someone else has
+  already reported the same thing. If so, add your comments, and anything that can
+  be helpful to find and fix the bug to the existing report.
 
-- if there is no entry:
+- If there is no previously existing entry:
 
-- write a clear report with at least the following information:
+  - Write a clear report (the button saying "Report Issue" in the top menu).
+    Please select what the bug is in regards to (category), how often it
+    occurs (reproducibility), how serious it is (severity), how urgent it is
+    that this bug be fixed (priority) and the release of PHPlist being used
+    (product version).  In the summary field give a few words explaining the
+    bug and what page it is on, then in the description field please write:
 
-* Your platform (windows, mac, unix)
-* Your PHP version (lists/info.php will help)
-* Your Mysql version
-* The PHPlist version
-* The page the error is on
-* What the error is, and what you did when it happened.
+    * Your browser version & OS
+    * Your server platform (Windows, Linux, etc)
+    * Your PHP version (lists/info.php will help)
+    * Your MySQL version
+    * What the error message states
+    * What happened to cause the error
 
-I use Mozilla (generally the latest version) on a Linux (Redhat 7.1) system myself,
-and I don't have time to check it thoroughly on other systems, so any feedback on
-javascript and layout errors on other systems are welcome.
-
-Once you've compiled your bugreport, point your webbrowser at
-http://bugtrack.tincan.co.uk and add a new bug report
-
-Thanks in advance for taking the time. Contributions are very much
-appreciated, and will help to make PHPlist a solid and useful application
-for everyone.
+- You may also wish to join our support forum (http://www.phplist.com/forums/)
+  and mention your bug.  Please include a direct link to your bug report, if
+  you filed one.
+  
+Thanks in advance for taking the time.  Contributions are very much appreciated, 
+and will help to make PHPlist a solid and useful application for everyone.
 

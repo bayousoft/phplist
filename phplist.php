@@ -1,5 +1,5 @@
 <?
-# class to become plugin for the web httblerp://demo.tincan.co.uk
+# class to become plugin for the webbler http://demo.tincan.co.uk
 # this file is not used in the standalone version
 
 class phplist extends DefaultPlugin {
@@ -21,7 +21,10 @@ class phplist extends DefaultPlugin {
       "user_history" => $usertable_prefix . "user_history",
       "list" => $table_prefix . "list",
       "listuser" => $table_prefix . "listuser",
+      "user_blacklist" => $table_prefix . "user_blacklist",
+      "user_blacklist_data" => $table_prefix . "user_blacklist_data",
       "message" => $table_prefix . "message",
+      "messagedata" => $table_prefix. "messagedata",
       "listmessage" => $table_prefix . "listmessage",
       "usermessage" => $table_prefix . "usermessage",
       "attribute" => $usertable_prefix . "attribute",
@@ -31,6 +34,7 @@ class phplist extends DefaultPlugin {
       "templateimage" => $table_prefix . "templateimage",
       "bounce" => $table_prefix ."bounce",
       "user_message_bounce" => $table_prefix . "user_message_bounce",
+      "user_message_forward" => $table_prefix . 'user_message_forward',
       "config" => $table_prefix . "config",
       "admin" => $table_prefix . "admin",
       "adminattribute" => $table_prefix . "adminattribute",
@@ -45,7 +49,13 @@ class phplist extends DefaultPlugin {
       "rssitem" => $table_prefix . "rssitem",
       "rssitem_data" => $table_prefix . "rssitem_data",
       "user_rss" => $table_prefix . "user_rss",
-      "rssitem_user" => $table_prefix . "rssitem_user"
+      "rssitem_user" => $table_prefix . "rssitem_user",
+      "listrss" => $table_prefix . "listrss",
+      "sessiontable" => "WebblerSessions",
+      "urlcache" => $table_prefix . "urlcache",
+      'linktrack' => $table_prefix .'linktrack',
+      'linktrack_userclick' => $table_prefix.'linktrack_userclick',
+      'userstats' => $table_prefix .'userstats',
     );
     $this->addDataType("phplist_1","Mailinglist Pages");
    # $_GET["id"] = 1;
@@ -75,9 +85,24 @@ class phplist extends DefaultPlugin {
       "public_html/lists/admin/lib.php",
       "public_html/lists/texts/english.inc",
  //     "public_html/lists/admin/subscribelib2.php",
-#      "public_html/lists/admin/phplistObj.php",
+ //     "public_html/lists/admin/phplistObj.php",
 #      "public_html/lists/admin/defaultconfig.inc",
     );
+  }
+
+  function saveConfig($key,$val,$editable = 1) {
+    Sql_Query(sprintf('update %s set value = "%s",editable = %d where item = "%s"',
+      $this->tables["config"],$val,$editable,$key));
+    if (!Sql_Affected_Rows()) {
+      Sql_Query(sprintf('insert into %s (item,value,editable)   values("%s","%s",%d)',$this->tables["config"],$key,$val,$editable));
+    }
+  }
+
+  function getConfig($key) {
+    $req = Sql_Fetch_Row_Query(sprintf('select value from %s where item = "%s"',$this->tables["config"],$key));
+    $req[0] = preg_replace('/\[DOMAIN\]/i', $GLOBALS["domain"], $req[0]);
+    $req[0] = preg_replace('/\[WEBSITE\]/i', $GLOBALS["website"], $req[0]);
+    return $req[0];
   }
 
   function parseText($data,$leaf,$branch) {
@@ -106,6 +131,9 @@ class phplist extends DefaultPlugin {
       uniqid = "%s",htmlemail = 1
       ', $email,$password,getUniqid()),1);
     $id = Sql_Insert_Id();
+    if (is_array($_SESSION["userdata"])) {
+      saveUserByID($id,$_SESSION["userdata"]);
+    }
     $_SESSION["userid"] = $id;
     return $id;
   }
@@ -125,14 +153,109 @@ class phplist extends DefaultPlugin {
      }
     return 0;
   }
+  
+  function getUserConfig($item,$userid = 0) {
+    $value = $this->getConfig($item);
+    if ($userid) {
+      $user_req = Sql_Fetch_Row_Query("select uniqid from {$this->tables["user"]} where id = $userid");
+      $uniqid = $user_req[0];
+      # parse for placeholders
+      # do some backwards compatibility:
+      $url = $this->getConfig("unsubscribeurl");$sep = ereg('\?',$url)?'&':'?';
+      $value = eregi_replace('\[UNSUBSCRIBEURL\]', $url.$sep.'uid='.$uniqid, $value);
+      $url = $this->getConfig("confirmationurl");$sep = ereg('\?',$url)?'&':'?';
+      $value = eregi_replace('\[CONFIRMATIONURL\]', $url.$sep.'uid='.$uniqid, $value);
+      $url = $this->getConfig("preferencesurl");$sep = ereg('\?',$url)?'&':'?';
+      $value = eregi_replace('\[PREFERENCESURL\]', $url.$sep.'uid='.$uniqid, $value);
+    }
+    $value = eregi_replace('\[SUBSCRIBEURL\]', $this->getConfig("subscribeurl"), $value);
+    if ($value == "0") {
+      $value = "false";
+    } elseif ($value == "1") {
+      $value = "true";
+    }
+    return $value;
+  }
 
   function confirmUser($userid) {
     Sql_Query(sprintf('update %s set confirmed = 1 where id = %d',$this->tables["user"],$userid));
   }
 
-  function sendConfirmationRequest($userid) {
-    Sql_Query(sprintf('update %s set confirmed = 1 where id = %d',$this->tables["user"],$userid));
+  function confirmEmail($email) {
+    Sql_Query(sprintf('update %s set confirmed = 1 where email = "%s"',$this->tables["user"],$email));
   }
+
+
+  function userEmail($userid = 0) {
+    $user_req = Sql_Fetch_Row_Query("select email from {$this->tables["user"]} where id = $userid");
+    return $user_req[0];
+  }    
+
+  function sendConfirmationRequest($userid) {
+    $subscribemessage = ereg_replace('\[LISTS\]', '', $this->getUserConfig("subscribemessage",$userid));
+    $this->sendMail($this->userEmail($userid), $this->getConfig("subscribesubject"), $subscribemessage);
+    Sql_Query(sprintf('update %s set confirmed = 0 where id = %d',$this->tables["user"],$userid));
+  }
+  
+  function sendMail ($to,$subject,$message,$header = "",$parameters = "") {
+    mail($to,$subject,$message);
+    dbg("mail $to $subject");
+    if (TEST)
+      return 1;
+    if (!$to)  {
+      logEvent("Error: empty To: in message with subject $subject to send");
+      return 0;
+    } elseif (!$subject) {
+      logEvent("Error: empty Subject: in message to send to $to");
+      return 0;
+    }
+    if (isBlackListed($to)) {
+      logEvent("Error, $to is blacklisted, not sending");
+      Sql_Query(sprintf('update %s set blacklisted = 1 where email = "%s"',$GLOBALS["tables"]["user"],$to));
+      addUserHistory($to,"Marked Blacklisted","Found user in blacklist while trying to send an email, marked black listed");
+      return 0;
+    }
+    $v = phpversion();
+    $v = preg_replace("/\-.*$/","",$v);
+    if ($GLOBALS["message_envelope"]) {
+      $header = rtrim($header);
+      if ($header)
+        $header .= "\n";
+      $header .= "Errors-To: ".$GLOBALS["message_envelope"];
+      if (!$parameters || !ereg("-f".$GLOBALS["message_envelope"],$parameters)) {
+        $parameters = '-f'.$GLOBALS["message_envelope"];
+      }
+    }
+    $header .= "X-Mailer: PHPlist v".VERSION.' (http://www.phplist.com)'."\n";
+  
+    if (WORKAROUND_OUTLOOK_BUG) {
+      $header = rtrim($header);
+      if ($header)
+        $header .= "\n";
+      $header .= "X-Outlookbug-fixed: Yes";
+      $message = preg_replace("/\r?\n/", "\r\n", $message);
+    }
+  
+    if (!ereg("dev",VERSION)) {
+      if ($v > "4.0.5" && !ini_get("safe_mode")) {
+        if (mail($to,$subject,$message,$header,$parameters))
+          return 1;
+        else
+          return mail($to,$subject,$message,$header);
+      }
+      else
+        return mail($to,$subject,$message,$header);
+    } else {
+      # send mails to one place when running a test version
+      $message = "To: $to\n".$message;
+      if ($GLOBALS["developer_email"]) {
+        return mail($GLOBALS["developer_email"],$subject,$message,$header,$parameters);
+      } else {
+        print "Error: Running CVS version, but developer_email not set";
+      }
+    }
+  }
+
 
   function display($subtype,$name,$value,$docid = 0) {
     global $config;
@@ -157,6 +280,7 @@ class phplist extends DefaultPlugin {
   function adminTasks() {
     $tasks = array(
       "home" => "Administer Mailinglists",
+      "send" => "Send a message",
       "configure" => "Configure Mailinglists",
       "list" => "Lists",
       "messages" => "Messages",
@@ -183,6 +307,7 @@ class phplist extends DefaultPlugin {
     $tasks = array(
       "home" => "Administer Mailinglists",
       "list" => "Lists",
+      "configure" => "Configure",
       "messages" => "Messages",
       "reconcileusers" => "Reconcile",
       "export" => "Export Emails",
@@ -194,8 +319,15 @@ class phplist extends DefaultPlugin {
       "eventlog" => "Eventlog",
       "spage" => "Configure Subscribe Pages",
       "spageedit" => "Edit a Subscribe Page",
-      "editlist" => "Edit a list",
-      "members" => "View members of a list",
+      "viewtemplate" => "View a message template",
+      "image" => "Image",
+      "template" => "Edit a template",
+      "dbcheck" => "Check DB",
+      "processqueue" => "Process Queue",
+      "editlist" => "Edit a List",
+      "members" => "Members of a list",
+      "message" => "View a message",
+      "users" => "List Users",
     );
     return $tasks;
   }
@@ -240,7 +372,6 @@ class phplist extends DefaultPlugin {
   }
 
   function initialise() {
-    dbg("initialising phplist");
     global $config;
     foreach($this->DBstructure as $table => $val){
       if (!Sql_Table_exists($table)) {
