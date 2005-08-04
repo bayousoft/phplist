@@ -50,8 +50,8 @@ $strPreferencesTitle    = 'Mettre à jour vos préférences';
 $strUpdatePreferences   = 'Mettre à jour';
 $strPreferencesInfo     = 'Vérifiez si les informations ci-dessous sont correctes et cliquez sur le bouton "'.$strUpdatePreferences.'"';
 $strPreferencesEmailChanged = 'Votre adresse de courriel a changé. Veuillez cliquer sur le lien dans le courriel que vous allez recevoir pour confimer ce changement d\'adresse';
-$strPreferencesNotificationSent = 'Vous recevrez un courriel avec les modifications';
-$strPreferencesUpdated = 'Merci pour votre envoi. Vos informations ont été mises à jour.';
+$strPreferencesNotificationSent = 'Vous allez recevoir un courriel avec vos modifications.';
+$strPreferencesUpdated = 'Vos informations ont été mises à jour. Merci de votre Visite.';
 $strClickHere          = 'Cliquez ici';
 $strThisLink           = 'ce lien';
 $strToUnsubscribe      = 'Pour vous désabonner à cette liste, visitez';
@@ -90,4 +90,7 @@ $strPersonalLocationInfo = '<p>Cette page nécessite une authentification personn
 <p>Si vous ne connaissez pas sa localisation, vous pouvez demander un courriel qui vous la fera
  parvenir. Veuillez entrer votre adresse de courriel dans le champ et cliquer sur "Continuer"';
 $strPersonalLocationSent = '<h1>Bravo ! vous allez recevoir un courriel avec vos indications personnalisées</h1>';
+$strYouAreBlacklisted = '<br>Votre compte est dans notre "Black List", vous avez demandé à ne plus recevoir d"information de notre part. <br/>
+Pour recevoir de nouveau nos courriels notre administrateur doit éffectuer une intervention manuelle. Contacter le afin qu"il vous retire de notre "Black List", vous pourrez alors vous abonner de nouveau';
 ?>
+
