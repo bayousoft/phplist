@@ -144,7 +144,8 @@ $lan = array(
   'open' => 'open',
   'import is not available' => 'import is not available',
 
-
+  # new for 2.10.0
+  'Please wait, upgrading your database, do not interrupt' => 'Please wait, upgrading your database, do not interrupt',
 );
 
 ?>

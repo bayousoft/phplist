@@ -29,5 +29,11 @@ $lan = array(
   'Check that all external images exist' => 'Check that all external images exist',
   'Save Changes' => 'Save Changes',
   'Save Images' => 'Save Images',
+
+  # added 2.10.0
+  'You can upload a template file or paste the text in the box below' => 'You can upload a template file or paste the text in the box below',
+  'Template file.' => 'Template file.',
+
+
 );
 ?>
