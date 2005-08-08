@@ -113,12 +113,14 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
   # now check whether this user already exists.
   $email = $_POST["email"];
   $result = Sql_query("select * from {$GLOBALS["tables"]["user"]} where email = \"$email\"");#"
+  $rssfrequency = validateRssFrequency($_POST['rssfrequency']);
+
   if (!Sql_affected_rows()) {
     # they do not exist, so add them
     $query = sprintf('insert into %s (email,entered,uniqid,confirmed,
       htmlemail,subscribepage,rssfrequency) values("%s",now(),"%s",0,%d,%d,"%s")',
     $GLOBALS["tables"]["user"],addslashes($email),getUniqid(),$htmlemail,$id,
-    $_POST["rssfrequency"]);
+    $rssfrequency);
     $result = Sql_query($query);
     $userid = Sql_Insert_Id();
     addSubscriberStatistics('total users',1);
@@ -145,13 +147,6 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
     $userid = $old_data["id"];
     $old_data = array_merge($old_data,getUserAttributeValues('',$userid));
     $history_entry = 'http://'.getConfig("website").$GLOBALS["adminpages"].'/?page=user&id='.$userid."\n\n";
-    $rssfrequency = '';
-    # @@@@ needs checking
-    if (isset($_POST['rssfrequency'])) {
-      if (in_array($_POST['rssfrequency'],array_keys($GLOBALS['rssfrequencies']))) {
-        $rssfrequency = $_POST['rssfrequency'];
-      }
-    }
 
     $query = sprintf('update %s set email = "%s",htmlemail = %d,subscribepage = %d,rssfrequency = "%s" where id = %d',$GLOBALS["tables"]["user"],addslashes($email),$htmlemail,$id,$rssfrequency,$userid);
     $result = Sql_query($query);
@@ -358,8 +353,9 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
     $storepassword = "";
   }
 
-  $query = sprintf('update %s set email = "%s", %s htmlemail = %d where id = %d',
-    $GLOBALS["tables"]["user"],addslashes($_POST["email"]),$storepassword,$_POST["htmlemail"],$userid);
+  $rssfrequency = validateRssFrequency($_POST['rssfrequency']);
+  $query = sprintf('update %s set email = "%s", %s htmlemail = %d, rssfrequency = "%s" where id = %d',
+    $GLOBALS["tables"]["user"],addslashes($_POST["email"]),$storepassword,$_POST["htmlemail"],$rssfrequency,$userid);
  #print $query;
   $result = Sql_query($query);
   if ($data["email"] != $email) {
@@ -395,8 +391,9 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
     $datachange .= "$strSendHTML : ";
     $datachange .= $_POST["htmlemail"] ? "$strYes\n":"$strNo\n";
   }
-  if ($_POST["rssfrequency"]) {
-    $datachange .= "$strFrequency : ".$_POST["rssfrequency"]."\n";
+  $rssfrequency = validateRssFrequency($_POST['rssfrequency']);
+  if ($rssfrequency) {
+    $datachange .= "$strFrequency : ".$rssfrequency."\n";
   }
 
   # remember the users attributes

@@ -96,7 +96,7 @@ if (!$xormask) {
 }
 define('XORmask',$xormask);
 
-$rssfrequencies = array(
+$GLOBALS['rssfrequencies'] = array(
 #  "hourly" => $strHourly, # to be added at some other point
   "daily" => $strDaily,
   "weekly" => $strWeekly,

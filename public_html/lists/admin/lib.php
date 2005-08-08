@@ -770,6 +770,14 @@ function matchBounceRules($text,$rules = array()) {
   return '';
 }
 
+function validateRssFrequency($freq = '') {
+  if (!$freq) return '';
+  if (in_array($freq,array_keys($GLOBALS['rssfrequencies']))) {
+    return $freq;
+  }
+  return '';
+}
+
 class timer {
   var $start;
 
