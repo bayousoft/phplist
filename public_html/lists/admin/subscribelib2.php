@@ -378,10 +378,18 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
     while(list($key,$val)= each($_POST["list"])) {
       if ($val == "signup") {
         $result = Sql_query("replace into {$GLOBALS["tables"]["listuser"]} (userid,listid,entered) values($userid,$key,now())");
-        $lists .= "  * ".$_POST["listname"][$key]."\n";
+#        $lists .= "  * ".$_POST["listname"][$key]."\n";
       }
     }
   }
+  # check list membership
+  $req = Sql_Query(sprintf('select * from %s listuser,%s list where listuser.userid = %d and listuser.listid = list.id and list.active',$GLOBALS['tables']['listuser'],$GLOBALS['tables']['list'],$userid));
+  while ($row = Sql_Fetch_Array($req)) {
+    $lists .= "  * ".listName($row['listid'])."\n";
+  }
+
+  if ($lists == "")
+    $lists = "No Lists";
   if ($lists == "")
     $lists = "No Lists";
 
