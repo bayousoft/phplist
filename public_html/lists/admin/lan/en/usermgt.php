@@ -8,4 +8,5 @@ $lan = array(
   'check' => 'Check for Users',
   'import' => 'Import Users',
   'export' => 'Export Users',
+  'mass unconfirm users' => 'Mass Unconfirm Users'
 );
