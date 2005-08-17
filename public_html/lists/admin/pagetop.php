@@ -14,8 +14,9 @@
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />
 <meta http-equiv="pragma" content="no-cache" />
 <link rev="made" href="mailto:phplist%40tincan.co.uk" />
-<link rel="home" href="http://www.phplist.com" />
-<link rel="copyright" href="mailto:phplist%40tincan.co.uk" />
+<link rel="home" href="http://www.phplist.com" title="phplist homepage" />
+<link rel="copyright" href="http://tincan.co.uk" title="Copyright" />
+<link rel="license" href="http://www.gnu.org/copyleft/gpl.html" title="GNU General Public License" />
 <meta name="Author" content="Michiel Dethmers - http://www.phplist.com" />
 <meta name="Copyright" content="Michiel Dethmers, Tincan Ltd - http://tincan.co.uk" />
 <meta name="Powered-By" content="PHPlist version <?php echo VERSION?>" />
