@@ -360,12 +360,14 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 
     # to process the Yahoo webpage with base href and link like <a href=link> we'd need this one
 #    preg_match_all('/<a href=([^> ]*)([^>]*)>(.*)<\/a>/Umis',$htmlmessage,$links);
+    $clicktrack_root = sprintf('http://%s/lt.php',$website.$GLOBALS["pageroot"]);
+    $phplist_root = sprintf('http://%s',$website.$GLOBALS["pageroot"]);
     for($i=0; $i<count($links[2]); $i++){
       $link = cleanUrl($links[2][$i]);
       $link = str_replace('"','',$link);
       $linkid = 0;
 #      print "LINK: $link<br/>";
-      if ((preg_match('/^http|ftp/',$link) || preg_match('/^http|ftp/',$urlbase)) && $link != 'http://www.phplist.com') {
+      if ((preg_match('/^http|ftp/',$link) || preg_match('/^http|ftp/',$urlbase)) && $link != 'http://www.phplist.com' && !strpos($link,$clicktrack_root)) {
         # take off personal uids
         $url = cleanUrl($link,array('PHPSESSID','uid'));
 
@@ -389,11 +391,14 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     }
 
     # convert Text message
-    preg_match_all('#(http://[^\s\}]+)#mis',$textmessage,$links);
+    preg_match_all('#(http://[^\s\>\}]+)#mis',$textmessage,$links);
     for($i=0; $i<count($links[1]); $i++){
-      $link = cleanUrl($links[1][$i]);
+#      $fullmatch = $links[0][$i];
+      $link = strtolower(cleanUrl($links[1][$i]));
       $linkid = 0;
-      if (preg_match('/^http|ftp/',$link) && $link != 'http://www.phplist.com') {
+      if (preg_match('/^http|ftp/',$link) && $link != 'http://www.phplist.com' && !strpos($link,$clicktrack_root)
+      && $link != $phplist_root && $link != $phplist_root.'/'
+      ) {
  #       $url = preg_replace('/&uid=[^\s&]+/','',$link);
         $url = cleanUrl($link,array('PHPSESSID','uid'));
 
@@ -414,7 +419,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   #
   if (eregi("\[LISTS\]",$htmlmessage)) {
     $lists = "";$listsarr = array();
-    $req = Sql_Verbose_Query(sprintf('select list.name from %s as list,%s as listuser where list.id = listuser.listid and listuser.userid = %d',$tables["list"],$tables["listuser"],$user_system_values["id"]));
+    $req = Sql_Query(sprintf('select list.name from %s as list,%s as listuser where list.id = listuser.listid and listuser.userid = %d',$tables["list"],$tables["listuser"],$user_system_values["id"]));
     while ($row = Sql_Fetch_Row($req)) {
       array_push($listsarr,$row[0]);
     }
@@ -764,10 +769,13 @@ function stripHTML($text) {
   $text = preg_replace("/\r/","",$text);
 
   #$text = preg_replace("/\n/","###NL###",$text);
-   $text = preg_replace("/<script[^>]*>(.*?)<\/script\s*>/is","",$text);
-   $text = preg_replace("/<style[^>]*>(.*?)<\/style\s*>/is","",$text);
+  $text = preg_replace("/<script[^>]*>(.*?)<\/script\s*>/is","",$text);
+  $text = preg_replace("/<style[^>]*>(.*?)<\/style\s*>/is","",$text);
 
-  $text = preg_replace("/<a href=\"(.*?)\"[^>]*>(.*?)<\/a>/is","\\2\n{\\1}",$text,100);
+  # would prefer to use < and > but the strip tags below would erase that.
+#  $text = preg_replace("/<a href=\"(.*?)\"[^>]*>(.*?)<\/a>/is","\\2\n{\\1}",$text,100);
+
+  $text = preg_replace("/<a href=\"(.*?)\"[^>]*>(.*?)<\/a>/is","[URLTEXT]\\2[/URLTEXT][LINK]\\1[/LINK]",$text,100);
 
   $text = preg_replace("/<b>(.*?)<\/b\s*>/is","*\\1*",$text);
   $text = preg_replace("/<h[\d]>(.*?)<\/h[\d]\s*>/is","**\\1**\n",$text);
@@ -779,6 +787,23 @@ function stripHTML($text) {
   $text = preg_replace("/<br\s*?\/>/i","<br\/>\n",$text);
   $text = preg_replace("/<table/i","\n\n<table",$text);
   $text = strip_tags($text);
+
+  # find all URLs and replace them back
+  preg_match_all('~\[URLTEXT\](.*)\[/URLTEXT\]\[LINK\](.*)\[/LINK\]~Ui', $text, $links);
+  foreach ($links[0] as $matchindex => $fullmatch) {
+    $linktext = $links[1][$matchindex];
+    $linkurl = $links[2][$matchindex];
+    # check if the text linked is a repetition of the URL
+    if (strtolower(trim($linktext)) == strtolower(trim($linkurl)) ||
+      'http://'.strtolower(trim($linktext)) == strtolower(trim($linkurl))) {
+        $linkreplace = $linkurl;
+    } else {
+      $linkreplace = $linktext.' <'.strtolower($linkurl).'>';
+    }
+    $text = preg_replace('~'.preg_quote($fullmatch).'~',$linkreplace,$text);
+  }
+  $text = preg_replace("/<a href=\"(.*?)\"[^>]*>(.*?)<\/a>/is","[URLTEXT]\\2[/URLTEXT][LINK]\\1[/LINK]",$text,100);
+
   $text = replaceChars($text);
   $text = preg_replace("/###NL###/","\n",$text);
   # reduce whitespace
