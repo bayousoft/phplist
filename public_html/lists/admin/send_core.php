@@ -639,6 +639,8 @@ if (!isset($messagedata['criteria_overall_operator'])) {
 }
 $mainoperator = $messagedata['criteria_overall_operator'] == "all"? ' and ':' or ';
 
+$subqueries = array();
+
 for ($i = 1; $i<=$num;$i++) {
   $crit_data = parseDelimitedData($messagedata[sprintf('criterion%d',$i)]);
   if ($crit_data["attribute"]) {
@@ -677,6 +679,8 @@ for ($i = 1; $i<=$num;$i++) {
           $or_clause .= "find_in_set('$val',table$tc.value) $compare 0";
         }
         $where_clause .= $or_clause . ") ) ";
+        $subqueries[$i]['query'] = sprintf('select userid from %s as table%d where attributeid = %d
+          and %s',$GLOBALS['tables']['user_attribute'],$tc,$crit_data['attribute'],$or_clause);
         break;
       case "checkbox":
         $value = $crit_data["values"][0];
@@ -692,12 +696,17 @@ for ($i = 1; $i<=$num;$i++) {
         if ($crit_data["operator"] == "isnot") {
           $where_clause .= ' not ';
         }
+        $valueselect = '';
         if ($value) {
-          $where_clause .= "( length(table$tc.value) and table$tc.value != \"off\" and table$tc.value != \"0\") ";
+          $valueselect = " length(table$tc.value) and table$tc.value != \"off\" and table$tc.value != \"0\" ";
         } else {
-          $where_clause .= "( table$tc.value = \"\" or table$tc.value = \"0\" or table$tc.value = \"off\") ";
+          $valueselect = " table$tc.value = \"\" or table$tc.value = \"0\" or table$tc.value = \"off\" ";
         }
-        $where_clause .= ' ) ';
+
+        $where_clause .= '( '.$valueselect . ') ) ';
+        $subqueries[$i]['query'] = sprintf('select userid from %s as table%d where attributeid = %d
+          and %s',$GLOBALS['tables']['user_attribute'],$tc,$crit_data['attribute'],$valueselect);
+
         break;
       case "date":
         $date_value = parseDate($crit_data["values"]);
@@ -712,18 +721,23 @@ for ($i = 1; $i<=$num;$i++) {
         }
 
         $where_clause .= ' ( table'.$tc.'.attributeid = '.$crit_data["attribute"].' and table'.$tc.'.value != "" and table'.$tc.'.value ';
-
+        $dateoperator = '';
         switch ($crit_data["operator"]) {
           case "is":
-            $where_clause .= ' = "'.$date_value . '" )';break;
+            $where_clause .= ' = "'.$date_value . '" )';$dateoperator = '=';break;
           case "isnot":
-            $where_clause .= ' != "'.$date_value . '" )';break;
+            $where_clause .= ' != "'.$date_value . '" )';$dateoperator = '!=';break;
           case "isbefore":
-            $where_clause .= ' <= "'.$date_value . '" )';break;
+            $where_clause .= ' <= "'.$date_value . '" )';$dateoperator = '<=';break;
           case "isafter":
-            $where_clause .= ' >= "'.$date_value . '" )';break;
+            $where_clause .= ' >= "'.$date_value . '" )';$dateoperator = '>=';break;
         }
 #        $where_clause .= " )";
+        $subqueries[$i]['query'] = sprintf('select userid from %s where attributeid = %d and value != "" and value %s "%s" ',$GLOBALS['tables']['user_attribute'],
+          $crit_data['attribute'],
+          $dateoperator,
+          $date_value);
+
         break;
       default:
         if (isset($where_clause)) {
@@ -740,6 +754,13 @@ for ($i = 1; $i<=$num;$i++) {
           $where_clause .= ' in (';
         }
         $where_clause .= $crit_data["values"] . ") )";
+        $subqueries[$i]['query'] = sprintf('select userid from %s
+        where attributeid = %d and
+        value %s in (%s) ',$GLOBALS['tables']['user_attribute'],
+          $crit_data['attribute'],
+          $crit_data["operator"] == "isnot" ? 'not' :'',
+          $crit_data["values"]);
+
     }
     $tc++;
   }
@@ -750,12 +771,34 @@ if ($num) {
 #    $count_query = addslashes($count_query);
   if ($_GET["calculate"]) {
     ob_end_flush();
-    print "<h1>$count_query</h1>";
+   # print "<h1>$count_query</h1>";
     print "<p>".$GLOBALS['I18N']->get("calculating")." ...";
     flush();
+    foreach ($subqueries as $qid => $querydetails) {
+      $req = Sql_Query($querydetails['query']);
+      $subqueries[$qid]['results'] = array();
+      while ($row = Sql_Fetch_Row($req)) {
+        array_push($subqueries[$qid]['results'],$row[0]);
+      }
+    }
+    $first = array_shift($subqueries);
+    $userids = $first['results'];
+    foreach ($subqueries as $subquery) {
+      if ($messagedata['criteria_overall_operator'] == 'all') {
+        $userids = array_intersect($userids,$subquery['results']);
+      } else {
+        $userids = array_merge($userids,$subquery['results']);
+      }
+    }
+    $userids = array_unique($userids);
+#    $req = Sql_Query($count_query);
+#    $num = Sql_Num_Rows($req);
+    $num = sizeof($userids);
 
-    $req = Sql_Query($count_query);
-    $num = Sql_Num_Rows($req);
+    $count_query = sprintf('select * from %s where id in (%s)',$GLOBALS['tables']['user'],join(', ',$userids));
+
+#    $req = Sql_Query($count_query);
+#    $num = Sql_Num_Rows($req);
     printf('.. '.$GLOBALS['I18N']->get('%d users apply'),$num).'</p>';
   }
 
@@ -764,7 +807,11 @@ if ($num) {
       $tables["message"],addslashes($count_query),$messageid));
   }
 
-  $ls->addButton($GLOBALS['I18N']->get("calculate"),$baseurl.'&amp;tab='.$_GET["tab"].'&amp;calculate=1');
+  if (!isset($_GET['calculate'])) {
+    $ls->addButton($GLOBALS['I18N']->get("calculate"),$baseurl.'&amp;tab='.$_GET["tab"].'&amp;calculate=1');
+  } else {
+    $ls->addButton($GLOBALS['I18N']->get("reload"),$baseurl.'&amp;tab='.$_GET["tab"]);
+  }
   $existing_criteria = $ls->display();
 }
 
