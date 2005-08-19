@@ -21,3 +21,4 @@
 <meta name="Copyright" content="Michiel Dethmers, Tincan Ltd - http://tincan.co.uk" />
 <meta name="Powered-By" content="PHPlist version <?php echo VERSION?>" />
 <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $strCharSet?>" />
+
