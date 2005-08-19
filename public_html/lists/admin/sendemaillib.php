@@ -856,7 +856,10 @@ function parseText($text) {
   $text = ereg_replace("\)","<!--RB-->",$text);
   $text = preg_replace('/\$/',"<!--DOLL-->",$text);
 
-  $paragraph = '<p>';
+  # @@@ to be xhtml compabible we'd have to close the <p> as well
+  # so for now, just make it two br/s, which will be done by replacing
+  # \n with <br/>
+#  $paragraph = '<p>';
   $br = '<br />';
   $text = ereg_replace("\r","",$text);
   $text = ereg_replace("\n\n","\n".$paragraph,$text);
