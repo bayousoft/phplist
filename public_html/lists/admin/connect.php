@@ -896,16 +896,22 @@ function repeatMessage($msgid) {
   Sql_Query(sprintf('
     insert into %s (entered) values(now())',$GLOBALS["tables"]["message"]));
   $id = Sql_Insert_id();
-  require $GLOBALS["3"]."structure.php";
+  require dirname(__FILE__).'/structure.php';
   if (!is_array($DBstruct["message"])) {
     logEvent("Error including structure when trying to duplicate message $msgid");
     return;
-   }
+  }
   foreach ($DBstruct["message"] as $column => $rec) {
-    if ($column != "id" && $column != "entered") {
+    if ($column != "id" && $column != "entered" && $column != "sendstart") {
       Sql_Query(sprintf('update %s set %s = "%s" where id = %d',
         $GLOBALS["tables"]["message"],$column,addslashes($msgdata[$column]),$id));
      }
+  }
+  $req = Sql_Query(sprintf('select * from %s where id = %d',
+    $GLOBALS['tables']['messagedata'],$msgid));
+  while ($row = Sql_Fetch_Array($req)) {
+    Sql_Query(sprintf('insert into %s (name,id,data) values("%s",%d,"%s")',
+      $GLOBALS['tables']['messagedata'],$row['name'],$id,addslashes($row['data'])));
   }
 
   # check whether the new embargo is not on an exclusion
