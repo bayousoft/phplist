@@ -1,7 +1,7 @@
 <?php
 
 ## notes to translators:
-# do not translate anything in square brackets: eg [RSS] 
+# do not translate anything in square brackets: eg [RSS]
 
 $lan = array (
   'noaccess' => 'Este mensaje no existe, o bien usted no tiene acceso
@@ -46,9 +46,7 @@ $lan = array (
   'scheduling' => 'Calendario',
   'criteria' => 'Criterios',
   'lists' => 'Listas',
-  'unsavedchanges' => 'Atenci&oacute;n: Ha hecho cambios que no ha
-  salvado\nS&aacute;lvelos primero, o haga click en
-  &#171;cancelar&#187; para descartar los cambios y continuar',
+  'unsavedchanges' => '&#161;Cuidado! No ha salvado sus cambios\nHaga clic en OK para continuar o Anular para no cambiar de p&agrave;gina\npara poder salvar sus cambios.',
   'whatisprepare' => '&#191;Qu&eacute; es &#171;Preparar un mensaje&#187;?',
   'subject' => 'Asunto',
   'fromline' => 'campo &#171;De&#187;',
@@ -79,7 +77,7 @@ $lan = array (
   'plaintextversion' => 'Versi&oacute; en texto plano del mensaje',
   'messagefooter' => 'Pie de mensaje',
   'messagefooterexplanation' => 'Utilice <b>[UNSUBSCRIBE]</b> para incluir
-  una URL &uacute;nica para cada usuario, en la que se pueda desinscribir. 
+  una URL &uacute;nica para cada usuario, en la que se pueda desinscribir.
     <br/>Utilice <b>[PREFERENCES]</b> para incluir una URL &uacute;nica
   para cada usuario, en la que se pueda actualizar sus datos',
   'addattachments' => 'Adjuntar ficheros a su mensaje.',
@@ -128,7 +126,7 @@ $lan = array (
   'buggywithie' => 'Atenci&oacute;n: esta funci&oacute;n da errores y
   no es fiable con IE.\nEs preferible utilizar Mozilla, Firefox u
   Opera\nTambi&eacute;n puede desconectar STACKED_ATTRIBUTE_SELECTION
-  en su fichero de configuraci&oacute;n', # Don't translate STACKED_ATTRIBUTE_SELECTION 
+  en su fichero de configuraci&oacute;n', # Don't translate STACKED_ATTRIBUTE_SELECTION
   'matchallrules' => 'Concuerda con todas estas normas',
   'matchanyrules' => 'Concuerda con alguna de estas normas',
   'addcriterion' => 'A&ntilde;adir criterio',
@@ -136,9 +134,9 @@ $lan = array (
   'savechanges' => 'Salvar cambios',
   'selectattribute' => 'seleccionar atributo',
   'dd-mm-yyyy' => 'dd-mm-yyyy', # it's essential that the format is the same (ie dd-mm-yyyy)
-  
+
   # above is all from send_core
-  
+
   'selectlists' => 'Escoja las listas a las que lo quiere enviar',
   'alllists' => 'Todas las listas',
   'listactive' => 'La lista est&aacute; activa',
@@ -152,9 +150,9 @@ $lan = array (
   'warnnopearhttprequest' => 'Est&aacute; intentando enviar una URL
   remota, pero PEAR::HTTP/Request no est&aacute; disponible, de modo
   que esto no va a funcionar',
-  #  
+  #
 
-  
+
   ### new in 2.9.5
   'Misc' => 'Varios',
   'email to alert when sending of this message starts' => 'Email al que avisar cuando comienze el env&iacute;o de este mensaje.',

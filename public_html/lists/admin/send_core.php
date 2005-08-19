@@ -883,7 +883,7 @@ if (!$done) {
   // detection of unsaved changes,
   var browser = navigator.appName.substring ( 0, 9 );
   var changed = 0; function haschanged() {changed = 1; }
-  function savechanges() { if (changed) { if (confirm("<?php echo str_replace('"','&quot',reverse_htmlentities($GLOBALS['I18N']->get("unsavedchanges")))?>")) return false; else return true; return true;}}
+  function savechanges() { if (changed) { if (confirm("<?php echo str_replace('"','&quot',reverse_htmlentities($GLOBALS['I18N']->get("unsavedchanges")))?>")) return true; else return false; return false;}}
   //'
   var event_number = 0;if (browser=="Microsoft") {  document.onkeydown=haschanged;  document.onchange=haschanged;} else if (browser=="Netscape") {  document.captureEvents(Event.KEYDOWN);  document.captureEvents(Event.CHANGE); document.onkeydown=haschanged;document.onchange=haschanged;}
   function submitform() { document.sendmessageform.submit() }

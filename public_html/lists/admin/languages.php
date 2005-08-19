@@ -121,10 +121,10 @@ class phplist_I18N {
 
   function formatText($text) {
     if (isset($GLOBALS["developer_email"])) {
-      return '<font color=#A704FF>'.$text.'</font>';
+      return '<font color=#A704FF>'.str_replace("\n","",$text).'</font>';
 #       return 'TE'.$text.'XT';
     }
-    return $text;
+    return str_replace("\n","",$text);
   }
 
   function missingText($text) {

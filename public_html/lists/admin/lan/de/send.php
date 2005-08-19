@@ -6,7 +6,7 @@
 $lan = array (
   'noaccess' => 'Diese Nachricht existiert nicht, oder Sie haben keine Zugriffsberechtigung.',
   'htmlusedwarning' =>
-  	'Warnung: Sie haben angegeben, dass der Inhalt kein HTML ist, aber er enth&auml;lt einige HTML-Tags. Dies kann zu Problemen f&uuml;hren.',
+    'Warnung: Sie haben angegeben, dass der Inhalt kein HTML ist, aber er enth&auml;lt einige HTML-Tags. Dies kann zu Problemen f&uuml;hren.',
   'adding' => 'F&uuml;ge hinzu',
   'longmimetype' => 'Der MIME-Type ist l&auml;nger als 255 Zeichen. Dies kann zu Problemen f&uuml;hren.',
   'addingattachment' => 'Hinzugef&uuml;gtes Attachment ',
@@ -36,7 +36,7 @@ $lan = array (
   'scheduling' => 'Planen',
   'criteria' => 'Kriterien',
   'lists' => 'Listen',
-  'unsavedchanges' => 'Warnung: Sie haben nicht gespeicherte &Auml;nderungen.\nSpeichern Sie zuerst, oder w&auml;hlen Sie [Abbrechen], um die &Auml;nderungen zu verwerfen.',
+  'unsavedchanges' => 'Warnung: Sie haben nicht gespeicherte &Auml;nderungen. Best&auml;tigen Sie mit [OK],\n um trotzdem fortzufahren, oder w&auml;hlen Sie [Abbrechen], wenn Sie Ihre\n&Auml;nderungen zuerst speichern m&ouml;chten.',
   'whatisprepare' => 'Was ist eine Vorlage?',
   'subject' => 'Betreff',
   'fromline' => 'Absender',
@@ -67,9 +67,9 @@ $lan = array (
   'messagefooterexplanation' => 'Mit <b>[UNSUBSCRIBE]</b> f&uuml;gen Sie einen personalisierten Abmelde-Link f&uuml;r jeden Abonnenten ein.
     <br/>Mit <b>[PREFERENCES]</b> f&uuml;gen Sie einen Link auf das pers&ouml;nliche Profil f&uuml;r jeden Abonnenten ein',
   'addattachments' => 'Attachments zur Nachricht hinzuf&uuml;gen',
-  'uploadlimits' => 'Für Ihren Server gelten folgende Limiten',
+  'uploadlimits' => 'Fr Ihren Server gelten folgende Limiten',
   'maxtotaldata' => 'Maximale Datenmenge (total)',
-  'maxfileupload' => 'Maximale Dateigrösse (pro Datei)',
+  'maxfileupload' => 'Maximale Dateigrï¿½se (pro Datei)',
   'currentattachments' => 'Aktuelle Attachments',
   'filename' => 'Dateiname',
   'desc' => 'Beschreibung',# short for description
@@ -101,8 +101,8 @@ $lan = array (
   'isbefore' => 'liegt vor', # date and time wise
   'isafter' => 'liegt nach', # date and time wise
   'nocriteria' =>
-  	'Derzeit existieren keine Attribute, welche als Auswahlkriterien f&uuml;r den Nachrichtenversand benutzt werden k&ouml;nnten.
-	Die Nachricht wird an s&auml;mtliche Abonnenten der gew&auml;hlten Liste(n) gesendet.',
+    'Derzeit existieren keine Attribute, welche als Auswahlkriterien f&uuml;r den Nachrichtenversand benutzt werden k&ouml;nnten.
+  Die Nachricht wird an s&auml;mtliche Abonnenten der gew&auml;hlten Liste(n) gesendet.',
   'checked' => 'Angew&auml;hlt', # as for checkbox
   'unchecked' => 'Nicht angew&auml;hlt', # as for checkbox
   'buggywithie' => 'Achtung: Diese Funktion funktioniert nicht einwandfrei im Microsoft Internet Explorer.\nEs wird empfohlen, Mozilla, Firefox oder Opera als Browser zu benutzen.\nAls Alternative deaktivieren Sie STACKED_ATTRIBUTE_SELECTION in Ihrer Konfigurationsdatei.', # Don't translate STACKED_ATTRIBUTE_SELECTION
@@ -131,9 +131,9 @@ $lan = array (
   ### new in 2.9.5
   'Misc' => 'Diverses',
   'email to alert when sending of this message starts' =>
-  	'Benachrichtigung beim Beginn des Versands an E-Mail-Adresse(n)',
+    'Benachrichtigung beim Beginn des Versands an E-Mail-Adresse(n)',
   'email to alert when sending of this message has finished' =>
-  	'Benachrichtigung nach Beendigung des Versands an E-Mail-Adresse(n)',
+    'Benachrichtigung nach Beendigung des Versands an E-Mail-Adresse(n)',
   'separate multiple with a comma' => '(mehrere Adressen durch Kommata trennen)',
   'operator' => 'Operator',
   'values' => 'Werte',

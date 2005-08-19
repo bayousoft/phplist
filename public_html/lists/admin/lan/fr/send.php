@@ -1,7 +1,7 @@
 <?php
 
 ## notes to translators:
-# do not translate anything in square brackets: eg [RSS] 
+# do not translate anything in square brackets: eg [RSS]
 
 $lan = array (
   'noaccess' => 'Il n&rsquo;y a pas de message de ce type, ou alors vous n&rsquo;&ecirc;tes pas autoris&eacute;(e) &agrave; y acc&eacute;der',
@@ -35,7 +35,7 @@ $lan = array (
   'scheduling' => 'Envoi programm&eacute;',
   'criteria' => 'Crit&egrave;res',
   'lists' => 'Listes',
-  'unsavedchanges' => 'Avertissement, Vous avez effectu&eacute; des modifications qui n&rsquo;ont pas &eacute;t&eacute; sauvegard&eacute;es\nSauvegardez les d&rsquo;abord, ou cliquez sur annuler pour annuler les modifications et poursuivre',
+  'unsavedchanges' => 'Attention! Vous n\'avez pas sauvegard&eacute; vos modifications\nCliquez OK pour continuer ou Annuler pour rester sur cette page\npour vous permettre de sauvegarder vos modifications.',
   'whatisprepare' => 'Qu&rsquo;est-ce que pr&eacute;parer un message',
   'subject' => 'Objet',
   'fromline' => 'Exp&eacute;diteur',
@@ -63,7 +63,7 @@ s&eacute;lectionnez la fr&eacute;quence d&rsquo;envoi et utilisez [RSS] dans vot
   'expand' => 'd&eacute;compresser',
   'plaintextversion' => 'Version texte du message',
   'messagefooter' => 'Pied de page du message',
-  'messagefooterexplanation' => 'Utilisez <b>[UNSUBSCRIBE]</b> pour inclure l&rsquo;URL de d&eacute;sinscription propre &agrave; chaque utilisateur. 
+  'messagefooterexplanation' => 'Utilisez <b>[UNSUBSCRIBE]</b> pour inclure l&rsquo;URL de d&eacute;sinscription propre &agrave; chaque utilisateur.
     <br/>Utilisez <b>[PREFERENCES]</b> pour inclure l&rsquo;URL personnalis&eacute;e pour qu&rsquo;un utilisateur puisse mettre &agrave; jour ses donn&eacute;es personnelles',
   'addattachments' => 'Ajouter des pi&egrave;ce-jointes &agrave; votre message',
   'uploadlimits' => 'Le t&eacute;l&eacute;chargement est limit&eacute; par votre serveur comme suit',
@@ -100,7 +100,7 @@ s&eacute;lectionnez la fr&eacute;quence d&rsquo;envoi et utilisez [RSS] dans vot
   'nocriteria' => 'Il n&rsquo;y a pas encore d&rsquo;attributs disponibles pour vous permettre d&rsquo;envoyer un message.  Le message sera envoy&eacute; &agrave; tous les utilisateurs des listes s&eacute;lectionn&eacute;es',
   'checked' => 'Coch&eacute;s', # as for checkbox
   'unchecked' => 'Non coch&eacute;s', # as for checkbox
-  'buggywithie' => 'Avertissement, cette fonctionnalit&eacute; pose encore des probl&egrave;mes avec IE (Internet Explorer).\nIl serait plus s&ucirc;r d&rsquo;utiliser Mozilla, Firefox ou Opera\nOu alors d&eacute;sactivez STACKED_ATTRIBUTE_SELECTION dans votre fichier de configuration', # Don't translate STACKED_ATTRIBUTE_SELECTION 
+  'buggywithie' => 'Avertissement, cette fonctionnalit&eacute; pose encore des probl&egrave;mes avec IE (Internet Explorer).\nIl serait plus s&ucirc;r d&rsquo;utiliser Mozilla, Firefox ou Opera\nOu alors d&eacute;sactivez STACKED_ATTRIBUTE_SELECTION dans votre fichier de configuration', # Don't translate STACKED_ATTRIBUTE_SELECTION
   'matchallrules' => 'Utiliser toutes ces r&egrave;gles',
   'matchanyrules' => 'Utiliser n&rsquo;importe laquelle de ces r&egrave;gles',
   'addcriterion' => 'Ajouter Crit&egrave;re',
@@ -108,26 +108,26 @@ s&eacute;lectionnez la fr&eacute;quence d&rsquo;envoi et utilisez [RSS] dans vot
   'savechanges' => 'Sauver les modifications',
   'selectattribute' => 's&eacute;lectionner un attribut',
   'dd-mm-yyyy' => 'jj-mm-aaaa', # it's essential that the format is the same (ie dd-mm-yyyy)
-  
+
   # above is all from send_core
-  
+
   'selectlists' => 'S&eacute;lectionnez les listes auxquelles vous d&eacute;sirez envoyer votre message',
   'alllists' => 'Toutes les listes',
   'listactive' => 'La liste est activ&eacute;e',
   'listnotactive' => 'La liste n&rsquo;est pas activ&eacute;e',
   'selectexcludelist' => 'S&eacute;lectionnez les listes &agrave; exclure.',
-  'excludelistexplain' => 'Le message sera envoy&eacute; aux utilisateurs qui font partie des listes ci-dessus, 
+  'excludelistexplain' => 'Le message sera envoy&eacute; aux utilisateurs qui font partie des listes ci-dessus,
     &agrave; moins qu&rsquo;ils fassent partie d&rsquo;une des listes que vous s&eacute;lectionnez ici.',
   'nolistsavailable' => 'D&eacute;sol&eacute;, il n&rsquo;y a pour le moment aucune liste disponible.',
   'sendmessage' => 'Envoyer le message aux listes s&eacute;lectionn&eacute;es',
   'warnnopearhttprequest' => 'Vous essayez d&rsquo;envoyer un URL distant, mais  PEAR::HTTP/Request n&rsquo;est pas disponible, alors ceci &eacute;chouera',
-  #  
+  #
   'Misc' => 'Divers',
 'email to alert when sending of this message starts' => 'adresse email &agrave; qui annoncer le d&eacute;but de l&rsquo;envoi de ce message',
 'separate multiple with a comma' => 's&eacute;parer plusieurs adresses par une virgule',
 'email to alert when sending of this message has finished' => 'adresse email &agrave; qui annoncer la fin de l&rsquo;envoi de ce message',
 'separate multiple with a comma' => 's&eacute;parer plusieurs adresses par une virgule',
-  
+
 );
 
 ?>

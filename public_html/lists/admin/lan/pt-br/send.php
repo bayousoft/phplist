@@ -1,7 +1,7 @@
 <?php
 
 ## notes to translators:
-# do not translate anything in square brackets: eg [RSS] 
+# do not translate anything in square brackets: eg [RSS]
 
 $lan = array (
   'noaccess' => 'No such message, or you do not have access to it',
@@ -35,7 +35,7 @@ $lan = array (
   'scheduling' => 'Scheduling',
   'criteria' => 'Criteria',
   'lists' => 'Lists',
-  'unsavedchanges' => 'Warning, You have unsaved changes\nSave them first, or click cancel to ignore changes and continue',
+  'unsavedchanges' => 'Aten&ccedil;&atilde;o! voc&ecirc; n&atilde;o salvou as mudan&ccedil;as realizadas\nClique OK para continuar ou Cancelar para continuar nesta p&agrave;gina\ne poder salvar as mudan&ccedil;as.',
   'whatisprepare' => 'What is prepare a message',
   'subject' => 'Subject',
   'fromline' => 'From Line',
@@ -63,7 +63,7 @@ $lan = array (
   'expand' => 'expand',
   'plaintextversion' => 'Plain text version of message',
   'messagefooter' => 'Message Footer',
-  'messagefooterexplanation' => 'Use <b>[UNSUBSCRIBE]</b> to insert the personal unsubscribe URL for each user. 
+  'messagefooterexplanation' => 'Use <b>[UNSUBSCRIBE]</b> to insert the personal unsubscribe URL for each user.
     <br/>Use <b>[PREFERENCES]</b> to insert the personal URL for a user to update their details',
   'addattachments' => 'Add attachments to your message',
   'uploadlimits' => 'The upload has the following limits set by the server',
@@ -100,7 +100,7 @@ $lan = array (
   'nocriteria' => 'There are currently no attributes available to use for sending a message. The message will go to any user on the lists selected',
   'checked' => 'Checked', # as for checkbox
   'unchecked' => 'Unchecked', # as for checkbox
-  'buggywithie' => 'Warning, this functionality is buggy and unreliable with IE.\nIt will be better to use Mozilla, Firefox or Opera\nAlternatively switch off STACKED_ATTRIBUTE_SELECTION in your config file', # Don't translate STACKED_ATTRIBUTE_SELECTION 
+  'buggywithie' => 'Warning, this functionality is buggy and unreliable with IE.\nIt will be better to use Mozilla, Firefox or Opera\nAlternatively switch off STACKED_ATTRIBUTE_SELECTION in your config file', # Don't translate STACKED_ATTRIBUTE_SELECTION
   'matchallrules' => 'Match all of these rules',
   'matchanyrules' => 'Match any of these rules',
   'addcriterion' => 'Add Criterion',
@@ -108,20 +108,20 @@ $lan = array (
   'savechanges' => 'Save Changes',
   'selectattribute' => 'select attribute',
   'dd-mm-yyyy' => 'dd-mm-yyyy', # it's essential that the format is the same (ie dd-mm-yyyy)
-  
+
   # above is all from send_core
-  
+
   'selectlists' => 'Please select the lists you want to send it to',
   'alllists' => 'All Lists',
   'listactive' => 'List is Active',
   'listnotactive' => 'List is not Active',
   'selectexcludelist' => 'Select the lists to be excluded.',
-  'excludelistexplain' => 'The message will go to users who are a member of the lists above, 
+  'excludelistexplain' => 'The message will go to users who are a member of the lists above,
     unless they are a member of one of the lists you select here.',
   'nolistsavailable' => 'Sorry, there are currently no lists available',
   'sendmessage' => 'Send Message to the Selected Mailinglists',
   'warnnopearhttprequest' => 'You are trying to send a remote URL, but PEAR::HTTP/Request is not available, so this will fail',
-  #  
+  #
 );
 
 ?>
