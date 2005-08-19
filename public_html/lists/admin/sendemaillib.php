@@ -862,7 +862,7 @@ function parseText($text) {
 #  $paragraph = '<p>';
   $br = '<br />';
   $text = ereg_replace("\r","",$text);
-  $text = ereg_replace("\n\n","\n".$paragraph,$text);
+#  $text = ereg_replace("\n\n","\n".$paragraph,$text);
   $text = ereg_replace("\n","$br\n",$text);
 
   # reverse our previous placeholders

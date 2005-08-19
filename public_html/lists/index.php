@@ -458,7 +458,7 @@ function confirmPage($id) {
     $html = '<ul>';
     $lists = '';
     Sql_Query("update {$tables["user"]} set confirmed = 1,blacklisted = 0 where id = ".$userdata["id"]);
-    $req = Sql_Query("select name,description from $tables[list],$tables[listuser] where $tables[listuser].userid = ".$userdata["id"] ." and $tables[listuser].listid = $tables[list].id");
+    $req = Sql_Query(sprintf('select name,description from %s list, %s listuser where listuser.userid = %d and listuser.listid = list.id and list.active',$tables['list'],$tables['listuser'],$userdata['id']));
     if (!Sql_Affected_Rows()) {
       $lists = "\n * ".$GLOBALS["strNoLists"];
       $html .= '<li>'.$GLOBALS["strNoLists"].'</li>';
