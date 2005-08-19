@@ -581,7 +581,7 @@ $system_pages = array (
     "viewrss" => "owner",
     "purgerss" => "none",
     "setup" => "none",
-    "dbcheck" => "none"
+    "dbcheck" => "none",
   ),
   "list" => array(
     "list" => "owner",
@@ -599,7 +599,8 @@ $system_pages = array (
     "import3" => "none",
     "import4" => "none",
     "import" => "none",
-    "export" => "none"
+    "export" => "none",
+    "massunconfirm" => "none",
   ),
   "message" => array(
     "message" => "owner",
