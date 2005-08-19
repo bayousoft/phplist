@@ -12,8 +12,8 @@ if ($save && $id) {
   $info = $default_config[$id];
   if (is_array($_POST)) {
     if ($id == "website" || $id == "domain") {
-      $_POST["values"][$id] = str_replace("[WEBSITE]","",$_POST["values"][$id]);
       $_POST["values"][$id] = str_replace("[DOMAIN]","",$_POST["values"][$id]);
+      $_POST["values"][$id] = str_replace("[WEBSITE]","",$_POST["values"][$id]);
     }
     if ($_POST["values"][$id] == "" && !$info[3])
       Error("$info[1] " . $GLOBALS['I18N']->get('cannot be empty'));
@@ -49,8 +49,8 @@ if (!$id) {
     $value = $val[0];
 #  print $value . " ".$website . " ".$domain.'<br/>';
   if ($id != "website" && $id != "domain") {
-    $value = preg_replace('/'.$website.'/i','[WEBSITE]', $value);
     $value = preg_replace('/'.$domain.'/i','[DOMAIN]', $value);
+    $value = preg_replace('/'.$website.'/i','[WEBSITE]', $value);
   }
 #  print $value . '<br/>';
   if ($val[2] == "textarea")
