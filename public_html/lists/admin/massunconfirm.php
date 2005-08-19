@@ -1,4 +1,10 @@
 <?
+require_once dirname(__FILE__).'/accesscheck.php';
+
+if (!$_SESSION['logindetails']['superuser']) {
+  print $GLOBALS['I18N']->get('Sorry, this page can only be used by super admins');
+  return;
+}
 
 if ($_POST['unsubscribe']) {
   $emails = explode("\n",$_POST['unsubscribe']);

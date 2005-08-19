@@ -24,7 +24,7 @@ switch ($page) {
   case 'reconcileusers': $page_title = 'Reconcile users';break;
   case 'user': $page_title = 'Details of a user';break;
   case 'userhistory': $page_title = 'History of a user';break;
-  case 'messages': $page_title = 'All messages';break;
+  case 'messages': $page_title = 'list of messages';break;
   case 'message': $page_title = 'View a message';break;
   case 'processqueue': $page_title = 'Send message queue';break;
   case 'defaults': $page_title = 'Some useful default attributes';break;
@@ -50,5 +50,6 @@ switch ($page) {
   case 'logout': $page_title = 'Log Out';break;
   case 'mclicks': $page_title = 'Message Click Statistics'; break;
   case 'uclicks': $page_title = 'URL Click Statistics'; break;
+  case 'massunconfirm': $page_title = 'Mass Unconfirm emails';break;
 }
 ?>
