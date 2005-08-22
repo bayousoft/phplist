@@ -251,7 +251,9 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 #    $GLOBALS["tables"]["templateimage"],$cached[$messageid]["templateid"]));
 
   $htmlmessage = eregi_replace("\[USERID\]",$hash,$htmlmessage);
-  $htmlmessage = eregi_replace("\[USERTRACK\]",'<img src="http://'.$website.$GLOBALS["pageroot"].'/ut.php?u='.$hash.'&m='.$messageid.'" width="1" height="1" border="0">',$htmlmessage);
+  $htmlmessage = preg_replace("/\[USERTRACK\]/i",'<img src="http://'.$website.$GLOBALS["pageroot"].'/ut.php?u='.$hash.'&m='.$messageid.'" width="1" height="1" border="0">',$htmlmessage,1);
+  $htmlmessage = eregi_replace("\[USERTRACK\]",'',$htmlmessage);
+
   if ($listowner) {
     $att_req = Sql_Query("select name,value from {$GLOBALS["tables"]["adminattribute"]},{$GLOBALS["tables"]["admin_attribute"]} where {$GLOBALS["tables"]["adminattribute"]}.id = {$GLOBALS["tables"]["admin_attribute"]}.adminattributeid and {$GLOBALS["tables"]["admin_attribute"]}.adminid = $listowner");
     while ($att = Sql_Fetch_Array($att_req))
