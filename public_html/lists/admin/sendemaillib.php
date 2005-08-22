@@ -225,7 +225,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   $html["footer"] = eregi_replace("\[FORWARDFORM\]",$html["forwardform"],$html["footer"]);
   if (sizeof($forwardedby) && isset($forwardedby['email'])) {
     $html["footer"] = eregi_replace("\[FORWARDEDBY]",$forwardedby["email"],$html["footer"]);
-    $html["footer"] = eregi_replace("\[FORWARDEDBY]",$forwardedby["email"],$html["footer"]);
+    $text["footer"] = eregi_replace("\[FORWARDEDBY]",$forwardedby["email"],$text["footer"]);
   }
 
   $html["footer"] = '<div class="emailfooter">'.nl2br($html["footer"]).'</div>';
