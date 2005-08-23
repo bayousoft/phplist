@@ -146,6 +146,9 @@ $lan = array(
 
   # new for 2.10.0
   'Please wait, upgrading your database, do not interrupt' => 'Please wait, upgrading your database, do not interrupt',
+  'purgerss' => 'purgerss',
+  'Purge RSS items' => 'Purge RSS items',
+  'In order to login, you need to enable cookies in your browser' => 'In order to login, you need to enable cookies in your browser',
 );
 
 ?>

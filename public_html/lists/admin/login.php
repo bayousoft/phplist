@@ -16,6 +16,13 @@ if (!isset($GLOBALS['msg'])) $GLOBALS['msg'] = '';
 ?>
 <font class="error"><?php echo $GLOBALS['msg']?></font>
 <p>
+<script language="Javascript" type="text/javascript">
+
+if (!navigator.cookieEnabled) {
+  document.writeln('<div class="error"><?php echo $GLOBALS['I18N']->get('In order to login, you need to enable cookies in your browser')?></div>');
+}
+
+</script>
 <form method=post>
 <input type=hidden name="page" value="<?php echo $page?>">
 <table width=100% border=0 cellpadding=2 cellspacing=0>
