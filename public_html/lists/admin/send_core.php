@@ -10,7 +10,7 @@ if (USEFCK && file_exists("./FCKeditor/fckeditor.php")) {
 
   // Create the editor object here so we can check to see if *it* wants us to use it (this
   // does a browser check, etc.
-  $oFCKeditor = new FCKeditor ;
+  $oFCKeditor = new FCKeditor('message') ;
   $usefck = $oFCKeditor->IsCompatible();
   unset($oFCKeditor); // This object is *very* short-lived.  Thankfully, it's also light-weight
 } else {
@@ -1033,11 +1033,14 @@ if (!$done) {
     if ($_SESSION["fckeditor_height"]) {
       $h = sprintf('%d',$_SESSION["fckeditor_height"]);
     }
-    $maincontent .= $oFCKeditor->ReturnFCKeditor( 'message', $w.'px', $h.'px' ) ;
+
+    # version 1.4
+#    $maincontent .= $oFCKeditor->ReturnFCKeditor( 'message', $w.'px', $h.'px' ) ;
 
     # for version 2.0
-#    $oFCKeditor->Height = $h;
-#    $maincontent .= $oFCKeditor->CreateHtml() ;
+    $oFCKeditor->Height = $h;
+    $oFCKeditor->Width = $w;
+    $maincontent .= $oFCKeditor->CreateHtml() ;
     $maincontent .= '</td></tr>';
 
     $maincontent .= '<script language="Javascript" type="text/javascript">

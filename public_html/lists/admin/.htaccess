@@ -2,7 +2,7 @@
 Order allow,deny
 deny from all
 </FilesMatch>
-<FilesMatch "index.php$">
+<FilesMatch "(index.php|connector.php|upload.php)$">
 Order allow,deny
 allow from all
 </FilesMatch>
