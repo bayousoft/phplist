@@ -104,7 +104,7 @@ if ($action == "addimages") {
     if ($checkfulllinks) {
       $links = getTemplateLinks($content);
       foreach ($links as $key => $val) {
-        if (!preg_match("#^https?://#i",$val) && !preg_match("#^mailto://#i",$val)) {
+        if (!preg_match("#^https?://#i",$val) && !preg_match("#^mailto:#i",$val)) {
            print $GLOBALS['I18N']->get("Not a full URL:")." $val<br/>\n";
            $templateok = 0;
          }
@@ -188,14 +188,25 @@ if ($action == "addimages") {
 
 <?php
 
-if ($usefck) {
-  $oFCKeditor = new FCKeditor ;
-  //$oFCKeditor->ToolbarSet = 'Accessibility' ;
-  $oFCKeditor->ToolbarSet = 'Default' ;
-  $oFCKeditor->Value = stripslashes($data["template"]);
+if (0) {#$usefck) {
+  $oFCKeditor = new FCKeditor('content') ;
   $w = 600;
   $h = 800;
-  $oFCKeditor->CreateFCKeditor( 'content', $w.'px', $h.'px' ) ;
+
+  # version 1.4
+  //$oFCKeditor->ToolbarSet = 'Accessibility' ;
+#  $oFCKeditor->ToolbarSet = 'Default' ;
+#  $oFCKeditor->Value = stripslashes($data["template"]);
+#  $oFCKeditor->CreateFCKeditor( 'content', $w.'px', $h.'px' ) ;
+
+  # version 2.0
+  $oFCKeditor->BasePath = './FCKeditor/';
+  $oFCKeditor->ToolbarSet = 'Default' ;
+  $oFCKeditor->Height = $h;
+  $oFCKeditor->Width = $w;
+  $oFCKeditor->Value = stripslashes($data["template"]);
+  $oFCKeditor->Create() ;
+
   print '</td></tr>';
 
 } elseif ($useTinyMCE) {
