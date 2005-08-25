@@ -974,6 +974,14 @@ function repeatMessage($msgid) {
   logEvent("Message $msgid was successfully rescheduled as message $id");
 }
 
+function versionCompare($checkversion,$compareversion) {
+  list($major1,$minor1,$sub1) = explode(".",$checkversion);
+  list($major2,$minor2,$sub2) = explode(".",$compareversion);
+  if ($major1 > $major2) return 1;
+  if ($major1 == $major2 && $minor1 > $minor2) return 1;
+  if ($major1 == $major2 && $minor1 == $minor2 && $sub1 > $sub2) return 1;
+  return 0;
+}
 
 function formatTime($time,$short = 0) {
   return $time;

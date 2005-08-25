@@ -34,12 +34,13 @@ if ($checkinterval) {
     ini_set("user_agent",NAME." (PHPlist version ".VERSION.")");
     ini_set("default_socket_timeout",5);
     if ($fp = @fopen ("http://www.phplist.com/files/LATESTVERSION","r")) {
-      $latestversion = fgets ($fp);
+      $latestversion = @fgets ($fp);
       $latestversion = preg_replace("/[^\.\d]/","",$latestversion);
+      @fclose($fp);
       $thisversion = VERSION;
       $thisversion = preg_replace("/[^\.\d]/","",$thisversion);
 
-      if ($latestversion > $thisversion) {
+      if (!empty($latestversion) && versionCompare($latestversion,$thisversion)) {
         print '<div align=center><font color=green size=2>';
         print $GLOBALS['I18N']->get('A new version of PHPlist is available!');
         print '</font><br/>';
