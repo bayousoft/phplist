@@ -240,6 +240,7 @@ if ($total) {
       $status = $msg['status'].'<br/>'.$msg['rsstemplate'];
       if ($msg['status'] == 'inprocess') {
         $status .= '<br/>'.
+        '<meta http-equiv="Refresh" content="300">'.
         $messagedata['to process'].' '.$GLOBALS['I18N']->get('still to process').'<br/>'.
         $GLOBALS['I18N']->get('ETA').': '.$messagedata['ETA'].'<br/>'.
         $GLOBALS['I18N']->get('Processing').' '.sprintf('%d',$messagedata['msg/hr']).' '.$GLOBALS['I18N']->get('msgs/hr').'<br/>'.
