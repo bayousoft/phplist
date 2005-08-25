@@ -416,7 +416,7 @@ FCKConfig.IEForceVScroll = false ;
 FCKConfig.IgnoreEmptyParagraphValue = true ;
 
 FCKConfig.ToolbarSets["Default"] = [
-  ['Source','DocProps','-','Save','NewPage','Preview'],
+  ['Source','DocProps','-','NewPage','Preview'],
   ['Cut','Copy','Paste','PasteText','PasteWord','-','Print','SpellCheck'],
   ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat','Link','Unlink','Anchor'],
   ['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript'],
@@ -427,6 +427,8 @@ FCKConfig.ToolbarSets["Default"] = [
   ['Style','FontFormat','FontName','FontSize'],
   ['About']
 ] ;
+
+// @@@ 'Save' taken out, gives the impression that the message is saved, but it isn't
 
 //@@@ need to add attribute selection
 
