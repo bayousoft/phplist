@@ -103,7 +103,7 @@ function moveUser($userid) {
   global $tables;
   $newlist = $_GET["list"];
   Sql_Query(sprintf('delete from %s where userid = %d',$tables["listuser"],$userid));
-  Sql_Query(sprintf('insert into %s (userid,listid) values(%d,%d)',$tables["listuser"],$userid,$newlist));
+  Sql_Query(sprintf('insert into %s (userid,listid,entered) values(%d,%d,now())',$tables["listuser"],$userid,$newlist));
 }
 
 function addUniqID($userid) {
