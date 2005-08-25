@@ -188,7 +188,7 @@ if ($action == "addimages") {
 
 <?php
 
-if (0) {#$usefck) {
+if ($usefck) {
   $oFCKeditor = new FCKeditor('content') ;
   $w = 600;
   $h = 800;
