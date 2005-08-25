@@ -1042,6 +1042,9 @@ if (!$done) {
 #    $maincontent .= $oFCKeditor->ReturnFCKeditor( 'message', $w.'px', $h.'px' ) ;
 
     # for version 2.0
+    if ($h < 400) {
+      $h = 400;
+    }
     $oFCKeditor->Height = $h;
     $oFCKeditor->Width = $w;
     $maincontent .= $oFCKeditor->CreateHtml() ;
