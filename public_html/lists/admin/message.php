@@ -3,7 +3,7 @@
 <hr />
 
 <?php
-require_once 'accesscheck.php';
+require_once dirname(__FILE__).'/accesscheck.php';
 
 $id = sprintf('%d',$_GET["id"]);
 if (!$id) {
@@ -43,6 +43,9 @@ if ($_POST['resend'] && is_array($_POST['list'])) {
 
 
 require $coderoot . 'structure.php';
+
+print '<p>'.PageLink2('send&amp;id='.$id,$GLOBALS['I18N']->get('Edit this message')).'</p>';
+
 echo "<table border=\"1>\"";
 
 $result = Sql_query("SELECT * FROM {$tables['message']} where id = $id");
@@ -52,18 +55,18 @@ while ($msg = Sql_fetch_array($result)) {
   }
 }
 if (ALLOW_ATTACHMENTS) {
-	print '<tr><td colspan=2><h3>' . $GLOBALS['I18N']->get('Attachments for this message') . '</h3></td></tr>';
+  print '<tr><td colspan=2><h3>' . $GLOBALS['I18N']->get('Attachments for this message') . '</h3></td></tr>';
   $req = Sql_Query("select * from {$tables["message_attachment"]},{$tables["attachment"]}
-  	where {$tables["message_attachment"]}.attachmentid = {$tables["attachment"]}.id and
+    where {$tables["message_attachment"]}.attachmentid = {$tables["attachment"]}.id and
     {$tables["message_attachment"]}.messageid = $id");
   if (!Sql_Affected_Rows())
-  	print '<tr><td colspan=2>' . $GLOBALS['I18N']->get('No attachments') . '</td></tr>';
+    print '<tr><td colspan=2>' . $GLOBALS['I18N']->get('No attachments') . '</td></tr>';
   while ($att = Sql_Fetch_array($req)) {
-  	printf ('<tr><td>%s:</td><td>%s</td></tr>', $GLOBALS['I18N']->get('Filename') ,$att["remotefile"]);
-  	printf ('<tr><td>%s:</td><td>%s</td></tr>', $GLOBALS['I18N']->get('Size'), formatBytes($att["size"]));
-  	printf ('<tr><td>%s:</td><td>%s</td></tr>', $GLOBALS['I18N']->get('Mime Type'),$att["mimetype"]);
-  	printf ('<tr><td>%s:</td><td>%s</td></tr>', $GLOBALS['I18N']->get('Description'), $att["description"]);
- 	}
+    printf ('<tr><td>%s:</td><td>%s</td></tr>', $GLOBALS['I18N']->get('Filename') ,$att["remotefile"]);
+    printf ('<tr><td>%s:</td><td>%s</td></tr>', $GLOBALS['I18N']->get('Size'), formatBytes($att["size"]));
+    printf ('<tr><td>%s:</td><td>%s</td></tr>', $GLOBALS['I18N']->get('Mime Type'),$att["mimetype"]);
+    printf ('<tr><td>%s:</td><td>%s</td></tr>', $GLOBALS['I18N']->get('Description'), $att["description"]);
+  }
  # print '</table>';
 }
 
