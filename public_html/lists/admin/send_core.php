@@ -766,39 +766,37 @@ for ($i = 1; $i<=$num;$i++) {
   }
 }
 $existing_criteria = '';
-if ($num) {
-    $count_query = "select distinct $select_clause where $where_clause";
+if (sizeof($subqueries)) {
+#    $count_query = "select distinct $select_clause where $where_clause";
 #    $count_query = addslashes($count_query);
   if ($_GET["calculate"]) {
     ob_end_flush();
    # print "<h1>$count_query</h1>";
     print "<p>".$GLOBALS['I18N']->get("calculating")." ...";
     flush();
-    foreach ($subqueries as $qid => $querydetails) {
-      $req = Sql_Query($querydetails['query']);
-      $subqueries[$qid]['results'] = array();
-      while ($row = Sql_Fetch_Row($req)) {
-        array_push($subqueries[$qid]['results'],$row[0]);
-      }
+  }
+  foreach ($subqueries as $qid => $querydetails) {
+    $req = Sql_Query($querydetails['query']);
+    $subqueries[$qid]['results'] = array();
+    while ($row = Sql_Fetch_Row($req)) {
+      array_push($subqueries[$qid]['results'],$row[0]);
     }
-    $first = array_shift($subqueries);
-    $userids = $first['results'];
-    foreach ($subqueries as $subquery) {
-      if ($messagedata['criteria_overall_operator'] == 'all') {
-        $userids = array_intersect($userids,$subquery['results']);
-      } else {
-        $userids = array_merge($userids,$subquery['results']);
-      }
+  }
+  $first = array_shift($subqueries);
+  $userids = $first['results'];
+  foreach ($subqueries as $subquery) {
+    if ($messagedata['criteria_overall_operator'] == 'all') {
+      $userids = array_intersect($userids,$subquery['results']);
+    } else {
+      $userids = array_merge($userids,$subquery['results']);
     }
-    $userids = array_unique($userids);
-#    $req = Sql_Query($count_query);
-#    $num = Sql_Num_Rows($req);
-    $num = sizeof($userids);
+  }
+  $userids = array_unique($userids);
+  $num_users = sizeof($userids);
 
-    $count_query = sprintf('select * from %s where id in (%s)',$GLOBALS['tables']['user'],join(', ',$userids));
+  $count_query = sprintf('select * from %s where id in (%s)',$GLOBALS['tables']['user'],join(', ',$userids));
 
-#    $req = Sql_Query($count_query);
-#    $num = Sql_Num_Rows($req);
+  if ($_GET["calculate"]) {
     printf('.. '.$GLOBALS['I18N']->get('%d users apply'),$num).'</p>';
   }
 
@@ -813,7 +811,13 @@ if ($num) {
     $ls->addButton($GLOBALS['I18N']->get("reload"),$baseurl.'&amp;tab='.$_GET["tab"]);
   }
   $existing_criteria = $ls->display();
+} else {
+  if ($messageid) {
+    Sql_query(sprintf('update %s set userselection = "" where id = %d',
+      $tables["message"],$messageid));
+  }
 }
+
 
 } // end of define STACKED_ATTRIBUTES
 
