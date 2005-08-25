@@ -299,7 +299,7 @@ if ($reload) {
 $script_stage = 1; # we are active
 $notsent = $sent = $invalid = $unconfirmed = $cannotsend = 0;
 
-$messages = Sql_query("select id,userselection,rsstemplate,subject from ".$tables["message"]." where status != \"draft\" and status != \"sent\" and status != \"prepared\" and embargo < now() order by entered");
+$messages = Sql_query("select id,userselection,rsstemplate,subject from ".$tables["message"]." where status != \"draft\" and status != \"sent\" and status != \"prepared\" and status != \"suspended\" and embargo < now() order by entered");
 $num_messages = Sql_affected_rows();
 if (Sql_Has_Error($database_connection)) {  ProcessError(Sql_Error($database_connection)); }
 
