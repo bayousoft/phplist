@@ -91,7 +91,7 @@ if (isset($_GET['resend'])) {
 if (isset($_GET['suspend'])) {
   $suspend = sprintf('%d',$_GET['suspend']);
   print $GLOBALS['I18N']->get('Suspending')." $suspend ..";
-  $result = Sql_query(sprintf('update %s set status = "suspended" where id = %d and status = "inprocess"',$tables["message"],$suspend));
+  $result = Sql_query(sprintf('update %s set status = "suspended" where id = %d and (status = "inprocess" or status = "submitted")',$tables["message"],$suspend));
   $suc6 = Sql_Affected_Rows();
   if ($suc6)
     print "... ".$GLOBALS['I18N']->get("Done");
@@ -243,12 +243,16 @@ if ($total) {
         '<meta http-equiv="Refresh" content="300">'.
         $messagedata['to process'].' '.$GLOBALS['I18N']->get('still to process').'<br/>'.
         $GLOBALS['I18N']->get('ETA').': '.$messagedata['ETA'].'<br/>'.
-        $GLOBALS['I18N']->get('Processing').' '.sprintf('%d',$messagedata['msg/hr']).' '.$GLOBALS['I18N']->get('msgs/hr').'<br/>'.
-        PageLink2('messages&suspend='.$msg['id'],$GLOBALS['I18N']->get('Suspend Sending'))
+        $GLOBALS['I18N']->get('Processing').' '.sprintf('%d',$messagedata['msg/hr']).' '.$GLOBALS['I18N']->get('msgs/hr')
         ;
       }
       $sendstats = '';
     }
+    if ($msg['status'] == 'inprocess' || $msg['status'] == 'submitted') {
+      $status .= '<br/>'.
+        PageLink2('messages&suspend='.$msg['id'],$GLOBALS['I18N']->get('Suspend Sending'));
+    }
+
     $totalsent = $msg['astext'] + $msg['ashtml'] + $msg['astextandhtml'] + $msg['aspdf'] + $msg['astextandpdf'];
     printf('
       <td>
