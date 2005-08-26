@@ -62,28 +62,29 @@ if ($success) {
   Sql_Query(sprintf('replace into %s (item,value,editable) values("updatelastcheck",now(),0)',
     $tables["config"]));
   # add a testlist
-  $info = $GLOBALS['I18N']->get("List for testing. If you don\'t make this list active and add yourself as a member, you can use this list to test a message. If the message comes out ok, you can resend it to other lists.");
+  $info = $GLOBALS['I18N']->get("List for testing.");
   $result = Sql_query("insert into {$tables["list"]} (name,description,entered,active,owner) values(\"test\",\"$info\",now(),0,1)");
   $body = '
     Version: '.VERSION."\r\n".
    ' Url: '.getConfig("website").$pageroot."\r\n";
-  printf('<p>'.$GLOBALS['I18N']->get('Success').': <a href="mailto:phplist@tincan.co.uk?subject=Successful installation of PHPlist&body=%s">'.$GLOBALS['I18N']->get('Tell us about it').'</a>. </p>', $body);
+  printf('<p>'.$GLOBALS['I18N']->get('Success').': <a href="mailto:phplist2@tincan.co.uk?subject=Successful installation of PHPlist&body=%s">'.$GLOBALS['I18N']->get('Tell us about it').'</a>. </p>', $body);
   printf('<p>
     '.$GLOBALS['I18N']->get("Please make sure to read the file README.security that can be found in the zip file.").'</p>');
   printf('<p>
     '.$GLOBALS['I18N']->get("Please make sure to").'
-    <a href="mailto:phplist-announce-subscribe@tincan.co.uk?subject=Subscribe"> '.$GLOBALS['I18N']->get("subscribe to the announcements list")."</a> ".
+    <a href="http://tincan.co.uk/lists/?p=subscribe"> '.$GLOBALS['I18N']->get("subscribe to the announcements list")."</a> ".
     $GLOBALS['I18N']->get("to make sure you are updated when new versions come out. Sometimes security bugs are found which make it important to upgrade. Traffic on the list is very low.").' </p>');
   print "<p>".$GLOBALS['I18N']->get("Continue with")." ".PageLink2("setup",$GLOBALS['I18N']->get("PHPlist Setup"))."</p>";
 } else {
  print ('<ul><li>'.$GLOBALS['I18N']->get("Maybe you want to")." ".PageLink2("upgrade",$GLOBALS['I18N']->get("Upgrade")).' '.$GLOBALS['I18N']->get("instead?").'
     <li>'.PageLink2("initialise",$GLOBALS['I18N']->get("Force Initialisation"),"force=yes").' '.$GLOBALS['I18N']->get("(will erase all data!)").' '."</ul>\n");
 }
-
+/*
 if ($_GET["firstinstall"] || $_SESSION["firstinstall"]) {
   $_SESSION["firstinstall"] = 1;
   print "<p>".$GLOBALS['I18N']->get("Checklist for Installation")."</p>";
   require "setup.php";
 }
+*/
 
 ?>

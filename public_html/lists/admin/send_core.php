@@ -1168,11 +1168,12 @@ if (!$done) {
   }
 
   // Load the email address for the admin user so we can use that as the default value in the testtarget field
+  # @@@ this only works with phplist authentication, needs to be abstracted
   if (!isset($_POST["testtarget"])) {
     $res = Sql_Query(sprintf("Select email from %s where id = %d", $tables["admin"], $_SESSION["logindetails"]["id"]));
-    $row = Sql_Fetch_Array($res);
+    $admin_details = Sql_Fetch_Array($res);
 
-    $_POST["testtarget"] = $row["email"];
+    $_POST["testtarget"] = $admin_details["email"];
   }
   // if there isn't one, load the developer one, just being lazy here :-)
   if (!$_POST["testtarget"]) {
@@ -1461,8 +1462,10 @@ if (!$done) {
   ##############################
 
   # notification of progress of message sending
-  $notify_start = isset($messagedata['notify_start'])?$messagedata['notify_start']:'';
-  $notify_end = isset($messagedata['notify_end'])?$messagedata['notify_end']:'';
+  # defaulting to admin_details['email'] gives the wrong impression that this is the
+  # value in the database, so it's better to leave that empty instead
+  $notify_start = isset($messagedata['notify_start'])?$messagedata['notify_start']:'';#$admin_details['email'];
+  $notify_end = isset($messagedata['notify_end'])?$messagedata['notify_end']:'';#$admin_details['email'];
 
   $notification_content = sprintf('
     <table>

@@ -51,7 +51,7 @@ function checkI18NDir($rootdir) {
     #   $tag = ereg_replace('/','//',$tag);
         $translation = $GLOBALS['I18N']->get(stripslashes($tag));
         if (!isset($_GET['changedonly']) || ($_GET['changedonly'] === 'yes' && preg_match('/ff1717/i',$translation))) {
-          $fileoutput .= $tag.' =&gt; '.$translation.'<br/>';
+          $fileoutput .= "'".$tag.'\' =&gt; \''.$translation.'\',<br/>';
           $some = 1;
         }
       }
@@ -70,7 +70,22 @@ function checkI18NDir($rootdir) {
   }
 }
 
+/*
+print '
+<script language="Javascript" type="text/javascript">
+
+function selectAll() {
+  document.form.content.focus();document.form.content.select();
+}
+
+</script>
+
+<a href="javascript:selectAll()">Select All</a><br/>';
+
+#print '<form name="form">';
+print '<textarea name="content" rows="50" cols="60">';
+*/
 checkI18NDir(dirname(__FILE__));
 checkI18NDir(dirname(__FILE__).'/commonlib/pages/');
-
-
+#print '</textarea>';
+print '</form>';

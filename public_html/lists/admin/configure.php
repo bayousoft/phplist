@@ -1,10 +1,13 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
+
+/*
 if ($_GET["firstinstall"] || $_SESSION["firstinstall"]) {
   $_SESSION["firstinstall"] = 1;
   print "<p>" . $GLOBALS['I18N']->get('checklist for installation') . "</p>";
   require "setup.php";
 }
+*/
 
 # configure options
 reset($default_config);

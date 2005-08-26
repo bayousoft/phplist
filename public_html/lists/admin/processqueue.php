@@ -1,10 +1,6 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 
-#if (!MANUALLY_PROCESS_QUEUE) {
-#  print "Error, process queue is set to be processed automatically. Loading of this page is not allowed");
-#  return;
-#}
 $processqueue_timer = new timer();
 $domainthrottle = array();
 if (isset($_GET['reload'])) {
@@ -17,6 +13,7 @@ if (isset($_GET['reload'])) {
 onerror = null;
 this.onerror = null;
 </script>
+
 <?php
 if (!$GLOBALS["commandline"]) {
   @ob_end_flush();
@@ -29,6 +26,7 @@ if (!$GLOBALS["commandline"]) {
   print ClineSignature();
   ob_start();
 }
+
 # once and for all get rid of those questions why they do not receive any emails :-)
 if (TEST)
   print '<font color=red size=5>'.$GLOBALS['I18N']->get('Running in testmode, no emails will be sent. Check your config file.').'</font>';
@@ -42,6 +40,7 @@ $minbatchperiod = -1;
 # check for batch limits
 $ISPrestrictions = '';
 $ISPlockfile = '';
+
 if ($fp = @fopen("/etc/phplist.conf","r")) {
   $contents = fread($fp, filesize("/etc/phplist.conf"));
   fclose($fp);
@@ -113,9 +112,9 @@ $report = "";
 $nothingtodo = 0;
 $cached = array(); # cache the message from the database to avoid reloading it every time
 
-require_once $GLOBALS["coderoot"] ."sendemaillib.php";
+require_once dirname(__FILE__) .'/sendemaillib.php';
 if (ENABLE_RSS) {
-  require_once $GLOBALS["coderoot"] ."rsslib.php";
+  require_once dirname(__FILE__) .'/rsslib.php';
 }
 
 function my_shutdown () {
@@ -151,10 +150,10 @@ function my_shutdown () {
     $reload++;
     if (!$GLOBALS["commandline"] && $num_per_batch && $batch_period) {
       if ($sent + 10 < $GLOBALS["original_num_per_batch"] && !$GLOBALS["wait"]) {
-        output("Less than batch size were sent, so reloading imminently");
+        output($GLOBALS['I18N']->get('Less than batch size were sent, so reloading imminently'));
         $delaytime = 10000;
       } else {
-        output("Waiting for $batch_period seconds before reloading");
+        output(sprintf($GLOBALS['I18N']->get('Waiting for %d seconds before reloading'),$batch_period));
         $delaytime = $batch_period * 1000;
       }
       //output("Do not reload this page yourself, because the next batch would fail");
@@ -179,10 +178,11 @@ function my_shutdown () {
       output($GLOBALS['I18N']->get('Reload required'));
     }
   #  print '<script language="Javascript" type="text/javascript">alert(document.location)</script>';
-  }  elseif ($script_stage == 6 || $nothingtodo)
+  }  elseif ($script_stage == 6 || $nothingtodo) {
     output($GLOBALS['I18N']->get('Finished, All done'),0);
-  else
+  } else {
     output($GLOBALS['I18N']->get('Script finished, but not all messages have been sent yet.'));
+  }
   include_once "footer.inc";
   exit;
 }
@@ -269,6 +269,7 @@ if ($ISPrestrictions != "") {
 if (is_file($ISPlockfile)) {
   ProcessError($GLOBALS['I18N']->get('Processing has been suspended by your ISP, please try again later'),1);
 }
+
 if ($num_per_batch > 0) {
   if ($safemode) {
     output($GLOBALS['I18N']->get('In safe mode, batches are set to a maximum of 100'));
@@ -305,10 +306,16 @@ if (Sql_Has_Error($database_connection)) {  ProcessError(Sql_Error($database_con
 
 if ($num_messages) {
   output($GLOBALS['I18N']->get('Processing has started,').' '.$num_messages.' '.$GLOBALS['I18N']->get('message(s) to process.'));
-  if (!$safemode) {
-    output($GLOBALS['I18N']->get('It is safe to click your stop button now, report will be sent by email to').' '.getConfig("report_address"));
-  } else {
-    output($GLOBALS['I18N']->get('Your webserver is running in safe_mode. Please keep this window open. It may reload several times to make sure all messages are sent.').' '.$GLOBALS['I18N']->get('Reports will be sent by email to').' '.getConfig("report_address"));
+  if (!$GLOBALS["commandline"]) {
+    if (!$safemode) {
+      if (!$num_per_batch) {
+        output($GLOBALS['I18N']->get('It is safe to click your stop button now, report will be sent by email to').' '.getConfig("report_address"));
+      } else {
+        output($GLOBALS['I18N']->get('Please leave this window open. You have batch processing enabled, so it will reload several times to send the messages. Reports will be sent by email to').' '.getConfig("report_address"));
+      }
+    } else {
+      output($GLOBALS['I18N']->get('Your webserver is running in safe_mode. Please keep this window open. It may reload several times to make sure all messages are sent.').' '.$GLOBALS['I18N']->get('Reports will be sent by email to').' '.getConfig("report_address"));
+    }
   }
 }
 
@@ -661,6 +668,10 @@ while ($message = Sql_fetch_array($messages)) {
 #          Sql_query("replace into {$tables['usermessage']} (userid,messageid) values($email[0],$messageid)");
       }  else {
         # some "invalid emails" are entirely empty, ah, that is because they are unconfirmed
+
+        ## this is quite old as well, with the preselection that avoids unconfirmed users
+        # it is unlikely this is every processed.
+
         if (!$user[5]) {
           if (VERBOSE)
             output($GLOBALS['I18N']->get('Unconfirmed user').': '."$userid $user[1], $user[0]");
@@ -681,6 +692,11 @@ while ($message = Sql_fetch_array($messages)) {
         }
       }
     } else {
+
+      ## and this is quite historical, and also unlikely to be every called
+      # because we now exclude users who have received the message from the
+      # query to find users to send to
+
       $um = Sql_Fetch_Row($um);
       $notsent++;
       if (VERBOSE)
@@ -705,40 +721,34 @@ while ($message = Sql_fetch_array($messages)) {
   }
   $processed = $notsent + $sent + $invalid + $unconfirmed + $cannotsend + $failed_sent;
   output($GLOBALS['I18N']->get('Processed').' '. $processed.' '.$GLOBALS['I18N']->get('out of').' '. $num_users .' '.$GLOBALS['I18N']->get('users'));
-  if ($processed >= $num_users || !$num_users || !$num_per_batch || $batch_total < ($reload * $num_per_batch)) {
+  if ($num_users - $sent <= 0) {
+    # this message is done
     if (!$someusers)
       output($GLOBALS['I18N']->get('Hmmm, No users found to send to'));
-#    $someusers = 0;
-#    if (ENABLE_RSS && $rssmessage) {
-#      $status = Sql_query("update {$tables['message']} set status = \"submitted\",sent = now() where id = \"$messageid\"");
-#    } else {
-      if (!$failed_sent) {
-        repeatMessage($messageid);
-        $status = Sql_query(sprintf('update %s set status = "sent",sent = now() where id = %d',$GLOBALS['tables']['message'],$messageid));
-        if ($msgdata['notify_end'] && !isset($msgdata['end_notified'])) {
-          $notifications = explode(',',$msgdata['notify_end']);
-          foreach ($notifications as $notification) {
-            sendMail($notification,$GLOBALS['I18N']->get('Message Sending has finished'),
-              sprintf($GLOBALS['I18N']->get('phplist has finished sending the message with subject %s'),$message['subject']));
-          }
-          Sql_Query(sprintf('insert ignore into %s (name,id,data) values("end_notified",%d,now())',
-            $GLOBALS['tables']['messagedata'],$messageid));
+    if (!$failed_sent) {
+      repeatMessage($messageid);
+      $status = Sql_query(sprintf('update %s set status = "sent",sent = now() where id = %d',$GLOBALS['tables']['message'],$messageid));
+      if ($msgdata['notify_end'] && !isset($msgdata['end_notified'])) {
+        $notifications = explode(',',$msgdata['notify_end']);
+        foreach ($notifications as $notification) {
+          sendMail($notification,$GLOBALS['I18N']->get('Message Sending has finished'),
+            sprintf($GLOBALS['I18N']->get('phplist has finished sending the message with subject %s'),$message['subject']));
         }
-
+        Sql_Query(sprintf('insert ignore into %s (name,id,data) values("end_notified",%d,now())',
+          $GLOBALS['tables']['messagedata'],$messageid));
       }
-#    }
-    $timetaken = Sql_Fetch_Row_query("select sent,sendstart from {$tables['message']} where id = \"$messageid\"");
-    output($GLOBALS['I18N']->get('It took').' '.timeDiff($timetaken[0],$timetaken[1]).' '.$GLOBALS['I18N']->get('to send this message'));
-    sendMessageStats($messageid);
+      $timetaken = Sql_Fetch_Row_query("select sent,sendstart from {$tables['message']} where id = \"$messageid\"");
+      output($GLOBALS['I18N']->get('It took').' '.timeDiff($timetaken[0],$timetaken[1]).' '.$GLOBALS['I18N']->get('to send this message'));
+      sendMessageStats($messageid);
+    }
   } else {
     if ($script_stage < 5)
       $script_stage = 5;
   }
 }
 
-if (!$num_messages || !$num_per_batch || $batch_total < $reload * $num_per_batch)
+if (!$num_messages)
   $script_stage = 6; # we are done
-#print "$safemode_total, ".$reload * $num_per_batch;
 # shutdown will take care of reporting
 
 ?>

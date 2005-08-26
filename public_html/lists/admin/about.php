@@ -5,7 +5,7 @@
 <td valign=top>
 PHPlist is licensed with the <a href="http://www.gnu.org/copyleft" target="_blank">GNU Public License (GPL)</a>.
 <br/>
-Copyright &copy; 2000-2004 <a href="http://tincan.co.uk" target="_blank">Tincan Ltd.</a>
+Copyright &copy; 2000-<?php echo date('Y')?> <a href="http://tincan.co.uk" target="_blank">Tincan Ltd.</a>
 <br/>
 <br/>
 <b><?php echo $GLOBALS['I18N']->get('Developers')?></b>:<ul>
@@ -16,6 +16,11 @@ Copyright &copy; 2000-2004 <a href="http://tincan.co.uk" target="_blank">Tincan 
 <li>Xavier Dutoit, Sydesy</li>
 <li>and many others</li>
 </ul>
+<b><a href="http://docs.phplist.com" target="_blank"><?php echo $GLOBALS['I18N']->get('Documentation')?></a></b><ul>
+<li>Yan Brailowsky</li>
+<li><!--a href="http://pascal.vanhecke.info/" target="_blank"-->Pascal Van Hecke<!--/a--></li>
+</ul>
+
 <b><?php echo $GLOBALS['I18N']->get('Translations') ?></b><ul>
 <li><a href="http://www.babels.org" target="_blank">Babels</a></li>
 <?php echo $GLOBALS['I18N']->get('credits for this translation') ?>

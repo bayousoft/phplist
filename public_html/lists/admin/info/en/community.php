@@ -24,7 +24,7 @@ if ($fp = @fopen ("http://www.phplist.com/files/LATESTVERSION","r")) {
 ?>
 <p>PHPlist started early 2000 as a small application for the
 <a href="http://www.nationaltheatre.org.uk" target="_blank">National Theatre</a>. Over time it has
-grown into a fairly comprehensive Customer Relationship Management system and the
+grown into a fairly comprehensive newsletter system and the
 number of sites using it has grown rapidly. Even though the codebase is primarily
 maintained by one person, it is starting to become very complex, and ensuring the
 quality will require the input of many other people.</p>
@@ -53,7 +53,7 @@ used by new users to get acquainted with the system</a>.</p>
 <input type="image" src="images/paypal.gif" border="0" name="submit" alt="Make payments with PayPal - it's fast, free and secure!">
 </form></p>
 <p>If you are a <b>regular user of PHPlist</b> and you think you have cracked most of it's issues
-you can help out by <a href="http://www.phplist.com/forums/" target="_blank">answering the questions of other users</a>. or writing pages in the <a href="http://docs.phplist.com" target="_blank">documentation site</a>.</p>
+you can help out by <a href="http://www.phplist.com/forums/" target="_blank">answering the questions of other users</a>. or writing pages in the <a href="#docscontrib">documentation site</a>.</p>
 <p>If you are <b>new to PHPlist</b> and you are having problems with setting it up to work for
 your site, you can help by trying to find the solution in the above locations first, before
 immediately posting a "it does not work" message. Often the problems you may have are related
@@ -114,3 +114,9 @@ foreach($le as $module) {
 </ul></li>
 </ul>
 <p>Please note, emails not using this system, or the forums will be ignored.</p>
+
+<p><b><a name="docscontrib"></a>Contributing to the documentation</b><br/>
+If you want to help out writing documentation, please sign up to the <a href="http://tincan.co.uk/?lid=878">Developers Mailinglist</a>. At the moment the documentors and the developers share a mailinglist, because their interests overlap and it is useful to share information. <br/>
+Before doing anything, discuss the issues on the mailinglist and once the ideas have been established you can go off and do your stuff.
+
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>

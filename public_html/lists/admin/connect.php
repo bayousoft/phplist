@@ -975,6 +975,8 @@ function repeatMessage($msgid) {
 }
 
 function versionCompare($checkversion,$compareversion) {
+  # return 1 if $checkversion is larger than $compareversion
+
   list($major1,$minor1,$sub1) = explode(".",$checkversion);
   list($major2,$minor2,$sub2) = explode(".",$compareversion);
   if ($major1 > $major2) return 1;

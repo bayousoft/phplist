@@ -28,6 +28,11 @@ $lan = array(
   'Checklist for Installation' => 'Checklist for Installation',
   'List for testing. If you don\'t make this list active and add yourself as a member, you can use this list to test a message. If the message comes out ok, you can resend it to other lists.' => 'List for testing. If you don\'t make this list active and add yourself as a member, you can use this list to test a message. If the message comes out ok, you can resend it to other lists.',
   'to make sure you are updated when new versions come out. Sometimes security bugs are found which make it important to upgrade. Traffic on the list is very low.' => 'to make sure you are updated when new versions come out. Sometimes security bugs are found which make it important to upgrade. Traffic on the list is very low.',
-  
+
+  # new in 2.10.1
+  'List for testing.' => 'List for testing.',
+
+
+
 );
 ?>

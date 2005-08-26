@@ -87,6 +87,11 @@ $lan = array(
 
 'Sending of this message has been suspended' => 'Sending of this message has been suspended',
 
+# new in 2.10.1
+'Less than batch size were sent, so reloading imminently' => 'Less than batch size were sent, so reloading imminently',
+'Waiting for %d seconds before reloading' => 'Waiting for %d seconds before reloading',
+'Please leave this window open. You have batch processing enabled, so it will reload several times to send the messages. Reports will be sent by email to' => 'Please leave this window open. You have batch processing enabled, so it will reload several times to send the messages. Reports will be sent by email to',
+
 );
 
 ?>
