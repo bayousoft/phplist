@@ -1,4 +1,4 @@
-<?php 
+<?php
 $lan = array(
 
   'initialise_database' => 'Initialise Database',

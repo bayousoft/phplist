@@ -15,5 +15,8 @@ $lan = array(
   "WhenSignedUp" => "When they signed up",
   "WhenRecordChanged" => "When the record was changed",
   "SelectColToIn" => "Select the columns to include in the export",
+
+  # new in 2.10.1
+  'When they subscribed to' => 'When they subscribed to',
 );
 ?>

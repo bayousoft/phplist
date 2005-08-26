@@ -47,7 +47,7 @@ $lan = array(
   'Mark all users confirmed' => 'Mark all users confirmed',
   'Fix emails for users who have an invalid email' => 'Fix emails for users who have an invalid email',
   'Remove Stale entries from the database' => 'Remove Stale entries from the database',
-  'Merge Duplicate Users' => 'Merge Duplicate Users',  
+  'Merge Duplicate Users' => 'Merge Duplicate Users',
   'To move all users who are not subscribed to any list to' => 'To move all users who are not subscribed to any list to',
   'Click here' => 'Click here',
   'To delete all users with more than' => 'To delete all users with more than',
@@ -66,7 +66,10 @@ We would like to give you the opportunity to re-confirm your
 subscription. The instructions on how to confirm are below.
   ',
   'To delete users who signed up and have not confirmed their subscription' => 'To delete users who signed up and have not confirmed their subscription',
-  
+
+  # new in 2.10.1
+  'Delete Tagged Users' => 'Delete Tagged Users',
+
 
 );
 ?>

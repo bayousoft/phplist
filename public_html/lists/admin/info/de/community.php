@@ -7,14 +7,13 @@ ini_set("user_agent",NAME. " (PHPlist Version ".VERSION.")");
 ini_set("default_socket_timeout",5);
 if ($fp = @fopen ("http://www.phplist.com/files/LATESTVERSION","r")) {
   $latestversion = fgets ($fp);
-  $latestversion = preg_replace("/[^\.\d]/","",$latestversion);
-  $v = VERSION;
-  $v = str_replace("-dev","",$v);
-  if ($v >= $latestversion) {
+  $thisversion = VERSION;
+  $thisversion = str_replace("-dev","",$thisversion);
+  if (versionCompare($thisversion,$latestversion)) {
     print "<p><font color=green>Sie haben die aktuelle Version von PHPlist installiert.</font></p>";
   } else {
     print "<p><font color=red>Sie haben nicht die aktuelle Version von PHPlist installiert.</font>";
-    print "<br/>Ihre Version: <b>".$v."</b>";
+    print "<br/>Ihre Version: <b>".$thisversion."</b>";
     print "<br/>Aktuelle Version: <b>".$latestversion."</b>  ";
     print '<a href="http://www.phplist.com/files/changelog">Neuerungen anzeigen</a>&nbsp;&nbsp;';
     print '<a href="http://www.phplist.com/files/phplist-'.$latestversion.'.tgz">Aktuelle Version herunterladen</a></p>';
@@ -43,8 +42,8 @@ sondern es entsteht auch eine Fragensammlung, welche wiederum anderen Benutzern 
 
 <p>Der PHPlist Community stehen folgende Plattformen zur Verf&uuml;gung:
 <ul>
-	<li><a href="http://www.phplist.com/forums/" target="_blank">PHPlist Forum</a></li>
-	<li><a href="http://mantis.tincan.co.uk/">PHPlist Bug Tracker</a></li>
+  <li><a href="http://www.phplist.com/forums/" target="_blank">PHPlist Forum</a></li>
+  <li><a href="http://mantis.tincan.co.uk/">PHPlist Bug Tracker</a></li>
 </ul>
 </p>
 
@@ -52,7 +51,7 @@ sondern es entsteht auch eine Fragensammlung, welche wiederum anderen Benutzern 
 
 <h1>Wie Sie PHPlist unterst&uuml;tzen k&ouml;nnen</h1>
 
-<p>Wenn Sie ein <b>regelm&auml;ssiger Benutzer von PHPlist</b> sind und der Meinung sind, 
+<p>Wenn Sie ein <b>regelm&auml;ssiger Benutzer von PHPlist</b> sind und der Meinung sind,
 dass Sie die meisten Schwierigkeiten gemeistert haben, dann k&ouml;nnen Sie uns helfen, indem Sie die Fragen anderer Benutzer beantworten.</p>
 
 <p>Wenn Sie ein <b>neuer Benutzer von PHPlist</b> sind und auf Probleme bei der Installation von PHPlist auf Ihrem Webserver stossen,
@@ -124,19 +123,19 @@ Sie k&ouml;nnen dieses System auch benutzen, um <b>neue Features</b> vorzuschlag
 <h1>Ihre Systemdetails</h1>
 
 <ul>
-	<li>PHPlist-Version: <?php echo VERSION?></li>
-	<li>PHP-Version: <?php echo phpversion()?></li>
-	<li>Webserver: <?php echo getenv("SERVER_SOFTWARE")?></li>
-	<li>Website: <a href="http://<?php echo getConfig("website")."$pageroot"?>"><?=getConfig("website")."$pageroot"?></a></li>
-	<li>MySQL-Version: <?php echo mysql_get_server_info();?></li>
-	<li>PHP-Module:<br/>
-		<ul>
-		<?php
-		$le = get_loaded_extensions();
-		foreach($le as $module) {
-		    print "<LI>$module\n";
-		}
-		?>
-		</ul>
-	</li>
+  <li>PHPlist-Version: <?php echo VERSION?></li>
+  <li>PHP-Version: <?php echo phpversion()?></li>
+  <li>Webserver: <?php echo getenv("SERVER_SOFTWARE")?></li>
+  <li>Website: <a href="http://<?php echo getConfig("website")."$pageroot"?>"><?=getConfig("website")."$pageroot"?></a></li>
+  <li>MySQL-Version: <?php echo mysql_get_server_info();?></li>
+  <li>PHP-Module:<br/>
+    <ul>
+    <?php
+    $le = get_loaded_extensions();
+    foreach($le as $module) {
+        print "<LI>$module\n";
+    }
+    ?>
+    </ul>
+  </li>
 </ul>

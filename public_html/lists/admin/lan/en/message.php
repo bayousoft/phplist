@@ -44,5 +44,8 @@ $lan = array(
  'sendstart' => 'send start',
  'rsstemplate' => 'RSS template',
  'owner' => 'owner',
+
+ # new in 2.10.1
+ 'edit this message' => 'Edit this message',
 );
 ?>

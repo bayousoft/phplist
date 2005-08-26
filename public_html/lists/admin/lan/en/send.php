@@ -135,6 +135,9 @@ $lan = array (
   'values' => 'values',
   '%d users apply' => '%d users apply',
 
+  # new in 2.10.1
+  'reload' => 'reload',
+
 );
 
 ?>

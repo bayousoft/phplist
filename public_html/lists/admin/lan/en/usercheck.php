@@ -9,6 +9,11 @@ $lan = array(
   "email" => "Email",
   "continue" => "Continue",
   "pastevalues" => "Paste the values to check in this box, one per line",
+
+
+  # new in 2.10.1
+  'key' => 'key',
+  'passwd' => 'passwd',
 );
 
 ?>

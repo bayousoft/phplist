@@ -7,14 +7,13 @@ ini_set("user_agent",NAME. " (PHPlist version ".VERSION.")");
 ini_set("default_socket_timeout",5);
 if ($fp = @fopen ("http://www.phplist.com/files/LATESTVERSION","r")) {
   $latestversion = fgets ($fp);
-  $latestversion = preg_replace("/[^\.\d]/","",$latestversion);
-  $v = VERSION;
-  $v = str_replace("-dev","",$v);
-  if ($v >= $latestversion) {
+  $thisversion = VERSION;
+  $thisversion = str_replace("-dev","",$thisversion);
+  if (versionCompare($thisversion,$latestversion)) {
     print "<font color=green size=2>F&eacute;licitations, vous utilisez la derni&egrave;re version de PHPlist</font>";
   } else {
     print "<font color=green size=2>Vous n&rsquo;utilisez pas la derni&egrave;re version de PHPlist</font>";
-    print "<br/>Votre version: <b>".$v."</b>";
+    print "<br/>Votre version: <b>".$thisversion."</b>";
     print "<br/>La derni&egrave;re version disponible: <b>".$latestversion."</b>  ";
     print '<a href="http://www.phplist.com/files/changelog">Pour voir ce qui a chang&eacute;</a>&nbsp;&nbsp;';
     print '<a href="http://www.phplist.com/files/phplist-'.$latestversion.'.tgz">T&eacute;l&eacute;charger</a>';
@@ -23,7 +22,7 @@ if ($fp = @fopen ("http://www.phplist.com/files/LATESTVERSION","r")) {
   print "<br/>T&eacute;l&eacute;charger la derni&egrave;re version de PHPlist: <a href=http://www.phplist.com/files>ici</a>";
 }
 ?>
-<p>PHPlist a &eacute;t&eacute; cr&eacute;&eacute; d&eacute;but 2000 sous la forme d&rsquo;un petit logiciel pour le 
+<p>PHPlist a &eacute;t&eacute; cr&eacute;&eacute; d&eacute;but 2000 sous la forme d&rsquo;un petit logiciel pour le
 <a href="http://www.nationaltheatre.org.uk" target="_blank">National Theatre</a> &agrave; Londres. Avec le temps, c&rsquo;est devenu un syst&egrave;me de Gestion des Relations-Client&egrave;le assez complet, et le nombre de sites qui utilisent PHPlist a rapidement augment&eacute;.  M&ecirc;me si l&rsquo;essentiel du code continue d&rsquo;&ecirc;tre d&eacute;velopp&eacute; par une seule personne, le logiciel devient de plus en plus complexe, et en garantir le bon fonctionnement exige des retours et des contributions de la part de beaucoup de monde.</p>
 <p>Afin d&rsquo;eviter de remplir les bo&icirc;tes aux lettres des d&eacute;veloppeurs, ayez la gentillesse de ne pas envoyer de questions directement &agrave; <a href="http://tincan.co.uk" target="_blank">Tincan</a>, et optez plut&ocirc;t pour les autres moyens de communication disponibles.  Non seulement cela lib&egrave;re du temps pour que les d&eacute;veloppeurs puissent continuer &agrave; am&eacute;liorer PHPlist, mais cela permet &eacute;galement de cr&eacute;er une archive des questions qui peuvent servir aux autres utilisateurs, ou aux futurs utilisateurs.</a>.</p>
 <p>Pour faire partie de &agrave; la communaut&eacute; PHPlist, vous avez plusieurs options &agrave; votre disposition:

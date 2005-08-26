@@ -36,17 +36,43 @@ If you think PHPlist is great, and you would advice more people to use it, why n
 </form>
 </li>
 <li><b>At codetransit</b>
-<form action="http://www.codetransit.com/index.php" method=post name=rate531 target="_vote"><input type=hidden name=action value=rate><input type=hidden name=id value=531>
-          <select name=score size=1 style="font-family: Verdana, Tahoma, Arial, Helvetica; font-size: 10pt; color: #000000" onchange="document.rate531.submit()">
-            <option>Select
-            <option value="1">Poor
-            <option value="2">Fair
-            <option value="3">Good
-            <option value="4">Very Good
-            <option value="5" selected>Excellent
-          </select>
-  <input type="submit" value="set rating">
-          </form> or write a <a href="http://www.codetransit.com/comments/index.php?action=addcommentsform&id=531&title=PHPlist&version=1.8.0" target="_review">Review</a>
+<TABLE CELLPADDING=1 CELLSPACING=0 BORDER=0 BGCOLOR=#000000><TR><TD>
+<TABLE border="0" cellspacing="0" cellpadding="4" align="center" style="font-family:verdana;font-size:10px;" bgcolor=#EEEEEE>
+<FORM name="rate" method="post" action="http://www.codetransit.com/action.php?action=rate&linkid=19">
+<TR bgcolor=gray>
+<TD colspan="3" style="color:#FFFFFF"><strong>Rate this product on Code Transit</strong></TD>
+</TR>
+<TR>
+<TD><INPUT type="radio" value="5" name="form_rate_radio_vote" checked ></TD>
+<TD><IMG src="http://www.codetransit.com/themes/advanced/rating/5.gif" width="75" height="13"></TD>
+<TD>Excellent!</TD>
+</TR>
+<TR>
+<TD><INPUT type="radio" value="4" name="form_rate_radio_vote"></TD>
+<TD><IMG src="http://www.codetransit.com/themes/advanced/rating/4.gif" width="75" height="13"></TD>
+<TD>Very Good</TD>
+</TR>
+<TR>
+<TD><INPUT type="radio" value="3" name="form_rate_radio_vote"></TD>
+<TD><IMG src="http://www.codetransit.com/themes/advanced/rating/3.gif" width="75" height="13"></TD>
+<TD>Good</TD>
+</TR>
+<TR>
+<TD><INPUT type="radio" value="2" name="form_rate_radio_vote"></TD>
+<TD><IMG src="http://www.codetransit.com/themes/advanced/rating/2.gif" width="75" height="13"></TD>
+<TD>Fair</TD>
+</TR>
+<TR>
+<TD><INPUT type="radio" value="1" name="form_rate_radio_vote"></TD>
+<TD><IMG src="http://www.codetransit.com/themes/advanced/rating/1.gif" width="75" height="13"></TD>
+<TD>Poor</TD>
+</TR>
+<TR>
+<TD colspan="3"><INPUT type="submit" name="form_rate_button_rate" value="Rate"></TD>
+</TR>
+</FORM>
+</TABLE>
+</TD></TR></TABLE> or write a <a href="http://www.codetransit.com/index.php?id=19&t=add_review" target="_review">Review</a>
 <br/><br/></li>
 <li><b>At PHPWelt</b> (german)
 <form action="http://www.phpwelt.de/archiv/arcscript.php" method="post" target="_vote">
@@ -66,9 +92,6 @@ If you think PHPlist is great, and you would advice more people to use it, why n
 <input type="hidden" name="ack_vote" value="TRUE">
 <input type="hidden" name="arcid" value="226">
 </form>
-</li>
-<li><b>At scripts.org</b> (german)<br/>
-<a href="http://www.scripts.org/links.php?op=rate&lid=773&progname=PHPlist" target="_vote">Rate PHPlist</a><br/><br/>
 </li>
 <li><b>At resourceindex</b><br/>
 <a href="http://php.resourceindex.com/detail/00074.html" target="_vote">Rate PHPlist</a><br/><br/>

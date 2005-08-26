@@ -8,15 +8,14 @@ ini_set("user_agent",NAME. " (PHPlist version ".VERSION.")");
 ini_set("default_socket_timeout",5);
 if ($fp = @fopen ("http://www.phplist.com/files/LATESTVERSION","r")) {
   $latestversion = fgets ($fp);
-  $latestversion = preg_replace("/[^\.\d]/","",$latestversion);
-  $v = VERSION;
-  $v = str_replace("-dev","",$v);
-  if ($v >= $latestversion) {
+  $thisversion = VERSION;
+  $thisversion = str_replace("-dev","",$thisversion);
+  if (versionCompare($thisversion,$latestversion)) {
     print "<font color=green size=2>Enhorabuena, est&aacute;
     utilizando la &uacute;ltima versi&oacute;n</font>";
   } else {
     print "<font color=green size=2>No est&aacute; utilizando la &uacute;ltima versi&oacut;n</font>";
-    print "<br/>Su versi&oacut;n: <b>".$v."</b>";
+    print "<br/>Su versi&oacut;n: <b>".$thisversion."</b>";
     print "<br/>&Uacute;ltima versi&oacute;n: <b>".$latestversion."</b>  ";
     print '<a href="http://www.phplist.com/files/changelog">Ver los cambios</a>&nbsp;&nbsp;';
     print '<a href="http://www.phplist.com/files/phplist-'.$latestversion.'.tgz">Descargar</a>';

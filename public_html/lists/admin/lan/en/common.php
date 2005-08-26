@@ -149,6 +149,7 @@ $lan = array(
   'purgerss' => 'purgerss',
   'Purge RSS items' => 'Purge RSS items',
   'In order to login, you need to enable cookies in your browser' => 'In order to login, you need to enable cookies in your browser',
+
 );
 
 ?>

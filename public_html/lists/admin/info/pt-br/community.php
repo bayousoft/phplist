@@ -7,14 +7,13 @@ ini_set("user_agent",NAME. " (PHPlist version ".VERSION.")");
 ini_set("default_socket_timeout",5);
 if ($fp = @fopen ("http://www.phplist.com/files/LATESTVERSION","r")) {
   $latestversion = fgets ($fp);
-  $latestversion = preg_replace("/[^\.\d]/","",$latestversion);
-  $v = VERSION;
-  $v = str_replace("-dev","",$v);
-  if ($v >= $latestversion) {
+  $thisversion = VERSION;
+  $thisversion = str_replace("-dev","",$thisversion);
+  if (versionCompare($thisversion,$latestversion)) {
     print "<font color=green size=2>Parab&eacutens, voc&ecirc est&aacute utilizando a &uacuteltima vers&atildeo</font>";
   } else {
     print "<font color=green size=2>voc&ecirc n&atildeo est&aacute utilizando a &uacuteltima vers&atildeo</font>";
-    print "<br/>Sua vers&atildeo: <b>".$v."</b>";
+    print "<br/>Sua vers&atildeo: <b>".$thisversion."</b>";
     print "<br/>&Uacuteltima vers&atildeo: <b>".$latestversion."</b>  ";
     print '<a href="http://www.phplist.com/files/changelog">Veja o que mudou</a>&nbsp;&nbsp;';
     print '<a href="http://www.phplist.com/files/phplist-'.$latestversion.'.tgz">Baixar</a>';
@@ -36,7 +35,7 @@ if ($fp = @fopen ("http://www.phplist.com/files/LATESTVERSION","r")) {
 </p><hr>
 <h1>O que voc&ecirc pode fazer para ajudar</h1>
 <p>Se voc&ecirc &eacute um <b>usu&aacuterio comum do PHPlist</b> e acha que j&aacute o conhece bem, voc&ecirc pode ajudar respondendo &agraves quest&otildees dos outros usu&aacuterios.</p>
-<p>Se voc&ecirce &eacute <b>novo no PHPlist</b> e tem tido dificuldades em configur&aacute-lo para funcionar em seu site, voc&ecirc pode ajudar tentando procurar a solu&ccedil&atildeo atrav&eacutes das op&ccedil&otildees acima, depois postando imediatamente a mensagem "n&atildeo funciona". Geralmente os problemas que voc&ecirc possa ter est&atildeo relacionados ao ambiente em que a sua  insta&ccedil&atildeo do PHPlist est&aacute rodando. 
+<p>Se voc&ecirce &eacute <b>novo no PHPlist</b> e tem tido dificuldades em configur&aacute-lo para funcionar em seu site, voc&ecirc pode ajudar tentando procurar a solu&ccedil&atildeo atrav&eacutes das op&ccedil&otildees acima, depois postando imediatamente a mensagem "n&atildeo funciona". Geralmente os problemas que voc&ecirc possa ter est&atildeo relacionados ao ambiente em que a sua  insta&ccedil&atildeo do PHPlist est&aacute rodando.
 Ter somente um desenvolvedor para o PHPlist tem a desvantagem de n&atildeo poder ser testado em todas as plataformas e em todas as vers&otildees do PHP.</p>
 <h1>Outras coisas que voc&ecirc pode fazer para ajudar</h1>
 <ul>
