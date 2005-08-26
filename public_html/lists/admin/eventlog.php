@@ -69,7 +69,7 @@ if ($total > MAX_USER_PP) {
           PageLink2("eventlog","&lt;",sprintf('start=%d',max(0,$start-MAX_USER_PP)).$find_url),
           PageLink2("eventlog","&gt;",sprintf('start=%d',min($total,$start+MAX_USER_PP)).$find_url),
           PageLink2("eventlog","&gt;&gt;",sprintf('start=%d',$total-MAX_USER_PP).$find_url));
-  $result = Sql_query(sprintf('select * from %s %s order by entered desc %s, id desc',$tables["eventlog"],$where,$limit));
+  $result = Sql_query(sprintf('select * from %s %s order by entered desc,id desc %s',$tables["eventlog"],$where,$limit));
 } else {
   $result = Sql_Query(sprintf('select * from %s %s order by entered desc, id desc',$tables["eventlog"],$where));
 }
