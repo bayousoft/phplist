@@ -1,7 +1,7 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 
-# $Id: export.php,v 1.6 2005-08-18 18:42:00 mdethmers Exp $
+# $Id: export.php,v 1.7 2005-08-26 15:40:27 mdethmers Exp $
 
 # export users from PHPlist
 
@@ -163,7 +163,7 @@ if ($list)
 <tr><td colspan=2><?php echo $GLOBALS['I18N']->get('DateToUsed');?></td></tr>
 <tr><td><input type=radio name="column" value="entered" checked></td><td><?php echo $GLOBALS['I18N']->get('WhenSignedUp');?></td></tr>
 <tr><td><input type=radio name="column" value="modified"></td><td><?php echo $GLOBALS['I18N']->get('WhenRecordChanged');?></td></tr>
-<tr><td><input type=radio name="column" value="listentered"></td><td><?php echo $GLOBALS['I18N']->get('When they subscribed to ');?>
+<tr><td><input type=radio name="column" value="listentered"></td><td><?php echo $GLOBALS['I18N']->get('When they subscribed to');?>
 <select name="list">
 <?
 $req = Sql_Query(sprintf('select * from %s %s',$GLOBALS['tables']['list'],$listselect_where));
