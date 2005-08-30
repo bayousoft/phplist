@@ -6,7 +6,7 @@ $lan = array(
   'config_gral_values' => 'Configurar Valores Gerais',
   'config_attribs' => 'Configurar Atributos',
   'create_lists' => 'Criar Listas',
-  'create_subscr_pages' => 'Criar P&aacuteginas de Inscri&ccedil&aatildeo',
+  'create_subscr_pages' => 'Criar P&aacute;ginas de Inscri&ccedil;&aatilde;o',
   'go_there' => 'Ir para',
 
 );

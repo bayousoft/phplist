@@ -1,10 +1,10 @@
 <?php
 
 $lan = array(
-  'existingusers' => "Usu&aacuterios Existentes",
-  'nonexistingusers' => "Usu&aacuterios Inexistentes",
-  'existcheckintro' => '<p>P&aacutegina para verificar a exist&ecircncia de usu&aacuterios na base de dados</p>',
-  'whatistype' => 'Que tipo de informa&ccedil&atildeo voc&ecirc quer verificar',
+  'existingusers' => "Usu&aacute;rios Existentes",
+  'nonexistingusers' => "Usu&aacute;rios Inexistentes",
+  'existcheckintro' => '<p>P&aacute;gina para verificar a exist&ecirc;ncia de usu&aacute;rios na base de dados</p>',
+  'whatistype' => 'Que tipo de informa&ccedil;&atilde;o voc&ecirc; quer verificar',
   "foreignkey" => "Chave Externa",
   "email" => "Email",
   "continue" => "Continuar",

@@ -1,1 +1,1 @@
-Aqui voc&ecirc pode adicionar m&uacuteltiplos administradores ao seu sistema.
+Aqui voc&ecirc; pode adicionar m&uacute;ltiplos administradores ao seu sistema.

@@ -1,7 +1,7 @@
 <?php
 $lan = array(
 	"Deleting" => "Apagando",
-	"Done" => "Conclu&iacutedo",
+	"Done" => "Conclu&iacute;do",
 	"No template have been defined" => "Nenhum modelo foi definido",
 	"Existing templates" => "Modelos existentes",
 	"View" => "Exibir",

@@ -5,3 +5,4 @@ $lan = array(
   'num' => 'num',
 );
 ?>
+‾

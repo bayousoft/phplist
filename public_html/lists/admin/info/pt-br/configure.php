@@ -1,16 +1,16 @@
-<p>Aqui voc&ecirc pode especificar os dados corretos do seu site.<br/>
-Voc&ecirc pode usar certos <b>Marcadores</b> para os seus dados.
-Os Demarcadores s&atildeo apresentados assim <b>[ALGUMTEXTO]</b>, onde <i>ALGUMTEXTO</i> pode ser variar.
-Alguns marcadores muito &uacuteteis s&atildeo:
+<p>Aqui voc&ecirc; pode especificar os dados corretos do seu site.<br/>
+Voc&ecirc; pode usar certos <b>Marcadores</b> para os seus dados.
+Os marcadores s&atilde;o apresentados assim <b>[ALGUMTEXTO]</b>, onde <i>ALGUMTEXTO</i> pode variar.
+Alguns marcadores muito &uacute;teis s&atilde;o:
 <ul>
-<li>WEBSITE - endere&ccedilo do seu site
-<li>DOMAIN - nome do seu dom&iacutenio
-<li>SUBSCRIBEURL - endere&ccedilo da p&aacutegina de inscri&ccedil&atildeo
-<li>UNSUBSCRIBEURL - endere&ccedilo da p&aacutegina de cancelamento da inscri&ccedil&atildeo
-<li>PREFERENCESURL - endere&ccedilo da p&aacutegina na qual os usu&aacuterios podem atualizar seus dados
-<li>CONFIRMATIONURL - endere&ccedilo da p&aacutegina na qual os usu&aacuterios confirmam a sua inscri&ccedilao
+<li>WEBSITE - endere&ccedil;o do seu site
+<li>DOMAIN - nome do seu dom&iacute;nio
+<li>SUBSCRIBEURL - endere&ccedil;o da p&aacute;gina de inscri&ccedil;&atilde;o
+<li>UNSUBSCRIBEURL - endere&ccedil;o da p&aacute;gina de cancelamento da inscri&ccedil;&atilde;o
+<li>PREFERENCESURL - endere&ccedil;o da p&aacute;gina na qual os usu&aacute;rios podem atualizar seus dados
+<li>CONFIRMATIONURL - endere&ccedil;o da p&aacute;gina na qual os usu&aacute;rios confirmam a sua inscri&ccedil;&atilde;o
 </ul>
-<!--Para cabe&ccedil&aacuterios e rodap&eacutes voc&ecirc pode usar os seguintes c&oacutedigos para incluir documentos externos:
+<!--Para cabe&ccedil;&aacute;rios e rodap&eacute;s voc&ecirc; pode usar os seguintes c&oacute;digos para incluir documentos externos:
 <br/>
-<b>[URL:&lt;URL completo da p&aacutegina a ser carregada&gt;]</b>-->
+<b>[URL:&lt;URL completo da p&aacute;gina a ser carregada&gt;]</b>-->
 </p>

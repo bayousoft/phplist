@@ -1,9 +1,9 @@
 
 
 <p><b>Vote no PHPlist</b><br/>
-Se voc&ecirc acha que o PHPlist &eacute &oacutetimo e voc&ecirc gostaria de aconselhar outras pessoas a us&aacute-lo, por que n&atildeo votar nele em alguns sites? 
+Se voc&ecirc; acha que o PHPlist &eacute; &oacutetimo; e voc&ecirc; gostaria de aconselhar outras pessoas a us&aacute;-lo, por que n&atilde;o votar nele em alguns sites? 
 </p>
-<p>Se voc&ecirc encontrar o PHPlist em um site diferente e acha que ele poderia ser inclu&iacutedo aqui, <a href="mailto:phplist2@tincan.co.uk?subject=New Directory">nos envie um email</a></p>
+<p>Se voc&ecirc; encontrar o PHPlist em um site diferente e acha que ele poderia ser inclu&iacute;do aqui, <a href="mailto:phplist2@tincan.co.uk?subject=New Directory">nos envie um email</a></p>
 <ul>
 <li><b>No freshmeat</b>
 <form method="post" action="http://freshmeat.net/rate/store/" target="_vote">
@@ -11,7 +11,7 @@ Se voc&ecirc acha que o PHPlist &eacute &oacutetimo e voc&ecirc gostaria de acon
 <table cellspacing="3" cellpadding="0" border="0">
   <tr>
     <td valign="middle" width="15%">
-  <b>Avalia&ccedil&atildeo:</b>
+  <b>Avalia&ccedil;&atilde;o:</b>
     </td>
   <td valign="top" width="85%">
   <select name="rating" onchange="submit()">
@@ -40,13 +40,13 @@ Se voc&ecirc acha que o PHPlist &eacute &oacutetimo e voc&ecirc gostaria de acon
           <select name=score size=1 style="font-family: Verdana, Tahoma, Arial, Helvetica; font-size: 10pt; color: #000000" onchange="document.rate531.submit()">
             <option>Select
             <option value="1">Ruim
-            <option value="2">M&eacutedio
+            <option value="2">M&eacute;dio
             <option value="3">Bom
             <option value="4">Muito bom
-            <option value="5" selected>&Oacutetimo
+            <option value="5" selected>&Oacute;timo
           </select>
   <input type="submit" value="set rating">
-          </form> ou escreva um <a href="http://www.codetransit.com/comments/index.php?action=addcommentsform&id=531&title=PHPlist&version=1.8.0" target="_review">Coment&aacuterio</a>
+          </form> ou escreva um <a href="http://www.codetransit.com/comments/index.php?action=addcommentsform&id=531&title=PHPlist&version=1.8.0" target="_review">Coment&aacute;rio</a>
 <br/><br/></li>
 <li><b>No PHPWelt</b> (alem&atildeo)
 <form action="http://www.phpwelt.de/archiv/arcscript.php" method="post" target="_vote">
@@ -77,20 +77,20 @@ Se voc&ecirc acha que o PHPlist &eacute &oacutetimo e voc&ecirc gostaria de acon
 <form action="http://www.hotscripts.com/cgi-bin/rate.cgi" method="POST">
 <input type=hidden name="ID" value="5015">
 <table BORDER="0" CELLSPACING="0" CELLPADDING="2" bgcolor="#CCCC99">
-<tr><td><font face="arial,verdana,helvetica" size="2"><b>Cabine de Vota&ccedil&atildeo do Visitante: </b></td>
-<td><select name="rate" size="1"><option selected>Fa&ccedila a sua Avalia&ccedil&atildeo</option>
-<option value="5" selected>&Oacutetimo!</option><option value="4">Muito Bom</option>
-<option value="3">Bom</option><option value="2">M&eacutedio</option>
+<tr><td><font face="arial,verdana,helvetica" size="2"><b>Cabine de Vota&ccedil;&atilde;o do Visitante: </b></td>
+<td><select name="rate" size="1"><option selected>Fa&ccedil;a a sua Avalia&ccedil;&atilde;o</option>
+<option value="5" selected>&Oacute;timo!</option><option value="4">Muito Bom</option>
+<option value="3">Bom</option><option value="2">M&eacute;dio</option>
 <option value="1">Ruim</option></select></td><td>
 <input type="submit" value="Rate It!"></td></tr></table></form>
-<a href="http://www.hotscripts.com/review/?linkid=5015&returnto=http://www.hotscripts.com/Detailed/5015.html" target="_review">Escreva um Coment&aacuterio</a><br/><br/>
+<a href="http://www.hotscripts.com/review/?linkid=5015&returnto=http://www.hotscripts.com/Detailed/5015.html" target="_review">Escreva um Coment&aacute;rio</a><br/><br/>
 
 </li>
 <li><b>No Devscripts.com</b>
 <form action="http://devscripts.com/vote.php" method="post" name="frmRate" target="_vote">
 <input type="hidden" name="strScriptId" value="1465">
     <select name="strRValue" onChange="document.frmRate.submit();">
-        <option value="NULL">Avalia&ccedil&atildeo</option>
+        <option value="NULL">Avalia&ccedil;&atilde;o</option>
         <option value="10" selected>10</option>
 
         <option value="9">9</option>
@@ -105,7 +105,7 @@ Se voc&ecirc acha que o PHPlist &eacute &oacutetimo e voc&ecirc gostaria de acon
         <option value="1">1</option>
     </select><input type="submit" value="set rating">
 </form>
-<a href="http://devscripts.com/review.php?sId=1465" target="_review">Escreva um coment&aacuterio</a><br/><br/>
+<a href="http://devscripts.com/review.php?sId=1465" target="_review">Escreva um coment&aacute;rio</a><br/><br/>
 </li>
 <li><b>No webscript.ru</b> (russo)<br/>
 <form name="rate" method="post" action="http://webscript.ru/action.php?sid=598201422&action=rate&linkid=22&having=753">
@@ -118,7 +118,7 @@ Se voc&ecirc acha que o PHPlist &eacute &oacutetimo e voc&ecirc gostaria de acon
 </form>
 </li>
 <li><b>No PHPindex.com</b> (franc&ecircs)<br/>
-<a href="http://www.phpindex.com/annuaire/annuaire_critique.php3?annuaire_critique_annuaire_id=917">Adicionar um coment&aacuterio</a><br/><br/>
+<a href="http://www.phpindex.com/annuaire/annuaire_critique.php3?annuaire_critique_annuaire_id=917">Adicionar um coment&aacute;rio</a><br/><br/>
 </li>
 <li><b>No bigboys</b><br/>
 <form method="GET" action="http://www.big-boys.com/php/vote1.asp">
@@ -127,7 +127,7 @@ Se voc&ecirc acha que o PHPlist &eacute &oacutetimo e voc&ecirc gostaria de acon
       <option VALUE="2">2
       <option VALUE="3">3
       <option VALUE="4">4
-      <option VALUE="5">5 - M&eacutedio
+      <option VALUE="5">5 - M&eacute;dio
       <option VALUE="6">6
       <option VALUE="7">7
       <option VALUE="8">8
