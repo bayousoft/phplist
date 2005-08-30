@@ -45,8 +45,8 @@ if (isset($_POST["save"]) && isset($_POST["listname"]) && $_POST["listname"]) {
     $_POST["prefix"],$_POST["owner"],$_POST["rssfeed"],$id);
   } else {
     $query = sprintf('insert into %s
-    	(name,description,entered,listorder,owner,prefix,rssfeed,active)
-    	values("%s","%s",now(),%d,%d,"%s","%s",%d)',
+      (name,description,entered,listorder,owner,prefix,rssfeed,active)
+      values("%s","%s",now(),%d,%d,"%s","%s",%d)',
       $tables["list"],addslashes($_POST["listname"]),addslashes($_POST["description"]),
       $_POST["listorder"],$_POST["owner"],$_POST["prefix"],$_POST["rssfeed"],$_POST["active"]);
   }
@@ -85,14 +85,14 @@ ob_end_flush();
 }
 if (ENABLE_RSS) {
  if ($list["rssfeed"]) {
- 	 $validate = sprintf('(<a href="http://feedvalidator.org/check?url=%s" target="_blank">%s</a>)',$list["rssfeed"],$GLOBALS['I18N']->get('validate'));
-	 $viewitems = PageLink2("viewrss&id=".$id,$GLOBALS['I18N']->get('View Items'));
+   $validate = sprintf('(<a href="http://feedvalidator.org/check?url=%s" target="_blank">%s</a>)',$list["rssfeed"],$GLOBALS['I18N']->get('validate'));
+   $viewitems = PageLink2("viewrss&id=".$id,$GLOBALS['I18N']->get('View Items'));
  } else {
    $validate = '';
    $viewitems = '';
  }
  printf('<tr><td>%s %s %s</td><td><input type=text name="rssfeed" value="%s" size=50></td></tr>',
- 	 $GLOBALS['I18N']->get('RSS Source'), $validate,$viewitems,htmlspecialchars($list["rssfeed"]));
+   $GLOBALS['I18N']->get('RSS Source'), $validate,$viewitems,htmlspecialchars($list["rssfeed"]));
 }
 
 ?>

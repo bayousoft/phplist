@@ -101,8 +101,7 @@ how well PHPlist is performing.</p></li>
 <? if (!stristr($_SERVER['HTTP_USER_AGENT'],'firefox')) { ?>
 <p>If you experience problems, please make sure to use Firefox to see if that solves the problem.
 <a href="http://www.spreadfirefox.com/?q=affiliates&amp;id=131358&amp;t=81"><img border="0" alt="Get Firefox!" title="Get Firefox!" src="images/getff.gif"/></a>
-<? }
-?>
+<? } ?>
 
 </p>
 <p>Your system details are:</p>
