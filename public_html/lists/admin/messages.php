@@ -201,6 +201,8 @@ if ($total) {
           <b>'.$GLOBALS['I18N']->get("Unique Views").'</b></td>
           <td align="center"><b>%d</b></td></tr>
           ',$msg["viewed"],$uniqueviews[0]);
+      } else {
+        $viewed = '';
       }
 
       $sendstats =
