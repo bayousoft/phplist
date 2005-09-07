@@ -22,7 +22,7 @@ $lan = array(
 'Foreign Key' => 'Fremdschl&uuml;ssel',
 'reset' => 'Zur&uuml;cksetzen',
 'Download all users as CSV file'
-	=> 'Alle Abonnenten als CSV-Datei herunterladen',
+	=> 'Abonnenten exportieren',
 'Add a User' => 'Neuer Abonnent',
 'confirmed' => 'Best&auml;tigt',
 'bl l' => 'Blacklist', # as in black listed (but then as short as possible)

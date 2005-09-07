@@ -26,5 +26,21 @@ $lan = array(
 'Group Membership' => 'Gruppenmitgliedschaft',
 'Please select the groups this user is a member of'
 	=> 'Bitte w&auml;hlen Sie die Gruppen, deren Mitglied der Abonnent ist.',
+# added 2.10.0
+'ID' => 'ID',
+'Email' => 'E-Mail-Adresse',
+'Is this user confirmed' => 'Best&auml;tigt',
+'Is this user blacklisted' => 'Auf der Blacklist',
+'Number of bounces on this user' => 'Anzahl Retouren',
+'Entered' => 'Erstellt',
+'Last Modified' => 'Letzte &Auml;nderung',
+'Unique ID for User' => 'Unique ID',
+'Send this user HTML emails' => 'Bevorzugt E-Mails im HTML-Format (1/0)',
+'Which page was used to subscribe' => 'Benutzte Anmeldeseite',
+'RSS Frequency' => 'RSS-H&auml;ufigkeit',
+'Last time password was changed' => 'Letzte Passwort&auml;nderung',
+'Is this account disabled?' => 'Deaktiviert (1/0)',
+'Additional data' => 'Zusatzdaten',
+'Foreign Key' => 'Fremdschl&uuml;ssel',
 );
 ?>

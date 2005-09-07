@@ -34,5 +34,9 @@ $lan = array(
   'Check that all external images exist' => 'Alle externen Bilder auf Existenz &uuml;berpr&uuml;fen',
   'Save Changes' => 'Speichern',
   'Save Images' => 'Bilder speichern',
+  # added 2.10.0
+  'You can upload a template file or paste the text in the box below'
+  	=> 'Sie k&ouml;nnen eine Template-Datei uploaden oder den Text in das nachfolgende Feld einf&uuml;gen.',
+  'Template file.' => 'Template-Datei',
 );
 ?>

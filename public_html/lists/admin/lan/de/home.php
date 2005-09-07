@@ -20,11 +20,10 @@ $lan = array(
   'View the eventlog' => 'Event-Log anzeigen',
   'Configuration functions' => 'Konfiguration',
   'Configure Attributes' => 'Attribute f&uuml;r Abonnenten konfigurieren',
+  // double entries?
   'Control values for' => 'Werte bearbeiten f&uuml;r Attribut',
-  // double entry
-  // 'Control values for' => 'Control values for',
-  // double entry
-  // 'Control values for' => 'Control values for',
+  'Control values for' => 'Werte bearbeiten f&uuml;r Attribut',
+  'Control values for' => 'Werte bearbeiten f&uuml;r Attribut',
   'Configure Subscribe pages' => 'Anmeldeseiten konfigurieren',
   'List and user functions' => 'Listen & Abonnenten',
   'List the current lists' => 'Listen verwalten',
@@ -39,9 +38,9 @@ $lan = array(
   'Configure Templates' => 'Templates konfigurieren',
   'List all Messages' => 'Nachrichten verwalten',
   'Process the Message queue' => 'Warteschlange abarbeiten',
-  'RSS Functions' => 'RSS Funktionen',
-  'Get RSS feeds' => 'RSS Feeds holen',
-  'View RSS items' => 'RSS Items anzeigen',
+  'RSS Functions' => 'RSS',
+  'Get RSS feeds' => 'Meldungen aus RSS-Feed in PHPlist importieren',
+  'View RSS items' => 'In PHPlist gespeicherte Meldungen anzeigen',
   'Plugins' => 'Plug-Ins',
   'Upgrade' => 'Upgrade',
   'Change your details (e.g. password)' => 'Pers&ouml;nliche Einstellungen bearbeiten (z.B. Passwort)',
@@ -65,12 +64,16 @@ $lan = array(
   'templates' => 'Templates',
   'processqueue' => 'Warteschlage',
   'processbounces' => 'Retouren abholen',
-  'getrss' => 'Get RSS',
-  'viewrss' => 'View RSS',
+  'getrss' => 'RSS-Meldungen importieren',
+  'viewrss' => 'RSS-Meldungen anzeigen',
   'admin' => 'Admin',
   'preparesend' => 'Neue Vorlage',
   'sendprepared' => 'Neue Nachricht ab Vorlage',
 
+  # added for German translation
+  'purgerss' => 'RSS-Meldungen l&ouml;schen',
+  'Purge RSS items' => 'Importierte Meldungen aus PHPlist l&ouml;schen'
+  
 );
 
 ?>

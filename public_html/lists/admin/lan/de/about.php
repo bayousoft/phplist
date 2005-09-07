@@ -11,6 +11,8 @@ $lan = array(
   # use this tag to give your own name(s), so you are listed in the "About" page
   # for credits for this particular translation
   'credits for this translation' => 'Martin Sauter',
+  # added for German translation
+  'Documentation' => 'Dokumentation',
 );
 
 ?>

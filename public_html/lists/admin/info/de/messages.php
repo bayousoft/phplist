@@ -5,7 +5,7 @@
 <strong>prepared</strong> = Vorlage (fertig erstellt, aber noch kein Versand geplant)
 </p>
 <p>Um eine Nachricht nochmals an diejenigen Abonnenten zu senden, welche sich erst nach einem Versand f&uuml;r diese Liste angemeldet haben,
-benutzen Sie den Befehl "Requeue". Abonnenten, welche die Nachricht schon fr&uuml;her erhalten haben, erhalten sie dadurch kein zweites Mal.</p>
+benutzen Sie den Befehl "erneut senden". Abonnenten, welche die Nachricht schon fr&uuml;her erhalten haben, erhalten sie dadurch kein zweites Mal.</p>
 <p>Um eine Nachricht an eine andere Liste zu senden, benutzen Sie die entsprechende Funktion in der Detailansicht dieser Nachricht.</p>
 <?php if (TEST) { ?>
 <br /><b>Hinweis:</b> Das System befindet sich im Test-Modus. Dadurch werden Nachrichten auch an Abonnenten gesendet, welche diese bereits erhalten haben.

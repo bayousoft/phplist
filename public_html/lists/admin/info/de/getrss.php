@@ -1,1 +1,1 @@
-<h1>Lade RSS Feeds herunter</h1>
+<h1>Meldungen aus RSS-Feeds werden in PHPlist importiert</h1>

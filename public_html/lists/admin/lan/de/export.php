@@ -11,5 +11,7 @@ $lan = array(
   "WhenSignedUp" => "Datum der Anmeldung",
   "WhenRecordChanged" => "Datum der letzten &Auml;nderung",
   "SelectColToIn" => "<h2>Zu exportierende Spalten</h2>",
+  # new in 2.10.1
+  'When they subscribed to' => 'Datum des Abonnements f&uuml;r Liste ',
 );
 ?>

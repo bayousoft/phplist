@@ -33,7 +33,7 @@ switch ($page) {
   case 'template': $page_title = 'Template erstellen/bearbeiten';break;
   case 'viewtemplate': $page_title = 'Template-Vorschau';break;
   case 'configure': $page_title = 'Konfiguration';break;
-  case 'admin': $page_title = 'Edit an Administrator';break;
+  case 'admin': $page_title = 'Administrator erstellen/bearbeiten';break;
   case 'admins': $page_title = 'Administratoren';break;
   case 'adminattributes': $page_title = 'Attribute f&uuml;r Administratoren';break;
   case 'processbounces': $page_title = 'Retouren abholen';break;
@@ -42,14 +42,15 @@ switch ($page) {
   case 'spageedit': $page_title = 'Anmeldeseite erstellen/bearbeiten';break;
   case 'spage': $page_title = 'Anmeldeseiten';break;
   case 'eventlog': $page_title = 'Event-Log';break;
-  case 'getrss': $page_title = 'Retrieve RSS feeds';break;
-  case 'viewrss': $page_title = 'View RSS Items';break;
+  case 'getrss': $page_title = 'RSS-Meldungen importieren';break;
+  case 'viewrss': $page_title = 'RSS-Meldungen anzeigen';break;
   case 'community': $page_title = 'Hilfe';break;
   case 'vote': $page_title = 'PHPlist bewerten';break;
   case 'login': $page_title = 'Login';break;
   case 'logout': $page_title = 'Logout';break;
   case 'mclicks': $page_title = 'Statistik: Klicks pro Nachricht'; break;
   case 'uclicks': $page_title = 'Statistik: Klicks pro URL'; break;
+  case 'massunconfirm': $page_title = 'Mass Unconfirm emails';break;
 
   // the following page titles are missing in the english language file
   case 'dbcheck': $page_title = 'DB-Check'; break;
@@ -58,5 +59,6 @@ switch ($page) {
   case 'domainstats': $page_title = 'Domain-Statistik'; break;
   case 'usermgt': $page_title = 'Abonnentenverwaltung'; break;
   case 'usercheck': $page_title = 'Abonnenten pr&uuml;fen'; break;
+  case 'purgerss': $page_title = 'RSS-Meldungen l&ouml;schen';break;
 }
 ?>
