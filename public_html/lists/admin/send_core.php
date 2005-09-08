@@ -33,6 +33,9 @@ $embargo = new date("embargo");
 $embargo->useTime = true;
 $repeatuntil = new date("repeatuntil");
 $repeatuntil->useTime = true;
+if (empty($_GET['id'])) {
+  $_GET['id'] = '';
+}
 $baseurl = PageURL2($_GET["page"].'&id='.$_GET["id"]);
 
 echo '<script language="Javascript" src="js/jslib.js" type="text/javascript"></script><hr><p>';

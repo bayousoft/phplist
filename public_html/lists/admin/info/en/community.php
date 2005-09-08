@@ -70,8 +70,9 @@ from your experience.</p>
 <p>To do so, you can <?php echo PageLink2("vote","Vote")?> for PHPlist, or write reviews on the
 sites that list applications. You can also tell other people you know about it.
 </li>
-<li><p>You can <b>Translate</b> PHPlist into your language and submit the translation. I hope to
-improve internationalisation, but for now, you simply need to translate the file <i>english.inc</i>.</p>
+<li><p>You can <b>Translate</b> PHPlist into your language and submit the translation.
+To help out check the <a href="http://docs.phplist.com/PhplistTranslation">Translation Pages</a> in the Wiki.
+</p>
 </li>
 <li>
 <p>You can <b>Try out</b> all the different features of PHPlist and check whether they work ok for you.
@@ -109,6 +110,7 @@ how well PHPlist is performing.</p></li>
 <ul>
 <li>PHPlist version: <?php echo VERSION?></li>
 <li>PHP version: <?php echo phpversion()?></li>
+<li>Browser: <?php echo $_SERVER['HTTP_USER_AGENT']?></li>
 <li>Webserver: <?php echo $_SERVER['SERVER_SOFTWARE']?></li>
 <li>Website: <a href="http://<?php echo getConfig("website")."$pageroot"?>"><?=getConfig("website")."$pageroot"?></a></li>
 <li>Mysql Info: <?php echo mysql_get_server_info();?></li>

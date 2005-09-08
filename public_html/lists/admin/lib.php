@@ -439,7 +439,7 @@ function getPageLock() {
   $running_res = Sql_Fetch_row($running_req);
   $waited = 0;
   while ($running_res[1]) { # a process is already running
-    if ($running_res[0] > 1200) {# some sql queries can take quite a while
+    if ($running_res[0] > 600) {# some sql queries can take quite a while
       # process has been inactive for too long, kill it
       Sql_query("update {$tables["sendprocess"]} set alive = 0 where id = $running_res[1]");
     } else {

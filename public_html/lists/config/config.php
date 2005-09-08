@@ -14,7 +14,8 @@ General settings for language and database
 # select the language module to use
 # Look for <country>.inc files in the texts directory
 # to find your language
-#
+# this is the language for the frontend pages. In the admin pages you can
+# choose your language by using the dropdown in the pages.
 $language_module = "english.inc";
 
 # what is your Mysql database server
@@ -43,6 +44,7 @@ $usertable_prefix = "phplist_user_";
 
 # if you change the path to the PHPlist system, make the change here as well
 # path should be relative to the root directory of your webserver (document root)
+# you cannot actually change the "admin", but you can change the "lists"
 $pageroot = '/lists';
 $adminpages = '/lists/admin';
 
