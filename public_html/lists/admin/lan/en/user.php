@@ -40,5 +40,7 @@ $lan = array(
 'Additional data' => 'Additional data',
 'Foreign Key' => 'Foreign Key',
 
+'Error adding user, please check that the user exists' => 'Error adding user, please check that the user exists',
+
 );
 ?>
