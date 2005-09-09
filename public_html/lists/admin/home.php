@@ -4,7 +4,7 @@ require_once dirname(__FILE__).'/accesscheck.php';
 
 ob_end_flush();
 $upgrade_required = 0;
-if (Sql_Table_exists($tables["config"])) {
+if (Sql_Table_exists($tables["config"],1)) {
   $dbversion = getConfig("version");
   if ($dbversion != VERSION && !defined("IN_WEBBLER")) {
     Error($GLOBALS['I18N']->get('Your database is out of date, please make sure to upgrade').'<br/>'.

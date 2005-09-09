@@ -434,7 +434,7 @@ if (!TEST && REGISTER && defined("VERSION")) {
 if (!function_exists("getconfig")) {
   function getConfig($item) {
     global $default_config,$domain,$website,$tables;
-    $hasconf = Sql_Table_Exists($tables["config"]);
+    $hasconf = Sql_Table_Exists($tables["config"],1);
     # correct old methods for finding public urls
     # @@@@ hmm maybe need to revert this
     /*
