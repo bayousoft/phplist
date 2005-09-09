@@ -177,10 +177,10 @@ if ($action == "addimages") {
   <td><input type=text name="title" value="<?php echo stripslashes(htmlspecialchars($data["title"]))?>" size=30></td>
 </tr>
 <tr>
-  <td colspan=2><?php echo $GLOBALS['I18N']->get('Content of the template.')?><br /><? echo $GLOBALS['I18N']->get('The content should at least have <b>[CONTENT]</b> somewhere.')?><br/><? echo $GLOBALS['I18N']->get('You can upload a template file or paste the text in the box below'); ?></td>
+  <td colspan=2><?php echo $GLOBALS['I18N']->get('Content of the template.')?><br /><?php echo $GLOBALS['I18N']->get('The content should at least have <b>[CONTENT]</b> somewhere.')?><br/><?php echo $GLOBALS['I18N']->get('You can upload a template file or paste the text in the box below'); ?></td>
 </tr>
 <tr>
-  <td><? echo $GLOBALS['I18N']->get('Template file.')?></td>
+  <td><?php echo $GLOBALS['I18N']->get('Template file.')?></td>
     <td><input type=file name="file_template" /></td>
     </tr>
 <tr>

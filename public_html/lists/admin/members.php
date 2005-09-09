@@ -281,9 +281,9 @@ if ($access == "view") return;
 ?>
 <hr>
 <table>
-<tr><td colspan=2><h3><? echo $GLOBALS['I18N']->get('What to do with "Tagged" users')?>:</h3>
-<? echo $GLOBALS['I18N']->get('This will only process the users in this page that have the "Tag" checkbox checked')?></td></tr>
-<tr><td colspan=2><? echo $GLOBALS['I18N']->get('delete')?> (<? echo $GLOBALS['I18N']->get('from this list')?>) <input type=radio name="tagaction"
+<tr><td colspan=2><h3><?php echo $GLOBALS['I18N']->get('What to do with "Tagged" users')?>:</h3>
+<?php echo $GLOBALS['I18N']->get('This will only process the users in this page that have the "Tag" checkbox checked')?></td></tr>
+<tr><td colspan=2><?php echo $GLOBALS['I18N']->get('delete')?> (<?php echo $GLOBALS['I18N']->get('from this list')?>) <input type=radio name="tagaction"
  value="delete"></td></tr>
 <?php
 $html = '';
@@ -294,35 +294,35 @@ while ($row = Sql_Fetch_array($res)) {
 }
 if ($html) {
 ?>
-  <tr><td><? echo $GLOBALS['I18N']->get('move')?> <input type=radio name="tagaction" value="move"> </td><td><? echo $GLOBALS['I18N']->get('to')?>
+  <tr><td><?php echo $GLOBALS['I18N']->get('move')?> <input type=radio name="tagaction" value="move"> </td><td><?php echo $GLOBALS['I18N']->get('to')?>
  <select name=movedestination>
   <?php echo $html ?>
 </select></td></tr>
-  <tr><td><? echo $GLOBALS['I18N']->get('copy')?> <input type=radio name="tagaction" value="copy"> </td><td><? echo $GLOBALS['I18N']->get('to')?>
+  <tr><td><?php echo $GLOBALS['I18N']->get('copy')?> <input type=radio name="tagaction" value="copy"> </td><td><?php echo $GLOBALS['I18N']->get('to')?>
  <select name=copydestination>
   <?php echo $html ?>
 </select></td></tr>
-<tr><td colspan=2><? echo $GLOBALS['I18N']->get('nothing')?> <input type=radio name="tagaction"
+<tr><td colspan=2><?php echo $GLOBALS['I18N']->get('nothing')?> <input type=radio name="tagaction"
  value="nothing" checked></td></tr>
 <?php } ?>
 <tr><td colspan=2><hr></td></tr>
-<tr><td colspan=2><h3><? echo $GLOBALS['I18N']->get('What to do with all users')?></h3><? echo $GLOBALS['I18N']->get('This will process all users on this list')?></td></tr>
-<tr><td colspan=2><? echo $GLOBALS['I18N']->get('delete')?> (<? echo $GLOBALS['I18N']->get('from this list')?>) <input type=radio name="tagaction_all"
+<tr><td colspan=2><h3><?php echo $GLOBALS['I18N']->get('What to do with all users')?></h3><?php echo $GLOBALS['I18N']->get('This will process all users on this list')?></td></tr>
+<tr><td colspan=2><?php echo $GLOBALS['I18N']->get('delete')?> (<?php echo $GLOBALS['I18N']->get('from this list')?>) <input type=radio name="tagaction_all"
  value="delete"></td></tr>
 <?php
 if ($html) {
 ?>
-  <tr><td><? echo $GLOBALS['I18N']->get('move')?> <input type=radio name="tagaction_all" value="move"> </td><td><? echo $GLOBALS['I18N']->get('to')?>
+  <tr><td><?php echo $GLOBALS['I18N']->get('move')?> <input type=radio name="tagaction_all" value="move"> </td><td><?php echo $GLOBALS['I18N']->get('to')?>
  <select name="movedestination_all">
   <?php echo $html ?>
 </select></td></tr>
-  <tr><td><? echo $GLOBALS['I18N']->get('copy')?> <input type=radio name="tagaction_all" value="copy"> </td><td><? echo $GLOBALS['I18N']->get('to')?>
+  <tr><td><?php echo $GLOBALS['I18N']->get('copy')?> <input type=radio name="tagaction_all" value="copy"> </td><td><?php echo $GLOBALS['I18N']->get('to')?>
  <select name="copydestination_all">
   <?php echo $html ?>
 </select></td></tr>
-<tr><td colspan=2><? echo $GLOBALS['I18N']->get('nothing')?> <input type=radio name="tagaction_all"
+<tr><td colspan=2><?php echo $GLOBALS['I18N']->get('nothing')?> <input type=radio name="tagaction_all"
  value="nothing" checked></td></tr>
 <?php } ?>
-<tr><td colspan=2><input type=submit name=processtags value="<? echo $GLOBALS['I18N']->get('do it')?>"></td></tr>
+<tr><td colspan=2><input type=submit name=processtags value="<?php echo $GLOBALS['I18N']->get('do it')?>"></td></tr>
 </table>
 </form>

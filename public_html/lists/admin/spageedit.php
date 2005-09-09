@@ -153,27 +153,27 @@ printf('<tr><td valign=top>%s</td><td><input type=text name=button value="%s" si
   $GLOBALS['I18N']->get('Text for Button'),
   htmlspecialchars($data["button"]));
 printf('<tr><td valign=top>%s</td><td>',  $GLOBALS['I18N']->get('HTML Email choice'));
-printf ('<input type=radio name="htmlchoice" value="textonly" %s> 
+printf ('<input type=radio name="htmlchoice" value="textonly" %s>
   %s <br/>',
   $data["htmlchoice"] == "textonly"?"checked":"",
   $GLOBALS['I18N']->get('Don\'t offer choice, default to <b>text</b>'));
-printf ('<input type=radio name="htmlchoice" value="htmlonly" %s> 
+printf ('<input type=radio name="htmlchoice" value="htmlonly" %s>
   %s <br/>',
   $data["htmlchoice"] == "htmlonly"?"checked":"",
   $GLOBALS['I18N']->get('Don\'t offer choice, default to <b>HTML</b>'));
-printf ('<input type=radio name="htmlchoice" value="checkfortext" %s> 
+printf ('<input type=radio name="htmlchoice" value="checkfortext" %s>
   %s <br/>',
   $data["htmlchoice"] == "checkfortext"?"checked":"",
   $GLOBALS['I18N']->get('Offer checkbox for text'));
-printf ('<input type=radio name="htmlchoice" value="checkforhtml" %s> 
+printf ('<input type=radio name="htmlchoice" value="checkforhtml" %s>
   %s <br/>',
   $data["htmlchoice"] == "checkforhtml"?"checked":"",
   $GLOBALS['I18N']->get('Offer checkbox for HTML'));
-printf ('<input type=radio name="htmlchoice" value="radiotext" %s> 
+printf ('<input type=radio name="htmlchoice" value="radiotext" %s>
   %s <br/>',
   $data["htmlchoice"] == "radiotext"?"checked":"",
   $GLOBALS['I18N']->get('Radio buttons, default to text'));
-printf ('<input type=radio name="htmlchoice" value="radiohtml" %s> 
+printf ('<input type=radio name="htmlchoice" value="radiohtml" %s>
   %s <br/>',
   $data["htmlchoice"] == "radiohtml"?"checked":"",
   $GLOBALS['I18N']->get('Radio buttons, default to HTML'));
@@ -219,12 +219,12 @@ print '<tr><td colspan=2><h1>'.$GLOBALS['I18N']->get('Select the attributes to u
   ?>
   <table border=1 width=100% bgcolor="<?php echo $bgcol?>">
   <tr><td colspan=2 width=150><?php echo $GLOBALS['I18N']->get('Attribute')?>:<?php echo $row["id"] ?></td>
-  <td colspan=2><?php echo $GLOBALS['I18N']->get('Check this box to use this attribute in the page')?> <input type="checkbox" name="attr_use[<? echo $row["id"] ?>]" value="1" <?=$checked[$row["id"]]?>></td></tr>
+  <td colspan=2><?php echo $GLOBALS['I18N']->get('Check this box to use this attribute in the page')?> <input type="checkbox" name="attr_use[<?php echo $row["id"] ?>]" value="1" <?=$checked[$row["id"]]?>></td></tr>
   <tr><td colspan=2><?php echo $GLOBALS['I18N']->get('Name')?>: </td><td colspan=2><h2><?php echo htmlspecialchars(stripslashes($row["name"])) ?></h2></td></tr>
   <tr><td colspan=2><?php echo $GLOBALS['I18N']->get('Type')?>: </td><td colspan=2><h2><?php echo $GLOBALS['I18N']->get($row["type"])?></h2></td></tr>
-  <tr><td colspan=2><?php echo $GLOBALS['I18N']->get('Default Value')?>: </td><td colspan=2><input type=text name="attr_default[<?php echo $row["id"]?>]" value="<? echo htmlspecialchars(stripslashes($value["default_value"])) ?>" size=40></td></tr>
-  <tr><td><?php echo $GLOBALS['I18N']->get('Order of Listing')?>: </td><td><input type=text name="attr_listorder[<?php echo $row["id"]?>]" value="<? echo $value["listorder"] ?>" size=5></td>
-  <td><?php echo $GLOBALS['I18N']->get('Is this attribute required?')?>: </td><td><input type=checkbox name="attr_required[<?php echo $row["id"]?>]" value="1" <? echo $value["required"] ? "checked": "" ?>></td></tr>
+  <tr><td colspan=2><?php echo $GLOBALS['I18N']->get('Default Value')?>: </td><td colspan=2><input type=text name="attr_default[<?php echo $row["id"]?>]" value="<?php echo htmlspecialchars(stripslashes($value["default_value"])) ?>" size=40></td></tr>
+  <tr><td><?php echo $GLOBALS['I18N']->get('Order of Listing')?>: </td><td><input type=text name="attr_listorder[<?php echo $row["id"]?>]" value="<?php echo $value["listorder"] ?>" size=5></td>
+  <td><?php echo $GLOBALS['I18N']->get('Is this attribute required?')?>: </td><td><input type=checkbox name="attr_required[<?php echo $row["id"]?>]" value="1" <?php echo $value["required"] ? "checked": "" ?>></td></tr>
   </table><hr>
 <?php
   }
@@ -240,7 +240,7 @@ if (ENABLE_RSS) {
     printf('<tr><td colspan=2><input type=checkbox name="rss[]" value="%s" %s> %s %s
     (%s <input type=radio name="rssdefault" value="%s" %s>)
     </td></tr>',
-    
+
     $key,in_array($key,$rss)?"checked":"",
     $GLOBALS['I18N']->get('Offer option to receive'),
     $GLOBALS['I18N']->get($val),

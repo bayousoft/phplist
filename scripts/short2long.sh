@@ -1,18 +1,21 @@
 
 # script to replace short php tags <? with long one <?php
 
-for i in `find public_html -type f|grep -e "\.php\|\.inc"`; do 
-  echo $i;
-  sed -i "s/<?/<?php/" $i 
+echo "replacing <? with <?php"
+for i in `fgrep -rilI -e "<? " public_html*`; do
+   echo $i;
+   sed -i "s/<? /<?php /" $i;
 done
 # remove accidentally doubled ones
-for i in `find public_html -type f|grep -e "\.php\|\.inc"`; do 
-  echo $i;
-  sed -i "s/<?phpphp/<?php/" $i 
+echo "replacing <?phpphp with <?php"
+for i in `fgrep -rilI -e "<?phpphp " public_html*`; do
+   echo $i;
+   sed -i "s/<?phpphp/<?php/" $i;
 done
-# change the echo ones
-for i in `find public_html -type f|grep -e "\.php\|\.inc"`; do 
-  echo $i;
-  sed -i "s/<?php=/<?php echo /" $i 
+echo "replacing <?php= with <?php echo "
+for i in `fgrep -rilI -e "<?php= " public_html*`; do
+   echo $i;
+   sed -i "s/<?php=/<?php echo /" $i;
 done
+
 

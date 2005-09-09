@@ -99,10 +99,10 @@ how well PHPlist is performing.</p></li>
 <a href="http://mantis.tincan.co.uk/" target="_blank">Mantis</a> is the place to report issues you find with phplist. Your issue can be be anything related to phplist, comments and suggestions how to improve it or reports of a bug. If you report a bug, make sure to include as much information as possible to facilitate the developers in solving the problem.</p>
 <p>The minimum requirements for reporting a bug are your system details:</p>
 
-<? if (!stristr($_SERVER['HTTP_USER_AGENT'],'firefox')) { ?>
+<?php if (!stristr($_SERVER['HTTP_USER_AGENT'],'firefox')) { ?>
 <p>If you experience problems, please make sure to use Firefox to see if that solves the problem.
 <a href="http://www.spreadfirefox.com/?q=affiliates&amp;id=131358&amp;t=81"><img border="0" alt="Get Firefox!" title="Get Firefox!" src="images/getff.gif"/></a>
-<? } ?>
+<?php } ?>
 
 </p>
 <p>Your system details are:</p>

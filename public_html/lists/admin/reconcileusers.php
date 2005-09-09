@@ -422,7 +422,7 @@ while ($row = Sql_Fetch_Row($req)) {
 <option selected>15</option>
 <option>20</option>
 <option>50</option>
-</select> <?php echo $GLOBALS['I18N']->get('bounces')?> <input type=submit value="<? echo $GLOBALS['I18N']->get('Click here')?>"></form>
+</select> <?php echo $GLOBALS['I18N']->get('bounces')?> <input type=submit value="<?php echo $GLOBALS['I18N']->get('Click here')?>"></form>
 <p><?php echo $GLOBALS['I18N']->get('Note: this will use the total count of bounces on a user, not consecutive bounces')?></p>
 
 <form method=get>
