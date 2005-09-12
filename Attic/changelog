@@ -1,4 +1,42 @@
-Changelog for PHPlist  2005-08-26 14:15
+Changelog for PHPlist  2005-09-12 15:28
+
+2005-09-12 12:37  mdethmers
+
+	* added some checks for email injection attempts
+
+2005-09-12 12:15  mdethmers
+
+	* updated processbounces
+
+2005-09-09 13:37  mdethmers
+
+	* updated getconfig to refresh tables so that existing sessiondata
+	  doesn't interfere causing install errors
+
+2005-09-08 15:05  mdethmers
+
+	* fixed #3989, adding user from admin section doesn't work
+
+2005-09-07 11:11  mdethmers
+
+	* updated german translation
+
+2005-09-05 09:20  mdethmers
+
+	* fixed #3967: Message Viewed statistics wrong for messages not
+	  being tracked
+
+2005-08-30 15:31  mdethmers
+
+	* new webbler version 3.0.8
+
+2005-08-30 10:58  mdethmers
+
+	* added some firefox evangelism :-)
+
+2005-08-29 21:05  mdethmers
+
+	* updated brazilian portuguese translation
 
 2005-08-26 13:59  mdethmers
 
