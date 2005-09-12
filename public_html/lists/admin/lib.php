@@ -144,6 +144,17 @@ function HTMLselect ($name, $table, $column, $value) {
 function sendMail ($to,$subject,$message,$header = "",$parameters = "",$skipblacklistcheck = 0) {
   if (TEST)
     return 1;
+
+  # do a quick check on mail injection attempt, @@@ needs more work
+  if (preg_match("/\n/",$to)) {
+    logEvent("Error: invalid recipient, containing newlines, email blocked");
+    return 0;
+  }
+  if (preg_match("/\n/",$subject)) {
+    logEvent("Error: invalid subject, containing newlines, email blocked");
+    return 0;
+  }
+
   if (!$to)  {
     logEvent("Error: empty To: in message with subject $subject to send");
     return 0;

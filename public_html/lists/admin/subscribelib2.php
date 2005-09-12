@@ -112,6 +112,9 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
 
   # now check whether this user already exists.
   $email = $_POST["email"];
+  if (preg_match("/(.*)\n/U",$email,$regs)) {
+    $email = $regs[1];
+  }
   $result = Sql_query("select * from {$GLOBALS["tables"]["user"]} where email = \"$email\"");#"
   $rssfrequency = validateRssFrequency($_POST['rssfrequency']);
 
@@ -201,6 +204,10 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
           $value = join(",",$newval);
         } elseif ($row["type"] == "date") {
           $value = $date->getDate($fieldname);
+        } elseif ($row['type'] != 'textarea') {
+          if (preg_match("/(.*)\n/U",$value,$regs)) {
+            $value = $regs[1];
+          }
         }
         Sql_Query(sprintf('replace into %s (attributeid,userid,value) values("%s","%s","%s")',
           $GLOBALS["tables"]["user_attribute"],$row["id"],$userid,$value));
@@ -303,6 +310,9 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
   exit;
 } elseif (isset($_POST["update"]) && $_POST["update"] && is_email($_POST["email"]) && $allthere) {
   $email = trim($_POST["email"]);
+  if (preg_match("/(.*)\n/U",$email,$regs)) {
+    $email = $regs[1];
+  }
   if ($_GET["uid"]) {
     $req = Sql_Fetch_Row_Query(sprintf('select id from %s where uniqid = "%s"',
       $GLOBALS["tables"]["user"],$_GET["uid"]));
@@ -420,6 +430,10 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
         $value = join(",",$values);
       } elseif ($attribute["type"] == "date") {
         $value = $date->getDate($fieldname);
+      } elseif ($row['type'] != 'textarea') {
+        if (preg_match("/(.*)\n/U",$value,$regs)) {
+          $value = $regs[1];
+        }
       }
       if ($replace) {
         Sql_query(sprintf('replace into %s (attributeid,userid,value) values("%s","%s","%s")',
