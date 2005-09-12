@@ -44,9 +44,6 @@ function ProcessError ($message) {
 
 function processbounces_shutdown() {
   global $report,$process_id;
-  if (!$GLOBALS["commandline"]) {
-    print '<script language="Javascript" type="text/javascript"> finish(); </script>';
-  }
   releaseLock($process_id);
  # $report .= "Connection status:".connection_status();
   finish('info',$report);
@@ -58,6 +55,7 @@ function processbounces_shutdown() {
 function output ($message,$reset = 0) {
   $infostring = "[". date("D j M Y H:i",time()) . "] [" . getenv("REMOTE_HOST") ."] [" . getenv("REMOTE_ADDR") ."]";
   #print "$infostring $message<br>\n";
+  $message = preg_replace("/\n/",'',$message);
   if ($GLOBALS["commandline"]) {
     ob_end_clean();
     print strip_tags($message) . "\n";
@@ -235,7 +233,7 @@ function processPop ($server,$user,$password) {
   }
 
   if (!$link) {
-    Error($GLOBALS['I18N']->get("Cannot create POP3 connection to")." $server: ".imap_last_error());
+    output($GLOBALS['I18N']->get("Cannot create POP3 connection to")." $server: ".imap_last_error());
     return;
   }
   return processMessages($link,100000);
@@ -250,7 +248,7 @@ function processMbox ($file) {
     $link=imap_open($file,"","");
   }
   if (!$link) {
-    Error($GLOBALS['I18N']->get("Cannot open mailbox file")." ".imap_last_error());
+    output($GLOBALS['I18N']->get("Cannot open mailbox file")." ".imap_last_error());
     return;
   }
   return processMessages($link,100000);
@@ -273,9 +271,6 @@ function processMessages($link,$max = 3000) {
   } else {
     print $GLOBALS['I18N']->get("Processed messages will be deleted from mailbox")."<br/>";
   }
-  print prepareOutput();
-  print '<script language="Javascript" type="text/javascript"> yposition = 10;document.write(progressmeter); start();</script>';
-  flush();
   $nberror = 0;
 #  for ($x=1;$x<150;$x++) {
   for($x=1; $x <= $num; $x++) {
@@ -306,7 +301,7 @@ function processMessages($link,$max = 3000) {
   output($GLOBALS['I18N']->get("Closing mailbox, and purging messages"));
   set_time_limit(60 * $num);
   imap_close($link);
-  print '<script language="Javascript" type="text/javascript"> finish(); </script>';
+#  print '<script language="Javascript" type="text/javascript"> finish(); </script>';
   if ($num)
     return $report;
 }
@@ -325,6 +320,11 @@ if (!$bounce_mailbox && (!$bounce_mailbox_host || !$bounce_mailbox_user || !$bou
 
 print '<script language="Javascript" type="text/javascript"> yposition = 10;document.write(progressmeter); start();</script>';
 print prepareOutput();
+# make sure the browser doesn't buffer it
+for ($i = 0; $i< 10000; $i++)  {
+  print ' '."\n";
+}
+
 
 # lets not do this unless we do some locking first
 register_shutdown_function('processbounces_shutdown');
@@ -511,8 +511,12 @@ while ($user = Sql_Fetch_Row($userid_req)) {
   $usercnt++;
   flush();
 }
+if (!$GLOBALS["commandline"]) {
+  print '<script language="Javascript" type="text/javascript"> finish(); </script>';
+}
+
 output($GLOBALS['I18N']->get("Identifying consecutive bounces"));
-output("$total ".$GLOBALS['I18N']->get("users processed"),1);
+output("$total ".$GLOBALS['I18N']->get("users processed"));
 
 $report = '';
 
@@ -526,9 +530,6 @@ if ($advanced_report) {
 if ($unsubscribed_users) {
   $report .= "\n".$GLOBALS['I18N']->get("Below are users who have been marked unconfirmed. The number in [] is their userid, the number in () is the number of consecutive bounces")."\n";
   $report .= "\n$unsubscribed_users";
-}
-if (!$GLOBALS["commandline"]) {
-  print '<script language="Javascript" type="text/javascript"> finish(); </script>';
 }
 # shutdown will take care of reporting
 #finish("info",$report);
