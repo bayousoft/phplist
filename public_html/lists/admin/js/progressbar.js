@@ -59,11 +59,11 @@ function incrCount(){
 window.status="Loading...";
 loaded+=dir;
 if(loaded<0) {
-	loaded=0;
+  loaded=0;
   dir = -dir;
 }
 if(loaded>=waitTime*10){
-//	loaded=0;
+//  loaded=0;
   dir = -dir;
   //clearInterval(Pid);
   //loaded=waitTime*10;
