@@ -12,6 +12,7 @@ Copyright &copy; 2000-<?php echo date('Y')?> <a href="http://tincan.co.uk" targe
 <li>Michiel Dethmers, Tincan Ltd</li>
 </ul>
 <b><?php echo $GLOBALS['I18N']->get('Contributors')?></b><ul>
+<li>Damien McKenna</li>
 <li>Pete Ness, Nessoft LLC</li>
 <li>Xavier Dutoit, Sydesy</li>
 <li>and many others</li>
