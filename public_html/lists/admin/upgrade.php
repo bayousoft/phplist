@@ -289,7 +289,7 @@ if ($_GET["doit"] == 'yes') {
         Sql_Query("alter table {$tables["usermessage"]} add index enteredindex (entered)");
         Sql_Create_Table($tables["urlcache"],$DBstruct["urlcache"]);
       }
-      if ($minor < 9 || ($minor == 9 && $sub < 4)) {
+      if ($minor < 9 || ($minor == 9 && $sub <= 4)) {
         Sql_Create_Table($tables["linktrack"],$DBstruct["linktrack"]);
         Sql_Create_Table($tables["linktrack_userclick"],$DBstruct["linktrack_userclick"]);
         SaveConfig("xormask",md5(uniqid(rand(), true)),0);
