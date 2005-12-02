@@ -6,6 +6,8 @@ $attributes = array();
 ob_end_flush();
 
 function readentry($file) {
+  if (ereg('\.\.',$file)) return;
+  if (!ereg('data/',$file)) return;
   $fp = fopen($file,"r");
   $found = "";
   while (!feof ($fp)) {
@@ -29,7 +31,8 @@ while ($file = readdir($dir)) {
 }
 closedir($dir);
 
-if (is_array($selected)) {
+if (!empty($_POST['selected']) && is_array($_POST['selected'])) {
+  $selected = $_POST['selected'];
   while(list($key,$val) = each($selected)) {
     $entry = readentry("data/$val");
     list($name,$desc) = explode(":",$entry);
@@ -73,9 +76,11 @@ if (is_array($selected)) {
 <?php
 reset($attributes);
 while (list($key,$attribute) = each ($attributes)) {
-  list($name,$desc) = explode(":",$key);
-  if ($name && $desc) {
-    printf('<input type=checkbox name="selected[]" value="%s">%s<br>', $attribute,$desc);
+  if (strstr($key,':')) {
+    list($name,$desc) = explode(":",$key);
+    if ($name && $desc) {
+      printf('<input type=checkbox name="selected[]" value="%s">%s<br>', $attribute,$desc);
+    }
   }
 }
 print '<input type=submit value="'.$GLOBALS['I18N']->get('add').'"></form>';

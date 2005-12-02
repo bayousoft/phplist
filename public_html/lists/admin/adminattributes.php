@@ -33,7 +33,7 @@ if (isset($_POST["action"]) && $_POST["action"] == $GLOBALS['I18N']->get('SaveCh
         } else {
           # and they cannot currently be required, changed 29/08/01,
           # insert javascript to require them, except for hidden ones :-)
-          if ($_POST["type"]["id"] == "hidden")
+          if (!empty($_POST["type"]["id"]) && $_POST["type"]["id"] == "hidden")
             Sql_Query("update {$tables['attribute']} set required = 0 where id = $insertid");
         }
         if ($_POST["type"][$id] == "checkbox") {
@@ -44,12 +44,12 @@ if (isset($_POST["action"]) && $_POST["action"] == $GLOBALS['I18N']->get('SaveCh
           Sql_Query("update {$tables['adminattribute']} set required = 0 where id = $insertid");
         }
 
-      } elseif ($_POST["name"][$id] != "") {
+      } elseif (!empty($_POST["name"][$id])) {
         # it is a change
         $query = sprintf('update %s set name = "%s" ,listorder = %d,default_value = "%s" ,required = %d where id = %d',
         $tables["adminattribute"],addslashes($_POST["name"][$id]),
         $_POST["listorder"][$id],$_POST["default"][$id],$_POST["required"][$id],$id);
-        Sql_Verbose_Query($query);
+        Sql_Query($query);
       }
     }
   if (isset($_POST["delete"]))
@@ -70,7 +70,7 @@ if (isset($_POST["action"]) && $_POST["action"] == $GLOBALS['I18N']->get('SaveCh
 <?php
 print formStart();
 $res = Sql_Query("select * from {$tables['adminattribute']} order by listorder");
-if (Sql_Num_Rows())
+if (Sql_Num_Rows($res))
   print $GLOBALS['I18N']->get('ExistingAttr');
 else {
   print $GLOBALS['I18N']->get('NoAttrYet');

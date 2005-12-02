@@ -24,7 +24,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   global $strThisLink,$PoweredByImage,$PoweredByText,$cached,$website;
   if ($email == "")
     return 0;
-  if (!$cached[$messageid]) {
+  if (empty($cached[$messageid])) {
     $domain = getConfig("domain");
     $message = Sql_query("select * from {$GLOBALS["tables"]["message"]} where id = $messageid");
     $cached[$messageid] = array();
@@ -103,7 +103,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   $url = getConfig("forwardurl");$sep = ereg('\?',$url)?'&':'?';
   $html["forward"] = sprintf('<a href="%s%suid=%s&mid=%d">%s</a>',$url,$sep,$hash,$messageid,$strThisLink);
   $text["forward"] = sprintf('%s%suid=%s&mid=%d',$url,$sep,$hash,$messageid);
-  $html["forwardurl"] = $text["forward"];
+  $html["forwardurl"] = sprintf('%s%suid=%s&mid=%d',$url,$sep,$hash,$messageid);
   $text["forwardurl"] = $text["forward"];
   $url = getConfig("public_baseurl");
   # make sure there are no newlines, otherwise they get turned into <br/>s
@@ -123,7 +123,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   You can configure how the credits are added to your pages and emails in your
   config file.
 
-  Michiel Dethmers, Tincan Ltd 2003, 2004
+  Michiel Dethmers, Tincan Ltd 2003, 2004, 2005
 */
   if (!EMAILTEXTCREDITS) {
     $html["signature"] = $PoweredByImage;#'<div align="center" id="signature"><a href="http://www.phplist.com"><img src="powerphplist.png" width=88 height=31 title="Powered by PHPlist" alt="Powered by PHPlist" border="0"></a></div>';
@@ -345,7 +345,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   # for now we won't click track forwards, as they are not necessarily users, so everything would fail
 
   if (CLICKTRACK && $hash != 'forwarded') {
-
+    $urlbase = '';
     # let's leave this for now
     /*
     if (preg_match('/<base href="(.*)"([^>]*)>/Umis',$htmlmessage,$regs)) {
@@ -363,10 +363,12 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     # to process the Yahoo webpage with base href and link like <a href=link> we'd need this one
 #    preg_match_all('/<a href=([^> ]*)([^>]*)>(.*)<\/a>/Umis',$htmlmessage,$links);
     $clicktrack_root = sprintf('http://%s/lt.php',$website.$GLOBALS["pageroot"]);
-    $phplist_root = sprintf('http://%s',$website.$GLOBALS["pageroot"]);
     for($i=0; $i<count($links[2]); $i++){
       $link = cleanUrl($links[2][$i]);
       $link = str_replace('"','',$link);
+      if (preg_match('/\.$/',$link)) {
+        $link = substr($link,0,-1);
+      }
       $linkid = 0;
 #      print "LINK: $link<br/>";
       if ((preg_match('/^http|ftp/',$link) || preg_match('/^http|ftp/',$urlbase)) && $link != 'http://www.phplist.com' && !strpos($link,$clicktrack_root)) {
@@ -393,15 +395,50 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     }
 
     # convert Text message
-    preg_match_all('#(http://[^\s\>\}]+)#mis',$textmessage,$links);
+    # first find occurances of our top domain, to avoid replacing them later
+    preg_match_all('#(https?://'.$GLOBALS['website'].'/?)\s+#mis',$textmessage,$links);
+#    preg_match_all('#(https?://[a-z0-9\./\#\?&:@=%\-]+)#ims',$textmessage,$links);
+#    preg_match_all('!(https?:\/\/www\.[a-zA-Z0-9\.\/#~\?+=&%@-_]+)!mis',$textmessage,$links);
+
     for($i=0; $i<count($links[1]); $i++){
-#      $fullmatch = $links[0][$i];
       $link = strtolower(cleanUrl($links[1][$i]));
+      if (preg_match('/\.$/',$link)) {
+        $link = substr($link,0,-1);
+      }
       $linkid = 0;
-      if (preg_match('/^http|ftp/',$link) && $link != 'http://www.phplist.com' && !strpos($link,$clicktrack_root)
-      && $link != $phplist_root && $link != $phplist_root.'/'
-      ) {
- #       $url = preg_replace('/&uid=[^\s&]+/','',$link);
+      if (preg_match('/^http|ftp/',$link) && $link != 'http://www.phplist.com' && !strpos($link,$clicktrack_root)) {
+        $url = cleanUrl($link,array('PHPSESSID','uid'));
+        $req = Sql_Query(sprintf('insert ignore into %s (messageid,userid,url,forward)
+          values(%d,%d,"%s","%s")',$GLOBALS['tables']['linktrack'],$messageid,$userdata['id'],$url,$link));
+        $req = Sql_Fetch_Row_Query(sprintf('select linkid from %s where messageid = %s and userid = %d and forward = "%s"
+        ',$GLOBALS['tables']['linktrack'],$messageid,$userdata['id'],$link));
+        $linkid = $req[0];
+
+        $masked = "T|$linkid|$messageid|".$userdata['id'] ^ XORmask;
+        $masked = urlencode(base64_encode($masked));
+        $newlink = sprintf('http://%s/lt.php?id=%s',$website.$GLOBALS["pageroot"],$masked);
+        $textmessage = str_replace($links[0][$i], '<'.$newlink.'>', $textmessage);
+      }
+    }
+
+    #now find the rest
+    # @@@ needs to expand to find complete urls like:
+    #http://user:password@www.web-site.com:1234/document.php?parameter=something&otherpar=somethingelse#anchor
+    # or secure
+    #https://user:password@www.website.com:2345/document.php?parameter=something%20&otherpar=somethingelse#anchor
+
+
+    preg_match_all('#(https?://[^\s\>\}\,]+)#mis',$textmessage,$links);
+#    preg_match_all('#(https?://[a-z0-9\./\#\?&:@=%\-]+)#ims',$textmessage,$links);
+#    preg_match_all('!(https?:\/\/www\.[a-zA-Z0-9\.\/#~\?+=&%@-_]+)!mis',$textmessage,$links);
+
+    for($i=0; $i<count($links[1]); $i++){
+      $link = strtolower(cleanUrl($links[1][$i]));
+      if (preg_match('/\.$/',$link)) {
+        $link = substr($link,0,-1);
+      }
+      $linkid = 0;
+      if (preg_match('/^http|ftp/',$link) && $link != 'http://www.phplist.com' && !strpos($link,$clicktrack_root)) {
         $url = cleanUrl($link,array('PHPSESSID','uid'));
 
         $req = Sql_Query(sprintf('insert ignore into %s (messageid,userid,url,forward)
@@ -413,7 +450,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
         $masked = "T|$linkid|$messageid|".$userdata['id'] ^ XORmask;
         $masked = urlencode(base64_encode($masked));
         $newlink = sprintf('http://%s/lt.php?id=%s',$website.$GLOBALS["pageroot"],$masked);
-        $textmessage = str_replace($links[0][$i], $newlink, $textmessage);
+        $textmessage = str_replace($links[0][$i], '<'.$newlink.'> ', $textmessage);
       }
     }
   }
@@ -781,7 +818,7 @@ function stripHTML($text) {
 
   $text = preg_replace("/<b>(.*?)<\/b\s*>/is","*\\1*",$text);
   $text = preg_replace("/<h[\d]>(.*?)<\/h[\d]\s*>/is","**\\1**\n",$text);
-  $text = preg_replace("/\s+/"," ",$text);
+#  $text = preg_replace("/\s+/"," ",$text);
   $text = preg_replace("/<i>(.*?)<\/i\s*>/is","/\\1/",$text);
   $text = preg_replace("/<\/tr\s*?>/i","<\/tr>\n\n",$text);
   $text = preg_replace("/<\/p\s*?>/i","<\/p>\n\n",$text);
@@ -842,8 +879,12 @@ function parseText($text) {
   $text = preg_replace("/(www\.[a-zA-Z0-9\.\/#~:?+=&%@!_\\-]+)/i", "http://\\1"  ,$text);#make www. -> http://www.
   $text = preg_replace("/(https?:\/\/)http?:\/\//i", "\\1"  ,$text);#take out duplicate schema
   $text = preg_replace("/(ftp:\/\/)http?:\/\//i", "\\1"  ,$text);#take out duplicate schema
-  $text = preg_replace("/(https?:\/\/)(?!www)([a-zA-Z0-9\.\/#~:?+=&%@!_\\-]+)/i", "<a href=\"\\1\\2\" class=\"url\"  target=\"_blank\">\\1\\2</a>"  ,$text); #eg-- http://kernel.org -> <a href"http://kernel.org" target="_blank">http://kernel.org</a>
+  $text = preg_replace("/(https?:\/\/)(?!www)([a-zA-Z0-9\.\/#~:?+=&%@!_\\-]+)/i", "<a href=\"\\1\\2\" class=\"url\" target=\"_blank\">\\2</a>"  ,$text); #eg-- http://kernel.org -> <a href"http://kernel.org" target="_blank">http://kernel.org</a>
+
   $text = preg_replace("/(https?:\/\/)(www\.)([a-zA-Z0-9\.\/#~:?+=&%@!\\-_]+)/i", "<a href=\"\\1\\2\\3\" class=\"url\" target=\"_blank\">\\2\\3</a>"  ,$text); #eg -- http://www.google.com -> <a href"http://www.google.com" target="_blank">www.google.com</a>
+
+  # take off a possible last full stop and move it outside
+  $text = preg_replace("/<a href=\"(.*?)\.\" class=\"url\" target=\"_blank\">(.*)\.<\/a>/i","<a href=\"\\1\" class=\"url\" target=\"_blank\">\\2</a>."   ,$text);
 
   for ($j = 0;$j<$i;$j++) {
     $replacement = $link[$j];

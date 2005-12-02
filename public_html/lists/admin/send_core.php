@@ -29,6 +29,7 @@ $errormsg = '';
 $rss_content = '';
 $done = 0;
 $messageid = 0;
+$duplicate_atribute = 0; # not actually used it seems @@@ check
 $embargo = new date("embargo");
 $embargo->useTime = true;
 $repeatuntil = new date("repeatuntil");
@@ -153,7 +154,7 @@ if ($id) {
 #}
 
 #input checking#######################
-
+$duplicate_attribute = 0;
 # check the criterias, one attribute can only exist once
 if ($send) {
   $used_attributes = array();
@@ -574,6 +575,7 @@ if ($send || $sendtest || $prepare || $save) {
       print "<font color=red size=+2>".$GLOBALS['I18N']->get("notargetemail")."</font><br>";
     }
 
+    if (isset($cached))
     unset($cached[$id]);
 
     include "sendemaillib.php";
@@ -904,7 +906,7 @@ if (!$done) {
     print Help("preparemessage",$GLOBALS['I18N']->get("whatisprepare"));
 
   if (!defined("IN_WEBBLER")) {
-    if (!$from) {
+    if (!$from && is_object($GLOBALS["admin_auth"]) && $GLOBALS['require_login']) {
       $adminemail = $GLOBALS["admin_auth"]->adminEmail($_SESSION["logindetails"]["id"]);
       if ($adminemail && USE_ADMIN_DETAILS_FOR_MESSAGES) {
         $from = $GLOBALS["admin_auth"]->adminName($_SESSION["logindetails"]["id"]).' '.$adminemail;

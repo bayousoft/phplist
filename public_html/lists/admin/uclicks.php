@@ -12,8 +12,13 @@ if (isset($_GET['id'])) {
 $access = accessLevel('uclicks');
 switch ($access) {
   case 'owner':
+    $select_tables = $GLOBALS['tables']['linktrack']. ' as linktrack, '.$GLOBALS['tables']['message'].' as message';
+    $owner_and = ' and message.id = linktrack.messageid and message.owner = '.$_SESSION['logindetails']['id'];
+    break;
   case 'all':
-    $subselect = '';
+    $select_tables = $GLOBALS['tables']['linktrack']. ' as linktrack ';
+    $owner_and = '';
+    break;
     break;
   case 'none':
   default:
@@ -24,9 +29,9 @@ switch ($access) {
 
 if (!$id) {
   print $GLOBALS['I18N']->get('Select URL to view');
-  $req = Sql_Query(sprintf('select distinct url, linkid, sum(clicked) as numclicks from %s 
-    where clicked group by url order by numclicks desc limit 50',
-    $GLOBALS['tables']['linktrack']));
+  $req = Sql_Query(sprintf('select distinct url, linkid, sum(clicked) as numclicks from %s
+    where clicked %s group by url order by numclicks desc limit 50',
+    $select_tables,$owner_and));
   $ls = new WebblerListing($GLOBALS['I18N']->get('Available URLs'));
   while ($row = Sql_Fetch_Array($req)) {
     $ls->addElement($row['url'],PageURL2('uclicks&amp;id='.$row['linkid']));
@@ -41,7 +46,7 @@ $ls = new WebblerListing($GLOBALS['I18N']->get('URL Click Statistics'));
 $urldata = Sql_Fetch_Array_Query(sprintf('select url from %s where linkid = %d',
   $GLOBALS['tables']['linktrack'],$id));
 print '<h1>'.$GLOBALS['I18N']->get('Click Details for a URL').' <b>'.$urldata['url'].'</b></h1>';
-  
+
 $req = Sql_Query(sprintf('select messageid,min(firstclick) as firstclick,date_format(max(latestclick),
   "%%e %%b %%Y %%H:%%i") as latestclick,sum(clicked) as numclicks from %s where url = "%s" and clicked group by messageid
   ',$GLOBALS['tables']['linktrack'],$urldata['url']));
@@ -55,7 +60,7 @@ while ($row = Sql_Fetch_Array($req)) {
   $totalsent = Sql_Fetch_Array_Query(sprintf('select count(*) as total from %s where url = "%s"',
     $GLOBALS['tables']['linktrack'],$urldata['url']));
   if (CLICKTRACK_SHOWDETAIL) {
-    $uniqueclicks = Sql_Fetch_Array_Query(sprintf('select count(distinct userid) as users from %s 
+    $uniqueclicks = Sql_Fetch_Array_Query(sprintf('select count(distinct userid) as users from %s
       where messageid = %d and url = "%s" and clicked',
       $GLOBALS['tables']['linktrack'],$row['messageid'],$urldata['url']));
   }

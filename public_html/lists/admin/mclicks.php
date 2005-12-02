@@ -8,28 +8,17 @@ if (isset($_GET['id'])) {
 } else {
   $id = 0;
 }
-if (!$id) {
-  print $GLOBALS['I18N']->get('Select Message to view');
-  $req = Sql_Query(sprintf('select distinct messageid, subject, linkid, sum(clicked) as numclicks from %s as linktrack, %s as message
-    where clicked and linktrack.messageid = message.id group by messageid order by numclicks desc limit 50',
-    $GLOBALS['tables']['linktrack'],$GLOBALS['tables']['message']));
-  $ls = new WebblerListing($GLOBALS['I18N']->get('Available Messages'));
-  while ($row = Sql_Fetch_Array($req)) {
-    $ls->addElement($row['messageid'].' '.substr($row['subject'],0,50),PageURL2('mclicks&amp;id='.$row['messageid']));
-    $ls->addColumn($row['messageid'].' '.substr($row['subject'],0,50),$GLOBALS['I18N']->get('clicks'),$row['numclicks']);
-  }
-  print $ls->display();
-  return;
-}
 
 $access = accessLevel('mclicks');
 switch ($access) {
   case 'owner':
     $subselect = ' and owner = ' . $_SESSION["logindetails"]["id"];
-    $allow = Sql_Fetch_Row_query(sprintf('select owner from %s where id = %d %s',$GLOBALS['tables']['message'],$id,$subselect));
-    if ($allow[0] != $_SESSION["logindetails"]["id"]) {
-      print $GLOBALS['I18N']->get('You do not have access to this page');
-      return;
+    if ($id) {
+      $allow = Sql_Fetch_Row_query(sprintf('select owner from %s where id = %d %s',$GLOBALS['tables']['message'],$id,$subselect));
+      if ($allow[0] != $_SESSION["logindetails"]["id"]) {
+        print $GLOBALS['I18N']->get('You do not have access to this page');
+        return;
+      }
     }
     break;
   case 'all':
@@ -43,6 +32,27 @@ switch ($access) {
     break;
 }
 
+if (!$id) {
+  print $GLOBALS['I18N']->get('Select Message to view');
+  $req = Sql_Query(sprintf('select distinct messageid, subject, sum(clicked) as totalclicks, count(distinct userid) as users, count(distinct linkid) as linkcount from %s as linktrack, %s as message
+    where clicked and linktrack.messageid = message.id %s group by messageid order by entered desc limit 50',
+    $GLOBALS['tables']['linktrack'],$GLOBALS['tables']['message'],$subselect));
+  if (!Sql_Affected_Rows()) {
+    print '<p>'.$GLOBALS['I18N']->get('There are currently no messages to view').'</p>';
+  }
+  $ls = new WebblerListing($GLOBALS['I18N']->get('Available Messages'));
+  while ($row = Sql_Fetch_Array($req)) {
+    $ls->addElement($row['messageid'].' '.substr($row['subject'],0,50),PageURL2('mclicks&amp;id='.$row['messageid']));
+    $ls->addColumn($row['messageid'].' '.substr($row['subject'],0,50),$GLOBALS['I18N']->get('clicks'),$row['totalclicks']);
+    $ls->addColumn($row['messageid'].' '.substr($row['subject'],0,50),$GLOBALS['I18N']->get('users'),$row['users']);
+    $ls->addColumn($row['messageid'].' '.substr($row['subject'],0,50),$GLOBALS['I18N']->get('links'),$row['linkcount']);
+    $perc = sprintf('%0.2f',($row['numclicks'] / $row['total'] * 100));
+    $ls->addColumn($row['messageid'].' '.substr($row['subject'],0,50),$GLOBALS['I18N']->get('rate'),$perc.' %');
+  }
+  print $ls->display();
+  return;
+}
+
 print '<h1>'.$GLOBALS['I18N']->get('Click Details for a Message').'</h1>';
 $messagedata = Sql_Fetch_Array_query("SELECT * FROM {$tables['message']} where id = $id $subselect");
 print '<table>
@@ -51,22 +61,21 @@ print '<table>
 <tr><td>'.$GLOBALS['I18N']->get('Sent').'<td><td>'.$messagedata['sent'].'</td></tr>
 </table><hr/>';
 
-
 $ls = new WebblerListing($GLOBALS['I18N']->get('Message Click Statistics'));
 
 $req = Sql_Query(sprintf('select linkid,url,min(firstclick) as firstclick,date_format(max(latestclick),
-  "%%e %%b %%Y %%H:%%i") as latestclick,sum(clicked) as numclicks from %s where messageid = %s 
+  "%%e %%b %%Y %%H:%%i") as latestclick,sum(clicked) as numclicks from %s where messageid = %s
   and clicked group by url',$GLOBALS['tables']['linktrack'],$id));
 $summary = array();
 while ($row = Sql_Fetch_Array($req)) {
-  
+
   $totalsent = Sql_Fetch_Array_Query(sprintf('select count(*) as total from %s where messageid = %d and url = "%s"',
     $GLOBALS['tables']['linktrack'],$id,$row['url']));
   if (CLICKTRACK_SHOWDETAIL) {
-    $uniqueclicks = Sql_Fetch_Array_Query(sprintf('select count(distinct userid) as users from %s 
+    $uniqueclicks = Sql_Fetch_Array_Query(sprintf('select count(distinct userid) as users from %s
       where messageid = %d and url = "%s" and clicked',
       $GLOBALS['tables']['linktrack'],$id,$row['url']));
-    $messagetypes_req = Sql_Query(sprintf('select data,count(userid) as num from %s 
+    $messagetypes_req = Sql_Query(sprintf('select data,count(userid) as num from %s
       where messageid = %d and linkid = %d and name = "Message Type" group by data',
       $GLOBALS['tables']['linktrack_userclick'],$id,$row['linkid']));
   }

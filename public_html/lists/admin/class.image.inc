@@ -17,7 +17,7 @@ class imageUpload {
   function showInput($name,$value,$template_id = 0) {
     # find image in database
     global $config,$tables;
-    $html .= '<table border=0>';
+    $html = '<table border=0>';
     if ($name && $template_id) {
       $req = Sql_Query(sprintf('select * from %s where template = %d
       and filename = "%s"',$tables["templateimage"],$template_id,$name));
@@ -38,7 +38,7 @@ class imageUpload {
     </script>
     ';
     if ($imdata["data"] && $imdata["width"] && $imdata["height"]) {
-      $html .= '<tr><td colspan=3><!-- '.$imageid .'-->'.$GLOBALS['I18N']->get('An image exists on the server, check this box to keep the existing one').' <input type="checkbox" name="'.$name.'_keep" value="yes" checked>&nbsp;';
+      $html .= '<tr><td colspan=3>'.$GLOBALS['I18N']->get('An image exists on the server, check this box to keep the existing one').' <input type="checkbox" name="'.$name.'_keep" value="yes" checked>&nbsp;';
       $html .= sprintf('%s</td></tr>',$this->viewImageLink($imdata["id"],$imdata["width"],$imdata["height"],$GLOBALS['I18N']->get('View Image')));
     }
     else

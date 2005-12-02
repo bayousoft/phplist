@@ -12,26 +12,29 @@ $s = 0;
 if (isset($_GET['s'])) {
   $s = sprintf('%d',$_GET['s']);
 }
+$start = !empty($_GET['start']) ? sprintf('%d',$_GET['start']) : 0;
+
 if (isset($_GET['filter'])) {
-  $filter = $_GET['filter'];
+  $filter = removeXss($_GET['filter']);
   if (isset($_GET['exclude'])) {
     $exclude = $_GET['exclude'];
-    $where = ' where page not like "%'.$_GET["filter"].'%" and entry not like "%'.$_GET["filter"].'%"';
-    $exclude_url = '&exclude='.$_GET["exclude"];
+    $where = ' where page not like "%'.$filter.'%" and entry not like "%'.$filter.'%"';
+    $exclude_url = '&exclude='.sprintf('%d',$_GET["exclude"]);
   } else {
-    $where = ' where page like "%'.$_GET["filter"].'%" or entry like "%'.$_GET["filter"].'%"';
+    $where = ' where page like "%'.$filter.'%" or entry like "%'.$filter.'%"';
     $exclude_url = '';
   }
-  $find_url = '&filter='.urlencode($_GET["filter"]).$exclude_url;
+  $find_url = '&filter='.urlencode($filter).$exclude_url;
 }
 $order = ' order by entered desc, id desc';
 
 if (isset($_GET['delete']) && $_GET['delete']) {
   # delete the index in delete
-  print $GLOBALS['I18N']->get('Deleting') . ' ' . $_GET['delete'] . "..\n";
+  $delete = sprintf('%d',$_GET['delete']);
+  print $GLOBALS['I18N']->get('Deleting') . ' ' . $delete . "..\n";
   if ($require_login && !isSuperUser()) {
   } else {
-    Sql_query(sprintf('delete from %s where id = %d',$tables['eventlog'],$_GET['delete']));
+    Sql_query(sprintf('delete from %s where id = %d',$tables['eventlog'],$delete));
   }
   print '..' . $GLOBALS['I18N']->get('Done') . "<br /><hr><br />\n";
 }
@@ -90,11 +93,11 @@ printf("[ <a href=\"javascript:deleteRec2('%s','%s');\">%s</a> |
 print '<br/><br/>';
 printf('<form method="get">
 <input type="hidden" name="page" value="eventlog">
-<input type="hidden" name="s" value="%d">
+<input type="hidden" name="start" value="%d">
 %s: <input type=text name="filter" value="%s"> %s <input type="checkbox" name="exclude" value="1" %s>
-</form><br/>',$s,
+</form><br/>',$start,
 $GLOBALS['I18N']->get('Filter'),
-$filter,
+htmlspecialchars(stripslashes($filter)),
 $GLOBALS['I18N']->get('Exclude filter'),
 $exclude == 1 ? 'checked':'');
 

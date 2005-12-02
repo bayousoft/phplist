@@ -40,6 +40,10 @@ $minbatchperiod = -1;
 # check for batch limits
 $ISPrestrictions = '';
 $ISPlockfile = '';
+$rssitems = array();
+$user_attribute_query = '';
+$lastsent = sprintf('%d',$_GET['lastsent']);
+$lastskipped = sprintf('%d',$_GET['lastskipped']);
 
 if ($fp = @fopen("/etc/phplist.conf","r")) {
   $contents = fread($fp, filesize("/etc/phplist.conf"));
@@ -101,6 +105,11 @@ if ($num_per_batch && $batch_period) {
     $num_per_batch = -1;
   }
 }
+# output some stuff to make sure it's not buffered in the browser
+for ($i=0;$i<10000; $i++) {
+  print '  '."\n";
+}
+flush();
 
 print '<script language="Javascript" src="js/progressbar.js" type="text/javascript"></script>';
 print '<script language="Javascript" type="text/javascript"> yposition = 10;document.write(progressmeter); start();</script>';
@@ -335,7 +344,7 @@ while ($message = Sql_fetch_array($messages)) {
   $rssmessage = $message["rsstemplate"];
 
   $msgdata = loadMessageData($messageid);
-  if ($msgdata['notify_start'] && !isset($msgdata['start_notified'])) {
+  if (!empty($msgdata['notify_start']) && !isset($msgdata['start_notified'])) {
     $notifications = explode(',',$msgdata['notify_start']);
     foreach ($notifications as $notification) {
       sendMail($notification,$GLOBALS['I18N']->get('Message Sending has started'),

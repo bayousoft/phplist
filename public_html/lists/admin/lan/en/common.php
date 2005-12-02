@@ -150,6 +150,9 @@ $lan = array(
   'Purge RSS items' => 'Purge RSS items',
   'In order to login, you need to enable cookies in your browser' => 'In order to login, you need to enable cookies in your browser',
 
+  # added 2.10.2
+  'globalvulnwarning' => 'Your version of PHP has a major security issue.<br/>It is best to upgrade to the latest version of PHP. <a href="http://www.hardened-php.net/globals-problem">Read More</a> about this issue.',
+
 );
 
 ?>

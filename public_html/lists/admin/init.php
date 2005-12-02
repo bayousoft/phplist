@@ -9,7 +9,12 @@ $GLOBALS["pagestats"]["time_start"] = $now["sec"] * 1000000 + $now["usec"];
 $GLOBALS["pagestats"]["number_of_queries"] = 0;
 
 $zlib_compression = ini_get('zlib.output_compression');
-$handlers = ob_list_handlers();
+# hmm older versions of PHP don't have this, but then again, upgrade php instead?
+if (function_exists('ob_list_handlers')) {
+  $handlers = ob_list_handlers();
+} else {
+  $handlers = array();
+}
 $gzhandler = 0;
 foreach ($handlers as $handler) {
   $gzhandler = $gzhandler || $handler == 'ob_gzhandler';

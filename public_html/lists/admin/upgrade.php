@@ -312,12 +312,26 @@ if ($_GET["doit"] == 'yes') {
 
   print '<script language="Javascript" type="text/javascript"> finish(); </script>';
   # update the system pages
-  while (list($type,$pages) = each ($system_pages)) {
-    foreach ($pages as $page)
-      Sql_Query(sprintf('replace into %s (page,type) values("%s","%s")',
+  include_once dirname(__FILE__).'/defaultconfig.inc';
+  $reverse_accesscodes = array_flip($GLOBALS['access_levels']);
+  foreach ($system_pages as $type => $pages) {
+    foreach ($pages as $page => $default) {
+      Sql_Query(sprintf('insert ignore into %s (page,type) values("%s","%s")',
         $tables["task"],$page,$type));
+      $newtask = Sql_Insert_Id();
+      if ($newtask) {
+        # it's a new page, set the standard default
+        Sql_Query(sprintf('insert into %s (adminid,taskid,level) values(0,%d,%d)',
+          $GLOBALS['tables']['admin_task'],$newtask,$reverse_accesscodes[$default]));
+      }
+    }
   }
-
+  # correct some strange access entries that have sneaked in
+  $req = Sql_Query(sprintf('select id from %s where page = "all" or page = "none"',$GLOBALS['tables']['task']));
+  while ($row = Sql_Fetch_Row($req)) {
+    Sql_Query(sprintf('delete from %s where taskid = %d',$GLOBALS['tables']['admin_task'],$row[0]));
+  }
+  Sql_Query(sprintf('delete from %s where page = "all" or page = "none"',$GLOBALS['tables']['task']));
 
   # mark the database to be our current version
   if ($success) {

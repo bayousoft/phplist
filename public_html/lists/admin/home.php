@@ -23,6 +23,9 @@ if (Sql_Table_exists($tables["config"],1)) {
   return;
 }
 
+if (WARN_ABOUT_PHP_SETTINGS && (version_compare('4.3.11',PHP_VERSION)>0 || version_compare('5.0.4',PHP_VERSION)>0))
+  Warn($GLOBALS['I18N']->get('globalvulnwarning'));
+
 # check for latest version
 $checkinterval = sprintf('%d',getConfig("check_new_version"));
 if (!isset($checkinterval)) {

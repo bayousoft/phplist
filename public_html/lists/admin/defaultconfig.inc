@@ -381,6 +381,8 @@ hr {width : 100%; height : 1px; color: #ff9900; size:1px;}
 .forwardform {margin: 0 0 0 0; padding: 0 0 0 0;}
 .forwardinput {margin: 0 0 0 0; padding: 0 0 0 0;}
 .forwardsubmit {margin: 0 0 0 0; padding: 0 0 0 0;}
+div.emailfooter { font-size : 11px; font-family: Verdana, Arial, Helvetica, sans-serif; }
+div.emailfooter a { font-size: 11px; color: #ff6600; font-style: normal; font-family: verdana, sans-serif; text-decoration: none; }
 </style>
 ',"CSS for HTML messages without a template","textarea"),
 
@@ -613,11 +615,12 @@ $system_pages = array (
     "templates" => "none"
   ),
   "clickstats" => array(
-    'statsmgt' => 'none',
-    'mclicks' => 'none',
-    'uclicks' => 'none',
-    'userclicks' => 'none',
-    'mviews' => 'none'
+    'statsmgt' => 'owner',
+    'mclicks' => 'owner',
+    'uclicks' => 'owner',
+    'userclicks' => 'owner',
+    'mviews' => 'owner',
+    'statsoverview' => 'owner',
   ),
   "admin" => array(
     "admins" => "none",

@@ -67,6 +67,7 @@ $lan = array(
   'preparesend' => 'preparesend',
   'sendprepared' => 'sendprepared',
 
+
 );
 
 ?>

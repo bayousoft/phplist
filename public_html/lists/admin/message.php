@@ -12,16 +12,20 @@ if (!$id) {
 }
 
 $access = accessLevel('message');
+#print "Access: $access";
 switch ($access) {
   case 'owner':
     $subselect = ' where owner = ' . $_SESSION["logindetails"]["id"];
+    $owner_select_and = ' and owner = ' . $_SESSION["logindetails"]["id"];
     break;
   case 'all':
     $subselect = '';
+    $owner_select_and = '';
     break;
   case 'none':
   default:
     $subselect = ' where id = 0';
+    $owner_select_and = ' and owner = 0';
     break;
 }
 
@@ -46,9 +50,13 @@ require $coderoot . 'structure.php';
 
 print '<p>'.PageLink2('send&amp;id='.$id,$GLOBALS['I18N']->get('Edit this message')).'</p>';
 
+$result = Sql_query("SELECT * FROM {$tables['message']} where id = $id $owner_select_and");
+if (!Sql_Affected_Rows()) {
+  print $GLOBALS['I18N']->get('No such message');
+  return;
+}
 echo "<table border=\"1>\"";
 
-$result = Sql_query("SELECT * FROM {$tables['message']} where id = $id");
 while ($msg = Sql_fetch_array($result)) {
   foreach($DBstruct["message"] as $field => $val) {
     printf('<tr><td valign="top">%s</td><td valign="top">%s</td></tr>',$GLOBALS['I18N']->get($field),$msg["htmlformatted"]?stripslashes($msg[$field]):nl2br(stripslashes($msg[$field])));

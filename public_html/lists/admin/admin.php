@@ -4,11 +4,12 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 
+$start = sprintf('%d',!empty($_GET['start'])?$_GET['start']:0);
 print PageLink2("admins",$GLOBALS['I18N']->get('listofadministrators'),"start=$start");
 
 require dirname(__FILE__) . "/structure.php";
 $struct = $DBstruct["admin"];
-$id = $_REQUEST["id"];
+$id = !empty($_REQUEST["id"]) ? sprintf('%d',$_REQUEST["id"]) : 0;
 
 echo "<hr /><br />";
 $noaccess = 0;
@@ -27,35 +28,37 @@ if ($noaccess) {
   return;
 }
 
-if ($_POST["change"]) {
-  if (!$_POST["id"]) {
+if (!empty($_POST["change"])) {
+  if (empty($_POST["id"])) {
     # new one
     Sql_Query(sprintf('insert into %s (namelc,created) values("%s",now())',
       $tables["admin"],strtolower(normalize($_POST["loginname"]))));
     $id = Sql_Insert_Id();
   } else {
-    $id = $_POST["id"];
+    $id = sprintf('%d',$_POST["id"]);
   }
 
   if ($id) {
     reset($struct);
     while (list ($key,$val) = each ($struct)) {
-      list($a,$b) = explode(":",$val[1]);
-      if ($a != "sys" && $val[1])
-        Sql_Query("update {$tables["admin"]} set $key = \"".$_POST[$key]."\" where id = $id");
+      $a = $b = '';
+      if (strstr($val[1],':'))
+        list($a,$b) = explode(":",$val[1]);
+      if ($a != "sys" && isset($_POST[$key]))
+        Sql_Query("update {$tables["admin"]} set $key = \"".addslashes($_POST[$key])."\" where id = $id");
     }
     if (is_array($_POST["attribute"]))
       while (list($key,$val) = each ($_POST["attribute"])) {
         Sql_Query(sprintf('replace into %s (adminid,adminattributeid,value)
-          values(%d,%d,"%s")',$tables["admin_attribute"],$id,$key,$val));
+          values(%d,%d,"%s")',$tables["admin_attribute"],$id,$key,addslashes($val)));
       }
     Sql_Query(sprintf('update %s set modifiedby = "%s" where id = %d',$tables["admin"],adminName($_SESSION["logindetails"]["id"]),$id));
 
-    if ($accesslevel == "all" && is_array($_POST["access"])) {
+    if ($accesslevel == "all" && isset($_POST['access']) && is_array($_POST["access"])) {
       Sql_Query("delete from {$tables["admin_task"]} where adminid = $id");
-      if (is_array($_POST["access"]))
+      if ( is_array($_POST["access"]))
         while (list($key,$val) = each ($_POST["access"]))
-          Sql_Query("replace into {$tables["admin_task"]} (adminid,taskid,level) values($id,$key,$val)");
+          Sql_Query(sprintf('replace into %s (adminid,taskid,level) values(%d,%d,%d)',$GLOBALS['tables']["admin_task"],$id,$key,$val));
     }
     Info($GLOBALS['I18N']->get('Changes saved'));
   } else {
@@ -63,7 +66,7 @@ if ($_POST["change"]) {
   }
 }
 
-if ($_POST["setdefault"]) {
+if (!empty($_POST["setdefault"])) {
   Sql_Query("delete from {$tables["admin_task"]} where adminid = 0");
   if (is_array($_POST["access"]))
     while (list($key,$val) = each ($_POST["access"]))
@@ -71,7 +74,7 @@ if ($_POST["setdefault"]) {
   Info($GLOBALS['I18N']->get('Current set of permissions made default'));
 }
 
-if ($_POST["resetaccess"]) {
+if (!empty($_POST["resetaccess"])) {
   $reverse_accesscodes = array_flip($access_levels);
   $req = Sql_Query("select * from {$tables["task"]} order by type");
   while ($row = Sql_Fetch_Array($req)) {
@@ -81,12 +84,13 @@ if ($_POST["resetaccess"]) {
   }
 }
 
-if (isset($_GET["delete"]) && $_GET["delete"]) {
+if (!empty($_GET["delete"])) {
+  $delete = sprintf('%d',$_GET['delete']);
   # delete the index in delete
   print $GLOBALS['I18N']->get('Deleting')." $delete ..\n";
-  Sql_query(sprintf('delete from %s where id = %d',$GLOBALS["tables"]["admin"],$_GET["delete"]));
-  Sql_query(sprintf('delete from %s where adminid = %d',$GLOBALS["tables"]["admin_attribute"],$_GET["delete"]));
-  Sql_query(sprintf('delete from %s where adminid = %d',$GLOBALS["tables"]["admin_task"],$_GET["delete"]));
+  Sql_query(sprintf('delete from %s where id = %d',$GLOBALS["tables"]["admin"],$delete));
+  Sql_query(sprintf('delete from %s where adminid = %d',$GLOBALS["tables"]["admin_attribute"],$delete));
+  Sql_query(sprintf('delete from %s where adminid = %d',$GLOBALS["tables"]["admin_task"],$delete));
   print '..'.$GLOBALS['I18N']->get('Done')."<br /><hr><br />\n";
 }
 
@@ -98,6 +102,7 @@ if ($id) {
   if ($data["loginname"] != "admin" && $accesslevel == "all")
     printf( "<br /><li><a href=\"javascript:deleteRec('%s');\">Delete</a> %s\n",PageURL2("admin","","delete=$id"),$admin["loginname"]);
 } else {
+  $data = array();
   print $GLOBALS['I18N']->get('Add a new Administrator');
 }
 print "<br/>";
@@ -106,7 +111,10 @@ printf('<input type=hidden name="id" value="%d">',$id);
 
 reset($struct);
 while (list ($key,$val) = each ($struct)) {
-  list($a,$b) = explode(":",$val[1]);
+  $a = $b = '';
+  if (empty($data[$key])) $data[$key] = '';
+  if (strstr($val[1],':'))
+    list($a,$b) = explode(":",$val[1]);
   if ($a == "sys")
     printf('<tr><td>%s</td><td>%s</td></tr>',$GLOBALS['I18N']->get($b),$data[$key]);
   elseif ($key == "loginname" && $data[$key] == "admin") {
@@ -114,10 +122,10 @@ while (list ($key,$val) = each ($struct)) {
     print('<input type=hidden name="loginname" value="admin">');
   } elseif ($key == "superuser" || $key == "disabled") {
     if ($accesslevel == "all") {
-      printf('<tr><td>%s</td><td><input type="text" name="%s" value="%s" size=30></td></tr>'."\n",$GLOBALS['I18N']->get($val[1]),$key,$data[$key]);
+      printf('<tr><td>%s</td><td><input type="text" name="%s" value="%s" size=30></td></tr>'."\n",$GLOBALS['I18N']->get($val[1]),$key,stripslashes($data[$key]));
     }
-  } elseif ($val[1]) {
-    printf('<tr><td>%s</td><td><input type="text" name="%s" value="%s" size=30></td></tr>'."\n",$GLOBALS['I18N']->get($val[1]),$key,$data[$key]);
+  } elseif (!empty($val[1])) {
+    printf('<tr><td>%s</td><td><input type="text" name="%s" value="%s" size=30></td></tr>'."\n",$GLOBALS['I18N']->get($val[1]),$key,stripslashes($data[$key]));
   }
 }
 $res = Sql_Query("select
@@ -132,6 +140,8 @@ while ($row = Sql_fetch_array($res)) {
     $val_req = Sql_Fetch_Row_Query("select value from {$tables["admin_attribute"]}
       where adminid = $id and adminattributeid = $row[id]");
     $row["value"] = $val_req[0];
+  } else {
+    $row['value'] = '';
   }
 
   if ($row["type"] == "checkbox") {
@@ -144,7 +154,7 @@ while ($row = Sql_fetch_array($res)) {
   if ($row["type"] != "textline" && $row["type"] != "hidden")
     printf ("<tr><td>%s</td><td>%s</td></tr>\n",$row["name"],AttributeValueSelect($row["id"],$row["tablename"],$row["value"],"adminattr"));
   else
-    printf('<tr><td>%s</td><td><input style="attributeinput" type=text name="attribute[%d]" value="%s" size=30></td></tr>'."\n",$row["name"],$row["id"],htmlspecialchars($row["value"]));
+    printf('<tr><td>%s</td><td><input style="attributeinput" type=text name="attribute[%d]" value="%s" size=30></td></tr>'."\n",$row["name"],$row["id"],htmlspecialchars(stripslashes($row["value"])));
 }
 print '<tr><td colspan=2><input type=submit name=change value="'.$GLOBALS['I18N']->get('Save Changes').'"></table>';
 

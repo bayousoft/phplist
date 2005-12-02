@@ -4,6 +4,7 @@ require_once dirname(__FILE__).'/accesscheck.php';
 # make sure we have not send any output yet
 ob_end_clean();
 
+$id = !empty($_GET['id']) ? sprintf('%d',$_GET['id']) : 0;
 if ($id) {
   $res = Sql_query("select * from {$tables["templateimage"]} where id = $id");
   $row = Sql_fetch_array($res);

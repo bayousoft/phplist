@@ -15,7 +15,7 @@ if( !$GLOBALS["require_login"] || $_SESSION["logindetails"]['superuser'] ){
 }
 
 # remember last one listed
-if (!isset($_GET["type"]) && $_SESSION["lastmessagetype"]) {
+if (!isset($_GET["type"]) && !empty($_SESSION["lastmessagetype"])) {
   $_GET["type"] = $_SESSION["lastmessagetype"];
 } elseif (isset($_GET["type"])) {
   $_SESSION["lastmessagetype"] = $_GET["type"];
@@ -39,11 +39,16 @@ if (USE_PREPARE) {
 #if (ENABLE_RSS) {
 #  $tabs->addTab("rss",PageUrl2("messages&type=rss"));
 #}
-$tabs->setCurrent($_GET["type"]);
+if (!empty($_GET['type'])) {
+  $tabs->setCurrent($_GET["type"]);
+} else {
+  $_GET['type'] = 'sent';
+  $tabs->setCurrent('sent');
+}
 
 print $tabs->display();
 
-if ($_GET["delete"]) {
+if (!empty($_GET["delete"])) {
   $todelete = array();
   if ($_GET["delete"] == "draft") {
     $req = Sql_Query(sprintf('select id from %s where status = "draft" and (subject = "" or subject = "(no subject)") %s',$tables["message"],$ownerselect_and));

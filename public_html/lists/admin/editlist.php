@@ -28,7 +28,11 @@ if ($GLOBALS["require_login"] && !isSuperUser()) {
   }
 }
 
-$id = sprintf('%d',$_GET["id"]);
+if (!empty($_GET['id'])) {
+  $id = sprintf('%d',$_GET["id"]);
+} else {
+  $id = 0;
+}
 if ($id)
   echo "<br />".PageLink2("members",$GLOBALS['I18N']->get('Members of this list'),"id=$id");
 echo "<hr />";
@@ -37,6 +41,8 @@ if (isset($_POST["save"]) && isset($_POST["listname"]) && $_POST["listname"]) {
   if ($GLOBALS["require_login"] && !isSuperUser())
     $owner = $_SESSION["logindetails"]["id"];
   if (!isset($_POST["active"])) $_POST["active"] = 0;
+  $_POST['listname'] = removeXss($_POST['listname']);
+
   if ($id) {
     $query = sprintf('update %s set name="%s",description="%s",
     active=%d,listorder=%d,prefix = "%s", owner = %d, rssfeed = "%s"
@@ -58,9 +64,18 @@ if (isset($_POST["save"]) && isset($_POST["listname"]) && $_POST["listname"]) {
   echo "<br><font color=red size=+1>" . $GLOBALS['I18N']->get('Record Saved') . ": $id</font><br>";
 }
 
-if (isset($id)) {
+if (!empty($id)) {
   $result = Sql_Query("SELECT * FROM $tables[list] where id = $id");
   $list = Sql_Fetch_Array($result);
+} else {
+  $list = array(
+    'name' => '',
+    'rssfeed' => '',
+    'active' => 0,
+    'listorder' => 0,
+    'description' => '',
+
+  );
 }
 ob_end_flush();
 
@@ -84,7 +99,7 @@ ob_end_flush();
   print '<input type=hidden name="owner" value="'.$_SESSION["logindetails"]["id"].'">';
 }
 if (ENABLE_RSS) {
- if ($list["rssfeed"]) {
+ if (!empty($list["rssfeed"])) {
    $validate = sprintf('(<a href="http://feedvalidator.org/check?url=%s" target="_blank">%s</a>)',$list["rssfeed"],$GLOBALS['I18N']->get('validate'));
    $viewitems = PageLink2("viewrss&id=".$id,$GLOBALS['I18N']->get('View Items'));
  } else {

@@ -10,8 +10,8 @@ if (isset($_GET['id'])) {
 }
 
 $addcomparison = 0;
-$access = accessLevel('mviews');
-#print "Access level: $access";
+$access = accessLevel('statsoverview');
+#print "Access Level: $access";
 switch ($access) {
   case 'owner':
     $subselect = ' and owner = ' . $_SESSION["logindetails"]["id"];
@@ -38,20 +38,21 @@ switch ($access) {
 if (!$id) {
   print $GLOBALS['I18N']->get('Select Message to view');
   $timerange = ' and date_add(msg.entered,interval 6 month) > now()';
-  $timerange = '';
+  #$timerange = '';
   $limit = 'limit 10';
 
-  $req = Sql_Query(sprintf('select msg.id as messageid,count(um.viewed) as views, count(um.entered) as total,subject,date_format(sent,"%%e %%b %%Y") as sent,bouncecount as bounced from %s um,%s msg where um.messageid = msg.id %s %s
+  $req = Sql_Query(sprintf('select msg.owner,msg.id as messageid,count(um.viewed) as views, count(um.entered) as total,subject,date_format(sent,"%%e %%b %%Y") as sent,bouncecount as bounced from %s um,%s msg where um.messageid = msg.id %s %s
     group by msg.id order by msg.entered desc %s',
     $GLOBALS['tables']['usermessage'],$GLOBALS['tables']['message'],$subselect,$timerange,$limit));
   if (!Sql_Affected_Rows()) {
     print '<p>'.$GLOBALS['I18N']->get('There are currently no messages to view').'</p>';
   }
 
-  $ls = new WebblerListing($GLOBALS['I18N']->get('Available Messages'));
+  $ls = new WebblerListing($GLOBALS['I18N']->get('Last few Messages'));
   while ($row = Sql_Fetch_Array($req)) {
     $element = $row['messageid'].' '.substr($row['subject'],0,50);
-    $ls->addElement($element);
+    $ls->addElement($element,PageURL2('message&id='.$row['messageid']));
+ #   $ls->addColumn($element,$GLOBALS['I18N']->get('owner'),$row['owner']);
     $ls->addColumn($element,$GLOBALS['I18N']->get('date'),$row['sent']);
     $ls->addColumn($element,$GLOBALS['I18N']->get('sent'),$row['total']);
     $ls->addColumn($element,$GLOBALS['I18N']->get('bounced'),$row['bounced']);

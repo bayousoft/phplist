@@ -133,6 +133,8 @@ define("MAXLIST",1);
 # if you use commandline, you will need to identify the users who are allowed to run
 # the script. See README.commandline for more info
 $commandline_users = array("admin");
+# or you can use the following to disable the check (take off the # in front of the line)
+# $commandline_users = array();
 
 # as of version 2.4.1, you can have your users define a password for themselves as well
 # this will cause some public pages to ask for an email and a password when the password is

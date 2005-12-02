@@ -12,10 +12,8 @@ if (!ini_get("register_globals") || ini_get("register_globals") == "off") {
   # sure, this gets around the entire reason that regLANGUAGE_SWITCHister globals
   # should be off, but going through three years of code takes a long time....
 
-  # don't do this for developers so they get to work it out properly
   foreach ($_REQUEST as $key => $val) {
     $$key = $val;
-#    print "$key = $val<br/>";
   }
 }
 
@@ -63,8 +61,12 @@ $GLOBALS["pagestats"] = array();
 $GLOBALS["pagestats"]["time_start"] = $now["sec"] * 1000000 + $now["usec"];
 $GLOBALS["pagestats"]["number_of_queries"] = 0;
 
-if (!$GLOBALS["commandline"] && isset($GLOBALS["developer_email"]) && $_SERVER['HTTP_HOST'] != 'cvs.phplist.com') {
+if (!$GLOBALS["commandline"] && isset($GLOBALS["developer_email"]) && $_SERVER['HTTP_HOST'] != 'cvs.phplist.com' && !empty($GLOBALS['show_dev_errors'])) {
   error_reporting(E_ALL | E_NOTICE);
+  ini_set('display_errors',1);
+  foreach ($_REQUEST as $key => $val) {
+      unset($$key);
+  }
   #error_reporting(0);
 } else {
 #  error_reporting($er);
@@ -84,8 +86,12 @@ require_once dirname(__FILE__)."/commonlib/lib/interfacelib.php";
 include_once dirname(__FILE__)."/pagetop.php";
 
 if ($GLOBALS["commandline"]) {
-  if (!in_array($_SERVER["USER"],$GLOBALS["commandline_users"])) {
-    clineError("Sorry, You (".$_SERVER["USER"].") do not have sufficient permissions to run this script");
+  if (!isset($_SERVER["USER"]) && sizeof($GLOBALS["commandline_users"])) {
+    clineError("USER environment variable is not defined, cannot do access check. Please make sure USER is defined.");
+    exit;
+  }
+  if (is_array($GLOBALS["commandline_users"]) && sizeof($GLOBALS["commandline_users"]) && !in_array($_SERVER["USER"],$GLOBALS["commandline_users"])) {
+    clineError("Sorry, You (".$_SERVER["USER"].") do not have sufficient permissions to run phplist on commandline");
     exit;
   }
   $GLOBALS["require_login"] = 0;

@@ -17,6 +17,9 @@ $lan = array(
   'views' => 'views',
   'responsetime' => 'responsetime',
   'sec' => 'sec',
+
+  # for 2.10.2
+'there are currently no messages to view' => 'There are currently no messages to view',
 );
 
 ?>

@@ -24,6 +24,8 @@ if (isset($_GET['id'])) {
 
 if (isset($_POST["save"]) || isset($_POST["activate"]) || isset($_POST["deactivate"])) {
   $owner = $_POST["owner"];
+  $title = removeXss($_POST['title']);
+
   if (!$owner)
     $owner = $_SESSION['logindetails']['id'];
   if ($id) {
@@ -76,12 +78,12 @@ if (isset($_POST["save"]) || isset($_POST["activate"]) || isset($_POST["deactiva
     Sql_Query(sprintf('replace into %s (id,name,data) values(%d,"rssdefault","%s")',
        $tables["subscribepage_data"],$id,$rssdefault));
   }
-  if ($activate) {
+  if (!empty($_POST['activate'])) {
     Sql_Query(sprintf('update %s set active = 1 where id = %d',
       $tables["subscribepage"],$id));
      Redirect("spage");
     exit;
-  } elseif ($deactivate) {
+  } elseif (!empty($_POST['deactivate'])) {
     Sql_Query(sprintf('update %s set active = 0 where id = %d',
       $tables["subscribepage"],$id));
      Redirect("spage");
@@ -99,14 +101,18 @@ if ($id) {
   $attributes = explode('+',$data["attributes"]);
   $rss = explode(",",$data["rss"]);
   foreach ($attributes as $attribute) {
-    if ($data[sprintf('attribute%03d',$attribute)]) {
+    if (!empty($data[sprintf('attribute%03d',$attribute)])) {
         list($attributedata[$attribute]["id"],
         $attributedata[$attribute]["default_value"],
         $attributedata[$attribute]["listorder"],
         $attributedata[$attribute]["required"]) = explode('###',$data[sprintf('attribute%03d',$attribute)]);
      }
   }
-  $selected_lists = explode(',',$data["lists"]);
+  if (isset($data['lists'])) {
+    $selected_lists = explode(',',$data["lists"]);
+  } else {
+    $selected_lists = array();
+  }
   printf('<input type=hidden name="id" value="%d">',$id);
   $data["subscribemessage"] = getConfig("subscribemessage:$id");
   $data["subscribesubject"] = getConfig("subscribesubject:$id");

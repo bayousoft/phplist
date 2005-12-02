@@ -307,6 +307,7 @@ function safeImageName($name) {
   $name = ereg_replace("-","DASH",$name);
   $name = ereg_replace("_","US",$name);
   $name = ereg_replace("/","SLASH",$name);
+  $name = ereg_replace(':','COLON',$name);
   return $name;
 }
 
@@ -343,6 +344,7 @@ function timeDiff($time1,$time2) {
   $mins = (int)(($diff - ($hours * 3600)) / 60);
   $secs = (int)($diff - $hours * 3600 - $mins * 60);
 
+  $res = '';
   if ($hours)
     $res = $hours . " hours";
   if ($mins)
@@ -628,8 +630,12 @@ function releaseLock($processid) {
 }
 
 function cleanUrl($url,$disallowed_params = array('PHPSESSID')) {
-  $parsed = parse_url($url);
+  $parsed = @parse_url($url);
   $params = array();
+
+  if (empty($parsed['query'])) {
+    $parsed['query'] = '';
+  }
   # hmm parse_str should take the delimiters as a parameter
   if (strpos($parsed['query'],'&amp;')) {
     $pairs = explode('&amp;',$parsed['query']);
@@ -640,11 +646,11 @@ function cleanUrl($url,$disallowed_params = array('PHPSESSID')) {
   } else {
     parse_str($parsed['query'],$params);
   }
-  $uri = $parsed['scheme'] ? $parsed['scheme'].':'.((strtolower($parsed['scheme']) == 'mailto') ? '':'//'): '';
-  $uri .= $parsed['user'] ? $parsed['user'].($parsed['pass']? ':'.$parsed['pass']:'').'@':'';
-  $uri .= $parsed['host'] ? $parsed['host'] : '';
-  $uri .= $parsed['port'] ? ':'.$parsed['port'] : '';
-  $uri .= $parsed['path'] ? $parsed['path'] : '';
+  $uri = !empty($parsed['scheme']) ? $parsed['scheme'].':'.((strtolower($parsed['scheme']) == 'mailto') ? '':'//'): '';
+  $uri .= !empty($parsed['user']) ? $parsed['user'].(!empty($parsed['pass'])? ':'.$parsed['pass']:'').'@':'';
+  $uri .= !empty($parsed['host']) ? $parsed['host'] : '';
+  $uri .= !empty($parsed['port']) ? ':'.$parsed['port'] : '';
+  $uri .= !empty($parsed['path']) ? $parsed['path'] : '';
 #  $uri .= $parsed['query'] ? '?'.$parsed['query'] : '';
   $query = '';
   foreach ($params as $key => $val) {
@@ -657,7 +663,7 @@ function cleanUrl($url,$disallowed_params = array('PHPSESSID')) {
 #  if (!empty($params['p'])) {
 #    $uri .= '?p='.$params['p'];
 #  }
-  $uri .= $parsed['fragment'] ? '#'.$parsed['fragment'] : '';
+  $uri .= !empty($parsed['fragment']) ? '#'.$parsed['fragment'] : '';
   return $uri;
 }
 
@@ -703,6 +709,12 @@ function addSubscriberStatistics($item = '',$amount,$list = 0) {
     Sql_Query(sprintf('insert into %s set value = %d,unixdate = %d,item = "%s",listid = %d',
       $GLOBALS['tables']['userstats'],$amount,$time,$item,$list));
   }
+}
+
+# centralised function to remove Xss from parameters
+function removeXss($string) {
+  $string = preg_replace('/<script/im','< script',$string);
+  return $string;
 }
 
 function deleteBounce($id = 0) {

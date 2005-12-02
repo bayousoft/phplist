@@ -341,9 +341,11 @@ if (file_exists($UPLOAD_BASE_DIR.$_FILES['FCKeditor_File']['name'])) {
   if ($dir = opendir($smileypath)) {
     while (false !== ($file = readdir($dir)))
     {
-      list($fname,$ext) = explode(".",$file);
-      if (in_array($ext,$smileyextensions)) {
-        $smileys .= '"'.$file.'",';
+      if (ereg('\.',$file)) {
+        list($fname,$ext) = explode(".",$file);
+        if (in_array($ext,$smileyextensions)) {
+          $smileys .= '"'.$file.'",';
+        }
       }
     }
   }
@@ -510,7 +512,7 @@ if( window.console ) window.console.log( 'Config is loaded!' ) ;  // @Packager.C
 <?
   exit;
 } elseif ($_GET["action"]) {
-  print "Sorry, ".$_GET["action"]." has not been implemented yet";
+  print "Sorry, not implemented";
 }
 
 ?>

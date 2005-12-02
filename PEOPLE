@@ -74,3 +74,7 @@ Neil Drummond, niel@cyanescent.co.uk, May 2005, update to layout, css and design
 Cristi Cotovan, cristi.cotovan@gmail.com, May 2005, romanian.inc
 Fidel Santiago, pperez333@gmail.com, July 2005, file upload in template editing
 Patrick Le guillou <pleguillou@inforquin.com>, July 2005, update to french.inc
+Ronny Williams, ronny@williams.no, Sept 2005, norwegian.inc
+Michael Stenitzer, stenitzer@wienfluss.net, Sept 2005, security checks
+Marshall Roch, marshall@kineticode.com, Oct 2005, some more security checks
+Tobias Klein, tk@trapkit.de, Nov 2005, security and xss checks and identification

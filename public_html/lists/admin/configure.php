@@ -8,10 +8,19 @@ if ($_GET["firstinstall"] || $_SESSION["firstinstall"]) {
   require "setup.php";
 }
 */
+if (empty($_REQUEST['id'])) {
+  $id = '';
+} else {
+  $id = $_REQUEST['id'];
+  if (!isset($default_config[$id])) {
+    print $GLOBALS['I18N']->get('invalid request');
+    return;
+  }
+}
 
 # configure options
 reset($default_config);
-if ($save && $id) {
+if (!empty($_REQUEST['save']) && $id) {
   $info = $default_config[$id];
   if (is_array($_POST)) {
     if ($id == "website" || $id == "domain") {

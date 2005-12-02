@@ -256,7 +256,7 @@ if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
         print $deleted." ".$GLOBALS['I18N']->get('Users deleted')."<br/>";
         print $c." ".$GLOBALS['I18N']->get('Users apply')."<br/>$list\n";
         if ($c)
-        print '<input type=submit name="deletetagged" value="'.$GLOBALS['I18N']->get('Delete Tagged Users').'></form>';
+        print '<input type=submit name="deletetagged" value="'.$GLOBALS['I18N']->get('Delete Tagged Users').'"></form>';
       } elseif ($_GET["option"] == "fixinvalidemail") {
         Info($GLOBALS['I18N']->get("Trying to fix users with an invalid email"));
         flush();

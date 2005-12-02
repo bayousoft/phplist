@@ -1,9 +1,9 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 
-# $Id: editattributes.php,v 1.3 2005-08-03 02:36:58 mdethmers Exp $
+# $Id: editattributes.php,v 1.4 2005-12-02 00:57:15 mdethmers Exp $
 
-
+$id = !empty($_GET['id']) ? sprintf('%d',$_GET['id']) : 0;
 ob_end_flush();
 function adminMenu() {
   global $adminlevel,$config;
@@ -24,8 +24,10 @@ function adminMenu() {
   return $html;
 }
 
-if (!$id)
+if (!$id) {
   Fatal_Error($GLOBALS['I18N']->get('NoAttr')." $id");
+  return;
+}
 
 if (!isset($tables["attribute"])) {
   $tables["attribute"] = "attribute";
@@ -38,6 +40,16 @@ if (!isset($table_prefix )) {
 $res = Sql_Query("select * from $tables[attribute] where id = $id");
 $data = Sql_Fetch_array($res);
 $table = $table_prefix ."listattr_".$data["tablename"];
+switch ($data['type']) {
+  case 'checkboxgroup':
+  case 'select':
+  case 'radio':
+    break;
+  default:
+    print $GLOBALS['I18N']->get('This datatype does not have editable values');
+    return;
+}
+
 ?>
 <script language="Javascript" src="js/jslib.js" type="text/javascript"></script>
 

@@ -3,10 +3,12 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 
-if (is_uploaded_file($_FILES['file_template']['tmp_name'])) {
+if (!empty($_FILES['file_template']) && is_uploaded_file($_FILES['file_template']['tmp_name'])) {
   $content = file_get_contents($_FILES['file_template']['tmp_name']);
-} else {
+} elseif (isset($_POST['content'])) {
   $content = $_POST['content'];
+} else {
+  $content = '';
 }
 
 if (file_exists("./FCKeditor/fckeditor.php") && USEFCK) {
@@ -49,8 +51,13 @@ function getTemplateImages($content) {
   while(list($key,) = each($image_types))
     $extensions[] = $key;
   preg_match_all('/"([^"]+\.('.implode('|', $extensions).'))"/Ui', stripslashes($content), $images);
-  while (list($key,$val) = each ($images[1]))
-    $html_images[$val]++;
+  while (list($key,$val) = each ($images[1])) {
+    if (isset($html_images[$val])) {
+      $html_images[$val]++;
+    } else {
+      $html_images[$val] = 1;
+    }
+  }
   return $html_images;
 }
 
@@ -58,8 +65,13 @@ function getTemplateLinks($content) {
   preg_match_all('/href="([^"]+)"/Ui', stripslashes($content), $links);
   return $links[1];
 }
+$msg = '';
+$checkfullimages = !empty($_POST['checkfullimages']) ? 1 : 0;
+$checkimagesexist = !empty($_POST['checkimagesexist']) ? 1 : 0;
+$checkfulllinks = !empty($_POST['checkfulllinks']) ? 1 : 0;
+$baseurl = '';
 
-if ($action == "addimages") {
+if (!empty($_POST['action']) && $_POST['action'] == "addimages") {
   if (!$id)
     $msg = $GLOBALS['I18N']->get("No such template");
   else {
@@ -78,10 +90,13 @@ if ($action == "addimages") {
   }
   print '<p class="error">'.$msg.'</p>';
   return;
-} elseif ($save) {
+} elseif (!empty($_POST['save'])) {
   $templateok = 1;
+  $title = removeXss($_POST['title']);
   if ($title && ereg("\[CONTENT\]",$content)) {
     $images = getTemplateImages($content);
+
+    $cantestremoteimages = ini_get('allow_url_fopen');
     if (($checkfullimages || $checkimagesexist) && sizeof($images)) {
       foreach ($images as $key => $val) {
         if (!preg_match("#^https?://#i",$key)) {
@@ -91,16 +106,20 @@ if ($action == "addimages") {
            }
         } else {
           if ($checkimagesexist) {
-            $fp = @fopen($key,"r");
-            if (!$fp) {
-              print $GLOBALS['I18N']->get("Image")." $key => ".$GLOBALS['I18N']->get("does not exist")."<br/>\n";
-              $templateok = 0;
+            if ($cantestremoteimages) {
+              $fp = @fopen($key,"r");
+              if (!$fp) {
+                print $GLOBALS['I18N']->get("Image")." $key => ".$GLOBALS['I18N']->get("does not exist")."<br/>\n";
+                $templateok = 0;
+              }
+              @fclose($fp);
+            } else {
+              print $GLOBALS['I18N']->get("Image")." $key => ".$GLOBALS['I18N']->get('cannot check, "allow_url_fopen" disabled in PHP settings')."<br/>\n";
             }
-            @fclose($fp);
           }
         }
-       }
-     }
+      }
+    }
     if ($checkfulllinks) {
       $links = getTemplateLinks($content);
       foreach ($links as $key => $val) {
@@ -133,7 +152,7 @@ if ($action == "addimages") {
     print '<p class="error">'.$GLOBALS['I18N']->get("Template saved").'</p>';
 
     if (sizeof($images)) {
-      include $GLOBALS["coderoot"] . "class.image.inc";
+      include dirname(__FILE__) . "/class.image.inc";
       $image = new imageUpload();
       print "<h3>".$GLOBALS['I18N']->get("Images")."</h3><p>".$GLOBALS['I18N']->get("Below is the list of images used in your template. If an image is currently unavailable, please upload it to the database.")."</p>";
       print "<p>".$GLOBALS['I18N']->get("This includes all images, also fully referenced ones, so you may choose not to upload some. If you upload images, they will be included in the emails that use this template.")."</p>";
@@ -143,9 +162,9 @@ if ($action == "addimages") {
       reset($images);
       while (list($key,$val) = each ($images)) {
         printf($GLOBALS['I18N']->get("Image name:").' <b>%s</b> (%d '.$GLOBALS['I18N']->get("times used").')<br/>',$key,$val);
-        print $image->showInput($key,$value,$id);
+        print $image->showInput($key,$val,$id);
       }
-//nizar 'value' ci-dessous plusieurs fois
+
       print '<input type=hidden name="id" value="'.$id.'"><input type=hidden name="action" value="addimages"><input type=submit name="addimages" value="'.$GLOBALS['I18N']->get("Save Images").'"></form>';
       return;
     } else {

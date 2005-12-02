@@ -326,6 +326,37 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
   # update the existing record, check whether the email has changed
   $req = Sql_Query("select * from {$GLOBALS["tables"]["user"]} where id = $userid");
   $data = Sql_fetch_array($req);
+
+  # check that the password was provided if required
+  # we only require a password if there is one, otherwise people are blocked out
+  # when switching to requiring passwords
+  if (ASKFORPASSWORD && $data['password']) {
+    # they need to be "logged in" for this
+    if (empty($_SESSION['userloggedin'])) {
+      Fatal_Error("Access Denied");
+      exit;
+    }
+    $checkpassword = '';
+    $allow = 0;
+    # either they have to give the current password, or given two new ones
+    if (ENCRYPTPASSWORD) {
+      $checkpassword = sprintf('%s',md5($_POST["password"]));
+     } else {
+      $checkpassword = sprintf('%s',$_POST["password"]);
+    }
+    if (!empty($_POST['password_check'])) {
+      $allow = $_POST['password_check'] == $_POST['password'] && !empty($_POST['password']);
+    } else {
+      $allow = (!empty($_POST['password']) && $data['password'] == $checkpassword) || empty($_POST['password']);
+    }
+
+    if (!$allow) {
+      # @@@ this check should be done above, so the error can be embedded in the template
+      print $GLOBALS["strPasswordsNoMatch"];
+      exit;
+    }
+  }
+
   # check whether they are changing to an email that already exists, should not be possible
   $req = Sql_Query("select uniqid from {$GLOBALS["tables"]["user"]} where email = \"$email\"");
   if (Sql_Affected_Rows()) {
@@ -608,8 +639,6 @@ function ListAttributes($attributes,$attributedata,$htmlchoice = 0,$userid = 0,$
     }
     if (isset($_POST['htmlemail'])) {
       $htmlemail = $_POST["htmlemail"];
-    } else {
-      $htmlemail = 0;
     }
     $data = array();
     $current = array();
@@ -666,12 +695,18 @@ $html .= sprintf('
 
   switch($htmlchoice) {
     case "textonly":
+      if (!isset($htmlemail))
+        $htmlemail = 0;
       $html .= sprintf('<input type=hidden name="htmlemail" value="0">');
       break;
     case "htmlonly":
+      if (!isset($htmlemail))
+        $htmlemail = 1;
       $html .= sprintf('<input type=hidden name="htmlemail" value="1">');
       break;
     case "checkfortext":
+      if (!isset($htmlemail))
+        $htmlemail = 0;
       $html .= sprintf('<tr><td colspan=2>
       <span class="attributeinput">
       <input type=checkbox name="textemail" value="1" %s></span>

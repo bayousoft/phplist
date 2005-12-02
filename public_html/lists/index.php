@@ -189,7 +189,7 @@ if ($login_required && empty($_SESSION["userloggedin"]) && !$canlogin) {
         if (!$userid) {
 #          print "Userid not set".$_SESSION["userid"];
           print sendPersonalLocationPage($id);
-        } elseif (ASKFORPASSWORD && $passwordcheck && !$canlogin) {
+        } elseif (ASKFORPASSWORD && $userpassword && !$canlogin) {
           print LoginPage($id,$userid,$emailcheck);
         } else {
           print PreferencesPage($id,$userid);
@@ -581,9 +581,18 @@ function unsubscribePage($id) {
     return $res;
   }
 
-  $current = Sql_Fetch_Array_query("SELECT list.id as listid,user.uniqid as userhash FROM $tables[list] as list,$tables[listuser] as listuser,$tables[user] as user where list.id = listuser.listid and user.id = listuser.userid and user.email = \"$email\"");
+  $current = Sql_Fetch_Array_query("SELECT list.id as listid,user.uniqid as userhash, user.password as password FROM $tables[list] as list,$tables[listuser] as listuser,$tables[user] as user where list.id = listuser.listid and user.id = listuser.userid and user.email = \"$email\"");
   $some = $current["listid"];
-  $hash = $current["userhash"];
+  if (ASKFORPASSWORD && !empty($user['password'])) {
+    # it is safe to link to the preferences page, because it will still ask for
+    # a password
+    $hash = $current["userhash"];
+  } elseif (isset($_GET['uid']) && $_GET['uid'] == $current['userhash']) {
+    # they got to this page from a link in an email
+    $hash = $current['userhash'];
+  } else {
+    $hash = '';
+  }
 
   $finaltext = $GLOBALS["strUnsubscribeFinalInfo"];
   $pref_url = getConfig("preferencesurl");

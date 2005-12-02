@@ -23,10 +23,10 @@ $LANGUAGES = array(
 #"et" => array("Estonian ","iso-8859-15 "),
 #"fo" => array("Faroese "," iso-8859-1, windows-1252 "),
 #"fi"=> array("Finnish "," iso-8859-1, windows-1252 "),
-"de" => array("Deutsch "," iso-8859-1, windows-1252 "),
-"en" => array("English "," iso-8859-1, windows-1252 "),
-"es"=>array("espa&ntilde;ol"," iso-8859-1, windows-1252"),
-"fr"=>array("fran&ccedil;ais ","iso-8859-1, windows-1252 "),
+"de" => array("Deutsch ","iso-8859-1","iso-8859-1, windows-1252 "),
+"en" => array("English ","iso-8859-1","iso-8859-1, windows-1252 "),
+"es"=>array("espa&ntilde;ol","iso-8859-1","iso-8859-1, windows-1252"),
+"fr"=>array("fran&ccedil;ais ","iso-8859-1","iso-8859-1, windows-1252 "),
 #"gl"=>array("Galician "," iso-8859-1, windows-1252 "),
 #"el"=> array("Greek "," iso-8859-7 "),
 #"iw"=> array("Hebrew "," iso-8859-8 "),
@@ -42,7 +42,7 @@ $LANGUAGES = array(
 #"no"=>array("Norwegian ","iso-8859-1, windows-1252"),
 #"pl"=>array("Polish ","iso-8859-2"),
 #"pt"=>array("Portuguese "," iso-8859-1, windows-1252"),
-"pt-br"=>array("portugu&ecirc;s ","iso-8859-1, windows-1252"),
+"pt-br"=>array("portugu&ecirc;s ","iso-8859-1","iso-8859-1, windows-1252"),
 #"ro"=>array("Romanian "," iso-8859-2"),
 #"ru"=>array("Russian "," koi8-r, iso-8859-5"),
 #"gd"=>array("Scottish "," iso-8859-1, windows-1252"),
@@ -53,7 +53,7 @@ $LANGUAGES = array(
 #"sv"=>array("Swedish "," iso-8859-1, windows-1252"),
 #"tr"=> array("Turkish "," iso-8859-9, windows-1254"),
 #"uk"=>array("Ukrainian "," iso-8859-5"),
-"zh-tw" => array("Traditional Chinese","utf-8"),
+"zh-tw" => array("Traditional Chinese","utf-8","utf-8"),
 );
 
 if (!empty($GLOBALS["SessionTableName"])) {
