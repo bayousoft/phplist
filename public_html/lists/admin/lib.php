@@ -711,12 +711,6 @@ function addSubscriberStatistics($item = '',$amount,$list = 0) {
   }
 }
 
-# centralised function to remove Xss from parameters
-function removeXss($string) {
-  $string = preg_replace('/<script/im','< script',$string);
-  return $string;
-}
-
 function deleteBounce($id = 0) {
   if (!$id) return;
   $id = sprintf('%d',$id);

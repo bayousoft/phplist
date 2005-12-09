@@ -995,6 +995,13 @@ function formatDateTime ($datetime,$short = 0) {
   return formatDate($date,$short). " ".formatTime($time,$short);
 }
 
+# centralised function to remove Xss from parameters
+function removeXss($string) {
+  $string = preg_replace('/<script/im','< script',$string);
+  return $string;
+}
+
+
 function phplist_shutdown () {
 #  output( "Script status: ".connection_status(),0); # with PHP 4.2.1 buggy. http://bugs.php.net/bug.php?id=17774
   $status = connection_status();
