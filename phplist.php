@@ -100,8 +100,8 @@ class phplist extends DefaultPlugin {
 
   function getConfig($key) {
     $req = Sql_Fetch_Row_Query(sprintf('select value from %s where item = "%s"',$this->tables["config"],$key));
-    $req[0] = preg_replace('/\[DOMAIN\]/i', $GLOBALS["domain"], $req[0]);
-    $req[0] = preg_replace('/\[WEBSITE\]/i', $GLOBALS["website"], $req[0]);
+    $req[0] = preg_replace('/\[DOMAIN\]/i', $GLOBALS['config']["domain"], $req[0]);
+    $req[0] = preg_replace('/\[WEBSITE\]/i', $GLOBALS['config']["websiteurl"], $req[0]);
     return $req[0];
   }
 
@@ -153,7 +153,7 @@ class phplist extends DefaultPlugin {
      }
     return 0;
   }
-  
+
   function getUserConfig($item,$userid = 0) {
     $value = $this->getConfig($item);
     if ($userid) {
@@ -189,14 +189,20 @@ class phplist extends DefaultPlugin {
   function userEmail($userid = 0) {
     $user_req = Sql_Fetch_Row_Query("select email from {$this->tables["user"]} where id = $userid");
     return $user_req[0];
-  }    
+  }
+
+  function isListSubscribed($userid = 0,$listid = 0) {
+    if (!$userid || !$listid) return 0;
+    $req = Sql_Fetch_Row_Query(sprintf('select userid from %s where userid = %d and listid = %d',$this->tables["listuser"],$userid,$listid));
+    return $req[0] == $userid;
+  }
 
   function sendConfirmationRequest($userid) {
     $subscribemessage = ereg_replace('\[LISTS\]', '', $this->getUserConfig("subscribemessage",$userid));
     $this->sendMail($this->userEmail($userid), $this->getConfig("subscribesubject"), $subscribemessage);
     Sql_Query(sprintf('update %s set confirmed = 0 where id = %d',$this->tables["user"],$userid));
   }
-  
+
   function sendMail ($to,$subject,$message,$header = "",$parameters = "") {
     mail($to,$subject,$message);
     dbg("mail $to $subject");
@@ -227,7 +233,7 @@ class phplist extends DefaultPlugin {
       }
     }
     $header .= "X-Mailer: PHPlist v".VERSION.' (http://www.phplist.com)'."\n";
-  
+
     if (WORKAROUND_OUTLOOK_BUG) {
       $header = rtrim($header);
       if ($header)
@@ -235,7 +241,7 @@ class phplist extends DefaultPlugin {
       $header .= "X-Outlookbug-fixed: Yes";
       $message = preg_replace("/\r?\n/", "\r\n", $message);
     }
-  
+
     if (!ereg("dev",VERSION)) {
       if ($v > "4.0.5" && !ini_get("safe_mode")) {
         if (mail($to,$subject,$message,$header,$parameters))
