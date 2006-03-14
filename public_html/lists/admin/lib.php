@@ -509,6 +509,8 @@ function addAbsoluteResources($text,$url) {
 #      print "$match<br/>";
       if (preg_match("#[http|javascript|https|ftp|mailto]:#i",$match)) {
         # scheme exists, leave it alone
+      } elseif (preg_match("#\[.*\]#U",$match)) {
+        # placeholders used, leave alone as well
       } elseif (ereg("^/",$match)) {
         # starts with /
         $text = preg_replace('#'.preg_quote($foundtags[0][$i]).'#im',$tagmatch.'"'.$parts["scheme"].'://'.$parts["host"].$match.'"',$text,1);
@@ -546,6 +548,78 @@ function setPageCache($url,$lastmodified = 0,$content) {
   Sql_Query(sprintf('insert into %s (url,lastmodified,added,content)
     values("%s",%d,now(),"%s")',$GLOBALS["tables"]["urlcache"],$url,$lastmodified,addslashes($content)));
 }
+
+function removeJavascript($content) {
+  $content = preg_replace('/<script[^>]*>(.*?)<\/script\s*>/mis','',$content);
+  return $content;
+}
+
+function stripComments($content) {
+ $content = preg_replace('/<!--(.*?)-->/mis','',$content);
+  return $content;
+}
+
+function compressContent($content) {
+  $content = removeJavascript($content);
+  $content = stripComments($content);
+  $content = preg_replace("/\n/",'',$content);
+  $content = preg_replace("/\r/",'',$content);
+
+  #$content = preg_replace('/\s*(<.*? >)\s*/',"\\1",$content);
+
+  return $content;
+}
+
+/* do not use @@@
+
+# try to pull remote styles into the email, but that's a nightmare, because
+# it needs to be made absolute again
+# kind of works, but not really nicely.
+
+function includeStyles($text) {
+  $styles = fetchStyles($text);
+  $text = stripStyles($text);
+  $text = preg_replace('#</head>#','<style type="text/css">'.$styles.'</style></head>',$text);
+  return $text;
+}
+
+function stripStyles($text) {
+  $tags = array('src\s*=\s*','href\s*=\s*','action\s*=\s*',
+    'background\s*=\s*','@import\s+','@import\s+url\(');
+  foreach ($tags as $tag) {
+    preg_match_all('/<link.*('.$tag.')"([^"|\#]*)".*>/Uim', $text, $foundtags);
+    for ($i=0; $i< count($foundtags[0]); $i++) {
+      $pat = $foundtags[0][$i];
+      $match = $foundtags[2][$i];
+      $tagmatch = $foundtags[1][$i];
+      if (preg_match("#[http|https]:#i",$match) && preg_match("#\.css$#i",$match)) {
+        $text = str_replace($foundtags[0][$i],'',$text);
+      }
+    }
+  }
+  return $text;
+}
+
+function fetchStyles($text) {
+  $styles = '';
+  $url = '';
+  $tags = array('src\s*=\s*','href\s*=\s*','action\s*=\s*',
+    'background\s*=\s*','@import\s+','@import\s+url\(');
+  foreach ($tags as $tag) {
+    preg_match_all('/<link.*('.$tag.')"([^"|\#]*)"/Uim', $text, $foundtags);
+    for ($i=0; $i< count($foundtags[0]); $i++) {
+      $match = $foundtags[2][$i];
+      $url = $match;
+      $tagmatch = $foundtags[1][$i];
+      if (preg_match("#[http|https]:#i",$match) && preg_match("#\.css$#i",$match)) {
+        $styles .= fetchUrl($match);
+      }
+    }
+  }
+  return addAbsoluteResources($styles,$url);
+}
+
+*/
 
 function fetchUrl($url,$userdata = array()) {
   require_once "HTTP/Request.php";

@@ -148,6 +148,10 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
         $url = 'http://'.$url;
       }
       $remote_content = fetchUrl($url,$userdata);
+
+      # @@ don't use this
+      #      $remote_content = includeStyles($remote_content);
+
       if ($remote_content) {
         $content = eregi_replace(preg_quote($regs[0]),$remote_content,$content);
         $cached[$messageid]["htmlformatted"] = strip_tags($content) != $content;
@@ -396,7 +400,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 
     # convert Text message
     # first find occurances of our top domain, to avoid replacing them later
-    preg_match_all('#(https?://'.$GLOBALS['website'].'/?)\s+#mis',$textmessage,$links);
+    preg_match_all('#<(https?://'.$GLOBALS['website'].'/?)\s*?>#Umis',$textmessage,$links);
 #    preg_match_all('#(https?://[a-z0-9\./\#\?&:@=%\-]+)#ims',$textmessage,$links);
 #    preg_match_all('!(https?:\/\/www\.[a-zA-Z0-9\.\/#~\?+=&%@-_]+)!mis',$textmessage,$links);
 
@@ -417,7 +421,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
         $masked = "T|$linkid|$messageid|".$userdata['id'] ^ XORmask;
         $masked = urlencode(base64_encode($masked));
         $newlink = sprintf('http://%s/lt.php?id=%s',$website.$GLOBALS["pageroot"],$masked);
-        $textmessage = str_replace($links[0][$i], '<'.$newlink.'>', $textmessage);
+        $textmessage = str_replace($links[0][$i], $newlink, $textmessage);
       }
     }
 
@@ -428,7 +432,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     #https://user:password@www.website.com:2345/document.php?parameter=something%20&otherpar=somethingelse#anchor
 
 
-    preg_match_all('#(https?://[^\s\>\}\,]+)#mis',$textmessage,$links);
+    preg_match_all('#<(https?://[^\s\>\}\,]+)\s*>#Umis',$textmessage,$links);
 #    preg_match_all('#(https?://[a-z0-9\./\#\?&:@=%\-]+)#ims',$textmessage,$links);
 #    preg_match_all('!(https?:\/\/www\.[a-zA-Z0-9\.\/#~\?+=&%@-_]+)!mis',$textmessage,$links);
 
