@@ -28,6 +28,11 @@ $lan = array (
   'Comment' => '意見',
   'Header' => '頁首',
   'Body' => '內容',
+  'Regular Expression' => '樣式比對',
+  'Action' => '操作',
+  'Memo for this rule' => '這個規則的備註',
+  'Add new Rule' => '新增規則',
+  'Create New Rule based on this bounce' => '以這封退信建立新規則',
 
 );
 ?>

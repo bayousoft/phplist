@@ -11,6 +11,7 @@ $lan = array (
   'WhenSignedUp' => '當他們註冊時',
   'WhenRecordChanged' => '當這筆記錄異動時',
   'SelectColToIn' => '選擇希望匯出的欄位',
+  'When they subscribed to' => '當他們訂閱',
 
 );
 ?>

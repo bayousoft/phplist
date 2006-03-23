@@ -12,7 +12,8 @@ $lan = array (
   'Please make sure to' => '請記得',
   'subscribe to the announcements list' => '訂閱我們的公告電子報',
   'to make sure you are updated when new versions come out.
-    Sometimes security bugs are found which make it important to upgrade. Traffic on the list is very low.' => '，藉此獲得最新版本的消息，有時候會出現安全性漏洞需要升級，我們寄送信件的頻率並不高。',
+    Sometimes security bugs are found which make it important to upgrade. Traffic on the list is very low.' => 'to make sure you are updated when new versions come out.
+    Sometimes security bugs are found which make it important to upgrade. Traffic on the list is very low.',
   'Continue with' => '繼續',
   'PHPlist Setup' => '安裝',
   'Maybe you want to' => '也許您想要',
@@ -22,6 +23,7 @@ $lan = array (
   '(will erase all data!)' => '(將會清除所有資料！)',
   'Checklist for Installation' => '安裝前的檢查',
   'to make sure you are updated when new versions come out. Sometimes security bugs are found which make it important to upgrade. Traffic on the list is very low.' => '可以確認您是否更新到最新版本，有時候會出現安全性漏洞需要升級，我們寄送信件的頻率並不高。',
+  'List for testing.' => '測試列表',
 
 );
 ?>

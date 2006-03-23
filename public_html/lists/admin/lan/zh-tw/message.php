@@ -12,6 +12,7 @@ $lan = array (
   'Send this (same) message to (a) new list(s)' => '送出這封信件到新的電子報',
   'List is Active' => '電子報啟用中',
   'List is not Active' => '電子報停用中',
+  '<b>Note:</b> this message has already been sent to all lists. To resend it to new users use the "Requeue" function.' => '<b>注意：</b> 這封信已經寄給了所有電子報主題，重新寄送資料給新加入的使用者請點選"重新寄送"功能。',
   'Resend' => '重新寄送',
   'id' => 'id',
   'subject' => '主旨',
@@ -43,6 +44,7 @@ $lan = array (
   'sendstart' => '開始寄送',
   'rsstemplate' => 'RSS樣板',
   'owner' => '擁有者',
+  'edit this message' => '編輯這封信',
 
 );
 ?>

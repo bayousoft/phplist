@@ -54,7 +54,9 @@ $strPreferencesTitle    = '更新您的設定';
 $strPreferencesInfo     = '請確認下面的資訊是否正確，接著點選"更新"';
 $strUpdatePreferences   = '更新';
 $strPreferencesEmailChanged = '您修改了收件信箱，我們將會寄出一封確認信函到您的新信箱。';
-$strYouAreBlacklisted = '抱歉，您的信箱列在我們的封鎖清單中，這表示您曾經要求我們不要再寄送任何信件到您的信箱 <br/>如果您希望透過這個信箱再次訂閱我們的電子報，請連繫管理員協助更新這個封鎖清單！';
+$strYouAreBlacklisted = '抱歉，您的信箱列在我們的封鎖清單中，這表示您曾經要求我們不要再寄送任何信件到您的信箱 <br/>
+如果您希望透過這個信箱再次訂閱我們的電子報，
+請連繫管理員協助更新這個封鎖清單！';
 $strPreferencesNotificationSent = '您將會收到異動通知信';
 $strPreferencesUpdated = '謝謝您提供的資訊，資料已經更新。';
 $strClickHere          = '點選這裡';
@@ -80,6 +82,7 @@ $strForgotPassword     = '忘了我的密碼';
 $strPassword           = '密碼';
 $strPassword2          = '再次輸入密碼';
 $strPasswordsNoMatch   = '兩次密碼不同';
+$strEmailsNoMatch     = '您輸入的電子信箱不符';
 $strInvalidPassword    = '錯誤：無效的密碼或電子郵件地址';
 $strPasswordSent       = '您的密碼已送到您的電子郵件中，您可以在幾分鐘後收到電子信 ';
 $strPasswordRemindSubject = '列表密碼';
@@ -90,13 +93,26 @@ $strLoginTitle         = '請輸入您的電子郵件地址及密碼';
 $strLoginInfo          = '這頁需要密碼，請輸入您的電子郵件地址及密碼';
 $strPersonalLocationInfo = '
   <p>這個頁面需要透過我們電子報內容後附加的個人連結<br/>
-  如果您是透過那些連結而出現這個錯誤訊息，請確認網址的部分有沒有被切成兩行，記得將他們完整的貼到網址列。</p>
-  <p>如果您不知道是哪個位置，您可以在下面欄位輸入您的信箱，接著點選 "繼續"
+  如果您是透過那些連結而出現這個錯誤訊息，
+  請確認網址的部分有沒有被切成兩行，記得將他們完整的貼到網址列。</p>
+  <p>如果您不知道是哪個位置，
+  您可以在下面欄位輸入您的信箱，接著點選 "繼續"
 ';
 $strPersonalLocationSent = '<h1>成功！您在幾分鐘內會收到上述的連結</h1>';
 $strUserExists   = '<br/>電子郵件位址重複或是密碼錯誤';
 $strUserExistsExplanationStart = '<br/>如果忘記密碼，請點選 ';
 $strUserExistsExplanationLink = '這裡';
 $strUserExistsExplanationEnd = ' 來繼續索取密碼的步驟';
+$strForwardTitle = '轉寄信件給朋友';
+$strForwardSubtitle = '轉寄信件主旨';
+$strForwardEnterEmail = '請輸入希望轉寄的信箱';
+$strForwardSuccessInfo ='信件已經轉寄出去';
+$strForwardFailInfo = '信件轉寄失敗';
+$strForwardAlreadyDone = '信件已經成功轉寄到您指定的信箱';
+$strForwardFooter = '這封信由 [FORWARDEDBY] 轉寄給您，
+  您並未因此自動訂閱了我們的電子報（別擔心），
+  如果您希望訂閱我們的電子報請前往';
+$strForward = '轉寄';
+$strFwd = '[轉寄]'; # short version of forward for email subject
 
 ?>

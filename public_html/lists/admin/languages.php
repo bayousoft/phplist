@@ -18,7 +18,7 @@ $LANGUAGES = array(
 #"hr" => array("Croatian"," iso-8859-2, windows-1250 "),
 #"cs" => array("Czech "," iso-8859-2 "),
 #"da" => array("Danish "," iso-8859-1, windows-1252 "),
-#"nl"=> array("Dutch "," iso-8859-1, windows-1252 "),
+"nl"=> array("Nederlands ","iso-8859-1"," iso-8859-1, windows-1252 "),
 #"eo" => array("Esperanto "," iso-8859-3* "),
 #"et" => array("Estonian ","iso-8859-15 "),
 #"fo" => array("Faroese "," iso-8859-1, windows-1252 "),
@@ -54,6 +54,7 @@ $LANGUAGES = array(
 #"tr"=> array("Turkish "," iso-8859-9, windows-1254"),
 #"uk"=>array("Ukrainian "," iso-8859-5"),
 "zh-tw" => array("Traditional Chinese","utf-8","utf-8"),
+"vi" => array("Vietnamese","utf-8","utf-8"),
 );
 
 if (!empty($GLOBALS["SessionTableName"])) {
