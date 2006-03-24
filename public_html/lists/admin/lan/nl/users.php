@@ -40,6 +40,9 @@ $lan = array(
 'Click this link to use the public subscribe page to add this user:' => 'Klik op deze link om de schrijf-je-in pagina te gebruiken om deze gebruiker toe te voegen:',
 'Listing user %d to %d' => 'Lijst van gebruikers %d tot %d',
 'last sent' => 'Laatst verzonden',
+'%s users in total' => '%s gebruikers in totaal',
+'too many users, use a search query to list some' => 'te veel gebruikers, gebruike een zoek query om er enkele te tonen',
+
 
 
 );

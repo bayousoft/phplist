@@ -1,6 +1,7 @@
 <?php
 
 $lan = array(
+'view bounces per list' => 'Bekijk bounces per lijst',
   'List Bounce Rules' => 'Lijst van bounce regels',
   'rulesexistwarning' => 'Je hebt al bounce regels vastgelegd op je systeem.
     Let op bij het creeren van nieuwe regels, omdat deze kunnen tegenwerken met de reeds bestaande regels.',

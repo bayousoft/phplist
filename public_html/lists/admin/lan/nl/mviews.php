@@ -17,6 +17,8 @@ $lan = array(
   'views' => 'bekijkingen',
   'responsetime' => 'reageertijd',
   'sec' => 'sec',
+  'Comparison to other admins' => 'Vergelijking met andere admins',
+
 
   # for 2.10.2
 'there are currently no messages to view' => 'Er zijn momenteel geen berichten te bekijken',

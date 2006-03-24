@@ -2,6 +2,7 @@
 $lan = array(
   "NoAttr" => "Onbekend attribuut:",
   "AddNew" => "voeg nieuw toe",
+  'This datatype does not have editable values' => 'Dit datatype heeft geen bewerkbare waarden',
   "SureToDeleteAll" => "Bent u zeker dat u alle verslagen wilt verwijderen?",
   "DelAll" => "verwijder",
   "ReplaceAllWith" => "Als alternatief kunt u alle waarden met een andere vervangen:",

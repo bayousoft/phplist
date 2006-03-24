@@ -12,6 +12,7 @@ $lan = array(
  'Send this (same) message to (a) new list(s)' => 'Verzend dit (zelfde) bericht naar (een) nieuwe lijst(en)',
  'List is Active' => 'Lijst is actief',
  'List is not Active' => 'Lijst is niet actief',
+ 'No such message' => 'Geen zulk bericht',
  '<b>Note:</b> this message has already been sent to all lists. To resend it to new users use the "Requeue" function.' => '<b>Notitie:</b> dit bericht is al naar alle lijsten verzonden. Om dit bericht te zenden naar nieuwe gebruikers, gebruik de "Terug in wachtrij" functie.',
  'Resend' => 'Zend Opnieuw',
  'id' => 'id',

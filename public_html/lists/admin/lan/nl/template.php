@@ -29,6 +29,7 @@ $lan = array(
   'Check that all external images exist' => 'Controleer of alle externe afbeeldingen bestaan',
   'Save Changes' => 'Wijzigingen opslaan',
   'Save Images' => 'Afbeeldingen Opslaan',
+  'cannot check, "allow_url_fopen" disabled in PHP settings' => 'Kan niet controleren, "allow_url_fopen" is uitgeschakeld in de PHP settings',
 
   # added 2.10.0
   'You can upload a template file or paste the text in the box below' => 'Je kan een template bestand uploaden of plakken in het tekstveld onderaan',
