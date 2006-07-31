@@ -311,11 +311,14 @@ if ($send || $sendtest || $prepare || $save) {
   // More  "Insert  only"  stuff  here (no need  to change  it on  an edit!)
   if (isset($_POST["targetlist"]) && is_array($_POST["targetlist"]))  {
     Sql_query("delete from {$tables["listmessage"]} where messageid = $messageid");
-    if (isset($_POST["targetlist"]["all"]) && $_POST["targetlist"]["all"] == "on") {
+    if ( (isset($_POST["targetlist"]["all"]) && $_POST["targetlist"]["all"] == "on") ||
+      (isset($_POST["targetlist"]["allactive"]) && $_POST["targetlist"]["allactive"] == "on")
+      )
+    {
       $res = Sql_query("select * from  $tables[list] $subselect");
       while($row = Sql_fetch_array($res))  {
         $listid  =  $row["id"];
-        if ($row["active"])  {
+        if ($row["active"] || $_POST["targetlist"]["all"] == "on")  {
           $result  =  Sql_query("insert ignore into $tables[listmessage]  (messageid,listid,entered) values($messageid,$listid,now())");
         }
       }
@@ -480,6 +483,11 @@ if ($send || $sendtest || $prepare || $save) {
       $tmpfile = $_FILES[$fieldname]['tmp_name'];
       $remotename = $_FILES[$fieldname]["name"];
       $type = $_FILES[$fieldname]["type"];
+      $newtmpfile = $remotename.time();
+      move_uploaded_file($tmpfile, $GLOBALS['tmpdir'].'/'. $newtmpfile);
+      if (is_file($GLOBALS['tmpdir'].'/'.$newtmpfile) && filesize($GLOBALS['tmpdir'].'/'.$newtmpfile)) {
+        $tmpfile = $GLOBALS['tmpdir'].'/'.$newtmpfile;
+      }
       if (strlen($_POST[$type]) > 255)
         print Warn($GLOBALS['I18N']->get("longmimetype"));
       $description = $_POST[$fieldname."_description"];
@@ -506,6 +514,9 @@ if ($send || $sendtest || $prepare || $save) {
           $attachmentid = Sql_Insert_id();
           Sql_query(sprintf('insert into %s (messageid,attachmentid) values(%d,%d)',
           $tables["message_attachment"],$messageid,$attachmentid));
+          if (is_file($tmpfile)) {
+            unlink($tmpfile);
+          }
 
           # do a final check
           if (filesize($GLOBALS["attachment_repository"]."/".$newfile))
@@ -549,7 +560,7 @@ if ($send || $sendtest || $prepare || $save) {
   } elseif ($send || $sendtest) {
     $errormessage = "";
     if ($subject != stripslashes($_POST["subject"])) {
-      $errormessage = $GLOBALS['I18N']->get("errorsubject"). "S: $subject, P".$_POST["subject"];
+      $errormessage = $GLOBALS['I18N']->get("errorsubject");
     } elseif ($from != $_POST["from"]) {
       $errormessage = $GLOBALS['I18N']->get("errorfrom");
     } elseif (!$from) {
@@ -587,7 +598,11 @@ if ($send || $sendtest || $prepare || $save) {
       $address = trim($address);
       $result = Sql_query(sprintf('select id,email,uniqid,htmlemail,rssfrequency,confirmed from %s where email = "%s"',$tables["user"],$address));
       if ($user = Sql_fetch_array($result)) {
-        $success = sendEmail($id, $address, $user["uniqid"], 1) && sendEmail($id, $address, $user["uniqid"], 0);
+        if (SEND_ONE_TESTMAIL) {
+          $success = sendEmail($id, $address, $user["uniqid"], $user['htmlemail']);
+        } else {
+          $success = sendEmail($id, $address, $user["uniqid"], 1) && sendEmail($id, $address, $user["uniqid"], 0);
+        }
 ;
         print $GLOBALS['I18N']->get("sentemailto").": $address ";
         if (!$success) {

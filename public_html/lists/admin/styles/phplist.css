@@ -1,8 +1,8 @@
 @import url(shader.css);
 body {
-scrollbar-base-color: #DEDEB6; 
-scrollbar-face-color: #CCCC99;; 
-scrollbar-track-color: #DEDEB6; 
+scrollbar-base-color: #DEDEB6;
+scrollbar-face-color: #CCCC99;;
+scrollbar-track-color: #DEDEB6;
 scrollbar-arrow-color: #000000;font-size: 11px;
 }
 
@@ -75,8 +75,8 @@ a:visited.abouthead {
 }
 
 .menulinkleft {margin : 0px; padding : 0px;}
-.menulinkleft a:link, 
-.menulinkleft a:active, 
+.menulinkleft a:link,
+.menulinkleft a:active,
 .menulinkleft a:visited {font-family: verdana, sans-serif;font-size : 11px; color : #000000;background-color : #F9F9F9; font-weight: normal; display : block; text-align : left; text-decoration : none; padding-left: 5px;line-height : 15px;border-top: 2px white solid;}
 .menulinkleft a:hover {font-family: verdana, sans-serif;font-size : 11px; color : #000000;background-color : #EBEBEB; font-weight: normal; display : block; text-align : left; text-decoration : none;}
 
@@ -119,7 +119,7 @@ a.buttonpublish {border: 1px #999966 solid; padding :2px;}
 a:link.buttonpublish,
 a:active.buttonpublish,
 a:visited.buttonpublish  {font-family: verdana, sans-serif;font-size : 11px; color : #999966;background-color : #ffffff; font-weight: bold; text-align : middle; text-decoration : none;}
-a:hover.buttonpublish 
+a:hover.buttonpublish
 
 a.menuhelp {color : #000000;}
 a:link.menuhelp,
@@ -135,7 +135,7 @@ a:hover.urhere  {font-family: verdana, sans-serif; font-size : 10px; color : #66
 
 .webblermenu {
 	font-family: verdana, sans-serif;
-	font-size : 11px; 
+	font-size : 11px;
   color : white;
   font-weight: normal;
   text-align : left;

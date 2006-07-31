@@ -61,16 +61,21 @@ $GLOBALS["pagestats"] = array();
 $GLOBALS["pagestats"]["time_start"] = $now["sec"] * 1000000 + $now["usec"];
 $GLOBALS["pagestats"]["number_of_queries"] = 0;
 
-if (!$GLOBALS["commandline"] && isset($GLOBALS["developer_email"]) && $_SERVER['HTTP_HOST'] != 'cvs.phplist.com' && !empty($GLOBALS['show_dev_errors'])) {
+if (!$GLOBALS["commandline"] && isset($GLOBALS["developer_email"]) && $_SERVER['HTTP_HOST'] != 'cvs.phplist.com' && $GLOBALS['show_dev_errors']) {
   error_reporting(E_ALL | E_NOTICE);
   ini_set('display_errors',1);
   foreach ($_REQUEST as $key => $val) {
-      unset($$key);
+    unset($$key);
   }
   #error_reporting(0);
 } else {
 #  error_reporting($er);
-  error_reporting(0);
+#  error_reporting(0);
+  if (isset($error_level)) {
+    error_reporting($error_level);
+  } else {
+    error_reporting($er);
+  }
 }
 
 # load all required files
@@ -321,7 +326,7 @@ if (defined("USE_PDF") && USE_PDF && !defined('FPDF_VERSION')) {
 }
 
 $this_doc = getenv("REQUEST_URI");
-if (preg_match("#(.*?)/admin#i",$this_doc,$regs)) {
+if (preg_match("#(.*?)/admin?$#i",$this_doc,$regs)) {
   $check_pageroot = $pageroot;
   $check_pageroot = preg_replace('#/$#','',$check_pageroot);
   if ($check_pageroot != $regs[1] && WARN_ABOUT_PHP_SETTINGS)

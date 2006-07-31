@@ -2,8 +2,8 @@
 # format of this file: anything with a # symbol is ignored
 # first line without # will be the name of this "attribute"
 # anything else will be values to use
-# if you have any useful contributions like this for PHPlist, send them to me, 
-# and I can include them in next versions. That will save others in collecting 
+# if you have any useful contributions like this for PHPlist, send them to me,
+# and I can include them in next versions. That will save others in collecting
 # the information
 Country:Countries in the world
 Andorra
@@ -245,5 +245,4 @@ Mayotte
 Yugoslavia
 South Africa
 Zambia
-Zaire
 Zimbabwe

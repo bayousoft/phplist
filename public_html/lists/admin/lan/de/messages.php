@@ -46,7 +46,7 @@ $lan = array(
   'ETA' => 'ETA',
   'Processing' => 'In Bearbeitung',
   'msgs/hr' => 'Nachrichten/Std.',
-  'suspend sending' => 'Versand pausiert',
+  'suspend sending' => 'Versand pausieren',
   'suspending' => 'pausiere',
 
 );

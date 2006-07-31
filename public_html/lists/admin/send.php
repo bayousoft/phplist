@@ -81,7 +81,7 @@ if ($done) {
 }
 
 /*if (!$_GET["id"]) {
-  Sql_Query(sprintf('insert into %s (subject,status,entered) 
+  Sql_Query(sprintf('insert into %s (subject,status,entered)
     values("(no subject)","draft",now())',$GLOBALS["tables"]["message"]));
   $id = Sql_Insert_id();
   Redirect("send&id=$id");
@@ -95,6 +95,12 @@ $list_content = '
   if (isset($_POST["targetlist"]["all"]) && $_POST["targetlist"]["all"])
     $list_content .= "checked";
 $list_content .= '>'.$GLOBALS['I18N']->get('alllists').'</li>';
+
+$list_content .= '<li><input type=checkbox name="targetlist[allactive]"
+';
+  if (isset($_POST["targetlist"]["allactive"]) && $_POST["targetlist"]["allactive"])
+    $list_content .= "checked";
+$list_content .= '>'.$GLOBALS['I18N']->get('All Active Lists').'</li>';
 
 $result = Sql_query("SELECT * FROM $tables[list] $subselect");
 while ($row = Sql_fetch_array($result)) {
@@ -125,7 +131,7 @@ if (USE_LIST_EXCLUDE) {
   $list_content .= '
     <hr/><h1>'.$GLOBALS['I18N']->get('selectexcludelist').'</h1><p>'.$GLOBALS['I18N']->get('excludelistexplain').'</p>
     <ul>';
-    
+
   $dbdata = Sql_Fetch_Row_Query(sprintf('select data from %s where name = "excludelist" and id = %d',
     $GLOBALS["tables"]["messagedata"],$_GET["id"]));
   $excluded_lists = explode(",",$dbdata[0]);
@@ -141,9 +147,9 @@ if (USE_LIST_EXCLUDE) {
       $list_content .= ' (<font color=red>'.$GLOBALS['I18N']->get('listactive').'</font>)';
     else
       $list_content .= ' (<font color=red>'.$GLOBALS['I18N']->get('listnotactive').'</font>)';
-  
+
     $desc = nl2br(stripslashes($row["description"]));
-  
+
     $list_content .= "<br>$desc</li>";
   }
   $list_content .= '</ul>';

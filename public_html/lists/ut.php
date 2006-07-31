@@ -1,6 +1,6 @@
 <?php
 ob_start();
-$er = error_reporting(63); # some ppl have warnings on
+$er = error_reporting(0); # some ppl have warnings on
 if ($_SERVER["ConfigFile"] && is_file($_SERVER["ConfigFile"])) {
   include $_SERVER["ConfigFile"];
 } elseif ($_ENV["CONFIG"] && is_file($_ENV["CONFIG"])) {

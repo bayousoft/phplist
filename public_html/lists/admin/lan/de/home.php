@@ -62,7 +62,7 @@ $lan = array(
   'adminattributes' => 'Attribute',
   'send' => 'Neue Nachricht',
   'templates' => 'Templates',
-  'processqueue' => 'Warteschlage',
+  'processqueue' => 'Warteschlange',
   'processbounces' => 'Retouren abholen',
   'getrss' => 'RSS-Meldungen importieren',
   'viewrss' => 'RSS-Meldungen anzeigen',
@@ -73,7 +73,7 @@ $lan = array(
   # added for German translation
   'purgerss' => 'RSS-Meldungen l&ouml;schen',
   'Purge RSS items' => 'Importierte Meldungen aus PHPlist l&ouml;schen'
-  
+
 );
 
 ?>

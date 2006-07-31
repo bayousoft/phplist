@@ -321,8 +321,7 @@ $default_config = array (
 [CONFIRMATIONURL]
 
 ',
-  "Part of the message that is sent to their new email address when users change their information,
-    and the email address has changed","textarea"),
+  "Part of the message that is sent to their new email address when users change their information, and the email address has changed","textarea"),
 
 # this is the text that is placed in the [!-- confirmation --] location of the above
 # message, in case the email is sent to their old email address and they have changed
@@ -334,8 +333,7 @@ $default_config = array (
   to confirm this change. Please visit this website to activate
   your membership.
 ',
-  "Part of the message that is sent to their old email address when users change their information,
-    and the email address has changed","textarea"),
+  "Part of the message that is sent to their old email address when users change their information, and the email address has changed","textarea"),
 
 "personallocation_subject" => array('Your personal location',
 "Subject of message to send when users request their personal location","text"),
@@ -436,6 +434,14 @@ if (!TEST && REGISTER && defined("VERSION")) {
 if (!function_exists("getconfig")) {
   function getConfig($item) {
     global $default_config,$domain,$website,$tables;
+
+    if ($item != 'website' && isset($GLOBALS['config'][$item])) {
+      return $GLOBALS['config'][$item];
+    }
+    if (!isset($GLOBALS['config']) || !is_array($GLOBALS['config'])) {
+      $GLOBALS['config'] = array();
+    }
+
     $hasconf = Sql_Table_Exists($tables["config"],1);
     # correct old methods for finding public urls
     # @@@@ hmm maybe need to revert this
@@ -496,7 +502,8 @@ if (!function_exists("getconfig")) {
       list($a,$b) = split(":",$item);
       return getConfig($a);
      } else {
-      return stripslashes($value);
+      $GLOBALS['config'][$item] = stripslashes($value);
+      return $GLOBALS['config'][$item];
     }
   }
 } else {

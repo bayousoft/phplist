@@ -14,5 +14,3 @@ class helloworld extends phplistPlugin {
 
 }
 ?>
-
-?>

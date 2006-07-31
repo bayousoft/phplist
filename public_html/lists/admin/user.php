@@ -44,7 +44,7 @@ function groupName($id) {
   return $data["name"];
 }
 
-require $GLOBALS["coderoot"] . "structure.php";
+require dirname(__FILE__).'/structure.php';
 $struct = $DBstruct["user"];
 
 if (isset($_GET['list']))

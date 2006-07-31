@@ -1,7 +1,7 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 
-include $GLOBALS["coderoot"] . "structure.php";
+include dirname(__FILE__).'/structure.php';
 ob_end_flush();
 
 print "<h3>".$GLOBALS['I18N']->get("Creating tables")."</h3><br />\n";
@@ -16,8 +16,14 @@ while (list($table, $val) = each($DBstruct)) {
     Sql_query("drop table if exists $tables[$table]");
   }
   $query = "CREATE TABLE $tables[$table] (\n";
-  while (list($column, $val) = each($DBstruct[$table])) {
-    $query .= "$column " . $DBstruct[$table][$column][0] . ",";
+  while (list($column, $struct) = each($DBstruct[$table])) {
+    if (preg_match('/index_\d+/',$column)) {
+      $query .= "index " . $struct[0] . ",";
+    } elseif (preg_match('/unique_\d+/',$column)) {
+      $query .= "unique " . $struct[0] . ",";
+    } else {
+      $query .= "$column " . $struct[0] . ",";
+    }
   }
   # get rid of the last ,
   $query = substr($query,0,-1);

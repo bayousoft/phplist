@@ -14,5 +14,3 @@ class sidebar extends phplistPlugin {
 
 }
 ?>
-
-?>

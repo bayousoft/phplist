@@ -22,4 +22,10 @@ foreach ($handlers as $handler) {
 # @@@ needs more work
 $GLOBALS['compression_used'] = $zlib_compression || $gzhandler;
 
+# make sure these are set correctly, so they cannot be injected due to the PHP Globals Problem,
+# http://www.hardened-php.net/globals-problem
+$GLOBALS['language_module'] = $language_module;
+$GLOBALS['database_module'] = $database_module;
+$GLOBALS['show_dev_errors'] = $show_dev_errors;
+
 ?>

@@ -786,9 +786,9 @@ $html .= sprintf('
           $output[$attr["id"]] .= sprintf("\n".'<tr><td colspan=2><div class="%s">%s</div>',$attr["required"] ? 'required' : 'attributename',stripslashes($attr["name"]));
           $values_request = Sql_Query("select * from $table_prefix"."listattr_".$attr["tablename"]." order by listorder,name");
           while ($value = Sql_Fetch_array($values_request)) {
-            if (isset($_POST[$fieldname]))
+            if (!$_POST[$fieldname])
               $checked = $_POST[$fieldname] == $value["id"] ? "checked":"";
-            else if (isset($data[$attr["id"]]))
+            else if (!$data[$attr["id"]])
               $checked = $data[$attr["id"]] == $value["id"] ? "checked":"";
             else
               $checked = $attr["default_value"] == $value["name"] ? "checked":"";
@@ -801,9 +801,9 @@ $html .= sprintf('
           $values_request = Sql_Query("select * from $table_prefix"."listattr_".$attr["tablename"]." order by listorder,name");
           $output[$attr["id"]] .= sprintf('</td><td class="attributeinput"><!--%d--><select name="%s" class="attributeinput">',$data[$attr["id"]],$fieldname);
           while ($value = Sql_Fetch_array($values_request)) {
-            if (isset($_POST[$fieldname]))
+            if (!$_POST[$fieldname])
               $selected = $_POST[$fieldname] == $value["id"] ? "selected" : "";
-            else if (isset($data[$attr["id"]]))
+            else if (!$data[$attr["id"]])
               $selected = $data[$attr["id"]] == $value["id"] ? "selected":"";
             else
               $selected = $attr["default_value"] == $value["name"] ? "selected":"";
@@ -819,9 +819,9 @@ $html .= sprintf('
           $values_request = Sql_Query("select * from $table_prefix"."listattr_".$attr["tablename"]." order by listorder,name");
           $output[$attr["id"]] .= sprintf('</td></tr>');
           while ($value = Sql_Fetch_array($values_request)) {
-            if (isset($_POST[$fieldname]))
+            if (!$_POST[$fieldname])
               $selected = in_array($value["id"],$_POST[$fieldname]) ? "checked" : "";
-            else if (isset($data[$attr["id"]])) {
+            else if (!$data[$attr["id"]]) {
               $selection = explode(",",$data[$attr["id"]]);
               $selected = in_array($value["id"],$selection) ? "checked":"";
             }

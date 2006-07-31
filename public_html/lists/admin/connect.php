@@ -212,6 +212,7 @@ function sendReport($subject,$message) {
 
 function sendMessageStats($msgid) {
   global $stats_collection_address,$tables;
+  $msg = '';
   if (defined("NOSTATSCOLLECTION") && NOSTATSCOLLECTION) {
     return;
    }

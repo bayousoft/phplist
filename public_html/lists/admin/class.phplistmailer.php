@@ -1,7 +1,7 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 
-require( $GLOBALS["coderoot"] . "phpmailer/class.phpmailer.php");
+require( dirname(__FILE__) . '/phpmailer/class.phpmailer.php');
 
 class PHPlistMailer extends PHPMailer {
     var $isText = false;
@@ -21,6 +21,7 @@ class PHPlistMailer extends PHPMailer {
 
     function PHPlistMailer($messageid,$email) {
     #  parent::PHPMailer();
+      parent::SetLanguage('en','phpmailer/language/');
       $this->addCustomHeader("X-Mailer: PHPlist v".VERSION);
       $this->addCustomHeader("X-MessageID: $messageid");
       $this->addCustomHeader("X-ListMember: $email");

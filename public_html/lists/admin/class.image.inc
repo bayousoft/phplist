@@ -132,7 +132,7 @@ class imageUpload {
         copy($tmpimagefile,"/tmp/invalidUpload.jpg");
       }
       Sql_Query(sprintf('delete from %s where template = %d and filename = "%s"',
-        $tables["templateimage"],$templateid,$$originalname));
+        $tables["templateimage"],$templateid,$originalname));
       Sql_query(sprintf('insert into %s (template,filename,mimetype,width,height,data)
        values(%d,"%s","%s",%d,%d,"%s")',
        $tables["templateimage"],$templateid,

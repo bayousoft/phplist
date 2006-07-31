@@ -14,10 +14,14 @@ if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
   print "Error, cannot find config file\n";
   exit;
 }
-if (isset($GLOBALS["developer_email"])) {
+if (isset($GLOBALS["developer_email"]) && $GLOBALS['show_dev_errors']) {
   error_reporting(E_ALL);
 } else {
-  error_reporting(0);
+  if (isset($error_level)) {
+    error_reporting($error_level);
+  } else {
+    error_reporting($er);
+  }
 }
 require_once dirname(__FILE__) .'/admin/commonlib/lib/magic_quotes.php';
 
@@ -391,7 +395,7 @@ if ($data['emaildoubleentry']=='yes')
 $html .='
   if(! compareEmail())
   {
-    alert("Email addresses you entered do not match");
+    alert("'.str_replace('"','\"',$GLOBALS["strEmailsNoMatch"]).'");
     return false;
   }';
 }
@@ -438,6 +442,9 @@ function compareEmail()
    }
   $html .= ListAvailableLists("",$data["lists"]);
 
+  if (!empty($data['button'])) {
+    $data['button'] = $GLOBALS['strSubmit'];
+  }
   $html .= '<p><input type=submit name="subscribe" value="'.$data["button"].'" onClick="return checkform();"></p>
     </form><br/><br/>
     <p><a href="'.getConfig("unsubscribeurl").'&id='.$id.'">'.$GLOBALS["strUnsubscribe"].'</a></p>

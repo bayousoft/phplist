@@ -60,7 +60,7 @@ if (!defined('DATE_END_YEAR')) define('DATE_END_YEAR',0);
 if (!defined('ALLOW_IMPORT')) define('ALLOW_IMPORT',1);
 if (!defined('EMPTY_VALUE_PREFIX')) define('EMPTY_VALUE_PREFIX','--');
 if (!defined('USE_ADMIN_DETAILS_FOR_MESSAGES')) define('USE_ADMIN_DETAILS_FOR_MESSAGES',1);
-
+if (!defined('SEND_ONE_TESTMAIL')) define('SEND_ONE_TESTMAIL',0);
 
 if (!isset($GLOBALS["export_mimetype"])) $GLOBALS["export_mimetype"] = 'application/csv';
 if (!isset($GLOBALS["admin_auth_module"])) $GLOBALS["admin_auth_module"] = 'phplist_auth.inc';
@@ -502,6 +502,8 @@ function addAbsoluteResources($text,$url) {
     'background\s*=\s*','@import\s+','@import\s+url\(');
   foreach ($tags as $tag) {
 #   preg_match_all('/'.preg_quote($tag).'"([^"|\#]*)"/Uim', $text, $foundtags);
+# we're only handling nicely formatted src="something" and not src=something, ie quotes are required
+# bit of a nightmare to not handle it with quotes.
     preg_match_all('/('.$tag.')"([^"|\#]*)"/Uim', $text, $foundtags);
     for ($i=0; $i< count($foundtags[0]); $i++) {
       $match = $foundtags[2][$i];

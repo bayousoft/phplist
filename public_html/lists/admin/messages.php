@@ -13,6 +13,11 @@ if( !$GLOBALS["require_login"] || $_SESSION["logindetails"]['superuser'] ){
   $ownerselect_where = ' WHERE owner = ' . $_SESSION["logindetails"]['id'];
   $ownerselect_and = ' and owner = ' . $_SESSION["logindetails"]['id'];
 }
+if (isset($_GET['start'])) {
+  $start = sprintf('%d',$_GET['start']);
+} else {
+  unset($start);
+}
 
 # remember last one listed
 if (!isset($_GET["type"]) && !empty($_SESSION["lastmessagetype"])) {
@@ -139,11 +144,14 @@ $req = Sql_query("SELECT count(*) FROM " . $tables["message"].' '.$subselect);
 
 $total_req = Sql_Fetch_Row($req);
 $total = $total_req[0];
+$end = isset($start) ? $start + MAX_MSG_PP : MAX_MSG_PP;
+if ($end > $total) $end = $total;
+
 if (isset($start) && $start > 0) {
-  $listing = $GLOBALS['I18N']->get("Listing message")." $start ".$GLOBALS['I18N']->get("to")." " . ($start + MAX_MSG_PP);
+  $listing = $GLOBALS['I18N']->get("Listing message")." $start ".$GLOBALS['I18N']->get("to")." " . $end;
   $limit = "limit $start,".MAX_MSG_PP;
 } else {
-  $listing =  $GLOBALS['I18N']->get("Listing message 1 to")." ".MAX_MSG_PP;
+  $listing =  $GLOBALS['I18N']->get("Listing message 1 to")." ".$end;
   $limit = "limit 0,".MAX_MSG_PP;
   $start = 0;
 }

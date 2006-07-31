@@ -32,6 +32,8 @@ $strContinue            = 'Continuer';
 $strUnsubscribeSelect   = 'Sélectionnez les listes auxquelles vous désirez vous désabonner';
 $strAllLists            = 'Toutes les listes';
 $strNoLists             = 'Aucune liste';
+$strUnsubscribeRequestForReason = 'nous sommes désolé de constater que vous ne souhaitez plus recevoir nos lettres. Afin de nous aider a améliorer nos services, pouvez vous nous en préciser les raisons:';
+$strUnsubscribeFinalInfo = '<br/><b>Note</b>: Cette page est une page de déinscription <b>définitive</b> de nos listes. Si vous désirez changer votre adresse Couriel ou modifier les listes auquels vous souscrivez, S.V.P. utilisez le lien <a href="[PREFERENCESURL]">Mise à jour</a>';
 $strNoListsFound        = 'Désolé, votre courriel ne correspond à aucun abonnement.';
 $strResubmit            = 'Re-envoyer le courriel';
 $strUnsubscribeSubmit   = 'Se désabonner des listes sélectionnées';
@@ -47,9 +49,11 @@ $strPreferredFormat  = 'Format préféré pour les courriels :';
 $strText     = 'Texte';
 $strHTML    = 'HTML';
 $strPreferencesTitle    = 'Mettre à jour vos préférences';
-$strUpdatePreferences   = 'Mettre à jour';
 $strPreferencesInfo     = 'Vérifiez si les informations ci-dessous sont correctes et cliquez sur le bouton "'.$strUpdatePreferences.'"';
+$strUpdatePreferences   = 'Mettre à jour';
 $strPreferencesEmailChanged = 'Votre adresse de courriel a changé. Veuillez cliquer sur le lien dans le courriel que vous allez recevoir pour confimer ce changement d\'adresse';
+$strYouAreBlacklisted = '<br>Votre compte est dans notre "Black List", vous avez demandé à ne plus recevoir d"information de notre part. <br/>
+Pour recevoir de nouveau nos courriels notre administrateur doit éffectuer une intervention manuelle. Contacter le afin qu"il vous retire de notre "Black List", vous pourrez alors vous abonner de nouveau';
 $strPreferencesNotificationSent = 'Vous allez recevoir un courriel avec vos modifications.';
 $strPreferencesUpdated = 'Vos informations ont été mises à jour. Merci de votre Visite.';
 $strClickHere          = 'Cliquez ici';
@@ -60,6 +64,7 @@ $strSendHTML           = 'Envoyer un courriel au format HTML';
 $strYes                = 'Oui';
 $strNo                 = 'Non';
 $strUnsubscribe        = 'Se désabonner';
+$strAllMailinglists    = 'Toutes les Listes';
 $strAttachmentIntro  = 'Ce message contient des pièces jointes qui peuvent être ouvertes avec un navigateur :';
 $strLocation    = 'Localisation';
 $strFrequency    = 'Fréquence d\'envoi de nos messages';
@@ -74,6 +79,7 @@ $strForgotPassword  = 'Mot de passe oublié';
 $strPassword    = 'Mot de passe';
 $strPassword2    = 'Confirmation du mot de passe';
 $strPasswordsNoMatch   = 'Les mots de passe ne sont pas identiques';
+$strEmailsNoMatch     = 'les Adresse Email ne correspondent pas';
 $strInvalidPassword  = 'Erreur : courriel ou mot de passe invalide';
 $strPasswordSent   = 'Le mot de passe vient d\'être envoyé par courriel';
 $strPasswordRemindSubject = 'Votre mot de passe pour nos listes';
@@ -90,7 +96,22 @@ $strPersonalLocationInfo = '<p>Cette page nécessite une authentification personn
 <p>Si vous ne connaissez pas sa localisation, vous pouvez demander un courriel qui vous la fera
  parvenir. Veuillez entrer votre adresse de courriel dans le champ et cliquer sur "Continuer"';
 $strPersonalLocationSent = '<h1>Bravo ! vous allez recevoir un courriel avec vos indications personnalisées</h1>';
-$strYouAreBlacklisted = '<br>Votre compte est dans notre "Black List", vous avez demandé à ne plus recevoir d"information de notre part. <br/>
-Pour recevoir de nouveau nos courriels notre administrateur doit éffectuer une intervention manuelle. Contacter le afin qu"il vous retire de notre "Black List", vous pourrez alors vous abonner de nouveau';
+
+$strUserExists   = '<br/>un utilisateur cet EMail existe déja dans nos base , mais le pot de passe ne correspond pas';
+$strUserExistsExplanationStart = '<br/>Afin d\'obtenir votre mot de passe cliquez ';
+$strUserExistsExplanationLink = 'ici';
+$strUserExistsExplanationEnd = ' pour aller à la page ou vous trouverez vos informations personelles';
+$strForwardTitle = 'Faire suivre un message a quelqun';
+$strForwardSubtitle = 'Faire suivre le message ayant pour sujet';
+$strForwardEnterEmail = 'SVP entrez une adresse EMail valide auquel on fera suivre le courier';
+$strForwardSuccessInfo ='Le méssage a été transféré';
+$strForwardFailInfo = 'le Transfert du message a échoué';
+$strForwardAlreadyDone = 'Ce message a déja été transféré avec succes à cette adresse EMail';
+$strForwardFooter = 'Ce message vous a été transféré par  [FORWARDEDBY].
+  Vous n\'avez pas été incrit automatiquement sur cette liste de diffusion.
+  our vous y inscrire allez à ';
+$strForward = 'Faire Suivre';
+$strFwd = 'Tfr'; # short version of forward for email subject
+
 ?>
 

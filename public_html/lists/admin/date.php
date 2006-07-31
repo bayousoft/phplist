@@ -39,7 +39,7 @@ if (!defined("IN_WEBBLER")) {
       $this->getDate();
       $this->getTime();
     }
-    
+
     function setTime($time) {
       list($hr,$min,$sec) = explode(":",$time);
       if (!isset($_REQUEST['hour']) || !is_array($_REQUEST["hour"])) {
@@ -50,15 +50,15 @@ if (!defined("IN_WEBBLER")) {
       }
       $_REQUEST["hour"][$this->name] = $hr;
       $_REQUEST["minute"][$this->name] = $min;
-    }      
-    
+    }
+
     function setDateTime($datetime) {
       #0000-00-00 00:00:00
       list($date,$time) = explode(" ",$datetime);
       $this->setDate($date);
       $this->setTime($time);
     }
-    
+
     function setDate($date) {
       list($year,$month,$day) = explode("-",$date);
       if (!isset($_REQUEST['year']) || !is_array($_REQUEST["year"])) {
@@ -151,7 +151,7 @@ if (!defined("IN_WEBBLER")) {
       $html .= "</select>";
       if ($this->useTime) {
         $html .= '<select name="hour['.$name.']">';
-        for ($i=0;$i<23;$i++) {
+        for ($i=0;$i<=23;$i++) {
           $sel = "";
           if ($i == $hour)
             $sel = "selected";
@@ -159,7 +159,7 @@ if (!defined("IN_WEBBLER")) {
         }
         $html .= '</select>';
         $html .= '<select name="minute['.$name.']">';
-        for ($i=0;$i<59;$i+=15) {
+        for ($i=0;$i<=59;$i+=15) {
           $sel = "";
           if ($i == $minute)
             $sel = "selected";

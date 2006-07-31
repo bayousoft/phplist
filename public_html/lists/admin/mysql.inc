@@ -55,7 +55,7 @@ function Sql_Error ($dbconnection,$errno = 0) {
       background-color: #aa0000;
       border: 2px solid #000000;
       color: #ffffff;
-      ">Database error '. $errno.' '.$msg.'</div>';
+      ">Database error '. $errno.' while doing query '.$GLOBALS['lastquery']. ' ' .$msg.'</div>';
    if (function_exists("logevent")) {
      logevent("Database error: $msg");
    }
@@ -89,6 +89,7 @@ function Sql_Check_error($dbconnection,$errno = 0) {
 }
 
 function Sql_Query($query,$ignore = 0) {
+  unset($GLOBALS['lastquery']);
   if (isset($GLOBALS["developer_email"])) {
   #  if (preg_match("/dev$/",VERSION))
   #  print "<b>$query</b><br>\n";
@@ -101,6 +102,7 @@ function Sql_Query($query,$ignore = 0) {
     # be optimized
     $now =  gettimeofday();
     $start = $now["sec"] * 1000000 + $now["usec"];
+    $GLOBALS['lastquery'] = $query;
   }
   $GLOBALS["pagestats"]["number_of_queries"]++;
   $result = mysql_query($query,$GLOBALS["database_connection"]);
@@ -113,7 +115,7 @@ function Sql_Query($query,$ignore = 0) {
     $now = gettimeofday();
     $end = $now["sec"] * 1000000 + $now["usec"];
     $elapsed = $end - $start;
-    if ($elapsed > 30000) {
+    if ($elapsed > 300000) {
       $query = substr($query,0,200);
       sqllog(' ['.$elapsed.'] '.$query,"/tmp/phplist-sqltimer.log");
     }
@@ -215,7 +217,13 @@ function Sql_Check_For_Table($table) {
 function Sql_create_Table ($table,$structure) {
   $query = "CREATE TABLE $table (\n";
   while (list($column, $val) = each($structure)) {
-    $query .= "$column " . $structure[$column][0] . ",";
+    if (preg_match('/index_\d+/',$column)) {
+      $query .= "index " . $structure[$column][0] . ",";
+    } elseif (preg_match('/unique_\d+/',$column)) {
+      $query .= "unique " . $structure[$column][0] . ",";
+    } else {
+      $query .= "$column " . $structure[$column][0] . ",";
+    }
   }
   # get rid of the last ,
   $query = substr($query,0,-1);

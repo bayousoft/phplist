@@ -331,6 +331,13 @@ define('EMPTY_VALUE_PREFIX','--');
 # the From for system messages
 define('USE_ADMIN_DETAILS_FOR_MESSAGES',1);
 
+# test emails
+# if you send a test email, phplist will by default send you two emails, one in HTML format
+# and the other in Text format. If you set this to 1, you can override this behaviour
+# and only have a test email sent to you that matches the user record of the user that the
+# test emails are sent to
+define('SEND_ONE_TESTMAIL',0);
+
 /*
 
 =========================================================================

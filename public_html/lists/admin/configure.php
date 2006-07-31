@@ -45,13 +45,13 @@ if (!$id) {
         $value = $dbval;
       else
         $value = $val[0];
-      printf('<p><a href="%s">%s</a> <b>%s</b><br/>',PageURL2("configure","","id=$key"),$GLOBALS['I18N']->get('edit'),$val[1]);
+      printf('<p><a href="%s">%s</a> <b>%s</b><br/>',PageURL2("configure","","id=$key"),$GLOBALS['I18N']->get('edit'),$GLOBALS['I18N']->get($val[1]));
       print nl2br(htmlspecialchars(stripslashes($value))) . "<br/><hr/>";
     }
   }
 } else {
   $val = $default_config[$id];
-  printf('%s<p>' . $GLOBALS['I18N']->get('editing') . ' <b>%s</b><br/>',formStart(),$val[1]);
+  printf('%s<p>' . $GLOBALS['I18N']->get('editing') . ' <b>%s</b><br/>',formStart(),$GLOBALS['I18N']->get($val[1]));
   printf ('<input type=hidden name="id" value="%s">',$id);
   $dbval = getConfig($id);
 #  print $dbval.'<br/>';

@@ -3,6 +3,7 @@ require_once dirname(__FILE__).'/accesscheck.php';
 
 $processqueue_timer = new timer();
 $domainthrottle = array();
+$send_process_id = 0;
 if (isset($_GET['reload'])) {
   $reload = sprintf('%d',$_GET['reload']);
 } else {
@@ -24,6 +25,8 @@ if (!$GLOBALS["commandline"]) {
 } else {
   @ob_end_clean();
   print ClineSignature();
+  # check for other processes running
+  $send_process_id = getPageLock();
   ob_start();
 }
 
@@ -34,6 +37,7 @@ if (TEST)
 $num_per_batch = 0;
 $batch_period = 0;
 $script_stage = 0; # start
+$someusers = 0;
 
 $maxbatch = -1;
 $minbatchperiod = -1;
@@ -42,8 +46,8 @@ $ISPrestrictions = '';
 $ISPlockfile = '';
 $rssitems = array();
 $user_attribute_query = '';
-$lastsent = sprintf('%d',$_GET['lastsent']);
-$lastskipped = sprintf('%d',$_GET['lastskipped']);
+$lastsent = !empty($_GET['lastsent']) ? sprintf('%d',$_GET['lastsent']):0;
+$lastskipped = !empty($_GET['lastskipped']) ? sprintf('%d',$_GET['lastskipped']):0;
 
 if ($fp = @fopen("/etc/phplist.conf","r")) {
   $contents = fread($fp, filesize("/etc/phplist.conf"));
@@ -270,7 +274,9 @@ flush();
 
 output($GLOBALS['I18N']->get('Started'),0);
 # check for other processes running
-$send_process_id = getPageLock();
+if (!$send_process_id) {
+  $send_process_id = getPageLock();
+}
 
 if ($ISPrestrictions != "") {
   output($ISPrestrictions);
@@ -622,7 +628,7 @@ while ($message = Sql_fetch_array($messages)) {
              }
              # make sure it's not because it's an invalid email
              # unconfirm this user, so they're not included next time
-             if (!validateEmail($useremail)) {
+             if (!$throttled && !validateEmail($useremail)) {
                logEvent("invalid email $useremail user marked unconfirmed");
                Sql_Query(sprintf('update %s set confirmed = 0 where email = "%s"',
                  $GLOBALS['tables']['user'],$useremail));
@@ -737,7 +743,7 @@ while ($message = Sql_fetch_array($messages)) {
     if (!$failed_sent) {
       repeatMessage($messageid);
       $status = Sql_query(sprintf('update %s set status = "sent",sent = now() where id = %d',$GLOBALS['tables']['message'],$messageid));
-      if ($msgdata['notify_end'] && !isset($msgdata['end_notified'])) {
+      if (!empty($msgdata['notify_end']) && !isset($msgdata['end_notified'])) {
         $notifications = explode(',',$msgdata['notify_end']);
         foreach ($notifications as $notification) {
           sendMail($notification,$GLOBALS['I18N']->get('Message Sending has finished'),

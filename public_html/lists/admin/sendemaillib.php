@@ -55,7 +55,11 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     $cached[$messageid]["subject"] = $message["subject"];
     $cached[$messageid]["replyto"] =$message["replyto"];
     $cached[$messageid]["content"] = $message["message"];
-    $cached[$messageid]["textcontent"] = $message["textmessage"];
+    if (USE_MANUAL_TEXT_PART) {
+      $cached[$messageid]["textcontent"] = $message["textmessage"];
+    } else {
+      $cached[$messageid]["textcontent"] = '';
+    }
     $cached[$messageid]["footer"] = $message["footer"];
     $cached[$messageid]["htmlformatted"] = $message["htmlformatted"];
     $cached[$messageid]["sendformat"] = $message["sendformat"];
@@ -142,7 +146,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   }
 
   if ($GLOBALS["has_pear_http_request"] && preg_match("/\[URL:([^\s]+)\]/i",$content,$regs)) {
-    while (strlen($regs[1])) {
+    while (isset($regs[1]) && strlen($regs[1])) {
       $url = $regs[1];
       if (!preg_match('/^http/i',$url)) {
         $url = 'http://'.$url;
@@ -179,6 +183,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     }
     $htmlcontent = parseText($content);
   }
+
   $defaultstyle = getConfig("html_email_style");
   $adddefaultstyle = 0;
 
@@ -255,6 +260,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 #    $GLOBALS["tables"]["templateimage"],$cached[$messageid]["templateid"]));
 
   $htmlmessage = eregi_replace("\[USERID\]",$hash,$htmlmessage);
+  $textmessage = eregi_replace("\[USERID\]",$hash,$textmessage);
   $htmlmessage = preg_replace("/\[USERTRACK\]/i",'<img src="http://'.$website.$GLOBALS["pageroot"].'/ut.php?u='.$hash.'&m='.$messageid.'" width="1" height="1" border="0">',$htmlmessage,1);
   $htmlmessage = eregi_replace("\[USERTRACK\]",'',$htmlmessage);
 
@@ -305,7 +311,8 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     foreach ($userdata as $name => $value) {
       if (eregi("\[".$name."\]",$htmlmessage,$regs)) {
         $htmlmessage = eregi_replace("\[".$name."\]",$value,$htmlmessage);
-      }      if (eregi("\[".$name."\]",$textmessage,$regs)) {
+      }
+      if (eregi("\[".$name."\]",$textmessage,$regs)) {
         $textmessage = eregi_replace("\[".$name."\]",$value,$textmessage);
       }
     }
@@ -315,7 +322,9 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   if (is_array($user_att_values)) {
     foreach ($user_att_values as $att_name => $att_value) {
       if (eregi("\[".$att_name."\]",$htmlmessage,$regs)) {
-        $htmlmessage = eregi_replace("\[".$att_name."\]",$att_value,$htmlmessage);
+        # the value may be a multiline textarea field
+        $htmlatt_value = str_replace("\n","<br/>\n",$att_value);
+        $htmlmessage = eregi_replace("\[".$att_name."\]",$htmlatt_value,$htmlmessage);
       }
       if (eregi("\[".$att_name."\]",$textmessage,$regs)) {
         $textmessage = eregi_replace("\[".$att_name."\]",$att_value,$textmessage);
@@ -405,7 +414,9 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 #    preg_match_all('!(https?:\/\/www\.[a-zA-Z0-9\.\/#~\?+=&%@-_]+)!mis',$textmessage,$links);
 
     for($i=0; $i<count($links[1]); $i++){
-      $link = strtolower(cleanUrl($links[1][$i]));
+      # not entirely sure why strtolower was used, but it seems to break things http://mantis.tincan.co.uk/view.php?id=4406
+#      $link = strtolower(cleanUrl($links[1][$i]));
+      $link = cleanUrl($links[1][$i]);
       if (preg_match('/\.$/',$link)) {
         $link = substr($link,0,-1);
       }
@@ -437,7 +448,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 #    preg_match_all('!(https?:\/\/www\.[a-zA-Z0-9\.\/#~\?+=&%@-_]+)!mis',$textmessage,$links);
 
     for($i=0; $i<count($links[1]); $i++){
-      $link = strtolower(cleanUrl($links[1][$i]));
+      $link = cleanUrl($links[1][$i]);
       if (preg_match('/\.$/',$link)) {
         $link = substr($link,0,-1);
       }
@@ -802,12 +813,19 @@ $replace = array ("\"",
                   chr(163),
                   chr(169),
                   "chr(\\1)");
-#"
-$text = preg_replace ($search, $replace, $text);
+
+  $text = preg_replace ($search, $replace, $text);
+
+
+  # eze
+  # $text = html_entity_decode ( $text , ENT_QUOTES , $GLOBALS['strCharSet'] );
+  $text = html_entity_decode ( $text , ENT_QUOTES , 'UTF-8' );
+
   return $text;
 }
 
 function stripHTML($text) {
+
   # strip HTML, and turn links into the full URL
   $text = preg_replace("/\r/","",$text);
 
@@ -818,7 +836,9 @@ function stripHTML($text) {
   # would prefer to use < and > but the strip tags below would erase that.
 #  $text = preg_replace("/<a href=\"(.*?)\"[^>]*>(.*?)<\/a>/is","\\2\n{\\1}",$text,100);
 
-  $text = preg_replace("/<a href=\"(.*?)\"[^>]*>(.*?)<\/a>/is","[URLTEXT]\\2[/URLTEXT][LINK]\\1[/LINK]",$text,100);
+#  $text = preg_replace("/<a href=\"(.*?)\"[^>]*>(.*?)<\/a>/is","[URLTEXT]\\2[/URLTEXT][LINK]\\1[/LINK]",$text,100);
+  $text = preg_replace("/<a.*href=\"(.*)\"[^>]*>(.*)<\/a>/Umis","[URLTEXT]\\2[/URLTEXT][LINK]\\1[/LINK]",$text,100);
+
 
   $text = preg_replace("/<b>(.*?)<\/b\s*>/is","*\\1*",$text);
   $text = preg_replace("/<h[\d]>(.*?)<\/h[\d]\s*>/is","**\\1**\n",$text);
@@ -837,17 +857,18 @@ function stripHTML($text) {
     $linktext = $links[1][$matchindex];
     $linkurl = $links[2][$matchindex];
     # check if the text linked is a repetition of the URL
-    if (strtolower(trim($linktext)) == strtolower(trim($linkurl)) ||
-      'http://'.strtolower(trim($linktext)) == strtolower(trim($linkurl))) {
+    if (trim($linktext) == trim($linkurl) ||
+      'http://'.trim($linktext) == trim($linkurl)) {
         $linkreplace = $linkurl;
     } else {
-      $linkreplace = $linktext.' <'.strtolower($linkurl).'>';
+      $linkreplace = $linktext.' <'.$linkurl.'>';
     }
     $text = preg_replace('~'.preg_quote($fullmatch).'~',$linkreplace,$text);
   }
   $text = preg_replace("/<a href=\"(.*?)\"[^>]*>(.*?)<\/a>/is","[URLTEXT]\\2[/URLTEXT][LINK]\\1[/LINK]",$text,100);
 
   $text = replaceChars($text);
+
   $text = preg_replace("/###NL###/","\n",$text);
   # reduce whitespace
   while (preg_match("/  /",$text))
@@ -855,6 +876,7 @@ function stripHTML($text) {
   while (preg_match("/\n\s*\n\s*\n/",$text))
     $text = preg_replace("/\n\s*\n\s*\n/","\n\n",$text);
   $text = wordwrap($text,70);
+
   return $text;
 }
 
