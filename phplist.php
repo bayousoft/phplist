@@ -122,6 +122,13 @@ class phplist extends DefaultPlugin {
   function addUserToList($userid,$listid) {
     Sql_Query(sprintf('replace into %s (userid,listid,entered) values(%d,%d,now())',
       $this->tables["listuser"],$userid,$listid));
+    return 1;
+  }
+
+  function removeUserFromList($userid,$listid) {
+    Sql_Query(sprintf('delete from %s where userid = %d and listid = %d',
+      $this->tables["listuser"],$userid,$listid));
+    return 1;
   }
 
   function addEmail($email,$password = "") {
@@ -151,6 +158,15 @@ class phplist extends DefaultPlugin {
         return 1;
       }
      }
+    return 0;
+  }
+
+  function removeEmailFromList($email,$listid) {
+    $userid = Sql_Fetch_Row_Query(sprintf('select * from %s where email = "%s"',
+      $this->tables["user"],$email));
+    if ($userid[0]) {
+      return $this->removeUserFromList($userid[0],$listid);
+    } 
     return 0;
   }
 
