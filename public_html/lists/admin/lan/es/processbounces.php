@@ -40,7 +40,7 @@ $lan = array(
 // 3 lines below = one sentence
   "User" => "El usuario",
   "has consecutive bounces" => "tiene un n&uacute;mero de rebotes consecutivos",
-  "over treshold, user marked unconfirmed" => "que supera el
+  "over threshold, user marked unconfirmed" => "que supera el
   l&iacute;mite establecido. El usuario queda como no confirmado",
   "Auto Unsubscribed" => "Autodesinscrito",
 // 2 lines below = one sentence

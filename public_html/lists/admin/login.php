@@ -2,7 +2,7 @@
 require_once dirname(__FILE__).'/accesscheck.php';
 
 if (TEST)
-  print $GLOBALS['I18N']->get('default login is')." <b>admin</b>, ".$GLOBALS['I18N']->get('with password')." <b>phplist</b>";
+  print $GLOBALS['I18N']->get('default login is')." admin, ".$GLOBALS['I18N']->get('with password')." phplist";
 
 if (isset($_GET['page']) && $_GET["page"]) {
   $page = $_GET["page"];
@@ -15,7 +15,8 @@ if (isset($_GET['page']) && $_GET["page"]) {
 if (!isset($GLOBALS['msg'])) $GLOBALS['msg'] = '';
 ?>
 <font class="error"><?php echo $GLOBALS['msg']?></font>
-<p>
+
+
 <script language="Javascript" type="text/javascript">
 
 if (!navigator.cookieEnabled) {
@@ -23,7 +24,7 @@ if (!navigator.cookieEnabled) {
 }
 
 </script>
-<form method=post>
+<form method="post" action="">
 <input type=hidden name="page" value="<?php echo $page?>">
 <table width=100% border=0 cellpadding=2 cellspacing=0>
 
@@ -34,11 +35,18 @@ if (!navigator.cookieEnabled) {
 <tr><td><input type=password name="password" value="" size=30></td></tr>
 
 <tr><td><input type=submit name="process" value="<?php echo $GLOBALS['I18N']->get('enter');?>"></td></tr></table>
+</form>
 
-<br/>
-<p align="center"><hr width=50% size=3></p>
-<b><?php echo $GLOBALS['I18N']->get('forgot password');?>:</b><br/>
-<?php echo $GLOBALS['I18N']->get('enter your email');?>: <input type=text name="forgotpassword" value="" size=30><br/><br/>
+
+<form method="post" action="">
+<input type="hidden" name="page" value="<?php echo $page?>">
+<p align="center"><hr width=50% size=3>
+
+<?php echo $GLOBALS['I18N']->get('forgot password');?>:
+
+<?php echo $GLOBALS['I18N']->get('enter your email');?>: <input type=text name="forgotpassword" value="" size=30>
+
+
 <input type=submit name="process" value="<?php echo $GLOBALS['I18N']->get('send password');?>">
 
 </form>

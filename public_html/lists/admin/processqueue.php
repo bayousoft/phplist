@@ -241,6 +241,12 @@ function output ($message,$logit = 1) {
     $lines = explode("\n",$message);
     foreach ($lines as $line) {
       $line = preg_replace('/"/','\"',$line);
+
+      ## contribution in forums, http://forums.phplist.com/viewtopic.php?p=14648
+      //Replace the "&rsquo;" which is not replaced by html_decode
+      $line = preg_replace("/&rsquo;/","'",$line);
+      //Decode HTML chars
+      $line = html_entity_decode($line,ENT_QUOTES,'UTF-8');
       # hmm, language switch form is now in the page as well....
       print '<script language="Javascript" type="text/javascript">
 //        if (document.forms[0].name == "outputform") {
@@ -304,7 +310,7 @@ if ($num_per_batch > 0) {
   return;
 }
 
-$rss_content_treshold = sprintf('%d',getConfig("rssthreshold"));
+$rss_content_threshold = sprintf('%d',getConfig("rssthreshold"));
 if ($reload) {
 #  output("Reload count: $reload");
 #  output("Total processed: ".$reload * $num_per_batch);
@@ -538,7 +544,7 @@ while ($message = Sql_fetch_array($messages)) {
           if ($rssfrequency == $message["rsstemplate"]) {
             # output("User matches message frequency");
             $rssitems = rssUserHasContent($userid,$messageid,$rssfrequency);
-            $cansend = sizeof($rssitems) && (sizeof($rssitems) > $rss_content_treshold);
+            $cansend = sizeof($rssitems) && (sizeof($rssitems) > $rss_content_threshold);
 #            if (!$cansend)
 #              output("No content to send for this user ".sizeof($rssitems));
           } else {

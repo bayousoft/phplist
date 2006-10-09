@@ -330,7 +330,8 @@ class html_mime_mail{
     if(is_object($obj)){
       return $obj->addSubpart('', $params);
     }else{
-      return new Mail_mimePart('', $params);
+      $ret = new Mail_mimePart('', $params);
+      return $ret;
     }
   }
 
@@ -345,7 +346,8 @@ class html_mime_mail{
     if(is_object($obj)){
       return $obj->addSubpart('', $params);
     }else{
-      return new Mail_mimePart('', $params);
+      $ret = new Mail_mimePart('', $params);
+      return $ret;
     }
   }
 

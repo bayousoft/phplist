@@ -201,7 +201,6 @@ class phplist extends DefaultPlugin {
     Sql_Query(sprintf('update %s set confirmed = 1 where email = "%s"',$this->tables["user"],$email));
   }
 
-
   function userEmail($userid = 0) {
     $user_req = Sql_Fetch_Row_Query("select email from {$this->tables["user"]} where id = $userid");
     return $user_req[0];

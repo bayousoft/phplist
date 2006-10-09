@@ -33,7 +33,7 @@ if (!defined("MAILQUEUE_BATCH_SIZE")) define("MAILQUEUE_BATCH_SIZE",0);
 if (!defined("MAILQUEUE_BATCH_PERIOD")) define("MAILQUEUE_BATCH_PERIOD",3600);
 if (!defined('MAILQUEUE_THROTTLE')) define('MAILQUEUE_THROTTLE',0);
 if (!defined('MAILQUEUE_AUTOTHROTTLE')) define('MAILQUEUE_AUTOTHROTTLE',0);
-if (!defined("NAME")) define("NAME",'PHPlist');
+if (!defined("NAME")) define("NAME",'phplist');
 if (!defined("USE_OUTLOOK_OPTIMIZED_HTML")) define("USE_OUTLOOK_OPTIMIZED_HTML",0);
 if (!defined("EXPORT_EXCEL")) define("EXPORT_EXCEL",0);
 if (!defined("USE_PREPARE")) define("USE_PREPARE",0);
@@ -74,6 +74,7 @@ if (!isset($GLOBALS["message_envelope"])) $GLOBALS["message_envelope"] = '';
 
 $domain = getConfig("domain");
 $website = getConfig("website");
+
 if (defined("IN_WEBBLER") && is_object($GLOBALS["config"]["plugins"]["phplist"])) {
   $GLOBALS["tables"] = $GLOBALS["config"]["plugins"]["phplist"]->tables;
   $GLOBALS["table_prefix"] = $GLOBALS["config"]["plugins"]["phplist"]->table_prefix;
@@ -101,12 +102,12 @@ $GLOBALS['has_pear_http_request'] = class_exists('HTTP_Request');
 
 ini_set('error_append_string','<font style=\"{font-variant: small-caps;font-size: 12px}\">phplist</font> version '.VERSION);
 ini_set('error_prepend_string','<P><font color=red style=\"{font-size: 12px}\">Sorry a software error occurred:</font><br/>
-  Please <a href=http://mantis.tincan.co.uk>report a bug</a> when reporting the bug, please include URL and the entire content of this page.<br/>');
+  Please <a href="http://mantis.phplist.com">report a bug</a> when reporting the bug, please include URL and the entire content of this page.<br/>');
 
 function listName($id) {
   global $tables;
   $req = Sql_Fetch_Row_Query(sprintf('select name from %s where id = %d',$tables["list"],$id));
-  return $req[0] ? $req[0] : $GLOBALS['I18N']->get('Unnamed List');
+  return $req[0] ? stripslashes($req[0]) : $GLOBALS['I18N']->get('Unnamed List');
 }
 
 function setMessageData($msgid,$name,$value) {
@@ -421,7 +422,7 @@ function system_messageHeaders($useremail = "") {
     $additional_headers .= "Reply-To: $from_address\n";
   $v = VERSION;
   $v = ereg_replace("-dev","",$v);
-  $additional_headers .= "X-Mailer: PHPlist version $v (www.phplist.com)\n";
+  $additional_headers .= "X-Mailer: phplist version $v (www.phplist.com)\n";
   $additional_headers .= "X-MessageID: systemmessage\n";
   if ($useremail)
     $additional_headers .= "X-User: ".$useremail."\n";
@@ -517,7 +518,10 @@ function addAbsoluteResources($text,$url) {
         # starts with /
         $text = preg_replace('#'.preg_quote($foundtags[0][$i]).'#im',$tagmatch.'"'.$parts["scheme"].'://'.$parts["host"].$match.'"',$text,1);
       } else {
-        $path = $parts["path"];
+        $path = '';
+        if (isset($parts['path'])) {
+          $path = $parts["path"];
+        }
         if (!preg_match('#/$#',$path)) {
           $pathparts = explode('/',$path);
           array_pop($pathparts);
@@ -645,8 +649,8 @@ function fetchUrl($url,$userdata = array()) {
 
   $dbcache_lastmodified = getPageCacheLastModified($url);
   $timeout = time() - $dbcache_lastmodified;
-  if (time() - $dbcache_lastmodified < REMOTE_URL_REFETCH_TIMEOUT) {
-#    logEvent($url.' is cached in database');
+  if ($timeout < REMOTE_URL_REFETCH_TIMEOUT) {
+#    logEvent($url.' was cached in database');
     return getPageCache($url);
   } else {
 #    logEvent($url.' is not cached in database '.$timeout.' '. $dbcache_lastmodified." ".time());
@@ -668,7 +672,12 @@ function fetchUrl($url,$userdata = array()) {
       return 0;
     }
     $header = $headreq->getResponseHeader();
-    $lastmodified = strtotime($header["last-modified"]);
+
+    ## relying on the last modified header doesn't work for many pages
+    ## use current time instead
+    ## see http://mantis.phplist.com/view.php?id=7684
+#    $lastmodified = strtotime($header["last-modified"]);
+    $lastmodified = time();
     $cache = getPageCache($url,$lastmodified);
     if (!$cache) {
       $request_parameters['method'] = 'GET';

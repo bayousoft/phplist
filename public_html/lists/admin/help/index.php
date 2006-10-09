@@ -1,13 +1,14 @@
 <?php
 ob_start();
-if ($_SERVER["ConfigFile"] && is_file($_SERVER["ConfigFile"])) {
-  print '<!-- using '.$_SERVER["ConfigFile"].'-->'."\n";
+error_reporting(0);
+if (!empty($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
+#  print '<!-- using '.$_SERVER["ConfigFile"].'-->'."\n";
   include $_SERVER["ConfigFile"];
-} elseif ($_ENV["CONFIG"] && is_file($_ENV["CONFIG"])) {
-  print '<!-- using '.$_ENV["CONFIG"].'-->'."\n";
+} elseif (!empty($_ENV["CONFIG"]) && is_file($_ENV["CONFIG"])) {
+#  print '<!-- using '.$_ENV["CONFIG"].'-->'."\n";
   include $_ENV["CONFIG"];
 } elseif (is_file("../../config/config.php")) {
-  print '<!-- using ../../config/config.php-->'."\n";
+#  print '<!-- using ../../config/config.php-->'."\n";
   include "../../config/config.php";
 } else {
   print "Error, cannot find config file\n";
@@ -18,6 +19,7 @@ $GLOBALS["pagestats"] = array();
 $GLOBALS["pagestats"]["time_start"] = $now["sec"] * 1000000 + $now["usec"];
 $GLOBALS["pagestats"]["number_of_queries"] = 0;
 
+require_once dirname(__FILE__).'/../init.php';
 require_once dirname(__FILE__).'/../'.$GLOBALS["database_module"];
 require_once dirname(__FILE__)."/../../texts/english.inc";
 include_once dirname(__FILE__)."/../../texts/".$GLOBALS["language_module"];
@@ -50,7 +52,7 @@ if ($topic) {
 <BODY>
 <!-- content -->
 <?php
-print "<table width=100%><tr><td valign=top><h3>PHPlist Help: $topic</h3></td><td align=right valign=top>";
+print "<table width=100%><tr><td valign=top><h3>phplist Help: $topic</h3></td><td align=right valign=top>";
 printf('<A HREF="Javascript:close()">%s</A></td></tr></table>',$GLOBALS['I18N']->get('closewindow'));
 if ($include) {
   include $include;

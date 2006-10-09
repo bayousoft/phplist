@@ -30,7 +30,7 @@ $GLOBALS["img_cross"] = '<img src="images/cross.gif" alt="No">';
 $checkboxgroup_storesize = 1; # this will allow 10000 options for checkboxes
 
 # identify pages that can be run on commandline
-$commandline_pages = array("send","processqueue","processbounces","getrss");
+$commandline_pages = array("send","processqueue","processbounces","getrss",'import');
 
 if (isset($message_envelope))
   $envelope = "-f$message_envelope";
@@ -307,18 +307,24 @@ function join_clean($sep,$array) {
 }
 
 function Fatal_Error($msg) {
-  if (isset($GLOBALS['I18N']) && is_object($GLOBALS['I18N'])) {
-    print '<div align="center" class="error">'.$GLOBALS["I18N"]->get("fatalerror").": $msg </div>";
+  if ($GLOBALS['commandline']) {
+    @ob_end_clean();
+    print "\n".$GLOBALS["I18N"]->get("fatalerror").": ".strip_tags($msg)."\n";
+    @ob_start();
   } else {
-    print '<div align="center" class="error">'."Fatal Error: $msg </div>";
-  }
-  $message = '
-
-  An error has occurred in the Mailinglist System
-  URL: '.$_SERVER["REQUEST_URI"].'
-  Error: ' . $msg;
-  if (function_exists("sendMail")) {
-    sendMail(getConfig("report_address"),"Mail list error",$message,"");
+    if (isset($GLOBALS['I18N']) && is_object($GLOBALS['I18N'])) {
+      print '<div align="center" class="error">'.$GLOBALS["I18N"]->get("fatalerror").": $msg </div>";
+    } else {
+      print '<div align="center" class="error">'."Fatal Error: $msg </div>";
+    }
+    $message = '
+  
+    An error has occurred in the Mailinglist System
+    URL: '.$_SERVER["REQUEST_URI"].'
+    Error: ' . $msg;
+    if (function_exists("sendMail")) {
+      sendMail(getConfig("report_address"),"Mail list error",$message,"");
+    }
   }
  # include "footer.inc";
  # exit;
@@ -326,12 +332,18 @@ function Fatal_Error($msg) {
 }
 
 function Warn($msg) {
-  print '<div align=center class="error">'.$GLOBALS["I18N"]->get("warning").": $msg </div>";
-  $message = '
-
-  An warning has occurred in the Mailinglist System
-
-  ' . $msg;
+  if ($GLOBALS['commandline']) {
+    @ob_end_flush();
+    print "\n".$GLOBALS["I18N"]->get("warning").": ".strip_tags($msg)."\n";
+    @ob_start();
+  } else {
+    print '<div align=center class="error">'.$GLOBALS["I18N"]->get("warning").": $msg </div>";
+    $message = '
+  
+    An warning has occurred in the Mailinglist System
+  
+    ' . $msg;
+  }
 #  sendMail(getConfig("report_address"),"Mail list warning",$message,"");
 }
 
@@ -510,7 +522,7 @@ function PageURL2($name,$desc = "",$url="") {
 
 function Redirect($page) {
   $website = getConfig("website");
-  Header("Location: http://".$website.$GLOBALS["adminpages"]."/?page=$page");
+  Header("Location: ".$GLOBALS['scheme']."://".$website.$GLOBALS["adminpages"]."/?page=$page");
   exit;
 }
 
@@ -717,8 +729,15 @@ function PageData($id) {
     $data['rss'] = join(',',array_keys($GLOBALS['rssfrequencies']));
     return $data;
   }
-  while ($row = Sql_Fetch_Array($req))
+  while ($row = Sql_Fetch_Array($req)) {
     $data[$row["name"]] = preg_replace('/<\?=VERSION\?>/i', VERSION, $row["data"]);
+  }
+  if (!isset($data['lists'])) $data['lists'] = '';
+  if (!isset($data['emaildoubleentry'])) $data['emaildoubleentry'] = '';
+  if (!isset($data['rssdefault'])) $data['rssdefault'] = '';
+  if (!isset($data['rssintro'])) $data['rssintro'] = '';
+  if (!isset($data['rss'])) $data['rss'] = '';
+  if (!isset($data['lists'])) $data['lists'] = '';
   return $data;
 }
 
@@ -995,13 +1014,6 @@ function formatDateTime ($datetime,$short = 0) {
   $time = substr($datetime,11,8);
   return formatDate($date,$short). " ".formatTime($time,$short);
 }
-
-# centralised function to remove Xss from parameters
-function removeXss($string) {
-  $string = preg_replace('/<script/im','< script',$string);
-  return $string;
-}
-
 
 function phplist_shutdown () {
 #  output( "Script status: ".connection_status(),0); # with PHP 4.2.1 buggy. http://bugs.php.net/bug.php?id=17774

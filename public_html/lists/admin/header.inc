@@ -25,7 +25,7 @@
   <TR vAlign=bottom>
     <TD vAlign=bottom width=132
     background="images/topright.png" bgcolor="#F0D1A3"><SPAN
-      class=webblermenu>PHPlist</SPAN></TD></TR>
+      class=webblermenu>phplist</SPAN></TD></TR>
   <TR>
     <TD bgColor="#000000"><IMG height=1 alt=""
       src="images/transparent.png" width=20

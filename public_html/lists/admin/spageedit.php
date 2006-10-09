@@ -1,4 +1,4 @@
-<form method=post>
+<form method="post" action="">
 <table>
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
@@ -37,7 +37,7 @@ if (isset($_POST["save"]) || isset($_POST["activate"]) || isset($_POST["deactiva
      $id = Sql_Insert_id();
   }
   Sql_Query(sprintf('delete from %s where id = %d',$tables["subscribepage_data"],$id));
-  foreach (array("title","intro","header","footer","thankyoupage","button","htmlchoice","emaildoubleentry") as $item) {
+  foreach (array("title","language_file","intro","header","footer","thankyoupage","button","htmlchoice","emaildoubleentry") as $item) {
     Sql_Query(sprintf('insert into %s (name,id,data) values("%s",%d,"%s")',
       $tables["subscribepage_data"],$item,$id,$_POST[$item]));
   }
@@ -49,10 +49,10 @@ if (isset($_POST["save"]) || isset($_POST["activate"]) || isset($_POST["deactiva
   Sql_Query(sprintf('delete from %s where id = %d and name like "attribute___"',
     $tables["subscribepage_data"],$id));
 
-  if (is_array($attr_use)) {
+  $attributes = "";
+  if (isset($_POST['attr_use']) && is_array($_POST['attr_use'])) {
     $cnt=0;
-    $attributes = "";
-    while (list($att,$val) = each ($attr_use)) {
+    while (list($att,$val) = each ($_POST['attr_use'])) {
       $default = $attr_default[$att];
       $order = $attr_listorder[$att];
       $required = $attr_required[$att];
@@ -66,9 +66,9 @@ if (isset($_POST["save"]) || isset($_POST["activate"]) || isset($_POST["deactiva
   }
   Sql_Query(sprintf('replace into %s (id,name,data) values(%d,"attributes","%s")',
      $tables["subscribepage_data"],$id,$attributes));
-  if (is_array($list)) {
+  if (isset($_POST['list']) && is_array($_POST['list'])) {
     Sql_Query(sprintf('replace into %s (id,name,data) values(%d,"lists","%s")',
-       $tables["subscribepage_data"],$id,join(',',$list)));
+       $tables["subscribepage_data"],$id,join(',',$_POST['list'])));
   }
   if (ENABLE_RSS) {
     Sql_Query(sprintf('replace into %s (id,name,data) values(%d,"rssintro","%s")',
@@ -92,14 +92,41 @@ if (isset($_POST["save"]) || isset($_POST["activate"]) || isset($_POST["deactiva
 
 }
 ob_end_flush();
+
+## initialise
+$data = array();
+$data["title"] = $GLOBALS['I18N']->get('Title of this set of lists');
+$data["button"] = $strSubmit;
+$data["intro"] = $strSubscribeInfo;
+$data['language_file'] = '';#$GLOBALS['language_module'];
+$data["header"] = getConfig("pageheader");
+$data["footer"] = getConfig("pagefooter");
+$data["thankyoupage"] = '<h3>'.$GLOBALS["strThanks"].'</h3>'."\n". $GLOBALS["strEmailConfirmation"];
+$data["subscribemessage"] = getConfig("subscribemessage");
+$data["subscribesubject"] = getConfig("subscribesubject");
+$data["confirmationmessage"] = getConfig("confirmationmessage");
+$data["confirmationsubject"] = getConfig("confirmationsubject");
+$data["htmlchoice"] = "checkforhtml";
+$data["emaildoubleentry"] = "yes";
+$data["rssdefault"] = "daily";
+$data["rssintro"] = $GLOBALS['I18N']->get('Please indicate how often you want to receive messages');
+$rss = array_keys($rssfrequencies);
+$selected_lists = array();
+$attributedata = array();
+
 if ($id) {
   $req = Sql_Query(sprintf('select * from %s where id = %d',$tables["subscribepage_data"],$id));
-  while ($row = Sql_Fetch_Array($req))
+  while ($row = Sql_Fetch_Array($req)) {
     $data[$row["name"]] = $row["data"];
+  }
   $ownerreq = Sql_Fetch_Row_Query(sprintf('select owner from %s where id = %d',$GLOBALS['tables']['subscribepage'],$id));
   $data['owner'] = $ownerreq[0];
   $attributes = explode('+',$data["attributes"]);
-  $rss = explode(",",$data["rss"]);
+  if (isset($data['rss'])) {
+    $rss = explode(",",$data["rss"]);
+  } else { 
+    $rss = array();
+  }
   foreach ($attributes as $attribute) {
     if (!empty($data[sprintf('attribute%03d',$attribute)])) {
         list($attributedata[$attribute]["id"],
@@ -118,24 +145,6 @@ if ($id) {
   $data["subscribesubject"] = getConfig("subscribesubject:$id");
   $data["confirmationmessage"] = getConfig("confirmationmessage:$id");
   $data["confirmationsubject"] = getConfig("confirmationsubject:$id");
-} else {
-  $data["title"] = $GLOBALS['I18N']->get('Title of this set of lists');
-  $data["button"] = $strSubmit;
-  $data["intro"] = $strSubscribeInfo;
-  $data["header"] = getConfig("pageheader");
-  $data["footer"] = getConfig("pagefooter");
-  $data["thankyoupage"] = '<h3>'.$GLOBALS["strThanks"].'</h3>'."\n". $GLOBALS["strEmailConfirmation"];
-  $data["subscribemessage"] = getConfig("subscribemessage");
-  $data["subscribesubject"] = getConfig("subscribesubject");
-  $data["confirmationmessage"] = getConfig("confirmationmessage");
-  $data["confirmationsubject"] = getConfig("confirmationsubject");
-  $data["htmlchoice"] = "checkforhtml";
-  $data["emaildoubleentry"] = "yes";
-  $data["rssdefault"] = "daily";
-  $data["rssintro"] = $GLOBALS['I18N']->get('Please indicate how often you want to receive messages');
-  $rss = array_keys($rssfrequencies);
-  $selected_lists = array();
-  $attributedata = array();
 }
 
 print '<tr><td colspan=2><h1>'.$GLOBALS['I18N']->get('General Information').'</h1></td></tr>';
@@ -143,6 +152,29 @@ print '<tr><td colspan=2><h1>'.$GLOBALS['I18N']->get('General Information').'</h
 printf('<tr><td valign=top>%s</td><td><input type=text name=title value="%s" size=60></td></tr>',
   $GLOBALS['I18N']->get('Title'),
   htmlspecialchars(stripslashes($data["title"])));
+
+$language_file = $GLOBALS['language_module'];
+if (is_dir(dirname(__FILE__).'/../texts')) {
+  $language_files = array();
+  $landir = dir(dirname(__FILE__).'/../texts');
+  while (false !== ($direntry = $landir->read())) {
+    if (is_file($landir->path.'/'.$direntry) && preg_match('/\.inc$/i',$direntry)) {
+      $language_files[$direntry] = basename($direntry,'.inc');
+    }
+  }
+  $landir->close();
+}
+asort($language_files);
+$language_select = '<select name="language_file">';
+$language_select .= '<option value="">--'.$GLOBALS['I18N']->get('default').'</option>';
+foreach ($language_files as $key => $val) {
+  $language_select .= sprintf('<option value="%s" %s>%s</option>',$key,$key == $data['language_file']? 'selected="selected"':'',$val);
+}
+$language_select .= '</select>';
+
+printf('<tr><td valign=top>%s</td><td>%s</td></tr>',
+  $GLOBALS['I18N']->get('Language file to use'),$language_select);
+
 printf('<tr><td valign=top>%s</td><td><textarea name=intro cols=60 rows=10 wrap=virtual>%s</textarea></td></tr>',
   $GLOBALS['I18N']->get('Intro'),
   htmlspecialchars(stripslashes($data["intro"])));

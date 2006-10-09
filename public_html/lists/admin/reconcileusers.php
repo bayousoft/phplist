@@ -12,7 +12,8 @@ if (!is_object("date")) {
 ob_end_flush();
 $from = new date("from");
 $to = new date("to");
-$todo = "";
+$fromval = $toval = $todo = "";
+
 
 $findtables = '';
 $findbyselect = sprintf(' email like "%%%s%%"',$find);;

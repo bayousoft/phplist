@@ -1,6 +1,7 @@
 
 <script language="Javascript" src="js/jslib.js" type="text/javascript"></script>
-<hr>
+<hr>
+
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 $access = accessLevel("members");
@@ -309,7 +310,8 @@ if ($html) {
 <tr><td colspan=2><h3><?php echo $GLOBALS['I18N']->get('What to do with all users')?></h3><?php echo $GLOBALS['I18N']->get('This will process all users on this list')?></td></tr>
 <tr><td colspan=2><?php echo $GLOBALS['I18N']->get('delete')?> (<?php echo $GLOBALS['I18N']->get('from this list')?>) <input type=radio name="tagaction_all"
  value="delete"></td></tr>
-<?php
+<?php
+
 if ($html) {
 ?>
   <tr><td><?php echo $GLOBALS['I18N']->get('move')?> <input type=radio name="tagaction_all" value="move"> </td><td><?php echo $GLOBALS['I18N']->get('to')?>
@@ -325,4 +327,5 @@ if ($html) {
 <?php } ?>
 <tr><td colspan=2><input type=submit name=processtags value="<?php echo $GLOBALS['I18N']->get('do it')?>"></td></tr>
 </table>
-</form>
+</form>
+

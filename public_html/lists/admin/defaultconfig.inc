@@ -37,7 +37,7 @@ $defaultheader = '
 <tr valign="bottom">
 <td><img src="images/top03a.png" width=20 height=34 alt="" border="0"></td>
 <td background="images/top03b.png" height="34"><!--hello <b>ben</b>:&nbsp;<a class="urhere" href="">you are here &gt; main admin</a>-->
-<td width="132" valign="bottom" background="images/top04.png"><span class="webblermenu">PHPlist</span></td>
+<td width="132" valign="bottom" background="images/top04.png"><span class="webblermenu">phplist</span></td>
 </tr>
 
 <tr>
@@ -108,7 +108,11 @@ if (is_file("../config/footer.inc")) {
   fclose ($fd);
 }
 
-$D_website = strtolower(getenv("SERVER_NAME"));
+if (isset($_SERVER['HTTP_HOST'])) {
+  $D_website = $_SERVER['HTTP_HOST'];
+} else {
+  $D_website = $_SERVER['SERVER_NAME'];
+}
 $D_domain = $D_website;
 if (preg_match("#^www\.(.*)#i",$D_domain,$regs))
   $D_domain = $regs[1];
@@ -132,7 +136,7 @@ $default_config = array (
     "Person in charge of this system (one email address)","text"),
 
 # how often to check for new versions of PHPlist
-"check_new_version" => array("7","How often do you want to check for a new version of PHPlist (days)","text"),
+"check_new_version" => array("7","How often do you want to check for a new version of phplist (days)","text"),
 
 # admin addresses are other people who receive copies of subscriptions
 "admin_addresses" => array('',
@@ -184,23 +188,23 @@ $default_config = array (
 #  "Base URL for public pages","text"),
 
 # the location of your subscribe script
-"subscribeurl" => array("http://[WEBSITE]$pageroot/?p=subscribe",
+"subscribeurl" => array($GLOBALS['scheme']."://[WEBSITE]$pageroot/?p=subscribe",
   "URL where users can subscribe","text"),
 
 # the location of your unsubscribe script:
-"unsubscribeurl" => array("http://[WEBSITE]$pageroot/?p=unsubscribe",
+"unsubscribeurl" => array($GLOBALS['scheme']."://[WEBSITE]$pageroot/?p=unsubscribe",
   "URL where users can unsubscribe","text"),
 
 # the location of your confirm script:
-"confirmationurl" => array("http://[WEBSITE]$pageroot/?p=confirm",
+"confirmationurl" => array($GLOBALS['scheme']."://[WEBSITE]$pageroot/?p=confirm",
   "URL where users have to confirm their subscription","text"),
 
 # url to change their preferences
-"preferencesurl" => array("http://[WEBSITE]$pageroot/?p=preferences",
+"preferencesurl" => array($GLOBALS['scheme']."://[WEBSITE]$pageroot/?p=preferences",
   "URL where users can update their details","text"),
 
 # url to change their preferences
-"forwardurl" => array("http://[WEBSITE]$pageroot/?p=forward",
+"forwardurl" => array($GLOBALS['scheme']."://[WEBSITE]$pageroot/?p=forward",
   "URL where messages can be forwarded","text"),
 
 # the location of your subscribe script
@@ -350,7 +354,7 @@ Your personal location is:
 Thank you.
 ','Message to send when they request their personal location',"textarea"),
 
-"messagefooter" => array("--\n$strToUnsubscribe [UNSUBSCRIBE]\n\n$strToUpdate [PREFERENCES]\n",
+"messagefooter" => array("--\n$strToUnsubscribe [UNSUBSCRIBE]\n\n$strToUpdate [PREFERENCES]\n$strForwardTitle [FORWARD]",
   "Default footer for sending a message","textarea"),
 
 "forwardfooter" => array("--\n$strForwardFooter\n\n [SUBSCRIBE]\n",
@@ -427,9 +431,9 @@ $efont = "</font>";
 
 if (!TEST && REGISTER && defined("VERSION")) {
   if (ereg("dev",VERSION)) $v = "dev"; else $v = VERSION;
-  $PoweredBy = '<p align=left><a href="http://www.phplist.com"><img src="http://phplist.tincan.co.uk/images/'.$v.'/power-phplist.png" width=88 height=31 title="Powered by PHPlist" alt="Powered by PHPlist" border="0"></a></p>';
+  $PoweredBy = '<p align=left><a href="http://www.phplist.com"><img src="http://phplist.tincan.co.uk/images/'.$v.'/power-phplist.png" width=88 height=31 title="powered by phplist" alt="powered by phplist" border="0"></a></p>';
 } else
-  $PoweredBy = '<center><a href="http://www.phplist.com"><img src="images/power-phplist.png" width=88 height=31 title="Powered by PHPlist" alt="Powered by PHPlist" border="0"></a></center>';
+  $PoweredBy = '<center><a href="http://www.phplist.com"><img src="images/power-phplist.png" width=88 height=31 title="powered by phplist" alt="powered by phplist" border="0"></a></center>';
 
 if (!function_exists("getconfig")) {
   function getConfig($item) {

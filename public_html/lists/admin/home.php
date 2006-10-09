@@ -23,8 +23,8 @@ if (Sql_Table_exists($tables["config"],1)) {
   return;
 }
 
-if (WARN_ABOUT_PHP_SETTINGS && (version_compare('4.3.11',PHP_VERSION)>0 || version_compare('5.0.4',PHP_VERSION)>0))
-  Warn($GLOBALS['I18N']->get('globalvulnwarning'));
+// if (WARN_ABOUT_PHP_SETTINGS && (version_compare('4.3.11',PHP_VERSION)>0 || version_compare('5.0.4',PHP_VERSION)>0))
+//   Warn($GLOBALS['I18N']->get('globalvulnwarning'));
 
 # check for latest version
 $checkinterval = sprintf('%d',getConfig("check_new_version"));
@@ -34,7 +34,7 @@ if (!isset($checkinterval)) {
 if ($checkinterval) {
   $needscheck = Sql_Fetch_Row_Query(sprintf('select date_add(value,interval %d day) < now() as needscheck from %s where item = "updatelastcheck"',$checkinterval,$tables["config"]));
   if ($needscheck[0]) {
-    ini_set("user_agent",NAME." (PHPlist version ".VERSION.")");
+    ini_set("user_agent",NAME." (phplist version ".VERSION.")");
     ini_set("default_socket_timeout",5);
     if ($fp = @fopen ("http://www.phplist.com/files/LATESTVERSION","r")) {
       $latestversion = fgets ($fp);

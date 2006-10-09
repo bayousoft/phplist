@@ -51,14 +51,18 @@ function Sql_has_error ($dbconnection) {
 
 function Sql_Error ($dbconnection,$errno = 0) {
   $msg = mysql_error($dbconnection);
-  return '<div id="dberror" style="position: relative;
-      background-color: #aa0000;
-      border: 2px solid #000000;
-      color: #ffffff;
-      ">Database error '. $errno.' while doing query '.$GLOBALS['lastquery']. ' ' .$msg.'</div>';
-   if (function_exists("logevent")) {
-     logevent("Database error: $msg");
-   }
+  if (!$GLOBALS['commandline']) {
+    return '<div id="dberror" style="position: relative;
+        background-color: #aa0000;
+        border: 2px solid #000000;
+        color: #ffffff;
+        ">Database error '. $errno.' while doing query '.$GLOBALS['lastquery']. ' ' .$msg.'</div>';
+  } else {
+    return 'Database error '.$errno.' while doing query '.$GLOBALS['lastquery']. ' ' .$msg."\n";
+  }
+    if (function_exists("logevent")) {
+      logevent("Database error: $msg");
+    }
 #  return "<table border=1><tr><td class=\"error\">Database Error</td></tr><tr><td><!--$errno: -->$msg</td></tr></table>";
 }
 

@@ -44,12 +44,18 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
       $cached[$messageid]["fromemail"] = "listmaster@$domain";
     } else {
       $cached[$messageid]["fromemail"] = $message["fromfield"] . "@$domain";
+
+      ## makes more sense not to add the domain to the word, but the help says it does
+      ## so let's keep it for now
       $cached[$messageid]["fromname"] = $message["fromfield"] . "@$domain";
     }
     # erase double spacing
     while (ereg("  ",$cached[$messageid]["fromname"]))
       $cached[$messageid]["fromname"] = eregi_replace("  "," ",$cached[$messageid]["fromname"]);
-    $cached[$messageid]["fromname"] = eregi_replace("@","",$cached[$messageid]["fromname"]);
+
+    ## this has weird effects when used with only one word, so take it out for now
+#    $cached[$messageid]["fromname"] = eregi_replace("@","",$cached[$messageid]["fromname"]);
+
     $cached[$messageid]["fromname"] = trim($cached[$messageid]["fromname"]);
     $cached[$messageid]["to"] = $message["tofield"];
     $cached[$messageid]["subject"] = $message["subject"];
@@ -127,7 +133,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   You can configure how the credits are added to your pages and emails in your
   config file.
 
-  Michiel Dethmers, Tincan Ltd 2003, 2004, 2005
+  Michiel Dethmers, Tincan Ltd 2003, 2004, 2005, 2006
 */
   if (!EMAILTEXTCREDITS) {
     $html["signature"] = $PoweredByImage;#'<div align="center" id="signature"><a href="http://www.phplist.com"><img src="powerphplist.png" width=88 height=31 title="Powered by PHPlist" alt="Powered by PHPlist" border="0"></a></div>';
@@ -261,7 +267,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 
   $htmlmessage = eregi_replace("\[USERID\]",$hash,$htmlmessage);
   $textmessage = eregi_replace("\[USERID\]",$hash,$textmessage);
-  $htmlmessage = preg_replace("/\[USERTRACK\]/i",'<img src="http://'.$website.$GLOBALS["pageroot"].'/ut.php?u='.$hash.'&m='.$messageid.'" width="1" height="1" border="0">',$htmlmessage,1);
+  $htmlmessage = preg_replace("/\[USERTRACK\]/i",'<img src="'.$GLOBALS['scheme'].'://'.$website.$GLOBALS["pageroot"].'/ut.php?u='.$hash.'&m='.$messageid.'" width="1" height="1" border="0">',$htmlmessage,1);
   $htmlmessage = eregi_replace("\[USERTRACK\]",'',$htmlmessage);
 
   if ($listowner) {
@@ -371,11 +377,11 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 
     # convert html message
 #    preg_match_all('/<a href="?([^> "]*)"?([^>]*)>(.*)<\/a>/Umis',$htmlmessage,$links);
-    preg_match_all('/<a(.*)href="(.*)"([^>]*)>(.*)<\/a>/Umis',$htmlmessage,$links);
+    preg_match_all('/<a(.*)href=["\'](.*)["\']([^>]*)>(.*)<\/a>/Umis',$htmlmessage,$links);
 
     # to process the Yahoo webpage with base href and link like <a href=link> we'd need this one
 #    preg_match_all('/<a href=([^> ]*)([^>]*)>(.*)<\/a>/Umis',$htmlmessage,$links);
-    $clicktrack_root = sprintf('http://%s/lt.php',$website.$GLOBALS["pageroot"]);
+    $clicktrack_root = sprintf('%s://%s/lt.php',$GLOBALS["scheme"],$website.$GLOBALS["pageroot"]);
     for($i=0; $i<count($links[2]); $i++){
       $link = cleanUrl($links[2][$i]);
       $link = str_replace('"','',$link);
@@ -402,14 +408,18 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 
         $masked = "H|$linkid|$messageid|".$userdata['id'] ^ XORmask;
         $masked = urlencode(base64_encode($masked));
-        $newlink = sprintf('<a%shref="http://%s/lt.php?id=%s" %s>%s</a>',$links[1][$i],$website.$GLOBALS["pageroot"],$masked,$links[3][$i],$links[4][$i]);
+        $newlink = sprintf('<a%shref="%s://%s/lt.php?id=%s" %s>%s</a>',$links[1][$i],$GLOBALS["scheme"],$website.$GLOBALS["pageroot"],$masked,$links[3][$i],$links[4][$i]);
         $htmlmessage = str_replace($links[0][$i], $newlink, $htmlmessage);
       }
     }
 
     # convert Text message
     # first find occurances of our top domain, to avoid replacing them later
-    preg_match_all('#<(https?://'.$GLOBALS['website'].'/?)\s*?>#Umis',$textmessage,$links);
+
+    ## hmm, this is no point, it's not just *our* topdomain, but any 
+
+if (0) {
+    preg_match_all('#(https?://'.$GLOBALS['website'].'/?)\s+#mis',$textmessage,$links);
 #    preg_match_all('#(https?://[a-z0-9\./\#\?&:@=%\-]+)#ims',$textmessage,$links);
 #    preg_match_all('!(https?:\/\/www\.[a-zA-Z0-9\.\/#~\?+=&%@-_]+)!mis',$textmessage,$links);
 
@@ -431,29 +441,33 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 
         $masked = "T|$linkid|$messageid|".$userdata['id'] ^ XORmask;
         $masked = urlencode(base64_encode($masked));
-        $newlink = sprintf('http://%s/lt.php?id=%s',$website.$GLOBALS["pageroot"],$masked);
-        $textmessage = str_replace($links[0][$i], $newlink, $textmessage);
+        $newlink = sprintf('%s://%s/lt.php?id=%s',$GLOBALS["scheme"],$website.$GLOBALS["pageroot"],$masked);
+        $textmessage = str_replace($links[0][$i], '<'.$newlink.'>', $textmessage);
       }
     }
 
+}
     #now find the rest
     # @@@ needs to expand to find complete urls like:
     #http://user:password@www.web-site.com:1234/document.php?parameter=something&otherpar=somethingelse#anchor
     # or secure
     #https://user:password@www.website.com:2345/document.php?parameter=something%20&otherpar=somethingelse#anchor
 
-
-    preg_match_all('#<(https?://[^\s\>\}\,]+)\s*>#Umis',$textmessage,$links);
+    preg_match_all('#(https?://[^\s\>\}\,]+)#mis',$textmessage,$links);
 #    preg_match_all('#(https?://[a-z0-9\./\#\?&:@=%\-]+)#ims',$textmessage,$links);
 #    preg_match_all('!(https?:\/\/www\.[a-zA-Z0-9\.\/#~\?+=&%@-_]+)!mis',$textmessage,$links);
+    ## sort the results in reverse order, so that they are replaced correctly
+    rsort($links[1]);
+    $newlinks = array();
 
     for($i=0; $i<count($links[1]); $i++){
       $link = cleanUrl($links[1][$i]);
       if (preg_match('/\.$/',$link)) {
         $link = substr($link,0,-1);
       }
+  
       $linkid = 0;
-      if (preg_match('/^http|ftp/',$link) && $link != 'http://www.phplist.com' && !strpos($link,$clicktrack_root)) {
+      if (preg_match('/^http|ftp/',$link) && $link != 'http://www.phplist.com') {# && !strpos($link,$clicktrack_root)) {
         $url = cleanUrl($link,array('PHPSESSID','uid'));
 
         $req = Sql_Query(sprintf('insert ignore into %s (messageid,userid,url,forward)
@@ -464,9 +478,13 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 
         $masked = "T|$linkid|$messageid|".$userdata['id'] ^ XORmask;
         $masked = urlencode(base64_encode($masked));
-        $newlink = sprintf('http://%s/lt.php?id=%s',$website.$GLOBALS["pageroot"],$masked);
-        $textmessage = str_replace($links[0][$i], '<'.$newlink.'> ', $textmessage);
+        $newlinks[$linkid] = sprintf('%s://%s/lt.php?id=%s',$GLOBALS["scheme"],$website.$GLOBALS["pageroot"],$masked);
+#        print $links[0][$i] .' -> '.$newlink.'<br/>';
+        $textmessage = str_replace($links[1][$i], '[%%%'.$linkid.'%%%]', $textmessage);
       }
+    }
+    foreach ($newlinks as $linkid => $newlink) {
+      $textmessage = str_replace('[%%%'.$linkid.'%%%]',$newlink, $textmessage);
     }
   }
 
@@ -761,7 +779,7 @@ function addAttachments($msgid,&$mail,$type) {
           }
            break;
          case "text":
-          $viewurl = "http://".$website.$GLOBALS["pageroot"].'/dl.php?id='.$att["id"];
+          $viewurl = $GLOBALS["scheme"]."://".$website.$GLOBALS["pageroot"].'/dl.php?id='.$att["id"];
           $mail->append_text($att["description"]."\n".$GLOBALS["strLocation"].": ".$viewurl);
           break;
       }
@@ -837,8 +855,8 @@ function stripHTML($text) {
 #  $text = preg_replace("/<a href=\"(.*?)\"[^>]*>(.*?)<\/a>/is","\\2\n{\\1}",$text,100);
 
 #  $text = preg_replace("/<a href=\"(.*?)\"[^>]*>(.*?)<\/a>/is","[URLTEXT]\\2[/URLTEXT][LINK]\\1[/LINK]",$text,100);
-  $text = preg_replace("/<a.*href=\"(.*)\"[^>]*>(.*)<\/a>/Umis","[URLTEXT]\\2[/URLTEXT][LINK]\\1[/LINK]",$text,100);
 
+  $text = preg_replace("/<a.*href=[\"\'](.*)[\"\'][^>]*>(.*)<\/a>/Umis","[URLTEXT]\\2[ENDURLTEXT][LINK]\\1[ENDLINK]\n",$text);
 
   $text = preg_replace("/<b>(.*?)<\/b\s*>/is","*\\1*",$text);
   $text = preg_replace("/<h[\d]>(.*?)<\/h[\d]\s*>/is","**\\1**\n",$text);
@@ -852,7 +870,7 @@ function stripHTML($text) {
   $text = strip_tags($text);
 
   # find all URLs and replace them back
-  preg_match_all('~\[URLTEXT\](.*)\[/URLTEXT\]\[LINK\](.*)\[/LINK\]~Ui', $text, $links);
+  preg_match_all('~\[URLTEXT\](.*)\[ENDURLTEXT\]\[LINK\](.*)\[ENDLINK\]~Umis', $text, $links);
   foreach ($links[0] as $matchindex => $fullmatch) {
     $linktext = $links[1][$matchindex];
     $linkurl = $links[2][$matchindex];
@@ -863,9 +881,10 @@ function stripHTML($text) {
     } else {
       $linkreplace = $linktext.' <'.$linkurl.'>';
     }
-    $text = preg_replace('~'.preg_quote($fullmatch).'~',$linkreplace,$text);
+  #  $text = preg_replace('~'.preg_quote($fullmatch).'~',$linkreplace,$text);
+    $text = str_replace($fullmatch,$linkreplace,$text);
   }
-  $text = preg_replace("/<a href=\"(.*?)\"[^>]*>(.*?)<\/a>/is","[URLTEXT]\\2[/URLTEXT][LINK]\\1[/LINK]",$text,100);
+  $text = preg_replace("/<a href=[\"\'](.*?)[\"\'][^>]*>(.*?)<\/a>/is","[URLTEXT]\\2[ENDURLTEXT][LINK]\\1[ENDLINK]",$text,500);
 
   $text = replaceChars($text);
 

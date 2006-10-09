@@ -26,6 +26,7 @@ if ($daysago) {
 
 print '<p>'.$GLOBALS['I18N']->get('Purge RSS items from database').'</p>';
 print '<p>'.$GLOBALS['I18N']->get('Enter the number of days to go back purging entries').'</p>';
-print '<form method="post"><input type=text name="daysago" value="30" size=7>
+print '<p>'.$GLOBALS['I18N']->get('All entries that are older than the number of days you enter will be purged.').'</p>';
+print '<form method="post" action=""><input type=text name="daysago" value="30" size=7>
 </form>';
 ?>

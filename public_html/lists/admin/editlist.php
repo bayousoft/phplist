@@ -100,7 +100,7 @@ ob_end_flush();
 }
 if (ENABLE_RSS) {
  if (!empty($list["rssfeed"])) {
-   $validate = sprintf('(<a href="http://feedvalidator.org/check?url=%s" target="_blank">%s</a>)',$list["rssfeed"],$GLOBALS['I18N']->get('validate'));
+   $validate = sprintf('(<a href="http://feedvalidator.org/check?url=%s" target="_blank">%s</a>)',urlencode($list["rssfeed"]),$GLOBALS['I18N']->get('validate'));
    $viewitems = PageLink2("viewrss&id=".$id,$GLOBALS['I18N']->get('View Items'));
  } else {
    $validate = '';

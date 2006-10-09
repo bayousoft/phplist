@@ -6,6 +6,6 @@ if (!ALLOW_IMPORT) {
   return;
 }
 
-require 'commonlib/pages/importcsv.php';
+require dirname(__FILE__).'/commonlib/pages/importcsv.php';
 
 ?>

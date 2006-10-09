@@ -28,4 +28,25 @@ $GLOBALS['language_module'] = $language_module;
 $GLOBALS['database_module'] = $database_module;
 $GLOBALS['show_dev_errors'] = $show_dev_errors;
 
+## @@ would be nice to move this to the config file at some point
+$GLOBALS['scheme'] = 'http';
+
+## spelling mistake in earlier version, make sure to set it correctly
+if (!isset($bounce_unsubscribe_threshold) && isset($bounce_unsubscribe_threshold)) {
+  $bounce_unsubscribe_threshold = $bounce_unsubscribe_treshold;
+}
+
+function removeXss($string) {
+  if (is_array($string)) {
+    $return = array();
+    foreach ($string as $key => $val) {
+      $return[removeXss($key)] = removeXss($val);
+    }
+    return $return;
+  }
+  #$string = preg_replace('/<script/im','&lt;script',$string);
+  $string = htmlspecialchars($string);
+  return $string;
+}
+
 ?>

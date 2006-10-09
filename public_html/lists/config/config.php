@@ -107,7 +107,7 @@ $bounce_mailbox_purge = 1;
 $bounce_mailbox_purge_unprocessed = 1;
 
 # how many bounces in a row need to have occurred for a user to be marked unconfirmed
-$bounce_unsubscribe_treshold = 5;
+$bounce_unsubscribe_threshold = 5;
 
 
 /*

@@ -34,7 +34,7 @@ $LANGUAGES = array(
 #"is"=>array("Icelandic "," iso-8859-1, windows-1252 "),
 #"ga"=>array("Irish "," iso-8859-1, windows-1252 "),
 #"it"=>array("Italian "," iso-8859-1, windows-1252 "),
-#"ja"=>array("Japanese "," shift_jis, iso-2022-jp, euc-jp"),
+#"ja"=>array("Japanese ","EUC-JP"," shift_jis, iso-2022-jp, euc-jp"),
 #"lv"=> array("Latvian ","iso-8859-13, windows-1257"),
 #"lt"=> array("Lithuanian "," iso-8859-13, windows-1257"),
 #"mk"=> array("Macedonian ","iso-8859-5, windows-1251"),
@@ -102,7 +102,13 @@ if (!isset($_SESSION['adminlanguage']) || !is_array($_SESSION['adminlanguage']))
     "charset" => $LANGUAGES[$detectlan][1],
   );
 }
-$GLOBALS['strCharSet'] = $_SESSION['adminlanguage']['charset'];
+
+## this interferes with the frontend if an admin is logged in. 
+## better split the frontend and backend charSets at some point
+##http://mantis.tincan.co.uk/view.php?id=5528
+if (!isset($GLOBALS['strCharSet'])) {
+  $GLOBALS['strCharSet'] = $_SESSION['adminlanguage']['charset'];
+}
 
 # internationalisation (I18N)
 class phplist_I18N {
@@ -121,6 +127,9 @@ class phplist_I18N {
   }
 
   function formatText($text) {
+    # we've decided to spell phplist all lowercase
+    $text = str_replace('PHPlist','phplist',$text);
+
     if (isset($GLOBALS["developer_email"])) {
       return '<font color=#A704FF>'.str_replace("\n","",$text).'</font>';
 #       return 'TE'.$text.'XT';
@@ -169,6 +178,7 @@ class phplist_I18N {
       $page = $_GET["page"];
     else
       $page = "home";
+    
     if (trim($text) == "") return "";
     if (strip_tags($text) == "") return $text;
     if (is_file($this->basedir.$this->language.'/'.$page.'.php')) {
@@ -214,11 +224,13 @@ class phplist_I18N {
     if (is_array($lan) && isset($lan[strtoupper($text)])) {
       return $this->formatText($lan[strtoupper($text)]);
     }
+  
+    # spelling mistake, retry with old spelling
+    if ($text == 'over threshold, user marked unconfirmed') {
+      return $this->get('over treshold, user marked unconfirmed');
+    }
     return $this->missingText($text);
   }
 }
 
 $I18N = new phplist_I18N();
-
-
-

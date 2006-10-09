@@ -937,13 +937,13 @@ if (!$done) {
   $maincontent .= '
   <tr><td>'.Help("subject").' '.$GLOBALS['I18N']->get("Subject").':</td>
     <td><input type=text name="msgsubject"
-    value="'.htmlentities($subject).'" size=40></td></tr>
+    value="'.htmlentities($subject,ENT_QUOTES,'UTF-8').'" size=40></td></tr>
   <tr>
     <td colspan=2>
     </td></tr>
   <tr><td>'.Help("from").' '.$GLOBALS['I18N']->get("fromline").':</td>
     <td><input type=text name=from
-    value="'.htmlentities($from).'" size=40></td></tr>
+    value="'.htmlentities($from,ENT_QUOTES,'UTF-8').'" size=40></td></tr>
   <tr><td colspan=2>
 
   </td></tr>';
@@ -1119,7 +1119,9 @@ if (!$done) {
   }
 
   $maincontent .= '<tr><td colspan=2>'.$GLOBALS['I18N']->get("messagefooter").'. <br/>
-    '.$GLOBALS['I18N']->get("messagefooterexplanation").'.</td></tr>
+    '.$GLOBALS['I18N']->get("messagefooterexplanation").'<br/>'.
+    $GLOBALS['I18N']->get("use [FORWARD] to add a personalised URL to forward the message to someone else.").
+  '.</td></tr>
   <tr><td colspan=2><textarea name=footer cols=65 rows=5>'.$footer.'</textarea></td></tr>
   </table>';
 

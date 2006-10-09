@@ -29,7 +29,7 @@ $lan = array(
     estar actualizado. Es una lista con muy poco tr&aacute;fico.',
 //one sentence: 'continue with ... phplist setup?
   'Continue with' => 'Continuar con',
-  'PHPlist Setup' => 'la instalaci&oacute;n de PHPlist',
+  'PHPlist Setup' => 'la instalaci&oacute;n de phplist',
 //one sentence: 'maybe you want to... upgrade... instead?
   'Maybe you want to' => '&#191;Quizá prefiera',
   'Upgrade' => 'Actualizar',

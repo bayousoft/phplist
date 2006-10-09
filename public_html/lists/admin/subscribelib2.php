@@ -17,6 +17,9 @@ $date = new Date();
 
 $allthere = 1;
 $subscribepagedata = PageData($id);
+if (isset($subscribepagedata['language_file']) && is_file(dirname(__FILE__).'/../texts/'.$subscribepagedata['language_file'])) {
+  @include dirname(__FILE__).'/../texts/'.$subscribepagedata['language_file'];
+}
 $required = array();
 if (sizeof($subscribepagedata)) {
   $attributes = explode('+',$subscribepagedata["attributes"]);
@@ -72,7 +75,8 @@ if (isset($subscribepagedata['emaildoubleentry']) && $subscribepagedata['emaildo
     $missing = $GLOBALS["strEmailsNoMatch"];
   }
 }
-
+if (!isset($_POST['passwordreq'])) $_POST['passwordreq'] = '';
+if (!isset($_POST['password'])) $_POST['password'] = '';
 
 if ($allthere && ASKFORPASSWORD && ($_POST["passwordreq"] || $_POST["password"])) {
   if (empty($_POST["password"]) || $_POST["password"] != $_POST["password_check"]) {
@@ -98,7 +102,7 @@ if (isset($_POST["email"]) && $check_for_host) {
   $validhost = 1;
 }
 
-$listsok = ((!ALLOW_NON_LIST_SUBSCRIBE && is_array($_POST["list"])) || ALLOW_NON_LIST_SUBSCRIBE);
+$listsok = ((!ALLOW_NON_LIST_SUBSCRIBE && isset($_POST["list"]) && is_array($_POST["list"])) || ALLOW_NON_LIST_SUBSCRIBE);
 
 if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
    && $allthere && $validhost) {
@@ -116,7 +120,11 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
     $email = $regs[1];
   }
   $result = Sql_query("select * from {$GLOBALS["tables"]["user"]} where email = \"$email\"");#"
-  $rssfrequency = validateRssFrequency($_POST['rssfrequency']);
+  if (isset($_POST['rssfrequency'])) {
+    $rssfrequency = validateRssFrequency($_POST['rssfrequency']);
+  } else {
+    $rssfrequency = '';
+  }
 
   if (!Sql_affected_rows()) {
     # they do not exist, so add them
@@ -307,7 +315,11 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
 
   print "<P>".$PoweredBy.'</p>';
   print $subscribepagedata["footer"];
-  exit;
+//  exit;
+  // Instead of exiting here, we return 2. So in lists/index.php
+  // We can decide, whether to show subcribe page or not.
+  ## issue 6508
+  return 2;
 } elseif (isset($_POST["update"]) && $_POST["update"] && is_email($_POST["email"]) && $allthere) {
   $email = trim($_POST["email"]);
   if (preg_match("/(.*)\n/U",$email,$regs)) {
@@ -540,7 +552,11 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
   }
   print "<P>".$PoweredBy.'</p>';
   print $subscribepagedata["footer"];
-  exit;
+  // exit;
+  // Instead of exiting here, we return 2. So in lists/index.php
+  // We can decide, whether to show preferences page or not.
+  ## mantis issue 6508
+  return 3; 
 } elseif ((isset($_POST["subscribe"]) || isset($_POST["update"])) && !is_email($_POST["email"])) {
   $msg = '<div class="missing">'.$strEnterEmail.'</div><br/>';
 } elseif ((isset($_POST["subscribe"]) || isset($_POST["update"])) && !$validhost) {
@@ -665,7 +681,7 @@ $html .= sprintf('
   <tr><td><div class="required">%s</div></td>
   <td class="attributeinput"><input type=text name=emailconfirm value="%s" size="%d">
   <script language="Javascript" type="text/javascript">addFieldToCheck("emailconfirm","%s");</script></td></tr>',
- 'Confirm email',htmlspecialchars($_REQUEST["emailconfirm"]),$textlinewidth,'Confirm email');
+ 'Confirm email',htmlspecialchars(stripslashes($_REQUEST["emailconfirm"])),$textlinewidth,'Confirm email');
 }
 // BPM 12 May 2004 - Finish
 
@@ -786,9 +802,9 @@ $html .= sprintf('
           $output[$attr["id"]] .= sprintf("\n".'<tr><td colspan=2><div class="%s">%s</div>',$attr["required"] ? 'required' : 'attributename',stripslashes($attr["name"]));
           $values_request = Sql_Query("select * from $table_prefix"."listattr_".$attr["tablename"]." order by listorder,name");
           while ($value = Sql_Fetch_array($values_request)) {
-            if (!$_POST[$fieldname])
+            if ($_POST[$fieldname])
               $checked = $_POST[$fieldname] == $value["id"] ? "checked":"";
-            else if (!$data[$attr["id"]])
+            else if ($data[$attr["id"]])
               $checked = $data[$attr["id"]] == $value["id"] ? "checked":"";
             else
               $checked = $attr["default_value"] == $value["name"] ? "checked":"";
@@ -801,9 +817,9 @@ $html .= sprintf('
           $values_request = Sql_Query("select * from $table_prefix"."listattr_".$attr["tablename"]." order by listorder,name");
           $output[$attr["id"]] .= sprintf('</td><td class="attributeinput"><!--%d--><select name="%s" class="attributeinput">',$data[$attr["id"]],$fieldname);
           while ($value = Sql_Fetch_array($values_request)) {
-            if (!$_POST[$fieldname])
+            if ($_POST[$fieldname])
               $selected = $_POST[$fieldname] == $value["id"] ? "selected" : "";
-            else if (!$data[$attr["id"]])
+            else if ($data[$attr["id"]])
               $selected = $data[$attr["id"]] == $value["id"] ? "selected":"";
             else
               $selected = $attr["default_value"] == $value["name"] ? "selected":"";
@@ -819,9 +835,9 @@ $html .= sprintf('
           $values_request = Sql_Query("select * from $table_prefix"."listattr_".$attr["tablename"]." order by listorder,name");
           $output[$attr["id"]] .= sprintf('</td></tr>');
           while ($value = Sql_Fetch_array($values_request)) {
-            if (!$_POST[$fieldname])
+            if (is_array($_POST[$fieldname]))
               $selected = in_array($value["id"],$_POST[$fieldname]) ? "checked" : "";
-            else if (!$data[$attr["id"]]) {
+            else if ($data[$attr["id"]]) {
               $selection = explode(",",$data[$attr["id"]]);
               $selected = in_array($value["id"],$selection) ? "checked":"";
             }
@@ -917,6 +933,10 @@ function RSSOptions($data,$userid = 0) {
   if (!in_array($data["rssdefault"],$options)) {
     array_push($options,$data["rssdefault"]);
   }
+  if (sizeof($options) == 1) {
+    return sprintf('<input type="hidden" name="rssfrequency" value="%s">',$options[0]);
+  }
+
   foreach ($options as $freq) {
     if ($freq) {
       $html .= sprintf('<input type=radio name="rssfrequency" value="%s" %s>&nbsp;%s&nbsp;',

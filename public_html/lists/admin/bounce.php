@@ -14,7 +14,7 @@ if (isset($_GET['delete'])) {
 } else {
   $delete = 0;
 }
-$useremail = isset($_POST["useremail"]) ? $_POST["useremail"] : '';
+$useremail = isset($_GET["useremail"]) ? $_GET["useremail"] : '';
 
 if (!$id && !$delete) {
   Fatal_Error($GLOBALS['I18N']->get('NoRecord'));

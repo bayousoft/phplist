@@ -1,6 +1,13 @@
 <?php
 ob_start();
 $er = error_reporting(0); # some ppl have warnings on
+require_once dirname(__FILE__) .'/admin/commonlib/lib/magic_quotes.php';
+require_once dirname(__FILE__).'/admin/init.php';
+## none of our parameters can contain html for now
+$_GET = removeXss($_GET);
+$_POST = removeXss($_POST);
+$_REQUEST = removeXss($_REQUEST);
+
 if ($_SERVER["ConfigFile"] && is_file($_SERVER["ConfigFile"])) {
   include $_SERVER["ConfigFile"];
 } elseif ($_ENV["CONFIG"] && is_file($_ENV["CONFIG"])) {
@@ -9,7 +16,7 @@ if ($_SERVER["ConfigFile"] && is_file($_SERVER["ConfigFile"])) {
   include "config/config.php";
 }
 error_reporting($er);
-require_once dirname(__FILE__).'/admin/init.php';
+
 require_once dirname(__FILE__).'/admin/'.$GLOBALS["database_module"];
 require_once dirname(__FILE__)."/texts/english.inc";
 include_once dirname(__FILE__)."/texts/".$GLOBALS["language_module"];

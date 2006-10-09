@@ -56,6 +56,13 @@ function output ($message,$reset = 0) {
   $infostring = "[". date("D j M Y H:i",time()) . "] [" . getenv("REMOTE_HOST") ."] [" . getenv("REMOTE_ADDR") ."]";
   #print "$infostring $message<br>\n";
   $message = preg_replace("/\n/",'',$message);
+  ## contribution from http://forums.phplist.com/viewtopic.php?p=14648
+  ## in languages with accented characters replace the HTML back
+  //Replace the "&rsquo;" which is not replaced by html_decode
+  $message = preg_replace("/&rsquo;/","'",$message); 
+  //Decode HTML chars
+  #$message = html_entity_decode($message,ENT_QUOTES,$_SESSION['adminlanguage']['charset']);
+  $message = html_entity_decode($message,ENT_QUOTES,'UTF-8');
   if ($GLOBALS["commandline"]) {
     ob_end_clean();
     print strip_tags($message) . "\n";
@@ -488,11 +495,11 @@ while ($user = Sql_Fetch_Row($userid_req)) {
       ProcessError($GLOBALS['I18N']->get("Process Killed by other process"));
     if (sprintf('%d',$bounce["bounce"]) == $bounce["bounce"]) {
       $cnt++;
-      if ($cnt >= $bounce_unsubscribe_treshold) {
+      if ($cnt >= $bounce_unsubscribe_threshold) {
         $removed = 1;
         output(sprintf('unsubscribing %d -> %d bounces',$user[0],$cnt));
         $userurl = PageLink2("user&id=$user[0]",$user[0]);
-        logEvent($GLOBALS['I18N']->get("User")." $userurl ".$GLOBALS['I18N']->get("has consecutive bounces")." ($cnt) ".$GLOBALS['I18N']->get("over treshold, user marked unconfirmed"));
+        logEvent($GLOBALS['I18N']->get("User")." $userurl ".$GLOBALS['I18N']->get("has consecutive bounces")." ($cnt) ".$GLOBALS['I18N']->get("over threshold, user marked unconfirmed"));
         $emailreq = Sql_Fetch_Row_Query("select email from {$tables["user"]} where id = $user[0]");
         addUserHistory($emailreq[0],$GLOBALS['I18N']->get("Auto Unsubscribed"),$GLOBALS['I18N']->get("User auto unsubscribed for")." $cnt ".$GLOBALS['I18N']->get("consecutive bounces"));
         Sql_Query(sprintf('update %s set confirmed = 0 where id = %d',$tables["user"],$user[0]));

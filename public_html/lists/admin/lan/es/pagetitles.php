@@ -46,8 +46,8 @@ switch ($page) {
   case 'eventlog': $page_title = 'Registro de eventos';break;
   case 'getrss': $page_title = 'Obtener canales RSS';break;
   case 'viewrss': $page_title = 'Ver elementos RSS';break;
-  case 'community': $page_title = 'Bienvenido a la comunidad PHPlist';break;
-  case 'vote': $page_title = 'Vote por PHPlist';break;
+  case 'community': $page_title = 'Bienvenido a la comunidad phplist';break;
+  case 'vote': $page_title = 'Vote por phplist';break;
   case 'login': $page_title = 'Conectarse';break;
   case 'logout': $page_title = 'Desconectarse';break;
   case 'mclicks': $page_title = 'Estad&iacute;sticas de clicks de un mensaje'; break;

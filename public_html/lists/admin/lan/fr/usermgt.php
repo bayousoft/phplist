@@ -8,4 +8,5 @@ $lan = array(
   'check' => 'Effectuer une V&eacute;rification de certains utilisateurs',
   'import' => 'Importer des Utilisateurs',
   'export' => 'Exporter des Utilisateurs',
+  'mass unconfirm users' => 'Marquer en masse les utilisateurs comme  Non confirm&eacute;s'
 );

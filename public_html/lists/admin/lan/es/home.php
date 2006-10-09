@@ -12,7 +12,7 @@ $lan = array(
   'Initialise Database' => 'Initializar base de datos',
   'to continue' => 'para continuar',
   'A new version of PHPlist is available!' => '&#161;Hay una nueva
-  versi&oacute;n de PHPlist disponible!',
+  versi&oacute;n de phplist disponible!',
   'The new version may have fixed security issues,<br/>so it is
   recommended to upgrade as soon as possible' => 'La nueva
   versi&oacute;n puede haber solucionado problemas de

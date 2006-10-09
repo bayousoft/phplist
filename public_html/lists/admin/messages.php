@@ -86,7 +86,7 @@ if (isset($_GET['resend'])) {
   $resend = sprintf('%d',$_GET['resend']);
   # requeue the message in $resend
   print $GLOBALS['I18N']->get("Requeuing")." $resend ..";
-  $result = Sql_query("update ".$tables["message"]." set status = \"submitted\" where id = $resend");
+  $result = Sql_query("update ".$tables["message"]." set status = \"submitted\",sendstart = now() where id = $resend");
   $suc6 = Sql_Affected_Rows();
   # only send it again to users, if we are testing, otherwise only to new users
   if (TEST)

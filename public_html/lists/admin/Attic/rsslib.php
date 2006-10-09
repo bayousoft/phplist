@@ -72,9 +72,9 @@ function rssUserHasContent($userid,$messageid,$frequency) {
       }
     }
   #  print "<br/>Items to send for user $userid: ".sizeof($itemstosend);
-    # if it is less than the treshold return nothing
-    $treshold = getConfig("rsstheshold");
-    if (sizeof($itemstosend) >= $treshold)
+    # if it is less than the threshold return nothing
+    $threshold = getConfig("rssthreshold");
+    if (sizeof($itemstosend) >= $threshold)
        return $itemstosend;
     else
       return array();

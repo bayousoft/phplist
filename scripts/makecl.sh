@@ -8,8 +8,8 @@ if [ -f BRANCH ]; then
 else 
   cvs log >> cvslog
 fi
-cvs2cl.pl --prune -t --hide-filenames --stdin < cvslog
-echo "Changelog for PHPlist $BRANCH $DATE" > cl
+cvs2cl.pl -F phplist-version-2-10-x --prune -t --hide-filenames --stdin < cvslog
+echo "Changelog for phplist $BRANCH $DATE" > cl
 echo >> cl
 cat ChangeLog changelog.presf >> cl
 mv cl changelog

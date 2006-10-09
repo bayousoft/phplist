@@ -1,6 +1,14 @@
 <?php
+
 ob_start();
-$er = error_reporting(0); # some ppl have warnings on
+$er = error_reporting(0); 
+require_once dirname(__FILE__) .'/admin/commonlib/lib/magic_quotes.php';
+require_once dirname(__FILE__).'/admin/init.php';
+## none of our parameters can contain html for now
+$_GET = removeXss($_GET);
+$_POST = removeXss($_POST);
+$_REQUEST = removeXss($_REQUEST);
+
 if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
 #  print '<!-- using '.$_SERVER["ConfigFile"].'-->'."\n";
   include $_SERVER["ConfigFile"];
@@ -14,7 +22,7 @@ if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
   print "Error, cannot find config file\n";
   exit;
 }
-if (isset($GLOBALS["developer_email"]) && $GLOBALS['show_dev_errors']) {
+if (0) {#isset($GLOBALS["developer_email"]) && $GLOBALS['show_dev_errors']) {
   error_reporting(E_ALL);
 } else {
   if (isset($error_level)) {
@@ -23,9 +31,7 @@ if (isset($GLOBALS["developer_email"]) && $GLOBALS['show_dev_errors']) {
     error_reporting($er);
   }
 }
-require_once dirname(__FILE__) .'/admin/commonlib/lib/magic_quotes.php';
 
-require_once dirname(__FILE__).'/admin/init.php';
 require_once dirname(__FILE__).'/admin/'.$GLOBALS["database_module"];
 require_once dirname(__FILE__)."/texts/english.inc";
 include_once dirname(__FILE__)."/texts/".$GLOBALS["language_module"];
@@ -54,7 +60,7 @@ if (!isset($_POST) && isset($HTTP_POST_VARS)) {
   by the developers  but also helps build interest, traffic and use of
   PHPlist, which is beneficial to it's future development.
 
-  Michiel Dethmers, Tincan Ltd 2000,2004
+  Michiel Dethmers, Tincan Ltd 2000,2006
 */
 include "admin/pagetop.php";
 if (isset($_GET['id'])) {
@@ -184,18 +190,20 @@ if ($login_required && empty($_SESSION["userloggedin"]) && !$canlogin) {
   if ($id) {
     switch ($_GET["p"]) {
       case "subscribe":
-        require "admin/subscribelib2.php";
-         print SubscribePage($id);
+        $success = require "admin/subscribelib2.php";
+        if ($success != 2) {
+          print SubscribePage($id);
+        }
         break;
       case "preferences":
         if (!isset($_GET["id"]) || !$_GET['id']) $_GET["id"] = $id;
-        require "admin/subscribelib2.php";
+        $success = require "admin/subscribelib2.php";
         if (!$userid) {
 #          print "Userid not set".$_SESSION["userid"];
           print sendPersonalLocationPage($id);
         } elseif (ASKFORPASSWORD && $userpassword && !$canlogin) {
           print LoginPage($id,$userid,$emailcheck);
-        } else {
+        } elseif ($success != 3) { 
           print PreferencesPage($id,$userid);
         }
         break;
@@ -216,6 +224,9 @@ if ($login_required && empty($_SESSION["userloggedin"]) && !$canlogin) {
   }
 } else {
   if ($id) $data = PageData($id);
+  if (isset($data['language_file']) && is_file(dirname(__FILE__).'/texts/'.$data['language_file'])) {
+    @include dirname(__FILE__).'/texts/'.$data['language_file'];
+  }
   print '<title>'.$GLOBALS["strSubscribeTitle"].'</title>';
   print $data["header"];
   $req = Sql_Query(sprintf('select * from %s where active',$tables["subscribepage"]));
@@ -236,6 +247,9 @@ if ($login_required && empty($_SESSION["userloggedin"]) && !$canlogin) {
 
 function LoginPage($id,$userid,$email = "",$msg = "") {
   $data = PageData($id);
+  if (isset($data['language_file']) && is_file(dirname(__FILE__).'/texts/'.$data['language_file'])) {
+    @include dirname(__FILE__).'/texts/'.$data['language_file'];
+  }
   list($attributes,$attributedata) = PageAttributes($data);
   $html = '<title>'.$GLOBALS["strLoginTitle"].'</title>';
   $html .= $data["header"];
@@ -268,6 +282,9 @@ function LoginPage($id,$userid,$email = "",$msg = "") {
 
 function sendPersonalLocationPage($id) {
   $data = PageData($id);
+  if (isset($data['language_file']) && is_file(dirname(__FILE__).'/texts/'.$data['language_file'])) {
+    @include dirname(__FILE__).'/texts/'.$data['language_file'];
+  }
   list($attributes,$attributedata) = PageAttributes($data);
   $html = '<title>'.$GLOBALS["strPreferencesTitle"].'</title>';
   $html .= $data["header"];
@@ -294,6 +311,9 @@ function sendPersonalLocationPage($id) {
 
 function preferencesPage($id,$userid) {
   $data = PageData($id);
+  if (isset($data['language_file']) && is_file(dirname(__FILE__).'/texts/'.$data['language_file'])) {
+    @include dirname(__FILE__).'/texts/'.$data['language_file'];
+  }
   list($attributes,$attributedata) = PageAttributes($data);
   $selected_lists = explode(',',$data["lists"]);
   $html = '<title>'.$GLOBALS["strPreferencesTitle"].'</title>';
@@ -366,6 +386,9 @@ function compareEmail()
 
 function subscribePage($id) {
   $data = PageData($id);
+  if (isset($data['language_file']) && is_file(dirname(__FILE__).'/texts/'.$data['language_file'])) {
+    @include dirname(__FILE__).'/texts/'.$data['language_file'];
+  }
   list($attributes,$attributedata) = PageAttributes($data);
   $selected_lists = explode(',',$data["lists"]);
   $html = '<title>'.$GLOBALS["strSubscribeTitle"].'</title>';
@@ -431,6 +454,7 @@ function compareEmail()
       </style>';
     $html .= '<div class="adminmessage"><p><b>You are logged in as administrator ('.$_SESSION["logindetails"]["adminname"].') of this phplist system</b></p>';
     $html .= '<p>You are therefore offered the following choice, which your users will not see when they load this page.</p>';
+    $html .= '<p><a href="'.$GLOBALS['adminpages'].'">Go back to admin area</a></p>';
     $html .= '<p><b>Please choose</b>: <br/><input type=radio name="makeconfirmed" value="1"> Make this user confirmed immediately
       <br/><input type=radio name="makeconfirmed" value="0" checked> Send this user a request for confirmation email </p></div>';
   }
@@ -471,8 +495,8 @@ function confirmPage($id) {
       $html .= '<li>'.$GLOBALS["strNoLists"].'</li>';
     }
     while ($row = Sql_fetch_array($req)) {
-      $lists .= "\n *".$row["name"];
-      $html .= '<li class="list">'.$row["name"].'<div class="listdescription">'.stripslashes($row["description"]).'</div></li>';
+      $lists .= "\n *".stripslashes($row["name"]);
+      $html .= '<li class="list">'.stripslashes($row["name"]).'<div class="listdescription">'.stripslashes($row["description"]).'</div></li>';
     }
     $html .= '</ul>';
     if ($blacklisted) {
@@ -501,6 +525,9 @@ function confirmPage($id) {
     $info = $GLOBALS["strConfirmFailInfo"];
   }
   $data = PageData($id);
+  if (isset($data['language_file']) && is_file(dirname(__FILE__).'/texts/'.$data['language_file'])) {
+    @include dirname(__FILE__).'/texts/'.$data['language_file'];
+  }
 
   $res = '<title>'.$GLOBALS["strConfirmTitle"].'</title>';
   $res .= $data["header"];
@@ -513,6 +540,9 @@ function confirmPage($id) {
 
 function unsubscribePage($id) {
   $pagedata = pageData($id);
+  if (isset($pagedata['language_file']) && is_file(dirname(__FILE__).'/texts/'.$pagedata['language_file'])) {
+    @include dirname(__FILE__).'/texts/'.$pagedata['language_file'];
+  }
   global $tables;
   $res = $pagedata["header"];
   $res .= '<title>'.$GLOBALS["strUnsubscribeTitle"].'</title>';
@@ -543,7 +573,7 @@ function unsubscribePage($id) {
       $result = Sql_query("delete from {$tables["listuser"]} where userid = \"$userid\"");
       $lists = "  * ".$GLOBALS["strAllMailinglists"]."\n";
       # add user to blacklist
-      addUserToBlacklist($email,$_POST['unsubscribereason']);
+      addUserToBlacklist($email,nl2br(strip_tags($_POST['unsubscribereason'])));
 
       addUserHistory($email,"Unsubscription","Unsubscribed from $lists");
       $unsubscribemessage = ereg_replace("\[LISTS\]", $lists,getUserConfig("unsubscribemessage",$userid));
@@ -703,6 +733,9 @@ function forwardPage($id) {
     $info = $GLOBALS["strForwardFailInfo"];
   }
   $data = PageData($id);
+  if (isset($data['language_file']) && is_file(dirname(__FILE__).'/texts/'.$data['language_file'])) {
+    @include dirname(__FILE__).'/texts/'.$data['language_file'];
+  }
 
   $res = '<title>'.$GLOBALS["strForwardTitle"].'</title>';
   $res .= $data["header"];

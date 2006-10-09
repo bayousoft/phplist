@@ -36,7 +36,7 @@ $lan = array(
 // 3 lines below = one sentence
   "User" => "Der Empf&auml;nger",
   "has consecutive bounces" => "hat aufeinanderfolgende nicht zustellbare Mails",
-  "over treshold, user marked unconfirmed" =>
+  "over threshold, user marked unconfirmed" =>
   	"Grenzwert &uuml;berschritten, Empf&auml;nger wird als unbest&auml;tigt gekennzeichnet",
   "Auto Unsubscribed" => "automatische Abmeldung",
 // 2 lines below = one sentence
@@ -45,7 +45,7 @@ $lan = array(
 // 3 lines below = one sentence
   "Identifying consecutive bounces" => "Identifiziere aufeinanderfolgende nicht zustellbare Mails",
   "of" => "von",
-  "users processed" => "Empfänger bearbeitet", // don't HTML encode special characters on this line
+  "users processed" => "Empfï¿½ger bearbeitet", // don't HTML encode special characters on this line
   'processing first' => 'Bearbeite erste',
   'Report:' => 'Bericht:',
   'Below are users who have been marked unconfirmed.
