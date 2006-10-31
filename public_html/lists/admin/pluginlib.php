@@ -24,9 +24,13 @@ if (is_dir(PLUGIN_ROOTDIR)) {
     list($name,$ext) = explode(".",$file);
     if (preg_match("/[\w]+/",$name)) {
       include_once PLUGIN_ROOTDIR."/" . $file;
-      eval("\$class = new ". $name ."();");
+      if (class_exists($name)) {
+        eval("\$class = new ". $name ."();");
+        $GLOBALS["plugins"][$name] = $class;
+      } else {
+     #   logEvent('Error initiliasing plugin'. $name);
+      }
 #      print "$name = $class<br/>";
-      $GLOBALS["plugins"][$name] = $class;
     }
   }
 }
