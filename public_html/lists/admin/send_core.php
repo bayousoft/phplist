@@ -218,6 +218,11 @@ if (isset($_REQUEST['prepare'])) {
 
 if ($send || $sendtest || $prepare || $save) {
 
+  ## remember any data entered
+  foreach ($_POST as $key => $val) {
+    setMessageData($id,$key,$val);
+  }
+
   if ($save || $sendtest) {
     // We're just saving, not sending.
     if (!isset($_POST['status']) || $_POST["status"] == "") {
@@ -601,7 +606,7 @@ if ($send || $sendtest || $prepare || $save) {
         if (SEND_ONE_TESTMAIL) {
           $success = sendEmail($id, $address, $user["uniqid"], $user['htmlemail']);
         } else {
-          $success = sendEmail($id, $address, $user["uniqid"], 1) && sendEmail($id, $address, $user["uniqid"], 0);
+          $success = sendEmail($id, $address, $user["uniqid"], 0) && sendEmail($id, $address, $user["uniqid"], 1);
         }
 ;
         print $GLOBALS['I18N']->get("sentemailto").": $address ";
@@ -862,34 +867,6 @@ if (!$done) {
     $enctype = 'enctype="multipart/form-data"';
   } else {
     $enctype = '';
-  }
-
-  #$baseurl = sprintf('./?page=%s&amp;id=%d',$_GET["page"],$_GET["id"]);
-  if ($_GET["id"]) {
-    $tabs = new WebblerTabs();
-    $tabs->addTab($GLOBALS['I18N']->get("Content"),"$baseurl&amp;tab=Content");
-    $tabs->addTab($GLOBALS['I18N']->get("Format"),"$baseurl&amp;tab=Format");
-    if (ALLOW_ATTACHMENTS) {
-      $tabs->addTab($GLOBALS['I18N']->get("Attach"),"$baseurl&amp;tab=Attach");
-    }
-    $tabs->addTab($GLOBALS['I18N']->get("Scheduling"),"$baseurl&amp;tab=Scheduling");
-#    if (USE_RSS) {
-#      $tabs->addTab("RSS","$baseurl&amp;tab=RSS");
-#    }
-    $tabs->addTab($GLOBALS['I18N']->get("Criteria"),"$baseurl&amp;tab=Criteria");
-    $tabs->addTab($GLOBALS['I18N']->get("Lists"),"$baseurl&amp;tab=Lists");
-#    $tabs->addTab("Review and Send","$baseurl&amp;tab=Review");
-    $tabs->addTab($GLOBALS['I18N']->get("Misc"),"$baseurl&amp;tab=Misc");
-
-    if ($_GET["tab"]) {
-      $tabs->setCurrent($GLOBALS['I18N']->get($_GET["tab"]));
-    } else {
-      $tabs->setCurrent($GLOBALS['I18N']->get("Content"));
-    }
-    if (defined("WARN_SAVECHANGES")) {
-      $tabs->addLinkCode(' onClick="return savechanges();" ');
-    }
-    print $tabs->display();
   }
 
   ?>
@@ -1499,6 +1476,47 @@ if (!$done) {
     $GLOBALS['I18N']->get('email to alert when sending of this message has finished'),
     $GLOBALS['I18N']->get('separate multiple with a comma'),$notify_end);
   $show_lists = 0;
+
+
+  #$baseurl = sprintf('./?page=%s&amp;id=%d',$_GET["page"],$_GET["id"]);
+  if ($_GET["id"]) {
+    $tabs = new WebblerTabs();
+    $tabs->addTab($GLOBALS['I18N']->get("Content"),"$baseurl&amp;tab=Content");
+    $tabs->addTab($GLOBALS['I18N']->get("Format"),"$baseurl&amp;tab=Format");
+    if (ALLOW_ATTACHMENTS) {
+      $tabs->addTab($GLOBALS['I18N']->get("Attach"),"$baseurl&amp;tab=Attach");
+    }
+    $tabs->addTab($GLOBALS['I18N']->get("Scheduling"),"$baseurl&amp;tab=Scheduling");
+#    if (USE_RSS) {
+#      $tabs->addTab("RSS","$baseurl&amp;tab=RSS");
+#    }
+    $tabs->addTab($GLOBALS['I18N']->get("Criteria"),"$baseurl&amp;tab=Criteria");
+    $tabs->addTab($GLOBALS['I18N']->get("Lists"),"$baseurl&amp;tab=Lists");
+#    $tabs->addTab("Review and Send","$baseurl&amp;tab=Review");
+    $tabs->addTab($GLOBALS['I18N']->get("Misc"),"$baseurl&amp;tab=Misc");
+
+    if ($_GET["tab"]) {
+      $tabs->setCurrent($GLOBALS['I18N']->get($_GET["tab"]));
+    } else {
+      $tabs->setCurrent($GLOBALS['I18N']->get("Content"));
+    }
+    if (defined("WARN_SAVECHANGES")) {
+      $tabs->addLinkCode(' onClick="return savechanges();" ');
+    }
+  }
+
+  ### allow plugins to add tabs
+  $plugintabs = array();
+  foreach ($GLOBALS['plugins'] as $plugin) {
+    $plugintab = $plugin->sendMessageTab($id,$messagedata);
+    if ($plugintab) {
+      $plugintabname = substr(strip_tags($plugin->sendMessageTabTitle()),0,10);
+      $plugintabs[$plugintabname] = $plugintab;
+      $tabs->addTab($GLOBALS['I18N']->get($plugintabname),"$baseurl&amp;tab=".urlencode($plugintabname));
+    }
+  }
+
+  print $tabs->display();
   switch ($_GET["tab"]) {
     case "Attach": print $att_content; break;
     case "Criteria": print $criteria_content; break;
@@ -1509,7 +1527,16 @@ if (!$done) {
     case "Review": print $review_content; break;
     case "Misc": print $notification_content; break;
     default:
-      print $maincontent;
+      $isplugin = 0;
+      foreach ($plugintabs as $tabname => $tabcontent) {
+        if ($_GET['tab'] == $tabname) {
+          print $tabcontent;
+          $isplugin = 1;
+        }
+      }
+      if (!$isplugin) {
+        print $maincontent;
+      }
       break;
   }
 }
