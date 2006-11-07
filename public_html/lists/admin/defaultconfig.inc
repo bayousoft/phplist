@@ -367,6 +367,7 @@ Thank you.
 
 "html_charset" => array("iso-8859-1","Charset for HTML messages","text"),
 "text_charset" => array("iso-8859-1","Charset for Text messages","text"),
+"wordwrap" => array("75","Width for Wordwrap of Text messages","text"),
 
 "html_email_style" => array('
 <style type="text/css">
