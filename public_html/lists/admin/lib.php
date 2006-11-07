@@ -111,19 +111,34 @@ function listName($id) {
 }
 
 function setMessageData($msgid,$name,$value) {
+  if (is_array($value) || is_object($value)) {
+    $value = 'SER:'.serialize($value);
+  }
   Sql_Query(sprintf('replace into %s set id = %d,name = "%s", data = "%s"',
-    $GLOBALS['tables']['messagedata'],$msgid,addslashes($name),$value));
+    $GLOBALS['tables']['messagedata'],$msgid,addslashes($name),addslashes($value)));
 #  print "setting $name for $msgid to $value";
 #  exit;
 }
 
 function loadMessageData($msgid) {
+  if (!is_array($GLOBALS['MD'])) {
+    $GLOBALS['MD'] = array();
+  }
+  if (isset($GLOBALS['MD'][$msgid])) return $GLOBALS['MD'][$msgid];
+
   $messagedata = array();
   $msgdata_req = Sql_Query(sprintf('select * from %s where id = %d',
     $GLOBALS['tables']['messagedata'],$msgid));
   while ($row = Sql_Fetch_Array($msgdata_req)) {
-    $messagedata[$row['name']] = $row['data'];
+    if (strpos($row['data'],'SER:')) {
+      $data = substr(4,$row['data']);
+      $data = unserialize($data);
+    } else {
+      $data = $row['data'];
+    }
+    $messagedata[stripslashes($row['name'])] = stripslashes($data);
   }
+  $GLOBALS['MD'][$msgid] = $messagedata;
   return $messagedata;
 }
 
