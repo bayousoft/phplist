@@ -118,7 +118,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   $url = getConfig("public_baseurl");
   # make sure there are no newlines, otherwise they get turned into <br/>s
   $html["forwardform"] = sprintf('<form method="get" action="%s" name="forwardform" class="forwardform"><input type=hidden name="uid" value="%s" /><input type=hidden name="mid" value="%d" /><input type=hidden name="p" value="forward" /><input type=text name="email" value="" class="forwardinput" /><input name="Send" type="submit" value="%s" class="forwardsubmit"/></form>',$url,$hash,$messageid,$GLOBALS['strForward']);
-  $text["signature"] = "\n\n--\nPowered by PHPlist, www.phplist.com --\n\n";
+  $text["signature"] = "\n\n-- Powered by PHPlist, www.phplist.com --\n\n";
   $url = getConfig("preferencesurl");$sep = ereg('\?',$url)?'&':'?';
   $html["preferences"] = sprintf('<a href="%s%suid=%s">%s</a>',$url,$sep,$hash,$strThisLink);
   $text["preferences"] = sprintf('%s%suid=%s',$url,$sep,$hash);
@@ -501,6 +501,19 @@ if (0) {
     $textmessage = ereg_replace("\[LISTS\]",$lists_text,$textmessage);
   }
 
+  foreach ($GLOBALS['plugins'] as $plugin) {
+/*    $plugin_attachments = $plugin->getMessageAttachment($messageid,$mail->Body);
+    if (!empty($plugin_attachments[0]['content'])) {
+      foreach ($plugins_attachments as $plugin_attachment) {
+        $mail->add_attachment($plugin_attachment['content'],
+            basename($plugin_attachment["filename"]),
+            $plugin_attachment["mimetype"]);
+      }
+    }*/
+    $textmessage = $plugin->parseOutgoingTextMessage($messageid,$textmessage,$destinationemail);
+    $htmlmessage = $plugin->parseOutgoingHTMLMessage($messageid,$htmlmessage,$destinationemail);
+  }
+
   # remove any existing placeholders
   $htmlmessage = eregi_replace("\[[A-Z\. ]+\]","",$htmlmessage);
   $textmessage = eregi_replace("\[[A-Z\. ]+\]","",$textmessage);
@@ -707,6 +720,7 @@ if (0) {
       logEvent("Error sending message $messageid to $email ($destinationemail)");
       return 0;
     } else {
+   #   logEvent("Sent message $messageid to $email ($destinationemail)");
       return 1;
     }
   }
