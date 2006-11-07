@@ -40,6 +40,7 @@ class PHPMailer
      * @var string
      */
     var $ContentType        = "text/plain";
+    var $ContentTypeHeader        = "";
 
     /**
      * Sets the Encoding of the message. Options for this are "8bit",
@@ -220,7 +221,9 @@ class PHPMailer
     var $boundary        = array();
     var $language        = array();
     var $error_count     = 0;
-    var $LE              = "\n";
+    var $LE              = "\r\n";
+    var $header          = '';
+    var $body          = '';
     /**#@-*/
 
     /////////////////////////////////////////////////
@@ -341,8 +344,8 @@ class PHPMailer
      * @return bool
      */
     function Send() {
-        $header = "";
-        $body = "";
+        $this->header = "";
+        $this->body = "";
         $result = true;
 
         if((count($this->to) + count($this->cc) + count($this->bcc)) < 1)
@@ -357,22 +360,23 @@ class PHPMailer
 
         $this->error_count = 0; // reset errors
         $this->SetMessageType();
-        $header .= $this->CreateHeader();
-        $body = $this->CreateBody();
+        $this->header .= $this->CreateHeader();
+        $this->body = $this->CreateBody();
 
-        if($body == "") { return false; }
+        if($this->body == "") { return false; }
+        $this->header .= $this->ContentTypeHeader;
 
         // Choose the mailer
         switch($this->Mailer)
         {
             case "sendmail":
-                $result = $this->SendmailSend($header, $body);
+                $result = $this->SendmailSend($this->header, $this->body);
                 break;
             case "mail":
-                $result = $this->MailSend($header, $body);
+                $result = $this->MailSend($this->header, $this->body);
                 break;
             case "smtp":
-                $result = $this->SmtpSend($header, $body);
+                $result = $this->SmtpSend($this->header, $this->body);
                 break;
             default:
             $this->SetError($this->Mailer . $this->Lang("mailer_not_supported"));
@@ -819,8 +823,8 @@ class PHPMailer
         switch($this->message_type)
         {
             case "plain":
-                $result .= $this->HeaderLine("Content-Transfer-Encoding", $this->Encoding);
-                $result .= sprintf("Content-Type: %s; charset=\"%s\"",
+                $this->ContentTypeHeader = $this->HeaderLine("Content-Transfer-Encoding", $this->Encoding);
+                $this->ContentTypeHeader .= sprintf("Content-Type: %s; charset=\"%s\"",
                                     $this->ContentType, $this->CharSet);
                 break;
             case "attachments":
@@ -828,25 +832,24 @@ class PHPMailer
             case "alt_attachments":
                 if($this->InlineImageExists())
                 {
-                    $result .= sprintf("Content-Type: %s;%s\ttype=\"text/html\";%s\tboundary=\"%s\"%s",
+                    $this->ContentTypeHeader = sprintf("Content-Type: %s;%s\ttype=\"text/html\";%s\tboundary=\"%s\"%s",
                                     "multipart/related", $this->LE, $this->LE,
                                     $this->boundary[1], $this->LE);
                 }
                 else
                 {
-                    $result .= $this->HeaderLine("Content-Type", "multipart/mixed;");
-                    $result .= $this->TextLine("\tboundary=\"" . $this->boundary[1] . '"');
+                    $this->ContentTypeHeader = $this->HeaderLine("Content-Type", "multipart/mixed;");
+                    $this->ContentTypeHeader .= $this->TextLine("\tboundary=\"" . $this->boundary[1] . '"');
                 }
                 break;
             case "alt":
-                $result .= $this->HeaderLine("Content-Type", "multipart/alternative;");
-                $result .= $this->TextLine("\tboundary=\"" . $this->boundary[1] . '"');
+                $this->ContentTypeHeader = $this->HeaderLine("Content-Type", "multipart/alternative;");
+                $this->ContentTypeHeader .= $this->TextLine("\tboundary=\"" . $this->boundary[1] . '"');
                 break;
         }
 
         if($this->Mailer != "mail")
             $result .= $this->LE.$this->LE;
-
         return $result;
     }
 
