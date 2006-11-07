@@ -7,6 +7,8 @@ class PHPlistMailer extends PHPMailer {
     var $isText = false;
     var $WordWrap = 75;
     var $encoding = 'base64';
+    var $messageid = 0;
+    var $destionationemail = '';
     var $image_types = array(
                   'gif'  => 'image/gif',
                   'jpg'  => 'image/jpeg',
@@ -28,6 +30,12 @@ class PHPlistMailer extends PHPMailer {
       $this->addCustomHeader("Precedence: bulk");
       $this->Host = PHPMAILERHOST;
       $this->Helo = getConfig("website");
+      $newwrap = getConfig("wordwrap");
+      if ($newwrap) {
+        $this->WordWrap = $newwrap;
+      }
+      $this->destinationemail = $email;
+
       $this->CharSet = getConfig("html_charset");
       if (isset($GLOBALS['phpmailer_smtpuser']) && $GLOBALS['phpmailer_smtpuser'] != '') {
         $this->SMTPAuth = true;
@@ -47,6 +55,7 @@ class PHPlistMailer extends PHPMailer {
         $this->Mailer = "smtp";
 #        logEvent('Sending via smtp');
       }
+      $this->messageid = $messageid;
     }
 
     function add_html($html,$text = '',$templateid = 0) {
@@ -78,6 +87,22 @@ class PHPlistMailer extends PHPMailer {
     function build_message() {
     }
 
+    function CreateHeader() {
+      return parent::CreateHeader();
+    }
+
+    function CreateBody() {
+      $body = parent::CreateBody();
+      if ($this->message_type != 'plain') {
+        foreach ($GLOBALS['plugins'] as $plugin) {
+          list($header,$body,$contenttype) = $plugin->mimeWrap($this->messageid,$body,$this->header,$this->ContentTypeHeader,$this->destinationemail);
+          $this->header = $header;
+          $this->ContentTypeHeader = $contenttype;
+        }
+      }
+      return $body;
+    }
+
     function send($to_name = "", $to_addr, $from_name, $from_addr, $subject = '', $headers = '',$envelope = '') {
       $this->From = $from_addr;
       $this->FromName = $from_name;
@@ -89,11 +114,16 @@ class PHPlistMailer extends PHPMailer {
         $this->AddAddress($to_addr);
       }
       $this->Subject = $subject;
-      if(!parent::Send()) {
-        #echo "Message was not sent <p>";
-        logEvent("Mailer Error: " . $this->ErrorInfo);
+      if ($this->Body) {
+        if(!parent::Send()) {
+          #echo "Message was not sent <p>";
+          logEvent("Error sending email to ".$to_addr);
+          return 0;
+        }#
+      } else {
+        logEvent('Error sending email to '.$to_addr);
         return 0;
-      }#
+      }
       return 1;
     }
 
