@@ -144,6 +144,12 @@ class phplist_I18N {
       } else {
         $page = 'main page';
       }
+      $pl = $prefix = '';
+      if (!empty($_GET['pi'])) {
+        $pl = $_GET['pi'];
+        $pl = preg_replace('/\W/','',$pl);
+        $prefix = $pl.'_';
+      }
 
       $msg = '
 
@@ -153,7 +159,7 @@ class phplist_I18N {
 
       #sendMail($GLOBALS["developer_email"],"phplist dev, missing text",$msg);
       $line = "'".$text."' => '".$text."',";
-      $this->appendText('/tmp/'.$page.'.php',$line);
+      $this->appendText('/tmp/'.$prefix.$page.'.php',$line);
 
       return '<font color=#FF1717>'.$text.'</font>';#MISSING TEXT
     }
@@ -173,11 +179,33 @@ class phplist_I18N {
     }
   }
 
+  function getPluginBasedir() {
+    $pl = $_GET['pi'];
+    $pl = preg_replace('/\W/','',$pl);
+    $pluginroot = '';
+    if (isset($GLOBALS['plugins'][$pl]) && is_object($GLOBALS['plugins'][$pl])) {
+      $pluginroot = $GLOBALS['plugins'][$pl]->coderoot;
+    }
+    if (is_dir($pluginroot.'/lan/')) {
+      return $pluginroot.'/lan/';
+    } else {
+      return $pluginroot.'/';
+    }
+  }
+
   function get($text) {
+    $this->basedir = dirname(__FILE__).'/lan/';
     if (isset($_GET["page"]))
       $page = $_GET["page"];
     else
       $page = "home";
+
+    if (!empty($_GET['pi'])) {
+      $plugin_languagedir = $this->getPluginBasedir();
+      if (is_dir($plugin_languagedir)) {
+        $this->basedir = $plugin_languagedir;
+      }
+    }
     
     if (trim($text) == "") return "";
     if (strip_tags($text) == "") return $text;
@@ -200,13 +228,13 @@ class phplist_I18N {
     } elseif (!isset($GLOBALS['developer_email'])) {
       @include $this->basedir.$this->defaultlanguage.'/common.php';
     }
-    if (is_array($lan) && isset($lan[$text])) {
+    if (isset($lan) && is_array($lan) && isset($lan[$text])) {
       return $this->formatText($lan[$text]);
     }
-    if (is_array($lan) && isset($lan[strtolower($text)])) {
+    if (isset($lan) && is_array($lan) && isset($lan[strtolower($text)])) {
       return $this->formatText($lan[strtolower($text)]);
     }
-    if (is_array($lan) && isset($lan[strtoupper($text)])) {
+    if (isset($lan) && is_array($lan) && isset($lan[strtoupper($text)])) {
       return $this->formatText($lan[strtoupper($text)]);
     }
 
@@ -215,13 +243,13 @@ class phplist_I18N {
     } elseif (!isset($GLOBALS['developer_email'])) {
       @include $this->basedir.$this->defaultlanguage.'/frontend.php';
     }
-    if (is_array($lan) && isset($lan[$text])) {
+    if (isset($lan) && is_array($lan) && isset($lan[$text])) {
       return $this->formatText($lan[$text]);
     }
-    if (is_array($lan) && isset($lan[strtolower($text)])) {
+    if (isset($lan) && is_array($lan) && isset($lan[strtolower($text)])) {
       return $this->formatText($lan[strtolower($text)]);
     }
-    if (is_array($lan) && isset($lan[strtoupper($text)])) {
+    if (isset($lan) && is_array($lan) && isset($lan[strtoupper($text)])) {
       return $this->formatText($lan[strtoupper($text)]);
     }
   
