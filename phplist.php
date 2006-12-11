@@ -54,7 +54,10 @@ class phplist extends DefaultPlugin {
       "sessiontable" => "WebblerSessions",
       "urlcache" => $table_prefix . "urlcache",
       'linktrack' => $table_prefix .'linktrack',
+      'linktrack_forward' => $table_prefix.'linktrack_forward',
       'linktrack_userclick' => $table_prefix.'linktrack_userclick',
+      'linktrack_ml' => $table_prefix.'linktrack_ml',
+      'linktrack_uml_click' => $table_prefix.'linktrack_uml_click',
       'userstats' => $table_prefix .'userstats',
     );
     $this->addDataType("phplist_1","Mailinglist Pages");

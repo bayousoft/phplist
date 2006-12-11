@@ -138,6 +138,18 @@ $lan = array (
   # new in 2.10.1
   'reload' => 'reload',
 
+  ## new in 2.11.2
+  'use [FORWARD] to add a personalised URL to forward the message to someone else.' => 'use <b>[FORWARD]</b> to add a personalised URL to forward the message to someone else.',
+  'PGP' => 'PGP',
+  'Sign message' => 'Sign message',
+  'Select email to sign with' => 'Select email to sign with',
+  'Enter pass phrase' => 'Enter pass phrase',
+  'Encrypt message' => 'Encrypt message',
+  'When a message cannot be encrypted because the public key cannot be found' => 'When a message cannot be encrypted because the public key cannot be found',
+  'Send it anyway, but unencrypted' => 'Send it anyway, but unencrypted',
+  'Do not send it' => 'Do not send it',
+  'All Active Lists' => 'All Active Lists',
+
 );
 
 ?>
