@@ -15,7 +15,6 @@ if (is_file(dirname(__FILE__) .'/../../../VERSION')) {
 define("VERSION",$version.'dev');
 
 include_once dirname(__FILE__)."/commonlib/lib/userlib.php";
-include_once dirname(__FILE__)."/pluginlib.php";
 
 # set some variables
 if (!isset($_GET["pi"])) $_GET["pi"] = "";
@@ -30,7 +29,7 @@ $GLOBALS["img_cross"] = '<img src="images/cross.gif" alt="No">';
 $checkboxgroup_storesize = 1; # this will allow 10000 options for checkboxes
 
 # identify pages that can be run on commandline
-$commandline_pages = array("send","processqueue","processbounces","getrss",'import');
+$commandline_pages = array("send","processqueue","processbounces","getrss",'import','upgrade','convertstats');
 
 if (isset($message_envelope))
   $envelope = "-f$message_envelope";
@@ -82,11 +81,17 @@ $tables = array(
   "listrss" => $table_prefix . "listrss",
   "urlcache" => $table_prefix . "urlcache",
   'linktrack' => $table_prefix.'linktrack',
+  'linktrack_forward' => $table_prefix.'linktrack_forward',
   'linktrack_userclick' => $table_prefix.'linktrack_userclick',
+  'linktrack_ml' => $table_prefix.'linktrack_ml',
+  'linktrack_uml_click' => $table_prefix.'linktrack_uml_click',
   'userstats' => $table_prefix .'userstats',
   'bounceregex' => $table_prefix.'bounceregex',
   'bounceregex_bounce' => $table_prefix.'bounceregex_bounce',
 );
+
+include_once dirname(__FILE__)."/pluginlib.php";
+
 $domain = getConfig("domain");
 $website = getConfig("website");
 $xormask = getConfig('xormask');
@@ -333,8 +338,8 @@ function Fatal_Error($msg) {
 
 function Warn($msg) {
   if ($GLOBALS['commandline']) {
-    @ob_end_flush();
-    print "\n".$GLOBALS["I18N"]->get("warning").": ".strip_tags($msg)."\n";
+    @ob_end_clean();
+    print "\n".strip_tags($GLOBALS["I18N"]->get("warning").": ".$msg)."\n";
     @ob_start();
   } else {
     print '<div align=center class="error">'.$GLOBALS["I18N"]->get("warning").": $msg </div>";
@@ -348,7 +353,13 @@ function Warn($msg) {
 }
 
 function Info($msg) {
-  print '<center><table border=1><tr><td class="error">'.$GLOBALS["I18N"]->get("information").": $msg </td></tr></table></center>";
+  if ($GLOBALS['commandline']) {
+    @ob_end_clean();
+    print "\n".strip_tags($GLOBALS["I18N"]->get("information").": ".$msg);
+    @ob_start();
+  } else {
+    print '<center><table border=1><tr><td class="error">'.$GLOBALS["I18N"]->get("information").": $msg </td></tr></table></center>";
+  }
 }
 
 
