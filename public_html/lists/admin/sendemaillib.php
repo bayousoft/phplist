@@ -34,10 +34,10 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
       $message["fromfield"] = ereg_replace($regs[0],"",$message["fromfield"]);
       $cached[$messageid]["fromemail"] = $regs[0];
       # if the email has < and > take them out here
-      $cached[$messageid]["fromemail"] = ereg_replace("<","",$cached[$messageid]["fromemail"]);
-      $cached[$messageid]["fromemail"] = ereg_replace(">","",$cached[$messageid]["fromemail"]);
+      $cached[$messageid]["fromemail"] = str_replace("<","",$cached[$messageid]["fromemail"]);
+      $cached[$messageid]["fromemail"] = str_replace(">","",$cached[$messageid]["fromemail"]);
       # make sure there are no quotes around the name
-      $cached[$messageid]["fromname"] = ereg_replace('"',"",ltrim(rtrim($message["fromfield"])));
+      $cached[$messageid]["fromname"] = str_replace('"',"",ltrim(rtrim($message["fromfield"])));
     } elseif (ereg(" ",$message["fromfield"],$regs)) {
       # if there is a space, we need to add the email
       $cached[$messageid]["fromname"] = $message["fromfield"];
@@ -51,7 +51,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     }
     # erase double spacing
     while (ereg("  ",$cached[$messageid]["fromname"]))
-      $cached[$messageid]["fromname"] = eregi_replace("  "," ",$cached[$messageid]["fromname"]);
+      $cached[$messageid]["fromname"] = str_replace("  "," ",$cached[$messageid]["fromname"]);
 
     ## this has weird effects when used with only one word, so take it out for now
 #    $cached[$messageid]["fromname"] = eregi_replace("@","",$cached[$messageid]["fromname"]);
@@ -336,16 +336,24 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
         $textmessage = eregi_replace("\[".$att_name."\]",$att_value,$textmessage);
       }
       # @@@ undocumented, use alternate field for real email to send to
+      ## would be good to move into a plugin instead
       if (isset($GLOBALS["alternate_email"]) && strtolower($att_name) == strtolower($GLOBALS["alternate_email"])) {
         $destinationemail = $att_value;
       }
     }
   }
+
   if (!$destinationemail) {
     $destinationemail = $email;
   }
+  # this should move into a plugin
   if (!ereg('@',$destinationemail) && isset($GLOBALS["expand_unqualifiedemail"])) {
     $destinationemail .= $GLOBALS["expand_unqualifiedemail"];
+  }
+
+  foreach ($GLOBALS['plugins'] as $plugin) {
+#    print "Checking Destination for ".$plugin->name."<br/>";
+    $destinationemail = $plugin->setFinalDestinationEmail($messageid,$user_att_values,$destinationemail);
   }
 
   if (eregi("\[LISTS\]",$htmlmessage)) {
@@ -400,11 +408,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 #          $link = $urlbase . $link;
 #        }
 
-        $req = Sql_Query(sprintf('insert ignore into %s (messageid,userid,url,forward)
-          values(%d,%d,"%s","%s")',$GLOBALS['tables']['linktrack'],$messageid,$userdata['id'],$url,addslashes($link)));
-        $req = Sql_Fetch_Row_Query(sprintf('select linkid from %s where messageid = %s and userid = %d and forward = "%s"
-        ',$GLOBALS['tables']['linktrack'],$messageid,$userdata['id'],$link));
-        $linkid = $req[0];
+        $linkid = clickTrackLinkId($messageid,$userdata['id'],$url,$link);
 
         $masked = "H|$linkid|$messageid|".$userdata['id'] ^ XORmask;
         $masked = urlencode(base64_encode($masked));
@@ -470,11 +474,7 @@ if (0) {
       if (preg_match('/^http|ftp/',$link) && $link != 'http://www.phplist.com') {# && !strpos($link,$clicktrack_root)) {
         $url = cleanUrl($link,array('PHPSESSID','uid'));
 
-        $req = Sql_Query(sprintf('insert ignore into %s (messageid,userid,url,forward)
-          values(%d,%d,"%s","%s")',$GLOBALS['tables']['linktrack'],$messageid,$userdata['id'],$url,$link));
-        $req = Sql_Fetch_Row_Query(sprintf('select linkid from %s where messageid = %s and userid = %d and forward = "%s"
-        ',$GLOBALS['tables']['linktrack'],$messageid,$userdata['id'],$link));
-        $linkid = $req[0];
+        $linkid = clickTrackLinkId($messageid,$userdata['id'],$url,$link);
 
         $masked = "T|$linkid|$messageid|".$userdata['id'] ^ XORmask;
         $masked = urlencode(base64_encode($masked));
@@ -596,24 +596,6 @@ if (0) {
         addAttachments($messageid,$mail,"text");
       }
       break;
-    case "both":
-    case "text and HTML":
-      # send one big file to users who want html and text to everyone else
-      if ($htmlpref) {
-        Sql_Query("update {$GLOBALS["tables"]["message"]} set astextandhtml = astextandhtml + 1 where id = $messageid");
-        if (ENABLE_RSS && sizeof($rssitems))
-          updateRSSStats($rssitems,"ashtml");
-      #  dbg("Adding HTML ".$cached[$messageid]["templateid"]);
-        $mail->add_html($htmlmessage,$textmessage,$cached[$messageid]["templateid"]);
-        addAttachments($messageid,$mail,"HTML");
-      } else {
-        Sql_Query("update {$GLOBALS["tables"]["message"]} set astext = astext + 1 where id = $messageid");
-        if (ENABLE_RSS && sizeof($rssitems))
-          updateRSSStats($rssitems,"astext");
-        $mail->add_text($textmessage);
-        addAttachments($messageid,$mail,"text");
-      }
-      break;
     case "PDF":
       # send a PDF file to users who want html and text to everyone else
       if (ENABLE_RSS && sizeof($rssitems))
@@ -687,7 +669,6 @@ if (0) {
       }
       break;
     case "text":
-    default:
       # send as text
       if (ENABLE_RSS && sizeof($rssitems))
         updateRSSStats($rssitems,"astext");
@@ -695,7 +676,38 @@ if (0) {
        $mail->add_text($textmessage);
       addAttachments($messageid,$mail,"text");
       break;
+    case "both":
+    case "text and HTML":
+    default:
+      $handled_by_plugin = 0;
+      if (!empty($GLOBALS['pluginsendformats'][$cached[$messageid]["sendformat"]])) {
+        # possibly handled by plugin
+        $pl = $GLOBALS['plugins'][$GLOBALS['pluginsendformats'][$cached[$messageid]["sendformat"]]];
+        if (is_object($pl) && method_exists($pl,'constructMessage')) {
+          $handled_by_plugin = $pl->constructMessage($cached[$messageid]["sendformat"],$htmlmessage,$textmessage,$mail);
+        }
+      }
+
+      if (!$handled_by_plugin) {
+        # send one big file to users who want html and text to everyone else
+        if ($htmlpref) {
+          Sql_Query("update {$GLOBALS["tables"]["message"]} set astextandhtml = astextandhtml + 1 where id = $messageid");
+          if (ENABLE_RSS && sizeof($rssitems))
+            updateRSSStats($rssitems,"ashtml");
+        #  dbg("Adding HTML ".$cached[$messageid]["templateid"]);
+          $mail->add_html($htmlmessage,$textmessage,$cached[$messageid]["templateid"]);
+          addAttachments($messageid,$mail,"HTML");
+        } else {
+          Sql_Query("update {$GLOBALS["tables"]["message"]} set astext = astext + 1 where id = $messageid");
+          if (ENABLE_RSS && sizeof($rssitems))
+            updateRSSStats($rssitems,"astext");
+          $mail->add_text($textmessage);
+          addAttachments($messageid,$mail,"text");
+        }
+      } 
+      break;
   }
+
   $mail->build_message(
       array(
         "html_charset" => $cached[$messageid]["html_charset"],
@@ -703,7 +715,6 @@ if (0) {
         "text_charset" => $cached[$messageid]["text_charset"],
         "text_encoding" => TEXTEMAIL_ENCODING)
       );
-
 
   if (!TEST) {
     if ($hash != 'forwarded' || !sizeof($forwardedby)) {
@@ -911,6 +922,35 @@ function stripHTML($text) {
   $text = wordwrap($text,70);
 
   return $text;
+}
+
+function clickTrackLinkId($messageid,$userid,$url,$link) {
+  global $cached;
+  if (!isset($cached['linktrack']) || !is_array($cached['linktrack'])) $cached['linktrack'] = array();
+  if (!isset($cached['linktrack'][$link])) {
+    $exists = Sql_Fetch_Row_Query(sprintf('select id from %s where url = "%s"',
+      $GLOBALS['tables']['linktrack_forward'],addslashes($url)));
+    if (!$exists[0]) {
+      $personalise = preg_match('/uid=/',$link);
+      Sql_Query(sprintf('insert into %s set url = "%s", personalise = %d',
+        $GLOBALS['tables']['linktrack_forward'],addslashes($url),$personalise));
+      $fwdid = Sql_Insert_id();
+    } else {
+      $fwdid = $exists[0];
+    }
+    $cached['linktrack'][$link] = $fwdid;
+  } else {
+    $fwdid = $cached['linktrack'][$link];
+  }
+  $tot = Sql_Fetch_Row_Query(sprintf('select total from %s where messageid = %d and forwardid = %d',$GLOBALS['tables']['linktrack_ml'],$messageid,$fwdid));
+  Sql_Query(sprintf('replace into %s set total = %d, messageid = %d, forwardid = %d',
+    $GLOBALS['tables']['linktrack_ml'],$tot[0]+1,$messageid,$fwdid));
+
+/*  $req = Sql_Query(sprintf('insert ignore into %s (messageid,userid,forwardid)
+    values(%d,%d,"%s","%s")',$GLOBALS['tables']['linktrack'],$messageid,$userdata['id'],$url,addslashes($link)));
+  $req = Sql_Fetch_Row_Query(sprintf('select linkid from %s where messageid = %s and userid = %d and forwardid = %d
+  ',$GLOBALS['tables']['linktrack'],$messageid,$userid,$fwdid));*/
+  return $fwdid;
 }
 
 function parseText($text) {
