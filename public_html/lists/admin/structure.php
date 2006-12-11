@@ -341,7 +341,8 @@ $DBstruct = array( # order of tables is essential for smooth upgrade
        "content" => array("mediumtext",""),
        "index_1" => array("urlindex (url)",""),
     ),
-    "linktrack" => array (
+    # obsoleted table, but may still contain data
+/*    "linktrack" => array ( 
         "linkid" => array("integer not null primary key auto_increment", "Link ID"),
         "messageid" => array("integer not null","Message ID"),
         "userid" => array("integer not null","User ID"),
@@ -356,6 +357,44 @@ $DBstruct = array( # order of tables is essential for smooth upgrade
         "index_4" => array("miduidindex (messageid,userid)",""),
         "index_5" => array("miduidurlindex (messageid,userid,url)",""),
         "unique_1" => array("(messageid,userid,url)","")
+    ),*/
+    "linktrack_ml" => array ( # ml -> message link
+        "messageid" => array("integer not null","Message ID"),
+        'forwardid' => array('integer not null','ID in forward table'),
+        "firstclick" => array("datetime","When first clicked"),
+        "latestclick" => array("datetime", "When last clicked"),
+        "total" => array("integer default 0", "Number of times this link has been sent to users for this message"),
+        "clicked" => array("integer default 0", "Number of clicks"),
+        "htmlclicked" => array("integer default 0", "Number of clicks from HTML emails"),
+        "textclicked" => array("integer default 0", "Number of clicks from text emails"),
+        "primary key" => array("(messageid,forwardid)",""),
+        "index_1" => array("midindex (messageid)",""),
+        "index_2" => array("fwdindex (forwardid)",""),
+    ),
+    "linktrack_uml_click" => array ( # uml -> user message link, click
+        "id" => array("integer not null primary key auto_increment", "ID"),
+        "messageid" => array("integer not null","Message ID"),
+        "userid" => array("integer not null","User ID"),
+        'forwardid' => array('integer','ID in forward table'),
+        "firstclick" => array("datetime","When first clicked"),
+        "latestclick" => array("datetime", "When last clicked"),
+        "clicked" => array("integer default 0", "Number of clicks"),
+        "htmlclicked" => array("integer default 0", "Number of clicks from HTML emails"),
+        "textclicked" => array("integer default 0", "Number of clicks from text emails"),
+        "index_1" => array("midindex (messageid)",""),
+        "index_2" => array("uidindex (userid)",""),
+        "index_4" => array("miduidindex (messageid,userid)",""),
+        "unique_1" => array("miduidfwdid (messageid,userid,forwardid)","")
+    ),
+    "linktrack_forward" => array (
+        "id" => array("integer not null primary key auto_increment", "forward ID"),
+        "url" => array("varchar(255)", "URL to log"),
+#        "forward" => array("text","URL to forward to"),
+        "personalise" => array("tinyint default 0","Forward adding the UID?"),
+        "index_1" => array("urlindex (url)",""),
+#        "index_2" => array("urlforwardindex (url,forward(255))",""),
+#        'unique_1' => array('fwdunique (forward (500))','Forward should be unique'),
+        'unique_1' => array('urlunique (url)','URL should be unique'),
     ),
     "linktrack_userclick" => array (
         "linkid" => array("integer not null",""),
