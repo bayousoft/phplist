@@ -5,12 +5,34 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 
+if (!$GLOBALS["commandline"]) {
+  @ob_end_flush();
+} else {
+  @ob_end_clean();
+  print ClineSignature();
+  ## when on cl, doit immediately
+  $_GET['doit'] = 'yes';
+  ob_start();
+}
+
+function output ($message) {
+  if ($GLOBALS["commandline"]) {
+    @ob_end_clean();
+    print strip_tags($message) . "\n";
+    ob_start();
+  } else {
+    print $message;
+    flush();
+  }
+  flush();
+}
+
 $dbversion = getConfig("version");
 if (!$dbversion)
   $dbversion = "Older than 1.4.1";
-print '<p>Your database version: '.$dbversion.'</p>';
+output( '<p>'.$GLOBALS['I18N']->get('Your database version').': '.$dbversion.'</p>');
 if ($dbversion == VERSION)
-  print "Your database is already the correct version, there is no need to upgrade";
+  output($GLOBALS['I18N']->get('Your database is already the correct version, there is no need to upgrade'));
 else
 
 if ($_GET["doit"] == 'yes') {
@@ -18,7 +40,7 @@ if ($_GET["doit"] == 'yes') {
   # once we are off, this should not be interrupted
   ignore_user_abort(1);
   # rename tables if we are using the prefix
-  include $GLOBALS["coderoot"] . "structure.php";
+  include dirname(__FILE__) "/structure.php";
   while (list($table,$value) = each ($DBstruct)) {
     set_time_limit(500);
     if (isset($table_prefix)) {
@@ -38,7 +60,7 @@ if ($_GET["doit"] == 'yes') {
   for ($i=0;$i<10000; $i++) {
     print '  '."\n";
   }
-  print '<p>'.$GLOBALS['I18N']->get('Please wait, upgrading your database, do not interrupt').'</p>';
+  output( '<p>'.$GLOBALS['I18N']->get('Please wait, upgrading your database, do not interrupt').'</p>');
   for ($i=0;$i<10000; $i++) {
     print '  '."\n";
   }
@@ -340,9 +362,17 @@ if ($_GET["doit"] == 'yes') {
     Sql_Query(sprintf('replace into %s (item,value,editable) values("updatelastcheck",now(),0)',
       $tables["config"]));
     Info("Success");
+    if ($GLOBALS['commandline']) {
+      output($GLOBALS['I18N']->get('Upgrade successful'));
+    }
    }
-   else
+   else {
     Error("An error occurred while upgrading your database");
+    if ($GLOBALS['commandline']) {
+      output($GLOBALS['I18N']->get('Upgrade failed'));
+    }
+  }
+
 } else {
 
 ?>
@@ -352,3 +382,7 @@ if ($_GET["doit"] == 'yes') {
 <?php } ?>
 </td></tr></table>
 </div>
+
+<?php
+ob_end_flush();
+?>
