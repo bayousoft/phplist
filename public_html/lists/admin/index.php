@@ -104,9 +104,9 @@ if ($GLOBALS["commandline"]) {
   # getopt is actually useless
   #$opt = getopt("p:");
   if ($cline["p"]) {
-    if (!in_array($cline["p"],$GLOBALS["commandline_pages"])) {
+    if (isset($cline["p"]) && !in_array($cline["p"],$GLOBALS["commandline_pages"])) {
       clineError($cline["p"]." does not process commandline");
-    } else {
+    } elseif (isset($cline["p"])) {
       $_GET["page"] = $cline["p"];
     }
   } else {
@@ -274,9 +274,9 @@ if (LANGUAGE_SWITCH) {
 if ($page != "login") {
   if (ereg("dev",VERSION) && !TEST) {
     if ($GLOBALS["developer_email"]) {
-      print Info("Running CVS version. All emails will be sent to ".$GLOBALS["developer_email"]);
+      Info("Running CVS version. All emails will be sent to ".$GLOBALS["developer_email"]);
     } else {
-      print Info("Running CVS version, but developer email is not set");
+      Info("Running CVS version, but developer email is not set");
     }
   }
   #if (!ini_get("register_globals") && WARN_ABOUT_PHP_SETTINGS)
@@ -305,8 +305,13 @@ if (isset($_GET['page']) && $_GET['page'] == 'about') {
 }
 
 # include some information
-if (is_file("info/".$_SESSION['adminlanguage']['info']."/$include")) {
+if (!isset($_GET['pi']) && is_file("info/".$_SESSION['adminlanguage']['info']."/$include")) {
   @include "info/".$_SESSION['adminlanguage']['info']."/$include";
+# include some information
+} elseif (isset($_GET['pi']) && is_object($GLOBALS['plugins'][$_GET['pi']])) {
+  if (is_file($GLOBALS['plugins'][$_GET['pi']]->coderoot.'/info/'.$_SESSION['adminlanguage']['info']."/$include")) {
+    @include $GLOBALS['plugins'][$_GET['pi']] .'/info/'.$_SESSION['adminlanguage']['info']."/$include";
+  }
 } else {
 #  print "Not a file: "."info/".$adminlanguage["info"]."/$include";
 }
@@ -428,9 +433,9 @@ function parseCline() {
         $res[$cur] .= $clinearg;
     }
   }
-  foreach ($res as $key => $val) {
+/*  foreach ($res as $key => $val) {
     print "$key = $val\n";
-  }
+  }*/
   return $res;
 }
 
