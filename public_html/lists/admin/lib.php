@@ -19,6 +19,7 @@ if (!defined("UNSUBSCRIBE_REQUIRES_PASSWORD")) define("UNSUBSCRIBE_REQUIRES_PASS
 if (!defined("UNSUBSCRIBE_JUMPOFF")) define("UNSUBSCRIBE_JUMPOFF",0);
 if (!defined("ENCRYPTPASSWORD")) define("ENCRYPTPASSWORD",0);
 if (!defined("PHPMAILER")) define("PHPMAILER",0);
+if (!defined('PHPMAILERHOST')) define("PHPMAILERHOST",'');
 if (!defined("MANUALLY_PROCESS_QUEUE")) define("MANUALLY_PROCESS_QUEUE",1);
 if (!defined("CHECK_SESSIONIP")) define("CHECK_SESSIONIP",1);
 if (!defined("FILESYSTEM_ATTACHMENTS")) define("FILESYSTEM_ATTACHMENTS",0);
@@ -121,7 +122,7 @@ function setMessageData($msgid,$name,$value) {
 }
 
 function loadMessageData($msgid) {
-  if (!is_array($GLOBALS['MD'])) {
+  if (!isset($GLOBALS['MD']) || !is_array($GLOBALS['MD'])) {
     $GLOBALS['MD'] = array();
   }
   if (isset($GLOBALS['MD'][$msgid])) return $GLOBALS['MD'][$msgid];
@@ -299,7 +300,6 @@ function sendMailPhpMailer ($to,$subject,$message) {
       );
   return $mail->send("", $destinationemail, $fromname, $fromemail, $subject);
 }
-
 
 function sendAdminCopy($subject,$message) {
   $sendcopy = getConfig("send_admin_copies");

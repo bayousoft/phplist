@@ -51,7 +51,7 @@ function Sql_has_error ($dbconnection) {
 
 function Sql_Error ($dbconnection,$errno = 0) {
   $msg = mysql_error($dbconnection);
-  if (!$GLOBALS['commandline']) {
+  if (empty($GLOBALS['commandline'])) {
     return '<div id="dberror" style="position: relative;
         background-color: #aa0000;
         border: 2px solid #000000;
@@ -147,7 +147,7 @@ function Sql_Verbose_Query($query) {
   if (preg_match("/dev/",VERSION))
     print "<b>$query</b><br>\n";
   flush();
-  if ($GLOBALS["commandline"]) {
+  if (!empty($GLOBALS["commandline"])) {
     ob_end_clean();
     print "Sql: $query\n";
     ob_start();
