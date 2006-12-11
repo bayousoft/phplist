@@ -95,9 +95,12 @@ class PHPlistMailer extends PHPMailer {
       $body = parent::CreateBody();
       if ($this->message_type != 'plain') {
         foreach ($GLOBALS['plugins'] as $plugin) {
-          list($header,$body,$contenttype) = $plugin->mimeWrap($this->messageid,$body,$this->header,$this->ContentTypeHeader,$this->destinationemail);
-          $this->header = $header;
-          $this->ContentTypeHeader = $contenttype;
+          $plreturn =  $plugin->mimeWrap($this->messageid,$body,$this->header,$this->ContentTypeHeader,$this->destinationemail);
+          if (is_array($plreturn) && sizeof($plreturn) == 3) {
+            $this->header = $plreturn[0];
+            $body = $plreturn[1];
+            $this->ContentTypeHeader = $plreturn[2];
+          }
         }
       }
       return $body;
@@ -110,6 +113,7 @@ class PHPlistMailer extends PHPMailer {
         # make sure we are not sending out emails to real users
         # when developing
         $this->AddAddress($GLOBALS["developer_email"]);
+        $this->Body = 'Originally to: '.$to_addr."\n\n".$this->Body;
       } else {
         $this->AddAddress($to_addr);
       }
