@@ -485,17 +485,21 @@ if ($send || $sendtest || $prepare || $save) {
   if (ALLOW_ATTACHMENTS) {
     for ($att_cnt = 1;$att_cnt <= NUMATTACHMENTS;$att_cnt++) {
       $fieldname = "attachment".$att_cnt;
-      $tmpfile = $_FILES[$fieldname]['tmp_name'];
-      $remotename = $_FILES[$fieldname]["name"];
-      $type = $_FILES[$fieldname]["type"];
-      $newtmpfile = $remotename.time();
-      move_uploaded_file($tmpfile, $GLOBALS['tmpdir'].'/'. $newtmpfile);
-      if (is_file($GLOBALS['tmpdir'].'/'.$newtmpfile) && filesize($GLOBALS['tmpdir'].'/'.$newtmpfile)) {
-        $tmpfile = $GLOBALS['tmpdir'].'/'.$newtmpfile;
+      if (isset($_FILES[$fieldname])) {
+        $tmpfile = $_FILES[$fieldname]['tmp_name'];
+        $remotename = $_FILES[$fieldname]["name"];
+        $type = $_FILES[$fieldname]["type"];
+        $newtmpfile = $remotename.time();
+        move_uploaded_file($tmpfile, $GLOBALS['tmpdir'].'/'. $newtmpfile);
+        if (is_file($GLOBALS['tmpdir'].'/'.$newtmpfile) && filesize($GLOBALS['tmpdir'].'/'.$newtmpfile)) {
+          $tmpfile = $GLOBALS['tmpdir'].'/'.$newtmpfile;
+        }
+        if (strlen($_POST[$type]) > 255)
+          print Warn($GLOBALS['I18N']->get("longmimetype"));
+        $description = $_POST[$fieldname."_description"];
+      } else {
+        $tmpfile = '';
       }
-      if (strlen($_POST[$type]) > 255)
-        print Warn($GLOBALS['I18N']->get("longmimetype"));
-      $description = $_POST[$fieldname."_description"];
       if ($tmpfile && filesize($tmpfile) && $tmpfile != "none") {
         list($name,$ext) = explode(".",basename($remotename));
         # create a temporary file to make sure to use a unique file name to store with
@@ -531,7 +535,7 @@ if ($send || $sendtest || $prepare || $save) {
         } else {
           print Warn($GLOBALS['I18N']->get("uploadfailed"));
         }
-      } elseif ($_POST["localattachment".$att_cnt]) {
+      } elseif (!empty($_POST["localattachment".$att_cnt])) {
         $type = findMime(basename($_POST["localattachment".$att_cnt]));
         Sql_query(sprintf('insert into %s (remotefile,mimetype,description,size) values("%s","%s","%s",%d)',
           $tables["attachment"],
@@ -545,7 +549,7 @@ if ($send || $sendtest || $prepare || $save) {
     }
   }
 
-  if ($_POST["id"]) {
+  if (!empty($_POST["id"])) {
     print "<h3>".$GLOBALS['I18N']->get("saved")."</H3><br/>";
   } else {
     $id = $messageid; // New ID - need to set it for later use (test email).
@@ -995,6 +999,17 @@ if (!$done) {
     $formatting_content .= $GLOBALS['I18N']->get("textandpdf").' <input type=radio name="sendformat" value="text and PDF" ';
     $formatting_content .= $_POST["sendformat"]=="text and PDF" ?"checked":"";
     $formatting_content .= ' >';
+  }
+
+  foreach ($GLOBALS['plugins'] as $plugin) {
+    $plugins_sendformats = $plugin->sendFormats();
+    if (is_array($plugins_sendformats) && sizeof($plugins_sendformats)) {
+      foreach ($plugins_sendformats as $val => $desc) {
+        $val = preg_replace("/\W/",'',strtolower(trim($val)));
+        $formatting_content .= sprintf('%s <input type=radio name="sendformat" value="%s" %s>',
+          $desc,$val, $_POST["sendformat"]==$val?'checked="checked"':'');
+      }
+    }
   }
   $formatting_content .= '</td></tr>';
 
