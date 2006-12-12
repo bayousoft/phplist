@@ -33,6 +33,17 @@ if (is_dir(PLUGIN_ROOTDIR)) {
 #      print "$name = $class<br/>";
     }
   }
+  $GLOBALS['pluginsendformats'] = array();
+  foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
+    $plugin_sendformats = $plugin->sendFormats();
+    if (is_array($plugin_sendformats) && sizeof($plugin_sendformats)) {
+      foreach ($plugin_sendformats as $val => $desc) {
+        $val = preg_replace("/\W/",'',strtolower(trim($val)));
+        $GLOBALS['pluginsendformats'][$val] = $pluginname;
+      }
+    }
+  }
+
 }
 
 ?>
