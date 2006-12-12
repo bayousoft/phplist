@@ -40,7 +40,7 @@ if ($_GET["doit"] == 'yes') {
   # once we are off, this should not be interrupted
   ignore_user_abort(1);
   # rename tables if we are using the prefix
-  include dirname(__FILE__) "/structure.php";
+  include dirname(__FILE__) ."/structure.php";
   while (list($table,$value) = each ($DBstruct)) {
     set_time_limit(500);
     if (isset($table_prefix)) {
@@ -324,6 +324,11 @@ if ($_GET["doit"] == 'yes') {
         Sql_Create_Table($tables["userstats"],$DBstruct["userstats"]);
         Sql_Create_Table($tables["bounceregex"],$DBstruct["bounceregex"]);
         Sql_Create_Table($tables["bounceregex_bounce"],$DBstruct["bounceregex_bounce"]);
+      }
+      if ($minor < 11 || ($minor == 11 && $sub < 2)) {
+        Sql_Create_Table($tables["linktrack_forward"],$DBstruct["linktrack_forward"]);
+        Sql_Create_Table($tables["linktrack_ml"],$DBstruct["linktrack_ml"]);
+        Sql_Create_Table($tables["linktrack_uml_click"],$DBstruct["linktrack_uml_click"]);
       }
       break;
   }
