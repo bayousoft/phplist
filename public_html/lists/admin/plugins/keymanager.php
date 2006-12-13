@@ -2,7 +2,7 @@
 class keymanager extends phplistPlugin {
   var $name = "Key Manager";
   var $coderoot = "keymgr/";
-  var $keyring = "keymgt/keyring";
+  var $keyring = "keyring"; # set this to the location of your keyring
   var $keyreq = '';
   var $uiditems = array('email','uid','comments');
   var $keyitems = array('timestamp','disabled','expired','expires','revoked','invalid','is_secret','can_sign','can_encrypt','fingerprint');
@@ -35,7 +35,8 @@ class keymanager extends phplistPlugin {
   function keymanager() {
     parent::phplistplugin();
 //    error_reporting(E_ALL);
-    putenv('GNUPGHOME='.$this->keyring);
+  #  putenv('GNUPGHOME='.dirname(__FILE__).'/keymgr/'.$this->keyring);
+     putenv('GNUPGHOME=/home/phplist/keyring');
   }
 
   function initialise() {
@@ -282,7 +283,7 @@ class keymanager extends phplistPlugin {
 #    echo $gnupg -> geterror();
     $gnupg -> seterrormode(gnupg::ERROR_EXCEPTION); // throw an exception in case of an error
     $gnupg->setsignmode(gnupg::SIG_MODE_NORMAL);
-//     print "importing <pre>$key</pre>";
+//    print "importing <pre>$key</pre>";
     
     $info = $gnupg->import($key);
     return $info;
