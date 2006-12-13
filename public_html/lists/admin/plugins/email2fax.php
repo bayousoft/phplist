@@ -63,6 +63,14 @@ class email2fax extends phplistPlugin {
     return $format;
   }
 
+  function validateHtmlDocBinary($htmldoc) {
+    ## make sure the binary called is actually htmldoc
+    $bn = basename($htmldoc);
+    if ($bn !== 'htmldoc') return 0;
+    ## add some more checks?
+    return 1;
+  }
+
   function constructMessage($sendformat,$htmlmessage,$textmessage,&$mail) {
     if ($sendformat != 'fax') {
       return 0;
@@ -89,6 +97,9 @@ class email2fax extends phplistPlugin {
       unlink($fax);
       return 0;
     }
+    if (!$this->validateHtmlDocBinary($htmldoc)) {
+      return 0;
+    }
     $htmldoc .= ' --quiet ';
     switch ($this->config['sendas']) {
       case 'html':
@@ -106,6 +117,7 @@ class email2fax extends phplistPlugin {
     $options = $this->config['htmldocoptions'];
     $options = str_replace("\n"," ",$options);
     $options = str_replace("\r"," ",$options);
+    $options = preg_replace('/^[-\w\s]/','',$options);
     $htmldoc .= ' '.$options .' -f '.$fax;
     #print $htmldoc;exit;
     $commandresult = system($htmldoc.' '.$tmphtml);
