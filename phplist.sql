@@ -1,11 +1,18 @@
--- MySQL dump 10.9
+-- MySQL dump 10.10
 --
--- Host: localhost    Database: phplistdb
+-- Host: localhost    Database: phplistcvsdb
 -- ------------------------------------------------------
--- Server version	4.1.12
+-- Server version	5.0.22-standard
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO,MYSQL40' */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
@@ -19,7 +26,7 @@ CREATE TABLE `eventlog` (
   `page` varchar(100) default NULL,
   `entry` text,
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `eventlog`
@@ -32,6 +39,57 @@ UNLOCK TABLES;
 /*!40000 ALTER TABLE `eventlog` ENABLE KEYS */;
 
 --
+-- Table structure for table `keymanager_keydata`
+--
+
+DROP TABLE IF EXISTS `keymanager_keydata`;
+CREATE TABLE `keymanager_keydata` (
+  `name` varchar(255) NOT NULL default '',
+  `id` int(11) NOT NULL,
+  `data` text,
+  PRIMARY KEY  (`name`,`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `keymanager_keydata`
+--
+
+
+/*!40000 ALTER TABLE `keymanager_keydata` DISABLE KEYS */;
+LOCK TABLES `keymanager_keydata` WRITE;
+INSERT INTO `keymanager_keydata` VALUES ('keyid',1,'95594BCA409A5757'),('uid',1,'a:6:{s:4:\"name\";s:8:\"Test Key\";s:7:\"comment\";s:12:\"Testing Only\";s:5:\"email\";s:16:\"test@phplist.com\";s:3:\"uid\";s:42:\"Test Key (Testing Only) <test@phplist.com>\";s:7:\"revoked\";b:0;s:7:\"invalid\";b:0;}'),('timestamp',1,'1166055217'),('disabled',1,''),('expired',1,''),('expires',1,'1166660017'),('revoked',1,''),('invalid',1,''),('is_secret',1,''),('can_sign',1,'1'),('can_encrypt',1,''),('fingerprint',1,'BFA5D8D49E8306503EB7339395594BCA409A5757'),('keyid',2,'7D14A33E7C51CC14'),('uid',2,'a:6:{s:4:\"name\";s:8:\"Test Key\";s:7:\"comment\";s:12:\"Testing Only\";s:5:\"email\";s:16:\"test@phplist.com\";s:3:\"uid\";s:42:\"Test Key (Testing Only) <test@phplist.com>\";s:7:\"revoked\";b:0;s:7:\"invalid\";b:0;}'),('timestamp',2,'1166055228'),('disabled',2,''),('expired',2,''),('expires',2,'1166660028'),('revoked',2,''),('invalid',2,''),('is_secret',2,''),('can_sign',2,''),('can_encrypt',2,'1'),('fingerprint',2,'439C5C4328646F641221CD1A7D14A33E7C51CC14'),('keyid',3,'E93323A40F693332'),('uid',3,'a:6:{s:4:\"name\";s:9:\"Test User\";s:7:\"comment\";s:23:\"Keys to test the system\";s:5:\"email\";s:20:\"testuser@phplist.com\";s:3:\"uid\";s:58:\"Test User (Keys to test the system) <testuser@phplist.com>\";s:7:\"revoked\";b:0;s:7:\"invalid\";b:0;}'),('timestamp',3,'1162947175'),('disabled',3,''),('expired',3,''),('expires',3,'1199070001'),('revoked',3,''),('invalid',3,''),('is_secret',3,''),('can_sign',3,'1'),('can_encrypt',3,''),('fingerprint',3,'03ADF7C0CA373E2B5EE122EAE93323A40F693332'),('keyid',4,'E4C78A4C23880ADD'),('uid',4,'a:6:{s:4:\"name\";s:9:\"Test User\";s:7:\"comment\";s:23:\"Keys to test the system\";s:5:\"email\";s:20:\"testuser@phplist.com\";s:3:\"uid\";s:58:\"Test User (Keys to test the system) <testuser@phplist.com>\";s:7:\"revoked\";b:0;s:7:\"invalid\";b:0;}'),('timestamp',4,'1162947184'),('disabled',4,''),('expired',4,''),('expires',4,'1199070010'),('revoked',4,''),('invalid',4,''),('is_secret',4,''),('can_sign',4,''),('can_encrypt',4,'1'),('fingerprint',4,'F3AF547AAE11DA61F796D09BE4C78A4C23880ADD');
+UNLOCK TABLES;
+/*!40000 ALTER TABLE `keymanager_keydata` ENABLE KEYS */;
+
+--
+-- Table structure for table `keymanager_keys`
+--
+
+DROP TABLE IF EXISTS `keymanager_keys`;
+CREATE TABLE `keymanager_keys` (
+  `id` int(11) NOT NULL auto_increment,
+  `keyid` varchar(255) NOT NULL,
+  `email` varchar(255) default NULL,
+  `name` varchar(255) default NULL,
+  `fingerprint` varchar(255) default NULL,
+  `can_encrypt` tinyint(4) default NULL,
+  `can_sign` tinyint(4) default NULL,
+  `deleted` tinyint(4) default '0',
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `keymanager_keys`
+--
+
+
+/*!40000 ALTER TABLE `keymanager_keys` DISABLE KEYS */;
+LOCK TABLES `keymanager_keys` WRITE;
+INSERT INTO `keymanager_keys` VALUES (1,'95594BCA409A5757','test@phplist.com','Test Key','BFA5D8D49E8306503EB7339395594BCA409A5757',0,1,0),(2,'7D14A33E7C51CC14','test@phplist.com','Test Key','439C5C4328646F641221CD1A7D14A33E7C51CC14',1,0,0),(3,'E93323A40F693332','testuser@phplist.com','Test User','03ADF7C0CA373E2B5EE122EAE93323A40F693332',0,1,0),(4,'E4C78A4C23880ADD','testuser@phplist.com','Test User','F3AF547AAE11DA61F796D09BE4C78A4C23880ADD',1,0,0);
+UNLOCK TABLES;
+/*!40000 ALTER TABLE `keymanager_keys` ENABLE KEYS */;
+
+--
 -- Table structure for table `phplist_admin`
 --
 
@@ -42,7 +100,7 @@ CREATE TABLE `phplist_admin` (
   `namelc` varchar(255) default NULL,
   `email` varchar(255) NOT NULL default '',
   `created` datetime default NULL,
-  `modified` timestamp NOT NULL,
+  `modified` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   `modifiedby` varchar(25) default NULL,
   `password` varchar(255) default NULL,
   `passwordchanged` date default NULL,
@@ -50,7 +108,7 @@ CREATE TABLE `phplist_admin` (
   `disabled` tinyint(4) default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `loginname` (`loginname`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_admin`
@@ -59,7 +117,7 @@ CREATE TABLE `phplist_admin` (
 
 /*!40000 ALTER TABLE `phplist_admin` DISABLE KEYS */;
 LOCK TABLES `phplist_admin` WRITE;
-INSERT INTO `phplist_admin` VALUES (1,'admin','admin','','2002-05-24 16:06:33','2002-05-24 16:06:33','','phplist','2002-05-24',1,0),(2,'listadmin','listadmin','listadmin@phplist.com','2002-05-31 10:37:15','2002-05-31 11:17:27','listadmin','password','0000-00-00',0,0),(3,'listadmin2','listadmin2','lsitadmin2@phplist.com','2002-05-31 10:40:12','2002-05-31 10:40:12','admin','password','0000-00-00',0,0),(4,'listadmin3','listadmin3','','2002-05-31 11:05:22','2002-05-31 11:05:22','admin','password','0000-00-00',0,0);
+INSERT INTO `phplist_admin` VALUES (1,'admin','admin','','2002-05-24 16:06:33','2002-05-24 15:06:33','','phplist','2002-05-24',1,0),(2,'listadmin','listadmin','listadmin@phplist.com','2002-05-31 10:37:15','2002-05-31 10:17:27','listadmin','password','0000-00-00',0,0),(3,'listadmin2','listadmin2','lsitadmin2@phplist.com','2002-05-31 10:40:12','2002-05-31 09:40:12','admin','password','0000-00-00',0,0),(4,'listadmin3','listadmin3','','2002-05-31 11:05:22','2002-05-31 10:05:22','admin','password','0000-00-00',0,0);
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `phplist_admin` ENABLE KEYS */;
 
@@ -73,7 +131,7 @@ CREATE TABLE `phplist_admin_attribute` (
   `adminid` int(11) NOT NULL default '0',
   `value` varchar(255) default NULL,
   PRIMARY KEY  (`adminattributeid`,`adminid`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_admin_attribute`
@@ -95,7 +153,7 @@ CREATE TABLE `phplist_admin_task` (
   `taskid` int(11) NOT NULL default '0',
   `level` int(11) default NULL,
   PRIMARY KEY  (`adminid`,`taskid`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_admin_task`
@@ -104,7 +162,7 @@ CREATE TABLE `phplist_admin_task` (
 
 /*!40000 ALTER TABLE `phplist_admin_task` DISABLE KEYS */;
 LOCK TABLES `phplist_admin_task` WRITE;
-INSERT INTO `phplist_admin_task` VALUES (2,17,4),(2,16,4),(2,15,4),(2,14,4),(2,13,4),(2,12,4),(2,11,4),(2,7,4),(2,6,4),(2,5,4),(2,4,4),(2,3,4),(2,2,4),(2,1,4),(2,25,4),(2,24,4),(2,23,4),(2,22,4),(2,21,4),(2,20,4),(2,19,4),(2,18,4),(2,10,4),(2,9,4),(2,8,4),(2,27,4),(2,26,4),(0,26,0),(0,27,0),(0,8,4),(0,9,4),(0,10,4),(0,18,4),(0,19,4),(0,20,0),(0,21,0),(0,22,0),(0,23,1),(0,24,0),(0,25,0),(0,1,0),(0,2,0),(0,3,0),(0,4,0),(0,5,0),(0,6,0),(0,7,0),(0,11,0),(0,12,0),(0,13,0),(0,14,0),(0,15,4),(0,16,4),(0,17,4),(3,26,0),(3,27,0),(3,8,4),(3,9,4),(3,10,4),(3,18,4),(3,19,4),(3,20,0),(3,21,0),(3,22,0),(3,23,1),(3,24,0),(3,25,0),(3,1,0),(3,2,0),(3,3,0),(3,4,0),(3,5,0),(3,6,0),(3,7,0),(3,11,0),(3,12,0),(3,13,0),(3,14,0),(3,15,4),(3,16,4),(3,17,4),(4,26,0),(4,27,0),(4,8,4),(4,9,4),(4,10,4),(4,18,4),(4,19,4),(4,20,0),(4,21,0),(4,22,0),(4,23,1),(4,24,0),(4,25,0),(4,1,0),(4,2,0),(4,3,0),(4,4,0),(4,5,0),(4,6,0),(4,7,0),(4,11,0),(4,12,0),(4,13,0),(4,14,0),(4,15,4),(4,16,4),(4,17,4);
+INSERT INTO `phplist_admin_task` VALUES (2,17,4),(2,16,4),(2,15,4),(2,14,4),(2,13,4),(2,12,4),(2,11,4),(2,7,4),(2,6,4),(2,5,4),(2,4,4),(2,3,4),(2,2,4),(2,1,4),(2,25,4),(2,24,4),(2,23,4),(2,22,4),(2,21,4),(2,20,4),(2,19,4),(2,18,4),(2,10,4),(2,9,4),(2,8,4),(2,27,4),(2,26,4),(0,26,0),(0,27,0),(0,8,4),(0,9,4),(0,10,4),(0,18,4),(0,19,4),(0,20,0),(0,21,0),(0,22,0),(0,23,1),(0,24,0),(0,25,0),(0,1,0),(0,2,0),(0,3,0),(0,4,0),(0,5,0),(0,6,0),(0,7,0),(0,11,0),(0,12,0),(0,13,0),(0,14,0),(0,15,4),(0,16,4),(0,17,4),(3,26,0),(3,27,0),(3,8,4),(3,9,4),(3,10,4),(3,18,4),(3,19,4),(3,20,0),(3,21,0),(3,22,0),(3,23,1),(3,24,0),(3,25,0),(3,1,0),(3,2,0),(3,3,0),(3,4,0),(3,5,0),(3,6,0),(3,7,0),(3,11,0),(3,12,0),(3,13,0),(3,14,0),(3,15,4),(3,16,4),(3,17,4),(4,26,0),(4,27,0),(4,8,4),(4,9,4),(4,10,4),(4,18,4),(4,19,4),(4,20,0),(4,21,0),(4,22,0),(4,23,1),(4,24,0),(4,25,0),(4,1,0),(4,2,0),(4,3,0),(4,4,0),(4,5,0),(4,6,0),(4,7,0),(4,11,0),(4,12,0),(4,13,0),(4,14,0),(4,15,4),(4,16,4),(4,17,4),(0,246,0),(0,247,0),(0,248,0),(0,249,0),(0,250,4),(0,251,4),(0,252,4),(0,253,4),(0,254,4),(0,255,4);
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `phplist_admin_task` ENABLE KEYS */;
 
@@ -122,7 +180,7 @@ CREATE TABLE `phplist_adminattribute` (
   `required` tinyint(4) default NULL,
   `tablename` varchar(255) default NULL,
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_adminattribute`
@@ -147,7 +205,7 @@ CREATE TABLE `phplist_attachment` (
   `description` text,
   `size` int(11) default NULL,
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_attachment`
@@ -173,7 +231,7 @@ CREATE TABLE `phplist_bounce` (
   `comment` text,
   PRIMARY KEY  (`id`),
   KEY `dateindex` (`date`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_bounce`
@@ -201,7 +259,7 @@ CREATE TABLE `phplist_bounceregex` (
   `count` int(11) default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `regex` (`regex`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_bounceregex`
@@ -222,7 +280,7 @@ CREATE TABLE `phplist_bounceregex_bounce` (
   `regex` int(11) NOT NULL default '0',
   `bounce` int(11) NOT NULL default '0',
   PRIMARY KEY  (`regex`,`bounce`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_bounceregex_bounce`
@@ -245,7 +303,7 @@ CREATE TABLE `phplist_config` (
   `editable` tinyint(4) default '1',
   `type` varchar(25) default NULL,
   PRIMARY KEY  (`item`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_config`
@@ -254,7 +312,7 @@ CREATE TABLE `phplist_config` (
 
 /*!40000 ALTER TABLE `phplist_config` DISABLE KEYS */;
 LOCK TABLES `phplist_config` WRITE;
-INSERT INTO `phplist_config` VALUES ('version','2.10.0-dev',0,NULL),('subscribesubject:3','Request for confirmation',0,NULL),('subscribemessage:3','  Almost welcome to our mailinglist(s) ...\r\n\r\n  Someone, hopefully you, has subscribed your email address to the following mailinglists:\r\n\r\n[LISTS]\r\n\r\n  If this is correct, please click this URL to confirm your subscription:\r\n\r\n[CONFIRMATIONURL]\r\n\r\n  If this is not correct, you do not need to do anything, simply delete this message.\r\n\r\n  Thank you\r\n\r\n  ',0,NULL),('confirmationsubject:3','Welcome to our Mailinglist',0,NULL),('confirmationmessage:3','  Welcome to our Mailinglists\r\n\r\n  Please keep this email for later reference.\r\n\r\n  Your email address has been added to the following mailinglists:\r\n[LISTS]\r\n\r\n  To unsubscribe please go to [UNSUBSCRIBEURL] and follow the steps.\r\n  To update your details and preferences please go to [PREFERENCESURL].\r\n\r\n  Thank you\r\n\r\n',0,NULL),('subscribeurl','http://[WEBSITE]/lists/?p=subscribe',1,NULL),('unsubscribeurl','http://[WEBSITE]/lists/?p=unsubscribe',1,NULL),('preferencesurl','http://[WEBSITE]/lists/?p=preferences',1,NULL),('defaultsubscribepage','1',1,NULL),('textline_width','40',1,NULL),('textarea_dimensions','10,40',1,NULL),('hide_single_list','1',1,NULL),('messagefooter','--\nTo unsubscribe from this list visit [UNSUBSCRIBE]\n\nTo update your preferences visit [PREFERENCES]\n',1,NULL),('subscribemessage:2','  Almost welcome to our mailinglist(s) ...\r\n\r\n  Someone, hopefully you, has subscribed your email address to the following mailinglists:\r\n\r\n[LISTS]\r\n\r\n  If this is correct, please click this URL to confirm your subscription:\r\n\r\n[CONFIRMATIONURL]\r\n\r\n  If this is not correct, you do not need to do anything, simply delete this message.\r\n\r\n  Thank you\r\n\r\n  ',0,NULL),('subscribemessage','\n\n  Almost welcome to our mailinglist(s) ...\n\n  Someone, hopefully you, has subscribed your email address to the following mailinglists:\n\n[LISTS]\n\n  If this is correct, please click this URL to confirm your subscription:\n\n[CONFIRMATIONURL]\n\n  If this is not correct, you do not need to do anything, simply delete this message.\n\n  Thank you\n\n  ',1,NULL),('subscribesubject:2','Request for confirmation',0,NULL),('subscribesubject','Request for confirmation',1,NULL),('confirmationmessage:2','  Welcome to our Mailinglists\r\n\r\n  Please keep this email for later reference.\r\n\r\n  Your email address has been added to the following mailinglists:\r\n[LISTS]\r\n\r\n  To unsubscribe please go to [UNSUBSCRIBEURL] and follow the steps.\r\n  To update your details and preferences please go to [PREFERENCESURL].\r\n\r\n  Thank you\r\n\r\n',0,NULL),('confirmationmessage','\n\n  Welcome to our Mailinglists\n\n  Please keep this email for later reference.\n\n  Your email address has been added to the following mailinglists:\n[LISTS]\n\n  To unsubscribe please go to [UNSUBSCRIBEURL] and follow the steps.\n  To update your details and preferences please go to [PREFERENCESURL].\n\n  Thank you\n\n',1,NULL),('confirmationsubject:2','Welcome to our Mailinglist',0,NULL),('confirmationsubject','Welcome to our Mailinglist',1,NULL),('confirmationurl','http://[WEBSITE]/lists/?p=confirm',1,NULL),('message_from_name','Webmaster',1,NULL),('message_from_address','noreply@[DOMAIN]',1,NULL),('report_address','listreports@[DOMAIN]',1,NULL),('check_new_version','7',1,NULL),('updatelastcheck','2005-09-08 16:28:07',0,NULL),('fckeditor_height','400',1,NULL),('rssthreshold','',1,NULL),('unsubscribesubject','Goodbye from our Newsletter',1,NULL),('message_replyto_address','noreply@[DOMAIN]',1,NULL),('send_admin_copies','0',1,NULL),('defaultmessagetemplate','0',1,NULL),('fckeditor_width','600',1,NULL);
+INSERT INTO `phplist_config` VALUES ('version','2.11.1-dev',0,NULL),('subscribesubject:3','Request for confirmation',0,NULL),('subscribemessage:3','  Almost welcome to our mailinglist(s) ...\r\n\r\n  Someone, hopefully you, has subscribed your email address to the following mailinglists:\r\n\r\n[LISTS]\r\n\r\n  If this is correct, please click this URL to confirm your subscription:\r\n\r\n[CONFIRMATIONURL]\r\n\r\n  If this is not correct, you do not need to do anything, simply delete this message.\r\n\r\n  Thank you\r\n\r\n  ',0,NULL),('confirmationsubject:3','Welcome to our Mailinglist',0,NULL),('confirmationmessage:3','  Welcome to our Mailinglists\r\n\r\n  Please keep this email for later reference.\r\n\r\n  Your email address has been added to the following mailinglists:\r\n[LISTS]\r\n\r\n  To unsubscribe please go to [UNSUBSCRIBEURL] and follow the steps.\r\n  To update your details and preferences please go to [PREFERENCESURL].\r\n\r\n  Thank you\r\n\r\n',0,NULL),('subscribeurl','http://[WEBSITE]/lists/?p=subscribe',1,NULL),('unsubscribeurl','http://[WEBSITE]/lists/?p=unsubscribe',1,NULL),('preferencesurl','http://[WEBSITE]/lists/?p=preferences',1,NULL),('defaultsubscribepage','1',1,NULL),('textline_width','40',1,NULL),('textarea_dimensions','10,40',1,NULL),('hide_single_list','1',1,NULL),('messagefooter','--\nTo unsubscribe from this list visit [UNSUBSCRIBE]\n\nTo update your preferences visit [PREFERENCES]\n',1,NULL),('subscribemessage:2','  Almost welcome to our mailinglist(s) ...\r\n\r\n  Someone, hopefully you, has subscribed your email address to the following mailinglists:\r\n\r\n[LISTS]\r\n\r\n  If this is correct, please click this URL to confirm your subscription:\r\n\r\n[CONFIRMATIONURL]\r\n\r\n  If this is not correct, you do not need to do anything, simply delete this message.\r\n\r\n  Thank you\r\n\r\n  ',0,NULL),('subscribemessage','\n\n  Almost welcome to our mailinglist(s) ...\n\n  Someone, hopefully you, has subscribed your email address to the following mailinglists:\n\n[LISTS]\n\n  If this is correct, please click this URL to confirm your subscription:\n\n[CONFIRMATIONURL]\n\n  If this is not correct, you do not need to do anything, simply delete this message.\n\n  Thank you\n\n  ',1,NULL),('subscribesubject:2','Request for confirmation',0,NULL),('subscribesubject','Request for confirmation',1,NULL),('confirmationmessage:2','  Welcome to our Mailinglists\r\n\r\n  Please keep this email for later reference.\r\n\r\n  Your email address has been added to the following mailinglists:\r\n[LISTS]\r\n\r\n  To unsubscribe please go to [UNSUBSCRIBEURL] and follow the steps.\r\n  To update your details and preferences please go to [PREFERENCESURL].\r\n\r\n  Thank you\r\n\r\n',0,NULL),('confirmationmessage','\n\n  Welcome to our Mailinglists\n\n  Please keep this email for later reference.\n\n  Your email address has been added to the following mailinglists:\n[LISTS]\n\n  To unsubscribe please go to [UNSUBSCRIBEURL] and follow the steps.\n  To update your details and preferences please go to [PREFERENCESURL].\n\n  Thank you\n\n',1,NULL),('confirmationsubject:2','Welcome to our Mailinglist',0,NULL),('confirmationsubject','Welcome to our Mailinglist',1,NULL),('confirmationurl','http://[WEBSITE]/lists/?p=confirm',1,NULL),('message_from_name','Webmaster',1,NULL),('message_from_address','noreply@[DOMAIN]',1,NULL),('report_address','listreports@[DOMAIN]',1,NULL),('check_new_version','7',1,NULL),('updatelastcheck','2006-12-13 01:24:15',0,NULL),('fckeditor_height','400',1,NULL),('rssthreshold','',1,NULL),('unsubscribesubject','Goodbye from our Newsletter',1,NULL),('message_replyto_address','noreply@[DOMAIN]',1,NULL),('send_admin_copies','0',1,NULL),('defaultmessagetemplate','0',1,NULL),('fckeditor_width','600',1,NULL),('domain','phplist.com',0,NULL),('website','cvs.phplist.com',0,NULL),('xormask','4585d6fb8798ff2830062756e03eb6b2',0,NULL),('admin_address','webmaster@[DOMAIN]',1,NULL),('admin_addresses','',1,NULL),('forwardurl','http://[WEBSITE]/lists/?p=forward',1,NULL),('unsubscribemessage','\n\n  Goodbye from our Newsletter, sorry to see you go.\n\n  You have been unsubscribed from our newsletters.\n\n  This is the last email you will receive from us. We have added you to our\n  \"blacklist\", which means that our newsletter system will refuse to send\n  you any other email, without manual intervention by our administrator.\n\n  If there is an error in this information, you can re-subscribe:\n  please go to [SUBSCRIBEURL] and follow the steps.\n\n  Thank you\n\n',1,NULL),('updatesubject','[notify] Change of List-Membership details',1,NULL),('updatemessage','\n\n  This message is to inform you of a change of your details on our newsletter database\n\n  You are currently member of the following newsletters:\n\n[LISTS]\n\n[CONFIRMATIONINFO]\n\n  The information on our system for you is as follows:\n\n[USERDATA]\n\n  If this is not correct, please update your information at the following location:\n\n[PREFERENCESURL]\n\n  Thank you\n\n  ',1,NULL),('emailchanged_text','\n  When updating your details, your email address has changed.\n  Please confirm your new email address by visiting this webpage:\n\n[CONFIRMATIONURL]\n\n',1,NULL),('emailchanged_text_oldaddress','\n  Please Note: when updating your details, your email address has changed.\n\n  A message has been sent to your new email address with a URL\n  to confirm this change. Please visit this website to activate\n  your membership.\n',1,NULL),('personallocation_subject','Your personal location',1,NULL),('personallocation_message','\n\nYou have requested your personal location to update your details from our website.\nThe location is below. Please make sure that you use the full line as mentioned below.\nSometimes email programme can wrap the line into multiple lines.\n\nYour personal location is:\n[PREFERENCESURL]\n\nThank you.\n',1,NULL),('forwardfooter','--\nThis message has been forwarded to you by [FORWARDEDBY].\n  You have not been automatically subscribed to this newsletter.\n  To subscribe to this newsletter go to\n\n [SUBSCRIBE]\n',1,NULL),('pageheader','<link href=\"styles/phplist.css\" type=\"text/css\" rel=\"stylesheet\">\n</head>\n<body bgcolor=\"#ffffff\" background=\"images/bg.png\">\n<a name=\"top\"></a>\n<div align=center>\n<table cellspacing=0 cellpadding=0 width=710 border=0>\n<tr>\n<td bgcolor=\"#000000\" rowspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=708 border=0></td>\n<td bgcolor=\"#000000\" rowspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\n</tr>\n\n<tr valign=\"top\" align=\"left\">\n<td>\n<!--TOP TABLE starts-->\n<TABLE cellSpacing=0 cellPadding=0 width=708 bgColor=#ffffff border=0>\n  <TR vAlign=top>\n    <TD colSpan=2 rowspan=\"2\" height=\"63\" background=\"images/topstrip.png\"><a href=\"http://www.phplist.com\" target=\"_blank\"><img src=\"images/masthead.png\" border=0 width=577 height=75></a></TD>\n    <TD align=left\n      background=\"images/topstrip.png\" bgcolor=\"#F0D1A3\"><FONT\n      size=-2>&nbsp;<I>powered by: </I><BR>&nbsp;<B>[<A class=powered\n      href=\"http://www.php.net/\" target=_new><I>PHP</I></A>]</B> + <B>[<A\n      class=powered href=\"http://www.mysql.com/\"\n      target=_new>mySQL</A>]</B></FONT></TD></TR>\n  <TR vAlign=bottom>\n    <TD vAlign=bottom width=132\n    background=\"images/topright.png\" bgcolor=\"#F0D1A3\"><SPAN\n      class=webblermenu>PHPlist</SPAN></TD></TR>\n  <TR>\n    <TD bgColor=#000000><IMG height=1 alt=\"\"\n      src=\"images/transparent.png\" width=20\n      border=0></TD>\n    <TD bgColor=#000000><IMG height=1 alt=\"\"\n      src=\"images/transparent.png\" width=576\n      border=0></TD>\n    <TD bgColor=#000000><IMG height=1 alt=\"\"\n      src=\"images/transparent.png\" width=132\n      border=0></TD></TR>\n  <TR vAlign=top>\n    <TD>&nbsp;</TD>\n<td><div align=left>\n<br />\n',1,NULL),('pagefooter','</div>\n</td>\n<td>\n<div class=\"menutableright\">\n\n</div>\n</td>\n</tr>\n\n\n\n\n<tr><td colspan=\"4\">&nbsp;</td></tr>\n\n\n\n<tr><td colspan=\"4\">&nbsp;</td></tr>\n</table>\n<!--TOP TABLE ends-->\n\n</td></tr>\n\n\n<tr>\n<td bgcolor=\"#000000\" colspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\n</tr>\n\n<tr>\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\n<td bgcolor=\"#ff9900\" class=\"bottom\">&copy; <a href=\"http://tincan.co.uk\" target=\"_tincan\" class=\"urhere\">tincan limited</a> | <a class=\"urhere\" href=\"http://www.phplist.com\" target=\"_blank\">phplist</a> - version <?php echo VERSION?></td>\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\n</tr>\n\n<tr>\n<td bgcolor=\"#000000\" colspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\n</tr>\n\n<tr>\n<td colspan=3><img height=3 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\n</tr>\n\n<tr>\n<td colspan=3>\n&nbsp;\n</td>\n</tr>\n</tbody>\n</table>\n\n</div>\n</body></html>\n',1,NULL),('html_charset','iso-8859-1',1,NULL),('text_charset','iso-8859-1',1,NULL),('wordwrap','75',1,NULL),('html_email_style','\n<style type=\"text/css\">\nbody { font-size : 11px; font-family: Verdana, Arial, Helvetica, sans-serif; }\na { font-size: 11px; color: #ff6600; font-style: normal; font-family: verdana, sans-serif; text-decoration: none; }\na:visited { color: #666666; }\na:hover {  text-decoration: underline; }\np { font-weight: normal; font-size: 11px; color: #666666; font-style: normal; font-family: verdana, sans-serif; text-decoration: none; }\nh1 {font-weight: bold; font-size: 14px; color: #666666; font-style: normal; font-family: verdana, sans-serif; text-decoration: none;}\nh2 {font-weight: bold; font-size: 13px; color: #666666; font-style: normal; font-family: verdana, sans-serif; text-decoration: none;}\nh3 {font-weight: bold; font-size: 12px; color: #666666; font-style: normal; font-family: verdana, sans-serif; text-decoration: none; margin:0px; padding:0px;}\nh4 {font-weight: bold; font-size: 11px; color: #666666; font-style: normal; font-family: verdana, sans-serif; text-decoration: none; margin:0px; padding:0px;}\nhr {width : 100%; height : 1px; color: #ff9900; size:1px;}\n.forwardform {margin: 0 0 0 0; padding: 0 0 0 0;}\n.forwardinput {margin: 0 0 0 0; padding: 0 0 0 0;}\n.forwardsubmit {margin: 0 0 0 0; padding: 0 0 0 0;}\ndiv.emailfooter { font-size : 11px; font-family: Verdana, Arial, Helvetica, sans-serif; }\ndiv.emailfooter a { font-size: 11px; color: #ff6600; font-style: normal; font-family: verdana, sans-serif; text-decoration: none; }\n</style>\n',1,NULL),('alwayssendtextto','mail.com\nemail.com',1,NULL),('subscribesubject:4','Request for confirmation',0,NULL),('subscribemessage:4','  Almost welcome to our mailinglist(s) ...\r\n\r\n  Someone, hopefully you, has subscribed your email address to the following mailinglists:\r\n\r\n[LISTS]\r\n\r\n  If this is correct, please click this URL to confirm your subscription:\r\n\r\n[CONFIRMATIONURL]\r\n\r\n  If this is not correct, you do not need to do anything, simply delete this message.\r\n\r\n  Thank you\r\n\r\n  ',0,NULL),('confirmationsubject:4','Welcome to our Mailinglist',0,NULL),('confirmationmessage:4','  Welcome to our Mailinglists\r\n\r\n  Please keep this email for later reference.\r\n\r\n  Your email address has been added to the following mailinglists:\r\n[LISTS]\r\n\r\n  To unsubscribe please go to [UNSUBSCRIBEURL] and follow the steps.\r\n  To update your details and preferences please go to [PREFERENCESURL].\r\n\r\n  Thank you\r\n\r\n',0,NULL),('Key Manager-keyattribute','14',0,NULL),('Key Manager-keyringlocation','',0,NULL),('Email 2 Fax-provider','someemailtofaxprovider.com',0,NULL),('Email 2 Fax-faxattribute','15',0,NULL),('Email 2 Fax-prefix','Fax=',0,NULL),('Email 2 Fax-toformat','[prefix][faxnumber]@[providerdomain]',0,NULL),('Email 2 Fax-htmldocbin','/usr/bin/htmldoc',0,NULL),('Email 2 Fax-htmldocoptions','--no-toc --footer ./D --header lt. --browserwidth 800 --no-strict \r\n--size A4 --pagemode fullscreen --webpage  \r\n--bodycolor ffffff --bodyfont helvetica --textcolor 000000 \r\n--compression=9 --textfont helvetica --fontsize 12 \r\n--fontspacing 1 --color --firstpage p1 \r\n--headfootfont Courier --headfootsize 8 --linkstyle underline ',0,NULL),('Email 2 Fax-sendas','pdf',0,NULL),('subscribesubject:5','Request for confirmation',0,NULL),('subscribemessage:5','\r\n  Almost welcome to our mailinglist(s) ...\r\n\r\n  Someone, hopefully you, has subscribed your email address to the following mailinglists:\r\n\r\n[LISTS]\r\n\r\n  If this is correct, please click this URL to confirm your subscription:\r\n\r\n[CONFIRMATIONURL]\r\n\r\n  If this is not correct, you do not need to do anything, simply delete this message.\r\n\r\n  Thank you\r\n\r\n  ',0,NULL),('confirmationsubject:5','Welcome to our Mailinglist',0,NULL),('confirmationmessage:5','\r\n  Welcome to our Mailinglists\r\n\r\n  Please keep this email for later reference.\r\n\r\n  Your email address has been added to the following mailinglists:\r\n[LISTS]\r\n\r\n  To unsubscribe please go to [UNSUBSCRIBEURL] and follow the steps.\r\n  To update your details and preferences please go to [PREFERENCESURL].\r\n\r\n  Thank you\r\n\r\n',0,NULL);
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `phplist_config` ENABLE KEYS */;
 
@@ -269,7 +327,7 @@ CREATE TABLE `phplist_eventlog` (
   `page` varchar(100) default NULL,
   `entry` text,
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_eventlog`
@@ -293,12 +351,12 @@ CREATE TABLE `phplist_linktrack` (
   `url` varchar(255) default NULL,
   `forward` text,
   `firstclick` datetime default NULL,
-  `latestclick` timestamp NOT NULL,
+  `latestclick` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   `clicked` int(11) default '0',
   PRIMARY KEY  (`linkid`),
   UNIQUE KEY `messageid` (`messageid`,`userid`,`url`),
   KEY `miduidurlindex` (`messageid`,`userid`,`url`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_linktrack`
@@ -309,6 +367,91 @@ CREATE TABLE `phplist_linktrack` (
 LOCK TABLES `phplist_linktrack` WRITE;
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `phplist_linktrack` ENABLE KEYS */;
+
+--
+-- Table structure for table `phplist_linktrack_forward`
+--
+
+DROP TABLE IF EXISTS `phplist_linktrack_forward`;
+CREATE TABLE `phplist_linktrack_forward` (
+  `id` int(11) NOT NULL auto_increment,
+  `url` varchar(255) default NULL,
+  `personalise` tinyint(4) default '0',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `urlunique` (`url`),
+  KEY `urlindex` (`url`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `phplist_linktrack_forward`
+--
+
+
+/*!40000 ALTER TABLE `phplist_linktrack_forward` DISABLE KEYS */;
+LOCK TABLES `phplist_linktrack_forward` WRITE;
+UNLOCK TABLES;
+/*!40000 ALTER TABLE `phplist_linktrack_forward` ENABLE KEYS */;
+
+--
+-- Table structure for table `phplist_linktrack_ml`
+--
+
+DROP TABLE IF EXISTS `phplist_linktrack_ml`;
+CREATE TABLE `phplist_linktrack_ml` (
+  `messageid` int(11) NOT NULL,
+  `forwardid` int(11) NOT NULL,
+  `firstclick` datetime default NULL,
+  `latestclick` datetime default NULL,
+  `total` int(11) default '0',
+  `clicked` int(11) default '0',
+  `htmlclicked` int(11) default '0',
+  `textclicked` int(11) default '0',
+  PRIMARY KEY  (`messageid`,`forwardid`),
+  KEY `midindex` (`messageid`),
+  KEY `fwdindex` (`forwardid`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `phplist_linktrack_ml`
+--
+
+
+/*!40000 ALTER TABLE `phplist_linktrack_ml` DISABLE KEYS */;
+LOCK TABLES `phplist_linktrack_ml` WRITE;
+UNLOCK TABLES;
+/*!40000 ALTER TABLE `phplist_linktrack_ml` ENABLE KEYS */;
+
+--
+-- Table structure for table `phplist_linktrack_uml_click`
+--
+
+DROP TABLE IF EXISTS `phplist_linktrack_uml_click`;
+CREATE TABLE `phplist_linktrack_uml_click` (
+  `id` int(11) NOT NULL auto_increment,
+  `messageid` int(11) NOT NULL,
+  `userid` int(11) NOT NULL,
+  `forwardid` int(11) default NULL,
+  `firstclick` datetime default NULL,
+  `latestclick` datetime default NULL,
+  `clicked` int(11) default '0',
+  `htmlclicked` int(11) default '0',
+  `textclicked` int(11) default '0',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `miduidfwdid` (`messageid`,`userid`,`forwardid`),
+  KEY `midindex` (`messageid`),
+  KEY `uidindex` (`userid`),
+  KEY `miduidindex` (`messageid`,`userid`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `phplist_linktrack_uml_click`
+--
+
+
+/*!40000 ALTER TABLE `phplist_linktrack_uml_click` DISABLE KEYS */;
+LOCK TABLES `phplist_linktrack_uml_click` WRITE;
+UNLOCK TABLES;
+/*!40000 ALTER TABLE `phplist_linktrack_uml_click` ENABLE KEYS */;
 
 --
 -- Table structure for table `phplist_linktrack_userclick`
@@ -323,7 +466,7 @@ CREATE TABLE `phplist_linktrack_userclick` (
   `data` text,
   `date` datetime default NULL,
   KEY `linkusermessageindex` (`linkid`,`userid`,`messageid`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_linktrack_userclick`
@@ -347,12 +490,12 @@ CREATE TABLE `phplist_list` (
   `entered` datetime default NULL,
   `listorder` int(11) default NULL,
   `prefix` varchar(10) default NULL,
-  `modified` timestamp NOT NULL,
+  `modified` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   `active` tinyint(4) default NULL,
   `owner` int(11) default NULL,
   `rssfeed` varchar(255) default NULL,
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_list`
@@ -361,7 +504,7 @@ CREATE TABLE `phplist_list` (
 
 /*!40000 ALTER TABLE `phplist_list` DISABLE KEYS */;
 LOCK TABLES `phplist_list` WRITE;
-INSERT INTO `phplist_list` VALUES (1,'test','List for testing. I you don\'t make this list live and add yourself as a member, you can use this list to test a message. If the message comes out ok, you can resend it to other lists.','2002-04-18 22:27:28',0,'','2002-04-18 22:27:28',0,0,NULL),(2,'list 2','','2002-05-31 10:38:47',0,'','2003-08-22 21:20:51',1,1,'http://www.phplist.com/test.rss'),(3,'list 3','','2002-05-31 10:39:31',0,'','2003-03-21 11:01:33',1,0,NULL),(4,'list 4','','2002-05-31 10:40:29',0,'','2003-03-21 11:01:41',1,0,NULL),(5,'list 5','','2002-05-31 10:59:05',0,'','2003-03-21 11:01:47',1,0,NULL),(6,'list 6','','2002-05-31 11:05:39',0,'','2003-03-21 11:01:55',1,0,NULL);
+INSERT INTO `phplist_list` VALUES (1,'test','List for testing. I you don\'t make this list live and add yourself as a member, you can use this list to test a message. If the message comes out ok, you can resend it to other lists.','2002-04-18 22:27:28',0,'','2002-04-18 21:27:28',0,0,NULL),(2,'list 2','','2002-05-31 10:38:47',0,'','2003-08-22 20:20:51',1,1,'http://www.phplist.com/test.rss'),(3,'list 3','','2002-05-31 10:39:31',0,'','2003-03-21 11:01:33',1,0,NULL),(4,'list 4','','2002-05-31 10:40:29',0,'','2003-03-21 11:01:41',1,0,NULL),(5,'list 5','','2002-05-31 10:59:05',0,'','2003-03-21 11:01:47',1,0,NULL),(6,'list 6','','2002-05-31 11:05:39',0,'','2003-03-21 11:01:55',1,0,NULL);
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `phplist_list` ENABLE KEYS */;
 
@@ -376,7 +519,7 @@ CREATE TABLE `phplist_listattr_bpleaseche` (
   `listorder` int(11) default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_listattr_bpleaseche`
@@ -399,7 +542,7 @@ CREATE TABLE `phplist_listattr_bwheredoyo` (
   `listorder` int(11) default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_listattr_bwheredoyo`
@@ -423,7 +566,7 @@ CREATE TABLE `phplist_listattr_cbgroup` (
   `listorder` int(11) default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_listattr_cbgroup`
@@ -447,7 +590,7 @@ CREATE TABLE `phplist_listattr_comments` (
   `listorder` int(11) default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_listattr_comments`
@@ -470,7 +613,7 @@ CREATE TABLE `phplist_listattr_countries` (
   `listorder` int(11) default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_listattr_countries`
@@ -494,7 +637,7 @@ CREATE TABLE `phplist_listattr_hiddenfiel` (
   `listorder` int(11) default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_listattr_hiddenfiel`
@@ -517,7 +660,7 @@ CREATE TABLE `phplist_listattr_iagreewith` (
   `listorder` int(11) default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_listattr_iagreewith`
@@ -540,7 +683,7 @@ CREATE TABLE `phplist_listattr_most` (
   `listorder` int(11) default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_listattr_most`
@@ -564,7 +707,7 @@ CREATE TABLE `phplist_listattr_othercomme` (
   `listorder` int(11) default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_listattr_othercomme`
@@ -577,6 +720,29 @@ UNLOCK TABLES;
 /*!40000 ALTER TABLE `phplist_listattr_othercomme` ENABLE KEYS */;
 
 --
+-- Table structure for table `phplist_listattr_publickey`
+--
+
+DROP TABLE IF EXISTS `phplist_listattr_publickey`;
+CREATE TABLE `phplist_listattr_publickey` (
+  `id` int(11) NOT NULL auto_increment,
+  `name` varchar(255) default NULL,
+  `listorder` int(11) default '0',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `phplist_listattr_publickey`
+--
+
+
+/*!40000 ALTER TABLE `phplist_listattr_publickey` DISABLE KEYS */;
+LOCK TABLES `phplist_listattr_publickey` WRITE;
+UNLOCK TABLES;
+/*!40000 ALTER TABLE `phplist_listattr_publickey` ENABLE KEYS */;
+
+--
 -- Table structure for table `phplist_listattr_somemoreco`
 --
 
@@ -587,7 +753,7 @@ CREATE TABLE `phplist_listattr_somemoreco` (
   `listorder` int(11) default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_listattr_somemoreco`
@@ -609,10 +775,10 @@ CREATE TABLE `phplist_listmessage` (
   `messageid` int(11) NOT NULL default '0',
   `listid` int(11) NOT NULL default '0',
   `entered` datetime default NULL,
-  `modified` timestamp NOT NULL,
+  `modified` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `messageid` (`messageid`,`listid`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_listmessage`
@@ -621,7 +787,7 @@ CREATE TABLE `phplist_listmessage` (
 
 /*!40000 ALTER TABLE `phplist_listmessage` DISABLE KEYS */;
 LOCK TABLES `phplist_listmessage` WRITE;
-INSERT INTO `phplist_listmessage` VALUES (3,2,1,'2002-05-31 09:57:18','2002-05-31 09:57:18'),(4,3,0,'2002-05-31 11:57:44','2002-05-31 11:57:44'),(24,11,6,'2002-05-31 12:26:44','2002-05-31 12:26:44'),(25,0,2,'2002-05-31 12:30:39','2002-05-31 12:30:39'),(26,0,3,'2002-05-31 12:30:39','2002-05-31 12:30:39'),(27,26,4,'2002-05-31 12:30:39','2002-05-31 12:30:39'),(28,26,5,'2002-05-31 12:30:39','2002-05-31 12:30:39'),(29,28,6,'2002-05-31 12:30:39','2002-05-31 12:30:39'),(42,14,1,'2003-03-21 12:45:01','2003-03-21 12:45:01'),(43,15,2,'2003-10-20 01:11:55','2003-10-20 01:11:55'),(44,15,3,'2003-10-20 01:11:55','2003-10-20 01:11:55'),(45,15,4,'2003-10-20 01:11:55','2003-10-20 01:11:55'),(46,15,5,'2003-10-20 01:11:55','2003-10-20 01:11:55'),(47,15,6,'2003-10-20 01:11:55','2003-10-20 01:11:55'),(48,18,3,'2005-09-08 17:00:54','2005-09-08 17:00:54'),(49,18,4,'2005-09-08 17:00:54','2005-09-08 17:00:54'),(50,18,5,'2005-09-08 17:00:54','2005-09-08 17:00:54');
+INSERT INTO `phplist_listmessage` VALUES (3,2,1,'2002-05-31 09:57:18','2002-05-31 08:57:18'),(4,3,0,'2002-05-31 11:57:44','2002-05-31 10:57:44'),(24,11,6,'2002-05-31 12:26:44','2002-05-31 11:26:44'),(25,0,2,'2002-05-31 12:30:39','2002-05-31 11:30:39'),(26,0,3,'2002-05-31 12:30:39','2002-05-31 11:30:39'),(27,26,4,'2002-05-31 12:30:39','2002-05-31 11:30:39'),(28,26,5,'2002-05-31 12:30:39','2002-05-31 11:30:39'),(29,28,6,'2002-05-31 12:30:39','2002-05-31 11:30:39'),(42,14,1,'2003-03-21 12:45:01','2003-03-21 12:45:01'),(43,15,2,'2003-10-20 01:11:55','2003-10-20 00:11:55'),(44,15,3,'2003-10-20 01:11:55','2003-10-20 00:11:55'),(45,15,4,'2003-10-20 01:11:55','2003-10-20 00:11:55'),(46,15,5,'2003-10-20 01:11:55','2003-10-20 00:11:55'),(47,15,6,'2003-10-20 01:11:55','2003-10-20 00:11:55'),(48,18,3,'2005-09-08 17:00:54','2005-09-08 16:00:54'),(49,18,4,'2005-09-08 17:00:54','2005-09-08 16:00:54'),(50,18,5,'2005-09-08 17:00:54','2005-09-08 16:00:54');
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `phplist_listmessage` ENABLE KEYS */;
 
@@ -635,7 +801,7 @@ CREATE TABLE `phplist_listrss` (
   `type` varchar(255) default NULL,
   `entered` datetime default NULL,
   `info` text
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_listrss`
@@ -657,9 +823,9 @@ CREATE TABLE `phplist_listuser` (
   `userid` int(11) NOT NULL default '0',
   `listid` int(11) NOT NULL default '0',
   `entered` datetime default NULL,
-  `modified` timestamp NOT NULL,
+  `modified` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   PRIMARY KEY  (`userid`,`listid`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_listuser`
@@ -668,7 +834,7 @@ CREATE TABLE `phplist_listuser` (
 
 /*!40000 ALTER TABLE `phplist_listuser` DISABLE KEYS */;
 LOCK TABLES `phplist_listuser` WRITE;
-INSERT INTO `phplist_listuser` VALUES (1,1,NULL,'2005-09-08 16:37:06'),(3,1,'2002-05-31 09:51:36','2002-05-31 09:51:36'),(4,1,NULL,'2005-09-08 16:38:14'),(1,6,NULL,'2005-09-08 16:37:06'),(1,5,NULL,'2005-09-08 16:37:06'),(5,1,NULL,'2005-09-08 16:39:11'),(3,6,'2002-08-09 17:38:35','2002-08-09 17:38:35'),(5,6,NULL,'2005-09-08 16:39:11'),(5,2,NULL,'2005-09-08 16:39:11'),(1,4,NULL,'2005-09-08 16:37:06'),(1,2,NULL,'2005-09-08 16:37:06'),(8,6,NULL,'2005-09-08 16:43:47'),(8,5,NULL,'2005-09-08 16:43:47');
+INSERT INTO `phplist_listuser` VALUES (1,1,NULL,'2005-09-08 15:37:06'),(3,1,NULL,'2006-12-13 01:47:59'),(4,1,NULL,'2005-09-08 15:38:14'),(1,6,NULL,'2005-09-08 15:37:06'),(1,5,NULL,'2005-09-08 15:37:06'),(5,1,NULL,'2005-09-08 15:39:11'),(3,6,NULL,'2006-12-13 01:47:59'),(5,6,NULL,'2005-09-08 15:39:11'),(5,2,NULL,'2005-09-08 15:39:11'),(1,4,NULL,'2005-09-08 15:37:06'),(1,2,NULL,'2005-09-08 15:37:06'),(8,6,NULL,'2005-09-08 15:43:47'),(8,5,NULL,'2005-09-08 15:43:47');
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `phplist_listuser` ENABLE KEYS */;
 
@@ -686,7 +852,7 @@ CREATE TABLE `phplist_message` (
   `message` text,
   `footer` text,
   `entered` datetime default NULL,
-  `modified` timestamp NOT NULL,
+  `modified` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   `status` varchar(255) default NULL,
   `processed` mediumint(8) unsigned default '0',
   `userselection` text,
@@ -709,7 +875,7 @@ CREATE TABLE `phplist_message` (
   `repeatuntil` datetime default NULL,
   `textmessage` text,
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_message`
@@ -718,7 +884,7 @@ CREATE TABLE `phplist_message` (
 
 /*!40000 ALTER TABLE `phplist_message` DISABLE KEYS */;
 LOCK TABLES `phplist_message` WRITE;
-INSERT INTO `phplist_message` VALUES (2,'Demo','Demo','','','\r\n<b>Hello [NAME]</b><br/><br/>\r\nThis is a test message</br>\r\n\r\n','--\r\nTo unsubscribe from this list visit [UNSUBSCRIBE]\r\n\r\nTo update your preferences visit [PREFERENCES]\r\n','2002-05-31 09:57:18','2002-05-31 09:57:23','sent',4,'select distinct userid from user_attribute','2002-05-31 09:57:23',1,'HTML',1,1,3,0,0,0,NULL,0,0,NULL,NULL,NULL,0,NULL,NULL),(3,'Prepared Message','Prepared Message Demo','','','\r\n<b>Hello [NAME]</b><br/>\r\n<br/>\r\n\r\nThis is a Demo message',' ','2002-05-31 11:57:44','2002-05-31 11:57:44','prepared',0,'select distinct userid from phplist_user_user_attribute',NULL,1,'both',1,0,0,0,0,0,NULL,0,0,NULL,NULL,NULL,0,NULL,NULL),(11,'message 2','me','','','hi\n##LISTOWNER=4','--\r\nTo unsubscribe from this list visit [UNSUBSCRIBE]\r\n\r\nTo update your preferences visit [PREFERENCES]\r\n','2002-05-31 12:26:44','2002-08-09 17:38:45','sent',1,NULL,'2002-08-09 17:38:45',0,'both',1,0,0,1,0,0,NULL,0,0,NULL,NULL,NULL,0,NULL,NULL),(14,'Demo Message','Demo User','','','\r\nHi [NAME]\r\n\r\nIt is now possible to add configuration variables to the messages. Something like this:\r\n\r\nthe reports go to [report_address]\r\n\r\nour website is at [website]\r\n\r\nour domain is [domain]\r\n\r\n','--\r\nTo unsubscribe from this list visit [UNSUBSCRIBE]\r\n\r\nTo update your preferences visit [PREFERENCES]\r\n','2003-03-21 12:45:01','2003-03-21 12:45:40','sent',3,'select distinct userid from phplist_user_user_attribute','2003-03-21 12:45:06',0,'both',2,0,0,3,5,0,'2003-03-21 12:45:04',0,0,NULL,NULL,NULL,0,NULL,NULL),(15,'Your daily email','Webmaster noreply@phplist.michiel','','','\r\nThese are the latest entries:\r\n[RSS]','--\r\nTo unsubscribe from this list visit [UNSUBSCRIBE]\r\n\r\nTo update your preferences visit [PREFERENCES]\r\n','2003-10-20 01:11:55','2005-09-08 15:16:11','sent',3,'select distinct userid from phplist_user_user_attribute','2005-09-08 15:16:11',0,'text and HTML',2,0,0,0,0,0,'2005-09-08 15:16:04',0,0,'daily',1,'2004-03-04 19:03:22',0,NULL,NULL),(18,'Test Message','Webmaster noreply@mydomain.com','','','<br />Hello [NAME]<br /><br />This is a test message. We are using <a href=\"http://www.phplist.com\">phplist.</a><br />Thanks, cheers','--\r\nTo unsubscribe from this list visit [UNSUBSCRIBE]\r\n\r\nTo update your preferences visit [PREFERENCES]\r\n','2005-09-08 16:47:44','2005-09-08 17:00:54','submitted',0,NULL,NULL,1,'text and HTML',1,0,0,0,0,0,NULL,0,0,'',1,'2005-09-08 16:47:00',0,'2005-09-08 16:47:44','');
+INSERT INTO `phplist_message` VALUES (2,'Demo','Demo','','','\r\n<b>Hello [NAME]</b><br/><br/>\r\nThis is a test message</br>\r\n\r\n','--\r\nTo unsubscribe from this list visit [UNSUBSCRIBE]\r\n\r\nTo update your preferences visit [PREFERENCES]\r\n','2002-05-31 09:57:18','2002-05-31 08:57:23','sent',4,'select distinct userid from user_attribute','2002-05-31 09:57:23',1,'HTML',1,1,3,0,0,0,NULL,0,0,NULL,NULL,NULL,0,NULL,NULL),(3,'Prepared Message','Prepared Message Demo','','','\r\n<b>Hello [NAME]</b><br/>\r\n<br/>\r\n\r\nThis is a Demo message',' ','2002-05-31 11:57:44','2002-05-31 10:57:44','prepared',0,'select distinct userid from phplist_user_user_attribute',NULL,1,'both',1,0,0,0,0,0,NULL,0,0,NULL,NULL,NULL,0,NULL,NULL),(11,'message 2','me','','','hi\n##LISTOWNER=4','--\r\nTo unsubscribe from this list visit [UNSUBSCRIBE]\r\n\r\nTo update your preferences visit [PREFERENCES]\r\n','2002-05-31 12:26:44','2002-08-09 16:38:45','sent',1,NULL,'2002-08-09 17:38:45',0,'both',1,0,0,1,0,0,NULL,0,0,NULL,NULL,NULL,0,NULL,NULL),(14,'Demo Message','Demo User','','','\r\nHi [NAME]\r\n\r\nIt is now possible to add configuration variables to the messages. Something like this:\r\n\r\nthe reports go to [report_address]\r\n\r\nour website is at [website]\r\n\r\nour domain is [domain]\r\n\r\n','--\r\nTo unsubscribe from this list visit [UNSUBSCRIBE]\r\n\r\nTo update your preferences visit [PREFERENCES]\r\n','2003-03-21 12:45:01','2003-03-21 12:45:40','sent',3,'select distinct userid from phplist_user_user_attribute','2003-03-21 12:45:06',0,'both',2,0,0,3,5,0,'2003-03-21 12:45:04',0,0,NULL,NULL,NULL,0,NULL,NULL),(15,'Your daily email','Webmaster noreply@phplist.michiel','','','\r\nThese are the latest entries:\r\n[RSS]','--\r\nTo unsubscribe from this list visit [UNSUBSCRIBE]\r\n\r\nTo update your preferences visit [PREFERENCES]\r\n','2003-10-20 01:11:55','2005-09-08 14:16:11','sent',3,'select distinct userid from phplist_user_user_attribute','2005-09-08 15:16:11',0,'text and HTML',2,0,0,0,0,0,'2005-09-08 15:16:04',0,0,'daily',1,'2004-03-04 19:03:22',0,NULL,NULL),(18,'Test Message','Webmaster noreply@mydomain.com','','','<br />Hello [NAME]<br /><br />This is a test message. We are using <a href=\"http://www.phplist.com\">phplist.</a><br />Thanks, cheers','--\r\nTo unsubscribe from this list visit [UNSUBSCRIBE]\r\n\r\nTo update your preferences visit [PREFERENCES]\r\n','2005-09-08 16:47:44','2005-09-08 16:00:54','submitted',0,NULL,NULL,1,'text and HTML',1,0,0,0,0,0,NULL,0,0,'',1,'2005-09-08 16:47:00',0,'2005-09-08 16:47:44',''),(19,'(no subject)','','','',NULL,NULL,'2006-12-14 00:49:27','2006-12-14 00:49:27','draft',0,NULL,NULL,0,'text and HTML',0,0,0,0,0,0,NULL,0,0,NULL,1,'2006-12-14 00:49:27',0,'2006-12-14 00:49:27',NULL),(20,'(no subject)','','','',NULL,NULL,'2006-12-14 01:01:29','2006-12-14 01:01:29','draft',0,NULL,NULL,0,'text and HTML',0,0,0,0,0,0,NULL,0,0,NULL,1,'2006-12-14 01:01:29',0,'2006-12-14 01:01:29',NULL);
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `phplist_message` ENABLE KEYS */;
 
@@ -732,7 +898,7 @@ CREATE TABLE `phplist_message_attachment` (
   `messageid` int(11) NOT NULL default '0',
   `attachmentid` int(11) NOT NULL default '0',
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_message_attachment`
@@ -754,7 +920,7 @@ CREATE TABLE `phplist_messagedata` (
   `id` int(11) NOT NULL default '0',
   `data` text,
   PRIMARY KEY  (`name`,`id`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_messagedata`
@@ -784,7 +950,7 @@ CREATE TABLE `phplist_rssitem` (
   `ashtml` int(11) default '0',
   PRIMARY KEY  (`id`),
   KEY `title` (`title`,`link`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_rssitem`
@@ -807,7 +973,7 @@ CREATE TABLE `phplist_rssitem_data` (
   `tag` varchar(100) NOT NULL default '',
   `data` text,
   PRIMARY KEY  (`itemid`,`tag`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_rssitem_data`
@@ -828,9 +994,9 @@ DROP TABLE IF EXISTS `phplist_rssitem_user`;
 CREATE TABLE `phplist_rssitem_user` (
   `itemid` int(11) NOT NULL default '0',
   `userid` int(11) NOT NULL default '0',
-  `entered` timestamp NOT NULL,
+  `entered` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   PRIMARY KEY  (`itemid`,`userid`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_rssitem_user`
@@ -850,12 +1016,12 @@ DROP TABLE IF EXISTS `phplist_sendprocess`;
 CREATE TABLE `phplist_sendprocess` (
   `id` int(11) NOT NULL auto_increment,
   `started` datetime default NULL,
-  `modified` timestamp NOT NULL,
+  `modified` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   `alive` int(11) default '1',
   `ipaddress` varchar(50) default NULL,
   `page` varchar(100) default NULL,
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_sendprocess`
@@ -864,7 +1030,7 @@ CREATE TABLE `phplist_sendprocess` (
 
 /*!40000 ALTER TABLE `phplist_sendprocess` DISABLE KEYS */;
 LOCK TABLES `phplist_sendprocess` WRITE;
-INSERT INTO `phplist_sendprocess` VALUES (1,'2002-05-31 09:53:52','2002-05-31 09:53:57',0,'127.0.0.1',NULL),(2,'2002-05-31 09:57:19','2002-05-31 09:57:23',0,'127.0.0.1',NULL),(3,'2002-05-31 11:58:23','2002-05-31 11:58:25',0,'127.0.0.1',NULL),(4,'2002-05-31 11:58:51','2002-05-31 11:58:55',0,'127.0.0.1',NULL),(5,'2002-05-31 11:59:19','2002-05-31 11:59:19',0,'127.0.0.1',NULL),(6,'2002-05-31 12:24:04','2002-05-31 12:24:04',0,'127.0.0.1',NULL),(7,'2002-05-31 12:26:02','2002-05-31 12:26:02',0,'127.0.0.1',NULL),(8,'2002-05-31 12:31:08','2002-05-31 12:31:10',0,'127.0.0.1',NULL),(9,'2002-05-31 12:32:26','2002-05-31 12:32:26',0,'127.0.0.1',NULL);
+INSERT INTO `phplist_sendprocess` VALUES (1,'2002-05-31 09:53:52','2002-05-31 08:53:57',0,'127.0.0.1',NULL),(2,'2002-05-31 09:57:19','2002-05-31 08:57:23',0,'127.0.0.1',NULL),(3,'2002-05-31 11:58:23','2002-05-31 10:58:25',0,'127.0.0.1',NULL),(4,'2002-05-31 11:58:51','2002-05-31 10:58:55',0,'127.0.0.1',NULL),(5,'2002-05-31 11:59:19','2002-05-31 10:59:19',0,'127.0.0.1',NULL),(6,'2002-05-31 12:24:04','2002-05-31 11:24:04',0,'127.0.0.1',NULL),(7,'2002-05-31 12:26:02','2002-05-31 11:26:02',0,'127.0.0.1',NULL),(8,'2002-05-31 12:31:08','2002-05-31 11:31:10',0,'127.0.0.1',NULL),(9,'2002-05-31 12:32:26','2002-05-31 11:32:26',0,'127.0.0.1',NULL);
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `phplist_sendprocess` ENABLE KEYS */;
 
@@ -879,7 +1045,7 @@ CREATE TABLE `phplist_subscribepage` (
   `active` tinyint(4) default '0',
   `owner` int(11) default NULL,
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_subscribepage`
@@ -888,7 +1054,7 @@ CREATE TABLE `phplist_subscribepage` (
 
 /*!40000 ALTER TABLE `phplist_subscribepage` DISABLE KEYS */;
 LOCK TABLES `phplist_subscribepage` WRITE;
-INSERT INTO `phplist_subscribepage` VALUES (1,'Name Only',1,NULL),(2,'Everything',1,1),(3,'Email Only',1,1);
+INSERT INTO `phplist_subscribepage` VALUES (1,'Name Only',1,NULL),(2,'Everything',1,1),(3,'Email Only',1,1),(4,'Encryption',1,1),(5,'French',1,1);
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `phplist_subscribepage` ENABLE KEYS */;
 
@@ -902,7 +1068,7 @@ CREATE TABLE `phplist_subscribepage_data` (
   `name` varchar(100) NOT NULL default '',
   `data` text,
   PRIMARY KEY  (`id`,`name`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_subscribepage_data`
@@ -911,7 +1077,7 @@ CREATE TABLE `phplist_subscribepage_data` (
 
 /*!40000 ALTER TABLE `phplist_subscribepage_data` DISABLE KEYS */;
 LOCK TABLES `phplist_subscribepage_data` WRITE;
-INSERT INTO `phplist_subscribepage_data` VALUES (1,'title','Name Only'),(1,'intro','Subscribe to one or more of our mailing lists using the form below'),(1,'header','<link href=\"styles/phplist.css\" type=text/css rel=stylesheet>\r\n</head>\r\n<body bgcolor=\"#ffffff\" background=\"images/bg.png\">\r\n<a name=\"top\"></a>\r\n<div align=center>\r\n<table cellspacing=0 cellpadding=0 width=710 border=0>\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\" rowspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=708 border=0></td>\r\n<td bgcolor=\"#000000\" rowspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr valign=\"top\">\r\n<td>\r\n<!--TOP TABLE starts-->\r\n<table cellspacing=0 cellpadding=0 width=708 border=\"0\" bgcolor=\"#ffffff\">\r\n\r\n<tr valign=\"top\">\r\n<td height=\"41\" background=\"images/top01.png\" colspan=\"2\">\r\n<span class=\"phphead\"><a href=\"http://www.phplist.com\" class=\"phphead\"><b>PHP</b>list</a></span></td>\r\n<td background=\"images/top02.png\" align=\"left\">\r\n<font size=\"-2\">&nbsp;<i>powered by:\r\n</i><br />&nbsp;<b>[<a class=\"powered\" href=\"http://www.php.net/\" target=\"_new\"><i>PHP</i></a>]</b> + <b>[<a class=\"powered\" href=\"http://www.mysql.com/\" target=\"_new\">mySQL</a>]</b></font></td>\r\n</tr>\r\n\r\n<tr valign=\"bottom\">\r\n<td><img src=\"images/top03a.png\" width=20 height=34 alt=\"\" border=\"0\"></td>\r\n<td background=\"images/top03b.png\" height=\"34\"><!--hello <b>ben</b>:&nbsp;<a class=\"urhere\" href=\"\">you are here &gt; main admin</a>-->\r\n<td width=\"132\" valign=\"bottom\" background=\"images/top04.png\"><span class=\"webblermenu\">PHPlist</span></td>\r\n</tr>\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=20 border=0></td>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=576 border=0></td>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=132 border=0></td>\r\n</tr>\r\n\r\n<tr valign=\"top\">\r\n<td>&nbsp;</td>\r\n<td>\r\n<br />\r\n'),(1,'footer','</td>\r\n<td>\r\n&nbsp;</td>\r\n</tr>\r\n\r\n\r\n\r\n\r\n<tr><td colspan=\"4\">&nbsp;</td></tr>\r\n\r\n\r\n\r\n<tr><td colspan=\"4\">&nbsp;</td></tr>\r\n</table>\r\n<!--TOP TABLE ends-->\r\n\r\n</td></tr>\r\n\r\n<!-- main page content-->\r\n\r\n<!-- end of main page content--><!-- bottom black line-->\r\n<tr>\r\n<td bgcolor=\"#000000\" colspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n<td bgcolor=\"#ff9900\" class=\"bottom\">&copy; <a href=\"http://tincan.co.uk\" target=\"_tincan\" class=\"urhere\">tincan limited</a> | <a class=\"urhere\" href=\"http://www.phplist.com\" target=\"_blank\">phplist</a> - version <?=VERSION?></td>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\" colspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td colspan=3><img height=3 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td colspan=3>\r\n&nbsp;\r\n</td>\r\n</tr>\r\n</tbody>\r\n</table>\r\n\r\n</div>\r\n</body></html>\r\n'),(1,'button','Subscribe to the Selected Mailinglists'),(1,'htmlchoice','radiohtml'),(1,'attribute001','1######1###1'),(1,'attributes','1+'),(1,'lists','3,4,5,6'),(3,'htmlchoice','htmlonly'),(3,'emaildoubleentry','yes'),(2,'lists','2,3,4,5,6'),(2,'attributes','1+2+3+4+5+6+10+9+11+12+'),(2,'attribute012','12######10###1'),(2,'attribute011','11###Please use this area to describe how you think that the persons who make open source software actually make a living, if you didn\'t pay them any money?###9###1'),(2,'attribute009','9######8###1'),(2,'attribute010','10######7###'),(2,'attribute006','6###Checked###6###'),(2,'attribute005','5###Checked###5###'),(2,'attribute004','4###Checked###4###'),(3,'title','Email Only'),(3,'intro','Subscribe to one or more of our mailing lists using the form below'),(3,'header','<link href=\"styles/phplist.css\" type=text/css rel=stylesheet>\r\n</head>\r\n<body bgcolor=\"#ffffff\">\r\n<a name=\"top\"></a>\r\n<div align=center>\r\n<table cellspacing=0 cellpadding=0 width=710 border=0>\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\" rowspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=708 border=0></td>\r\n<td bgcolor=\"#000000\" rowspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr valign=\"top\">\r\n<td>\r\n<!--TOP TABLE starts-->\r\n<table cellspacing=0 cellpadding=0 width=708 border=\"0\" bgcolor=\"#ffffff\">\r\n\r\n<tr valign=\"top\">\r\n<td height=\"41\" background=\"images/top01.png\" colspan=\"2\">\r\n<span class=\"phphead\"><a href=\"http://www.phplist.com\" class=\"phphead\"><b>PHP</b>list</a></span></td>\r\n<td background=\"images/top02.png\" align=\"left\">\r\n<font size=\"-2\">&nbsp;<i>powered by:\r\n</i><br />&nbsp;<b>[<a class=\"powered\" href=\"http://www.php.net/\" target=\"_new\"><i>PHP</i></a>]</b> + <b>[<a class=\"powered\" href=\"http://www.mysql.com/\" target=\"_new\">mySQL</a>]</b></font></td>\r\n</tr>\r\n\r\n<tr valign=\"bottom\">\r\n<td><img src=\"images/top03a.png\" width=20 height=34 alt=\"\" border=\"0\"></td>\r\n<td background=\"images/top03b.png\" height=\"34\"><!--hello <b>ben</b>:&nbsp;<a class=\"urhere\" href=\"\">you are here &gt; main admin</a>-->\r\n<td width=\"132\" valign=\"bottom\" background=\"images/top04.png\"><span class=\"webblermenu\">PHPlist</span></td>\r\n</tr>\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=20 border=0></td>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=576 border=0></td>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=132 border=0></td>\r\n</tr>\r\n\r\n<tr valign=\"top\">\r\n<td>&nbsp;</td>\r\n<td>\r\n<br />\r\n'),(3,'footer','</td>\r\n<td>\r\n&nbsp;</td>\r\n</tr>\r\n\r\n\r\n\r\n\r\n<tr><td colspan=\"4\">&nbsp;</td></tr>\r\n\r\n\r\n\r\n<tr><td colspan=\"4\">&nbsp;</td></tr>\r\n</table>\r\n<!--TOP TABLE ends-->\r\n\r\n</td></tr>\r\n\r\n<!-- main page content-->\r\n\r\n<!-- end of main page content--><!-- bottom black line-->\r\n<tr>\r\n<td bgcolor=\"#000000\" colspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n<td bgcolor=\"#ff9900\" class=\"bottom\">&copy; <a href=\"http://tincan.co.uk\" target=\"_tincan\" class=\"urhere\">tincan limited</a> | <a class=\"urhere\" href=\"http://www.phplist.com\" target=\"_blank\">phplist</a> - version <?=VERSION?></td>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\" colspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td colspan=3><img height=3 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td colspan=3>\r\n&nbsp;\r\n</td>\r\n</tr>\r\n</tbody>\r\n</table>\r\n\r\n</div>\r\n</body></html>\r\n'),(3,'thankyoupage',''),(3,'button','Subscribe to the Selected Mailinglists'),(2,'footer','</td>\r\n<td>\r\n&nbsp;</td>\r\n</tr>\r\n\r\n\r\n\r\n\r\n<tr><td colspan=\"4\">&nbsp;</td></tr>\r\n\r\n\r\n\r\n<tr><td colspan=\"4\">&nbsp;</td></tr>\r\n</table>\r\n<!--TOP TABLE ends-->\r\n\r\n</td></tr>\r\n\r\n<!-- main page content-->\r\n\r\n<!-- end of main page content--><!-- bottom black line-->\r\n<tr>\r\n<td bgcolor=\"#000000\" colspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n<td bgcolor=\"#ff9900\" class=\"bottom\">&copy; <a href=\"http://tincan.co.uk\" target=\"_tincan\" class=\"urhere\">tincan limited</a> | <a class=\"urhere\" href=\"http://www.phplist.com\" target=\"_blank\">phplist</a> - version <?=VERSION?></td>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\" colspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td colspan=3><img height=3 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td colspan=3>\r\n&nbsp;\r\n</td>\r\n</tr>\r\n</tbody>\r\n</table>\r\n\r\n</div>\r\n</body></html>\r\n'),(2,'thankyoupage',''),(2,'button','Subscribe to the Selected Mailinglists'),(2,'htmlchoice','checkforhtml'),(2,'emaildoubleentry',''),(2,'attribute001','1######1###1'),(2,'attribute002','2###Netherlands###2###1'),(2,'attribute003','3######3###'),(2,'header','<link href=\"styles/phplist.css\" type=text/css rel=stylesheet>\r\n</head>\r\n<body bgcolor=\"#ffffff\" background=\"images/bg.png\">\r\n<a name=\"top\"></a>\r\n<div align=center>\r\n<table cellspacing=0 cellpadding=0 width=710 border=0>\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\" rowspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=708 border=0></td>\r\n<td bgcolor=\"#000000\" rowspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr valign=\"top\">\r\n<td>\r\n<!--TOP TABLE starts-->\r\n<table cellspacing=0 cellpadding=0 width=708 border=\"0\" bgcolor=\"#ffffff\">\r\n\r\n<tr valign=\"top\">\r\n<td height=\"41\" colspan=\"2\">\r\n<span class=\"phphead\"><a href=\"http://www.phplist.com\" class=\"phphead\"><b>PHP</b>list</a></span></td>\r\n<td align=\"left\">\r\n<font size=\"-2\">&nbsp;<i>powered by:\r\n</i><br />&nbsp;<b>[<a class=\"powered\" href=\"http://www.php.net/\" target=\"_new\"><i>PHP</i></a>]</b> + <b>[<a class=\"powered\" href=\"http://www.mysql.com/\" target=\"_new\">mySQL</a>]</b></font></td>\r\n</tr>\r\n\r\n<tr valign=\"bottom\">\r\n<td></td>\r\n<td height=\"34\"><td width=\"132\" valign=\"bottom\" background=\"images/top04.png\"><span class=\"webblermenu\">PHPlist</span></td>\r\n</tr>\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=20 border=0></td>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=576 border=0></td>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=132 border=0></td>\r\n</tr>\r\n\r\n<tr valign=\"top\">\r\n<td>&nbsp;</td>\r\n<td>\r\n<br />\r\n'),(2,'intro','Subscribe to one or more of our mailing lists using the form below'),(2,'title','Everything'),(3,'attributes',''),(3,'lists','2,3,4,5,6');
+INSERT INTO `phplist_subscribepage_data` VALUES (1,'title','Name Only'),(1,'intro','Subscribe to one or more of our mailing lists using the form below'),(1,'header','<link href=\"styles/phplist.css\" type=text/css rel=stylesheet>\r\n</head>\r\n<body bgcolor=\"#ffffff\" background=\"images/bg.png\">\r\n<a name=\"top\"></a>\r\n<div align=center>\r\n<table cellspacing=0 cellpadding=0 width=710 border=0>\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\" rowspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=708 border=0></td>\r\n<td bgcolor=\"#000000\" rowspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr valign=\"top\">\r\n<td>\r\n<!--TOP TABLE starts-->\r\n<table cellspacing=0 cellpadding=0 width=708 border=\"0\" bgcolor=\"#ffffff\">\r\n\r\n<tr valign=\"top\">\r\n<td height=\"41\" background=\"images/top01.png\" colspan=\"2\">\r\n<span class=\"phphead\"><a href=\"http://www.phplist.com\" class=\"phphead\"><b>PHP</b>list</a></span></td>\r\n<td background=\"images/top02.png\" align=\"left\">\r\n<font size=\"-2\">&nbsp;<i>powered by:\r\n</i><br />&nbsp;<b>[<a class=\"powered\" href=\"http://www.php.net/\" target=\"_new\"><i>PHP</i></a>]</b> + <b>[<a class=\"powered\" href=\"http://www.mysql.com/\" target=\"_new\">mySQL</a>]</b></font></td>\r\n</tr>\r\n\r\n<tr valign=\"bottom\">\r\n<td><img src=\"images/top03a.png\" width=20 height=34 alt=\"\" border=\"0\"></td>\r\n<td background=\"images/top03b.png\" height=\"34\"><!--hello <b>ben</b>:&nbsp;<a class=\"urhere\" href=\"\">you are here &gt; main admin</a>-->\r\n<td width=\"132\" valign=\"bottom\" background=\"images/top04.png\"><span class=\"webblermenu\">PHPlist</span></td>\r\n</tr>\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=20 border=0></td>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=576 border=0></td>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=132 border=0></td>\r\n</tr>\r\n\r\n<tr valign=\"top\">\r\n<td>&nbsp;</td>\r\n<td>\r\n<br />\r\n'),(1,'footer','</td>\r\n<td>\r\n&nbsp;</td>\r\n</tr>\r\n\r\n\r\n\r\n\r\n<tr><td colspan=\"4\">&nbsp;</td></tr>\r\n\r\n\r\n\r\n<tr><td colspan=\"4\">&nbsp;</td></tr>\r\n</table>\r\n<!--TOP TABLE ends-->\r\n\r\n</td></tr>\r\n\r\n<!-- main page content-->\r\n\r\n<!-- end of main page content--><!-- bottom black line-->\r\n<tr>\r\n<td bgcolor=\"#000000\" colspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n<td bgcolor=\"#ff9900\" class=\"bottom\">&copy; <a href=\"http://tincan.co.uk\" target=\"_tincan\" class=\"urhere\">tincan limited</a> | <a class=\"urhere\" href=\"http://www.phplist.com\" target=\"_blank\">phplist</a> - version <?=VERSION?></td>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\" colspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td colspan=3><img height=3 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td colspan=3>\r\n&nbsp;\r\n</td>\r\n</tr>\r\n</tbody>\r\n</table>\r\n\r\n</div>\r\n</body></html>\r\n'),(1,'button','Subscribe to the Selected Mailinglists'),(1,'htmlchoice','radiohtml'),(1,'attribute001','1######1###1'),(1,'attributes','1+'),(1,'lists','3,4,5,6'),(3,'htmlchoice','htmlonly'),(3,'emaildoubleentry','yes'),(2,'lists','2,3,4,5,6'),(2,'attributes','1+2+3+4+5+6+10+9+11+12+'),(2,'attribute012','12######10###1'),(2,'attribute011','11###Please use this area to describe how you think that the persons who make open source software actually make a living, if you didn\'t pay them any money?###9###1'),(2,'attribute009','9######8###1'),(2,'attribute010','10######7###'),(2,'attribute006','6###Checked###6###'),(2,'attribute005','5###Checked###5###'),(2,'attribute004','4###Checked###4###'),(3,'title','Email Only'),(3,'intro','Subscribe to one or more of our mailing lists using the form below'),(3,'header','<link href=\"styles/phplist.css\" type=text/css rel=stylesheet>\r\n</head>\r\n<body bgcolor=\"#ffffff\">\r\n<a name=\"top\"></a>\r\n<div align=center>\r\n<table cellspacing=0 cellpadding=0 width=710 border=0>\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\" rowspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=708 border=0></td>\r\n<td bgcolor=\"#000000\" rowspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr valign=\"top\">\r\n<td>\r\n<!--TOP TABLE starts-->\r\n<table cellspacing=0 cellpadding=0 width=708 border=\"0\" bgcolor=\"#ffffff\">\r\n\r\n<tr valign=\"top\">\r\n<td height=\"41\" background=\"images/top01.png\" colspan=\"2\">\r\n<span class=\"phphead\"><a href=\"http://www.phplist.com\" class=\"phphead\"><b>PHP</b>list</a></span></td>\r\n<td background=\"images/top02.png\" align=\"left\">\r\n<font size=\"-2\">&nbsp;<i>powered by:\r\n</i><br />&nbsp;<b>[<a class=\"powered\" href=\"http://www.php.net/\" target=\"_new\"><i>PHP</i></a>]</b> + <b>[<a class=\"powered\" href=\"http://www.mysql.com/\" target=\"_new\">mySQL</a>]</b></font></td>\r\n</tr>\r\n\r\n<tr valign=\"bottom\">\r\n<td><img src=\"images/top03a.png\" width=20 height=34 alt=\"\" border=\"0\"></td>\r\n<td background=\"images/top03b.png\" height=\"34\"><!--hello <b>ben</b>:&nbsp;<a class=\"urhere\" href=\"\">you are here &gt; main admin</a>-->\r\n<td width=\"132\" valign=\"bottom\" background=\"images/top04.png\"><span class=\"webblermenu\">PHPlist</span></td>\r\n</tr>\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=20 border=0></td>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=576 border=0></td>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=132 border=0></td>\r\n</tr>\r\n\r\n<tr valign=\"top\">\r\n<td>&nbsp;</td>\r\n<td>\r\n<br />\r\n'),(3,'footer','</td>\r\n<td>\r\n&nbsp;</td>\r\n</tr>\r\n\r\n\r\n\r\n\r\n<tr><td colspan=\"4\">&nbsp;</td></tr>\r\n\r\n\r\n\r\n<tr><td colspan=\"4\">&nbsp;</td></tr>\r\n</table>\r\n<!--TOP TABLE ends-->\r\n\r\n</td></tr>\r\n\r\n<!-- main page content-->\r\n\r\n<!-- end of main page content--><!-- bottom black line-->\r\n<tr>\r\n<td bgcolor=\"#000000\" colspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n<td bgcolor=\"#ff9900\" class=\"bottom\">&copy; <a href=\"http://tincan.co.uk\" target=\"_tincan\" class=\"urhere\">tincan limited</a> | <a class=\"urhere\" href=\"http://www.phplist.com\" target=\"_blank\">phplist</a> - version <?=VERSION?></td>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\" colspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td colspan=3><img height=3 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td colspan=3>\r\n&nbsp;\r\n</td>\r\n</tr>\r\n</tbody>\r\n</table>\r\n\r\n</div>\r\n</body></html>\r\n'),(3,'thankyoupage',''),(3,'button','Subscribe to the Selected Mailinglists'),(2,'footer','</td>\r\n<td>\r\n&nbsp;</td>\r\n</tr>\r\n\r\n\r\n\r\n\r\n<tr><td colspan=\"4\">&nbsp;</td></tr>\r\n\r\n\r\n\r\n<tr><td colspan=\"4\">&nbsp;</td></tr>\r\n</table>\r\n<!--TOP TABLE ends-->\r\n\r\n</td></tr>\r\n\r\n<!-- main page content-->\r\n\r\n<!-- end of main page content--><!-- bottom black line-->\r\n<tr>\r\n<td bgcolor=\"#000000\" colspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n<td bgcolor=\"#ff9900\" class=\"bottom\">&copy; <a href=\"http://tincan.co.uk\" target=\"_tincan\" class=\"urhere\">tincan limited</a> | <a class=\"urhere\" href=\"http://www.phplist.com\" target=\"_blank\">phplist</a> - version <?=VERSION?></td>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\" colspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td colspan=3><img height=3 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td colspan=3>\r\n&nbsp;\r\n</td>\r\n</tr>\r\n</tbody>\r\n</table>\r\n\r\n</div>\r\n</body></html>\r\n'),(2,'thankyoupage',''),(2,'button','Subscribe to the Selected Mailinglists'),(2,'htmlchoice','checkforhtml'),(2,'emaildoubleentry',''),(2,'attribute001','1######1###1'),(2,'attribute002','2###Netherlands###2###1'),(2,'attribute003','3######3###'),(2,'header','<link href=\"styles/phplist.css\" type=text/css rel=stylesheet>\r\n</head>\r\n<body bgcolor=\"#ffffff\" background=\"images/bg.png\">\r\n<a name=\"top\"></a>\r\n<div align=center>\r\n<table cellspacing=0 cellpadding=0 width=710 border=0>\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\" rowspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=708 border=0></td>\r\n<td bgcolor=\"#000000\" rowspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr valign=\"top\">\r\n<td>\r\n<!--TOP TABLE starts-->\r\n<table cellspacing=0 cellpadding=0 width=708 border=\"0\" bgcolor=\"#ffffff\">\r\n\r\n<tr valign=\"top\">\r\n<td height=\"41\" colspan=\"2\">\r\n<span class=\"phphead\"><a href=\"http://www.phplist.com\" class=\"phphead\"><b>PHP</b>list</a></span></td>\r\n<td align=\"left\">\r\n<font size=\"-2\">&nbsp;<i>powered by:\r\n</i><br />&nbsp;<b>[<a class=\"powered\" href=\"http://www.php.net/\" target=\"_new\"><i>PHP</i></a>]</b> + <b>[<a class=\"powered\" href=\"http://www.mysql.com/\" target=\"_new\">mySQL</a>]</b></font></td>\r\n</tr>\r\n\r\n<tr valign=\"bottom\">\r\n<td></td>\r\n<td height=\"34\"><td width=\"132\" valign=\"bottom\" background=\"images/top04.png\"><span class=\"webblermenu\">PHPlist</span></td>\r\n</tr>\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=20 border=0></td>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=576 border=0></td>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=132 border=0></td>\r\n</tr>\r\n\r\n<tr valign=\"top\">\r\n<td>&nbsp;</td>\r\n<td>\r\n<br />\r\n'),(2,'intro','Subscribe to one or more of our mailing lists using the form below'),(2,'title','Everything'),(3,'attributes',''),(3,'lists','2,3,4,5,6'),(4,'title','Encryption'),(4,'language_file','english-usa.inc'),(4,'intro','Subscribe to one or more of our newsletters using the form below\r\n\r\nPlease make sure to upload your public key to receive the emails encrypted.'),(4,'header','<link href=\"styles/phplist.css\" type=\"text/css\" rel=\"stylesheet\">\r\n</head>\r\n<body bgcolor=\"#ffffff\" background=\"images/bg.png\">\r\n<a name=\"top\"></a>\r\n<div align=center>\r\n<table cellspacing=0 cellpadding=0 width=710 border=0>\r\n<tr>\r\n<td bgcolor=\"#000000\" rowspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=708 border=0></td>\r\n<td bgcolor=\"#000000\" rowspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr valign=\"top\" align=\"left\">\r\n<td>\r\n<!--TOP TABLE starts-->\r\n<TABLE cellSpacing=0 cellPadding=0 width=708 bgColor=#ffffff border=0>\r\n  <TR vAlign=top>\r\n    <TD colSpan=2 rowspan=\"2\" height=\"63\" background=\"images/topstrip.png\"><a href=\"http://www.phplist.com\" target=\"_blank\"><img src=\"images/masthead.png\" border=0 width=577 height=75></a></TD>\r\n    <TD align=left\r\n      background=\"images/topstrip.png\" bgcolor=\"#F0D1A3\"><FONT\r\n      size=-2>&nbsp;<I>powered by: </I><BR>&nbsp;<B>[<A class=powered\r\n      href=\"http://www.php.net/\" target=_new><I>PHP</I></A>]</B> + <B>[<A\r\n      class=powered href=\"http://www.mysql.com/\"\r\n      target=_new>mySQL</A>]</B></FONT></TD></TR>\r\n  <TR vAlign=bottom>\r\n    <TD vAlign=bottom width=132\r\n    background=\"images/topright.png\" bgcolor=\"#F0D1A3\"><SPAN\r\n      class=webblermenu>PHPlist</SPAN></TD></TR>\r\n  <TR>\r\n    <TD bgColor=#000000><IMG height=1 alt=\"\"\r\n      src=\"images/transparent.png\" width=20\r\n      border=0></TD>\r\n    <TD bgColor=#000000><IMG height=1 alt=\"\"\r\n      src=\"images/transparent.png\" width=576\r\n      border=0></TD>\r\n    <TD bgColor=#000000><IMG height=1 alt=\"\"\r\n      src=\"images/transparent.png\" width=132\r\n      border=0></TD></TR>\r\n  <TR vAlign=top>\r\n    <TD>&nbsp;</TD>\r\n<td><div align=left>\r\n<br />\r\n'),(4,'footer','</div>\r\n</td>\r\n<td>\r\n<div class=\"menutableright\">\r\n\r\n</div>\r\n</td>\r\n</tr>\r\n\r\n\r\n\r\n\r\n<tr><td colspan=\"4\">&nbsp;</td></tr>\r\n\r\n\r\n\r\n<tr><td colspan=\"4\">&nbsp;</td></tr>\r\n</table>\r\n<!--TOP TABLE ends-->\r\n\r\n</td></tr>\r\n\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\" colspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n<td bgcolor=\"#ff9900\" class=\"bottom\">&copy; <a href=\"http://tincan.co.uk\" target=\"_tincan\" class=\"urhere\">tincan limited</a> | <a class=\"urhere\" href=\"http://www.phplist.com\" target=\"_blank\">phplist</a> - version <?php echo VERSION?></td>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\" colspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td colspan=3><img height=3 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td colspan=3>\r\n&nbsp;\r\n</td>\r\n</tr>\r\n</tbody>\r\n</table>\r\n\r\n</div>\r\n</body></html>\r\n'),(4,'thankyoupage','<h3>Thank you for subscribing to our newsletters.</h3>\r\nYour email has been added to our system. You will be e-mailed shortly with a request to confirm your membership. Please make sure to click the link in that message to confirm your subscription.'),(4,'button','Subscribe to the Selected Newsletters'),(4,'htmlchoice','htmlonly'),(4,'emaildoubleentry','yes'),(4,'attribute014','14######4###1'),(4,'attribute001','1######1###1'),(4,'attribute002','2###Netherlands###3###1'),(4,'attribute013','13######2###1'),(4,'attributes','14+1+2+13+'),(4,'lists','3,4'),(5,'title','French'),(5,'language_file','french.inc'),(5,'intro','Subscribe to one or more of our newsletters using the form below'),(5,'header','<link href=\"styles/phplist.css\" type=\"text/css\" rel=\"stylesheet\">\r\n</head>\r\n<body bgcolor=\"#ffffff\" background=\"images/bg.png\">\r\n<a name=\"top\"></a>\r\n<div align=center>\r\n<table cellspacing=0 cellpadding=0 width=710 border=0>\r\n<tr>\r\n<td bgcolor=\"#000000\" rowspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=708 border=0></td>\r\n<td bgcolor=\"#000000\" rowspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr valign=\"top\" align=\"left\">\r\n<td>\r\n<!--TOP TABLE starts-->\r\n<TABLE cellSpacing=0 cellPadding=0 width=708 bgColor=#ffffff border=0>\r\n  <TR vAlign=top>\r\n    <TD colSpan=2 rowspan=\"2\" height=\"63\" background=\"images/topstrip.png\"><a href=\"http://www.phplist.com\" target=\"_blank\"><img src=\"images/masthead.png\" border=0 width=577 height=75></a></TD>\r\n    <TD align=left\r\n      background=\"images/topstrip.png\" bgcolor=\"#F0D1A3\"><FONT\r\n      size=-2>&nbsp;<I>powered by: </I><BR>&nbsp;<B>[<A class=powered\r\n      href=\"http://www.php.net/\" target=_new><I>PHP</I></A>]</B> + <B>[<A\r\n      class=powered href=\"http://www.mysql.com/\"\r\n      target=_new>mySQL</A>]</B></FONT></TD></TR>\r\n  <TR vAlign=bottom>\r\n    <TD vAlign=bottom width=132\r\n    background=\"images/topright.png\" bgcolor=\"#F0D1A3\"><SPAN\r\n      class=webblermenu>PHPlist</SPAN></TD></TR>\r\n  <TR>\r\n    <TD bgColor=#000000><IMG height=1 alt=\"\"\r\n      src=\"images/transparent.png\" width=20\r\n      border=0></TD>\r\n    <TD bgColor=#000000><IMG height=1 alt=\"\"\r\n      src=\"images/transparent.png\" width=576\r\n      border=0></TD>\r\n    <TD bgColor=#000000><IMG height=1 alt=\"\"\r\n      src=\"images/transparent.png\" width=132\r\n      border=0></TD></TR>\r\n  <TR vAlign=top>\r\n    <TD>&nbsp;</TD>\r\n<td><div align=left>\r\n<br />\r\n'),(5,'footer','</div>\r\n</td>\r\n<td>\r\n<div class=\"menutableright\">\r\n\r\n</div>\r\n</td>\r\n</tr>\r\n\r\n\r\n\r\n\r\n<tr><td colspan=\"4\">&nbsp;</td></tr>\r\n\r\n\r\n\r\n<tr><td colspan=\"4\">&nbsp;</td></tr>\r\n</table>\r\n<!--TOP TABLE ends-->\r\n\r\n</td></tr>\r\n\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\" colspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n<td bgcolor=\"#ff9900\" class=\"bottom\">&copy; <a href=\"http://tincan.co.uk\" target=\"_tincan\" class=\"urhere\">tincan limited</a> | <a class=\"urhere\" href=\"http://www.phplist.com\" target=\"_blank\">phplist</a> - version <?php echo VERSION?></td>\r\n<td bgcolor=\"#000000\"><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td bgcolor=\"#000000\" colspan=3><img height=1 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td colspan=3><img height=3 alt=\"\" src=\"images/transparent.png\" width=1 border=0></td>\r\n</tr>\r\n\r\n<tr>\r\n<td colspan=3>\r\n&nbsp;\r\n</td>\r\n</tr>\r\n</tbody>\r\n</table>\r\n\r\n</div>\r\n</body></html>\r\n'),(5,'thankyoupage','<h3>Thank you for subscribing to our newsletters.</h3>\r\nYour email has been added to our system. You will be e-mailed shortly with a request to confirm your membership. Please make sure to click the link in that message to confirm your subscription.'),(5,'button','Subscribe to the Selected Newsletters'),(5,'htmlchoice','checkforhtml'),(5,'emaildoubleentry','yes'),(5,'attribute001','1######1###1'),(5,'attribute013','13######2###1'),(5,'attributes','1+13+'),(5,'lists','3,4');
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `phplist_subscribepage_data` ENABLE KEYS */;
 
@@ -926,7 +1092,7 @@ CREATE TABLE `phplist_task` (
   `type` varchar(25) default NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `page` (`page`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_task`
@@ -935,7 +1101,7 @@ CREATE TABLE `phplist_task` (
 
 /*!40000 ALTER TABLE `phplist_task` DISABLE KEYS */;
 LOCK TABLES `phplist_task` WRITE;
-INSERT INTO `phplist_task` VALUES (1,'adminattributes','system'),(2,'attributes','system'),(3,'upgrade','system'),(4,'configure','system'),(5,'defaultconfig','system'),(6,'defaults','system'),(7,'initialise','system'),(8,'list','list'),(9,'editlist','list'),(10,'members','list'),(11,'user','user'),(12,'users','user'),(13,'dlusers','user'),(14,'editattributes','user'),(15,'import1','user'),(16,'import2','user'),(17,'import','user'),(18,'message','message'),(19,'messages','message'),(20,'processqueue','message'),(21,'send','message'),(22,'preparesend','message'),(23,'sendprepared','message'),(24,'template','message'),(25,'templates','message'),(26,'admins','admin'),(27,'admin','admin'),(28,'export','user'),(30,'bounce','system'),(31,'bounces','system'),(32,'processbounces','system'),(33,'spage','system'),(34,'spageedit','system'),(35,'import3','user'),(36,'import4','user'),(49,'eventlog','system'),(50,'reconcileusers','system'),(51,'getrss','system'),(52,'viewrss','system'),(53,'setup','system'),(244,'none','admin'),(245,'owner','admin'),(236,'all','message');
+INSERT INTO `phplist_task` VALUES (1,'adminattributes','system'),(2,'attributes','system'),(3,'upgrade','system'),(4,'configure','system'),(5,'defaultconfig','system'),(6,'defaults','system'),(7,'initialise','system'),(8,'list','list'),(9,'editlist','list'),(10,'members','list'),(11,'user','user'),(12,'users','user'),(13,'dlusers','user'),(14,'editattributes','user'),(15,'import1','user'),(16,'import2','user'),(17,'import','user'),(18,'message','message'),(19,'messages','message'),(20,'processqueue','message'),(21,'send','message'),(22,'preparesend','message'),(23,'sendprepared','message'),(24,'template','message'),(25,'templates','message'),(26,'admins','admin'),(27,'admin','admin'),(28,'export','user'),(30,'bounce','system'),(31,'bounces','system'),(32,'processbounces','system'),(33,'spage','system'),(34,'spageedit','system'),(35,'import3','user'),(36,'import4','user'),(49,'eventlog','system'),(50,'reconcileusers','system'),(51,'getrss','system'),(52,'viewrss','system'),(53,'setup','system'),(245,'owner','admin'),(246,'purgerss','system'),(247,'dbcheck','system'),(248,'usercheck','user'),(249,'massunconfirm','user'),(250,'statsmgt','clickstats'),(251,'mclicks','clickstats'),(252,'uclicks','clickstats'),(253,'userclicks','clickstats'),(254,'mviews','clickstats'),(255,'statsoverview','clickstats');
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `phplist_task` ENABLE KEYS */;
 
@@ -951,7 +1117,7 @@ CREATE TABLE `phplist_template` (
   `listorder` int(11) default NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `title` (`title`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_template`
@@ -978,7 +1144,7 @@ CREATE TABLE `phplist_templateimage` (
   `width` int(11) default NULL,
   `height` int(11) default NULL,
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_templateimage`
@@ -1004,7 +1170,7 @@ CREATE TABLE `phplist_urlcache` (
   `content` mediumtext,
   PRIMARY KEY  (`id`),
   KEY `urlindex` (`url`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_urlcache`
@@ -1030,7 +1196,7 @@ CREATE TABLE `phplist_user_attribute` (
   `required` tinyint(4) default NULL,
   `tablename` varchar(255) default NULL,
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_user_attribute`
@@ -1039,7 +1205,7 @@ CREATE TABLE `phplist_user_attribute` (
 
 /*!40000 ALTER TABLE `phplist_user_attribute` DISABLE KEYS */;
 LOCK TABLES `phplist_user_attribute` WRITE;
-INSERT INTO `phplist_user_attribute` VALUES (1,'Name','textline',1,'',1,'name'),(2,'Country','select',2,'Netherlands',1,'countries'),(3,'<b>Please check all that apply</b>','radio',3,'',0,'bpleaseche'),(4,'I think PHPlist is brilliant','checkbox',4,'Checked',0,'ithinkphpl'),(5,'I think the price of software has no relationship to the quality of software','checkbox',5,'Checked',0,'ithinkthep'),(6,'I think it is obvious that in a few years\\\' time all software will be opensource','checkbox',6,'Checked',0,'ithinkitis'),(10,'<b>Where do you connect to the internet</b>','checkboxgroup',7,'',0,'bwheredoyo'),(9,'Where do you connect most often','radio',8,'',1,'most'),(11,'Some more comments','textarea',9,'Please use this area to describe how you think that the persons who make open source software actually make a living, if you didn\'t pay them any money?',1,'somemoreco'),(12,'I agree with the terms and conditions of use','checkbox',10,'',0,'iagreewith');
+INSERT INTO `phplist_user_attribute` VALUES (1,'First Name','textline',1,'',1,'name'),(2,'Country','select',2,'Netherlands',1,'countries'),(3,'<b>Please check all that apply</b>','radio',3,'',0,'bpleaseche'),(4,'I think PHPlist is brilliant','checkbox',4,'Checked',0,'ithinkphpl'),(5,'I think the price of software has no relationship to the quality of software','checkbox',5,'Checked',0,'ithinkthep'),(6,'I think it is obvious that in a few years\\\' time all software will be opensource','checkbox',6,'Checked',0,'ithinkitis'),(10,'<b>Where do you connect to the internet</b>','checkboxgroup',7,'',0,'bwheredoyo'),(9,'Where do you connect most often','radio',8,'',1,'most'),(11,'Some more comments','textarea',9,'Please use this area to describe how you think that the persons who make open source software actually make a living, if you didn\'t pay them any money?',1,'somemoreco'),(12,'I agree with the terms and conditions of use','checkbox',10,'',0,'iagreewith'),(13,'Last Name','textline',2,'',1,'lastname'),(14,'Public Key','textarea',6,'',1,'publickey'),(15,'Fax Number (numbers only)','textline',5,'',1,'faxnumbern');
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `phplist_user_attribute` ENABLE KEYS */;
 
@@ -1052,7 +1218,7 @@ CREATE TABLE `phplist_user_blacklist` (
   `email` varchar(255) NOT NULL default '',
   `added` datetime default NULL,
   UNIQUE KEY `email` (`email`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_user_blacklist`
@@ -1075,7 +1241,7 @@ CREATE TABLE `phplist_user_blacklist_data` (
   `name` varchar(100) default NULL,
   `data` text,
   UNIQUE KEY `email` (`email`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_user_blacklist_data`
@@ -1098,10 +1264,10 @@ CREATE TABLE `phplist_user_message_bounce` (
   `user` int(11) NOT NULL default '0',
   `message` int(11) NOT NULL default '0',
   `bounce` int(11) NOT NULL default '0',
-  `time` timestamp NOT NULL,
+  `time` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   PRIMARY KEY  (`id`),
   KEY `user` (`user`,`message`,`bounce`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_user_message_bounce`
@@ -1124,10 +1290,10 @@ CREATE TABLE `phplist_user_message_forward` (
   `message` int(11) NOT NULL default '0',
   `forward` varchar(255) default NULL,
   `status` varchar(255) default NULL,
-  `time` timestamp NOT NULL,
+  `time` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   PRIMARY KEY  (`id`),
   KEY `user` (`user`,`message`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_user_message_forward`
@@ -1148,7 +1314,7 @@ CREATE TABLE `phplist_user_rss` (
   `userid` int(11) NOT NULL default '0',
   `last` datetime default NULL,
   PRIMARY KEY  (`userid`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_user_rss`
@@ -1170,7 +1336,7 @@ CREATE TABLE `phplist_user_user` (
   `email` varchar(255) NOT NULL default '',
   `confirmed` tinyint(4) default '0',
   `entered` datetime default NULL,
-  `modified` timestamp NOT NULL,
+  `modified` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   `uniqid` varchar(255) default NULL,
   `htmlemail` tinyint(4) default '0',
   `bouncecount` int(11) default '0',
@@ -1186,7 +1352,7 @@ CREATE TABLE `phplist_user_user` (
   UNIQUE KEY `email` (`email`),
   KEY `fkey` (`foreignkey`),
   KEY `index_uniqid` (`uniqid`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_user_user`
@@ -1195,7 +1361,7 @@ CREATE TABLE `phplist_user_user` (
 
 /*!40000 ALTER TABLE `phplist_user_user` DISABLE KEYS */;
 LOCK TABLES `phplist_user_user` WRITE;
-INSERT INTO `phplist_user_user` VALUES (1,'html@testdomain.com',1,'2002-05-31 09:50:42','2005-09-08 16:37:06','fccc8f74d93746c87b283118a1782d4a',1,0,0,'','',NULL,0,'','',0),(3,'blahblah@localhost.localdomain',1,'2002-05-31 09:51:36','2003-08-22 21:14:41','ca17bbd22c9b6e4f46873da6b24fc886',1,0,0,'','',NULL,0,'',NULL,0),(4,'anotheruser@anotherdomain.com',1,'2002-05-31 09:52:18','2005-09-08 16:38:14','a407ffbc6f4aa66a2fc5635af0342a33',1,0,0,'','',NULL,0,'','',0),(5,'user4@hotmail.com',0,'2002-05-31 12:15:59','2005-09-08 16:39:11','7304ea28bb8ab6733f923cf3ea7451ec',0,0,0,'','',NULL,0,'','',0),(8,'billgates@microsoft.com',1,'2003-10-20 01:06:40','2005-09-08 16:42:14','60de27fe99c566f73d03c29959ba7d3b',1,0,2,'daily','iwantyourmoney','2003-10-20 01:06:40',0,'','',1);
+INSERT INTO `phplist_user_user` VALUES (1,'html@testdomain.com',1,'2002-05-31 09:50:42','2005-09-08 15:37:06','fccc8f74d93746c87b283118a1782d4a',1,0,0,'','',NULL,0,'','',0),(3,'blahblah@localhost.localdomain',1,'2002-05-31 09:51:36','2006-12-13 01:47:59','ca17bbd22c9b6e4f46873da6b24fc886',1,0,0,'','',NULL,0,'','',0),(4,'anotheruser@anotherdomain.com',1,'2002-05-31 09:52:18','2005-09-08 15:38:14','a407ffbc6f4aa66a2fc5635af0342a33',1,0,0,'','',NULL,0,'','',0),(5,'user4@hotmail.com',0,'2002-05-31 12:15:59','2005-09-08 15:39:11','7304ea28bb8ab6733f923cf3ea7451ec',0,0,0,'','',NULL,0,'','',0),(8,'billgates@microsoft.com',1,'2003-10-20 01:06:40','2005-09-08 15:42:14','60de27fe99c566f73d03c29959ba7d3b',1,0,2,'daily','iwantyourmoney','2003-10-20 01:06:40',0,'','',1);
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `phplist_user_user` ENABLE KEYS */;
 
@@ -1207,13 +1373,13 @@ DROP TABLE IF EXISTS `phplist_user_user_attribute`;
 CREATE TABLE `phplist_user_user_attribute` (
   `attributeid` int(11) NOT NULL default '0',
   `userid` int(11) NOT NULL default '0',
-  `value` varchar(255) default NULL,
+  `value` text,
   PRIMARY KEY  (`attributeid`,`userid`),
   KEY `userindex` (`userid`),
   KEY `attindex` (`attributeid`),
   KEY `userattid` (`attributeid`,`userid`),
   KEY `attuserid` (`userid`,`attributeid`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_user_user_attribute`
@@ -1222,7 +1388,7 @@ CREATE TABLE `phplist_user_user_attribute` (
 
 /*!40000 ALTER TABLE `phplist_user_user_attribute` DISABLE KEYS */;
 LOCK TABLES `phplist_user_user_attribute` WRITE;
-INSERT INTO `phplist_user_user_attribute` VALUES (1,1,'HTML Test'),(1,3,'Blah'),(1,4,'Some other test user'),(2,1,'222'),(1,5,'Name'),(2,5,'158'),(5,5,'on'),(4,5,'on'),(6,5,''),(9,1,'1'),(4,1,''),(5,1,''),(6,1,''),(10,1,'5,1,3'),(2,3,'0'),(4,3,'on'),(5,3,'on'),(6,3,'on'),(9,3,'5'),(10,3,''),(2,4,'11'),(9,4,'1'),(4,4,'on'),(5,4,'on'),(6,4,'on'),(10,4,'1,3'),(11,1,''),(11,3,NULL),(11,4,''),(11,5,''),(12,1,''),(12,3,NULL),(12,4,'on'),(12,5,''),(1,8,'William'),(2,8,'223'),(3,8,''),(4,8,'on'),(5,8,'on'),(6,8,'on'),(10,8,'4'),(9,8,'1'),(11,8,'What a nice app. Cool!'),(12,8,'on'),(9,5,'0'),(10,5,'');
+INSERT INTO `phplist_user_user_attribute` VALUES (1,1,'HTML Test'),(1,3,'Blah'),(1,4,'Some other test user'),(2,1,'222'),(1,5,'Name'),(2,5,'158'),(5,5,'on'),(4,5,'on'),(6,5,''),(9,1,'1'),(4,1,''),(5,1,''),(6,1,''),(10,1,'5,1,3'),(2,3,'0'),(4,3,'on'),(5,3,'on'),(6,3,'on'),(9,3,'5'),(10,3,''),(2,4,'11'),(9,4,'1'),(4,4,'on'),(5,4,'on'),(6,4,'on'),(10,4,'1,3'),(11,1,''),(11,3,''),(11,4,''),(11,5,''),(12,1,''),(12,3,''),(12,4,'on'),(12,5,''),(1,8,'William'),(2,8,'223'),(3,8,''),(4,8,'on'),(5,8,'on'),(6,8,'on'),(10,8,'4'),(9,8,'1'),(11,8,'What a nice app. Cool!'),(12,8,'on'),(9,5,'0'),(10,5,''),(13,1,NULL),(13,3,''),(13,4,NULL),(13,5,NULL),(13,8,NULL),(14,1,NULL),(14,3,'-----BEGIN PGP PUBLIC KEY BLOCK-----\r\nVersion: GnuPG v1.4.5 (GNU/Linux)\r\n\r\nmQGiBEVRKmcRBAC1VrGyOt4W/tuAPvwULudPujp64I0sc5bSE0uf1x9HWbfSJGaR\r\n8B4VoUvP/mWtIHBEy7EsBFRk8MUn/nB4qyHgsUXXwgTV0HKTV2N1JA2wn4W0l3nZ\r\nBHmVkUbDdmjfA7FM/4CljLkQFiSgwP4ofgDg/sR7kGn5xEFtSkqRI4enJwCgtvQi\r\nhVljgIE983nNAhxusQxzamkD/iGYpYR0FCHJgRjFYZvb6fEhGQesjqLrct3MRm/1\r\n3yD5tq2DEvFK9hl+G4q5R3VZ9eFDPaA5ZeP+1j4Znv1u6wyCvgc3xun+yzNTHhNx\r\nRnr9VpcTdC29F9ex7JSQzJzZ1i30hF5fya0ZlTOTsq9yOS1+SnN/9MxFPtevDE5o\r\nZEkdA/0aSkGJeRo1QkennZrce1cXoqsCCFFJadLhxjlF7FUvalZLMB6MAPzEPHi5\r\nBILpXyGbfmv+L3X1PSsTGt2KPHnhfN4m0EHeQwT5+YlRwF1Wf97ceeGu0T2RWaqV\r\nULRN7oNF2tfmvl5zZRSzvwcjHc7uJEUcg7WYHq618Sp0MJlQX7Q6VGVzdCBVc2Vy\r\nIChLZXlzIHRvIHRlc3QgdGhlIHN5c3RlbSkgPHRlc3R1c2VyQHBocGxpc3QuY29t\r\nPohmBBMRAgAmBQJFUSpnAhsjBQkCJzDKBgsJCAcDAgQVAggDBBYCAwECHgECF4AA\r\nCgkQ6TMjpA9pMzJi2wCfXWaV9oQC5hWhC9cq3P5RoxQPObkAmwWcaUE3RnE9zof5\r\n4VC5ocR9OBL5uQINBEVRKnAQCADDBBj6iNXza2TvpZe3aFmTbIxkMryRgoIie+MA\r\nSxn+/OR57MDM9AJ4xhW9xl6neu0eygw0mbZGl+HTX4AjAGVIMSUGHno4cpv9VLA+\r\nSyElAJI6+pKTGPxzm+yX+ic7b8/O5s5MN9W9PMOT0gBwT+dBdZ03rgtCpOpKINbg\r\nqhseJlxl+b1nrDyjf+1pq+O3ZIlDMrCd6TlbadBJd9ntY7Wj9MgtqwOIbozSD9LT\r\nSZ7dyWgvebj9aJ7YU/E2tqr5GweXwRpLO3AEZyBhOUE7gj5Kl8DlYR6BDC2Lns5f\r\npFDf7XR/+q/r79emMGHNKQE9rNA/zwmcTWxw3ZzEsRJd4AKDAAMFCACLUhCcytbo\r\n2wPEre/eCjERWLQen2Qxs9uipzjr++sHlcfnWIYOCe2WwNRFycfpi8SOLDIEm9gn\r\nB3jBlIQNNbI2crxHiFHmtPwWlSnJPenVrbAW+bzuoko6TJvTcOCfgu+L452n+o2H\r\npbzt9cgOfL3/43dDtxkdEwOTNMOBnPFTWV5dtJ0Jp0eK1Zz/AHpmbY0993zpdMDC\r\nQfJyj8VEgUEHAQ21D7stWo437w4Jg2LJugtXSfHWT8A2dBXXhCJSS9swA7Qi+9l+\r\njOld8YZZRxAVpJSvHFrCwQXuKbaC/u1kMP/IguMjbI1PXS+GLVuZIGfhzX2O4TCf\r\nQTn5g58y8QqliE8EGBECAA8FAkVRKnACGwwFCQInMMoACgkQ6TMjpA9pMzJ/XQCf\r\nQdMvZgIGvg4Tb55e/5FHEODGWZwAn0JX78nLRgp77qKOj0yZWIeTqmGW\r\n=h+2D\r\n-----END PGP PUBLIC KEY BLOCK-----\r\n'),(14,4,NULL),(14,5,NULL),(14,8,NULL),(15,1,NULL),(15,3,''),(15,4,NULL),(15,5,NULL),(15,8,NULL);
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `phplist_user_user_attribute` ENABLE KEYS */;
 
@@ -1240,7 +1406,7 @@ CREATE TABLE `phplist_user_user_history` (
   `detail` text,
   `systeminfo` text,
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_user_user_history`
@@ -1249,7 +1415,7 @@ CREATE TABLE `phplist_user_user_history` (
 
 /*!40000 ALTER TABLE `phplist_user_user_history` DISABLE KEYS */;
 LOCK TABLES `phplist_user_user_history` WRITE;
-INSERT INTO `phplist_user_user_history` VALUES (1,8,'192.168.0.18','2004-06-02 11:31:06','Update by admin','I think it is obvious that in a few years\' time all software will be opensource = on\nchanged from \n\nList subscriptions:\nWas subscribed to: list 5\nWas subscribed to: list 6\nIs now subscribed to: list 5\nIs now subscribed to: list 6\n','\nHTTP_USER_AGENT = Mozilla/5.0 (X11; U; Linux i686; en-GB; rv:1.6) Gecko/20040113\nHTTP_REFERER = http://phplist.michiel/lists/admin/?page=user&start=&id=8&find=\nREMOTE_ADDR = 192.168.0.18'),(2,1,'127.0.0.1','2005-09-08 16:37:06','Update by admin','email = html@testdomain.com\nchanged from html@domain1.com\nconfirmed = 1\nchanged from 0\nWhere do you connect most often = At home\nchanged from \n&lt;b&gt;Where do you connect to the internet&lt;/b&gt; = At home; At school; At a friend&amp;rsquo;s home\nchanged from \n\nList subscriptions:\nWas subscribed to: test\nWas subscribed to: list 2\nWas subscribed to: list 4\nWas subscribed to: list 5\nWas subscribed to: list 6\nIs now subscribed to: test\nIs now subscribed to: list 2\nIs now subscribed to: list 4\nIs now subscribed to: list 5\nIs now subscribed to: list 6\n','\nHTTP_USER_AGENT = Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7.10) Gecko/20050719 Fedora/1.7.10-1.5.1\nHTTP_REFERER = http://phplist.laptop/lists/admin/?page=user&id=1\nREMOTE_ADDR = 127.0.0.1'),(3,4,'127.0.0.1','2005-09-08 16:38:14','Update by admin','email = anotheruser@anotherdomain.com\nchanged from anotheruser@another==domain.com\nCountry = Argentina\nchanged from \nI think PHPlist is brilliant = on\nchanged from \nI think the price of software has no relationship to the quality of software = on\nchanged from \nI think it is obvious that in a few years\' time all software will be opensource = on\nchanged from \nWhere do you connect most often = At home\nchanged from \n&lt;b&gt;Where do you connect to the internet&lt;/b&gt; = At home; At school\nchanged from \nI agree with the terms and conditions of use = on\nchanged from \n\nList subscriptions:\nWas subscribed to: test\nIs now subscribed to: test\n','\nHTTP_USER_AGENT = Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7.10) Gecko/20050719 Fedora/1.7.10-1.5.1\nHTTP_REFERER = http://phplist.laptop/lists/admin/?page=user&start=0&id=4&find=&sortby=&sortorder=desc&unconfirmed=0&blacklisted=0\nREMOTE_ADDR = 127.0.0.1'),(4,5,'127.0.0.1','2005-09-08 16:39:11','Update by admin','email = user4@hotmail.com\nchanged from asdhsakjd@czxczxczxczxczxs.com\nName = Name\nchanged from gfhngfhgfhgfh\nI think PHPlist is brilliant = on\nchanged from \nI think the price of software has no relationship to the quality of software = on\nchanged from \n\nList subscriptions:\nWas subscribed to: test\nWas subscribed to: list 2\nWas subscribed to: list 6\nIs now subscribed to: test\nIs now subscribed to: list 2\nIs now subscribed to: list 6\n','\nHTTP_USER_AGENT = Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7.10) Gecko/20050719 Fedora/1.7.10-1.5.1\nHTTP_REFERER = http://phplist.laptop/lists/admin/?page=user&start=0&id=5&find=&sortby=&sortorder=desc&unconfirmed=0&blacklisted=0\nREMOTE_ADDR = 127.0.0.1'),(5,8,'127.0.0.1','2005-09-08 16:40:17','Update by admin','confirmed = 1\nchanged from 0\n\nList subscriptions:\nWas subscribed to: list 5\nWas subscribed to: list 6\nIs now subscribed to: list 5\nIs now subscribed to: list 6\n','\nHTTP_USER_AGENT = Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7.10) Gecko/20050719 Fedora/1.7.10-1.5.1\nHTTP_REFERER = http://phplist.laptop/lists/admin/?page=user&start=0&id=8&find=&sortby=&sortorder=desc&unconfirmed=0&blacklisted=0\nREMOTE_ADDR = 127.0.0.1'),(6,8,'127.0.0.1','2005-09-08 16:42:14','Unsubscription','Unsubscribed from   * All newsletters\n','\nHTTP_USER_AGENT = Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7.10) Gecko/20050719 Fedora/1.7.10-1.5.1\nHTTP_REFERER = http://phplist.laptop/lists/?p=unsubscribe&uid=60de27fe99c566f73d03c29959ba7d3b\nREMOTE_ADDR = 127.0.0.1'),(7,8,'127.0.0.1','2005-09-08 16:43:47','Update by admin','\nNo userdata changed\nList subscriptions:\nIs now subscribed to: list 5\nIs now subscribed to: list 6\n','\nHTTP_USER_AGENT = Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7.10) Gecko/20050719 Fedora/1.7.10-1.5.1\nHTTP_REFERER = http://phplist.laptop/lists/admin/?page=user&start=0&id=8&find=&sortby=&sortorder=desc&unconfirmed=0&blacklisted=0\nREMOTE_ADDR = 127.0.0.1');
+INSERT INTO `phplist_user_user_history` VALUES (1,8,'192.168.0.18','2004-06-02 11:31:06','Update by admin','I think it is obvious that in a few years\' time all software will be opensource = on\nchanged from \n\nList subscriptions:\nWas subscribed to: list 5\nWas subscribed to: list 6\nIs now subscribed to: list 5\nIs now subscribed to: list 6\n','\nHTTP_USER_AGENT = Mozilla/5.0 (X11; U; Linux i686; en-GB; rv:1.6) Gecko/20040113\nHTTP_REFERER = http://phplist.michiel/lists/admin/?page=user&start=&id=8&find=\nREMOTE_ADDR = 192.168.0.18'),(2,1,'127.0.0.1','2005-09-08 16:37:06','Update by admin','email = html@testdomain.com\nchanged from html@domain1.com\nconfirmed = 1\nchanged from 0\nWhere do you connect most often = At home\nchanged from \n&lt;b&gt;Where do you connect to the internet&lt;/b&gt; = At home; At school; At a friend&amp;rsquo;s home\nchanged from \n\nList subscriptions:\nWas subscribed to: test\nWas subscribed to: list 2\nWas subscribed to: list 4\nWas subscribed to: list 5\nWas subscribed to: list 6\nIs now subscribed to: test\nIs now subscribed to: list 2\nIs now subscribed to: list 4\nIs now subscribed to: list 5\nIs now subscribed to: list 6\n','\nHTTP_USER_AGENT = Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7.10) Gecko/20050719 Fedora/1.7.10-1.5.1\nHTTP_REFERER = http://phplist.laptop/lists/admin/?page=user&id=1\nREMOTE_ADDR = 127.0.0.1'),(3,4,'127.0.0.1','2005-09-08 16:38:14','Update by admin','email = anotheruser@anotherdomain.com\nchanged from anotheruser@another==domain.com\nCountry = Argentina\nchanged from \nI think PHPlist is brilliant = on\nchanged from \nI think the price of software has no relationship to the quality of software = on\nchanged from \nI think it is obvious that in a few years\' time all software will be opensource = on\nchanged from \nWhere do you connect most often = At home\nchanged from \n&lt;b&gt;Where do you connect to the internet&lt;/b&gt; = At home; At school\nchanged from \nI agree with the terms and conditions of use = on\nchanged from \n\nList subscriptions:\nWas subscribed to: test\nIs now subscribed to: test\n','\nHTTP_USER_AGENT = Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7.10) Gecko/20050719 Fedora/1.7.10-1.5.1\nHTTP_REFERER = http://phplist.laptop/lists/admin/?page=user&start=0&id=4&find=&sortby=&sortorder=desc&unconfirmed=0&blacklisted=0\nREMOTE_ADDR = 127.0.0.1'),(4,5,'127.0.0.1','2005-09-08 16:39:11','Update by admin','email = user4@hotmail.com\nchanged from asdhsakjd@czxczxczxczxczxs.com\nName = Name\nchanged from gfhngfhgfhgfh\nI think PHPlist is brilliant = on\nchanged from \nI think the price of software has no relationship to the quality of software = on\nchanged from \n\nList subscriptions:\nWas subscribed to: test\nWas subscribed to: list 2\nWas subscribed to: list 6\nIs now subscribed to: test\nIs now subscribed to: list 2\nIs now subscribed to: list 6\n','\nHTTP_USER_AGENT = Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7.10) Gecko/20050719 Fedora/1.7.10-1.5.1\nHTTP_REFERER = http://phplist.laptop/lists/admin/?page=user&start=0&id=5&find=&sortby=&sortorder=desc&unconfirmed=0&blacklisted=0\nREMOTE_ADDR = 127.0.0.1'),(5,8,'127.0.0.1','2005-09-08 16:40:17','Update by admin','confirmed = 1\nchanged from 0\n\nList subscriptions:\nWas subscribed to: list 5\nWas subscribed to: list 6\nIs now subscribed to: list 5\nIs now subscribed to: list 6\n','\nHTTP_USER_AGENT = Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7.10) Gecko/20050719 Fedora/1.7.10-1.5.1\nHTTP_REFERER = http://phplist.laptop/lists/admin/?page=user&start=0&id=8&find=&sortby=&sortorder=desc&unconfirmed=0&blacklisted=0\nREMOTE_ADDR = 127.0.0.1'),(6,8,'127.0.0.1','2005-09-08 16:42:14','Unsubscription','Unsubscribed from   * All newsletters\n','\nHTTP_USER_AGENT = Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7.10) Gecko/20050719 Fedora/1.7.10-1.5.1\nHTTP_REFERER = http://phplist.laptop/lists/?p=unsubscribe&uid=60de27fe99c566f73d03c29959ba7d3b\nREMOTE_ADDR = 127.0.0.1'),(7,8,'127.0.0.1','2005-09-08 16:43:47','Update by admin','\nNo userdata changed\nList subscriptions:\nIs now subscribed to: list 5\nIs now subscribed to: list 6\n','\nHTTP_USER_AGENT = Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7.10) Gecko/20050719 Fedora/1.7.10-1.5.1\nHTTP_REFERER = http://phplist.laptop/lists/admin/?page=user&start=0&id=8&find=&sortby=&sortorder=desc&unconfirmed=0&blacklisted=0\nREMOTE_ADDR = 127.0.0.1'),(8,3,'201.235.113.141','2006-12-13 01:47:59','Update by admin','Public Key = -----BEGIN PGP PUBLIC KEY BLOCK-----\r\nVersion: GnuPG v1.4.5 (GNU/Linux)\r\n\r\nmQGiBEVRKmcRBAC1VrGyOt4W/tuAPvwULudPujp64I0sc5bSE0uf1x9HWbfSJGaR\r\n8B4VoUvP/mWtIHBEy7EsBFRk8MUn/nB4qyHgsUXXwgTV0HKTV2N1JA2wn4W0l3nZ\r\nBHmVkUbDdmjfA7FM/4CljLkQFiSgwP4ofgDg/sR7kGn5xEFtSkqRI4enJwCgtvQi\r\nhVljgIE983nNAhxusQxzamkD/iGYpYR0FCHJgRjFYZvb6fEhGQesjqLrct3MRm/1\r\n3yD5tq2DEvFK9hl+G4q5R3VZ9eFDPaA5ZeP+1j4Znv1u6wyCvgc3xun+yzNTHhNx\r\nRnr9VpcTdC29F9ex7JSQzJzZ1i30hF5fya0ZlTOTsq9yOS1+SnN/9MxFPtevDE5o\r\nZEkdA/0aSkGJeRo1QkennZrce1cXoqsCCFFJadLhxjlF7FUvalZLMB6MAPzEPHi5\r\nBILpXyGbfmv+L3X1PSsTGt2KPHnhfN4m0EHeQwT5+YlRwF1Wf97ceeGu0T2RWaqV\r\nULRN7oNF2tfmvl5zZRSzvwcjHc7uJEUcg7WYHq618Sp0MJlQX7Q6VGVzdCBVc2Vy\r\nIChLZXlzIHRvIHRlc3QgdGhlIHN5c3RlbSkgPHRlc3R1c2VyQHBocGxpc3QuY29t\r\nPohmBBMRAgAmBQJFUSpnAhsjBQkCJzDKBgsJCAcDAgQVAggDBBYCAwECHgECF4AA\r\nCgkQ6TMjpA9pMzJi2wCfXWaV9oQC5hWhC9cq3P5RoxQPObkAmwWcaUE3RnE9zof5\r\n4VC5ocR9OBL5uQINBEVRKnAQCADDBBj6iNXza2TvpZe3aFmTbIxkMryRgoIie+MA\r\nSxn+/OR57MDM9AJ4xhW9xl6neu0eygw0mbZGl+HTX4AjAGVIMSUGHno4cpv9VLA+\r\nSyElAJI6+pKTGPxzm+yX+ic7b8/O5s5MN9W9PMOT0gBwT+dBdZ03rgtCpOpKINbg\r\nqhseJlxl+b1nrDyjf+1pq+O3ZIlDMrCd6TlbadBJd9ntY7Wj9MgtqwOIbozSD9LT\r\nSZ7dyWgvebj9aJ7YU/E2tqr5GweXwRpLO3AEZyBhOUE7gj5Kl8DlYR6BDC2Lns5f\r\npFDf7XR/+q/r79emMGHNKQE9rNA/zwmcTWxw3ZzEsRJd4AKDAAMFCACLUhCcytbo\r\n2wPEre/eCjERWLQen2Qxs9uipzjr++sHlcfnWIYOCe2WwNRFycfpi8SOLDIEm9gn\r\nB3jBlIQNNbI2crxHiFHmtPwWlSnJPenVrbAW+bzuoko6TJvTcOCfgu+L452n+o2H\r\npbzt9cgOfL3/43dDtxkdEwOTNMOBnPFTWV5dtJ0Jp0eK1Zz/AHpmbY0993zpdMDC\r\nQfJyj8VEgUEHAQ21D7stWo437w4Jg2LJugtXSfHWT8A2dBXXhCJSS9swA7Qi+9l+\r\njOld8YZZRxAVpJSvHFrCwQXuKbaC/u1kMP/IguMjbI1PXS+GLVuZIGfhzX2O4TCf\r\nQTn5g58y8QqliE8EGBECAA8FAkVRKnACGwwFCQInMMoACgkQ6TMjpA9pMzJ/XQCf\r\nQdMvZgIGvg4Tb55e/5FHEODGWZwAn0JX78nLRgp77qKOj0yZWIeTqmGW\r\n=h+2D\r\n-----END PGP PUBLIC KEY BLOCK-----\r\n\nchanged from \n\nList subscriptions:\nWas subscribed to: test\nWas subscribed to: list 6\nIs now subscribed to: test\nIs now subscribed to: list 6\n','\nHTTP_USER_AGENT = Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.0.8) Gecko/20061107 Fedora/1.5.0.8-1.fc6 Firefox/1.5.0.8\nHTTP_REFERER = http://phplistcvs.cedar.tincan.co.uk/lists/admin/?page=user&start=0&id=3&find=&sortby=&sortorder=desc&unconfirmed=0&blacklisted=0\nREMOTE_ADDR = 201.235.113.141');
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `phplist_user_user_history` ENABLE KEYS */;
 
@@ -1268,7 +1434,7 @@ CREATE TABLE `phplist_usermessage` (
   KEY `userindex` (`userid`),
   KEY `messageindex` (`messageid`),
   KEY `enteredindex` (`entered`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_usermessage`
@@ -1295,7 +1461,7 @@ CREATE TABLE `phplist_userstats` (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `entry` (`unixdate`,`item`,`listid`),
   KEY `listdateindex` (`listid`,`unixdate`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `phplist_userstats`
@@ -1307,9 +1473,13 @@ LOCK TABLES `phplist_userstats` WRITE;
 INSERT INTO `phplist_userstats` VALUES (1,1125543600,'unsubscription',0,1);
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `phplist_userstats` ENABLE KEYS */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
