@@ -6,5 +6,5 @@ DIR=`pwd`
 . VERSION
 cd $DIR/public_html/lists/admin
 rm -f `find . -name ".#*"`
-tar zcf $DIR/langpack-$DEVVERSION.tgz --exclude CVS lan/en info/en help/en
+tar zcf $DIR/public_html/langpack/phplist-langpack-$DEVVERSION.tgz --exclude CVS lan/en info/en help/en
 cd $DIR
