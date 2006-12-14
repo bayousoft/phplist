@@ -14,7 +14,9 @@ if (!class_exists('gnupg')) {
   return;
 }
 
-// error_reporting(E_ALL);
-// ini_set('display_errors',1);
+# $home = getenv('GNUPGHOME');
+# print "Keyring Home: ".$home.'<br/>';
+# error_reporting(E_ALL);
+# ini_set('display_errors',1);
 
 ?>

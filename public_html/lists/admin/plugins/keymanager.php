@@ -35,14 +35,20 @@ class keymanager extends phplistPlugin {
 
   function keymanager() {
     parent::phplistplugin();
-//    error_reporting(E_ALL);
+#    error_reporting(E_ALL);
     $keyring = $this->getConfig('keyringlocation');
     if (is_dir($keyring) && is_writable($keyring)) {
       putenv('GNUPGHOME='.$keyring);
     } elseif (is_dir(dirname(__FILE__).'/keymgr/'.$this->keyring) && is_writable(dirname(__FILE__).'/keymgr/'.$this->keyring)) {
       putenv('GNUPGHOME='.dirname(__FILE__).'/keymgr/'.$this->keyring);
     } else {
-      print Warn($GLOBALS['I18N']->get('invalid keyring location'));
+      #print $GLOBALS['I18N']->get('invalid keyring location');
+      if (is_object( $GLOBALS['I18N'])) {
+        print $GLOBALS['I18N']->get('invalid keyring location');
+      } else {
+        print "Invalid keyring location";
+     #   logevent("Invalid keyring location: ".$keyring);
+      }
     }
   }
 
@@ -287,12 +293,13 @@ class keymanager extends phplistPlugin {
 
   function add_key($key) {
     $gnupg = new gnupg();
-#    echo $gnupg -> geterror();
+    echo $gnupg -> geterror();
     $gnupg->seterrormode(gnupg::ERROR_EXCEPTION); // throw an exception in case of an error
     $gnupg->setsignmode(gnupg::SIG_MODE_NORMAL);
-//    print "importing <pre>$key</pre>";
+#    print "importing <pre>$key</pre>";
     
     $info = $gnupg->import($key);
+    echo $gnupg -> geterror();
     return $info;
   }
 

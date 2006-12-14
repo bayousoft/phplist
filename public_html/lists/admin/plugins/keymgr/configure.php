@@ -12,6 +12,7 @@ if (!empty($_POST) && is_array($_POST)) {
   }
   print '<div class="info">'.$GLOBALS['I18N']->get('Changes Saved').'</div>';
 }  
+print $pl->menu();
 
 print '<form method="post" action="">';
 print '<table>';
