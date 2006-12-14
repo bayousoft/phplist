@@ -305,7 +305,7 @@ if (isset($_GET['page']) && $_GET['page'] == 'about') {
 }
 
 # include some information
-if (!isset($_GET['pi']) && is_file("info/".$_SESSION['adminlanguage']['info']."/$include")) {
+if (empty($_GET['pi']) && is_file("info/".$_SESSION['adminlanguage']['info']."/$include")) {
   @include "info/".$_SESSION['adminlanguage']['info']."/$include";
 # include some information
 } elseif (isset($_GET['pi']) && is_object($GLOBALS['plugins'][$_GET['pi']])) {
