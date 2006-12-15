@@ -887,6 +887,14 @@ function matchBounceRules($text,$rules = array()) {
   return '';
 }
 
+function flushBrowser() {
+  ## push some more output to the browser, so it displays things sooner
+  for ($i=0;$i<10000; $i++) {
+    print ' '."\n";
+  }
+  flush();
+}
+
 function validateRssFrequency($freq = '') {
   if (!$freq) return '';
   if (in_array($freq,array_keys($GLOBALS['rssfrequencies']))) {
