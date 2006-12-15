@@ -342,7 +342,10 @@ $DBstruct = array( # order of tables is essential for smooth upgrade
        "index_1" => array("urlindex (url)",""),
     ),
     # obsoleted table, but may still contain data
-/*    "linktrack" => array ( 
+
+    ## keep it in for now, but could be dropped at some point
+    ## once all dependencies have been removed
+    "linktrack" => array ( 
         "linkid" => array("integer not null primary key auto_increment", "Link ID"),
         "messageid" => array("integer not null","Message ID"),
         "userid" => array("integer not null","User ID"),
@@ -357,7 +360,7 @@ $DBstruct = array( # order of tables is essential for smooth upgrade
         "index_4" => array("miduidindex (messageid,userid)",""),
         "index_5" => array("miduidurlindex (messageid,userid,url)",""),
         "unique_1" => array("(messageid,userid,url)","")
-    ),*/
+    ),
     "linktrack_ml" => array ( # ml -> message link
         "messageid" => array("integer not null","Message ID"),
         'forwardid' => array('integer not null','ID in forward table'),
