@@ -34,8 +34,8 @@ if (!isset($checkinterval)) {
 if ($checkinterval) {
   $needscheck = Sql_Fetch_Row_Query(sprintf('select date_add(value,interval %d day) < now() as needscheck from %s where item = "updatelastcheck"',$checkinterval,$tables["config"]));
   if ($needscheck[0]) {
-    ini_set("user_agent",NAME." (phplist version ".VERSION.")");
-    ini_set("default_socket_timeout",5);
+    @ini_set("user_agent",NAME." (phplist version ".VERSION.")");
+    @ini_set("default_socket_timeout",5);
     if ($fp = @fopen ("http://www.phplist.com/files/LATESTVERSION","r")) {
       $latestversion = fgets ($fp);
       $latestversion = preg_replace("/[^\.\d]/","",$latestversion);

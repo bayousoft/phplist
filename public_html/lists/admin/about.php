@@ -39,5 +39,5 @@ Copyright &copy; 2000-<?php echo date('Y')?> <a href="http://tincan.co.uk" targe
 </div>
 <!-- some google bombing, who knows, might work :-) -->
 <div style="display:none">
-<a href="http://www.phplist.com">Newsletter</a><a href="http://www.phplist.com">Newsletter Manager</a><a href="http://www.phplist.com">Open Source Newsletter</a><a href="http://www.phplist.com">Open Source Newsletter Manager</a><a href="http://www.phplist.com">Opt In</a><a href="http://www.phplist.com">Opt In Marketing</a><a href="http://www.phplist.com">Double Opt In Marketing</a>
+<a href="http://www.phplist.com">Newsletter</a><a href="http://www.phplist.com">Newsletter Manager</a><a href="http://www.phplist.com">Open Source Newsletter</a><a href="http://www.phplist.com">Open Source Newsletter Manager</a><a href="http://www.phplist.com">Opt In</a><a href="http://www.phplist.com">Opt In Marketing</a><a href="http://www.phplist.com">Double Opt In Marketing</a><a href="http://www.phplist.com">Newsletter Software</a><a href="http://www.phplist.com">Mailinglist</a><a href="http://www.phplist.com">Permission Marketing</a>
 </div>

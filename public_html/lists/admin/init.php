@@ -32,7 +32,7 @@ $GLOBALS['show_dev_errors'] = $show_dev_errors;
 $GLOBALS['scheme'] = 'http';
 
 ## spelling mistake in earlier version, make sure to set it correctly
-if (!isset($bounce_unsubscribe_threshold) && isset($bounce_unsubscribe_threshold)) {
+if (!isset($bounce_unsubscribe_threshold) && isset($bounce_unsubscribe_treshold)) {
   $bounce_unsubscribe_threshold = $bounce_unsubscribe_treshold;
 }
 

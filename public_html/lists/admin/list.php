@@ -21,7 +21,7 @@ if (isset($_GET['delete'])) {
 if (isset($_POST['listorder']) && is_array($_POST['listorder']))
   while (list($key,$val) = each ($_POST['listorder']))
   Sql_Query(sprintf('update %s set listorder = %d, active = %d where id = %d',
-    $tables["list"],$val,$active[$key],$key));
+    $tables["list"],$val,!empty($_POST['active'][$key]),$key));
 
 $access = accessLevel('list');
 switch ($access) {

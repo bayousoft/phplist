@@ -71,8 +71,8 @@ if (!isset($_GET['tab'])) $_GET['tab'] = '';
 
 if (!$id) {
   $defaulttemplate = getConfig('defaultmessagetemplate');
-  Sql_Query(sprintf('insert into %s (subject,status,entered,sendformat,embargo,repeatuntil,owner,template)
-    values("(no subject)","draft",now(),"text and HTML",now(),now(),%d,%d)',$GLOBALS["tables"]["message"],$_SESSION["logindetails"]["id"],$defaulttemplate));
+  Sql_Query(sprintf('insert into %s (subject,status,entered,sendformat,embargo,repeatuntil,owner,template,tofield,replyto)
+    values("(no subject)","draft",now(),"text and HTML",now(),now(),%d,%d,"","")',$GLOBALS["tables"]["message"],$_SESSION["logindetails"]["id"],$defaulttemplate));
   $id = Sql_Insert_id();
   Redirect($_GET["page"]."&id=$id");
   exit;
@@ -678,11 +678,17 @@ for ($i = 1; $i<=$num;$i++) {
     $ls->addColumn('<!--'.$crit_data["attribute"].'-->'.$crit_data["attribute_name"],$GLOBALS['I18N']->get('operator'),$GLOBALS['I18N']->get($crit_data["operator"]));
     $ls->addColumn('<!--'.$crit_data["attribute"].'-->'.$crit_data["attribute_name"],$GLOBALS['I18N']->get('values'),$crit_data["values"]);
     $ls->addColumn('<!--'.$crit_data["attribute"].'-->'.$crit_data["attribute_name"],$GLOBALS['I18N']->get('remove'),PageLink2($delete_base."&amp;deleterule=".$i,$GLOBALS['I18N']->get("remove")));
-    $attribute = $_POST["criteria"][$i];
+    if (isset($_POST["criteria"][$i])) {
+      $attribute = $_POST["criteria"][$i];
+    } else {
+      $attribute = '';
+    }
+    ## fix 6063
+    $crit_data["values"] = str_replace(" ", "",$crit_data["values"]);
 
     # hmm, rather get is some other way, this is a bit unnecessary
     $type = Sql_Fetch_Row_Query("select type from {$tables["attribute"]} where id = ".$crit_data["attribute"]);
-    $operator = "";
+    $operator = $where_clause = $select_clause = "";
     switch($type[0]) {
       case "checkboxgroup":
         $or_clause = '';
@@ -798,7 +804,7 @@ $existing_criteria = '';
 if (sizeof($subqueries)) {
 #    $count_query = "select distinct $select_clause where $where_clause";
 #    $count_query = addslashes($count_query);
-  if ($_GET["calculate"]) {
+  if (!empty($_GET["calculate"])) {
     ob_end_flush();
    # print "<h1>$count_query</h1>";
     print "<p>".$GLOBALS['I18N']->get("calculating")." ...";
@@ -825,8 +831,8 @@ if (sizeof($subqueries)) {
 
   $count_query = sprintf('select * from %s where id in (%s)',$GLOBALS['tables']['user'],join(', ',$userids));
 
-  if ($_GET["calculate"]) {
-    printf('.. '.$GLOBALS['I18N']->get('%d users apply'),$num).'</p>';
+  if (!empty($_GET["calculate"])) {
+    printf('.. '.$GLOBALS['I18N']->get('%d users apply'),$num_users).'</p>';
   }
 
   if ($messageid) {

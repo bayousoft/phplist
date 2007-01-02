@@ -433,9 +433,11 @@ function parseCline() {
         $res[$cur] .= $clinearg;
     }
   }
-/*  foreach ($res as $key => $val) {
+/*  ob_end_clean();
+  foreach ($res as $key => $val) {
     print "$key = $val\n";
-  }*/
+  }
+  ob_start();*/
   return $res;
 }
 

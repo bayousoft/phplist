@@ -365,8 +365,8 @@ Thank you.
 
 "pagefooter" => array($defaultfooter,"Footer of public pages","textarea"),
 
-"html_charset" => array("iso-8859-1","Charset for HTML messages","text"),
-"text_charset" => array("iso-8859-1","Charset for Text messages","text"),
+"html_charset" => array("UTF-8","Charset for HTML messages","text"),
+"text_charset" => array("UTF-8","Charset for Text messages","text"),
 "wordwrap" => array("75","Width for Wordwrap of Text messages","text"),
 
 "html_email_style" => array('

@@ -70,17 +70,18 @@ class PHPlistMailer extends PHPMailer {
     function add_text($text) {
       if (!$this->Body) {
         $this->IsHTML(false);
-        $this->Body = $text;
+        $this->Body = html_entity_decode($text ,ENT_QUOTES, 'UTF-8' ); #$text;
+#        $this->Body = $text;
        } else {
-        $this->AltBody = $text;
+        $this->AltBody = html_entity_decode($text ,ENT_QUOTES, 'UTF-8' );#$text;
       }
     }
 
     function append_text($text) {
       if ($this->AltBody) {
-        $this->AltBody .= $text;
+        $this->AltBody .= html_entity_decode($text ,ENT_QUOTES, 'UTF-8' );#$text;
       } else {
-        $this->Body .= $text;
+        $this->Body .= html_entity_decode($text ,ENT_QUOTES, 'UTF-8' );#$text;
       }
     }
 

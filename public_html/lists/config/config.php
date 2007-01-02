@@ -223,6 +223,20 @@ $userhistory_systeminfo = array(
   'REMOTE_ADDR'
 );
 
+# add spamblock
+# if you set this to 1, phplist will try to check if the subscribe attempt is a spambot trying to send
+# nonsense. If you think this doesn't work, set this to 0
+# this is currently only implemented on the subscribe pages
+define('USE_SPAM_BLOCK',1);
+
+# notify spam
+# when phplist detects a possible spam attack, it can send you a notification about it
+# you can check for a while to see if the spam check was correct and if so, set this value
+# to 0, if you think the check does it's job correctly.
+# it will only send you emails if you have "Does the admin get copies of subscribe, update and unsubscribe messages"
+# in the configuration set to true
+define('NOTIFY_SPAM',1);
+
 /*
 
 =========================================================================

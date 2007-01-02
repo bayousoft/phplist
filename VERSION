@@ -1,7 +1,7 @@
 # file that keeps track of the latest tag in cvs and the corresponding version
 # this automates publishing a new version, when it's tagged
 # if you don't understand this, don't worry. You don't need this file
-VERSION=2.11.1
-TAG=phplist-version2-11-1
+VERSION=2.11.2
+TAG=phplist-version2-11-2
 PREVTAG=pl-11-0
-DEVVERSION=2.11.2
+DEVVERSION=2.11.3

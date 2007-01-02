@@ -401,9 +401,6 @@ function subscribePage($id) {
 
 <script language="Javascript" type="text/javascript">
 
-var fieldstocheck = new Array();
-    fieldnames = new Array();
-
 function checkform() {
   for (i=0;i<fieldstocheck.length;i++) {
     if (eval("document.subscribeform.elements[\'"+fieldstocheck[i]+"\'].value") == "") {
@@ -427,7 +424,8 @@ $html .='
   return true;
 }
 
-
+var fieldstocheck = new Array();
+var fieldnames = new Array();
 function addFieldToCheck(value,name) {
   fieldstocheck[fieldstocheck.length] = value;
   fieldnames[fieldnames.length] = name;
@@ -466,9 +464,11 @@ function compareEmail()
    }
   $html .= ListAvailableLists("",$data["lists"]);
 
-  if (!empty($data['button'])) {
+  if (empty($data['button'])) {
     $data['button'] = $GLOBALS['strSubmit'];
   }
+  if (USE_SPAM_BLOCK)
+    $html .= '<div style="display:none"><input type="text" name="VerificationCodeX" value="" size="20"></div>';
   $html .= '<p><input type=submit name="subscribe" value="'.$data["button"].'" onClick="return checkform();"></p>
     </form><br/><br/>
     <p><a href="'.getConfig("unsubscribeurl").'&id='.$id.'">'.$GLOBALS["strUnsubscribe"].'</a></p>

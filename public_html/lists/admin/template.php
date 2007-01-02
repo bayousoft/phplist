@@ -16,7 +16,7 @@ if (file_exists("./FCKeditor/fckeditor.php") && USEFCK) {
 
   // Create the editor object here so we can check to see if *it* wants us to use it (this
   // does a browser check, etc.
-  $oFCKeditor = new FCKeditor ;
+  $oFCKeditor = new FCKeditor('content') ;
   $usefck = $oFCKeditor->IsCompatible();
   unset($oFCKeditor); // This object is *very* short-lived.  Thankfully, it's also light-weight
 } else {

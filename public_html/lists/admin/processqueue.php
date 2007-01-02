@@ -37,7 +37,7 @@ if (TEST)
 $num_per_batch = 0;
 $batch_period = 0;
 $script_stage = 0; # start
-$someusers = 0;
+$someusers = $skipped = 0;
 
 $maxbatch = -1;
 $minbatchperiod = -1;
@@ -196,7 +196,9 @@ function my_shutdown () {
   } else {
     output($GLOBALS['I18N']->get('Script finished, but not all messages have been sent yet.'));
   }
-  include_once "footer.inc";
+  if (!$GLOBALS['commandline']) {
+    include_once "footer.inc";
+  }
   exit;
 }
 
@@ -232,7 +234,7 @@ function output ($message,$logit = 1) {
   global $report;
   if ($GLOBALS["commandline"]) {
     @ob_end_clean();
-    print $message . "\n";
+    print strip_tags($message) . "\n";
     $infostring = '';
     ob_start();
   } else {
@@ -420,16 +422,26 @@ while ($message = Sql_fetch_array($messages)) {
   if (VERBOSE) {
     output($GLOBALS['I18N']->get('looking for users who can be excluded from this mailing'));
   }
+
+## 8478, avoid building large array in memory, when sending large amounts of users.
+
+/*
   $req = Sql_Query("select userid from {$tables["usermessage"]} where messageid = $messageid");
   $skipped = Sql_Affected_Rows();
-  while ($row = Sql_Fetch_Row($req)) {
-    $alive = checkLock($send_process_id);
-    if ($alive)
-      keepLock($send_process_id);
-    else
-      ProcessError($GLOBALS['I18N']->get('Process Killed by other process'));
-    array_push($doneusers,$row[0]);
+  if ($skipped < 10000) {
+    while ($row = Sql_Fetch_Row($req)) {
+      $alive = checkLock($send_process_id);
+      if ($alive)
+        keepLock($send_process_id);
+      else
+        ProcessError($GLOBALS['I18N']->get('Process Killed by other process'));
+      array_push($doneusers,$row[0]);
+    }
+  } else {
+    output($GLOBALS['I18N']->get('Warning, disabling exclusion of done users, too many found'));
+    logEvent($GLOBALS['I18N']->get('Warning, disabling exclusion of done users, too many found'));
   }
+
   # also exclude unconfirmed users, otherwise they'll block the process
   # will give quite different statistics than when used web based
 #  $req = Sql_Query("select id from {$tables["user"]} where !confirmed");
@@ -438,6 +450,8 @@ while ($message = Sql_fetch_array($messages)) {
 #  }
   if (sizeof($doneusers))
     $exclusion = " and listuser.userid not in (".join(",",$doneusers).")";
+*/
+
   if (USE_LIST_EXCLUDE) {
     $excluded_lists = Sql_Fetch_Row_Query(sprintf('select data from %s where name = "excludelist" and id = %d',
       $GLOBALS["tables"]["messagedata"],$messageid));
@@ -455,6 +469,8 @@ while ($message = Sql_fetch_array($messages)) {
 
   $userconfirmed = ' and user.confirmed and !user.blacklisted ';
 
+/*
+  ## 8478
   $query = sprintf('select distinct user.id from
     %s as listuser,
     %s as user,
@@ -467,8 +483,22 @@ while ($message = Sql_fetch_array($messages)) {
     $messageid,
     $userconfirmed,
     $exclusion,
-    $user_attribute_query);
-
+    $user_attribute_query);*/
+  $query = sprintf('select distinct user.id from
+  (%s as listuser,
+  %s as user,
+  %s as listmessage)
+  left join %s as usermessage
+  on (usermessage.messageid = %d and usermessage.userid = listuser.userid)
+  where
+  listmessage.messageid = %d and
+  listmessage.listid = listuser.listid and
+  user.id = listuser.userid and
+  usermessage.userid IS NULL
+  %s %s %s',
+  $tables['listuser'], $tables['user'], $tables['listmessage'], $tables['usermessage'],
+  $messageid, $messageid,
+  $userconfirmed, $exclusion, $user_attribute_query);
 
   if (VERBOSE) {
     output($query);
@@ -479,6 +509,10 @@ while ($message = Sql_fetch_array($messages)) {
 
   # now we have all our users to send the message to
   $num_users = Sql_affected_rows();
+  if ($skipped >= 10000) {
+    $num_users -= $skipped;
+  }
+  
   output($GLOBALS['I18N']->get('Found them').': '.$num_users.' '.$GLOBALS['I18N']->get('to process'));
   setMessageData($messageid,'to process',$num_users);
 

@@ -153,6 +153,29 @@ $lan = array(
   # added 2.10.2
   'globalvulnwarning' => 'Your version of PHP has a major security issue.<br/>It is best to upgrade to the latest version of PHP. <a href="http://www.hardened-php.net/globals-problem">Read More</a> about this issue.',
 
+  # added 2.10.4
+
+  # note to translators, this is part of a plain text email, so do not use html
+  'spamblockemailintro' => '
+
+--------------------------------------------------------------------------------
+This is a notification of a possible spam attack to your phplist subscribe page.
+The data submitted has been copied below, so you can check whether this was actually the case.
+The submitted data has been converted into non-html characters, for security reasons.
+
+If you want to stop receiving this message, set 
+
+  define(\'NOTIFY_SPAM\',0);
+
+in your phplist config file.
+
+This user has not been added to the database. If there is an error, you will need to 
+add them manually. 
+--------------------------------------------------------------------------------
+
+',
+
+
 );
 
 ?>

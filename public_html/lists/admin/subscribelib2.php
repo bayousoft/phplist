@@ -4,8 +4,10 @@ require_once dirname(__FILE__)."/accesscheck.php";
 mt_srand((double)microtime()*1000000);
 $randval = mt_rand();
 
-if (!$id) {
+if (empty($id) && isset($_GET['id'])) {
   $id = sprintf('%d',$_GET["id"]);
+} elseif (!isset($id)) {
+  $id = 0;
 }
 
 if (!$id && $_GET["page"] != "import1") {
@@ -75,6 +77,20 @@ if (isset($subscribepagedata['emaildoubleentry']) && $subscribepagedata['emaildo
     $missing = $GLOBALS["strEmailsNoMatch"];
   }
 }
+
+// anti spambot check
+if (!empty($_POST['VerificationCodeX'])) {
+  if (NOTIFY_SPAM) {
+    $msg = $GLOBALS['I18N']->get('spamblockemailintro');
+    foreach ($_REQUEST as $key => $val) {
+      $msg .= "\n".'Form field: '.htmlentities($key)."\n".'================='."\nSubmitted value: ".htmlentities($val)."\n".'=============='."\n\n";
+    }
+    sendAdminCopy("phplist Spam blocked","\n".$msg);
+  }
+  unset($msg);
+  return;
+}
+
 if (!isset($_POST['passwordreq'])) $_POST['passwordreq'] = '';
 if (!isset($_POST['password'])) $_POST['password'] = '';
 
@@ -482,7 +498,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
         Sql_query(sprintf('replace into %s (attributeid,userid,value) values("%s","%s","%s")',
           $GLOBALS["tables"]["user_attribute"],$attribute["id"],$userid,$value));
         if ($attribute["type"] != "hidden") {
-          $datachange .= strip_tags($attribute["name"]) . " = ";
+          $datachange .= strip_tags($attribute["name"]) . " : ";
           if ($attribute["type"] == "checkbox")
             $datachange .= $value?$strYes:$strNo;
           elseif ($attribute["type"] != "date" && $attribute["type"] != "textline" && $attribute["type"] != "textarea")
@@ -666,6 +682,7 @@ function ListAttributes($attributes,$attributedata,$htmlchoice = 0,$userid = 0,$
   if (!$textarearows) $textarearows = 10;
   if (!$textareacols) $textareacols = 40;
 
+  $html = '';
   if (!isset($_GET['page']) || (isset($_GET['page']) && $_GET["page"] != "import1"))
   $html = sprintf('
   <tr><td><div class="required">%s</div></td>

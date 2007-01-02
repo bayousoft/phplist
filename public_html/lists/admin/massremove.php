@@ -16,6 +16,7 @@ if (isset($_POST['unsubscribe'])) {
   foreach ($emails as $email) {
     $email = trim($email);
     $count++;
+    set_time_limit(600);
     $userid = Sql_Fetch_Row_Query(sprintf('select id from %s where email = "%s"',$GLOBALS['tables']['user'],$email));
     if ($userid[0]) {
       if (!empty($_POST['blacklist'])) {

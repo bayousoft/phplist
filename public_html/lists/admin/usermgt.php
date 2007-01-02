@@ -26,6 +26,7 @@ print $spb.$GLOBALS['I18N']->get('control').$spe.$html.$spb.'&nbsp;<br/>'.$spe;
 print $spb.PageLink2("reconcileusers",$GLOBALS['I18N']->get('reconcile')).$spe;
 print $spb.PageLink2("usercheck",$GLOBALS['I18N']->get('check')).$spe;
 print $spb.PageLink2("massunconfirm",$GLOBALS['I18N']->get('mass unconfirm users')).$spe;
+print $spb.PageLink2("massremove",$GLOBALS['I18N']->get('mass remove users')).$spe;
 if (ALLOW_IMPORT) {
   print $spb.PageLink2("import",$GLOBALS['I18N']->get('import')).$spe;
 }

@@ -228,9 +228,9 @@ function processBounce ($link,$num,$header) {
 
 function processPop ($server,$user,$password) {
   $port =  $GLOBALS["bounce_mailbox_port"];
-#  if (!$port) {
+  if (!$port) {
     $port = '110/pop3/notls';
-#  }
+  }
   set_time_limit(6000);
 
   if (!TEST) {
@@ -457,7 +457,7 @@ if (USE_ADVANCED_BOUNCEHANDLING) {
 output($GLOBALS['I18N']->get("Identifying consecutive bounces"));
 
 # we only need users who are confirmed at the moment
-$userid_req = Sql_Query(sprintf('select distinct %s.user from %s,%s
+$userid_req = Sql_Verbose_Query(sprintf('select distinct %s.user from %s,%s
   where %s.id = %s.user and %s.confirmed',
   $tables["user_message_bounce"],
   $tables["user_message_bounce"],
@@ -473,19 +473,16 @@ if (!$total)
 $usercnt = 0;
 $unsubscribed_users = "";
 while ($user = Sql_Fetch_Row($userid_req)) {
-  # give messages five days to bounce, most MTAs keep them in the queue for 4 days
-  # before giving up.
   keepLock($process_id);
   set_time_limit(600);
   $msg_req = Sql_Query(sprintf('select * from
-    %s left join %s on %s.messageid = %s.message
-    where (date_add(entered,INTERVAL 5 day) < now())
-    and userid = %d
-    and (userid = user or user is null) order by entered desc',
+    %s left join %s on (%s.messageid = %s.message and userid = user)
+    where userid = %d
+    order by entered desc',
     $tables["usermessage"],$tables["user_message_bounce"],
     $tables["usermessage"],$tables["user_message_bounce"],
     $user[0]));
-  $cnt = 0;
+/*  $cnt = 0;
   $alive = 1;$removed = 0;
   while ($alive && !$removed && $bounce = Sql_Fetch_Array($msg_req)) {
     $alive = checkLock($process_id);
@@ -509,6 +506,35 @@ while ($user = Sql_Fetch_Row($userid_req)) {
       }
     } elseif ($bounce["bounce"] == "") {
       $cnt = 0;
+    }
+  }*/
+  #$alive = 1;$removed = 0; DT 051105
+  $cnt=0;
+  $alive = 1;$removed = 0; $msgokay=0;
+        #while ($alive && !$removed && $bounce = Sql_Fetch_Array($msg_req)) { DT 051105
+  while ($alive && !$removed && !$msgokay &&$bounce = Sql_Fetch_Array($msg_req)) {
+    $alive = checkLock($process_id);
+    if ($alive)
+      keepLock($process_id);
+    else
+      ProcessError("Process Killed by other process");
+      if (sprintf('%d',$bounce["bounce"]) == $bounce["bounce"]) {
+        $cnt++;
+      if ($cnt >= $bounce_unsubscribe_threshold) {
+        $removed = 1;
+        output(sprintf('unsubscribing %d -> %d bounces',$user[0],$cnt));
+        $userurl = PageLink2("user&id=$user[0]",$user[0]);
+        logEvent("User $userurl has consecutive bounces ($cnt) over treshold, user marked unconfirmed");
+        $emailreq = Sql_Fetch_Row_Query("select email from {$tables["user"]} where id = $user[0]");
+        addUserHistory($emailreq[0],"Auto Unsubscribed","User auto unsubscribed for $cnt consecutive bounces");
+        Sql_Query(sprintf('update %s set confirmed = 0 where id = %d',$tables["user"],$user[0]));
+        $email_req = Sql_Fetch_Row_Query(sprintf('select email from %s where id = %d',$tables["user"],$user[0]));
+        $unsubscribed_users .= $email_req[0] . " [$user[0]] ($cnt)\n";
+      }
+    } elseif ($bounce["bounce"] == "") {
+      #$cnt = 0; DT 051105
+      $cnt = 0;
+      $msgokay = 1; #DT 051105 - escaping loop if message received okay
     }
   }
   if ($usercnt % 10 == 0) {

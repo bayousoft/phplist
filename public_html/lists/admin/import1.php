@@ -1,5 +1,8 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
+
+$subselect = '';
+
 if (!ALLOW_IMPORT) {
   print '<p>'.$GLOBALS['I18N']->get('import is not available').'</p>';
   return;
@@ -26,7 +29,7 @@ if (!is_dir($GLOBALS["tmpdir"]) || !is_writable($GLOBALS["tmpdir"])) {
   Warn($GLOBALS['I18N']->get('temp_dir_not_writeable')." (".$GLOBALS["tmpdir"].")");
 }
 
-if(isset($import)) {
+if(isset($_REQUEST['import'])) {
 
   $test_import = (isset($_POST["import_test"]) && $_POST["import_test"] == "yes");
  /*
@@ -35,12 +38,12 @@ if(isset($import)) {
     return;
   }
  */
-  if(!$_FILES["import_file"]) {
-    Fatal_Error($GLOBALS['I18N']->get('too_large_inexistant'));
-    return;
-  }
   if(empty($_FILES["import_file"])) {
     Fatal_Error($GLOBALS['I18N']->get('none_specified'));
+    return;
+  }
+  if(!$_FILES["import_file"]) {
+    Fatal_Error($GLOBALS['I18N']->get('too_large_inexistant'));
     return;
   }
   if (filesize($_FILES["import_file"]['tmp_name']) > 1000000) {
@@ -77,8 +80,14 @@ if(isset($import)) {
   $email_list = str_replace("\n\r","\n",$email_list);
   $email_list = str_replace("\n\n","\n",$email_list);
 
+  if (isset($_REQUEST['import_record_delimiter'])) {
+    $import_record_delimiter = $_REQUEST['import_record_delimiter'];
+  } else {
+    $import_record_delimiter = "\n";
+  }
+
   // Change delimiter for new line.
-  if(isset($import_record_delimiter) && $import_record_delimiter != "") {
+  if(isset($import_record_delimiter) && $import_record_delimiter != "" && $import_record_delimiter != "\n") {
     $email_list = str_replace($import_record_delimiter,"\n",$email_list);
   };
 
@@ -139,6 +148,11 @@ if(isset($import)) {
     $count_email_add = 0;
     $count_email_exist = 0;
     $count_list_add = 0;
+    if (isset($_REQUEST['lists']) && is_array($_REQUEST['lists'])) {
+      $lists = $_REQUEST['lists'];
+    } else {
+      $lists = array();
+    }
     $num_lists = sizeof($lists);
     $todo = sizeof($user_list);
     $done = 0;
@@ -316,6 +330,16 @@ if (Sql_Affected_Rows() == 1) {
 
 </ul>
 
+<script language="Javascript" type="text/javascript">
+
+var fieldstocheck = new Array();
+var fieldnames = new Array();
+function addFieldToCheck(value,name) {
+  fieldstocheck[fieldstocheck.length] = value;
+  fieldnames[fieldnames.length] = name;
+}
+
+</script>
 <table border="1">
 <tr><td colspan=2><?php echo $GLOBALS['I18N']->get('info_emails_file'); ?></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('emails_file'); ?></td><td><input type="file" name="import_file"></td></tr>

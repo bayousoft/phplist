@@ -93,7 +93,9 @@ function Sql_Check_error($dbconnection,$errno = 0) {
 }
 
 function Sql_Query($query,$ignore = 0) {
-  unset($GLOBALS['lastquery']);
+  if (isset($GLOBALS['lastquery'])) {
+    unset($GLOBALS['lastquery']);
+  }
   if (isset($GLOBALS["developer_email"])) {
   #  if (preg_match("/dev$/",VERSION))
   #  print "<b>$query</b><br>\n";
