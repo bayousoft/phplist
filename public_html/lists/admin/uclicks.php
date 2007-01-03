@@ -29,7 +29,7 @@ switch ($access) {
 
 if (!$id) {
   print $GLOBALS['I18N']->get('Select URL to view');
-  $req = Sql_Verbose_Query(sprintf('select forward.id,url, sum(clicked) as numclicks, count(messageid) as msgs from %s
+  $req = Sql_Query(sprintf('select forward.id,url, sum(clicked) as numclicks, count(messageid) as msgs from %s
     where clicked %s and forward.id = ml.forwardid group by url order by numclicks desc limit 50',
     $select_tables,$owner_and));
   $ls = new WebblerListing($GLOBALS['I18N']->get('Available URLs'));
@@ -48,7 +48,7 @@ $urldata = Sql_Fetch_Array_Query(sprintf('select url from %s where id = %d',
   $GLOBALS['tables']['linktrack_forward'],$id));
 print '<h1>'.$GLOBALS['I18N']->get('Click Details for a URL').' <b>'.$urldata['url'].'</b></h1>';
 
-$req = Sql_Verbose_Query(sprintf('select messageid,firstclick,date_format(latestclick,
+$req = Sql_Query(sprintf('select messageid,firstclick,date_format(latestclick,
   "%%e %%b %%Y %%H:%%i") as latestclick,total,clicked from %s where forwardid = %d 
   ',$GLOBALS['tables']['linktrack_ml'],$id));
 $summary = array();

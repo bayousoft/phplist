@@ -11,7 +11,7 @@ print $spb.PageLink2("mviews",$GLOBALS['I18N']->get('View Opens by Message')).$s
 print $spb.PageLink2("domainstats",$GLOBALS['I18N']->get('Domain Statistics')).$spe;
 
 $num = Sql_Fetch_Row_Query(sprintf('select count(*) from %s',$GLOBALS['tables']['linktrack']));
-if ($num > 0) {
+if ($num[0] > 0) {
   print '<p>'.$GLOBALS['I18N']->get('The clicktracking system has changed').'</p>';
   printf($GLOBALS['I18N']->get('You have %s entries in the old statistics table'),$num[0]);
   print $spb.PageLink2("convertstats",$GLOBALS['I18N']->get('Convert Old data to new')).$spe;
