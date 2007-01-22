@@ -7,6 +7,7 @@ class keymanager extends phplistPlugin {
   var $uiditems = array('email','uid','comments');
   var $keyitems = array('timestamp','disabled','expired','expires','revoked','invalid','is_secret','can_sign','can_encrypt','fingerprint');
   var $LE = "\r\n";
+  var $enabled = 1;
 
   var $DBstruct = array(
     'keymanager_keys' => array(
@@ -42,6 +43,7 @@ class keymanager extends phplistPlugin {
     } elseif (is_dir(dirname(__FILE__).'/keymgr/'.$this->keyring) && is_writable(dirname(__FILE__).'/keymgr/'.$this->keyring)) {
       putenv('GNUPGHOME='.dirname(__FILE__).'/keymgr/'.$this->keyring);
     } else {
+      $this->enabled = 0;
       #print $GLOBALS['I18N']->get('invalid keyring location');
       if (is_object( $GLOBALS['I18N'])) {
         print $GLOBALS['I18N']->get('invalid keyring location');
@@ -319,6 +321,7 @@ class keymanager extends phplistPlugin {
   }
 
   function sendMessageTab($messageid = 0,$data = array()) {
+    if (!$this->enabled) return;
     $html = sprintf('<br/>
       <input type="hidden" name="keymanager_signmessage_actualstate" value="%s" />
     <script language="Javascript" type="text/javascript">
@@ -368,6 +371,7 @@ class keymanager extends phplistPlugin {
   # parameters: none
   # returns: short title (less than about 10 characters)
   function sendMessageTabTitle($messageid = 0) {
+    if (!$this->enabled) return '';
     return 'PGP';
   }
 
@@ -382,6 +386,7 @@ class keymanager extends phplistPlugin {
 
   function parseOutgoingTextMessage($messageid,$content,$destination = '',$userhtmlpref = 0) {
 #    return $content;
+    if (!$this->enabled) return parent::parseOutgoingTextMessage($messageid,$content,$destination,$userhtmlpref);
     # we sign a text message inline, so it remains a text message
     $data = loadMessageData($messageid);
     $data = $this->initVars($data);
@@ -422,6 +427,7 @@ class keymanager extends phplistPlugin {
   }
 
   function parseOutgoingHTMLMessage($messageid,$content,$destination = '',$userhtmlpref = 0) {
+    if (!$this->enabled) return parent::parseOutgoingHTMLMessage($messageid,$content,$destination,$userhtmlpref);
     # an HTML message is signed in pgp/Mime so here we don't do anything
     return $content;
   }
@@ -511,6 +517,7 @@ Content-Generator: pgp-plugin for phplist, www.phplist.com'."\n\n".$encrypted.'
   }
 
   function mimeWrap($messageid,$body,$header,$contenttype,$destination) {
+    if (!$this->enabled) return parent::mimeWrap($messageid,$body,$header,$contenttype,$destination);
     $data = loadMessageData($messageid);
     $data = $this->initVars($data);
     $result = array();
