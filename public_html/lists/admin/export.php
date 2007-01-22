@@ -1,11 +1,29 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 
-# $Id: export.php,v 1.7 2005-08-26 15:40:27 mdethmers Exp $
+# $Id: export.php,v 1.8 2007-01-22 21:11:42 mdethmers Exp $
 
 # export users from PHPlist
 
 include dirname(__FILE__) .'/date.php';
+
+function quoteEnclosed($value) {
+  $enclose = 0;
+  if (ereg('"',$value)) {
+    $value = ereg_replace('"','""',$value);
+    $enclose = 1;
+  }
+  if (ereg($col_delim,$value)) {
+    $enclose = 1;
+  }
+  if (ereg($row_delim,$value)) {
+    $enclose = 1;
+  }
+  if ($enclose) {
+    $value = '"'.$value .'"';
+  }
+  return $value;
+}
 
 $from = new date("from");
 $to = new date("to");
@@ -50,7 +68,7 @@ switch ($access) {
 }
 
 include dirname(__FILE__). '/structure.php';
-if (isset($_POST['process'])) {
+if (isset($_POST['processexport'])) {
   $fromval= $from->getDate("from");
   $toval =  $to->getDate("to");
   if ($list)
@@ -60,9 +78,9 @@ if (isset($_POST['process'])) {
   ob_end_clean();
   $filename = trim(strip_tags($filename));
 
-#  header("Content-type: text/plain");
-  header("Content-type: ".$GLOBALS["export_mimetype"]);
-  header("Content-disposition:  attachment; filename=\"$filename\"");
+  header("Content-type: text/plain");
+#  header("Content-type: ".$GLOBALS["export_mimetype"]);
+#  header("Content-disposition:  attachment; filename=\"$filename\"");
   $col_delim = "\t";
   if (EXPORT_EXCEL) {
     $col_delim = ",";
@@ -90,27 +108,38 @@ if (isset($_POST['process'])) {
       }
     }
   }
-  print $GLOBALS['I18N']->get('ListMembership').$row_delim;
+  $exporthistory = 0;
   if ($_POST['column'] == 'listentered') {
     $column = 'listuser.entered';
+  } elseif ($_POST['column'] == 'historyentry') {
+    $column = 'user_history.date';
+    $querytables .= ', '.$GLOBALS['tables']['user_history'].' user_history ';
+    $subselect .= ' and user_history.userid = user.id and user_history.summary = "Profile edit"';
+    print 'IP' .$col_delim;
+    print 'Change Summary' .$col_delim;
+    print 'Change Detail' .$col_delim;
+    $exporthistory = 1;
   } else {
     switch ($_POST['column']) {
-      case 'entered':$column = 'user.entered';
-      default: $column = 'user.modified';
+      case 'entered':$column = 'user.entered';break;
+      default: $column = 'user.modified';break;
     }
   }
   if ($list) {
-    $result = Sql_query(sprintf('select user.* from
+    $result = Sql_Verbose_query(sprintf('select * from
       %s where user.id = listuser.userid and listuser.listid = %d and %s >= "%s 00:00:00" and %s  <= "%s 23:59:59" %s
       ',$querytables,$list,$column,$fromval,$column,$toval,$subselect)
       );
   } else {
-    $result = Sql_query(sprintf('
+    $result = Sql_Verbose_query(sprintf('
       select * from %s where %s >= "%s 00:00:00" and %s  <= "%s 23:59:59" %s',
       $querytables,$column,$fromval,$column,$toval,$subselect));
   }
 
+  print $GLOBALS['I18N']->get('ListMembership').$row_delim;
+
 # print Sql_Affected_Rows()." users apply<br/>";
+#return;
   while ($user = Sql_fetch_array($result)) {
     set_time_limit(500);
     reset($cols);
@@ -119,22 +148,14 @@ if (isset($_POST['process'])) {
     reset($attributes);
     while (list($key,$val) = each ($attributes)) {
       $value = UserAttributeValue($user["id"],$val["id"]);
-      $enclose = 0;
-      if (ereg('"',$value)) {
-        $value = ereg_replace('"','""',$value);
-        $enclose = 1;
-      }
-      if (ereg($col_delim,$value)) {
-        $enclose = 1;
-      }
-      if (ereg($row_delim,$value)) {
-        $enclose = 1;
-      }
-      if ($enclose) {
-        $value = '"'.$value .'"';
-      }
-      print $value.$col_delim;
+      print quoteEnclosed($value).$col_delim;
     }
+    if ($exporthistory) {
+      print quoteEnclosed($row['ip']).$col_delim;
+      print quoteEnclosed($row['summery']).$col_delim;
+      print quoteEnclosed($row['detail']).$col_delim;
+    }
+
     $lists = Sql_query("select listid,name from
       {$tables['listuser']},{$tables['list']} where userid = ".$user["id"]." and
       {$tables['listuser']}.listid = {$tables['list']}.id $listselect_and");
@@ -153,7 +174,7 @@ if ($list)
 
 
 ?>
-<form method=post>
+<form method="post" action="">
 
 <br/><br/>
 <table>
@@ -163,6 +184,7 @@ if ($list)
 <tr><td colspan=2><?php echo $GLOBALS['I18N']->get('DateToUsed');?></td></tr>
 <tr><td><input type=radio name="column" value="entered" checked></td><td><?php echo $GLOBALS['I18N']->get('WhenSignedUp');?></td></tr>
 <tr><td><input type=radio name="column" value="modified"></td><td><?php echo $GLOBALS['I18N']->get('WhenRecordChanged');?></td></tr>
+<tr><td><input type=radio name="column" value="historyentry"></td><td><?php echo $GLOBALS['I18N']->get('Based on changelog');?></td></tr>
 <tr><td><input type=radio name="column" value="listentered"></td><td><?php echo $GLOBALS['I18N']->get('When they subscribed to');?>
 <select name="list">
 <?
@@ -193,5 +215,5 @@ while ($row = Sql_Fetch_Array($req)) {
 
 ?>
 </table>
-<input type=submit name="process" value="<?php echo $GLOBALS['I18N']->get('Export'); ?>"></form>
+<input type=submit name="processexport" value="<?php echo $GLOBALS['I18N']->get('Export'); ?>"></form>
 
