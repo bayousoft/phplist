@@ -1,5 +1,7 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
+include dirname(__FILE__).'/commonlib/pages/userhistory.php';
+return;
 
 print '<script language="Javascript" type="text/javascript" src="js/jslib.js"></script>';
 
