@@ -5,7 +5,7 @@ require_once dirname(__FILE__).'/accesscheck.php';
 
 include dirname(__FILE__) .'/date.php';
 
-function quoteEnclosed($value) {
+function quoteEnclosed($value,$col_delim = "\t",$row_delim = "\n") {
   $enclose = 0;
   if (ereg('"',$value)) {
     $value = ereg_replace('"','""',$value);
@@ -146,12 +146,12 @@ if (isset($_POST['processexport'])) {
     reset($attributes);
     while (list($key,$val) = each ($attributes)) {
       $value = UserAttributeValue($user["id"],$val["id"]);
-      print quoteEnclosed($value).$col_delim;
+      print quoteEnclosed($value,$col_delim,$row_delim).$col_delim;
     }
     if ($exporthistory) {
-      print quoteEnclosed($user['ip']).$col_delim;
-      print quoteEnclosed($user['summary']).$col_delim;
-      print quoteEnclosed($user['detail']).$col_delim;
+      print quoteEnclosed($user['ip'],$col_delim,$row_delim).$col_delim;
+      print quoteEnclosed($user['summary'],$col_delim,$row_delim).$col_delim;
+      print quoteEnclosed($user['detail'],$col_delim,$row_delim).$col_delim;
     }
 
     $lists = Sql_query("select listid,name from
