@@ -1,8 +1,6 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 
-# $Id: export.php,v 1.9 2007-01-22 21:17:20 mdethmers Exp $
-
 # export users from PHPlist
 
 include dirname(__FILE__) .'/date.php';
@@ -152,7 +150,7 @@ if (isset($_POST['processexport'])) {
     }
     if ($exporthistory) {
       print quoteEnclosed($user['ip']).$col_delim;
-      print quoteEnclosed($user['summery']).$col_delim;
+      print quoteEnclosed($user['summary']).$col_delim;
       print quoteEnclosed($user['detail']).$col_delim;
     }
 
