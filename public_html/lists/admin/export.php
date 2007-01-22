@@ -1,7 +1,7 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 
-# $Id: export.php,v 1.8 2007-01-22 21:11:42 mdethmers Exp $
+# $Id: export.php,v 1.9 2007-01-22 21:17:20 mdethmers Exp $
 
 # export users from PHPlist
 
@@ -78,9 +78,9 @@ if (isset($_POST['processexport'])) {
   ob_end_clean();
   $filename = trim(strip_tags($filename));
 
-  header("Content-type: text/plain");
-#  header("Content-type: ".$GLOBALS["export_mimetype"]);
-#  header("Content-disposition:  attachment; filename=\"$filename\"");
+#  header("Content-type: text/plain");
+  header("Content-type: ".$GLOBALS["export_mimetype"]);
+  header("Content-disposition:  attachment; filename=\"$filename\"");
   $col_delim = "\t";
   if (EXPORT_EXCEL) {
     $col_delim = ",";
@@ -126,12 +126,12 @@ if (isset($_POST['processexport'])) {
     }
   }
   if ($list) {
-    $result = Sql_Verbose_query(sprintf('select * from
+    $result = Sql_query(sprintf('select * from
       %s where user.id = listuser.userid and listuser.listid = %d and %s >= "%s 00:00:00" and %s  <= "%s 23:59:59" %s
       ',$querytables,$list,$column,$fromval,$column,$toval,$subselect)
       );
   } else {
-    $result = Sql_Verbose_query(sprintf('
+    $result = Sql_query(sprintf('
       select * from %s where %s >= "%s 00:00:00" and %s  <= "%s 23:59:59" %s',
       $querytables,$column,$fromval,$column,$toval,$subselect));
   }
@@ -151,9 +151,9 @@ if (isset($_POST['processexport'])) {
       print quoteEnclosed($value).$col_delim;
     }
     if ($exporthistory) {
-      print quoteEnclosed($row['ip']).$col_delim;
-      print quoteEnclosed($row['summery']).$col_delim;
-      print quoteEnclosed($row['detail']).$col_delim;
+      print quoteEnclosed($user['ip']).$col_delim;
+      print quoteEnclosed($user['summery']).$col_delim;
+      print quoteEnclosed($user['detail']).$col_delim;
     }
 
     $lists = Sql_query("select listid,name from
