@@ -364,7 +364,11 @@ class PHPMailer
         $this->body = $this->CreateBody();
 
         if($this->body == "") { return false; }
+
         $this->header .= $this->ContentTypeHeader;
+
+        if($this->Mailer != "mail")
+          $this->header .= $this->LE.$this->LE;
 
         // Choose the mailer
         switch($this->Mailer)
@@ -848,8 +852,8 @@ class PHPMailer
                 break;
         }
 
-        if($this->Mailer != "mail")
-            $result .= $this->LE.$this->LE;
+
+
         return $result;
     }
 
