@@ -26,7 +26,12 @@ if (!$GLOBALS["commandline"]) {
   @ob_end_clean();
   print ClineSignature();
   # check for other processes running
-  $send_process_id = getPageLock();
+  if (isset($cline['f'])) {
+    # force set, so kill other processes
+    $send_process_id = getPageLock(1);
+  } else {
+    $send_process_id = getPageLock();
+  }
   ob_start();
 }
 

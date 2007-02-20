@@ -64,6 +64,15 @@ if (!defined('USE_ADMIN_DETAILS_FOR_MESSAGES')) define('USE_ADMIN_DETAILS_FOR_ME
 if (!defined('SEND_ONE_TESTMAIL')) define('SEND_ONE_TESTMAIL',0);
 if (!defined('USE_SPAM_BLOCK')) define('USE_SPAM_BLOCK',1);
 if (!defined('NOTIFY_SPAM')) define('NOTIFY_SPAM',1);
+if (!defined('CLICKTRACK_LINKMAP')) define('CLICKTRACK_LINKMAP',0);
+if (!defined('ALWAYS_ADD_USERTRACK')) define('ALWAYS_ADD_USERTRACK',0);
+
+## fairly crude way to determine php version, but mostly needed for the stripos
+if (function_exists('stripos')) {
+  define('PHP5',1);
+} else {
+  define('PHP5',0);
+}  
 
 if (!isset($GLOBALS["export_mimetype"])) $GLOBALS["export_mimetype"] = 'application/csv';
 if (!isset($GLOBALS["admin_auth_module"])) $GLOBALS["admin_auth_module"] = 'phplist_auth.inc';
@@ -463,9 +472,14 @@ function logEvent($msg) {
 }
 
 ### process locking stuff
-function getPageLock() {
+function getPageLock($force = 0) {
   global $tables;
   $thispage = $GLOBALS["page"];
+  ## allow killing other processes
+  if ($force) {
+    Sql_query("delete from ".$tables["sendprocess"]." where page = \"$thispage\" ");
+  }
+
   $running_req = Sql_query("select now() - modified,id from ".$tables["sendprocess"]." where page = \"$thispage\" and alive order by started desc");
   $running_res = Sql_Fetch_row($running_req);
   $waited = 0;
