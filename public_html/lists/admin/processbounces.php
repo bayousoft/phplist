@@ -529,7 +529,7 @@ while ($user = Sql_Fetch_Row($userid_req)) {
         addUserHistory($emailreq[0],"Auto Unsubscribed","User auto unsubscribed for $cnt consecutive bounces");
         Sql_Query(sprintf('update %s set confirmed = 0 where id = %d',$tables["user"],$user[0]));
         $email_req = Sql_Fetch_Row_Query(sprintf('select email from %s where id = %d',$tables["user"],$user[0]));
-        $unsubscribed_users .= $email_req[0] . " [$user[0]] ($cnt)\n";
+        $unsubscribed_users .= $email_req[0]."\t\t($cnt)\t\t". $GLOBALS['scheme'].'//'.getConfig('website').$GLOBALS['adminpages'].'/?page=user&id='.$user[0]. "\n";
       }
     } elseif ($bounce["bounce"] == "") {
       #$cnt = 0; DT 051105
@@ -561,8 +561,11 @@ if ($advanced_report) {
   $report .= $GLOBALS['I18N']->get('Report of advanced bounce processing:')."\n$advanced_report\n";
 }
 if ($unsubscribed_users) {
-  $report .= "\n".$GLOBALS['I18N']->get("Below are users who have been marked unconfirmed. The number in [] is their userid, the number in () is the number of consecutive bounces")."\n";
+  $report .= "\n".$GLOBALS['I18N']->get("Below are users who have been marked unconfirmed. The in () is the number of consecutive bounces.")."\n";
   $report .= "\n$unsubscribed_users";
+} else {
+  # don't send a report email, if only some bounces were downloaded, but no users unsubscribed.
+  $report = '';
 }
 # shutdown will take care of reporting
 #finish("info",$report);
