@@ -504,6 +504,12 @@ define("USEFCK",1);
 # This is a potential security risk, so read README.security for more information
 define("FCKIMAGES_DIR","uploadimages");
 
+# alternatively, you can set UPLOADIMAGES_DIR, which will take precedence over the FCKIMAGES_DIR
+# and it's location will need to be in the document root of your website, instead of in the 
+# phplist root. To use this, comment out the following line, and set it to a directory in your
+# website document root, that is writable by your webserver user
+#define("UPLOADIMAGES_DIR","uploadimages");
+
 # TinyMCE Support (http://tinymce.moxiecode.com/)
 # It is suggested to copy the tinymce/jscripts/tiny_mce directory from the
 # standard TinyMCE distribution into the public_html/lists/admin/plugins
