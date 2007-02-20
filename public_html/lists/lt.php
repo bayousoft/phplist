@@ -106,6 +106,9 @@ if ($linkdata['personalise']) {
   }
 }
 #print "$url<br/>";
+if (!isset($_SESSION['entrypoint'])) {
+  $_SESSION['entrypoint'] = $url;
+}
 
 header("Location: " . $url);
 exit;
