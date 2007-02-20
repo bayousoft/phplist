@@ -37,7 +37,7 @@ if (!$id) {
 /*  $req = Sql_Query(sprintf('select distinct messageid, subject, sum(clicked) as totalclicks, count(distinct userid) as users, count(distinct linkid) as linkcount from %s as linktrack, %s as message
     where clicked and linktrack.messageid = message.id %s group by messageid order by entered desc limit 50',
     $GLOBALS['tables']['linktrack'],$GLOBALS['tables']['message'],$subselect));*/
-  $req = Sql_Verbose_Query(sprintf('select distinct messageid, subject, total, count(forwardid) as linkcount,clicked as totalclicks,htmlclicked,textclicked from %s as linktrack_ml, %s as message
+  $req = Sql_Query(sprintf('select distinct messageid, subject, total, count(forwardid) as linkcount,clicked as totalclicks,htmlclicked,textclicked from %s as linktrack_ml, %s as message
     where clicked and linktrack_ml.messageid = message.id %s group by messageid order by entered desc limit 50',
     $GLOBALS['tables']['linktrack_ml'],$GLOBALS['tables']['message'],$subselect));
   if (!Sql_Affected_Rows()) {

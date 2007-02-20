@@ -60,7 +60,7 @@ if ($fwdid && $msgid) {
   <tr><td>'.$GLOBALS['I18N']->get('Entered').'<td><td>'.$messagedata['entered'].'</td></tr>
   <tr><td>'.$GLOBALS['I18N']->get('Sent').'<td><td>'.$messagedata['sent'].'</td></tr>
   </table><hr/>';
-  $req = Sql_Verbose_query(sprintf('select user.email,user.id as userid,firstclick,date_format(latestclick,
+  $req = Sql_query(sprintf('select user.email,user.id as userid,firstclick,date_format(latestclick,
     "%%e %%b %%Y %%H:%%i") as latestclick,clicked from %s as uml_click, %s as user where uml_click.userid = user.id 
     and uml_click.forwardid = %d and uml_click.messageid = %d
     and uml_click.clicked',$GLOBALS['tables']['linktrack_uml_click'],$GLOBALS['tables']['user'],$fwdid,$msgid));
@@ -73,12 +73,12 @@ if ($fwdid && $msgid) {
   <tr><td>'.$GLOBALS['I18N']->get('Entered').'<td><td>'.$messagedata['entered'].'</td></tr>
   <tr><td>'.$GLOBALS['I18N']->get('Sent').'<td><td>'.$messagedata['sent'].'</td></tr>
   </table><hr/>';
-  $req = Sql_Verbose_query(sprintf('select user.email,user.id as userid,firstclick,date_format(latestclick,
+  $req = Sql_query(sprintf('select user.email,user.id as userid,firstclick,date_format(latestclick,
     "%%e %%b %%Y %%H:%%i") as latestclick,clicked,messageid,forwardid,url from %s as uml_click, %s as user, %s as forward where uml_click.userid = user.id 
     and uml_click.userid = %d and uml_click.messageid = %d and forward.id = uml_click.forwardid',$GLOBALS['tables']['linktrack_uml_click'],$GLOBALS['tables']['user'],$GLOBALS['tables']['linktrack_forward'], $userid,$msgid));
 } elseif ($fwdid) {
   print '<h1>'.$GLOBALS['I18N']->get('User Click Details for a URL').' <b>'.$urldata['url'].'</b></h1>';
-  $req = Sql_Verbose_query(sprintf('select user.email, user.id as userid,firstclick,date_format(latestclick,
+  $req = Sql_query(sprintf('select user.email, user.id as userid,firstclick,date_format(latestclick,
     "%%e %%b %%Y %%H:%%i") as latestclick,clicked from %s as uml_click, %s as user where uml_click.userid = user.id 
     and uml_click.forwardid = %d group by uml_click.userid',$GLOBALS['tables']['linktrack_uml_click'],$GLOBALS['tables']['user'],
     $fwdid));
@@ -89,13 +89,13 @@ if ($fwdid && $msgid) {
   <tr><td>'.$GLOBALS['I18N']->get('Entered').'<td><td>'.$messagedata['entered'].'</td></tr>
   <tr><td>'.$GLOBALS['I18N']->get('Sent').'<td><td>'.$messagedata['sent'].'</td></tr>
   </table><hr/>';
-  $req = Sql_Verbose_query(sprintf('select user.email,user.id as userid,firstclick,date_format(latestclick,
+  $req = Sql_query(sprintf('select user.email,user.id as userid,firstclick,date_format(latestclick,
     "%%e %%b %%Y %%H:%%i") as latestclick,clicked from %s as uml_click, %s as user where uml_click.userid = user.id 
     and uml_click.messageid = %d',$GLOBALS['tables']['linktrack_uml_click'],$GLOBALS['tables']['user'],
     $msgid));
 } elseif ($userid) {
   print '<h1>'.$GLOBALS['I18N']->get('User Click Details').'</h1>';
-  $req = Sql_Verbose_query(sprintf('select user.email,user.id as userid,firstclick,date_format(latestclick,
+  $req = Sql_query(sprintf('select user.email,user.id as userid,firstclick,date_format(latestclick,
     "%%e %%b %%Y %%H:%%i") as latestclick,clicked,messageid,forwardid,url from %s as uml_click, %s as user, %s as forward where uml_click.userid = user.id 
     and uml_click.userid = %d and forward.id = uml_click.forwardid',$GLOBALS['tables']['linktrack_uml_click'],$GLOBALS['tables']['user'],$GLOBALS['tables']['linktrack_forward'],
     $userid));

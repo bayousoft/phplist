@@ -355,7 +355,7 @@ function Warn($msg) {
 function Info($msg) {
   if ($GLOBALS['commandline']) {
     @ob_end_clean();
-    print "\n".strip_tags($GLOBALS["I18N"]->get("information").": ".$msg);
+    print "\n".strip_tags($GLOBALS["I18N"]->get("information").": ".$msg)."\n";
     @ob_start();
   } else {
     print '<center><table border=1><tr><td class="error">'.$GLOBALS["I18N"]->get("information").": $msg </td></tr></table></center>";

@@ -48,6 +48,9 @@ if (!Sql_Table_exists($GLOBALS['tables']['linktrack_forward']) ||
   output("creating tables done");
 }
 
+$num = Sql_Fetch_Row_Query(sprintf('select count(*) from %s',$GLOBALS['tables']['linktrack']));
+output("$num[0] entries still to convert");
+
 $c = 0;
 output("converting data<br/>");
 $req = Sql_Query(sprintf('select * from %s limit 10000',$GLOBALS['tables']['linktrack']));

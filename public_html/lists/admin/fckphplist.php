@@ -525,6 +525,9 @@ if( window.console ) window.console.log( 'Config is loaded!' ) ;  // @Packager.C
   $imgdir = $_SERVER['DOCUMENT_ROOT'].$GLOBALS["pageroot"].'/'.FCKIMAGES_DIR.'/';
   $enable_image_upload = is_dir($imgdir) && is_writeable ($imgdir) ? 'true':'false';
 
+  $imgdir = $_SERVER['DOCUMENT_ROOT'].'/'.UPLOADIMAGES_DIR.'/';
+  $enable_image_upload = is_dir($imgdir) && is_writeable ($imgdir) ? 'true':'false';
+
   $smileypath = $_SERVER["DOCUMENT_ROOT"].$GLOBALS["pageroot"].'/images/smiley';
   $smileyextensions = array('gif');
   $smileys = '';
@@ -630,20 +633,16 @@ FCKConfig.TemplateReplaceCheckbox = true ;
 FCKConfig.ToolbarLocation = 'In' ;
 
 FCKConfig.ToolbarSets["Default"] = [
-  ['Source','DocProps','-','NewPage','Preview','-','Templates'],
+  ['Source','DocProps','-','NewPage','Preview'],
   ['Cut','Copy','Paste','PasteText','PasteWord','-','Print','SpellCheck'],
-  ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
-  ['Form','Checkbox','Radio','TextField','Textarea','Select','Button','ImageButton','HiddenField'],
-  '/',
+  ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat','Link','Unlink','Anchor'],
   ['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript'],
   ['OrderedList','UnorderedList','-','Outdent','Indent'],
   ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
-  ['Link','Unlink','Anchor'],
-  ['Image','Flash','Table','Rule','Smiley','SpecialChar','PageBreak','UniversalKey'],
+  ['Image','Table','Rule','Smiley','SpecialChar','UniversalKey','TextColor','BGColor'],
   '/',
   ['Style','FontFormat','FontName','FontSize'],
-  ['TextColor','BGColor'],
-  ['FitWindow','-','About']
+  ['About']
 ] ;
 
 FCKConfig.ToolbarSets["Basic"] = [
@@ -697,7 +696,6 @@ FCKConfig.LinkBrowserWindowWidth  = FCKConfig.ScreenWidth * 0.7 ;   // 70%
 FCKConfig.LinkBrowserWindowHeight = FCKConfig.ScreenHeight * 0.7 ;  // 70%
 
 FCKConfig.ImageBrowser = <?php echo $enable_image_upload?> ;
-//FCKConfig.ImageBrowserURL = FCKConfig.BasePath + 'filemanager/browser/default/browser.html?Type=Image&Connector=connectors/' + _FileBrowserLanguage + '/connector.' + _FileBrowserExtension ;
 FCKConfig.ImageBrowserURL = FCKConfig.BasePath + 'filemanager/browser/default/browser.html?Type=Image&Connector=connectors/phplist/connector.php'
 FCKConfig.ImageBrowserWindowWidth  = FCKConfig.ScreenWidth * 0.7 ;  // 70% ;
 FCKConfig.ImageBrowserWindowHeight = FCKConfig.ScreenHeight * 0.7 ; // 70% ;

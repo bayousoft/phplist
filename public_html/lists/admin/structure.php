@@ -459,6 +459,13 @@ $DBstruct = array( # order of tables is essential for smooth upgrade
       "primary key" => array("(id,item)","")
     )
 */
+//   "querycount" => array(
+//     "query" => array('text',''),
+//     "count" => array('integer default 0',''),
+//     'frontend' => array('integer default 0',''),
+//     'unique_1' => array('qindex (query (500))',''),
+//   ),
+
 );
 
 ?>

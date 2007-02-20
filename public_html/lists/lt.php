@@ -53,11 +53,12 @@ $ml = Sql_Fetch_Array_Query(sprintf('select * from %s where messageid = %d and f
   $GLOBALS['tables']['linktrack_ml'],$messageid,$fwdid));
 
 if (empty($ml['firstclick'])) {
-  Sql_query(sprintf('update %s set firstclick = now() where forwardid = %d and messageid = %d',
+  Sql_query(sprintf('update %s set firstclick = now(),latestclick = now(),clicked = clicked + 1 where forwardid = %d and messageid = %d',
     $GLOBALS['tables']['linktrack_ml'],$fwdid,$messageid));
-} 
-Sql_query(sprintf('update %s set clicked = clicked + 1, latestclick = now() where forwardid = %d and messageid = %d',
+} else {
+  Sql_query(sprintf('update %s set clicked = clicked + 1, latestclick = now() where forwardid = %d and messageid = %d',
   $GLOBALS['tables']['linktrack_ml'],$fwdid,$messageid));
+}
 
 if ($msgtype == 'H') {
   Sql_query(sprintf('update %s set htmlclicked = htmlclicked + 1 where forwardid = %d and messageid = %d',
@@ -72,7 +73,7 @@ $viewed = Sql_Fetch_Row_query(sprintf('select viewed from %s where messageid = %
 if (!$viewed[0]) {
   Sql_Query(sprintf('update %s set viewed = now() where messageid = %d and userid = %d', 
     $GLOBALS['tables']['usermessage'], $messageid, $userid));
-  Sql_Query(sprintf('update %s set viewed = (viewed + 1) where id = %d', 
+  Sql_Query(sprintf('update %s set viewed = viewed + 1 where id = %d', 
     $GLOBALS['tables']['message'], $messageid));
 }
 
