@@ -204,21 +204,43 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   $textmessage = $textcontent;
 
   foreach (array("forwardform","forward","subscribe","preferences","unsubscribe","signature") as $item) {
-    if (eregi('\['.$item.'\]',$htmlmessage,$regs)) {
-      $htmlmessage = eregi_replace('\['.$item.'\]',$html[$item],$htmlmessage);
-      unset($html[$item]);
-    }
-    if (eregi('\['.$item.'\]',$textmessage,$regs)) {
-      $textmessage = eregi_replace('\['.$item.'\]',$text[$item],$textmessage);
-      unset($text[$item]);
+    # hmm str_ireplace and stripos would be faster, presumably, but that's php5 only
+    if (PHP5) {
+      if (stripos($htmlmessage,'['.$item.']')) {
+        $htmlmessage = str_ireplace('\['.$item.'\]',$html[$item],$htmlmessage);
+        unset($html[$item]);
+      }
+      if (stripos($textmessage,'['.$item.']')) {
+        $textmessage = str_ireplace('['.$item.']',$text[$item],$textmessage);
+        unset($text[$item]);
+      }
+    } else {
+      if (eregi('\['.$item.'\]',$htmlmessage,$regs)) {
+        $htmlmessage = eregi_replace('\['.$item.'\]',$html[$item],$htmlmessage);
+        unset($html[$item]);
+      }
+      if (eregi('\['.$item.'\]',$textmessage,$regs)) {
+        $textmessage = eregi_replace('\['.$item.'\]',$text[$item],$textmessage);
+        unset($text[$item]);
+      }
     }
   }
+
   foreach (array("forwardurl","subscribeurl","preferencesurl","unsubscribeurl") as $item) {
-    if (eregi('\['.$item.'\]',$htmlmessage,$regs)) {
-      $htmlmessage = eregi_replace('\['.$item.'\]',$html[$item],$htmlmessage);
-    }
-    if (eregi('\['.$item.'\]',$textmessage,$regs)) {
-      $textmessage = eregi_replace('\['.$item.'\]',$text[$item],$textmessage);
+    if (PHP5) {
+      if (stripos($htmlmessage,'['.$item.']')) {
+        $htmlmessage = str_ireplace('['.$item.']',$html[$item],$htmlmessage);
+      }
+      if (stripos($textmessage,'['.$item.']')) {
+        $textmessage = str_ireplace('['.$item.']',$text[$item],$textmessage);
+      }
+    } else {
+      if (eregi('\['.$item.'\]',$htmlmessage,$regs)) {
+        $htmlmessage = eregi_replace('\['.$item.'\]',$html[$item],$htmlmessage);
+      }
+      if (eregi('\['.$item.'\]',$textmessage,$regs)) {
+        $textmessage = eregi_replace('\['.$item.'\]',$text[$item],$textmessage);
+      }
     }
   }
   if ($hash != 'forwarded') {
@@ -267,8 +289,18 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 
   $htmlmessage = eregi_replace("\[USERID\]",$hash,$htmlmessage);
   $textmessage = eregi_replace("\[USERID\]",$hash,$textmessage);
-  $htmlmessage = preg_replace("/\[USERTRACK\]/i",'<img src="'.$GLOBALS['scheme'].'://'.$website.$GLOBALS["pageroot"].'/ut.php?u='.$hash.'&m='.$messageid.'" width="1" height="1" border="0">',$htmlmessage,1);
-  $htmlmessage = eregi_replace("\[USERTRACK\]",'',$htmlmessage);
+
+  if (ALWAYS_ADD_USERTRACK) {
+    $htmlmessage .= '<img src="'.$GLOBALS['scheme'].'://'.$website.$GLOBALS["pageroot"].'/ut.php?u='.$hash.'&m='.$messageid.'" border="0">';
+  } else {
+    $htmlmessage = preg_replace("/\[USERTRACK\]/i",'<img src="'.$GLOBALS['scheme'].'://'.$website.$GLOBALS["pageroot"].'/ut.php?u='.$hash.'&m='.$messageid.'" border="0">',$htmlmessage,1);
+  }
+  # make sure to only include usertrack once, otherwise the stats would go silly
+  if (PHP5) {
+    $htmlmessage = str_ireplace('[USERTRACK]','',$htmlmessage);
+  } else {
+    $htmlmessage = eregi_replace("\[USERTRACK\]",'',$htmlmessage);
+  }
 
   if ($listowner) {
     $att_req = Sql_Query("select name,value from {$GLOBALS["tables"]["adminattribute"]},{$GLOBALS["tables"]["admin_attribute"]} where {$GLOBALS["tables"]["adminattribute"]}.id = {$GLOBALS["tables"]["admin_attribute"]}.adminattributeid and {$GLOBALS["tables"]["admin_attribute"]}.adminid = $listowner");
@@ -412,7 +444,11 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 
         $masked = "H|$linkid|$messageid|".$userdata['id'] ^ XORmask;
         $masked = urlencode(base64_encode($masked));
-        $newlink = sprintf('<a%shref="%s://%s/lt.php?id=%s" %s>%s</a>',$links[1][$i],$GLOBALS["scheme"],$website.$GLOBALS["pageroot"],$masked,$links[3][$i],$links[4][$i]);
+        if (!CLICKTRACK_LINKMAP) {
+          $newlink = sprintf('<a%shref="%s://%s/lt.php?id=%s" %s>%s</a>',$links[1][$i],$GLOBALS["scheme"],$website.$GLOBALS["pageroot"],$masked,$links[3][$i],$links[4][$i]);
+        } else {
+          $newlink = sprintf('<a%shref="%s://%s%s" %s>%s</a>',$links[1][$i],$GLOBALS["scheme"],$website.CLICKTRACK_LINKMAP,$masked,$links[3][$i],$links[4][$i]);
+        }
         $htmlmessage = str_replace($links[0][$i], $newlink, $htmlmessage);
       }
     }
@@ -478,7 +514,12 @@ if (0) {
 
         $masked = "T|$linkid|$messageid|".$userdata['id'] ^ XORmask;
         $masked = urlencode(base64_encode($masked));
-        $newlinks[$linkid] = sprintf('%s://%s/lt.php?id=%s',$GLOBALS["scheme"],$website.$GLOBALS["pageroot"],$masked);
+        if (!CLICKTRACK_LINKMAP) {
+          $newlinks[$linkid] = sprintf('%s://%s/lt.php?id=%s',$GLOBALS["scheme"],$website.$GLOBALS["pageroot"],$masked);
+        } else {
+          $newlinks[$linkid] = sprintf('%s://%s%s',$GLOBALS["scheme"],$website.CLICKTRACK_LINKMAP,$masked);
+        }
+
 #        print $links[0][$i] .' -> '.$newlink.'<br/>';
         $textmessage = str_replace($links[1][$i], '[%%%'.$linkid.'%%%]', $textmessage);
       }
@@ -558,6 +599,10 @@ if (0) {
     ));
   } else {
     $mail = new PHPlistMailer($messageid,$destinationemail);
+    $mail->addCustomHeader("List-Help: <".$text["preferences"].">");
+    $mail->addCustomHeader("List-Unsubscribe: <".$text["unsubscribe"].">");
+    $mail->addCustomHeader("List-Subscribe: <".getConfig("subscribeurl").">");
+    $mail->addCustomHeader("List-Owner: <mailto:".getConfig("admin_address").">");
     ##$mail->IsSMTP();
   }
 
@@ -880,6 +925,9 @@ function stripHTML($text) {
 #  $text = preg_replace("/<a href=\"(.*?)\"[^>]*>(.*?)<\/a>/is","\\2\n{\\1}",$text,100);
 
 #  $text = preg_replace("/<a href=\"(.*?)\"[^>]*>(.*?)<\/a>/is","[URLTEXT]\\2[/URLTEXT][LINK]\\1[/LINK]",$text,100);
+
+  # strip links that are to an "a name" in the same document
+  $text = preg_replace("/<a.*href=[\"\']#(.*)[\"\'][^>]*>(.*)<\/a>/Umis","",$text);
 
   $text = preg_replace("/<a.*href=[\"\'](.*)[\"\'][^>]*>(.*)<\/a>/Umis","[URLTEXT]\\2[ENDURLTEXT][LINK]\\1[ENDLINK]\n",$text);
 
