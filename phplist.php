@@ -7,12 +7,19 @@ class phplist extends DefaultPlugin {
   var $tables = array();
   var $table_prefix = "";
   var $VERSION = "dev";
+  var $message_envelope = '';
+  var $developer_email = '';
 
   function phplist() {
     global $tables,$config;
     $table_prefix = "phplist_";
-    $this->table_prefix = $table_prefix;
     $usertable_prefix = "";
+    if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
+      include $_SERVER["ConfigFile"];
+      $this->message_envelope = $message_envelope;
+      $this->developer_email = $developer_email;
+      $this->table_prefix = $table_prefix;
+    }
     include $config["code_root"]."/uploader/plugins/phplist/".$this->coderoot()."/structure.php";
     $this->DBstructure = $DBstruct;
 
@@ -215,6 +222,15 @@ class phplist extends DefaultPlugin {
     return $req[0] == $userid;
   }
 
+  function getListSubscriptions($email) {
+    $res = array();
+    $req = Sql_Query(sprintf('select list.id,list.name from %s listuser, %s user, %s list where user.id = listuser.userid and user.email = "%s" and listuser.listid = list.id',$this->tables['listuser'],$this->tables['user'],$this->tables['list'],addslashes($email)));
+    while ($row = Sql_Fetch_Array($req)) {
+      $res[$row['id']] = $row['name'];
+    }
+    return $res;
+  }
+
   function sendConfirmationRequest($userid) {
     $subscribemessage = ereg_replace('\[LISTS\]', '', $this->getUserConfig("subscribemessage",$userid));
     $this->sendMail($this->userEmail($userid), $this->getConfig("subscribesubject"), $subscribemessage);
@@ -222,10 +238,8 @@ class phplist extends DefaultPlugin {
   }
 
   function sendMail ($to,$subject,$message,$header = "",$parameters = "") {
-    mail($to,$subject,$message);
+#    mail($to,$subject,$message);
     dbg("mail $to $subject");
-    if (TEST)
-      return 1;
     if (!$to)  {
       logEvent("Error: empty To: in message with subject $subject to send");
       return 0;
@@ -235,51 +249,54 @@ class phplist extends DefaultPlugin {
     }
     if (isBlackListed($to)) {
       logEvent("Error, $to is blacklisted, not sending");
-      Sql_Query(sprintf('update %s set blacklisted = 1 where email = "%s"',$GLOBALS["tables"]["user"],$to));
+      Sql_Query(sprintf('update %s set blacklisted = 1 where email = "%s"',$this->tables["user"],$to));
       addUserHistory($to,"Marked Blacklisted","Found user in blacklist while trying to send an email, marked black listed");
       return 0;
     }
     $v = phpversion();
     $v = preg_replace("/\-.*$/","",$v);
-    if ($GLOBALS["message_envelope"]) {
+    $header .= "X-Mailer: webbler/phplist v".VERSION.' (http://www.phplist.com)'."\n";
+    $from_address = $this->getConfig("message_from_address");
+    $from_name = $this->getConfig("message_from_name");
+    if ($from_name)
+      $header .= "From: \"$from_name\" <$from_address>\n";
+    else
+      $header .= "From: $from_address\n";
+    $message_replyto_address = $this->getConfig("message_replyto_address");
+    if ($message_replyto_address)
+      $header .= "Reply-To: $message_replyto_address\n";
+    else
+      $header .= "Reply-To: $from_address\n";
+    $v = VERSION;
+    $v = ereg_replace("-dev","",$v);
+    $header .= "X-MessageID: systemmessage\n";
+    if ($useremail)
+      $header .= "X-User: ".$useremail."\n";
+    if ($this->message_envelope) {
       $header = rtrim($header);
       if ($header)
         $header .= "\n";
-      $header .= "Errors-To: ".$GLOBALS["message_envelope"];
-      if (!$parameters || !ereg("-f".$GLOBALS["message_envelope"],$parameters)) {
-        $parameters = '-f'.$GLOBALS["message_envelope"];
+      $header .= "Errors-To: ".$this->message_envelope;
+      if (!$parameters || !ereg("-f".$this->message_envelope)) {
+        $parameters = '-f'.$this->message_envelope;
       }
-    }
-    $header .= "X-Mailer: PHPlist v".VERSION.' (http://www.phplist.com)'."\n";
-
-    if (WORKAROUND_OUTLOOK_BUG) {
-      $header = rtrim($header);
-      if ($header)
-        $header .= "\n";
-      $header .= "X-Outlookbug-fixed: Yes";
-      $message = preg_replace("/\r?\n/", "\r\n", $message);
     }
 
     if (!ereg("dev",VERSION)) {
-      if ($v > "4.0.5" && !ini_get("safe_mode")) {
-        if (mail($to,$subject,$message,$header,$parameters))
-          return 1;
-        else
-          return mail($to,$subject,$message,$header);
-      }
+      if (mail($to,$subject,$message,$header,$parameters))
+        return 1;
       else
         return mail($to,$subject,$message,$header);
     } else {
       # send mails to one place when running a test version
       $message = "To: $to\n".$message;
-      if ($GLOBALS["developer_email"]) {
-        return mail($GLOBALS["developer_email"],$subject,$message,$header,$parameters);
+      if ($this->developer_email) {
+        return mail($this->developer_email,$subject,$message,$header,$parameters);
       } else {
         print "Error: Running CVS version, but developer_email not set";
       }
     }
   }
-
 
   function display($subtype,$name,$value,$docid = 0) {
     global $config;
