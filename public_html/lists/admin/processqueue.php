@@ -796,6 +796,17 @@ while ($message = Sql_fetch_array($messages)) {
       output($GLOBALS['I18N']->get('It took').' '.timeDiff($timetaken[0],$timetaken[1]).' '.$GLOBALS['I18N']->get('to send this message'));
       sendMessageStats($messageid);
     }
+    ## flush cached message track stats to the DB
+    if (isset($GLOBALS['cached']['linktracksent'])) {
+      foreach ($GLOBALS['cached']['linktracksent'] as $messageid => $numsent) {
+        foreach ($numsent as $fwdid => $fwdtotal) {
+          output("Flushing clicktrack stats for $messageid: $fwdid => $fwdtotal");
+          Sql_Query(sprintf('update %s set total = %d where messageid = %d and forwardid = %d',
+            $GLOBALS['tables']['linktrack_ml'],$fwdtotal,$messageid,$fwdid));
+        }
+      }
+    }
+
   } else {
     if ($script_stage < 5)
       $script_stage = 5;

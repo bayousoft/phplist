@@ -927,6 +927,7 @@ function stripHTML($text) {
 function clickTrackLinkId($messageid,$userid,$url,$link) {
   global $cached;
   if (!isset($cached['linktrack']) || !is_array($cached['linktrack'])) $cached['linktrack'] = array();
+  if (!isset($cached['linktracksent']) || !is_array($cached['linktracksent'])) $cached['linktracksent'] = array();
   if (!isset($cached['linktrack'][$link])) {
     $exists = Sql_Fetch_Row_Query(sprintf('select id from %s where url = "%s"',
       $GLOBALS['tables']['linktrack_forward'],addslashes($url)));
@@ -942,9 +943,27 @@ function clickTrackLinkId($messageid,$userid,$url,$link) {
   } else {
     $fwdid = $cached['linktrack'][$link];
   }
-  $tot = Sql_Fetch_Row_Query(sprintf('select total from %s where messageid = %d and forwardid = %d',$GLOBALS['tables']['linktrack_ml'],$messageid,$fwdid));
-  Sql_Query(sprintf('replace into %s set total = %d, messageid = %d, forwardid = %d',
-    $GLOBALS['tables']['linktrack_ml'],$tot[0]+1,$messageid,$fwdid));
+
+  if (!isset($cached['linktracksent'][$messageid]) || !is_array($cached['linktracksent'][$messageid])) $cached['linktracksent'][$messageid] = array();
+  if (!isset($cached['linktracksent'][$messageid][$fwdid])) {
+    $tot = Sql_Fetch_Row_Query(sprintf('select total from %s where messageid = %d and forwardid = %d',$GLOBALS['tables']['linktrack_ml'],$messageid,$fwdid));
+    if (!Sql_Affected_Rows()) {
+      ## first time for this link/message
+      Sql_Query(sprintf('replace into %s set total = %d,messageid = %d,forwardid = %d',
+        $GLOBALS['tables']['linktrack_ml'],$tot[0]+1,$messageid,$fwdid));
+    } else {
+      Sql_Query(sprintf('update %s set total = %d where messageid = %d and forwardid = %d',
+        $GLOBALS['tables']['linktrack_ml'],$tot[0]+1,$messageid,$fwdid));
+    }
+    $cached['linktracksent'][$messageid][$fwdid] = $tot[0]+1;
+  } else {
+    $cached['linktracksent'][$messageid][$fwdid]++;
+    ## write every so often, to make sure it's saved when interrupted
+    if ($cached['linktracksent'][$messageid][$fwdid] % 100 == 0) {
+      Sql_Query(sprintf('update %s set total = %d where messageid = %d and forwardid = %d',
+        $GLOBALS['tables']['linktrack_ml'],$cached['linktracksent'][$messageid][$fwdid],$messageid,$fwdid));
+    }
+  }
 
 /*  $req = Sql_Query(sprintf('insert ignore into %s (messageid,userid,forwardid)
     values(%d,%d,"%s","%s")',$GLOBALS['tables']['linktrack'],$messageid,$userdata['id'],$url,addslashes($link)));
