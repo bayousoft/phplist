@@ -432,6 +432,23 @@ define('CLICKTRACK',0);
 # recommended to leave it off, but if you're very curious, you can enable it
 define('CLICKTRACK_SHOWDETAIL',0);
 
+# Click track link map
+# if you want the links in your emails to look a bit more professional, you can set the click track
+# link map. If you do this, you will need to add a RewriteRule in your Apache config, which maps this
+# back to the original lt.php
+# it's quite useful to keep links short in the emails, particularly text emails
+# basically the effect is that /lists/lt.php?id=XYX is changed to /lt/XYZ
+# if for example your rewrite rule is:
+# RewriteRule   ^/lt/(.*)$ /lists/lt.php?id=$1 [PT]
+# more info at http://www.google.com/search?q=mod_rewrite (phplist docs to follow at some point)
+#define('CLICKTRACK_LINKMAP','/lt/');
+
+# Add Usertrack
+# tracking opens now seems fairly common, however flawed it still is. Set this option to 1
+# to always add [USERTRACK] to any message being sent out, even if someone forgot to add it to
+# the template, footer or message body
+define('ALWAYS_ADD_USERTRACK',0);
+
 # Domain Throttling
 # You can activate domain throttling, by setting USE_DOMAIN_THROTTLE to 1
 # define the maximum amount of emails you want to allow sending to any domain and the number
