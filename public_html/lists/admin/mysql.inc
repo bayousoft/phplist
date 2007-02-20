@@ -109,6 +109,18 @@ function Sql_Query($query,$ignore = 0) {
     $now =  gettimeofday();
     $start = $now["sec"] * 1000000 + $now["usec"];
     $GLOBALS['lastquery'] = $query;
+    # keep track of queries to see which ones to optimize
+    if (function_exists('stripos')) {
+      if (!stripos($query,'WebblerSessions') && !stripos($query,'cache')) {
+        $store = $query;
+        $store = preg_replace('/\d+/','X',$store);
+        $store = trim($store);
+        @mysql_query(sprintf('update querycount set count = count + 1 where query = "%s" and frontend = %d',$store,$frontend));
+        if (mysql_affected_rows() != 2) {
+          @mysql_query(sprintf('insert into querycount set count = count + 1 , query = "%s",phplist = 1',$store));
+        }
+      }
+    }  
   }
   $GLOBALS["pagestats"]["number_of_queries"]++;
   $result = mysql_query($query,$GLOBALS["database_connection"]);
@@ -124,6 +136,8 @@ function Sql_Query($query,$ignore = 0) {
     if ($elapsed > 300000) {
       $query = substr($query,0,200);
       sqllog(' ['.$elapsed.'] '.$query,"/tmp/phplist-sqltimer.log");
+    } else {
+#      sqllog(' ['.$elapsed.'] '.$query,"/tmp/phplist-sqltimer.log");
     }
   }
 
