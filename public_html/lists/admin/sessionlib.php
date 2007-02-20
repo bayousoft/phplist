@@ -4,6 +4,9 @@ require_once dirname(__FILE__).'/accesscheck.php';
   # try to set the configuration
 	if (empty($GLOBALS["SessionTableName"])) return;
 
+  # only necessary on main pages, not in lt/dl etc
+  if (basename($_SERVER['SCRIPT_NAME']) != 'index.php') return;
+
   @ini_set("session.save_handler","user");
   $SessionTableName = $GLOBALS["SessionTableName"];
 
