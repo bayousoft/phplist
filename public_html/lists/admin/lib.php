@@ -49,7 +49,7 @@ if (!defined('CLICKTRACK_SHOWDETAIL')) define('CLICKTRACK_SHOWDETAIL',0);
 if (!defined('USETINYMCEMESG')) define('USETINYMCEMESG',0);
 if (!defined('USETINYMCETEMPL')) define('USETINYMCETEMPL',0);
 if (!defined('TINYMCEPATH')) define('TINYMCEPATH','');
-if (!defined('STATS_INTERVAL')) define('STATS_INTERVAL','monthly');
+if (!defined('STATS_INTERVAL')) define('STATS_INTERVAL','weekly');
 if (!defined('USE_DOMAIN_THROTTLE')) define('USE_DOMAIN_THROTTLE',0);
 if (!defined('DOMAIN_BATCH_SIZE')) define('DOMAIN_BATCH_SIZE',1);
 if (!defined('DOMAIN_BATCH_PERIOD')) define('DOMAIN_BATCH_PERIOD',120);
