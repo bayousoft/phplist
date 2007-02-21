@@ -495,6 +495,9 @@ function confirmPage($id) {
     $html = '<ul>';
     $lists = '';
     Sql_Query("update {$tables["user"]} set confirmed = 1,blacklisted = 0 where id = ".$userdata["id"]);
+    # just in case the DB is not updated, should be merged with the above later
+    Sql_Query("update {$tables["user"]} set optedin = 1 where id = ".$userdata["id"],1);
+
     $req = Sql_Query(sprintf('select name,description from %s list, %s listuser where listuser.userid = %d and listuser.listid = list.id and list.active',$tables['list'],$tables['listuser'],$userdata['id']));
     if (!Sql_Affected_Rows()) {
       $lists = "\n * ".$GLOBALS["strNoLists"];

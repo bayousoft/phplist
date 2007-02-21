@@ -29,6 +29,7 @@ $DBstruct = array( # order of tables is essential for smooth upgrade
         "id" => array("integer not null primary key auto_increment","sysexp:ID"),
         "email" => array("varchar(255) not null","Email"),
         "confirmed" => array("tinyint default 0","sys:Is this user confirmed"),
+        "optedin" => array("tinyint default 0","sys:Did this user manually confirm"),
         "blacklisted" => array("tinyint default 0","sys:Is this user blacklisted"),
         "bouncecount" => array("integer default 0","sys:Number of bounces on this user"),
         "entered" => array("datetime", "sysexp:Entered"),
