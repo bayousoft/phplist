@@ -159,7 +159,7 @@ function db_db_Query($query,$database,$db_connection) {
   return $res;
 }
 
-function Sql_Verbose_Query($query) {
+function Sql_Verbose_Query($query,$ignore = 0) {
   if (preg_match("/dev/",VERSION))
     print "<b>$query</b><br>\n";
   flush();
@@ -168,7 +168,7 @@ function Sql_Verbose_Query($query) {
     print "Sql: $query\n";
     ob_start();
   }
-  return Sql_Query($query);
+  return Sql_Query($query,$ignore);
 }
 
 function Sql_Fetch_Array($dbresult) {
