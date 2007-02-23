@@ -53,9 +53,9 @@ while ($row = Sql_fetch_array($result)) {
   }
   $html .= sprintf('
     <tr>
-      <td valign="top">%d</td><td valign="top"><b>%s</b><br/>%d %s</td>
+      <td valign="top">%d</td><td valign="top"><b>%s</b><br/>%d %s </td>
       <td valign="top"><input type="text" name="listorder[%d]" value="%d" size="5"></td>
-    <td valign="top">%s | %s | <a href="javascript:deleteRec(\'%s\');">%s</a></td>
+    <td valign="top">%s<br/>%s<br/>%s<br/><a href="javascript:deleteRec(\'%s\');">%s</a></td>
     <td valign="top"><input type="checkbox" name="active[%d]" value="1" %s></td>
     <td valign="top">%s</td></tr><tr><td>&nbsp;</td>
       <td colspan="5">%s</td></tr><tr><td colspan="6"><hr width="50%%" size="4"></td>
@@ -68,6 +68,7 @@ while ($row = Sql_fetch_array($result)) {
     $row['listorder'],
     PageLink2("editlist",$GLOBALS['I18N']->get('edit'),"id=".$row["id"]),
     PageLink2("members",$GLOBALS['I18N']->get('view members'),"id=".$row["id"]),
+    PageLink2("listbounces",$GLOBALS['I18N']->get('view bounces'),"id=".$row["id"]),
     PageURL2("list","","delete=".$row["id"]),
     $GLOBALS['I18N']->get('delete'),
    $row["id"],
