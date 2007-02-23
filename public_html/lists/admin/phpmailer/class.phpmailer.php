@@ -142,6 +142,11 @@ class PHPMailer
      */
     var $Hostname          = "";
 
+    /**
+      * at send time, estimate the size of the message
+    */
+    var $mailsize = 0;
+
     /////////////////////////////////////////////////
     // SMTP VARIABLES
     /////////////////////////////////////////////////
@@ -369,6 +374,8 @@ class PHPMailer
 
         if($this->Mailer != "mail")
           $this->header .= $this->LE.$this->LE;
+
+        $this->mailsize = strlen($this->header.$this->body);
 
         // Choose the mailer
         switch($this->Mailer)
