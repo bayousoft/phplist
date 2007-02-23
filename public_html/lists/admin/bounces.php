@@ -32,6 +32,8 @@ if (isset($_GET['action']) && $_GET['action']) {
    }
 }
 
+print '<p>'.PageLink2('listbounces',$GLOBALS['I18N']->get('view bounces by list')).'</p>';
+
 # view bounces
 $count = Sql_Query(sprintf('select count(*) from %s',$tables["bounce"]));
 $totalres = Sql_fetch_Row($count);
