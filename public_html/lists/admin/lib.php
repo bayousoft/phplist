@@ -66,6 +66,7 @@ if (!defined('USE_SPAM_BLOCK')) define('USE_SPAM_BLOCK',1);
 if (!defined('NOTIFY_SPAM')) define('NOTIFY_SPAM',1);
 if (!defined('CLICKTRACK_LINKMAP')) define('CLICKTRACK_LINKMAP',0);
 if (!defined('ALWAYS_ADD_USERTRACK')) define('ALWAYS_ADD_USERTRACK',0);
+if (!defined('MERGE_DUPLICATES_DELETE_DUPLICATE')) define('MERGE_DUPLICATES_DELETE_DUPLICATE',0);
 
 ## fairly crude way to determine php version, but mostly needed for the stripos
 if (function_exists('stripos')) {
@@ -142,13 +143,13 @@ function loadMessageData($msgid) {
   $msgdata_req = Sql_Query(sprintf('select * from %s where id = %d',
     $GLOBALS['tables']['messagedata'],$msgid));
   while ($row = Sql_Fetch_Array($msgdata_req)) {
-    if (strpos($row['data'],'SER:')) {
-      $data = substr(4,$row['data']);
-      $data = unserialize($data);
+    if (strpos($row['data'],'SER:') === 0) {
+      $data = substr($row['data'],4);
+      $data = unserialize(stripslashes($data));
     } else {
-      $data = $row['data'];
+      $data = stripslashes($row['data']);
     }
-    $messagedata[stripslashes($row['name'])] = stripslashes($data);
+    $messagedata[stripslashes($row['name'])] = $data;
   }
   $GLOBALS['MD'][$msgid] = $messagedata;
   return $messagedata;
@@ -909,6 +910,25 @@ function flushBrowser() {
     print ' '."\n";
   }
   flush();
+}
+
+if (!function_exists('formatbytes')) {
+  function formatBytes ($value) {
+    $gb = 1024 * 1024 * 1024;
+    $mb = 1024 * 1024;
+    $kb = 1024;
+    $gbs = $value / $gb;
+    if ($gbs > 1)
+      return sprintf('%2.2fGb',$gbs);
+    $mbs = $value / $mb;
+    if ($mbs > 1)
+      return sprintf('%2.2fMb',$mbs);
+    $kbs = $value / $kb;
+    if ($kbs > 1)
+      return sprintf('%dKb',$kbs);
+    else
+    return sprintf('%dBytes',$value);
+  }
 }
 
 function validateRssFrequency($freq = '') {
