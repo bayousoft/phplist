@@ -1487,7 +1487,7 @@ if (!$done) {
   $notify_start = isset($messagedata['notify_start'])?$messagedata['notify_start']:'';#$admin_details['email'];
   $notify_end = isset($messagedata['notify_end'])?$messagedata['notify_end']:'';#$admin_details['email'];
 
-  $notification_content = sprintf('
+  $misc_content = sprintf('
     <table>
     <tr valign="top"><td>%s<br/>%s</td><td><input type=text name="notify_start" value="%s" size="35"></td></tr>
     <tr valign="top"><td>%s<br/>%s</td><td><input type=text name="notify_end" value="%s" size="35"></td></tr>
@@ -1537,6 +1537,52 @@ if (!$done) {
     }
   }
 
+  if ($messagedata['htmlsize']) {
+    $misc_content .= $GLOBALS['I18N']->get('Estimated size of HTML email').': '.formatBytes($messagedata['htmlsize']).'<br/>';
+  }
+  if ($messagedata['textsize']) {
+    $misc_content .= $GLOBALS['I18N']->get('Estimated size of text email').': '.formatBytes($messagedata['textsize']).'<br/>';
+  }
+
+  if ($messagedata['textsize'] || $messagedata['htmlsize']) {
+    if (is_array($messagedata['targetlist'])) {
+      $lists = $messagedata['targetlist'];
+      $excludelists = explode(',',$messagedata['excludelist']);
+
+      if (!empty($lists['all']) || !empty($lists['allactive'])) {
+        $active = $lists['allactive'];
+        $all = $lists['all'];
+        $req = Sql_Query(sprintf('select id,active from %s %s',$GLOBALS['tables']['list'],$subselect));
+        $lists = array();
+        while ($row = Sql_Fetch_Row($req)) {
+          if (($allactive && $row[1]) || $all) {
+            $lists[$row[0]] = $row[0];
+          } 
+        }
+      } 
+      unset($lists['all']);
+      unset($lists['allactive']);
+      if (trim($messagedata['excludelist']) != '') {
+        $exclude = sprintf(' and listuser.listid not in (%s)',$messagedata['excludelist']);
+      } else {
+        $exclude = '';
+      }
+      
+      $htmlcnt = Sql_Fetch_Row_Query(sprintf('select count(distinct userid) from %s listuser,%s user where user.htmlemail and user.id = listuser.userid and listuser.listid in (%s) %s',
+        $GLOBALS['tables']['listuser'],$GLOBALS['tables']['user'],join(',',array_keys($lists)),$exclude),1);
+      $textcnt = Sql_Fetch_Row_Query(sprintf('select count(distinct userid) from %s listuser,%s user where !user.htmlemail and user.id = listuser.userid and listuser.listid in (%s) %s',
+        $GLOBALS['tables']['listuser'],$GLOBALS['tables']['user'],join(',',array_keys($lists)),$exclude),1);
+      if ($htmlcnt[0] || $textcnt[0]) {
+        $misc_content .= $GLOBALS['I18N']->get('Estimated size of mailout').': '.formatBytes($htmlcnt[0] * $messagedata['htmlsize'] + $textcnt[0] * $messagedata['textsize']).'<br/>';
+        ## remember this to see how well the estimate was
+        Sql_Query(sprintf('replace into %s set name = "estimatedsize",id=%d,data = "%s"',$GLOBALS['tables']['messagedata'],$id,$htmlcnt[0] * $messagedata['htmlsize'] + $textcnt[0] * $messagedata['textsize']));
+        $misc_content .= sprintf($GLOBALS['I18N']->get('About %d users to receive HTML and %s users to receive text version of email'),$htmlcnt[0],$textcnt[0]).'<br/>';
+        Sql_Query(sprintf('replace into %s set name = "estimatedhtmlusers",id=%d,data = "%s"',$GLOBALS['tables']['messagedata'],$id,$htmlcnt[0]));
+        Sql_Query(sprintf('replace into %s set name = "estimatedtextusers",id=%d,data = "%s"',$GLOBALS['tables']['messagedata'],$id,$textcnt[0]));
+      }
+    }
+  }
+
   print $tabs->display();
   switch ($_GET["tab"]) {
     case "Attach": print $att_content; break;
@@ -1546,7 +1592,7 @@ if (!$done) {
     case "RSS": print $rss_content;break;
     case "Lists": $show_lists = 1;break;
     case "Review": print $review_content; break;
-    case "Misc": print $notification_content; break;
+    case "Misc": print $misc_content; break;
     default:
       $isplugin = 0;
       foreach ($plugintabs as $tabname => $tabcontent) {
