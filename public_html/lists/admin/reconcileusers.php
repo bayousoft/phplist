@@ -46,6 +46,9 @@ function resendConfirm($id) {
 }
 
 function fixEmail($email) {
+  # we don't fix mails marked duplicate, as that makes them valid, which we don't want.
+  if (strpos($email,'duplicate') !== false) return $email;
+
   if (preg_match("#(.*)@.*hotmail.*#i",$email,$regs)) {
     $email = $regs[1].'@hotmail.com';
   }
@@ -83,14 +86,19 @@ function mergeUser($userid) {
       print " ".$GLOBALS['I18N']->get("user found");
       $umreq = Sql_Query("select * from {$GLOBALS["tables"]["usermessage"]} where userid = ".$duplicate["id"]);
       while ($um = Sql_Fetch_Array($umreq)) {
-        Sql_Query(sprintf('update %s set userid = %d, entered = "%s" where userid = %d and entered = "%s"',$GLOBALS["tables"]["usermessage"],$orig[0],$um["entered"],$duplicate["id"],$um["entered"]));
+        Sql_Query(sprintf('update %s set userid = %d, entered = "%s" where userid = %d and entered = "%s"',$GLOBALS["tables"]["usermessage"],$orig[0],$um["entered"],$duplicate["id"],$um["entered"]),1);
       }
       $bncreq = Sql_Query("select * from {$GLOBALS["tables"]["user_message_bounce"]} where user = ".$duplicate["id"]);
       while ($bnc = Sql_Fetch_Array($bncreq)) {
-        Sql_Query(sprintf('update %s set user = %d, time = "%s" where user = %d and time = "%s"',$GLOBALS["tables"]["user_message_bounce"],$orig[0],$bnc["time"],$duplicate["id"],$bnc["time"]));
+        Sql_Query(sprintf('update %s set user = %d, time = "%s" where user = %d and time = "%s"',$GLOBALS["tables"]["user_message_bounce"],$orig[0],$bnc["time"],$duplicate["id"],$bnc["time"]),1);
 
       }
       Sql_Query("delete from {$GLOBALS["tables"]["listuser"]} where userid = ".$duplicate["id"]);
+      Sql_Query("delete from {$GLOBALS["tables"]["user_message_bounce"]} where user = ".$duplicate["id"]);
+      Sql_Query("delete from {$GLOBALS["tables"]["usermessage"]} where userid = ".$duplicate["id"]);
+      if (MERGE_DUPLICATES_DELETE_DUPLICATE) {
+        deleteUser($duplicate['id']);
+      }
     } else {
       print " ".$GLOBALS['I18N']->get("no user found");
     }
@@ -404,11 +412,11 @@ print "</p>";
 <input type=hidden name="page" value="reconcileusers">
 <input type=hidden name="option" value="nolistsnewlist">
 <p><?php echo $GLOBALS['I18N']->get('To move all users who are not subscribed to any list to')?>
-<select name="list">
+ <select name="list">
 <?php
 $req = Sql_Query(sprintf('select id,name from %s order by listorder',$tables["list"]));
 while ($row = Sql_Fetch_Row($req)) {
-  printf ('<option value="%d">%s</option>',$row[0],$row[1]);
+  printf ('<option value="%d">%s</option>',$row[0],stripslashes($row[1]));
 }
 ?>
 </select><input type=submit value="<?php echo $GLOBALS['I18N']->get('Click here')?>"></form>
