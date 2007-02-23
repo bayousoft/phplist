@@ -59,7 +59,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     $cached[$messageid]["fromname"] = trim($cached[$messageid]["fromname"]);
     $cached[$messageid]["to"] = $message["tofield"];
     $cached[$messageid]["subject"] = $message["subject"];
-    $cached[$messageid]["replyto"] =$message["replyto"];
+    $cached[$messageid]["replyto"] = $message["replyto"];
     $cached[$messageid]["content"] = $message["message"];
     if (USE_MANUAL_TEXT_PART) {
       $cached[$messageid]["textcontent"] = $message["textmessage"];
@@ -776,6 +776,18 @@ if (0) {
       logEvent("Error sending message $messageid to $email ($destinationemail)");
       return 0;
     } else {
+      ## only save the estimated size of the message when sending a test message
+      if (!isset($GLOBALS['send_process_id'])) {
+        if ($mail->mailsize) {
+          if ($htmlpref) {
+            Sql_Query(sprintf('replace into %s set id = %d, name = "htmlsize", data=%d',
+              $GLOBALS['tables']['messagedata'],$messageid,$mail->mailsize));
+          } else {
+            Sql_Query(sprintf('replace into %s set id = %d, name = "textsize", data=%d',
+              $GLOBALS['tables']['messagedata'],$messageid,$mail->mailsize));
+          }
+        }
+      }
    #   logEvent("Sent message $messageid to $email ($destinationemail)");
       return 1;
     }
