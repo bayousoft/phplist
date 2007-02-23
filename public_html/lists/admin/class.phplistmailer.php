@@ -9,6 +9,7 @@ class PHPlistMailer extends PHPMailer {
     var $encoding = 'base64';
     var $messageid = 0;
     var $destionationemail = '';
+    var $estimatedsize = 0;
     var $image_types = array(
                   'gif'  => 'image/gif',
                   'jpg'  => 'image/jpeg',
@@ -47,6 +48,9 @@ class PHPlistMailer extends PHPMailer {
       if ($GLOBALS["message_envelope"]) {
         $this->Sender = $GLOBALS["message_envelope"];
         $this->addCustomHeader("Errors-To: ".$GLOBALS["message_envelope"]);
+
+## one to work on at a later stage
+#        $this->addCustomHeader("Return-Receipt-To: ".$GLOBALS["message_envelope"]);
       }
       if (!$this->Host || $ip == $this->Host) {
         $this->Mailer = "mail";
