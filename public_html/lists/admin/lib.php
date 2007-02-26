@@ -67,6 +67,7 @@ if (!defined('NOTIFY_SPAM')) define('NOTIFY_SPAM',1);
 if (!defined('CLICKTRACK_LINKMAP')) define('CLICKTRACK_LINKMAP',0);
 if (!defined('ALWAYS_ADD_USERTRACK')) define('ALWAYS_ADD_USERTRACK',0);
 if (!defined('MERGE_DUPLICATES_DELETE_DUPLICATE')) define('MERGE_DUPLICATES_DELETE_DUPLICATE',0);
+if (!defined('USE_PERSONALISED_REMOTEURLS')) define('USE_PERSONALISED_REMOTEURLS',1);
 
 ## fairly crude way to determine php version, but mostly needed for the stripos
 if (function_exists('stripos')) {
@@ -581,7 +582,7 @@ function getPageCacheLastModified($url) {
 }
 
 function setPageCache($url,$lastmodified = 0,$content) {
-  if (isset($GLOBALS['developer_email'])) return;
+#  if (isset($GLOBALS['developer_email'])) return;
   Sql_Query(sprintf('delete from %s where url = "%s"',$GLOBALS["tables"]["urlcache"],$url));
   Sql_Query(sprintf('insert into %s (url,lastmodified,added,content)
     values("%s",%d,now(),"%s")',$GLOBALS["tables"]["urlcache"],$url,$lastmodified,addslashes($content)));
@@ -676,6 +677,9 @@ function fetchUrl($url,$userdata = array()) {
   if (isset($GLOBALS['urlcache'][$url]) && is_array($GLOBALS['urlcache'][$url])
     && (time() - $GLOBALS['urlcache'][$url]['fetched'] < REMOTE_URL_REFETCH_TIMEOUT)) {
 #     logEvent($url . " is cached in memory");
+      if (VERBOSE && function_exists('output')) {
+        output('From memory cache: '.$url);
+      }
       return $GLOBALS['urlcache'][$url]['content'];
   }
 
@@ -683,6 +687,9 @@ function fetchUrl($url,$userdata = array()) {
   $timeout = time() - $dbcache_lastmodified;
   if ($timeout < REMOTE_URL_REFETCH_TIMEOUT) {
 #    logEvent($url.' was cached in database');
+    if (VERBOSE && function_exists('output')) {
+      output('From database cache: '.$url);
+    }
     return getPageCache($url);
   } else {
 #    logEvent($url.' is not cached in database '.$timeout.' '. $dbcache_lastmodified." ".time());
@@ -716,6 +723,9 @@ function fetchUrl($url,$userdata = array()) {
       $req =& new HTTP_Request($url,$request_parameters);
       $req->addHeader('User-Agent', 'phplist v'.VERSION.' (http://www.phplist.com)');
       logEvent('Fetching '.$url);
+      if (VERBOSE && function_exists('output')) {
+        output('Fetching remote: '.$url);
+      }
       if (!PEAR::isError($req->sendRequest(true))) {
         $content = $req->getResponseBody();
         $content = addAbsoluteResources($content,$url);
@@ -941,6 +951,7 @@ function validateRssFrequency($freq = '') {
 
 class timer {
   var $start;
+  var $previous = 0;
 
   function timer() {
     $now =  gettimeofday();
@@ -951,6 +962,23 @@ class timer {
     $now = gettimeofday();
     $end = $now["sec"] * 1000000 + $now["usec"];
     $elapsed = $end - $this->start;
+    if ($seconds) {
+      return $elapsed / 1000000;
+    } else {
+      return $elapsed;
+    }
+  }
+
+  function interval($seconds = 0) {
+    $now = gettimeofday();
+    $end = $now["sec"] * 1000000 + $now["usec"];
+    if (!$this->previous) {
+      $elapsed = $end - $this->start;
+    } else {
+      $elapsed = $end - $this->previous;
+    }
+    $this->previous = $end;
+
     if ($seconds) {
       return $elapsed / 1000000;
     } else {
