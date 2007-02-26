@@ -210,4 +210,24 @@ class PHPlistMailer extends PHPMailer {
       # as we already encoded the contents in $path, return $path
       return chunk_split($path, 76, $this->LE);
     }
+
+    function MailSend($header, $body) {
+      ## we don't really use multiple to's so pass that on to phpmailer, if there are any
+      if (sizeof($this->to) > 1 ||!USE_LOCAL_SPOOL) {
+        return parent::MailSend($header,$body);
+      } 
+      if (!is_dir(USE_LOCAL_SPOOL) || !is_writable(USE_LOCAL_SPOOL)) return 0;
+      if (!ereg("dev",VERSION)) {
+        $header .= "To: ".$this->destinationemail.$this->LE;
+      } else {
+        $header .= 'Originally-To: '.$this->destinationemail.$this->LE;
+        $header .= 'To: '.$GLOBALS['developer_email'].$this->LE;
+      }
+      $header .= "Subject: ".$this->EncodeHeader($this->Subject).$this->LE;
+
+      $fname = tempnam(USE_LOCAL_SPOOL,'msg');
+      file_put_contents($fname,$header."\n".$body);
+      file_put_contents($fname.'.S',$this->Sender);
+      return true;
+    }
 }
