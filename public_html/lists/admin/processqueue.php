@@ -203,7 +203,7 @@ function my_shutdown () {
   }
   if (!$GLOBALS['commandline']) {
     include_once "footer.inc";
-  }
+  } 
   exit;
 }
 
@@ -239,7 +239,10 @@ function output ($message,$logit = 1) {
   global $report;
   if ($GLOBALS["commandline"]) {
     @ob_end_clean();
-    print strip_tags($message) . "\n";
+#    $mem = memory_get_usage(true);
+    print strip_tags($message);
+#    print ' '.formatBytes($mem) . ' '.$mem;
+    print "\n";
     $infostring = '';
     ob_start();
   } else {
@@ -803,13 +806,15 @@ while ($message = Sql_fetch_array($messages)) {
     }
     ## flush cached message track stats to the DB
     if (isset($GLOBALS['cached']['linktracksent'])) {
-      foreach ($GLOBALS['cached']['linktracksent'] as $messageid => $numsent) {
+      foreach ($GLOBALS['cached']['linktracksent'] as $mid => $numsent) {
         foreach ($numsent as $fwdid => $fwdtotal) {
-          output("Flushing clicktrack stats for $messageid: $fwdid => $fwdtotal");
+          output("Flushing clicktrack stats for $mid: $fwdid => $fwdtotal");
           Sql_Query(sprintf('update %s set total = %d where messageid = %d and forwardid = %d',
-            $GLOBALS['tables']['linktrack_ml'],$fwdtotal,$messageid,$fwdid));
+            $GLOBALS['tables']['linktrack_ml'],$fwdtotal,$mid,$fwdid));
         }
       }
+      # we're done with $messageid, so get rid of the cache
+      unset($GLOBALS['cached']['linktracksent'][$messageid]);
     }
 
   } else {
