@@ -337,6 +337,7 @@ if (Sql_Has_Error($database_connection)) {  ProcessError(Sql_Error($database_con
 
 if ($num_messages) {
   output($GLOBALS['I18N']->get('Processing has started,').' '.$num_messages.' '.$GLOBALS['I18N']->get('message(s) to process.'));
+  clearPageCache();
   if (!$GLOBALS["commandline"]) {
     if (!$safemode) {
       if (!$num_per_batch) {
