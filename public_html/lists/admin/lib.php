@@ -68,6 +68,7 @@ if (!defined('CLICKTRACK_LINKMAP')) define('CLICKTRACK_LINKMAP',0);
 if (!defined('ALWAYS_ADD_USERTRACK')) define('ALWAYS_ADD_USERTRACK',0);
 if (!defined('MERGE_DUPLICATES_DELETE_DUPLICATE')) define('MERGE_DUPLICATES_DELETE_DUPLICATE',0);
 if (!defined('USE_PERSONALISED_REMOTEURLS')) define('USE_PERSONALISED_REMOTEURLS',1);
+if (!defined('USE_LOCAL_SPOOL')) define('USE_LOCAL_SPOOL',0);
 
 ## fairly crude way to determine php version, but mostly needed for the stripos
 if (function_exists('stripos')) {
@@ -88,6 +89,13 @@ if (!isset($GLOBALS["message_envelope"])) $GLOBALS["message_envelope"] = '';
 
 $domain = getConfig("domain");
 $website = getConfig("website");
+if (!$GLOBALS["message_envelope"]) {
+  # why not try set it to "person in charge of this system". Will help get rid of a lot of bounces to nobody@server :-)
+  $admin = getConfig('admin_address');
+  if (!empty($admin)) {
+    $GLOBALS["message_envelope"] = $admin;
+  }
+}
 
 if (defined("IN_WEBBLER") && is_object($GLOBALS["config"]["plugins"]["phplist"])) {
   $GLOBALS["tables"] = $GLOBALS["config"]["plugins"]["phplist"]->tables;
