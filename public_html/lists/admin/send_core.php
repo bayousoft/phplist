@@ -597,7 +597,6 @@ if ($send || $sendtest || $prepare || $save) {
 
     if (isset($cached))
     unset($cached[$id]);
-
     include "sendemaillib.php";
 
     // OK, let's get to sending!
@@ -1545,13 +1544,17 @@ if (!$done) {
   }
 
   if ($messagedata['textsize'] || $messagedata['htmlsize']) {
-    if (is_array($messagedata['targetlist'])) {
+    if (is_array($messagedata['targetlist']) && sizeof($messagedata['targetlist'])) {
       $lists = $messagedata['targetlist'];
-      $excludelists = explode(',',$messagedata['excludelist']);
+      if (isset($messagedata['excludelist'])) {
+        $excludelists = explode(',',$messagedata['excludelist']);
+      } else {
+        $excludelists = array();
+      }
 
       if (!empty($lists['all']) || !empty($lists['allactive'])) {
-        $active = $lists['allactive'];
-        $all = $lists['all'];
+        $allactive = isset($lists['allactive']);
+        $all = isset($lists['all']);
         $req = Sql_Query(sprintf('select id,active from %s %s',$GLOBALS['tables']['list'],$subselect));
         $lists = array();
         while ($row = Sql_Fetch_Row($req)) {
@@ -1562,7 +1565,7 @@ if (!$done) {
       } 
       unset($lists['all']);
       unset($lists['allactive']);
-      if (trim($messagedata['excludelist']) != '') {
+      if (isset($messagedata['excludelist']) && trim($messagedata['excludelist']) != '') {
         $exclude = sprintf(' and listuser.listid not in (%s)',$messagedata['excludelist']);
       } else {
         $exclude = '';
