@@ -596,6 +596,10 @@ function setPageCache($url,$lastmodified = 0,$content) {
     values("%s",%d,now(),"%s")',$GLOBALS["tables"]["urlcache"],$url,$lastmodified,addslashes($content)));
 }
 
+function clearPageCache () {
+  Sql_Query(sprintf('delete from %s',$GLOBALS["tables"]["urlcache"]));
+}
+
 function removeJavascript($content) {
   $content = preg_replace('/<script[^>]*>(.*?)<\/script\s*>/mis','',$content);
   return $content;
