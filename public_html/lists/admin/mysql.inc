@@ -175,6 +175,10 @@ function Sql_Fetch_Array($dbresult) {
   return mysql_fetch_array($dbresult);
 }
 
+function Sql_Fetch_Assoc($dbresult) {
+  return mysql_fetch_assoc($dbresult);
+}
+
 function Sql_Fetch_Row($dbresult) {
   return mysql_fetch_row($dbresult);
 }
@@ -187,6 +191,11 @@ function Sql_Fetch_Row_Query($query) {
 function Sql_Fetch_Array_Query($query) {
   $req = Sql_Query($query);
   return Sql_Fetch_Array($req);
+}
+
+function Sql_Fetch_Assoc_Query($query) {
+  $req = Sql_Query($query);
+  return Sql_Fetch_Assoc($req);
 }
 
 function Sql_Affected_Rows() {
