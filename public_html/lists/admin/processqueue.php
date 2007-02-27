@@ -781,6 +781,7 @@ while ($message = Sql_fetch_array($messages)) {
     setMessageData($messageid,'ETA',$eta);
     setMessageData($messageid,'msg/hr',$msgperhour);
     setMessageData($messageid,'to process',$num_users - $sent);
+    setMessageData($messageid,'last msg sent',time());
   }
   $processed = $notsent + $sent + $invalid + $unconfirmed + $cannotsend + $failed_sent;
   output($GLOBALS['I18N']->get('Processed').' '. $processed.' '.$GLOBALS['I18N']->get('out of').' '. $num_users .' '.$GLOBALS['I18N']->get('users'));

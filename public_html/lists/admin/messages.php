@@ -1,5 +1,32 @@
 
 <script language="Javascript" src="js/jslib.js" type="text/javascript"></script>
+
+<script language="Javascript" type="text/javascript">
+  function updateStatus(id,content) {
+    var el = document.getElementById("messagestatus"+id);
+    el.innerHTML = content;
+  }
+
+  function statusError(id) {
+    var el = document.getElementById("messagestatus"+id);
+    el.innerHTML = "Unable to fetch progress";
+  }
+
+  function fetchProgress(id) {
+    var req = new AjaxRequest();
+    AjaxRequest.get(
+      {
+        'id': id
+        ,'url':'./?page=msgstatus'
+        ,'onSuccess':function(req){ updateStatus(id,req.responseText) }
+        ,'onError':function(req){ statusError(); }
+      }
+    );
+  }
+
+</script>
+
+
 <hr>
 
 <?php
@@ -254,12 +281,24 @@ if ($total) {
     } else {
       $status = $msg['status'].'<br/>'.$msg['rsstemplate'];
       if ($msg['status'] == 'inprocess') {
-        $status .= '<br/>'.
+/*        $status .= '<br/>'.
         '<meta http-equiv="Refresh" content="300">'.
         $messagedata['to process'].' '.$GLOBALS['I18N']->get('still to process').'<br/>'.
         $GLOBALS['I18N']->get('ETA').': '.$messagedata['ETA'].'<br/>'.
         $GLOBALS['I18N']->get('Processing').' '.sprintf('%d',$messagedata['msg/hr']).' '.$GLOBALS['I18N']->get('msgs/hr')
-        ;
+        ;*/
+        ## try with ajax
+      #  $status .= '<br/>';
+        $status = '
+        <script type="text/javascript">
+        function fetchProgress'.$msg['id'].'() {
+          fetchProgress('.$msg['id'].');
+          setTimeout(fetchProgress'.$msg['id'].',3000);
+        }
+        fetchProgress'.$msg['id'].'();
+        </script>
+        ';
+        $status .= '<div id="messagestatus'.$msg['id'].'"></div>';
       }
       $sendstats = '';
     }
