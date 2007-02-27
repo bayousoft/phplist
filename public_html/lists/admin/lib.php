@@ -934,6 +934,18 @@ function flushBrowser() {
   flush();
 }
 
+function flushClickTrackCache() {
+  if (!isset($GLOBALS['cached']['linktracksent'])) return;
+  foreach ($GLOBALS['cached']['linktracksent'] as $mid => $numsent) {
+    foreach ($numsent as $fwdid => $fwdtotal) {
+      if (VERBOSE)
+        output("Flushing clicktrack stats for $mid: $fwdid => $fwdtotal");
+      Sql_Query(sprintf('update %s set total = %d where messageid = %d and forwardid = %d',
+        $GLOBALS['tables']['linktrack_ml'],$fwdtotal,$mid,$fwdid));
+    }
+  }
+}
+
 if (!function_exists('formatbytes')) {
   function formatBytes ($value) {
     $gb = 1024 * 1024 * 1024;

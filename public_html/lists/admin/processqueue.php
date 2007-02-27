@@ -158,6 +158,7 @@ function my_shutdown () {
   if ($unconfirmed)
     output(sprintf('%d %s',$unconfirmed,$GLOBALS['I18N']->get('emails unconfirmed (not sent)')));
 
+  flushClickTrackCache();
   releaseLock($send_process_id);
 
   finish("info",$report);
@@ -807,13 +808,7 @@ while ($message = Sql_fetch_array($messages)) {
     }
     ## flush cached message track stats to the DB
     if (isset($GLOBALS['cached']['linktracksent'])) {
-      foreach ($GLOBALS['cached']['linktracksent'] as $mid => $numsent) {
-        foreach ($numsent as $fwdid => $fwdtotal) {
-          output("Flushing clicktrack stats for $mid: $fwdid => $fwdtotal");
-          Sql_Query(sprintf('update %s set total = %d where messageid = %d and forwardid = %d',
-            $GLOBALS['tables']['linktrack_ml'],$fwdtotal,$mid,$fwdid));
-        }
-      }
+      flushClicktrackCache();
       # we're done with $messageid, so get rid of the cache
       unset($GLOBALS['cached']['linktracksent'][$messageid]);
     }
