@@ -108,7 +108,7 @@ if (isset($_POST['content']) && isset($_POST['passphrase']) && isset($_POST['sig
 <textarea name="content" rows="10" cols="50">Type some text to send</textarea>
 <br/>Select email to sign with:
 <select name="signemail">
-<? 
+<?php 
 $emails = $pl->get_signing_emails();
 foreach ($emails as $email) {
   print '<option>'.$email.'</option>';
@@ -118,7 +118,7 @@ foreach ($emails as $email) {
 Enter pass phrase: <input type="password" name="passphrase" value=""><br/>
 <br/>Select email to encrypt for:
 <select name="encemail">
-<? 
+<?php 
 $emails = $pl->get_encrypting_emails();
 foreach ($emails as $email) {
   print '<option>'.$email.'</option>';
