@@ -13,8 +13,7 @@ cvs2cl.pl --prune -b -r -t --hide-filenames --stdin < cvslog
 echo "Changelog for phplist $BRANCH $DATE" > cl
 echo >> cl
 cat ChangeLog >> cl
-rm -f ChangeLog
-mv cl ChangeLog
+mv -f cl ChangeLog
 rm -f cvslog
 # make one for languages as well
 

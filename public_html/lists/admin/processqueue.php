@@ -561,7 +561,6 @@ while ($message = Sql_fetch_array($messages)) {
     } elseif ($status['status'] != 'inprocess') {
       ProcessError($GLOBALS['I18N']->get('Sending of this message has been suspended'));
     }
-
     flush();
 
     # check whether the user has already received the message
