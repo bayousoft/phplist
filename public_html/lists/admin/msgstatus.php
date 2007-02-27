@@ -17,10 +17,11 @@ if ($message['status'] != 'inprocess') {
   if ($active > 60) {
     $html = $GLOBALS['I18N']->get('Stalled');
   } else {
-    $html = $GLOBALS['I18N']->get($message['status']).'<br/>'.$messagedata['to process'].' '.$GLOBALS['I18N']->get('still to process').'<br/>'.
-          $GLOBALS['I18N']->get('ETA').': '.$messagedata['ETA'].'<br/>'.
-          $GLOBALS['I18N']->get('Processing').' '.sprintf('%d',$messagedata['msg/hr']).' '.$GLOBALS['I18N']->get('msgs/hr')
-          ;
+    $html = $GLOBALS['I18N']->get($message['status']).'<br/>'.
+    $messagedata['to process'].' '.$GLOBALS['I18N']->get('still to process').'<br/>'.
+    $GLOBALS['I18N']->get('ETA').': '.$messagedata['ETA'].'<br/>'.
+    $GLOBALS['I18N']->get('Processing').' '.sprintf('%d',$messagedata['msg/hr']).' '.$GLOBALS['I18N']->get('msgs/hr')
+    ;
   }
 }
 
