@@ -22,10 +22,10 @@ $lan = array(
   'statistics' => 'statistieken',
   'process queue' => 'verwerk wachtrij',
   'configure' => 'configureer',
-  'Subscribe Pages' => 'schrijf-je-in pagina&acute;s ',
+  'Subscribe Pages' => 'Inschrijf pagina&acute;s ',
   'Send a prepared message' => 'verzend een voorbereid bericht',
   'Prepare a message' => 'bereid een bericht voor',
-  'Templates' => 'templates',
+  'Templates' => 'sjablonen',
   'View Bounces' => 'bekijk bounces',
   'Process Bounces' => 'verwerk bounces',
   'Eventlog' => 'logboek',
@@ -72,9 +72,9 @@ $lan = array(
   'cannotsendpassword' => 'Kan het wachtwoord niet mailen',
   'ipchanged' => 'Uw IP-adres is gewijzigd, om veiligheidsredenen dient u opnieuw in te loggen',
   'goodbye' => 'vaarwel',
-  'goodmorning' => 'goede morgen',
-  'goodafternoon' => 'goede middag',
-  'goodevening' => 'goede avond',
+  'goodmorning' => 'Goedemorgen',
+  'goodafternoon' => 'Goedemiddag',
+  'goodevening' => 'Goedenavond',
   'safemodewarning' => 'In veilige modus zal niet alles werken als verwacht',
   'magicquoteswarning' => 'Het zal beter gaan als PHP magic_quotes_gpc = <b>on</b>',
   'magicruntimewarning' => 'Het zal beter gaan als PHP magic_quotes_runtime = off',
@@ -146,8 +146,8 @@ $lan = array(
 
   # new for 2.10.0
   'Please wait, upgrading your database, do not interrupt' => 'Wacht aub, bezig met upgraden van de database, onderbreek dit niet',
-  'purgerss' => 'zuiverrss',
-  'Purge RSS items' => 'Zuiver RSS items',
+  'purgerss' => 'filter rss',
+  'Purge RSS items' => 'Filter RSS items',
   'In order to login, you need to enable cookies in your browser' => 'Om in te loggen moet je cookies accepteren in je browser',
 
   # added 2.10.2

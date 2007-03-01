@@ -1,0 +1,9 @@
+Translated by SaWey © 2007
+
+To use this language, unpack it in its corresponding folders.
+
+
+Uncomment the following line:
+#"nl"=> array("Nederlands "," iso-8859-1, windows-1252 "),
+in languages.php
+

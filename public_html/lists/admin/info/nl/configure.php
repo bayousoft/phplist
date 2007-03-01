@@ -5,8 +5,8 @@ Enkele nuttige placeholders zijn:
 <ul>
 <li>WEBSITE - het adres dat je typt voor je website
 <li>DOMAIN - de tekst die je typt voor je domein
-<li>SUBSCRIBEURL - de locatie van de Schrijf-je-in pagina
-<li>UNSUBSCRIBEURL - de locatie van de Schrijf-je-uit pagina
+<li>SUBSCRIBEURL - de locatie van de Inschrijf pagina
+<li>UNSUBSCRIBEURL - de locatie van de Uitnschrijf pagina
 <li>PREFERENCESURL - de locatie van de pagina waar gebruikers hun details kunnen wijzigen
 <li>CONFIRMATIONURL - de locatie van de pagina waar gebruikers hun inschrijving moeten bevestigen
 </ul>

@@ -1,12 +1,12 @@
 <?php
 $lan = array(
 
-  'subscribe pages' => 'Schrijf-je-in Pagina&acute;s',
+  'subscribe pages' => 'Inschrijf Pagina&acute;s',
   'deleted' => 'Verwijderd',
   'add_new' => 'Voeg een nieuwe toe',
   'title' => 'titel',
   'edit' => 'bewerk',
-  'del' => 'verw',
+  'del' => 'wis',
   'view' => 'bekijk',
   'status' => 'status',
   'owner' => 'eigenaar',

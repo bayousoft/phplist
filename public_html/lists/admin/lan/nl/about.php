@@ -5,7 +5,7 @@ $lan = array(
   'Contributors' => 'Bijdragen',
   'Translations' => 'Vertalingen',
   'Portions of the system include' => 'Gedeelten van het systeem omvatten',
-  'thankseveryone' => 'De ontwikkelaars willen de helpende handen bedanken, diegene die bugs rapporteren, voorstellen maken, doneren, nieuwigheden verzoeken, sponsoring, vertalingen en vele andere bijdragen.',
+  'thankseveryone' => 'De ontwikkelaars willen iedereen die geholpen heeft bedanken, diegene die bugs rapporteren, voorstellen maken, doneren, nieuwigheden verzoeken, sponsoring, vertalingen en vele andere bijdragen.',
 
 
   # use this tag to give your own name(s), so you are listed in the "About" page

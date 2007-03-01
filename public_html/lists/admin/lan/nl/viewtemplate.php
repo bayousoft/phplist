@@ -1,6 +1,6 @@
 <?php
 $lan = array(
-  "BackEditTemp" => "Terug naar bewerken van template",
+  "BackEditTemp" => "Terug naar bewerken van sjabloon",
   "TempSample" => '
 
 I understand, said Socrates, and quite accept your account.  But tell me,

@@ -1,1 +1,1 @@
-<h1>Downloading RSS Feeds</h1>
+<h1>Downloaden van RSS Feeds</h1>

@@ -33,7 +33,7 @@ $lan = array(
  'sent' => 'verzonden',
  'htmlformatted' => 'htmlformaat',
  'sendformat' => 'verzendformaat',
- 'template' => 'template',
+ 'template' => 'sjabloon',
  'processed' => 'verwerkt',
  'astext' => 'als tekst',
  'ashtml' => 'als html',
@@ -43,7 +43,7 @@ $lan = array(
  'viewed' => 'bekeken',
  'bouncecount' => 'bounce telling',
  'sendstart' => 'verzend start',
- 'rsstemplate' => 'RSS template',
+ 'rsstemplate' => 'RSS sjabloon',
  'owner' => 'eigenaar',
 
  # new in 2.10.1

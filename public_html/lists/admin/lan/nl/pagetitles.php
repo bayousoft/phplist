@@ -30,8 +30,8 @@ switch ($page) {
   case 'defaults': $page_title = 'Enkele nuttige attributen';break;
   case 'upgrade': $page_title = 'Upgrade '.NAME;break;
   case 'templates': $page_title = 'Templates in het systeem';break;
-  case 'template': $page_title = 'Bewerk of voeg een nieuw template toe';break;
-  case 'viewtemplate': $page_title = 'Template Preview';break;
+  case 'template': $page_title = 'Bewerk of voeg een nieuw sjabloon toe';break;
+  case 'viewtemplate': $page_title = 'Sjabloon Voorbeeld';break;
   case 'configure': $page_title = 'Configureeer '.NAME;break;
   case 'admin': $page_title = 'Bewerk een Administrator';break;
   case 'admins': $page_title = 'Lijst van Administrators';break;
@@ -39,8 +39,8 @@ switch ($page) {
   case 'processbounces': $page_title = 'zoek bounces van de server op';break;
   case 'bounces': $page_title = 'Lijst van bounces';break;
   case 'bounce': $page_title = 'Bekijk een bounce';break;
-  case 'spageedit': $page_title = 'Bewerk een Schrijf-je-in pagina';break;
-  case 'spage': $page_title = 'Schrijf-je-in pagina&acute;s';break;
+  case 'spageedit': $page_title = 'Bewerk een inschrijf pagina';break;
+  case 'spage': $page_title = 'Inschrijf pagina&acute;s';break;
   case 'eventlog': $page_title = 'Logboek';break;
   case 'getrss': $page_title = 'Zoek RSS feeds op';break;
   case 'viewrss': $page_title = 'Bekijk RSS Items';break;

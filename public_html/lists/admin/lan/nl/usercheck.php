@@ -12,7 +12,7 @@ $lan = array(
 
 
   # new in 2.10.1
-  'key' => 'key',
+  'key' => 'sleutel',
   'passwd' => 'wachtwoord',
 );
 

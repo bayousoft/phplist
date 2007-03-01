@@ -1,4 +1,4 @@
-<p>Deze pagina laat je toe om pagina\'s aan te maken die gebruikt worden door gebruikers om zich in te schrijven bij jou lijsten.</p>
+<p>Deze pagina laat je toe om pagina's aan te maken die gebruikt worden door gebruikers om zich in te schrijven bij jou lijsten.</p>
 <p>Je kan alle attributen en lijsten die zijn vastgelegd in jou systeem selecteren. Als een lijst of
 attribuut hier niet staat, dan zul je deze eerst moeten toevoegen. Waarden voor attributen standaard aan jou globale attribuut waarden, <br />
 maar je kan ze hier her-positioneren, en andere waarden toevoegen. Je kan ook
