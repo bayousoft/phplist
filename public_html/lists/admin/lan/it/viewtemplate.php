@@ -10,8 +10,8 @@ anche se, cambiando qualche particolare, tenta di ingannarci, come se avesse
 detto qualcosa di diverso. Tu nei tuoi versi affermi che il tutto &egrave; uno, e di
 queste affermazioni fornisci delle prove valide e plausibili: costui a sua volta
 dice che i molti non esistono, e anch\'egli fornisce moltissime prove e di
-considerevole ampiezza. Poich&eacute; uno di voi afferma che il tutto &egrave; uno, e l'altro
-nega l'esistenza dei molti, e poich&eacute; l\'uno e l\'altro parlate in modo da sembrare
+considerevole ampiezza. Poich&eacute; uno di voi afferma che il tutto &egrave; uno, e l\'altro
+nega l\'esistenza dei molti, e poich&eacute; l\'uno e l\'altro parlate in modo da sembrare
 non aver detto le stesse cose, mentre press\'a poco le avete dette, mi sembra che
 le cose che avete detto siano dette per superare l\'intelligenza di noi altri.
 

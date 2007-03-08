@@ -5,5 +5,6 @@ $lan = array(
  # new in 2.9.5
  'View Opens by Message' => 'Mostra aperture per Messaggio',
  'Domain Statistics' => 'Statistiche del dominio',
+)
 ;
 ?>
