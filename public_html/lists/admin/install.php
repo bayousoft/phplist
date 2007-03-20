@@ -72,6 +72,8 @@ checkScalarInt($_SESSION, $GLOBALS['requiredVars']);
 
 ?>
 <?php
+require_once("install/define.php");
+
 include('install/footer.inc');
 
 ob_end_flush();
