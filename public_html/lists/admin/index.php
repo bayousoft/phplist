@@ -38,20 +38,38 @@ if (php_sapi_name() == "cli") {
   header("Pragma: no-cache");                                   // HTTP/1.0
 }
 
-if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
+if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"]) && filesize($_SERVER["ConfiFile"]) > 1) {
   print '<!-- using '.$_SERVER["ConfigFile"].'-->'."\n";
   include $_SERVER["ConfigFile"];
-} elseif (isset($cline["c"]) && is_file($cline["c"])) {
+} elseif (isset($cline["c"]) && is_file($cline["c"]) && filesize($cline["c"]) > 1) {
   print '<!-- using '.$cline["c"].' -->'."\n";
   include $cline["c"];
-} elseif (isset($_ENV["CONFIG"]) && is_file($_ENV["CONFIG"])) {
+} elseif (isset($_ENV["CONFIG"]) && is_file($_ENV["CONFIG"]) && filesize($_ENV["CONFIG"]) > 1) {
 #  print '<!-- using '.$_ENV["CONFIG"].'-->'."\n";
   include $_ENV["CONFIG"];
-} elseif (is_file("../config/config.php")) {
+} elseif (is_file("../config/config.php") && filesize("../config/config.php") > 1) {
   print '<!-- using ../config/config.php -->'."\n";
   include "../config/config.php";
-} else {
-  print "Error, cannot find config file\n";
+}
+elseif (is_file($_SERVER["ConfigFile"]) && filesize($_SERVER["ConfiFile"]) < 2) {
+  include('install.php');
+  exit;
+}
+elseif (is_file($cline["c"]) && filesize($cline["c"]) < 2) {
+  include('install.php');
+  exit;
+}
+elseif (is_file($_ENV["CONFIG"]) && filesize($_ENV["CONFIG"]) < 2) {
+  include('install.php');
+  exit;
+}
+elseif (is_file("../config/config.php") && filesize("../config/config.php") < 2) {
+  include('install.php');
+  exit;
+}
+else {
+//  print "Error, cannot find config file. Installer will be run\n";
+  include('install.php');
   exit;
 }
 
@@ -225,7 +243,7 @@ if (isset($GLOBALS["require_login"]) && $GLOBALS["require_login"]) {
 
 $include = '';
 include "header.inc";
-if ($page != '') {
+if ($page != '' && $page != 'install') {
   preg_match("/([\w_]+)/",$page,$regs);
   $include = $regs[1];
   $include .= ".php";

@@ -30,9 +30,9 @@ a:visited {
 a:hover {font-size: 11px; color: #ff6600; font-style: normal; font-family: verdana, sans-serif;
 	text-decoration: underline;
 }
-p {
+/*p {
 	font-weight: normal; font-size: 11px; color: #666666; font-style: normal; font-family: verdana, sans-serif; text-decoration: none;
-}
+}*/
 td {
 	font-weight: normal; font-size: 11px; color: #666666; font-style: normal; font-family: verdana, sans-serif; text-decoration: none;
 }
@@ -227,3 +227,28 @@ a:link.listingname,
 a:active.listingname,
 a:visited.listingname  {font-family: verdana, sans-serif;font-size : 11px; color : #999966;background-color : #ffffff; font-weight: bold; text-align : middle; text-decoration : none; display:block;}
 a:hover.listingname {color: #666633;}
+
+.allok {color:#999000; font-weight:bold;}
+.allwrong {color:#FF0000; font-weight:bold;}
+.funcion { color: red; text-decoration:underline;}
+input.input { color: #000000; font-weight:bold; }
+
+.description {color: #DD995B; font-size: 1.2em;}
+.description span {color: #000000; }
+
+#phplist_logo_header { display:block }
+#phplist_logo_header span { float:left; display:block }
+#phplist_logo_header span.title_installer { color:#66666F; font-size:350%; border-left: 1px #DD995B solid;  margin: 0em 0em 0em 2em; padding: 1em 1em 1em 1.5em }
+#phplist_logo_header span.phplist_logo_span {margin: 3em 0 0 10px; }
+
+
+#maincontent_install div { float:left; padding:1em; clear:both; width:100%;}
+html>body #maincontent_install div { float:left; padding:1em; clear:both;}
+
+#maincontent_install div.intro_install {font-size: 135%;}
+#maincontent_install div.intro_install a {font-size: 100%;}
+
+.wrong { color:#FF0000; font-size:120%; font-weight: bold;}
+#maincontent_install div.install_start {font-size: 135%; float:left; width:100%}
+#maincontent_install div.install_start a {font-size: 100%;}
+
