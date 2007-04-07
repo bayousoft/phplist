@@ -165,5 +165,9 @@ $strGoToInitialiseDb = 'Click in the link and go to your installation to initial
 $addFeature = 'Or maybe you want to add a new feature to the config file? If yes click this';
 $strChangedForThis = 'I have changed it for this => ';
 $strErraticValue = ' will cause a syntax error. The erratic value is = ';
+$strDbExplain = 'Here you will try to create/check your phplist database. You wont be able to continue if the Installer can\'t make a connection to the database.
+Try not to use special characters like "\'-/*%", keep it simple using letter, numbers and "_".';
+$strExplainInstall1 = 'Please read one and each of the following descriptions, once submitted you can\'t go back.
+Keep in mind that using wrong values in the field can cause a parse error in the Config file and will make the whole system stop working';
 
 ?>
