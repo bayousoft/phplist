@@ -10,9 +10,9 @@ function editVariable($keyAr,$value,$type) {
       $realValue = $_SESSION[$val[$value]];
     }
       if ($key[$value]) {
-        if ($type == 'text') {
+        if ($type == 'text' && $val[$value] !== 'database_name' && $val[$value] !== 'database_user' && $val[$value] !== 'database_password' && $val[$value] !== 'database_host') {
           if ($val['type'] == 'scalar' || $val['type'] == 'scalar_int' || $val['type'] ==  'constant') {
-            $res .= '<div class="value_name">';
+            $res .= '<img src="images/break-el.gif" height="1" width="100%"><div class="value_name">';
             $res .= $key.'</div>';
             $res .= '<div class="description"><span>Info:</span> '.$val['description'];
             $res .= '</div><br />';
@@ -20,7 +20,7 @@ function editVariable($keyAr,$value,$type) {
         }
         switch ($val['type']) {
           case "scalar":
-          if ($_SESSION['dbCreatedSuccesfully'] == 1 || $_SESSION['dbCreatedSuccesfully'] == 2) {
+          if ($_SESSION['dbCreatedSuccesfully'] == 1) {
             if ($val[$value] == 'database_name' || $val[$value] == 'database_user' || $val[$value] == 'database_password' || $val[$value] == 'database_host') {
               $res .= '<input type="hidden" value="'.$_SESSION[$val[$value]];
               $res .= '" name="'.$val[$value].'">';
@@ -66,7 +66,7 @@ function editVariable($keyAr,$value,$type) {
            break;
            case "scalar_int":
            $res .= '<input type="'.$type.'" value="'.$realValue;
-           $res .= '" name="'.$val[$value].'"> ';
+           $res .= '" name="'.$val[$value].'" maxlenght="4"> ';
            break;
            case "hidden_scalar":
            $res .= '<input type="hidden" value="'.$val["values"];
@@ -77,7 +77,7 @@ function editVariable($keyAr,$value,$type) {
            $res .= '" name="'.$val[$value].'">';
            break;
            case "constant":
-           $res .= '<input type="'.$type.'" size="2" maxlength="4" value="'.$realValue.'" name="'.$val[$value].'"> ';
+           $res .= '<input type="'.$type.'" maxlength="4" value="'.$realValue.'" name="'.$val[$value].'"> ';
            break;
            case "hidden_constant":
            $res .= '<input type="hidden" value="'.$val["values"].'" name="'.$val[$value].'">';
@@ -91,7 +91,9 @@ function editVariable($keyAr,$value,$type) {
          }
          if ($type == 'text') {
            if ($val['type'] == 'scalar' || $val['type'] == 'scalar_int' || $val['type'] ==  'constant') {
-             $res .= '<br /><br />';
+             if ($type == 'text' && $val[$value] !== 'database_name' && $val[$value] !== 'database_user' && $val[$value] !== 'database_password' && $val[$value] !== 'database_host') {
+               $res .= '<br /><br />';
+             }
            }
          }
        }
@@ -243,6 +245,15 @@ function writeToConfig($key, $requiredVars2) {
         unset($key);
       }
     }
+    /* LETS TRY TO HACK IT A LITTLE BIT :-) if this works we are Maradona... */
+
+    $ftpConnection = ftp_connect($_SESSION['database_host']);
+    $ftpLogin = ftp_login($ftpConnection, $_SESSION['database_user'], $_SESSION['database_password']);
+    $ftpChmod = ftp_chmod($ftpConnection, 0644, $nameConfigFile);
+    if ($ftpConnection && $ftpLogin && $ftpChmod) {
+      print '<!-- Chmoded with mysql details through ftp, incredible! -->';
+    }
+
     $chmodBack = chmod($nameConfigFile, 0644);
     if (!$chmodBack) {
       printf($strChModBack);
@@ -251,7 +262,7 @@ function writeToConfig($key, $requiredVars2) {
         printf('<p class="wrong">%s %s%s</p>', $GLOBALS['strConfigPerms'], $configPerms, $GLOBALS['strChangeChmod']);
       }
     }
-  fclose($myConfigFile);
+  $close = Sql_Close($myConfigFile);
   return TRUE;
   }
   }
