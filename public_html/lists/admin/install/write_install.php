@@ -12,6 +12,8 @@ printf('<br><br>%s<a href="%s">here</a>',$GLOBALS['strGoToInitialiseDb'], $yourP
 
 include('install/footer.inc');
 
+cleanSession();
+
 exit;
 
 ?>

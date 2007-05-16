@@ -32,6 +32,6 @@
       border=0></TD></TR>
   <TR vAlign=top>
     <TD>&nbsp;</TD>
-<td><div align=left>
+<td><div align=left class="install_head">
 <br />
 <?php ?>

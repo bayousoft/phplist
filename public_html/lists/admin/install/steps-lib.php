@@ -460,4 +460,16 @@ function Sql_Close ($connection) {
   mysql_close($connection);
 }
 
+function cleanSession($vars) {
+
+/*  if (is_array($vars)) {
+    cleanSession($vars);
+  }
+  else {*/
+    session_unset();
+    session_destroy();
+#  }
+  return;
+}
+
 ?>

@@ -13,8 +13,8 @@ if (isset($_POST['page']) && $_POST['page']!== 'write_install') {
 foreach ($_POST as $key => $val) {
   $_SESSION[$key] = $val;
 }
-//print $_SERVER["ConfigFile"];
-require dirname(__FILE__)."/../texts/english.inc";
+//print_r($_SERVER);
+require("../texts/english.inc");
 require("mysql.inc");
 //include('connect.php');
 require("install/steps-lib.php");
