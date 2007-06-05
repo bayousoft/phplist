@@ -69,6 +69,7 @@ if (!defined('ALWAYS_ADD_USERTRACK')) define('ALWAYS_ADD_USERTRACK',0);
 if (!defined('MERGE_DUPLICATES_DELETE_DUPLICATE')) define('MERGE_DUPLICATES_DELETE_DUPLICATE',0);
 if (!defined('USE_PERSONALISED_REMOTEURLS')) define('USE_PERSONALISED_REMOTEURLS',1);
 if (!defined('USE_LOCAL_SPOOL')) define('USE_LOCAL_SPOOL',0);
+if (!defined('SEND_LISTADMIN_COPY')) define('SEND_LISTADMIN_COPY',0);
 
 ## fairly crude way to determine php version, but mostly needed for the stripos
 if (function_exists('stripos')) {
@@ -322,12 +323,23 @@ function sendMailPhpMailer ($to,$subject,$message) {
   return $mail->send("", $destinationemail, $fromname, $fromemail, $subject);
 }
 
-function sendAdminCopy($subject,$message) {
+function sendAdminCopy($subject,$message,$lists = array()) {
   $sendcopy = getConfig("send_admin_copies");
   if ($sendcopy == "true") {
-    $admin_mail = getConfig("admin_address");
-    $mails = explode(",",getConfig("admin_addresses"));
-    array_push($mails,$admin_mail);
+    $lists = cleanArray($lists);
+    $mails = array();
+    if (sizeof($lists) && SEND_LISTADMIN_COPY) {
+      $mailsreq = Sql_Query(sprintf('select email from %s admin, %s list where admin.id = list.owner and list.id in (%s)',
+        $GLOBALS['tables']['admin'],$GLOBALS['tables']['list'],join(',',$lists)));
+      while ($row = Sql_Fetch_Array($mailsreq)) {
+        array_push($mails,$row['email']);
+      }
+    }
+    if (!sizeof($mails)) {
+      $admin_mail = getConfig("admin_address");
+      $mails = explode(",",getConfig("admin_addresses"));
+      array_push($mails,$admin_mail);
+    }
     $sent = array();
     foreach ($mails as $admin_mail) {
       $admin_mail = trim($admin_mail);
@@ -847,6 +859,26 @@ function addSubscriberStatistics($item = '',$amount,$list = 0) {
   if (!$done) {
     Sql_Query(sprintf('insert into %s set value = %d,unixdate = %d,item = "%s",listid = %d',
       $GLOBALS['tables']['userstats'],$amount,$time,$item,$list));
+  }
+}
+
+function deleteMessage($id = 0) {
+  if( !$GLOBALS["require_login"] || $_SESSION["logindetails"]['superuser'] ){
+    $ownerselect_and = '';
+    $ownerselect_where = '';
+  } else {
+    $ownerselect_where = ' WHERE owner = ' . $_SESSION["logindetails"]['id'];
+    $ownerselect_and = ' and owner = ' . $_SESSION["logindetails"]['id'];
+  }
+
+  # delete the message in delete
+  $result = Sql_query("select id from ".$GLOBALS['tables']["message"]." where id = $id $ownerselect_and");
+  while ($row = Sql_Fetch_Row($result)) {
+    $result = Sql_query("delete from ".$GLOBALS['tables']["message"]." where id = $row[0]");
+    $suc6 = Sql_Affected_Rows();
+    $result = Sql_query("delete from ".$GLOBALS['tables']["usermessage"]." where messageid = $row[0]");
+    $result = Sql_query("delete from ".$GLOBALS['tables']["listmessage"]." where messageid = $row[0]");
+    return $suc6;
   }
 }
 

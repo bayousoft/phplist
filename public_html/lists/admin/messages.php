@@ -83,7 +83,7 @@ print $tabs->display();
 if (!empty($_GET["delete"])) {
   $todelete = array();
   if ($_GET["delete"] == "draft") {
-    $req = Sql_Query(sprintf('select id from %s where status = "draft" and (subject = "" or subject = "(no subject)") %s',$tables["message"],$ownerselect_and));
+    $req = Sql_Query(sprintf('select id from %s where status = "draft" and (subject = "" or subject = "(no subject)") %s',$GLOBALS['tables']["message"],$ownerselect_and));
     while ($row = Sql_Fetch_Row($req)) {
       array_push($todelete,$row[0]);
     }
@@ -91,20 +91,13 @@ if (!empty($_GET["delete"])) {
     array_push($todelete,sprintf('%d',$_GET["delete"]));
   }
   foreach ($todelete as $delete) {
-    # delete the index in delete
-    $result = Sql_query("select id from ".$tables["message"]." where id = $delete $ownerselect_and");
-    while ($row = Sql_Fetch_Row($result)) {
-      print $GLOBALS['I18N']->get("Deleting")." $row[0] ...";
-      $result = Sql_query("delete from ".$tables["message"]." where id = $row[0]");
-      $suc6 = Sql_Affected_Rows();
-      $result = Sql_query("delete from ".$tables["usermessage"]." where messageid = $row[0]");
-      $result = Sql_query("delete from ".$tables["listmessage"]." where messageid = $row[0]");
-      if ($suc6)
-        print "... ".$GLOBALS['I18N']->get("Done");
-      else
-        print "... ".$GLOBALS['I18N']->get("failed");
-      print '<br/>';
-    }
+    print $GLOBALS['I18N']->get("Deleting")." $delete ...";
+    $del = deleteMessage($delete);
+    if ($del)
+      print "... ".$GLOBALS['I18N']->get("Done");
+    else
+      print "... ".$GLOBALS['I18N']->get("failed");
+    print '<br/>';
   }
   print "<hr /><br />\n";
 }
@@ -206,7 +199,7 @@ if ($total) {
   $result = Sql_query("SELECT * FROM ".$tables["message"]." $subselect order by status,entered desc $limit");
   while ($msg = Sql_fetch_array($result)) {
     $uniqueviews = Sql_Fetch_Row_Query("select count(userid) from {$tables["usermessage"]} where viewed is not null and messageid = ".$msg["id"]);
-    $clicks = Sql_Fetch_Row_Query("select sum(clicked) from {$tables["linktrack"]} where messageid = ".$msg["id"]);
+    #$clicks = Sql_Fetch_Row_Query("select sum(clicked) from {$tables["linktrack"]} where messageid = ".$msg["id"]);
     $messagedata = loadMessageData($msg['id']);
     printf ('<tr><td valign="top"><table>
       <tr><td valign="top">'.$GLOBALS['I18N']->get("From:").'</td><td valign="top">%s</td></tr>
