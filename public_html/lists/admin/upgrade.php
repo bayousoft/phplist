@@ -331,7 +331,7 @@ if ($_GET["doit"] == 'yes') {
         Sql_Create_Table($tables["linktrack_uml_click"],$DBstruct["linktrack_uml_click"]);
       }
       if ($minor < 11 || ($minor == 11 && $sub < 3)) {
-        Sql_Query(sprintf('alter table user add column optedin tinyint default 0'));
+        Sql_Query(sprintf('alter table %s add column optedin tinyint default 0',$tables['user']));
       }
       break;
   }
