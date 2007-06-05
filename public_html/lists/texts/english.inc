@@ -169,5 +169,6 @@ $strDbExplain = 'Here you will try to create/check your phplist database. You wo
 Try not to use special characters like "\'-/*%", keep it simple using letter, numbers and "_".';
 $strExplainInstall1 = 'Please read one and each of the following descriptions, once submitted you can\'t go back.
 Keep in mind that using wrong values in the field can cause a parse error in the Config file and will make the whole system stop working';
+$strFinalValuesText = 'These values (plus some no-editable-now values) will be written into your config file. You can always change these values later editing the config file.<br/>Values in red are the ones you haven\'t changed, or are the same as the default value.';
 
 ?>
