@@ -498,12 +498,14 @@ function confirmPage($id) {
     # just in case the DB is not updated, should be merged with the above later
     Sql_Query("update {$tables["user"]} set optedin = 1 where id = ".$userdata["id"],1);
 
-    $req = Sql_Query(sprintf('select name,description from %s list, %s listuser where listuser.userid = %d and listuser.listid = list.id and list.active',$tables['list'],$tables['listuser'],$userdata['id']));
+    $subscriptions = array();
+    $req = Sql_Query(sprintf('select list.id,name,description from %s list, %s listuser where listuser.userid = %d and listuser.listid = list.id and list.active',$tables['list'],$tables['listuser'],$userdata['id']));
     if (!Sql_Affected_Rows()) {
       $lists = "\n * ".$GLOBALS["strNoLists"];
       $html .= '<li>'.$GLOBALS["strNoLists"].'</li>';
     }
     while ($row = Sql_fetch_array($req)) {
+      array_push($subscriptions,$row['id']);
       $lists .= "\n *".stripslashes($row["name"]);
       $html .= '<li class="list">'.stripslashes($row["name"]).'<div class="listdescription">'.stripslashes($row["description"]).'</div></li>';
     }
@@ -524,7 +526,7 @@ function confirmPage($id) {
       if ($blacklisted) {
         $adminmessage .= "\nUser has been removed from blacklist";
       }
-      sendAdminCopy("List confirmation",$adminmessage);
+      sendAdminCopy("List confirmation",$adminmessage,$subscriptions);
       addSubscriberStatistics('confirmation',1);
     }
     $info = $GLOBALS["strConfirmInfo"];
@@ -579,6 +581,12 @@ function unsubscribePage($id) {
       $res .= 'Error: '.$GLOBALS["strUserNotFound"];
       logEvent("Request to unsubscribe non-existent user: ".substr($_POST["email"],0,150));
     } else {
+      $subscriptions = array();
+      $listsreq = Sql_Query(sprintf('select listid from %s where userid = %d',$GLOBALS['tables']['listuser'],$userid));
+      while ($row = Sql_Fetch_Row($listsreq)) {
+        array_push($subscriptions,$row[0]);
+      }
+
       $result = Sql_query("delete from {$tables["listuser"]} where userid = \"$userid\"");
       $lists = "  * ".$GLOBALS["strAllMailinglists"]."\n";
       # add user to blacklist
@@ -588,7 +596,7 @@ function unsubscribePage($id) {
       $unsubscribemessage = ereg_replace("\[LISTS\]", $lists,getUserConfig("unsubscribemessage",$userid));
       sendMail($email, getConfig("unsubscribesubject"), stripslashes($unsubscribemessage), system_messageheaders($email));
       $reason = $_POST["unsubscribereason"] ? "Reason given:\n".stripslashes($_POST["unsubscribereason"]):"No Reason given";
-      sendAdminCopy("List unsubscription",$email . " has unsubscribed\n$reason");
+      sendAdminCopy("List unsubscription",$email . " has unsubscribed\n$reason",$subscriptions);
       addSubscriberStatistics('unsubscription',1);
     }
 
@@ -715,19 +723,25 @@ function forwardPage($id) {
       if ($done['status'] === 'sent') {
         $info = $GLOBALS['strForwardAlreadyDone'];
       } else {
+        $messagelists = array();
+        $messagelistsreq = Sql_Query(sprintf('select listid from %s where messageid = %d',$GLOBALS['tables']['listmessage'],$mid));
+        while ($row = Sql_Fetch_Row($messagelistsreq)) {
+          array_push($messagelists,$row[0]);
+        }
+
         if (!TEST) {
           # forward the message
           require 'admin/sendemaillib.php';
           # sendEmail will take care of blacklisting
           if (sendEmail($mid,$forwardemail,'forwarded',$userdata['htmlemail'],array(),$userdata)) {
             $info = $GLOBALS["strForwardSuccessInfo"];
-            sendAdminCopy("Message Forwarded",$userdata["email"] . " has forwarded a message $mid to $forwardemail");
+            sendAdminCopy("Message Forwarded",$userdata["email"] . " has forwarded a message $mid to $forwardemail",$messagelists);
             Sql_Query(sprintf('insert into %s (user,message,forward,status,time)
               values(%d,%d,"%s","sent",now())',
               $tables['user_message_forward'],$userdata['id'],$mid,$forwardemail));
           } else {
             $info = $GLOBALS["strForwardFailInfo"];
-            sendAdminCopy("Message Forwarded",$userdata["email"] . " tried forwarding a message $mid to $forwardemail but failed");
+            sendAdminCopy("Message Forwarded",$userdata["email"] . " tried forwarding a message $mid to $forwardemail but failed",$messagelists);
             Sql_Query(sprintf('insert into %s (user,message,forward,status,time)
               values(%d,%d,"%s","failed",now())',
               $tables['user_message_forward'],$userdata['id'],$mid,$forwardemail));
