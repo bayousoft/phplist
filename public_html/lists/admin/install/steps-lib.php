@@ -241,9 +241,6 @@ function writeToConfig($key, $requiredVars2) {
       else {
         printf("%s", $GLOBALS['configDoesntExist']);
       }
-      foreach ($_SESSION as $key) {
-        unset($key);
-      }
     }
     /* LETS TRY TO HACK IT A LITTLE BIT :-) if this works we are Maradona... */
 
@@ -274,7 +271,7 @@ function writeToConfig($key, $requiredVars2) {
 function checkScalarInt($sessionValues, $requiredVars) {
 
   foreach ($sessionValues as $key => $val) {
-    if (is_int($requiredVars[$key]['values'])) {
+    if (is_numeric($requiredVars[$key]['values'])) {
 //      $val = intval($val);
 
       if (!is_numeric($val)) {
@@ -310,26 +307,29 @@ return TRUE;
 }
 
 function showFinalValues($keyVar,$value2, $request) { // this will also make no-empty values
+
 $result = '';
 $result .= '<table width=100% align="right" border="1">';
 foreach ($keyVar as $fin => $finVal) {
-  $result .= '<tr><td width="50%">';
-  $result .= $finVal["name"];
-  $result .= ' => </td>';
-  if (!isset($request[$finVal[$value2]])) {
-  $result .= '<td width="50%">';
-  $result .= $finVal["values"];
-  $result .= '</td></tr>';
-  }
-  elseif ($finVal["type"] == "commented") {
+  if (($finVal["type"] != "commented" && $finVal["type"] != "hidden_constant" && $finVal["type"] != "hidden_scalar_int" && $finVal["type"] != "hidden_scalar") && $finVal["name"] != "database_password") {
+    $result .= '<tr><td width="50%">';
+    $result .= $finVal["name"];
+    $result .= ' => </td>';
+    if (!isset($request[$finVal[$value2]]) || $request[$finVal[$value2]] == $finVal["values"]) {
+    $result .= '<td width="50%"><span style="color:red;">';
+    $result .= $finVal["values"];
+    $result .= "</span></td></tr>";
+    }
+/*  elseif ($finVal["type"] == "commented") {
   $result .= '<td width="50%">';
   $result .= 'Do not worry about this one, ;)';
   $result .= '</td></tr>';
-  } //hidden_constant, Hmm maybe
-  else {
-  $result .= '<td width="50%">';
-  $result .= $request[$finVal[$value2]];
-  $result .= '</td></tr>';
+  } */ // hidden_constant, Hmm maybe - Yes, it's now hidden
+    else {
+    $result .= '<td width="50%">';
+    $result .= $request[$finVal[$value2]];
+    $result .= "</td></tr>";
+    }
   }
 }
 $result .= '</table>';
@@ -387,13 +387,18 @@ function getNextPageForm ($actualPage) {
   $textSubmit = 'Next step';
   break;
   case 'install6':
-  $nextpage = 'final_install';
+  $nextpage = 'install7';
   $prevpage = 'install5';
+  $textSubmit = 'Next step';
+  break;
+  case 'install7':
+  $nextpage = 'final_install';
+  $prevpage = 'install6';
   $textSubmit = 'Next step';
   break;
   case 'final_install':
   $nextpage = 'write_install';
-  $prevpage = 'install6';
+  $prevpage = 'install7';
   $textSubmit = 'Write to config now!';
   break;
   case 'write_install':

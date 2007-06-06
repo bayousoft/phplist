@@ -331,6 +331,28 @@ $requiredVars = array(
 		"type"=> "constant",
 		"description"=> 'Click track, list detail. If you enable this, you will get some extra statistics about unique users who have clicked the links in your messages, and the breakdown between clicks from text or html messages. However, this will slow down the process to view the statistics, so it is recommended to leave it off, but if you\'re very curious, you can enable it',
 		"values"=> 0),
+	"CLICKTRACK_LINKMAP"=> array(
+		"name"=> "CLICKTRACK_LINKMAP",
+		"type"=> "commented",
+		"description"=> '# Click track link map
+# if you want the links in your emails to look a bit more professional, you can set the click track
+# link map. If you do this, you will need to add a RewriteRule in your Apache config, which maps this
+# back to the original lt.php
+# it\'s quite useful to keep links short in the emails, particularly text emails
+# basically the effect is that /lists/lt.php?id=XYX is changed to /lt/XYZ
+# if for example your rewrite rule is:
+# RewriteRule   ^/lt/(.*)$ /lists/lt.php?id=$1 [PT]
+# more info at http://www.google.com/search?q=mod_rewrite (phplist docs to follow at some point)
+#define(\'CLICKTRACK_LINKMAP\',\'/lt/\');',
+		"values"=> ""),
+	"ALWAYS_ADD_USERTRACK"=> array(
+		"name"=> "ALWAYS_ADD_USERTRACK",
+		"type"=> "constant",
+		"description"=> '# Add Usertrack
+# tracking opens now seems fairly common, however flawed it still is. Set this option to 1
+# to always add [USERTRACK] to any message being sent out, even if someone forgot to add it to
+# the template, footer or message body',
+		"values"=> 0),
 	"USE_DOMAIN_THROTTLE"=> array(
 		"name"=> "USE_DOMAIN_THROTTLE",
 		"type"=> "hidden_constant",
@@ -393,6 +415,15 @@ $requiredVars = array(
 		"description"=> "If you want to upload images to the FCKeditor, you need to specify the location of the directory where the images go. This needs to be writable by the webserver, and it needs to be in your public document (website) area. The directory is relative to the root of PHPlist as set above
 # This is a potential security risk, so read README.security for more information",
                 "values"=> '"uploadimages"'),
+        "UPLOADIMAGES_DIR"=> array(
+                "name"=> "UPLOADIMAGES_DIR",
+                "type"=> "commented",
+		"description"=> "# alternatively, you can set UPLOADIMAGES_DIR, which will take precedence over the FCKIMAGES_DIR
+# and it's location will need to be in the document root of your website, instead of in the 
+# phplist root. To use this, comment out the following line, and set it to a directory in your
+# website document root, that is writable by your webserver user
+#define(\"UPLOADIMAGES_DIR\",\"uploadimages\");",
+                "values"=> ''),
 	"USETINYMCEMESG"=> array(
 		"name"=> "USETINYMCEMESG",
 		"type"=> "hidden_constant",

@@ -2,6 +2,8 @@
 require('configvars.php');
 require('requiredvars.php');
 
+printf('<div class="explain">%s</div>',$GLOBALS["strFinalValuesText"]);
+
 print showFinalValues($generalVars,'name', $_SESSION);
 
 print showFinalValues($bouncesVars,'name', $_SESSION);
