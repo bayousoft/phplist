@@ -9,7 +9,7 @@ if (!isset($_SERVER["SERVER_NAME"]) && !PHP_SAPI == "cli") {
 
 if (!ini_get("register_globals") || ini_get("register_globals") == "off") {
   # fix register globals, for now, should be phased out gradually
-  # sure, this gets around the entire reason that regLANGUAGE_SWITCHister globals
+  # sure, this gets around the entire reason that register globals
   # should be off, but going through three years of code takes a long time....
 
   foreach ($_REQUEST as $key => $val) {
@@ -50,24 +50,13 @@ if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"]) && filesize
 } elseif (is_file("../config/config.php") && filesize("../config/config.php") > 1) {
   print '<!-- using ../config/config.php -->'."\n";
   include "../config/config.php";
-}
-elseif (is_file($_SERVER["ConfigFile"]) && filesize($_SERVER["ConfiFile"]) < 2) {
+} elseif (is_file($_SERVER["ConfigFile"]) && filesize($_SERVER["ConfigFile"]) < 2) {
   include('install.php');
   exit;
-}
-elseif (is_file($cline["c"]) && filesize($cline["c"]) < 2) {
+} elseif (is_file("../config/config.php") && filesize("../config/config.php") < 2) {
   include('install.php');
   exit;
-}
-elseif (is_file($_ENV["CONFIG"]) && filesize($_ENV["CONFIG"]) < 2) {
-  include('install.php');
-  exit;
-}
-elseif (is_file("../config/config.php") && filesize("../config/config.php") < 2) {
-  include('install.php');
-  exit;
-}
-else {
+} else {
 //  print "Error, cannot find config file. Installer will be run\n";
   include('install.php');
   exit;
