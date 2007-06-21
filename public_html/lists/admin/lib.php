@@ -100,7 +100,6 @@ if (!$GLOBALS["message_envelope"]) {
 
 if (defined("IN_WEBBLER") && is_object($GLOBALS["config"]["plugins"]["phplist"])) {
   $GLOBALS["tables"] = $GLOBALS["config"]["plugins"]["phplist"]->tables;
-  $GLOBALS["table_prefix"] = $GLOBALS["config"]["plugins"]["phplist"]->table_prefix;
 }
 
 $usephpmailer = 0;
@@ -345,6 +344,7 @@ function sendAdminCopy($subject,$message,$lists = array()) {
       $admin_mail = trim($admin_mail);
       if (!$sent[$admin_mail] && $admin_mail) {
         sendMail($admin_mail,$subject,$message,system_messageheaders($admin_mail));
+        logEvent('Sending admin copy to '.$admin_mail);
         $sent[$admin_mail] = 1;
        }
      }
