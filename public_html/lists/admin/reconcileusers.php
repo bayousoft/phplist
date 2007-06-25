@@ -101,6 +101,9 @@ function mergeUser($userid) {
       }
     } else {
       print " ".$GLOBALS['I18N']->get("no user found");
+      # so it must be save to rename the original to the actual email
+      Sql_Query(sprintf('update %s set email = "%s" where id = %d',$GLOBALS["tables"]["user"],$email,$userid));
+
     }
     flush();
   } else {
@@ -228,7 +231,7 @@ if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
         if ($todo && $req)
         while ($user = Sql_Fetch_Array($req)) {
           if ($c % 10 == 0) {
-            print "$c/$total<br/>\n";
+            print "<br/>$c/$total<br/>\n";
             flush();
           }
           set_time_limit(60);
