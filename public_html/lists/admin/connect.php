@@ -1020,6 +1020,20 @@ function formatTime($time,$short = 0) {
   return $time;
 }
 
+function cleanArray($array) {
+  $result = array();
+  foreach ($array as $key => $val) {
+    if (isset($key) && $val) {
+      $result[$key] = $val;
+    }
+  }
+  return $result;
+}
+
+function cleanCommaList($list) {
+  return join(',',cleanArray(split(',',$list)));
+}
+
 function formatDateTime ($datetime,$short = 0) {
   $date = substr($datetime,0,10);
   $time = substr($datetime,11,8);
