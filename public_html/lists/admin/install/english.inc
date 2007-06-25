@@ -149,9 +149,10 @@ $strConfigPerms = 'Warning: Your config permissions are now';
 $strChangeChmod = ', phplist could not change it, please change permissions to 0644 to your lists/config/config.php file. Right now your phplist config is not safe, so do this before continue with the installation of the system.';
 $strIntroInstaller = '<p>Phplist installer will help you to create your database and config file for the system in several steps. Please keep in mind that if permissions are not well set up phplist won\'t be able to create either your db or your config file. The best thing to do first is to check if you have the right permissions so the installer will work well.</p>
 <p>You can always make the manual install following the instructions <a href="http://docs.phplist.com/PhplistInstallation">here</a>.</p>
-<p>In several steps, as said, installer will check for all the configuration needed to start using the system. Some advances features are not availables for edit for now, if you still want to use them you will have to edit those manually after the creation of the config file.</p>
+<p>Some advanced features are not availables here, if you still want to use them you will have to edit those manually after the creation of the config file.</p>
 
-<p>For more help undertanding phplist install you can take a look at <a href="http://docs.phplist.com/">phplist docs</a>, <a href="http://mantis.phplist.com/">mantis</a> for report a bug or ask for a future feature and the <a href="http://forums.phplist.com/">forums</a> for tips, answers and extra help.</p>';
+<p>For more help understanding phplist install you can take a look at the <a href="http://docs.phplist.com/">phplist docs</a> or ask around at the <a href="http://forums.phplist.com/">forums</a> for tips, answers and extra help.</p>
+<p>The phplist installer requires cookies to be enabled</p>';
 $strStartInstall = 'Let\'s start the installation in the next page, click <a href="step0-install.php">here to start the install of your phplist version.</a> Good luck! ;)';
 $strInstallerTitle = 'installer';
 $strConfigHasContent = 'Warning: Your config file already has content, which means that it was already initialised. If you want to use the installer please clean the file.';
