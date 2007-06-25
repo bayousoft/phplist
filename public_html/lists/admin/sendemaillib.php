@@ -614,14 +614,6 @@ if (0) {
       output($GLOBALS['I18N']->get('sendingtextonlyto')." $domaincheck");
   }
 
-  list($dummy,$domaincheck) = split('@',$email);
-  $text_domains = explode("\n",trim(getConfig("alwayssendtextto")));
-  if (in_array($domaincheck,$text_domains)) {
-    $htmlpref = 0;
-    if (VERBOSE)
-      output("Sending text only to $domaincheck");
-  }
-
   # so what do we actually send?
   switch($cached[$messageid]["sendformat"]) {
     case "HTML":
