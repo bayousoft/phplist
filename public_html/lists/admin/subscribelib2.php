@@ -199,10 +199,12 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
 
   # subscribe to the lists
   $lists = '';
+  $subscriptions = array();
   if (isset($_POST['list']) && is_array($_POST["list"])) {
     while(list($key,$val)= each($_POST["list"])) {
       if ($val == "signup") {
-        $result = Sql_query("replace into {$GLOBALS["tables"]["listuser"]} (userid,listid,entered) values($userid,$key,now())");
+        array_push($subscriptions,sprintf('%d',$key));
+        $result = Sql_query(sprintf('replace into %s (userid,listid,entered) values(%d,%d,now())',$GLOBALS["tables"]["listuser"],$userid,$key));
         $lists .= "\n  * ".listname($key);
         addSubscriberStatistics('subscribe',1,$key);
       }
@@ -313,7 +315,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
   }
   if ($sendrequest && $listsok) { #is_array($_POST["list"])) {
     if (sendMail($email, getConfig("subscribesubject:$id"), $subscribemessage,system_messageheaders($email),$envelope,1)) {
-      sendAdminCopy("Lists subscription","\n".$email . " has subscribed\n\n$history_entry");
+      sendAdminCopy("Lists subscription","\n".$email . " has subscribed\n\n$history_entry",$subscriptions);
       addUserHistory($email,$history_subject,$history_entry);
       print $thankyoupage;
      } else {
@@ -452,9 +454,11 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
     }
   }
   # check list membership
+  $subscriptions = array();
   $req = Sql_Query(sprintf('select * from %s listuser,%s list where listuser.userid = %d and listuser.listid = list.id and list.active',$GLOBALS['tables']['listuser'],$GLOBALS['tables']['list'],$userid));
   while ($row = Sql_Fetch_Array($req)) {
     $lists .= "  * ".listName($row['listid'])."\n";
+    array_push($subscriptions,$row['listid']);
   }
 
   if ($lists == "")
@@ -540,7 +544,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
       if (sendMail($data["email"],getConfig("updatesubject"),$oldaddressmessage, system_messageheaders($email),$envelope) &&
         sendMail($email,getConfig("updatesubject"),$newaddressmessage, system_messageheaders($email),$envelope)) {
         $ok = 1;
-        sendAdminCopy("Lists information changed","\n".$data["email"] . " has changed their information.\n\nThe email has changed to $email.\n\n$history_entry");
+        sendAdminCopy("Lists information changed","\n".$data["email"] . " has changed their information.\n\nThe email has changed to $email.\n\n$history_entry",$subscriptions);
         addUserHistory($email,"Change",$history_entry);
       } else {
         $ok = 0;
@@ -548,7 +552,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
     } else {
       if (sendMail($email, getConfig("updatesubject"), $message, system_messageheaders($email),$envelope)) {
         $ok = 1;
-        sendAdminCopy("Lists information changed","\n".$data["email"] . " has changed their information\n\n$history_entry");
+        sendAdminCopy("Lists information changed","\n".$data["email"] . " has changed their information\n\n$history_entry",$subscriptions);
         addUserHistory($email,"Change",$history_entry);
       } else {
         $ok = 0;
