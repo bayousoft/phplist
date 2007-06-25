@@ -27,6 +27,12 @@ $GLOBALS['compression_used'] = $zlib_compression || $gzhandler;
 $GLOBALS['language_module'] = $language_module;
 $GLOBALS['database_module'] = $database_module;
 $GLOBALS['show_dev_errors'] = $show_dev_errors;
+if (empty($GLOBALS['language_module'])) {
+  $GLOBALS['language_module'] = 'english.inc';
+}
+if (empty($GLOBALS['database_module'])) {
+  $GLOBALS['database_module'] = 'mysql.inc';
+}
 
 ## @@ would be nice to move this to the config file at some point
 $GLOBALS['scheme'] = 'http';
