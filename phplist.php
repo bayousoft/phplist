@@ -14,6 +14,8 @@ class phplist extends DefaultPlugin {
     global $tables,$config;
     $table_prefix = "phplist_";
     $usertable_prefix = "";
+    $GLOBALS["table_prefix"] = 'phplist_';
+
     if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
       include $_SERVER["ConfigFile"];
       $this->message_envelope = $message_envelope;
