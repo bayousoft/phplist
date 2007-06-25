@@ -118,7 +118,9 @@ class PHPlistMailer extends PHPMailer {
         # make sure we are not sending out emails to real users
         # when developing
         $this->AddAddress($GLOBALS["developer_email"]);
-        $this->Body = 'Originally to: '.$to_addr."\n\n".$this->Body;
+        if ($GLOBALS["developer_email"] != $to_addr) {
+          $this->Body = 'Originally to: '.$to_addr."\n\n".$this->Body;
+        }
       } else {
         $this->AddAddress($to_addr);
       }
