@@ -69,7 +69,7 @@ $GLOBALS["pagestats"]["time_start"] = $now["sec"] * 1000000 + $now["usec"];
 $GLOBALS["pagestats"]["number_of_queries"] = 0;
 
 if (!$GLOBALS["commandline"] && isset($GLOBALS["developer_email"]) && $_SERVER['HTTP_HOST'] != 'cvs.phplist.com' && $GLOBALS['show_dev_errors']) {
-  error_reporting(E_ALL | E_NOTICE);
+  error_reporting(E_ALL & ~E_NOTICE);
   ini_set('display_errors',1);
   foreach ($_REQUEST as $key => $val) {
     unset($$key);
