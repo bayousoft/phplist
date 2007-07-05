@@ -70,6 +70,7 @@ if (!defined('MERGE_DUPLICATES_DELETE_DUPLICATE')) define('MERGE_DUPLICATES_DELE
 if (!defined('USE_PERSONALISED_REMOTEURLS')) define('USE_PERSONALISED_REMOTEURLS',1);
 if (!defined('USE_LOCAL_SPOOL')) define('USE_LOCAL_SPOOL',0);
 if (!defined('SEND_LISTADMIN_COPY')) define('SEND_LISTADMIN_COPY',0);
+if (!defined('EMAIL_ADDRESS_VALIDATION_LEVEL')) define('EMAIL_ADDRESS_VALIDATION_LEVEL',2);
 
 ## fairly crude way to determine php version, but mostly needed for the stripos
 if (function_exists('stripos')) {

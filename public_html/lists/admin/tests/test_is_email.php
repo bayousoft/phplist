@@ -29,8 +29,9 @@ function testEmail(){
 	  "n@company.com"          	=> TRUE , // Local part not yet too short
 	  "abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcd@company.com"  => TRUE , // Local part too long
 	  "abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcde@company.com" => FALSE , // Local part not yet too long
- 	  "mailto:name@company.com" => FALSE , // protocol included  @@?
-    "user1@domain1.com;user2@domain2.com"       => FALSE, // Mantis #0010174 @@?
+    "mailto:name@company.com" => FALSE , // protocol included  @@ maybe support during import?
+    "name,name@company.com"   => FALSE , // non-escaped comma
+    "user1@domain1.com;user2@domain2.com"       => FALSE, // Mantis #0010174 @@ maybe support during import?
     "name@127.0.0.1"          => TRUE , // not in the RFC but generally accepted (?)
 # From http://en.wikibooks.org/wiki/Programming:JavaScript:Standards_and_Best_Practices
     "me@example.com"            => TRUE ,
