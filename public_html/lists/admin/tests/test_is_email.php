@@ -51,7 +51,8 @@ function testEmail(){
     "me@example..com"           => FALSE,
     "me.example@com"            => FALSE,
     "me\@example.com"           => FALSE,
- # From http://www.faqs.org/rfcs/rfc3696.html
+    "me\@sales.com@example.com"          => TRUE,
+    # From http://www.faqs.org/rfcs/rfc3696.html
      "customer/department=shipping@example.com" => TRUE ,
      '$A12345@example.com'      => TRUE ,
      "!def!xyz%abc@example.com" => TRUE ,
