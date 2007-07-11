@@ -120,17 +120,24 @@ SUP {
 	margin : 3px 3px 3px 3px;
 	padding : 3px 3px 3px 3px;
 	font-size : xx-small ;
-	color : #FF6699;
+  color : #FF6699;
 	display : block;
 }
 .error{
-	background-color : #FF6699;
-	border : thin solid #FFFFCC;
-	display : block;
+  font-size : 12px;
+  font-family : Arial, Helvetica, sans-serif;
+  font-weight : normal;
+  font-style : normal;
+  color : #FF0000;
+  text-decoration : none;
+}
 
-	font-family : Times, "Times New Roman", serif;
-	margin : 3px 3px 3px 3px;
-	padding : 3px 3px 3px 3px;
-	font-size : small ;
+.error a:link{
+  font-size : 12px;
+  font-family : Arial, Helvetica, sans-serif;
+  font-weight : normal;
+  font-style : normal;
+  color : #FF0000;
+  text-decoration : none;
 }
 
