@@ -20,7 +20,7 @@ function editVariable($keyAr,$value,$type) {
         }
         switch ($val['type']) {
           case "scalar":
-          if ($_SESSION['dbCreatedSuccesfully'] == 1) {
+          if ($_SESSION['dbCreatedSuccesfully'] == TRUE) {
             if ($val[$value] == 'database_name' || $val[$value] == 'database_user' || $val[$value] == 'database_password' || $val[$value] == 'database_host') {
               $res .= '<input type="hidden" value="'.$_SESSION[$val[$value]];
               $res .= '" name="'.$val[$value].'">';
@@ -28,7 +28,7 @@ function editVariable($keyAr,$value,$type) {
             }
           }
           if ($val[$value] == 'database_name' || $val[$value] == 'database_user' || $val[$value] == 'database_password' || $val[$value] == 'database_host') {
-            if ($_SESSION['dbCreatedSuccesfully'] == "0") {
+            if ($_SESSION['dbCreatedSuccesfully'] == FALSE) {
               $realValue = $_SESSION[$val[$value]];
             }
             $res .= '<input type="'.$type.'" value="'.$realValue;
@@ -42,22 +42,7 @@ function editVariable($keyAr,$value,$type) {
             $res .= '" name="'.$val[$value].'"> ';
           }
           elseif ($val[$value] == 'language_module' && $type == 'text') {
-            $gestor = opendir('../texts');
-            if ($gestor && $language = readdir($gestor)) {
-              $res .= '<select type="'.$type.'" name="'.$val[$value].'">';
-                while (FALSE !== ($lang = readdir($gestor))) {
-                  if (strlen($lang) > 3 ) {
-                    $res .= '<option value="'.$lang.'"';
-                    if ($lang == 'english.inc') {
-                      $res .= ' selected="selected"';
-                    }
-                    $res .= '>';
-                    $res .= $lang;
-                    $res .= '</option>';
-                  }
-                }
-              $res .= '</select>';
-            }
+            $res .= languagePack($val[$value],"");
           }
            else {
              $res .= '<input type="'.$type.'" value="'.$realValue;
@@ -126,21 +111,21 @@ function writeToConfig($key, $requiredVars2) {
       $chmod = chmod($nameConfigFile, 0646); //Try to chmod if is not writeable
       $myConfigFile = fopen($nameConfigFile, 'w'); // Try to open
       if (!$myConfigFile) {
-        printf('<div class="wrong">%s (%s)</div>',$GLOBALS['noConfigAndChmod'], $nameConfigFile);
+        print $GLOBALS["I18N"]->get(sprintf('<div class="wrong">%s (%s)</div>',$GLOBALS['noConfigAndChmod'], $nameConfigFile));
       }
       elseif (!$chmod || $chmod == FALSE) {
       return FALSE;
       }
     }
   }
-  if ($myConfigFile) { 
-    printf('<p>%s</p>',$GLOBALS['creatingConfig']);
+  if ($myConfigFile) {
+    print $GLOBALS["I18N"]->get(sprintf('<p>%s</p>',$GLOBALS['creatingConfig']));
     $configInfoToWrite = '';
     $configInfoToWrite .= '<?php';
     foreach ($key as $configInfo => $val) {
-      if ($configInfo == "PHPSESSID" || $configInfo == "page" || $configInfo == "dbCreatedSuccesfully") {
-      }
-      else {
+      if ($requiredVars2[$configInfo]) {
+#      }
+#      else {
       $configInfoToWrite .= "\n";
       $configInfoToWrite .= '# ';
       $configInfoToWrite .= $requiredVars2[$configInfo]["description"];
@@ -231,35 +216,35 @@ function writeToConfig($key, $requiredVars2) {
     $myConfigFileOpen = fwrite($myConfigFile, $configText);
     $configCreatedValue = 0;
     if (!$myConfigFileOpen) {
-      printf('%s', $GLOBALS['cantWriteToConfig']);
+      print $GLOBALS["I18N"]->get(sprintf('%s', $GLOBALS['cantWriteToConfig']));
     }
     else {
       if (file_exists($nameConfigFile)) {
-        printf("<br /><b>%s</b>", $GLOBALS['configCreatedOk']);
+        print $GLOBALS["I18N"]->get(sprintf("<br /><b>%s</b>", $GLOBALS['configCreatedOk']));
         $configCreatedValue = 1;
       }
       else {
-        printf("%s", $GLOBALS['configDoesntExist']);
+        print $GLOBALS["I18N"]->get(printf("%s", $GLOBALS['configDoesntExist']));
       }
     }
     /* LETS TRY TO HACK IT A LITTLE BIT :-) if this works we are Maradona... */
 
-    $ftpConnection = ftp_connect($_SESSION['database_host']);
+/*    $ftpConnection = ftp_connect($_SESSION['database_host']);
     $ftpLogin = ftp_login($ftpConnection, $_SESSION['database_user'], $_SESSION['database_password']);
     $ftpChmod = ftp_chmod($ftpConnection, 0644, $nameConfigFile);
     if ($ftpConnection && $ftpLogin && $ftpChmod) {
       print '<!-- Chmoded with mysql details through ftp, incredible! -->';
     }
-
+*/
     $chmodBack = chmod($nameConfigFile, 0644);
     if (!$chmodBack) {
-      printf($strChModBack);
+      print $GLOBALS["I18N"]->get(sprintf($strChModBack));
       $configPerms = substr(sprintf('%o', fileperms($nameConfigFile)), -4);
       if ($configPerms !== '0644') {
-        printf('<p class="wrong">%s %s%s</p>', $GLOBALS['strConfigPerms'], $configPerms, $GLOBALS['strChangeChmod']);
+        print $GLOBALS["I18N"]->get(printf('<p class="wrong">%s %s%s</p>', $GLOBALS['strConfigPerms'], $configPerms, $GLOBALS['strChangeChmod']));
       }
     }
-  $close = Sql_Close($myConfigFile);
+  $close = fclose($myConfigFile);
   return TRUE;
   }
   }
@@ -275,13 +260,13 @@ function checkScalarInt($sessionValues, $requiredVars) {
 //      $val = intval($val);
 
       if (!is_numeric($val)) {
-        print '<p style="color:#000fff;"><b>'.$key.'</b>'.$GLOBALS['strErraticValue'].'<span style="color:#f00;">'.$val.'</span><br />';
+        print $GLOBALS["I18N"]->get('<p style="color:#000fff;"><b>'.$key.'</b>'.$GLOBALS['strErraticValue'].'<span style="color:#f00;">'.$val.'</span><br />');
         if (preg_match('/[0-9]+/', $val, $matches)) {
-          printf('%s%s</p>', $GLOBALS['strChangedForThis'], $matches[0]);
+          print $GLOBALS["I18N"]->get(printf('%s%s</p>', $GLOBALS['strChangedForThis'], $matches[0]));
           $_SESSION[$key] = $matches[0];
         }
         else {
-          printf('%s%s</p>', $GLOBALS['strChangedForThis'], $requiredVars[$key]['values']);
+          print $GLOBALS["I18N"]->get(printf('%s%s</p>', $GLOBALS['strChangedForThis'], $requiredVars[$key]['values']));
           $_SESSION[$key] = $requiredVars[$key]['values'];
         }
       }
@@ -356,7 +341,7 @@ function getNextPageForm ($actualPage) {
   $textSubmit = 'Next step';
   break;
   case 'install1':
-  if ($_SESSION['dbCreatedSuccesfully'] == "0") {
+  if ($_SESSION['dbCreatedSuccesfully'] == FALSE) {
   $nextpage = 'install01';
   $actualPage = 'install0';
   }
@@ -410,43 +395,95 @@ function getNextPageForm ($actualPage) {
   $textSubmit = 'Start the installer';
   break;
   }
-  if ($_SESSION['page'] == 'write_install') {
-  include("install/$actualPage.php");
+
+  if ($actualPage == 'home') {
+    print $GLOBALS["I18N"]->get('
+<div id="language_change">
+  <SCRIPT language="JavaScript" type="text/javascript">
+    function langChange(){
+    var lang_change=this.window.document.lang_change;
+    if(lang_change.language_module.selectedIndex==0)return false;
+    lang_change.submit();return true;
+    }
+  </SCRIPT>
+  <p>
+  <form name="lang_change" action="" method=POST>
+  '.languagePack("","langChange();").'
+  </form>
+  '/*.$GLOBALS["I18N"]->get($GLOBALS["strLanguageOpt"])*/.'
+  </p>
+</div>
+  ');
   }
-  else {
-  print '<form action="" method="post" name="page">';
+  print $GLOBALS["I18N"]->get('<form action="" method="post" name="subscribeform">');
   include("install/$actualPage.php");
-  print '<div id="maincontent_install"><div class="install_start"><input type="hidden" name="page" value="'.$nextpage.'"><input type="submit" value="'.$textSubmit.'"><br /><br /></div></div>';
-  print '</form>';
-  }
+  print $GLOBALS["I18N"]->get('<div id="maincontent_install"><div class="install_start"><input type="hidden" name="page" value="'.$nextpage.'"><a href="./?page='.$nextpage.'" onClick="javascript:installsubscribeform();"  class="formsubmit">'.$textSubmit.'</a></span><noscript><input type="submit" value="'.$textSubmit.'"></noscript><br /><br /></div></div>');
+  print $GLOBALS["I18N"]->get('    <script language="Javascript" type="text/javascript">
+    var submitted = false;
+    function installsubscribeform() {
+      if (!submitted) {
+        submitted = true;
+        document.subscribeform.submit();
+      }
+    }
+    </script>');
+  print $GLOBALS["I18N"]->get('</form>');
+#  }
   return;
 }
 
 function willNotContinue() {
-  printf('<div class="wrong"><br /><br />%s</div>',$GLOBALS['strReload']);
+  print $GLOBALS["I18N"]->get(sprintf('<div class="wrong"><br /><br />%s</div>',$GLOBALS['strReload']));
   include("install/footer.inc");
   exit;
 }
+function languagePack($value = "", $onChange = "") {
+$res = '';
+if (!empty($onChange)) {
+  $valueChange = 'onChange="'.$onChange.'"';
+}
+if (empty($value)) {
+  $name = 'language_module';
+} else {
+  $name = $value;
+}
+$_SESSION[$name] = $_SESSION[$name]?$_SESSION[$name]:'english.inc';
+$gestor = opendir('../texts');
+  if ($gestor && $language = readdir($gestor)) {
+    $res .= '<select name="'.$name.'" '.$valueChange.'>';
+    while (FALSE !== ($lang = readdir($gestor))) {
+      if (strlen($lang) > 3 ) {
+        $res .= '<option value="'.$lang.'"';
+        if ($lang == $_SESSION[$name]) {
+          $res .= ' selected="selected"';
+        }
+        $res .= '>';
+        $res .= $lang;
+        $res .= '</option>';
+      }
+    }
+    $res .= '</select>';
+  }
+  else {
+    $res .= '<select name="'.$name.'" type=text>';
+    $res .= '<option value="english.inc">english.inc</option>';
+    $res .= '</select>';
+  }
+return $res;
+}
 
 
-function Sql_Connect_Install($host,$user,$password,$database) {
+function Sql_Connect_Install($host,$user,$password) {
   if ($host && $user) {
-    $db = mysql_connect($host, $user ,$password);
+  $db = mysql_connect($host, $user ,$password);
   $errno = mysql_errno();
-  if (!$errno) {
-    $res = mysql_select_db($database,$db);
-    $errno = mysql_errno();
-    if ($res == TRUE) {
+    if (!$errno) {
       return TRUE;
     }
-    else {
-      return FALSE;
-    }
-  }
-  }
   if ($errno) {
         return FALSE;
     }
+  }
 }
 
 
@@ -465,7 +502,7 @@ function Sql_Close ($connection) {
   mysql_close($connection);
 }
 
-function cleanSession($vars) {
+function cleanSession() {
 
 /*  if (is_array($vars)) {
     cleanSession($vars);
