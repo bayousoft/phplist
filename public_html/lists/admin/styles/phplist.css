@@ -256,3 +256,5 @@ html>body #maincontent_install div { float:left; padding:1em; clear:both;}
 .explain span { color:#000000; font-weight:bold; }
 .install_head input, .install_head select { border:1px solid #8F8F8F;}
 .value_name { padding-bottom:8px; text-transform:uppercase; font-weight:bold;}
+
+#language_change { display:block; }
