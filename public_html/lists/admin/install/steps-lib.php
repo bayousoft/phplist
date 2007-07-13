@@ -43,6 +43,16 @@ function editVariable($keyAr,$value,$type) {
           }
           elseif ($val[$value] == 'language_module' && $type == 'text') {
             $res .= languagePack($val[$value],"");
+          } elseif ($val[$value] == 'pageroot') {
+            if (preg_match("/([\/]?[\w]+)?/", $_SERVER["REQUEST_URI"], $page)) {
+            $res .= '<input type="'.$type.'" value="'.$page[0];
+            $res .= '" name="'.$val[$value].'"> ';
+            }
+          } elseif ($val[$value] == 'adminpages') {
+            if (preg_match("/([\w\/]+)/", $_SERVER["REQUEST_URI"], $page)) {
+            $res .= '<input type="'.$type.'" value="'.$page[0];
+            $res .= '" name="'.$val[$value].'"> ';
+            }
           }
            else {
              $res .= '<input type="'.$type.'" value="'.$realValue;
@@ -93,10 +103,6 @@ function writeToConfig($key, $requiredVars2) {
 #  $configDir = $_SERVER['DOCUMENT_ROOT'].'/lists/config';
   if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
     $nameConfigFile = $_SERVER['ConfigFile'];
-  } elseif (isset($cline["c"]) && is_file($cline["c"])) {
-    $nameConfigFile = $cline["c"];
-  } elseif (isset($_ENV["CONFIG"]) && is_file($_ENV["CONFIG"])) {
-    $nameConfigFile =  $_ENV["CONFIG"];
   } elseif (is_file("../config/config.php")) {
     $nameConfigFile = "../config/config.php";
   }
@@ -227,15 +233,7 @@ function writeToConfig($key, $requiredVars2) {
         print $GLOBALS["I18N"]->get(printf("%s", $GLOBALS['configDoesntExist']));
       }
     }
-    /* LETS TRY TO HACK IT A LITTLE BIT :-) if this works we are Maradona... */
 
-/*    $ftpConnection = ftp_connect($_SESSION['database_host']);
-    $ftpLogin = ftp_login($ftpConnection, $_SESSION['database_user'], $_SESSION['database_password']);
-    $ftpChmod = ftp_chmod($ftpConnection, 0644, $nameConfigFile);
-    if ($ftpConnection && $ftpLogin && $ftpChmod) {
-      print '<!-- Chmoded with mysql details through ftp, incredible! -->';
-    }
-*/
     $chmodBack = chmod($nameConfigFile, 0644);
     if (!$chmodBack) {
       print $GLOBALS["I18N"]->get(sprintf($strChModBack));
@@ -296,7 +294,7 @@ function showFinalValues($keyVar,$value2, $request) { // this will also make no-
 $result = '';
 $result .= '<table width=100% align="right" border="1">';
 foreach ($keyVar as $fin => $finVal) {
-  if (($finVal["type"] != "commented" && $finVal["type"] != "hidden_constant" && $finVal["type"] != "hidden_scalar_int" && $finVal["type"] != "hidden_scalar") && $finVal["name"] != "database_password") {
+  if (($finVal["type"] != "commented" && $finVal["type"] != "hidden_constant" && $finVal["type"] != "hidden_scalar_int" && $finVal["type"] != "hidden_scalar") && $finVal["name"] != "database_password" && $finVal["name"] != "userhistory_systeminfo" ) {
     $result .= '<tr><td width="50%">';
     $result .= $finVal["name"];
     $result .= ' => </td>';
