@@ -52,13 +52,16 @@ if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"]) && filesize
   include "../config/config.php";
 } elseif (is_file($_SERVER["ConfigFile"]) && filesize($_SERVER["ConfigFile"]) < 2) {
   include('install.php');
+  $installer = 1;
   exit;
 } elseif (is_file("../config/config.php") && filesize("../config/config.php") < 2) {
   include('install.php');
+  $installer = 1;
   exit;
 } else {
 //  print "Error, cannot find config file. Installer will be run\n";
   include('install.php');
+  $installer = 1;
   exit;
 }
 
