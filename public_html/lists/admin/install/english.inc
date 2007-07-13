@@ -1,6 +1,6 @@
 <?php
 
-# language dependent text used in the interface for users (not admin)
+# language dependent text used in installer
 
 $strPhplistDbCreation = 'Now let\'s try to create the db. Fill in the form bellow to do it.';
 $strPhplistDbWrongOk = '<p class="allwrong">Default database and/or user/pass are wrong, that\'s ok, let\'s continue.</p>';
@@ -32,7 +32,8 @@ $strIntroInstaller = '<p>Phplist installer will help you to create your database
 <p>You can always make the manual install following the instructions <a href="http://docs.phplist.com/PhplistInstallation">here</a>.</p>
 <p>In several steps, as said, installer will check for all the configuration needed to start using the system. Some advances features are not availables for edit for now, if you still want to use them you will have to edit those manually after the creation of the config file.</p>
 
-<p>For more help undertanding phplist install you can take a look at <a href="http://docs.phplist.com/">phplist docs</a>, <a href="http://mantis.phplist.com/">mantis</a> for report a bug or ask for a future feature and the <a href="http://forums.phplist.com/">forums</a> for tips, answers and extra help.</p>';
+<p>For more help undertanding phplist install you can take a look at <a href="http://docs.phplist.com/">phplist docs</a>, <a href="http://mantis.phplist.com/">mantis</a> for report a bug or ask for a future feature and the <a href="http://forums.phplist.com/">forums</a> for tips, answers and extra help.</p>
+<p>The phplist installer requires cookies to be enabled.</p>';
 $strStartInstall = 'Let\'s start the installation in the next page, click <a href="step0-install.php">here to start the install of your phplist version.</a> Good luck! ;)';
 $strInstallerTitle = 'installer';
 $strConfigHasContent = 'Warning: Your config file already has content, which means that it was already initialised. If you want to use the installer please clean the file.';
