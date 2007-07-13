@@ -2,22 +2,24 @@
 require('configvars.php');
 require('requiredvars.php');
 
-printf('<div class="explain">%s</div>',$GLOBALS["strFinalValuesText"]);
+print $GLOBALS["I18N"]->get($_SESSION["printeable"]);
 
-print showFinalValues($generalVars,'name', $_SESSION);
+print $GLOBALS["I18N"]->get(sprintf('<div class="explain">%s</div>',$GLOBALS["strFinalValuesText"]));
 
-print showFinalValues($bouncesVars,'name', $_SESSION);
+print $GLOBALS["I18N"]->get(showFinalValues($generalVars,'name', $_SESSION));
 
-print showFinalValues($securityVars,'name', $_SESSION);
+print $GLOBALS["I18N"]->get(showFinalValues($bouncesVars,'name', $_SESSION));
 
-print showFinalValues($debbugingVars,'name', $_SESSION);
+print $GLOBALS["I18N"]->get(showFinalValues($securityVars,'name', $_SESSION));
 
-print showFinalValues($feedbackVars,'name', $_SESSION);
+print $GLOBALS["I18N"]->get(showFinalValues($debbugingVars,'name', $_SESSION));
 
-print showFinalValues($miscellaneousVars,'name', $_SESSION);
+print $GLOBALS["I18N"]->get(showFinalValues($feedbackVars,'name', $_SESSION));
 
-print showFinalValues($experimentalVars,'name', $_SESSION);
+print $GLOBALS["I18N"]->get(showFinalValues($miscellaneousVars,'name', $_SESSION));
 
-print showFinalValues($advanceVars,'name', $_SESSION);
+print $GLOBALS["I18N"]->get(showFinalValues($experimentalVars,'name', $_SESSION));
+
+print $GLOBALS["I18N"]->get(showFinalValues($advanceVars,'name', $_SESSION));
 
 ?>
