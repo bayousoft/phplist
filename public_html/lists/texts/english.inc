@@ -149,11 +149,9 @@ $strConfigPerms = 'Warning: Your config permissions are now';
 $strChangeChmod = ', phplist could not change it, please change permissions to 0644 to your lists/config/config.php file. Right now your phplist config is not safe, so do this before continue with the installation of the system.';
 $strIntroInstaller = '<p>Phplist installer will help you to create your database and config file for the system in several steps. Please keep in mind that if permissions are not well set up phplist won\'t be able to create either your db or your config file. The best thing to do first is to check if you have the right permissions so the installer will work well.</p>
 <p>You can always make the manual install following the instructions <a href="http://docs.phplist.com/PhplistInstallation">here</a>.</p>
-<p>Some advanced features are not availables here, if you still want to use them you will have to edit those manually after the creation of the config file.</p>
+<p>In several steps, as said, installer will check for all the configuration needed to start using the system. Some advances features are not availables for edit for now, if you still want to use them you will have to edit those manually after the creation of the config file.</p>
 
-<p>For more help understanding phplist you can take a look at the <a href="http://docs.phplist.com/">phplist docs</a> or ask around at the <a href="http://forums.phplist.com/">forums</a> for tips, answers and extra help.</p>
-<p>The phplist installer requires cookies to be enabled</p>';
-
+<p>For more help undertanding phplist install you can take a look at <a href="http://docs.phplist.com/">phplist docs</a>, <a href="http://mantis.phplist.com/">mantis</a> for report a bug or ask for a future feature and the <a href="http://forums.phplist.com/">forums</a> for tips, answers and extra help.</p>';
 $strStartInstall = 'Let\'s start the installation in the next page, click <a href="step0-install.php">here to start the install of your phplist version.</a> Good luck! ;)';
 $strInstallerTitle = 'installer';
 $strConfigHasContent = 'Warning: Your config file already has content, which means that it was already initialised. If you want to use the installer please clean the file.';
@@ -169,8 +167,14 @@ $strChangedForThis = 'I have changed it for this => ';
 $strErraticValue = ' will cause a syntax error. The erratic value is = ';
 $strDbExplain = 'Here you will try to create/check your phplist database. You wont be able to continue if the Installer can\'t make a connection to the database.
 Try not to use special characters like "\'-/*%", keep it simple using letter, numbers and "_".';
-$strExplainInstall1 = 'Please read one and each of the following descriptions, once submitted you can\'t go back.
+$strExplainInstall1 = 'Please read one and each of the following descriptions.
 Keep in mind that using wrong values in the field can cause a parse error in the Config file and will make the whole system stop working';
 $strFinalValuesText = 'These values (plus some no-editable-now values) will be written into your config file. You can always change these values later editing the config file.<br/>Values in red are the ones you haven\'t changed, or are the same as the default value.';
+$strDbroot = 'Aditionally you can give the root user and pass. The Installer then will create a user for your database, the database if it doesn\'t exist and will give permissions to that user only for that database. Root user and pass will be destroyed after used, and won\'t be written in the config file or any other place.
+<p>Something to be aware of is the actual mysql host used. When creating a mysql user, the host for the database should be something like \'localhost\', and phplist will used that as default. If you are not sure about this, create the user yourself and don\'t use the options below.</p>';
+$strDbrootuser = 'The root user to create everything at once.';
+$strDbrootpass = 'Root password';
+$strUserCreatedOk = 'User for the database was created ok, root access was destroy.';
+$strLanguageOpt = 'Please choose your language. Be aware that not all languages have been translated.';
 
 ?>
