@@ -39,7 +39,7 @@ function backtrace() {
   return $msg;
 }
 */
-if (!function_exists("checkAccess")) {
+if (!function_exists("checkAccess") && !isset($GLOBALS["installer"])) {
 #	print backtrace();
   print "Invalid Request";
   exit;
@@ -68,8 +68,8 @@ function requireAccessLevel($page,$level) {
 
 function isSuperUser() {
   global $tables;
-  if (!isset($_SESSION["adminloggedin"])) return 0;
-  if (!is_array($_SESSION["logindetails"])) return 0;
+#  if (!isset($_SESSION["adminloggedin"])) return 0;
+ # if (!is_array($_SESSION["logindetails"])) return 0;
   if (isset($_SESSION["logindetails"]["superuser"]))
     return $_SESSION["logindetails"]["superuser"];
   if ($GLOBALS["require_login"]) {
