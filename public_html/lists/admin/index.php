@@ -38,30 +38,43 @@ if (php_sapi_name() == "cli") {
   header("Pragma: no-cache");                                   // HTTP/1.0
 }
 
-if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"]) && filesize($_SERVER["ConfigFile"]) > 1) {
-  print '<!-- using '.$_SERVER["ConfigFile"].'-->'."\n";
+if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"]) && filesize($_SERVER["ConfiFile"]) > 1) {
+  print '<!-- using (server)'.$_SERVER["ConfigFile"].'-->'."\n";
   include $_SERVER["ConfigFile"];
 } elseif (isset($cline["c"]) && is_file($cline["c"]) && filesize($cline["c"]) > 1) {
-  print '<!-- using '.$cline["c"].' -->'."\n";
+  print '<!-- using (cline)'.$cline["c"].' -->'."\n";
   include $cline["c"];
 } elseif (isset($_ENV["CONFIG"]) && is_file($_ENV["CONFIG"]) && filesize($_ENV["CONFIG"]) > 1) {
 #  print '<!-- using '.$_ENV["CONFIG"].'-->'."\n";
   include $_ENV["CONFIG"];
 } elseif (is_file("../config/config.php") && filesize("../config/config.php") > 1) {
-  print '<!-- using ../config/config.php -->'."\n";
+  print '<!-- using (common)../config/config.php -->'."\n";
   include "../config/config.php";
-} elseif (is_file($_SERVER["ConfigFile"]) && filesize($_SERVER["ConfigFile"]) < 2) {
-  include('install.php');
+}
+elseif (is_file($_SERVER["ConfigFile"]) && filesize($_SERVER["ConfiFile"]) < 2) {
   $installer = 1;
-  exit;
-} elseif (is_file("../config/config.php") && filesize("../config/config.php") < 2) {
   include('install.php');
-  $installer = 1;
   exit;
-} else {
+}
+elseif (is_file($cline["c"]) && filesize($cline["c"]) < 2) {
+  $installer = 1;
+  include('install.php');
+  exit;
+}
+elseif (is_file($_ENV["CONFIG"]) && filesize($_ENV["CONFIG"]) < 2) {
+  $installer = 1;
+  include('install.php');
+  exit;
+}
+elseif (is_file("../config/config.php") && filesize("../config/config.php") < 2) {
+  $installer = 1;
+  include('install.php');
+  exit;
+}
+else {
 //  print "Error, cannot find config file. Installer will be run\n";
-  include('install.php');
   $installer = 1;
+  include('install.php');
   exit;
 }
 
