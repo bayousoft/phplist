@@ -14,7 +14,7 @@ function editVariable($keyAr,$value,$type) {
           if ($val['type'] == 'scalar' || $val['type'] == 'scalar_int' || $val['type'] ==  'constant') {
             $res .= '<img src="images/break-el.gif" height="1" width="100%"><div class="value_name">';
             $res .= $key.'</div>';
-            $res .= '<div class="description"><span>Info:</span> '.$val['description'];
+            $res .= '<div class="description"><span>Info:</span> '.$GLOBALS["str".$val['name']."_desc"];
             $res .= '</div><br />';
           }
         }
@@ -128,7 +128,7 @@ function writeToConfig($key, $requiredVars2) {
 #      else {
       $configInfoToWrite .= "\n";
       $configInfoToWrite .= '# ';
-      $configInfoToWrite .= $requiredVars2[$configInfo]["description"];
+      $configInfoToWrite .= $GLOBALS["str".$requiredVars2[$configInfo]["name"]."_desc"];
       $configInfoToWrite .= "\n";
       switch ($requiredVars2[$configInfo]["type"]) {
       case 'constant' :

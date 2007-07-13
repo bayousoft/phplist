@@ -9,46 +9,23 @@ if (!function_exists("mysql_connect")) {
 }
 
 function Sql_Connect($host,$user,$password,$database) {
-  if ($host && $user) {
+  if ($host && $user)
     $db = mysql_connect($host , $user ,$password );
   $errno = mysql_errno();
   if (!$errno) {
     $res = mysql_select_db($database,$db);
     $errno = mysql_errno();
-    if ($res) {
-        return TRUE;
-    }
-    elseif ($db && !$res) {
-	return TRUE;
-    }
-  }
   }
   if ($errno) {
-/*    switch ($errno) {
-      case 1049: # unknown database
-        Fatal_Error("unknown database, cannot continue");
-        break;
-      case 1045: # access denied
-        Fatal_Error("Cannot connect to database, access denied. Please contact the administrator");
-        break;
-      case 2002:
-        Fatal_Error("Cannot connect to database, Sql server is not running. Please contact the administrator");
-        break;
-      case 1040: # too many connections
-        Fatal_Error("Sorry, the server is currently too busy, please try again later.");
-        break;
-      case 0:
-        break;
-      default:*/
-        return FALSE;
-    }/*
-    print "Cannot connect to Database, please check your configuration";
-    break;
-  }*/
-/*  if (!$db) {
-    print "Cannot connect to Database, please check your configuration";
-    exit;
-  }*/
+#    print "<p>$dbm</p><p>Cannot connect to Database, please check your configuration</p>";
+    return false;
+  }
+  if (!$db) {
+#    print "<p>$dbm</p><p>Cannot connect to Database, please check your configuration</p>";
+    return false;
+#    exit;
+  }
+  return $db;
 }
 
 function Sql_has_error ($dbconnection) {
@@ -115,6 +92,18 @@ function Sql_Query($query,$ignore = 0) {
     $now =  gettimeofday();
     $start = $now["sec"] * 1000000 + $now["usec"];
     $GLOBALS['lastquery'] = $query;
+    # keep track of queries to see which ones to optimize
+    if (function_exists('stripos')) {
+      if (!stripos($query,'WebblerSessions') && !stripos($query,'cache')) {
+        $store = $query;
+        $store = preg_replace('/\d+/','X',$store);
+        $store = trim($store);
+        @mysql_query(sprintf('update querycount set count = count + 1 where query = "%s" and frontend = %d',$store,$frontend));
+        if (mysql_affected_rows() != 2) {
+          @mysql_query(sprintf('insert into querycount set count = count + 1 , query = "%s",phplist = 1',$store));
+        }
+      }
+    }  
   }
   $GLOBALS["pagestats"]["number_of_queries"]++;
   $result = mysql_query($query,$GLOBALS["database_connection"]);
@@ -130,6 +119,8 @@ function Sql_Query($query,$ignore = 0) {
     if ($elapsed > 300000) {
       $query = substr($query,0,200);
       sqllog(' ['.$elapsed.'] '.$query,"/tmp/phplist-sqltimer.log");
+    } else {
+#      sqllog(' ['.$elapsed.'] '.$query,"/tmp/phplist-sqltimer.log");
     }
   }
 
@@ -151,7 +142,7 @@ function db_db_Query($query,$database,$db_connection) {
   return $res;
 }
 
-function Sql_Verbose_Query($query) {
+function Sql_Verbose_Query($query,$ignore = 0) {
   if (preg_match("/dev/",VERSION))
     print "<b>$query</b><br>\n";
   flush();
@@ -160,11 +151,15 @@ function Sql_Verbose_Query($query) {
     print "Sql: $query\n";
     ob_start();
   }
-  return Sql_Query($query);
+  return Sql_Query($query,$ignore);
 }
 
 function Sql_Fetch_Array($dbresult) {
   return mysql_fetch_array($dbresult);
+}
+
+function Sql_Fetch_Assoc($dbresult) {
+  return mysql_fetch_assoc($dbresult);
 }
 
 function Sql_Fetch_Row($dbresult) {
@@ -179,6 +174,11 @@ function Sql_Fetch_Row_Query($query) {
 function Sql_Fetch_Array_Query($query) {
   $req = Sql_Query($query);
   return Sql_Fetch_Array($req);
+}
+
+function Sql_Fetch_Assoc_Query($query) {
+  $req = Sql_Query($query);
+  return Sql_Fetch_Assoc($req);
 }
 
 function Sql_Affected_Rows() {
@@ -243,20 +243,5 @@ function Sql_create_Table ($table,$structure) {
   # submit it to the database
   $res = Sql_Query($query);
 }
-function Sql_Close ($connection) {
-  mysql_close($connection);
-}
 
-function Sql_Create_Db ($databaseToCreate) {
-//  $query = sprintf('CREATE DATABASE %s',$databaseToCreate);
-//  $creatingDb = mysql_query($query);
-  $creatingDb = mysql_query(sprintf('CREATE DATABASE %s;',$databaseToCreate));
-  if ($creatingDb) {
-	$result = TRUE;
-  }
-  else {
-	$result = FALSE/*printf('%s',$GLOBALS['strDbCreatedKo'])*/;
-  }
-return $result;
-}
 ?>

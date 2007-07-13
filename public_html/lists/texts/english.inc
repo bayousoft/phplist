@@ -40,13 +40,8 @@ $strNoListsFound        = 'Sorry, you are not subscribed to any of our newslette
 $strResubmit            = 'Re-Submit Email';
 $strUnsubscribeSubmit   = 'Unsubscribe from the Selected Newsletters';
 $strValuesMissing       = 'The following required values are missing';
-//$strConfirmInfo         = 'Thank you for confirming your subscription to our newsletters. The newsletters you are subscribed to are listed below';
-$strConfirmInfo		='<h2>Welcome to MyICA</h2><p>Thank you for confirming your subscription to our newsletters.</p><p>The newsletters you are subscribed to are listed below.</p><p>You can edit your <a href="http://www.ica.org.uk/?lid=11835">profile</a>, view your <a href="http://www.ica.org.uk/?lid=11835">subscriptions</a>, and change your <a href="http://www.ica.org.uk/?lid=11994">password</a>.</p>';
-
-$strConfirmTitle        = 'ICA membership confirmation page';
-
-
-
+$strConfirmInfo         = 'Thank you for confirming your subscription to our newsletters. The newsletters you are subscribed to are listed below';
+$strConfirmTitle        = 'PHPlist membership confirmation page';
 $strUserNotFound        = 'User not found';
 $strUserAlreadyInitialised = 'Sorry, your password has already been set';
 $strConfirmFailInfo     = 'Sorry, your request for confirmation was not recognised. Please make sure to use the full web address as mentioned in the email that you received. Sometimes this web address wraps onto multiple lines.';
@@ -119,62 +114,6 @@ $strForwardFooter = 'This message has been forwarded to you by [FORWARDEDBY].
   To subscribe to this newsletter go to';
 $strForward = 'Forward';
 $strFwd = 'Fwd'; # short version of forward for email subject
-//$strDefaultSetting = 'Default setting. To change it write it here, to use this leave it like this.';
-$strValueNotFound = 'Value not found. Check your required vars and their values.';
-$strPhplistDbCreation = 'Now let\'s try to create the db. Fill in the form bellow to do it.';
-$strPhplistDbWrongOk = '<p class="allwrong">Default database and/or user/pass are wrong, that\'s ok, let\'s continue.</p>';
-$strPhplistDefaultDbOk = '<p class="allok">Hmm, the default settings for database connection worked ok. You dont want to use phplist with these values, is not safe, you better change them and create a user for the database before continue.</p>';
-$strDbname = 'Database name : ';
-$strDbhost = 'Database host, usually \'localhost\' : ';
-$strDbuser = 'Database user, previously created : ';
-$strDbpass = 'Database pass of your user : ';
-$strDbCreatedOk = 'Database created succesfully. The next step will create a config file for your system here.';
-$strDbCreatedKo = 'Could not create database, check the permissions of your user. Or ask your host provider to create one for you and then go to the next step.<p>Fill in the form again, installer will not continue if there isn\'t a databases.</p>';
-$myConfigFileOpen = '<b>Your next step is to chmod your /lists/config/config.php file to 644. Right now is 666, and this is not safe, your installation can be hacked if you don\'t do this</b>';
-$popAccountOk = '<strong>Your bounces POP3 account has responded ok.</strong>';
-$popAccountKo = 'Warning: Your bounces email account details are wrong, I couldn\'t create POP3 connection to ';
-$strFinal = '<p>These are the values that we are going to write to your config, is everything ok? If not go back and change it.</p>';
-$dbAlreadyCreated = 'Great, the database is working ok, go to the next step.';
-$noConfigAndChmod = 'Could not open config file to write, and could not chmod to be writable. The whole thing will fail... Have fun.';
-$creatingConfig = 'Creating config file...';
-$cantWriteToConfig = 'I couldnt right to the config file, HGRR!! Check the permissions again';
-$configCreatedOk = 'Config file created OK.';
-$configDoesntExist = 'Config file doesnt exists, something went wrong...';
-//$noConfigFileThere = 'Your config file doesnot exists, phplist will try to create one, but it might fail. Please check the permissions on the lists/config directory and start the installation';
-//$yesConfigFileNotWritable = 'Your config file exists, but is not writable. Change permissions to writable, ie 666 or 777 and continue with the installation';
-//$goodConfigFile = 'Your config file is ready for writing (mmm, maybe we have to check if it\'s empty...).';
-$strConfigIsNotAndDirNotWri = 'Warning: Your config file doesnt exists, and phplist cannot write into the lists/config directory. Please either create a config.php file with write permissions, or change permissions to the lists/config directory to be executable (ie 755) before continue.';
-$strConfigIsNotWritable = 'Warning: Your config file is not writable, please change the permissions of the lists/config/config.php file to be writable (ie 666, 646, 777, etc).';
-$strConfigPerms = 'Warning: Your config permissions are now';
-$strChangeChmod = ', phplist could not change it, please change permissions to 0644 to your lists/config/config.php file. Right now your phplist config is not safe, so do this before continue with the installation of the system.';
-$strIntroInstaller = '<p>Phplist installer will help you to create your database and config file for the system in several steps. Please keep in mind that if permissions are not well set up phplist won\'t be able to create either your db or your config file. The best thing to do first is to check if you have the right permissions so the installer will work well.</p>
-<p>You can always make the manual install following the instructions <a href="http://docs.phplist.com/PhplistInstallation">here</a>.</p>
-<p>In several steps, as said, installer will check for all the configuration needed to start using the system. Some advances features are not availables for edit for now, if you still want to use them you will have to edit those manually after the creation of the config file.</p>
 
-<p>For more help undertanding phplist install you can take a look at <a href="http://docs.phplist.com/">phplist docs</a>, <a href="http://mantis.phplist.com/">mantis</a> for report a bug or ask for a future feature and the <a href="http://forums.phplist.com/">forums</a> for tips, answers and extra help.</p>';
-$strStartInstall = 'Let\'s start the installation in the next page, click <a href="step0-install.php">here to start the install of your phplist version.</a> Good luck! ;)';
-$strInstallerTitle = 'installer';
-$strConfigHasContent = 'Warning: Your config file already has content, which means that it was already initialised. If you want to use the installer please clean the file.';
-$strTmpNotWritable = 'Warning: Your actual tmp directory is not writable, please right a complete path in the inputs below.';
-$strStillNoConnection = 'Warning: Your database details are still wrong, I couldn\'t connect to it. Please, come back and define the details again. Be sure to have Caps Lock disable in your keyboard, and check your spelling.';
-$strTmpIsOk = '<p><strong>Your tmp/ folder works ok right now, change them below only if you are sure.</strong></p>';
-$strNoDbCannotContinue = 'Fatal error: Still no connection to the database, installer will not continue. Please check it or create one to continue.';
-$strStartAgain = 'Click below to start the installer again, your database details were wrong.';
-$strReload = 'Please do what is described above and refresh to start the install.';
-$strGoToInitialiseDb = 'Click in the link and go to your installation to initialise the db ';
-$addFeature = 'Or maybe you want to add a new feature to the config file? If yes click this';
-$strChangedForThis = 'I have changed it for this => ';
-$strErraticValue = ' will cause a syntax error. The erratic value is = ';
-$strDbExplain = 'Here you will try to create/check your phplist database. You wont be able to continue if the Installer can\'t make a connection to the database.
-Try not to use special characters like "\'-/*%", keep it simple using letter, numbers and "_".';
-$strExplainInstall1 = 'Please read one and each of the following descriptions.
-Keep in mind that using wrong values in the field can cause a parse error in the Config file and will make the whole system stop working';
-$strFinalValuesText = 'These values (plus some no-editable-now values) will be written into your config file. You can always change these values later editing the config file.<br/>Values in red are the ones you haven\'t changed, or are the same as the default value.';
-$strDbroot = 'Aditionally you can give the root user and pass. The Installer then will create a user for your database, the database if it doesn\'t exist and will give permissions to that user only for that database. Root user and pass will be destroyed after used, and won\'t be written in the config file or any other place.
-<p>Something to be aware of is the actual mysql host used. When creating a mysql user, the host for the database should be something like \'localhost\', and phplist will used that as default. If you are not sure about this, create the user yourself and don\'t use the options below.</p>';
-$strDbrootuser = 'The root user to create everything at once.';
-$strDbrootpass = 'Root password';
-$strUserCreatedOk = 'User for the database was created ok, root access was destroy.';
-$strLanguageOpt = 'Please choose your language. Be aware that not all languages have been translated.';
 
 ?>

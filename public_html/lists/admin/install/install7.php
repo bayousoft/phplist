@@ -1,15 +1,17 @@
 <?php
 require('configvars.php');
 
+print $GLOBALS["I18N"]->get($_SESSION["printeable"]);
+
 $tmpDir = '/tmp';
 
 if (!is_writable($tmpDir)) {
-  printf('<p class="wrong">%s</p>',$GLOBALS["strTmpNotWritable"]);
+  print $GLOBALS["I18N"]->get(sprintf('<p class="wrong">%s</p>',$GLOBALS["strTmpNotWritable"]));
 }
 else {
-  printf('%s',$$GLOBALS["strTmpIsOk"]);
+  print $GLOBALS["I18N"]->get(sprintf('%s',$$GLOBALS["strTmpIsOk"]));
 }
 
-print editVariable($advanceVars,'name', 'text');
+print $GLOBALS["I18N"]->get(editVariable($advanceVars,'name', 'text'));
 
 ?>

@@ -13,9 +13,9 @@ if (isset($_POST['page'])/* && $_POST['page'] !== 'write_install'*/) {
 foreach ($_POST as $key => $val) {
   $_SESSION[$key] = $val;
 }
-//print_r($_SESSION);
-require("../texts/english.inc");
-include("../texts/".$_SESSION["language_module"]."");
+print_r($_SESSION);
+require("install/english.inc");
+include("install/".$_SESSION["language_module"]."");
 require("install/mysql.inc");
 require("install/steps-lib.php");
 include("install/header-install.inc");

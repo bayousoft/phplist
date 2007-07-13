@@ -1,6 +1,8 @@
 <?php
 require('configvars.php');
 
-print editVariable($debbugingVars,'name', 'text');
+print $GLOBALS["I18N"]->get($_SESSION["printeable"]);
+
+print $GLOBALS["I18N"]->get(editVariable($debbugingVars,'name', 'text'));
 
 ?>

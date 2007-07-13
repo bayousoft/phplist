@@ -1,6 +1,8 @@
 <?php
 require('configvars.php');
 
-print editVariable($feedbackVars,'name', 'text');
+print $GLOBALS["I18N"]->get($_SESSION["printeable"]);
+
+print $GLOBALS["I18N"]->get(editVariable($feedbackVars,'name', 'text'));
 
 ?>
