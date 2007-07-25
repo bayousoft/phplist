@@ -1,6 +1,6 @@
 <?php 
 $lan = array(
-  "BackEditTemp" => "Voltar para a edi&ccedil&atildeo do Modelo",
+  "BackEditTemp" => "Voltar para a edi&ccedil&atilde;o do Modelo",
   "TempSample" => '
 
 I understand, said Socrates, and quite accept your account.  But tell me,

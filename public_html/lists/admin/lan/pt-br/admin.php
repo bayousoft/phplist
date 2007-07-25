@@ -5,7 +5,7 @@ $lan = array(
 'Add a new Administrator' => 'Adicionar um novo Administrador',
   'No Access' => 'Sem Acesso',
   'Changes saved' => 'Altera&ccedil;&otilde;es salvas',
-  'Error adding new admin' => 'Erro ao adicionar novo admin',
+  'Error adding new admin' => 'Erro ao adicionar novo administrador',
   'strAccessExplain' => '<hr/>
 <p>Defina as permiss&otilde;es de visualiza&ccedil;&atilde;o das p&aacute;ginas do sistema:</p>
 <ul>
@@ -27,7 +27,7 @@ $lan = array(
 'Last time password was changed' => '&Uacute;ltima vez em que a senha foi modificada',
 'Is this user Super Admin?' => 'Este usu&aacute;rio &eacute; um Super Admin?',
 'Is this account disabled?' => 'Esta conta est&aacute; desativada?',
-'Save Changes' => 'Salvar Altera&ccedil&otildees',
+'Save Changes' => 'Salvar Altera&ccedil&otilde;es',
 'Current set of permissions made default' => 'Conjunto atual de permiss&otilde;es padr&atilde;o',
 'Done' => 'Conclu&iacute;do',
 'OK' => 'OK',

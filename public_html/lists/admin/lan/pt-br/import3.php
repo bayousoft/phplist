@@ -1,5 +1,6 @@
 <?php
 $lan = array(
+  'import is not available' => 'importa&ccedil;&atilde;o n&atilde;o est&aacute; dispon&iacute;vel',
   "Import emails from IMAP folders" => "Importar emails das pastas IMAP",
   "No lists available" => "Nenhuma lista dispon&iacute;vel",
   "Add a list" => "Adicionar uma lista",
@@ -13,7 +14,7 @@ $lan = array(
   "done" => "conclu&iacute;do",
   "imap_getmailboxes failed" => "imap_getmailboxes falhou",
   "Please enter details of the IMAP account" => "Por favor, entre com os dados da sua conta IMAP",
-  "Select the headers fields to search" => "Selecione os campos dos cabe&ccedil;&aacute;rios para realizar a busca",
+  "Select the headers fields to search" => "Selecione os campos dos cabe&ccedil;&aacute;lhos para realizar a busca",
   "Select the lists to add the emails to" => "Selecione as listas nas quais voc&ecirc; quer adicionar emails",
   "Adding users to list" => "Adicionar usu&aacute;rios &agrave; lista",
   "Mark new users as HTML" => "Marcar novos usu&aacute;rios como HTML",
@@ -22,14 +23,14 @@ $lan = array(
   "Overwrite Existing" => "Sobrescrever Existente",
   "information about a user in the database will be replaced by the imported information. Users are matched by email." => "a informa&ccedil;&atilde;o do usu&aacute;rio na base de dados ser&aacute; substitu&iacute;da pela informa&ccedil;&atilde;o importada. Os usu&aacute;rios s&atilde;o encontrados atrav&eacute;s do email.",
   "Only use complete addresses" => "Utilize somente endere&ccedil;os completos",
-  "addresses that do not have a real name will be ignored. Otherwise all emails will be imported." => "endere&ccedil;os que n&atilde;o tenham um nome real ser&aacute; ignorado. Caso contr&aacute;rio, todos os emails ser&atilde;o importados.",
+  "addresses that do not have a real name will be ignored. Otherwise all emails will be imported." => "endere&ccedil;os que n&atilde;o tenham um nome real ser&atilde;o ignorados. Caso contr&aacute;rio, todos os emails ser&atilde;o importados.",
   "If you choose" => "Se voc&ecirc; escolher",
   "send notification email" => "enviar email de aviso",
   "the users you are adding will be sent the request for confirmation of subscription to which they will have to reply. This is recommended, because it will identify invalid emails." => "Ser&aacute; enviada aos usu&aacute;rios que voc&ecirc; est&aacute; adicionando uma mensagem com o pedido de confirma&ccedil;&atilde;o da inscri&ccedil;&atilde;o, a qual eles devem responder. Isso &eacute; recomendado, pois identificar&aacute; os emails inv&aacute;lidos.",
   "Send&nbsp;Notification&nbsp;email&nbsp;" => "Enviar&nbsp;Aviso&nbsp;email&nbsp;",
   "Make confirmed immediately" => "Marcar confirmado imediatamente",
-  "import3info" => "Existem dois modo de adicionar os nomes dos usu&aacute;rios, por meio de um atributo para o nome completo ou dois atributos, um para o nome e outro para o sobrenome.
-Se voc&ecirc; utilizar 'dois atributos', o nome sera dividido depois do primeiro espa&ccedil;o.",
+  "import3info" => "Existem duas formas de adicionar os nomes dos usu&aacute;rios: um atributos para o nome completo ou um para o nome e outro para o sobrenome.
+Se voc&ecirc; utilizar 'dois atributos', o nome ser&aacute; tudo que estiver antes do primeiro espa&ccedil;o.",
   "Use one attribute for name" => "Utilizar um atributo para o nome",
   'Use two attributes for the name' => 'Utilizar dois atributos para o nome',
   "Attribute one" => "Atributo um",
@@ -40,7 +41,7 @@ Se voc&ecirc; utilizar 'dois atributos', o nome sera dividido depois do primeiro
   "failed" => "falhou",
   "Processed" => "Processado",
   "folders and" => "pastas e",
-  "unique emails found" => "emails sem par encontrados",
+  "unique emails found" => "emails &uacute;nicos encontrados",
   "list" => "lista",
   "lists" => "listas",
   "new email was" => "novo email era",
@@ -60,6 +61,6 @@ Se voc&ecirc; utilizar 'dois atributos', o nome sera dividido depois do primeiro
   'User' => 'Usu&aacute;rio',
   'Password' => 'Senha',
   'Continue' => 'Continuar',
-  'Process Selected Folders' => 'Processar Pastas Selecionas',
+  'Process Selected Folders' => 'Processar Pastas Selecionadas',
 );
 ?>

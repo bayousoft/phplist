@@ -49,6 +49,7 @@ $lan = array(
 'Offer option to receive' => 'Disponibilizar a op&ccedil;&atilde;o receber',
 'Monthly' => 'Mensalmente',
 'default' => 'padr&atilde;o',
+'Language file to use' => 'Arquivo com l&iacute;ngua a ser usada',
 'Select the lists to offer' => 'Selecione as listas a serem disponibilizadas',
 'Owner' => 'Administrador',
 'Save Changes' => 'Salvar Modifica&ccedil;&otilde;es',

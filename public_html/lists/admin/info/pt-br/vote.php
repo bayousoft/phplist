@@ -48,7 +48,7 @@ Se voc&ecirc; acha que o PHPlist &eacute; &oacutetimo; e voc&ecirc; gostaria de 
   <input type="submit" value="set rating">
           </form> ou escreva um <a href="http://www.codetransit.com/comments/index.php?action=addcommentsform&id=531&title=PHPlist&version=1.8.0" target="_review">Coment&aacute;rio</a>
 <br/><br/></li>
-<li><b>No PHPWelt</b> (alem&atildeo)
+<li><b>No PHPWelt</b> (alem&atilde;o)
 <form action="http://www.phpwelt.de/archiv/arcscript.php" method="post" target="_vote">
 <select name="arcwert" class="vote">
 <option selected>10

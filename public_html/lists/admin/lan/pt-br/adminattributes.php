@@ -1,8 +1,8 @@
 <?php 
 $lan = array(
   'SaveChanges' => 'Salvar Altera&ccedil;&otilde;es',
-  'NameNotEmpty' => 'O campo Nome n&atilde;o pode ficar em branco:',
-  'NameNotUnique' => 'S&oacute; o Nome n&atilde;o &eacute; suficiente',
+  'NameNotEmpty' => 'O campo Nome n&atilde;o pode ficar em branco',
+  'NameNotUnique' => 'Nome j&aacute; existe',
   'ExistingAttr' => 'Atributos Existentes:<p>',
   'NoAttrYet' => 'Ainda nenhum atributo foi definido<br>',
   'Attribute' => 'Atributo:',
@@ -11,7 +11,7 @@ $lan = array(
   'Type' => 'Tipo:',
   'DValue' => 'Valor Padr&atilde;o:',
   'OrderListing' => 'Ordem da Listagem:',
-  'IsAttrRequired' => 'Este atributo &eacute; obrigat&oacute;rio?:',
+  'IsAttrRequired' => 'Obrigat&oacute;rio?:',
   'AddAttr' => 'Adicionar novo Atributo:',
 );
 ?>

@@ -12,9 +12,9 @@ $lan = array(
 'Import list of admins' => 'Importar lista de admins',
 'Deleting' => 'Apagando',
 'Done' => 'Conclu&iacute;do',
-'Admin added' => 'Admin adicionado',
-'Listing admin' => 'Listando admin',
-'Listing admin 1 to 50' => 'Listando admin de 1 a 50',
+'Admin added' => 'Administrador adicionado',
+'Listing admin' => 'Listando administrador',
+'Listing admin 1 to 50' => 'Listando admins de 1 a 50',
 'found' => 'Encontrado',
 
 );

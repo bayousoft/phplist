@@ -1,10 +1,10 @@
 <?php
 $lan = array(
- 'This page can only be called from the commandline' => 'Est&acute; p&acute;gina s&oacute; pode ser acessada pela linha de comando',
+ 'This page can only be called from the commandline' => 'Esta p&aacute;gina s&oacute; pode ser acessada pela linha de comando',
  'Getting and Parsing the RSS sources' => 'Obtendo e Categorizando as fontes RSS',
- 'Rss Errors' => 'Erros do Rss',
- 'Rss Results' => 'Resultados do Rss',
- 'Rss Failure report' => 'Relat&oacute;rio de Falhas do Rss',
+ 'Rss Errors' => 'Erros do RSS',
+ 'Rss Results' => 'Resultados do RSS',
+ 'Rss Failure report' => 'Relat&oacute;rio de Falhas do RSS',
  'Parsing' => 'Categorizando',
  'ok' => 'ok',
  'failed' => 'falhou',

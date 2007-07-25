@@ -1,16 +1,16 @@
 <?php
 $lan = array(
-  'File is either to large or does not exist.' => 'O arquivo &acute; muito grande ou n&atilde;o existe.',
-  'No file was specified.' => 'O arquivo n&atildeo; foi especificado.',
+  'File is either to large or does not exist.' => 'O arquivo &eacute; muito grande ou n&atilde;o existe.',
+  'No file was specified.' => 'O arquivo n&atilde;o foi especificado.',
   'Some characters that are not valid have been found. These might be delimiters. Please check the file and select the right delimiter. Character found:' => 'Alguns caracteres inv&aacute;lidos foram encontrados. Eles podem ser separadores. Por favor, verifique o arquivo e selecione o separador correto. Caracter encontrado:',
   'Name cannot be empty' => 'O campo Nome n&atilde;o pode ficar em branco',
-  'Name is not unique enough' => 'S&oacute; o nome n&atilde;o &eacute; suficiente',
-  'Cannot find the email in the header' => 'N&atilde;o foi poss&iacute;vel encontra o email no cabe&ccedil;&aacute;rio',
-  'Cannot find the password in the header' => 'N&atilde;o foi poss&iacute;vel encontrar a senha no cabe&ccedil;&aacute;rio',
-  'Cannot find the loginname in the header' => 'N&atilde;o foi poss&iacute;vel encontrar o nome de usu&aacute;rio no cabe&ccedil;&aacute;rio',
+  'Name is not unique enough' => 'Nome n&atilde;o &eacute; &uacute;nico',
+  'Cannot find the email in the header' => 'N&atilde;o foi poss&iacute;vel encontrar o email no cabe&ccedil;&aacute;lho',
+  'Cannot find the password in the header' => 'N&atilde;o foi poss&iacute;vel encontrar a senha no cabe&ccedil;&aacute;lho',
+  'Cannot find the loginname in the header' => 'N&atilde;o foi poss&iacute;vel encontrar o nome de usu&aacute;rio no cabe&ccedil;&aacute;lho',
   'Record has no email' => 'O registro n&atilde;o cont&eacute;m nenhum email',
   'Invalid Email' => 'Email Inv&aacute;lido',
-  'Record has more values than header indicated, this may cause trouble' => 'O registro possui mais valores que os indicados no cabe&ccedil;&aacute;rio, isso pode causar problemas',
+  'Record has more values than header indicated, this may cause trouble' => 'O registro possui mais valores que os indicados no cabe&ccedil;&aacute;lho, isto pode causar problemas',
   'password' => 'senha',
   'loginname' => 'nome de usu&aacute;rio',
   'Empty loginname, using email:' => 'Nome de usu&aacute;rio em branco, utilizando o email:',
@@ -27,16 +27,16 @@ $lan = array(
   
   # do not translate email, loginname and password
   'importadmininfo' => '
-  O arquivo que voc&ecirc; quer fazer upload deve necessita conter quais administradores voc&ecirc; quer incluir no sistema. As colunas necessitam ter os seguintes cabe&ccedil;&acute;rios: <b>email</b>, <b>loginname</b>, <b>password</b>. Todas as outras colunas ser&atilde;o adicionadas como atributos do admin.
+  O arquivo que voc&ecirc; quer fazer upload precisa conter quais administradores voc&ecirc; quer incluir no sistema. As colunas necessitam ter os seguintes cabe&ccedil;&aacute;lhos: <b>email</b>, <b>loginname</b>, <b>password</b>. Todas as outras colunas ser&atilde;o adicionadas como atributos do admin.
  <b>Aten&ccedil;&atilde;o</b>: o arquivo deve ser tipo texto simples. N&atilde;o fa&ccedil;a upload de arquivos bin&aacute;rios como Documentos Word.
   ',
   'File containing emails' => 'Arquivo contendo emails',
   'Field Delimiter' => 'Campo Separador',
   'Record Delimiter' => 'Separador de registro',
-  'importadmintestinfo' => 'Se voc&ecirc; verificar o "Testar Resultados",  voc&ecirc; ver&aacute; a lista de emails categorizada na sua tela e a essas informa&ccedil;&otilde;es n&atilde;o ser&aacute; inseridas na base de dados. Isso &eacute; muito &uacute;til para verificar se o formato do seu arquivo est&aacute; correto. Ser&aacute; exibido somente os 50 primeiros registros.',
+  'importadmintestinfo' => 'Se voc&ecirc; verificar o "Testar Resultados",  voc&ecirc; ver&aacute; a lista de emails categorizada na sua tela e essas informa&ccedil;&otilde;es n&atilde;o ser&atilde;o inseridas na base de dados. Isso &eacute; muito &uacute;til para verificar se o formato do seu arquivo est&aacute; correto. Ser&aacute; exibido somente os 50 primeiros registros.',
   # this should be the same as the term between quotes in the previous one
   'Test output' => 'Testar Resultados',
-  'Check this box to create a list for each administrator, named after their loginname' => 'Marque esta caixa para criar uma lista de cada administrador, nomeados depois de sues nomes de usu&aacute;rios',
+  'Check this box to create a list for each administrator, named after their loginname' => 'Marque esta caixa para criar uma lista de cada administrador, nomeados depois de seus nomes de usu&aacute;rio',
   'Do Import' => 'Realmente Importar',
   'default is TAB' => 'o padr&atilde;o &eacute; TAB',
   'default is line break' => 'o padr&atilde;o &eacute; quebra de linha',

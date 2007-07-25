@@ -4,6 +4,7 @@ $lan = array(
   'Initialising table' => 'Iniciando tabela',
   'Table already exists' => 'Esta tabela j&acute; existe',
   'failed' => 'falhou',
+  'List for testing.' => 'Lista para testes.',
   'ok' => 'ok',
   'failed' => 'falhou',
   'List for testing. If you don\'t make this list active and add yourself as a member, you can use this list to test a message. If the message comes out ok, you can resend it to other lists.' => 'Lista de teste. Se voc&ecirc; n&atilde;o ativar esta lista e se adicionar como um membro, voc&ecirc; pode us&acute;-la para testar uma mensagem. Se a mensagem chegar corretamente, voc&ecirc; pode reenvi&aacute;-la para outras listas.',

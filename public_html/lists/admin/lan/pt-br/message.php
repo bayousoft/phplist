@@ -1,6 +1,8 @@
 <?php
 $lan = array(
- 'Please select a message to display' => 'Por favor, selecione uma mensage para ser exibida',
+ 'Please select a message to display' => 'Por favor, selecione a mensagem para ser exibida',
+ 'Edit this message' => 'Editar mensagem',
+ 'No such message' => 'Mensagem n&atilde;o encontrada',
  'Attachments for this message' => 'Anexos para esta mensagem',
  'No attachments' => 'Nenhum anexo',
  'Filename' => 'Nome do arquivo',
@@ -10,9 +12,9 @@ $lan = array(
  'Lists this message has been sent to' => 'Listas para as quais esta mensagem foi enviada',
  'None yet' => 'Nenhuma ainda',
  'Send this (same) message to (a) new list(s)' => 'Enviar esta (mesma) mensagem para outra(s) lista(s)',
- 'List is Active' => 'A lista est&acute; ativa',
- 'List is not Active' => 'A lista n&atilde;o est&acute; ativa',
- '<b>Note:</b> this message has already been sent to all lists. To resend it to new users use the "Requeue" function.' => '<b>Aviso:</b> esta mensagem j&acute; foi enviada para todas as listas. Para reenvi&acute;-la aos novos usu&acute;rios use a fun&ccedil;&atilde;o "Realinhamento".',
+ 'List is Active' => 'A lista est&aacute; ativa',
+ 'List is not Active' => 'A lista n&atilde;o est&aacute; ativa',
+ '<b>Note:</b> this message has already been sent to all lists. To resend it to new users use the "Requeue" function.' => '<b>Aviso:</b> esta mensagem j&aacute; foi enviada para todas as listas. Para reenvi&aacute;-la a novos usu&aacute;rios, use a fun&ccedil;&atilde;o "Redistribuir".',
  'Resend' => 'Reenviar',
  'id' => 'id',
  'subject' => 'assunto',

@@ -1,8 +1,8 @@
 <?php
 
 $lan = array(
-
-'The temporary directory for uploading (%s) is not writable, so import will fail' => 'O diret&oacute;rio tempor&aacute;rio para uploads (%s) n&atilde;o &eacute; grav&aacute;l, ent&atilde;o a importa&ccedil;&aatilde;o falhar&aacute;',
+   'import is not available' => 'importa&ccedil;&atilde;o n&atilde;o est&aacute; dispon&iacute;vel',
+'The temporary directory for uploading (%s) is not writable, so import will fail' => 'O diret&oacute;rio tempor&aacute;rio para uploads (%s) n&atilde;o &eacute; grav&aacute;l, ent&atilde;o a importa&ccedil;&atilde;o falhar&aacute;',
 'Invalid Email' => 'Email Inv&aacute;lido',
 'Import cleared' => 'A Importa&ccedil;&atilde;o foi limpa',
 'Continue' => 'Continuar',
