@@ -5,15 +5,15 @@ ob_start();
 
 session_start();
 
-if (isset($_POST['page'])/* && $_POST['page'] !== 'write_install'*/) {
-  $Page = $_POST['page'];
+if (isset($_GET['page'])/* && $_POST['page'] !== 'write_install'*/) {
+  $Page = sprintf("%s",$_GET['page']);
 #  header("Location: ./?page=$Page");
 }
 
 foreach ($_POST as $key => $val) {
   $_SESSION[$key] = $val;
 }
-//print_r($_SESSION);
+print_r($_SESSION);
 require("install/english.inc");
 include("install/".$_SESSION["language_module"]."");
 require("install/mysql.inc");
@@ -63,8 +63,8 @@ if ($_SESSION["page"]) {
 }
 
 
-if (isset($_SESSION["page"]) && in_array($_GET["page"], $_SESSION["history"])/* != FALSE*/) {
-  $getpage = sprintf("%s",$_GET["page"]);
+if (isset($Page) && in_array($Page, $_SESSION["history"])/* != FALSE*/) {
+  $getpage = sprintf("%s",$Page);
   $page = $_SESSION["page"]!=$getpage?$getpage:$_SESSION["page"];
   if (preg_match("/([\w_]+)/",$page,$regs)) {
   $page = $regs[1];
