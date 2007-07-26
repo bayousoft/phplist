@@ -3,7 +3,7 @@
 function editVariable($keyAr,$value,$type) {
   $res = '';
   foreach ($keyAr as $key => $val) {
-    if ($type == 'text') { // lets define the value, if default or request one
+    if ($type == 'text' && !isset($_SESSION[$val[$value]])) { // lets define the value, if default or request one
       $realValue = $val["values"];
     }
     else {
@@ -20,24 +20,15 @@ function editVariable($keyAr,$value,$type) {
         }
         switch ($val['type']) {
           case "scalar":
-          if ($_SESSION['dbCreatedSuccesfully'] == TRUE) {
+          if ($_SESSION['dbCreatedSuccesfully'] == 1) {
             if ($val[$value] == 'database_name' || $val[$value] == 'database_user' || $val[$value] == 'database_password' || $val[$value] == 'database_host') {
-              $res .= '<input type="hidden" value="'.$_SESSION[$val[$value]];
+              $res .= '<input type="hidden" value="'.$realValue;
               $res .= '" name="'.$val[$value].'">';
               break 1;
             }
           }
-          if ($val[$value] == 'database_name' || $val[$value] == 'database_user' || $val[$value] == 'database_password' || $val[$value] == 'database_host') {
-            if ($_SESSION['dbCreatedSuccesfully'] == FALSE) {
-              $realValue = $_SESSION[$val[$value]];
-            }
-            $res .= '<input type="'.$type.'" value="'.$realValue;
-            $res .= '" name="'.$val[$value].'"> ';
-          }
-          elseif ($val[$value] == 'message_envelope') {
-            if ($type == 'text') {
-              $realValue = 'bounces@'.$_SERVER["SERVER_NAME"];
-            }
+          if ($val[$value] == 'message_envelope') {
+              $realValue = ($_SESSION[$val[$value]]?$_SESSION[$val[$value]]:'bounces@'.$_SERVER["SERVER_NAME"]);
             $res .= '<input type="'.$type.'" value="'.$realValue;
             $res .= '" name="'.$val[$value].'"> ';
           }

@@ -22,17 +22,17 @@ if (isset($_SESSION['database_root_user']) && isset($_SESSION['database_root_pas
 Sql_Close($test_connection);
 $test_connection = Sql_Connect($_SESSION['database_host'], $_SESSION['database_user'], $_SESSION['database_password'], $_SESSION['database_name']);
 #print "Hello"; exit;
-$create_db = !$test_connection ? Sql_Create_Db($_SESSION['database_name']) : FALSE;
-if ($test_connection == TRUE && $create_db == FALSE) {
-  $_SESSION['dbCreatedSuccesfully'] = TRUE;
+$create_db = (!$test_connection ? (Sql_Create_Db($_SESSION['database_name'])?1:0) : 0);
+if ($test_connection && $create_db == 0) {
+  $_SESSION['dbCreatedSuccesfully'] = 1;
   printf('<p>%s</p>',$GLOBALS["dbAlreadyCreated"]);
 }
-elseif ($create_db == TRUE) {
-  $_SESSION['dbCreatedSuccesfully'] = TRUE;
+elseif ($create_db == 1) {
+  $_SESSION['dbCreatedSuccesfully'] = 0;
   printf('<p>%s</p><p>%s</p>', $userOk ? $GLOBALS["strUserCreatedOk"] : "",$GLOBALS["strDbCreatedOk"]);
 }
-elseif ($test_connection == FALSE && $create_db == FALSE) {
-  $_SESSION['dbCreatedSuccesfully'] = FALSE;
+elseif ($test_connection == 0 && $create_db == 0) {
+  $_SESSION['dbCreatedSuccesfully'] = 0;
   printf('<div class="wrong">%s</div>',$GLOBALS["strDbCreatedKo"]);
   unset($_SESSION["printeable"]);
   getNextPageForm('install0');

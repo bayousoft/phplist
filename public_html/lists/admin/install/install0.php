@@ -3,7 +3,7 @@
 //require('requiredvars.php');
 print $GLOBALS["I18N"]->get($_SESSION["printeable"]);
 
-if ($_SESSION['dbCreatedSuccesfully'] == FALSE) {
+if ($_SESSION['dbCreatedSuccesfully'] == 0) {
   $yourValue = $_SESSION;
   print $GLOBALS["I18N"]->get(sprintf('<table width=500><tr><td><div class="explain">%s</div></td></tr></table>', $GLOBALS['strDbExplain']));
 }
