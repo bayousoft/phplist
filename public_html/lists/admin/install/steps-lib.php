@@ -9,17 +9,17 @@ function editVariable($keyAr,$value,$type) {
     else {
       $realValue = $_SESSION[$val[$value]];
     }
-      if ($key[$value]) {
-        if ($type == 'text' && $val[$value] !== 'database_name' && $val[$value] !== 'database_user' && $val[$value] !== 'database_password' && $val[$value] !== 'database_host') {
-          if ($val['type'] == 'scalar' || $val['type'] == 'scalar_int' || $val['type'] ==  'constant') {
-            $res .= '<img src="images/break-el.gif" height="1" width="100%"><div class="value_name">';
-            $res .= $key.'</div>';
-            $res .= '<div class="description"><span>Info:</span> '.$GLOBALS["str".$val['name']."_desc"];
-            $res .= '</div><br />';
-          }
+    if ($key[$value]) {
+      if ($type == 'text' && $val[$value] !== 'database_name' && $val[$value] !== 'database_user' && $val[$value] !== 'database_password' && $val[$value] !== 'database_host') {
+        if ($val['type'] == 'scalar' || $val['type'] == 'scalar_int' || $val['type'] ==  'constant') {
+          $res .= '<img src="images/break-el.gif" height="1" width="100%"><div class="value_name">';
+          $res .= $key.'</div>';
+          $res .= '<div class="description"><span>Info:</span> '.$GLOBALS["str".$val['name']."_desc"];
+          $res .= '</div><br />';
         }
-        switch ($val['type']) {
-          case "scalar":
+      }
+      switch ($val['type']) {
+        case "scalar":
           if ($_SESSION['dbCreatedSuccesfully'] == 1) {
             if ($val[$value] == 'database_name' || $val[$value] == 'database_user' || $val[$value] == 'database_password' || $val[$value] == 'database_host') {
               $res .= '<input type="hidden" value="'.$realValue;
@@ -27,8 +27,9 @@ function editVariable($keyAr,$value,$type) {
               break 1;
             }
           }
+
           if ($val[$value] == 'message_envelope') {
-              $realValue = ($_SESSION[$val[$value]]?$_SESSION[$val[$value]]:'bounces@'.$_SERVER["SERVER_NAME"]);
+            $realValue = ($_SESSION[$val[$value]]?$_SESSION[$val[$value]]:'bounces@'.$_SERVER["SERVER_NAME"]);
             $res .= '<input type="'.$type.'" value="'.$realValue;
             $res .= '" name="'.$val[$value].'"> ';
           }
@@ -45,49 +46,49 @@ function editVariable($keyAr,$value,$type) {
             $res .= '" name="'.$val[$value].'"> ';
             }
           }
-           else {
-             $res .= '<input type="'.$type.'" value="'.$realValue;
-             $res .= '" name="'.$val[$value].'"> ';
-           }
-           break;
-           case "scalar_int":
-           $res .= '<input type="'.$type.'" value="'.$realValue;
-           $res .= '" name="'.$val[$value].'" maxlenght="4"> ';
-           break;
-           case "hidden_scalar":
-           $res .= '<input type="hidden" value="'.$val["values"];
-           $res .= '" name="'.$val[$value].'">';
-           break;
-           case "hidden_scalar_int":
-           $res .= '<input type="hidden" value="'.$val["values"];
-           $res .= '" name="'.$val[$value].'">';
-           break;
-           case "constant":
-           $res .= '<input type="'.$type.'" maxlength="4" value="'.$realValue.'" name="'.$val[$value].'"> ';
-           break;
-           case "hidden_constant":
-           $res .= '<input type="hidden" value="'.$val["values"].'" name="'.$val[$value].'">';
-           break;
-           case "hidden_array":
-           $res .= '<input type="hidden" value="'.$val["values"].'" name="'.$val[$value].'">';
-           break;
-           case "commented":
-           $res .= '<input type="hidden" value="'.$val["values"].'" name="'.$val[$value].'">';
-           break;
-         }
-         if ($type == 'text') {
-           if ($val['type'] == 'scalar' || $val['type'] == 'scalar_int' || $val['type'] ==  'constant') {
-             if ($type == 'text' && $val[$value] !== 'database_name' && $val[$value] !== 'database_user' && $val[$value] !== 'database_password' && $val[$value] !== 'database_host') {
-               $res .= '<br /><br />';
-             }
-           }
-         }
-       }
-       else {
-         $res .= $GLOBALS['$strValueNotFound'];
-       }
-     }
-   return $res;
+          else {
+            $res .= '<input type="'.$type.'" value="'.$realValue;
+            $res .= '" name="'.$val[$value].'"> ';
+          }
+          break;
+          case "scalar_int":
+          $res .= '<input type="'.$type.'" value="'.$realValue;
+          $res .= '" name="'.$val[$value].'" maxlenght="4"> ';
+          break;
+          case "hidden_scalar":
+          $res .= '<input type="hidden" value="'.$val["values"];
+          $res .= '" name="'.$val[$value].'">';
+          break;
+          case "hidden_scalar_int":
+          $res .= '<input type="hidden" value="'.$val["values"];
+          $res .= '" name="'.$val[$value].'">';
+          break;
+          case "constant":
+          $res .= '<input type="'.$type.'" maxlength="4" value="'.$realValue.'" name="'.$val[$value].'"> ';
+          break;
+          case "hidden_constant":
+          $res .= '<input type="hidden" value="'.$val["values"].'" name="'.$val[$value].'">';
+          break;
+          case "hidden_array":
+          $res .= '<input type="hidden" value="'.$val["values"].'" name="'.$val[$value].'">';
+          break;
+          case "commented":
+          $res .= '<input type="hidden" value="'.$val["values"].'" name="'.$val[$value].'">';
+          break;
+        }
+        if ($type == 'text') {
+          if ($val['type'] == 'scalar' || $val['type'] == 'scalar_int' || $val['type'] ==  'constant') {
+            if ($type == 'text' && $val[$value] !== 'database_name' && $val[$value] !== 'database_user' && $val[$value] !== 'database_password' && $val[$value] !== 'database_host') {
+              $res .= '<br /><br />';
+            }
+          }
+        }
+      }
+      else {
+        $res .= $GLOBALS['$strValueNotFound'];
+      }
+    }
+  return $res;
 }
 function writeToConfig($key, $requiredVars2) {
   if (!empty($key)) {
@@ -488,7 +489,7 @@ return $result;
 }
 
 function Sql_Close ($connection) {
-  mysql_close($connection);
+  return mysql_close($connection);
 }
 
 function cleanSession() {
