@@ -467,11 +467,11 @@ function Sql_Connect_Install($host,$user,$password) {
   if ($host && $user) {
   $db = mysql_connect($host, $user ,$password);
   $errno = mysql_errno();
-    if (!$errno) {
-      return TRUE;
+    if ($db) {
+      return $db;
     }
   if ($errno) {
-        return FALSE;
+        return 0;
     }
   }
 }
@@ -480,12 +480,11 @@ function Sql_Connect_Install($host,$user,$password) {
 function Sql_Create_Db ($databaseToCreate) {
   $creatingDb = mysql_query(sprintf('CREATE DATABASE %s;',$databaseToCreate));
   if ($creatingDb) {
-  $result = TRUE;
+  return $creatingDb;
   }
   else {
-  $result = FALSE;
+  return FALSE;
   }
-return $result;
 }
 
 function Sql_Close ($connection) {

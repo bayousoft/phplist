@@ -27,7 +27,7 @@ $configDoesntExist = 'Config file doesnt exists, something went wrong...';
 $strConfigIsNotAndDirNotWri = 'Warning: Your config file doesnt exists, and phplist cannot write into the lists/config directory. Please either create a config.php file with write permissions, or change permissions to the lists/config directory to be executable (ie 755) before continue.';
 $strConfigIsNotWritable = 'Warning: Your config file is not writable, please change the permissions of the lists/config/config.php file to be writable (ie 666, 646, 777, etc).';
 $strConfigPerms = 'Notice: Your config permissions are now';
-$strChangeChmod = ', phplist could not change it, if you can change permissions to 0644 to your lists/config/config.php file. It won\' affect your installation or security, but would be good to keep it 644.';
+$strChangeChmod = ', phplist could not change it, if you can, please change permissions to 0644 to your lists/config/config.php file. It won\' affect your installation or security, but would be good to keep it 644.';
 $strIntroInstaller = '<p>Phplist installer will help you to create your database and config file for the system in several steps. Please keep in mind that if permissions are not well set up phplist won\'t be able to create either your db or your config file. The best thing to do first is to check if you have the right permissions so the installer will work well. Installer will need write permission on the lists/config/config.php file. You can probably do this through ftp, or if you have console access do chmod 646 lists/config/config.php.</p>
 <p>You can always make the manual install following the instructions <a href="http://docs.phplist.com/PhplistInstallation">here</a>.</p>
 <p>In several steps, as said, installer will check for all the configuration needed to start using the system. Some advances features are not availables for edit for now, if you still want to use them you will have to edit those manually after the creation of the config file.</p>
@@ -226,5 +226,7 @@ $strADOdb_desc = ' there is now support for the use of ADOdb http://php.weblogs.
 #$adodb_inc_file = "/path/to/adodb_inc.php";
 #$adodb_driver = "mysql";';
 $strerror_level_desc = 'If you want more trouble, make this 63 (very unlikely you will like the result).';
-
+$strAccessDenied = 'Access denied, please check that the user has the right permissions or the password is ok.';
+$strWrongHost = 'Wrong host, please check your host name.';
+$strServerBusy = 'There\'s an error in your details. Seems to be that the database doesn\'t exists and the user can\'t create it or doesn\'t exists either.';
 ?>
