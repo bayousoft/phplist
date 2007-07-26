@@ -26,15 +26,14 @@ $configDoesntExist = 'Config file doesnt exists, something went wrong...';
 //$goodConfigFile = 'Your config file is ready for writing (mmm, maybe we have to check if it\'s empty...).';
 $strConfigIsNotAndDirNotWri = 'Warning: Your config file doesnt exists, and phplist cannot write into the lists/config directory. Please either create a config.php file with write permissions, or change permissions to the lists/config directory to be executable (ie 755) before continue.';
 $strConfigIsNotWritable = 'Warning: Your config file is not writable, please change the permissions of the lists/config/config.php file to be writable (ie 666, 646, 777, etc).';
-$strConfigPerms = 'Warning: Your config permissions are now';
-$strChangeChmod = ', phplist could not change it, please change permissions to 0644 to your lists/config/config.php file. Right now your phplist config is not safe, so do this before continue with the installation of the system.';
-$strIntroInstaller = '<p>Phplist installer will help you to create your database and config file for the system in several steps. Please keep in mind that if permissions are not well set up phplist won\'t be able to create either your db or your config file. The best thing to do first is to check if you have the right permissions so the installer will work well.</p>
+$strConfigPerms = 'Notice: Your config permissions are now';
+$strChangeChmod = ', phplist could not change it, if you can change permissions to 0644 to your lists/config/config.php file. It won\' affect your installation or security, but would be good to keep it 644.';
+$strIntroInstaller = '<p>Phplist installer will help you to create your database and config file for the system in several steps. Please keep in mind that if permissions are not well set up phplist won\'t be able to create either your db or your config file. The best thing to do first is to check if you have the right permissions so the installer will work well. Installer will need write permission on the lists/config/config.php file. You can probably do this through ftp, or if you have console access do chmod 646 lists/config/config.php.</p>
 <p>You can always make the manual install following the instructions <a href="http://docs.phplist.com/PhplistInstallation">here</a>.</p>
 <p>In several steps, as said, installer will check for all the configuration needed to start using the system. Some advances features are not availables for edit for now, if you still want to use them you will have to edit those manually after the creation of the config file.</p>
 
 <p>For more help undertanding phplist install you can take a look at <a href="http://docs.phplist.com/">phplist docs</a>, <a href="http://mantis.phplist.com/">mantis</a> for report a bug or ask for a future feature and the <a href="http://forums.phplist.com/">forums</a> for tips, answers and extra help.</p>
 <p>The phplist installer requires cookies to be enabled.</p>';
-$strStartInstall = 'Let\'s start the installation in the next page, click <a href="step0-install.php">here to start the install of your phplist version.</a> Good luck! ;)';
 $strInstallerTitle = 'installer';
 $strConfigHasContent = 'Warning: Your config file already has content, which means that it was already initialised. If you want to use the installer please clean the file.';
 $strTmpNotWritable = 'Warning: Your actual tmp directory is not writable, please right a complete path in the inputs below.';
