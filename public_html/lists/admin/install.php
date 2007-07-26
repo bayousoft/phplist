@@ -13,7 +13,7 @@ if (isset($_GET['page'])/* && $_POST['page'] !== 'write_install'*/) {
 foreach ($_POST as $key => $val) {
   $_SESSION[$key] = $val;
 }
-print_r($_SESSION);
+//print_r($_SESSION); # test
 require("install/english.inc");
 include("install/".$_SESSION["language_module"]."");
 require("install/mysql.inc");
@@ -21,7 +21,7 @@ require("install/steps-lib.php");
 include("install/header-install.inc");
 require("install/requiredvars.php");
 require("languages.php");
-error_reporting(63);
+error_reporting(0);
 
 ?>
 <div class="install_start wrong">

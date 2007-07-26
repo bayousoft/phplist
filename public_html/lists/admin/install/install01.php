@@ -18,7 +18,7 @@ if (isset($_SESSION['database_root_user']) && isset($_SESSION['database_root_pas
 }
 Sql_Close($test_connection);
 sleep(2);
-#flush();
+flush();
 $test_connection = Sql_Connect($_SESSION['database_host'], $_SESSION['database_user'], $_SESSION['database_password'], $_SESSION['database_name']);
 #print "Hello"; exit;
 $create_db = (!$test_connection ? (Sql_Create_Db($_SESSION['database_name'])?1:0) : 0);
@@ -33,11 +33,10 @@ elseif ($create_db == 1) {
 elseif ($test_connection == 0 && $create_db == 0) {
   $_SESSION['dbCreatedSuccesfully'] = 0;
   print $GLOBALS["I18N"]->get(sprintf('<div class="wrong">%s</div>',$GLOBALS["strDbCreatedKo"]));
-  #unset($_SESSION["printeable"]);
-  ob_end_clean();
+  unset($_SESSION["printeable"]);
   getNextPageForm('install0');
-  #include("install/footer.inc");
-#  exit;
+  include("install/footer.inc");
+  exit;
 }
 
 
