@@ -12,7 +12,7 @@ if (isset($_GET['page'])) {
 foreach ($_POST as $key => $val) {
   $_SESSION[$key] = $val;
 }
-//print_r($_SESSION); # test
+print_r($_SESSION); # test
 require("install/english.inc");
 include("install/".$_SESSION["language_module"]."");
 require("install/mysql.inc");

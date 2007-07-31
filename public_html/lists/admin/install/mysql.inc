@@ -11,20 +11,16 @@ if (!function_exists("mysql_connect")) {
 function Sql_Connect($host,$user,$password,$database) {
   if ($host && $user)
     $db = mysql_connect($host , $user ,$password );
-  $errno = mysql_errno();
-  if (!$errno) {
+#  $errno = mysql_errno();
+#  if (!$errno) {
     $res = mysql_select_db($database,$db);
-    $errno = mysql_errno();
-  }
-  if ($errno) {
+#    $errno = mysql_errno();
+#  }
+#  if ($errno) {
 #    print "<p>$dbm</p><p>Cannot connect to Database, please check your configuration</p>";
-    return $errno;
-  }
-  if (!$db) {
-    return $errno;
-#    exit;
-  }
-  return ($res?2:1);
+#    return $errno;
+#  }
+  return ($res);
 }
 
 function Sql_Error ($dbconnection,$errno = 0) {
