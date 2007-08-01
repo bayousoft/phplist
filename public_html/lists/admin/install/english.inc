@@ -229,4 +229,5 @@ $strerror_level_desc = 'If you want more trouble, make this 63 (very unlikely yo
 $strAccessDenied = 'Access denied, please check that the user has the right permissions or the password is ok.';
 $strWrongHost = 'Wrong host, please check your host name.';
 $strServerBusy = 'There\'s an error in your details. Seems to be that the database doesn\'t exists and the user can\'t create it or doesn\'t exists either.';
+$strCuoldNotCreateDb = "Could not create database";
 ?>

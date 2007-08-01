@@ -250,18 +250,19 @@ function checkScalarInt($sessionValues, $requiredVars) {
 //      $val = intval($val);
 
       if (!is_numeric($val)) {
-        print $GLOBALS["I18N"]->get('<p style="color:#000fff;"><b>'.$key.'</b>'.$GLOBALS['strErraticValue'].'<span style="color:#f00;">'.$val.'</span><br />');
+        $msg = $GLOBALS["I18N"]->get('<p style="color:#000fff;"><b>'.$key.'</b>'.$GLOBALS['strErraticValue'].'<span style="color:#f00;">'.$val.'</span><br />');
         if (preg_match('/[0-9]+/', $val, $matches)) {
-          print $GLOBALS["I18N"]->get(printf('%s%s</p>', $GLOBALS['strChangedForThis'], $matches[0]));
+          $msg .= $GLOBALS["I18N"]->get(printf('%s%s</p>', $GLOBALS['strChangedForThis'], $matches[0]));
           $_SESSION[$key] = $matches[0];
         }
         else {
-          print $GLOBALS["I18N"]->get(printf('%s%s</p>', $GLOBALS['strChangedForThis'], $requiredVars[$key]['values']));
+          $msg .= $GLOBALS["I18N"]->get(printf('%s%s</p>', $GLOBALS['strChangedForThis'], $requiredVars[$key]['values']));
           $_SESSION[$key] = $requiredVars[$key]['values'];
         }
       }
     }
   }
+  return $msg;
 }
 
 
@@ -331,7 +332,7 @@ function getNextPageForm ($actualPage) {
   $textSubmit = 'Next step';
   break;
   case 'install1':
-  if ($_SESSION['dbCreatedSuccesfully'] == FALSE) {
+  if (!$_SESSION['dbCreatedSuccesfully']) {
   $nextpage = 'install01';
   $actualPage = 'install0';
   }
@@ -405,9 +406,10 @@ function getNextPageForm ($actualPage) {
 </div>
   ');
   }
-  print $GLOBALS["I18N"]->get('<form action="" method="post" name="subscribeform">');
+  print $GLOBALS["I18N"]->get('<form action="./?page='.$nextpage.'" method="post" name="subscribeform">
+  <input type="hidden" name="page" value="'.$nextpage.'">');
   include("install/$actualPage.php");
-  print $GLOBALS["I18N"]->get('<div id="maincontent_install"><div class="install_start"><input type="hidden" name="page" value="'.$nextpage.'"><a href="./?page='.$nextpage.'" onClick="javascript:installsubscribeform();"  class="formsubmit">'.$textSubmit.'</a></span><noscript><input type="submit" value="'.$textSubmit.'"></noscript><br /><br /></div></div>');
+  print $GLOBALS["I18N"]->get('<div id="maincontent_install"><div class="install_start"><a href="javascript:installsubscribeform();" class="formsubmit">' . $textSubmit . '</a></span><br /><br /></div></div>');
   print $GLOBALS["I18N"]->get('    <script language="Javascript" type="text/javascript">
     var submitted = false;
     function installsubscribeform() {
@@ -416,7 +418,8 @@ function getNextPageForm ($actualPage) {
         document.subscribeform.submit();
       }
     }
-    </script>');
+    </script>
+  <noscript><input type="submit" name="submit" value="'.$textSubmit.'"></noscript>');
   print $GLOBALS["I18N"]->get('</form>');
 #  }
   return;
@@ -471,7 +474,7 @@ function Sql_Connect_Install($host,$user,$password) {
       return $db;
     }
   if ($errno) {
-        return 0;
+        return FALSE;
     }
   }
 }

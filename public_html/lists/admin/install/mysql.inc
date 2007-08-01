@@ -12,15 +12,17 @@ function Sql_Connect($host,$user,$password,$database) {
   if ($host && $user)
     $db = mysql_connect($host , $user ,$password );
 #  $errno = mysql_errno();
-#  if (!$errno) {
-    $res = mysql_select_db($database,$db);
+  if (!$db) {
+    return FALSE;
+  }
+  $res = mysql_select_db($database,$db);
 #    $errno = mysql_errno();
 #  }
 #  if ($errno) {
 #    print "<p>$dbm</p><p>Cannot connect to Database, please check your configuration</p>";
 #    return $errno;
 #  }
-  return ($res);
+  return $res;
 }
 
 function Sql_Error ($dbconnection,$errno = 0) {
@@ -89,6 +91,10 @@ function Sql_Affected_Rows() {
 
 function Sql_Num_Rows($result = "") {
   return mysql_num_rows($result);
+}
+
+function sql_errorno() {
+  return mysql_errno();
 }
 
 ?>

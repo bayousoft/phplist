@@ -5,70 +5,81 @@ print $GLOBALS["I18N"]->get($_SESSION["printeable"]);
 
 if (isset($_SESSION['database_root_user']) && isset($_SESSION['database_root_pass'])) {
   $root_connection = Sql_Connect($_SESSION['database_host'], $_SESSION['database_root_user'], $_SESSION['database_root_pass'], $_SESSION['database_name']);
-  if ($root_connection != 2 && $root_connection != 1) {
+  if (!$root_connection) {
     $root_connection = Sql_Connect_Install($_SESSION['database_host'], $_SESSION['database_root_user'], $_SESSION['database_root_pass']);
+    if ($root_connection) {
     $create_db = Sql_Create_Db($_SESSION['database_name']);
-    $GLOBALS["database_connection"] = $root_connection;
+#    $GLOBALS["database_connection"] = $root_connection; # useless
+# if error let's still try to connect with user's settings
+    }
   }
-  $rootPriv = Sql_Query(sprintf("GRANT ALL PRIVILEGES ON %s.* TO '%s'@'localhost' IDENTIFIED BY '%s'",$_SESSION['database_name'],$_SESSION['database_user'],$_SESSION['database_password']));
-  $root_error =  "$rootPriv error root<br/>";
+  Sql_Query(sprintf("GRANT ALL PRIVILEGES ON %s.* TO '%s'@'localhost' IDENTIFIED BY '%s'", $_SESSION['database_name'], $_SESSION['database_user'], $_SESSION['database_password']));
+#  if (!$rootPriv)  print '<script language="Javascript"> alert("No privileges given"); </script>'; # testing
   unset($_SESSION['database_root_user']);
   unset($_SESSION['database_root_pass']);
-  sql_query("FLUSH PRIVILEGES");
+  sql_query("FLUSH PRIVILEGES"); # this will help on windows and mac machines
 }
-Sql_Close($root_connection);
+if ($root_connection) {
+  Sql_Close($root_connection);
+}
 sleep(2);
-flush();
+#flush();
 $test_connection = Sql_Connect($_SESSION['database_host'], $_SESSION['database_user'], $_SESSION['database_password'], $_SESSION['database_name']);
 
-if (!$test_connection) {
-  $test_connection = sql_connect_install($_SESSION['database_host'], $_SESSION['database_user'], $_SESSION['database_password'])
-  $create_db = Sql_Create_Db($_SESSION['database_name']);
-}
-switch ($test_connection) {
-  case 2:
-    $procedure = 2;
-  break;
-  case 1:
+if (!$test_connection) { // let's connect without a db
+  $test_connection2 = sql_connect_install($_SESSION['database_host'], $_SESSION['database_user'], $_SESSION['database_password']);
+  if ($test_connection2) {
     $create_db = Sql_Create_Db($_SESSION['database_name']);
-    sql_query("FLUSH PRIVILEGES");
-    $new_db_conn = Sql_Connect($_SESSION['database_host'], $_SESSION['database_user'], $_SESSION['database_password'], $_SESSION['database_name']);
-    if ($new_db_conn != 2)
-      $procedure = $new_db_conn;
-    else
+    if (!$create_db) {
+      $errorno = sql_errorno();
+      $procedure = 2;
+    } else {
       $procedure = 1;
-  break;
-  case 0:
-  default:
-    $procedure = $test_connection;
-  break;
+    }
+  } else {
+    $errorno = sql_errorno();
+    $procedure = 3;
+  }
+} else {
+  $procedure = 1;
 }
-switch ($procedure) {
-  case 2:
-    $_SESSION['dbCreatedSuccesfully'] = 1;
-    print $GLOBALS["I18N"]->get(sprintf('<p>%sA</p>',$GLOBALS["dbAlreadyCreated"]));
-  break;
-  case 1:
-    $_SESSION['dbCreatedSuccesfully'] = 1;
-    print $GLOBALS["I18N"]->get(sprintf('<p>%sB</p><p>%s</p>', $rootPriv ? $GLOBALS["strUserCreatedOk"] : "",$GLOBALS["strDbCreatedOk"]));
-  break;
-  case 0:
-  default:
-    switch ($procedure) {
+
+/**
+procedure 1 = all ok, connection && db
+procedure 2 = connection ok && !db
+procedure 3 = no connection
+*/
+if ($errorno) {
+  switch($errorno) {
     case 2005:
     case 2009:
-      $msg = $procedure.$GLOBALS["strWrongHost"];
+      $msg = $GLOBALS["strWrongHost"];
     case 1040: # too many connections
-      $msg = $procedure.$GLOBALS["strServerBusy"];
+      $msg = $GLOBALS["strServerBusy"];
     case 1044: # access denied
-      $msg = $procedure . $GLOBALS["strAccessDenied"];
+      $msg = $GLOBALS["strAccessDenied"];
     break;
     case 0:
     default:
-      $msg = $procedure.$GLOBALS["strAccessDenied"];
+      $msg = $GLOBALS["strAccessDenied"];
     break;
-    }
-  $_SESSION['dbCreatedSuccesfully'] = 0;
+  }
+}
+
+switch ($procedure) {
+  case 1:
+    $_SESSION['dbCreatedSuccesfully'] = 1;
+    print $GLOBALS["I18N"]->get(sprintf('<p>%sA</p>',$GLOBALS["dbAlreadyCreated"]));
+  break;
+  case 2:
+    $msg = $GLOBALS["strCuoldNotCreateDb"] . "<br/>" . $msg;
+    $_SESSION['dbCreatedSuccesfully'] = 0;
+  case 3:
+  default:
+    $_SESSION['dbCreatedSuccesfully'] = 0;
+  break;
+}
+if (!$_SESSION['dbCreatedSuccesfully']) {
   print $GLOBALS["I18N"]->get(sprintf('<div class="wrong">%s</div>',$msg));
   unset($_SESSION["printeable"]);
   getNextPageForm('install0');

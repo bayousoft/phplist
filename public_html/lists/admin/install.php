@@ -12,7 +12,7 @@ if (isset($_GET['page'])) {
 foreach ($_POST as $key => $val) {
   $_SESSION[$key] = $val;
 }
-print_r($_SESSION); # test
+//print_r($_SESSION); # test
 require("install/english.inc");
 include("install/".$_SESSION["language_module"]."");
 require("install/mysql.inc");
@@ -77,7 +77,7 @@ else {
   getNextPageForm($page);
 }
 
-checkScalarInt($_SESSION, $GLOBALS['requiredVars']);
+print checkScalarInt($_SESSION, $GLOBALS['requiredVars']);
 $_SESSION["printeable"] = '<table width=500><tr><td>';
 for ($i=0;$i<count($_SESSION["history"]);$i++) {
   $_SESSION["printeable"] .= sprintf('<a href="./?page=%s">Step %s</a> >> ', $_SESSION["history"][$i], $i);
