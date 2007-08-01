@@ -22,7 +22,7 @@ function Sql_Connect($host,$user,$password,$database) {
 #    print "<p>$dbm</p><p>Cannot connect to Database, please check your configuration</p>";
 #    return $errno;
 #  }
-  return $res;
+  return $db;
 }
 
 function Sql_Error ($dbconnection,$errno = 0) {
@@ -84,6 +84,44 @@ function Sql_Query($query,$ignore = 0) {
   return $result;
 }
 
+function Sql_Fetch_Array($dbresult) {
+  return mysql_fetch_array($dbresult);
+}
+
+function Sql_Fetch_Assoc($dbresult) {
+  return mysql_fetch_assoc($dbresult);
+}
+
+function Sql_Fetch_Row($dbresult) {
+  return mysql_fetch_row($dbresult);
+}
+
+function Sql_Fetch_Row_Query($query) {
+  $req = Sql_Query($query);
+  return Sql_Fetch_Row($req);
+}
+
+function Sql_Fetch_Array_Query($query) {
+  $req = Sql_Query($query);
+  return Sql_Fetch_Array($req);
+}
+
+function Sql_Fetch_Assoc_Query($query) {
+  $req = Sql_Query($query);
+  return Sql_Fetch_Assoc($req);
+}
+
+function Sql_Insert_id() {
+  return mysql_insert_id($GLOBALS["database_connection"]);
+}
+
+function Sql_Result($result,$index,$column) {
+  return mysql_result($result,$index,$column);
+}
+
+function Sql_Free_Result($dbresult) {
+  mysql_free_result($dbresult);
+}
 
 function Sql_Affected_Rows() {
   return mysql_affected_rows($GLOBALS["database_connection"]);

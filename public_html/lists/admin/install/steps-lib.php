@@ -35,17 +35,11 @@ function editVariable($keyAr,$value,$type) {
           }
           elseif ($val[$value] == 'language_module' && $type == 'text') {
             $res .= languagePack($val[$value],"");
-          } elseif ($val[$value] == 'pageroot') {
-            if (preg_match("/([\/]?[\w]+)?/", $_SERVER["REQUEST_URI"], $page)) {
-            $res .= '<input type="'.$type.'" value="'.$page[0];
-            $res .= '" name="'.$val[$value].'"> ';
-            }
-          } elseif ($val[$value] == 'adminpages') {
-            if (preg_match("/([\w\/]+)/", $_SERVER["REQUEST_URI"], $page)) {
-            $res .= '<input type="'.$type.'" value="'.$page[0];
-            $res .= '" name="'.$val[$value].'"> ';
-            }
-          }
+          } elseif ($val[$value] == 'pageroot' || $val[$value] == 'adminpages') {
+            $res .= pageGetOpt($val[$value],$type);
+          }/* elseif ($val[$value] == 'adminpages') {
+            $res .= pageGetOpt($val[$value]);
+          }*/
           else {
             $res .= '<input type="'.$type.'" value="'.$realValue;
             $res .= '" name="'.$val[$value].'"> ';
@@ -451,7 +445,7 @@ $gestor = opendir('../texts');
           $res .= ' selected="selected"';
         }
         $res .= '>';
-        $res .= $lang;
+        $res .= str_replace(".inc","",$lang);
         $res .= '</option>';
       }
     }
@@ -465,16 +459,32 @@ $gestor = opendir('../texts');
 return $res;
 }
 
+function pageGetOpt($value,$type = "") {
+
+switch($value) {
+  case "pageroot": # adminpages
+    preg_match("/([\/]?[\w]+)?/", $_SERVER["REQUEST_URI"], $page);
+  break;
+  case "adminpages":
+  default:
+    preg_match("/([\w\/]+)/", $_SERVER["REQUEST_URI"], $page);
+  break;
+}
+
+return '<input type="'.$type.'" value="'.$page[0].'" name="'.$value.'"> ';
+
+}
+
 
 function Sql_Connect_Install($host,$user,$password) {
   if ($host && $user) {
-  $db = mysql_connect($host, $user ,$password);
-  $errno = mysql_errno();
+    $db = mysql_connect($host, $user ,$password);
+    $errno = mysql_errno();
     if ($db) {
       return $db;
     }
-  if ($errno) {
-        return FALSE;
+    if ($errno) {
+      return FALSE;
     }
   }
 }
@@ -483,10 +493,10 @@ function Sql_Connect_Install($host,$user,$password) {
 function Sql_Create_Db ($databaseToCreate) {
   $creatingDb = mysql_query(sprintf('CREATE DATABASE %s;',$databaseToCreate));
   if ($creatingDb) {
-  return $creatingDb;
+    return $creatingDb;
   }
   else {
-  return FALSE;
+    return FALSE;
   }
 }
 

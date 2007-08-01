@@ -230,4 +230,5 @@ $strAccessDenied = 'Access denied, please check that the user has the right perm
 $strWrongHost = 'Wrong host, please check your host name.';
 $strServerBusy = 'There\'s an error in your details. Seems to be that the database doesn\'t exists and the user can\'t create it or doesn\'t exists either.';
 $strCuoldNotCreateDb = "Could not create database";
+$strDoingDbCheck = '<p>Doing database checking for exiting tables.<br/>If database tables exists Installer won\'t create them again, but you can create them once the config system is operating.</p>';
 ?>

@@ -26,9 +26,15 @@ sleep(2);
 #flush();
 $test_connection = Sql_Connect($_SESSION['database_host'], $_SESSION['database_user'], $_SESSION['database_password'], $_SESSION['database_name']);
 
+if ($test_connection) {
+$GLOBALS["database_connection"] = $test_connection;
+include("install/dbchecking.php");
+}
+
 if (!$test_connection) { // let's connect without a db
   $test_connection2 = sql_connect_install($_SESSION['database_host'], $_SESSION['database_user'], $_SESSION['database_password']);
   if ($test_connection2) {
+    $GLOBALS["database_connection"] = $test_connection2;
     $create_db = Sql_Create_Db($_SESSION['database_name']);
     if (!$create_db) {
       $errorno = sql_errorno();
@@ -69,7 +75,7 @@ if ($errorno) {
 switch ($procedure) {
   case 1:
     $_SESSION['dbCreatedSuccesfully'] = 1;
-    print $GLOBALS["I18N"]->get(sprintf('<p>%sA</p>',$GLOBALS["dbAlreadyCreated"]));
+    print $GLOBALS["I18N"]->get(sprintf('<p>%s</p>',$GLOBALS["dbAlreadyCreated"]));
   break;
   case 2:
     $msg = $GLOBALS["strCuoldNotCreateDb"] . "<br/>" . $msg;

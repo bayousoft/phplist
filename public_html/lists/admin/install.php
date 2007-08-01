@@ -20,7 +20,7 @@ require("install/steps-lib.php");
 include("install/header-install.inc");
 require("install/requiredvars.php");
 require("languages.php");
-error_reporting(E_ALL);
+error_reporting(E_ALL & E_STRICT);
 
 ?>
 <div class="install_start wrong">
