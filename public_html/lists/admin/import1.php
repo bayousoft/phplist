@@ -59,6 +59,7 @@ if(isset($_REQUEST['import'])) {
     return;
   }
   $notify = $_POST["notify"];
+  $throttle_import = $_POST["throttle_import"];
 
   if ($_FILES["import_file"] && filesize($_FILES["import_file"]['tmp_name']) > 10) {
     $newfile = $GLOBALS['tmpdir'].'/'. $_FILES['import_file']['name'].time();
@@ -237,8 +238,12 @@ if(isset($_REQUEST['import'])) {
         if ($addition)
           $additional_emails++;
         $subscribemessage = ereg_replace('\[LISTS\]', $listoflists, getUserConfig("subscribemessage",$userid));
-        if (!TEST && $notify == "yes" && $addition)
+        if (!TEST && $notify == "yes" && $addition) {
           sendMail($email, getConfig("subscribesubject"), $subscribemessage,system_messageheaders(),$envelope);
+          if (isset($throttle_import)) {
+            sleep($throttle_import);
+          }
+        }
         # history stuff
         $current_data = Sql_Fetch_Array_Query(sprintf('select * from %s where id = %d',$tables["user"],$userid));
         $current_data = array_merge($current_data,getUserAttributeValues('',$userid));
@@ -349,6 +354,8 @@ function addFieldToCheck(value,name) {
 <tr><td><?php echo $GLOBALS['I18N']->get('test_output'); ?></td><td><input type="checkbox" name="import_test" value="yes"></td></tr>
 <tr><td colspan=2><?php echo $GLOBALS['I18N']->get('info_notification_email'); ?></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('notification_email'); ?><input type="radio" name="notify" value="yes"></td><td><?php echo $GLOBALS['I18N']->get('confirmed_immediately'); ?><input type="radio" name="notify" value="no"></td></tr>
+<tr><td colspan=2><?php echo $GLOBALS['I18N']->get('If you are going to send notification to users, you may want to add a little delay between messages')?></td></tr>
+<tr><td><?php echo $GLOBALS['I18N']->get('Notification throttle')?>:</td><td><input type="text" name="throttle_import" size=5> <?php echo $GLOBALS['I18N']->get('(default is nothing, will send as fast as it can)')?></td></tr>
 <?php
 include_once $GLOBALS["coderoot"] ."subscribelib2.php";
 print ListAllAttributes();
