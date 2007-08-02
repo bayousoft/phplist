@@ -99,8 +99,10 @@ while ($feed = Sql_Fetch_Row($req)) {
       else
         ProcessError($GLOBALS['I18N']->get('Process Killed by other process'));
       $itemcount++;
-      Sql_Query(sprintf('select * from %s where title = "%s" and link = "%s"',
-        $tables["rssitem"],addslashes(substr($item["title"],0,100)),addslashes(substr($item["link"],0,100))));
+        //Sql_Query(sprintf('select * from %s where title = "%s" and link = "%s"', $tables["rssitem"],addslashes(substr($item["title"],0,100)),addslashes(substr($item["link"],0,100))));
+        Sql_Query(sprintf('select * from %s where title = "%s" and link = "%s" and list = "%s"',
+          $tables["rssitem"],addslashes(substr($item["title"],0,100)),
+          addslashes(substr($item["link"],0,100)), addslashes($feed[4])));
       if (!Sql_Affected_Rows()) {
         $newitemcount++;
         Sql_Query(sprintf('insert into %s (title,link,source,list,added)
