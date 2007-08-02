@@ -240,7 +240,7 @@ if(isset($_REQUEST['import'])) {
         $subscribemessage = ereg_replace('\[LISTS\]', $listoflists, getUserConfig("subscribemessage",$userid));
         if (!TEST && $notify == "yes" && $addition) {
           sendMail($email, getConfig("subscribesubject"), $subscribemessage,system_messageheaders(),$envelope);
-          if (isset($throttle_import)) {
+          if ($throttle_import) {
             sleep($throttle_import);
           }
         }
