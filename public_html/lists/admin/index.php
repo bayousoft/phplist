@@ -38,7 +38,7 @@ if (php_sapi_name() == "cli") {
   header("Pragma: no-cache");                                   // HTTP/1.0
 }
 
-if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"]) && filesize($_SERVER["ConfiFile"]) > 1) {
+if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"]) && filesize($_SERVER["ConfigFile"]) > 1) {
   print '<!-- using (server)'.$_SERVER["ConfigFile"].'-->'."\n";
   include $_SERVER["ConfigFile"];
 } elseif (isset($cline["c"]) && is_file($cline["c"]) && filesize($cline["c"]) > 1) {
