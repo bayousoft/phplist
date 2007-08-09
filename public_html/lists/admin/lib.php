@@ -807,7 +807,8 @@ function cleanUrl($url,$disallowed_params = array('PHPSESSID')) {
   $query = '';
   foreach ($params as $key => $val) {
     if (!in_array($key,$disallowed_params)) {
-      $query .= $key.'='.$val.'&';
+      //0008980: Link Conversion for Click Tracking. no = will be added if key is empty.
+      $query .= $key . ( $val ? '=' . $val . '&' : '&' );
     }
   }
   $query = substr($query,0,-1);
