@@ -1,7 +1,5 @@
-
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
-
 ob_end_flush();
 $upgrade_required = 0;
 if (Sql_Table_exists($tables["config"],1)) {
@@ -31,7 +29,7 @@ $checkinterval = sprintf('%d',getConfig("check_new_version"));
 if (!isset($checkinterval)) {
   $checkinterval = 7;
 }
-if ($checkinterval) {
+if ($checkinterval && !defined('IN_WEBBLER')) {
   $needscheck = Sql_Fetch_Row_Query(sprintf('select date_add(value,interval %d day) < now() as needscheck from %s where item = "updatelastcheck"',$checkinterval,$tables["config"]));
   if ($needscheck[0]) {
     @ini_set("user_agent",NAME." (phplist version ".VERSION.")");
