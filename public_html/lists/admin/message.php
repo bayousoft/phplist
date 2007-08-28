@@ -48,6 +48,15 @@ if ($_POST['resend'] && is_array($_POST['list'])) {
 
 require $coderoot . 'structure.php';
 
+# This adds a return link. Should be replace by uniformbreadcrumtrail
+if ($returnpage) {
+  if ($returnoption) {
+    $more = "&option=".$returnoption;
+   }
+  echo "<br/>".PageLink2("$returnpage$more","Return to $returnpage");
+  $returnurl = "returnpage=$returnpage&returnoption=$returnoption";
+}
+
 print '<p>'.PageLink2('send&amp;id='.$id,$GLOBALS['I18N']->get('Edit this message')).'</p>';
 
 $result = Sql_query("SELECT * FROM {$tables['message']} where id = $id $owner_select_and");
