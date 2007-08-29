@@ -364,7 +364,7 @@ Experimental Features
 
 # email address validation level
 # 0 = No email address validation. So PHPList can be used as a non-email-sending registration system.
-# 1 = 10.4 style email validation.
+# 1 = phplist 2.10.4 style email validation.
 # 2 = RFC821 email validation without escaping and quoting of local part.
 # 3 = RFC821 email validation.
 # This is an expirimental email address validation based on the original RFC. It will validate all kind 
