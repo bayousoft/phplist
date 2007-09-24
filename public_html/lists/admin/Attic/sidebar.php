@@ -1,4 +1,9 @@
 <?php
+
+
+# Obsolete < experiment to put sidemenu in Mozilla sidebar.
+
+
 require_once dirname(__FILE__).'/accesscheck.php';
 
 # sidebar page
