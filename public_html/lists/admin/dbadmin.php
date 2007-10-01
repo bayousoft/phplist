@@ -1,7 +1,7 @@
 <script language="Javascript" src="js/jslib.js" type="text/javascript"></script>
 <hr>
 <H2>Database administration</H2>
-<H1>WARNING: this page is intended to aid development. <a href="?page=home">Return now</a> if you're not sure what this is.</H1>
+<H1>WARNING: this page is intended to aid development. Return to the <a href="?page=home">home page</a> now if you're not sure what this is.</H1>
 <?php
 require_once dirname(__FILE__) . '/accesscheck.php';
 
