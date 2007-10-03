@@ -72,8 +72,8 @@ function isSuperUser() {
  # if (!is_array($_SESSION["logindetails"])) return 0;
   if (isset($_SESSION["logindetails"]["superuser"]))
     return $_SESSION["logindetails"]["superuser"];
-  if ($GLOBALS["require_login"]) {
-    if (is_object($GLOBALS["admin_auth"])) {
+  if ($GLOBALS["require_login"] && isset($_SESSION["logindetails"]["id"])) {
+    if (is_object($GLOBALS["admin_auth"]) ) {
       $issuperuser = $GLOBALS["admin_auth"]->isSuperUser($_SESSION["logindetails"]["id"]);
     } else {
       $req = Sql_Fetch_Row_Query(sprintf('select superuser from %s where id = %d',$tables["admin"],$_SESSION["logindetails"]["id"]));
