@@ -122,11 +122,11 @@ $GLOBALS['bounceruleactions'] = array(
 # check whether Pear HTTP/Request is available
 @include_once "HTTP/Request.php";
 $GLOBALS['has_pear_http_request'] = class_exists('HTTP_Request');
-
-ini_set('error_append_string','<font style=\"{font-variant: small-caps;font-size: 12px}\">phplist</font> version '.VERSION);
-ini_set('error_prepend_string','<P><font color=red style=\"{font-size: 12px}\">Sorry a software error occurred:</font><br/>
-  Please <a href="http://mantis.phplist.com">report a bug</a> when reporting the bug, please include URL and the entire content of this page.<br/>');
-
+if( !isset($GLOBALS["developer_email"]) ) {
+  ini_set('error_append_string','<font style=\"{font-variant: small-caps;font-size: 12px}\">phplist</font> version '.VERSION);
+  ini_set('error_prepend_string','<P><font color=red style=\"{font-size: 12px}\">Sorry a software error occurred:</font><br/>
+    Please <a href="http://mantis.phplist.com">report a bug</a> when reporting the bug, please include URL and the entire content of this page.<br/>');
+}
 function listName($id) {
   global $tables;
   $req = Sql_Fetch_Row_Query(sprintf('select name from %s where id = %d',$tables["list"],$id));
@@ -832,7 +832,7 @@ function adminName($id) {
 }
 
 if (!function_exists("dbg")) {
-  function dbg($msg,$logfile = "") {
+  function xdbg($msg,$logfile = "") {
     if (!$logfile) return;
     $fp = @fopen($logfile,"a");
     $line = "[".date("d M Y, H:i:s")."] ".getenv("REQUEST_URI").'('.$config["stats"]["number_of_queries"].") $msg \n";
