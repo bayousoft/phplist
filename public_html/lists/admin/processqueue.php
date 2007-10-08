@@ -139,7 +139,7 @@ function my_shutdown () {
   global $script_stage,$reload;
 #  output( "Script status: ".connection_status(),0); # with PHP 4.2.1 buggy. http://bugs.php.net/bug.php?id=17774
   output( $GLOBALS['I18N']->get('Script stage').': '.$script_stage,0);
-  global $report,$send_process_id,$tables,$nothingtodo,$invalid,$processed,$failed_sent,$notsent,$sent,$unconfirmed,$num_per_batch,$batch_period;
+  global $report,$send_process_id,$tables,$nothingtodo,$invalid,$processed,$failed_sent,$notsent,$sent,$unconfirmed,$num_per_batch,$batch_period,$num_users;
   $some = $processed; #$sent;# || $invalid || $notsent;
   if (!$some) {
     output($GLOBALS['I18N']->get('Finished, Nothing to do'),0);
@@ -194,7 +194,7 @@ function my_shutdown () {
         query = query.replace(/&lastskipped=\d+/,"");
         document.location = document.location.pathname + query + "&reload=%d&lastsent=%d&lastskipped=%d";
       </script>',$reload,$sent,$notsent);
-      output($GLOBALS['I18N']->get('Reload required'));
+      output($GLOBALS['I18N']->get(($processed < $num_users)?'Reload required':''));
     }
   #  print '<script language="Javascript" type="text/javascript">alert(document.location)</script>';
   }  elseif ($script_stage == 6 || $nothingtodo) {

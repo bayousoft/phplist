@@ -136,7 +136,7 @@ if (!empty($_POST['action']) && $_POST['action'] == "addimages") {
   }
   if ($templateok) {
     if (!$id) {
-      Sql_Query("insert into {$tables["template"]} (title) values(\"Untitled Template\")");
+      Sql_Query("insert into {$tables["template"]} (title) values(\"$title\")");
       $id = Sql_Insert_id();
     }
     Sql_Query(sprintf('update %s set title = "%s",template = "%s" where id = %d',

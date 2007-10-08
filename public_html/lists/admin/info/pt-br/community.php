@@ -70,7 +70,7 @@ Voc&ecirc; pode entrar no sistema "mantis" e enviar o seu relat&oacute;io de err
 <li>Vers&atilde;o do PHPlist: <?php echo VERSION?></li>
 <li>Vers&atilde;o do PHP: <?php echo phpversion()?></li>
 <li>Servido Web: <?php echo getenv("SERVER_SOFTWARE")?></li>
-<li>Site: <a href="http://<?php echo getConfig("website")."$pageroot"?>"><?=getConfig("website")."$pageroot"?></a></li>
+<li>Site: <a href="http://<?php echo getConfig("website")."$pageroot"?>"><?php echo getConfig("website")."$pageroot"?></a></li>
 <li>Informa&ccedil;&otilde;es do Mysql: <?php echo mysql_get_server_info();?></li>
 <li>M&oacute;dulos PHP:<br/><ul>
 <?php

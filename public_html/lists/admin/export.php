@@ -185,7 +185,7 @@ if ($list)
 <tr><td><input type=radio name="column" value="historyentry"></td><td><?php echo $GLOBALS['I18N']->get('Based on changelog');?></td></tr>
 <tr><td><input type=radio name="column" value="listentered"></td><td><?php echo $GLOBALS['I18N']->get('When they subscribed to');?>
 <select name="list">
-<?
+<?php
 $req = Sql_Query(sprintf('select * from %s %s',$GLOBALS['tables']['list'],$listselect_where));
 while ($row = Sql_Fetch_Array($req)) {
   printf ('<option value=%d>%s</option>',$row['id'],$row['name']);

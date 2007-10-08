@@ -61,6 +61,8 @@ if (!isset($_GET["type"]) && !empty($_SESSION["lastmessagetype"])) {
 #  print PageLink2("messages&type=rss","RSS Messages").'&nbsp;&nbsp;&nbsp;';
 #}
 #print '</p>';
+
+### Print tabs
 $tabs = new WebblerTabs();
 $tabs->addTab($GLOBALS['I18N']->get("sent"),PageUrl2("messages&type=sent"));
 $tabs->addTab($GLOBALS['I18N']->get("draft"),PageUrl2("messages&type=draft"));
@@ -80,6 +82,7 @@ if (!empty($_GET['type'])) {
 
 print $tabs->display();
 
+### Process 'Action' requests
 if (!empty($_GET["delete"])) {
   $todelete = array();
   if ($_GET["delete"] == "draft") {
@@ -130,6 +133,7 @@ if (isset($_GET['suspend'])) {
   print"<br /><hr /><br /><p>\n";
 }
 
+### Switch tab
 switch ($_GET["type"]) {
   case "queued":
 #    $subselect = ' status in ("submitted") and (rsstemplate is NULL or rsstemplate = "") ';
@@ -155,6 +159,7 @@ switch ($_GET["type"]) {
     break;
 }
 
+### Query messages from db
 if( !$GLOBALS["require_login"] || $_SESSION["logindetails"]['superuser'] ){
   $subselect= ' where '.$subselect;
 } else {
@@ -167,6 +172,7 @@ $total = $total_req[0];
 $end = isset($start) ? $start + MAX_MSG_PP : MAX_MSG_PP;
 if ($end > $total) $end = $total;
 
+## Browse buttons table
 if (isset($start) && $start > 0) {
   $listing = $GLOBALS['I18N']->get("Listing message")." $start ".$GLOBALS['I18N']->get("to")." " . $end;
   $limit = "limit $start,".MAX_MSG_PP;
@@ -194,6 +200,7 @@ if ($_GET["type"] == "draft") {
 <tr>
 <?php
 
+## messages table
 if ($total) {
   print "<td>".$GLOBALS['I18N']->get("Message info")."</td><td>".$GLOBALS['I18N']->get("Status")."</td><td>".$GLOBALS['I18N']->get("Action")."</td></tr>";
   $result = Sql_query("SELECT * FROM ".$tables["message"]." $subselect order by status,entered desc $limit");
@@ -213,6 +220,7 @@ if ($total) {
       $msg["entered"],
       $msg["embargo"]
     );
+
     if ($clicks[0]) {
       $clicked = sprintf('<tr><td></td>
         <td align="right" colspan=2>
@@ -222,9 +230,11 @@ if ($total) {
     } else {
       $clicked = '';
     }
-
+    
+    ## Rightmost two columns per message
     if ($msg['status'] == 'sent') {
       $status = $GLOBALS['I18N']->get("Sent").": ".$msg['sent'].'<br/>'.$GLOBALS['I18N']->get("Time to send").': '.timeDiff($msg["sendstart"],$msg["sent"]);
+      
       if ($msg['viewed']) {
         $viewed = sprintf('<tr><td></td>
           <td align="right" colspan=2>
@@ -244,12 +254,10 @@ if ($total) {
           <td>'.$GLOBALS['I18N']->get("total").'</td>
           <td>'.$GLOBALS['I18N']->get("text").'</td>
           <td>'.$GLOBALS['I18N']->get("html").'</td>
-          <td>'.$GLOBALS['I18N']->get("both").'</td>
           <td>'.$GLOBALS['I18N']->get("PDF").'</td>
           <td>'.$GLOBALS['I18N']->get("both").'</td>
         </tr>
         <tr>
-          <td align="center"><b>%d</b></td>
           <td align="center"><b>%d</b></td>
           <td align="center"><b>%d</b></td>
           <td align="center"><b>%d</b></td>
@@ -262,8 +270,7 @@ if ($total) {
         </table>',
         $msg["processed"],
         $msg["astext"],
-        $msg["ashtml"],
-        $msg["astextandhtml"],
+        $msg["ashtml"] + $msg["astextandhtml"], //bug 0009687
         $msg["aspdf"],
         $msg["astextandpdf"],
         $viewed,
@@ -271,7 +278,7 @@ if ($total) {
         $msg["bouncecount"] ? sprintf('<tr><td></td><td align="right" colspan=2><b>'.$GLOBALS['I18N']->get("Bounced").'</b></td><td align="center"><b>%d</b></td></tr>
         ',$msg["bouncecount"]):""
         );
-    } else {
+    } else { ##Status <> sent
       $status = $msg['status'].'<br/>'.$msg['rsstemplate'];
       if ($msg['status'] == 'inprocess') {
 /*        $status .= '<br/>'.
@@ -301,6 +308,7 @@ if ($total) {
     }
 
     $totalsent = $msg['astext'] + $msg['ashtml'] + $msg['astextandhtml'] + $msg['aspdf'] + $msg['astextandpdf'];
+
     printf('
       <td>
       %s<br />

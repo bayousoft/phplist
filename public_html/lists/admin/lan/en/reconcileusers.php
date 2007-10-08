@@ -58,11 +58,11 @@ $lan = array(
   'Date they signed up before' => 'Date they signed up before',
   'Text to prepend to email' => 'Text to prepend to email',
   'prependemailtext' => '
-Sorry to bother you: we are cleaning up our database and
-it appears that you have previously signed up to our mailinglists
+Sorry to bother you: we are cleaning up our database and 
+it appears that you have previously signed up to our mailinglists 
 and not confirmed your subscription.
 
-We would like to give you the opportunity to re-confirm your
+We would like to give you the opportunity to re-confirm your 
 subscription. The instructions on how to confirm are below.
   ',
   'To delete users who signed up and have not confirmed their subscription' => 'To delete users who signed up and have not confirmed their subscription',

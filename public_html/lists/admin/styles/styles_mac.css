@@ -21,6 +21,17 @@ A.disclaimer {
  	font-size: xx-small;
 }
 
+/* the style for listing the lists */
+LI.list {
+  list-style-type:circle;
+  margin-left: 1em;
+}
+
+/* the style for the description of a list in the listing of lists */
+.listdescription {
+  margin-left: 6em;
+}
+
 SUP {
   font-size: xx-small;
 }
@@ -69,32 +80,33 @@ SUP {
 .whitetext A:HOVER{
 	color: White;
 }
-.purpleareatext{
-  font-family : Verdana, Arial, Helvetica, sans-serif;
-  color: white;
-  font-size: small;
+
+.attributename  {
+	font-size : 12px;
+	font-family : Arial, Helvetica, sans-serif;
+	font-weight : normal;
+	font-style : normal;
+	color : black;
+	text-decoration : none;
 }
 
-.purpleareatext A{
-  color:white;
-}
-.purpleareatext A:HOVER{
-  color: White;
-}
-.smokingchoicetext{
-  font-family : Verdana, Arial, Helvetica, sans-serif;
-  color: black;
-  font-size: small;
-}
-.smokingchoicetext A{
-  color:black;
-}
-.smokingchoicetext A:HOVER{
-  color: #99CCFF;
+.attributeinput  {
+	font-size : 12px;
+	font-family : Arial, Helvetica, sans-serif;
+	font-weight : normal;
+	font-style : normal;
+	color : black;
+	text-decoration : none;
 }
 
-
-
+.required {
+	font-size : 12px;
+	font-family : Arial, Helvetica, sans-serif;
+	font-weight : normal;
+	font-style : normal;
+	color : red;
+	text-decoration : none;
+}
 
 .privacy {
 	font-family : Verdana, Arial, Helvetica, sans-serif;
@@ -124,20 +136,27 @@ SUP {
 	display : block;
 }
 .error{
-  font-size : 12px;
-  font-family : Arial, Helvetica, sans-serif;
-  font-weight : normal;
-  font-style : normal;
-  color : #FF0000;
-  text-decoration : none;
+	background-color : #FF6699;
+	border : thin solid #FFFFCC;
+	display : block;
+	
+	font-family : Times, "Times New Roman", serif;
+	margin : 3px 3px 3px 3px;
+	padding : 3px 3px 3px 3px;
+	font-size : small ;
 }
 
-.error a:link{
-  font-size : 12px;
-  font-family : Arial, Helvetica, sans-serif;
-  font-weight : normal;
-  font-style : normal;
-  color : #FF0000;
-  text-decoration : none;
+.divih{
+	/*This is for DHTML purposes*/
+	BACKGROUND-COLOR: White;
+	POSITION: relative;
+	VISIBILITY: hidden;
+	layer-background-color: White;
 }
-
+.divi{
+	/*This is for DHTML purposes*/
+	BACKGROUND-COLOR: White;
+	POSITION: relative;
+	VISIBILITY: visible;
+	layer-background-color : White;
+}

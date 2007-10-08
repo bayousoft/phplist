@@ -1,111 +1,116 @@
 <?php
 
 # language dependent text used in the interface for users (not admin)
-# contributed by Igor Guskow igor@suplementa.com.br
-# Brazilian Portuguese
 
 $strCharSet             = 'ISO-8859-1';
 $strName                = 'Nome';
-$strAddress             = 'Endereço';
+$strAddress             = 'Endereï¿½o';
 $strEmail               = 'Email';
 $strTown                = 'Cidade';
 $strPostcode            = 'CEP';
-$strSubscribeInfo       = 'Inscreva-se em uma ou mais listas de email no formulário abaixo';
-$strRequired            = 'campo necessário';
+$strSubscribeInfo       = 'Inscreva-se em uma ou mais listas de email no formulï¿½rio abaixo';
+$strRequired            = 'campo necessï¿½rio';
 $strSubscribeTitle      = 'Inscreva-se em nossas listas de email';
-$strPleaseSelect        = 'Por favor, escolha as listas em que você deseja cadastrar-se';
+$strPleaseSelect        = 'Por favor, escolha as listas em que vocï¿½ deseja cadastrar-se';
 $strSubmit              = 'Inscreva-se nas listas selecionadas';
-$strNotAvailable        = 'Perdão, não há listas disponíveis nesse momento';
-$strEnterName           = 'Por favor, forneça seu nome';
-$strEnterEmail          = 'Por favor, forneça seu email';
-$strInvalidHostInEmail  = 'É impossível enviar emails para este domínio! Verifique se você digitou corretamente o endereço.';
-$strEnterList           = 'Por favor, escolha a lista em que você deseja inscrever-se';
-$strPleaseEnter      = 'Por favor, forneça seu';
-$strThanks              = 'Obrigado por inscrever-se em nossas listas';
-$strEmailConfirmation   = 'Em breve você receberá um email solicitando que você confirme a inscrição.';
-$strEmailFailed          = 'O envio do email de confirmação da inscrição falhou. Clique em "Atualizar" para nova tentativa. Se falhar novamente, talvez você esteja cadastrado na "lista negra", o que impediria você de receber emails enviados pelo sistema. Se for este o caso, por favor, entre em contato conosco.';
+$strNotAvailable        = 'Perdï¿½o, nï¿½o hï¿½ listas disponï¿½veis nesse momento';
+$strEnterName           = 'Por favor, forneï¿½a seu nome';
+$strEnterEmail          = 'Por favor, forneï¿½a seu email';
+$strInvalidHostInEmail  = 'Perdï¿½o, nï¿½o foi posivel verificar o e-mail, verifique se vocï¿½ digitou corretamente';
+$strEnterList           = 'Por favor, escolha a lista na qual deseja inscrever-se';
+$strPleaseEnter         = 'Por favor, forneï¿½a seu';
+# the thanks message can contain placeholders
+#$strThanks              = 'Dear [FIRST NAME], <br/>Thank you for subscribing to our lists.';
+$strThanks              = 'Obrigado por inscrever-se em nossas listas.';
+# the EmailConfirmation message can contain placeholders
+#$strEmailConfirmation  = 'Your email [email] has been added to our system. You will be e-mailed shortly with confirmation of the lists you have subscribed to.';
+$strEmailConfirmation   = 'Seu e-mail foi sumetido em nosso sistema. Vocï¿½ receberï¿½ uma mensagem com uma solicitaï¿½ï¿½o de confirmaï¿½ï¿½o. Favor clicar no link contido na mensagem para confirmar a sua inscriï¿½ï¿½o.';
+$strEmailFailed         = 'Perdï¿½o, o e-mail de solicitaï¿½ï¿½o de confirmaï¿½ï¿½o falhou. Clique no botï¿½o de "Recarregar" para tentar novamente. Se o problema persistir, ï¿½ provï¿½vel que voce esteja em nossa "Black List", o que significa que vocï¿½ nï¿½o pode receber mensagens do sistema. Neste caso, favor contactar o Administrador do Sistema.';
 $strUnsubscribeTitle    = 'Descadastre-se de nossas listas';
-$strUnsubscribeDone     = 'Você foi descadastrado das listas que você selecionou. Em breve receberá um email para a confirmação do cancelamento.';
+$strUnsubscribeDone     = 'Vocï¿½ foi descadastrado das listas que vocï¿½ selecionou. Em breve receberï¿½ um email para a confirmaï¿½ï¿½o do cancelamento.';
 $strBack                = 'Voltar';
 $strUnsubscribeInfo     = 'Descadastre-se de uma de nossas listas de email';
 $strContinue            = 'Continuar';
-$strUnsubscribeSelect   = 'Por favor, escolha as listas que você deseja se descadastrar';
+$strUnsubscribeSelect   = 'Por favor, escolha as listas que vocï¿½ deseja se descadastrar';
 $strAllLists            = 'Todas as listas';
 $strNoLists             = 'Nenhuma delas';
-$strUnsubscribeRequestForReason = 'Lamentamos que você não queira mais receber nossas mensagens. A fim de melhorarmos a qualidade dos nossos serviços, ficariamos agradecidos se você nos dissesse o motivo da sua decisão';
-$strUnsubscribeFinalInfo = '<br/><b>IMPORTANTE</b>: esta página tem como função remover seu email do nosso sistema <b>para sempre</b>. Se você deseja somente alterar o seu endereço de email, ou mudar alguma outra informação, por favor, acesse a página de <a href="[PREFERENCESURL]">atualização de dados</a> para isto.';
-$strNoListsFound        = 'Perdão, você não está cadastrado em nenhuma de nossas listas com esse email';
+$strUnsubscribeRequestForReason = 'Esperamos revï¿½-lo novamente participando da nossa newsletter. Ajude-nos a melhorar o nosso serviï¿½o, Ficaremos gratos se vocï¿½ puder nos dizer porque esta se descadastrando:';
+$strUnsubscribeFinalInfo = '<br/><b>Aviso</b>: Esta pï¿½gina ï¿½ utilizada para cancelar o recebimento da nossa newsletter definitivamente. Se voce quiser alterar o seu e-mail ou quiser modificar as listas que voce recebe, <a href="[PREFERENCESURL]">atualize o seu cadastro</a>';
+$strNoListsFound        = 'Perdï¿½o, vocï¿½ nï¿½o estï¿½ cadastrado em nenhuma de nossas listas com esse email';
 $strResubmit            = 'Reenviar email';
 $strUnsubscribeSubmit   = 'Descadastrar-se da lista selecionada';
-$strValuesMissing       = 'As seguintes informações são necessárias';
-$strConfirmInfo     = 'Obrigado por confirmar sua inscrição em nossas listas. Abaixo, a(s) lista(s) em que você se inscreveu';
-$strConfirmTitle     = 'Página de confirmação de Inscrição';
-$strUserNotFound    = 'Usuário não encontrado';
-$strUserAlreadyInitialised = 'Sua senha já foi definida anteriormente';
-$strConfirmFailInfo    = 'Sua inscrição não foi localizada no sistema. Certifique-se que você usou o endereço de página completo como informado no email enviado. Algumas vezes o endereço se extende por várias linhas.';
-$strPreferHTMLEmail     = 'Quero receber as mensagens no formato HTML';
-$strPreferTextEmail     = 'Quero receber as mensagens no formato TEXTO';
-$strPreferredFormat      = 'Formatos possíveis para as mensagens enviadas:';
+$strValuesMissing       = 'As seguintes informaï¿½ï¿½es sï¿½o necessï¿½rias';
+$strConfirmInfo         = 'Obrigado por confirmar sua inscriï¿½ï¿½o em nossas listas de email. Abaixo, a(s) lista(s) em que vocï¿½ estï¿½ inscrito:';
+$strConfirmTitle        = 'Pï¿½gina de confirmaï¿½ï¿½o do sistema';
+$strUserNotFound        = 'Usuï¿½rio nï¿½o encontrado';
+$strUserAlreadyInitialised = 'Perdï¿½o, sua senha jï¿½ foi alterada';
+$strConfirmFailInfo     = 'Perdï¿½o, sua confirmaï¿½ï¿½o estï¿½ invï¿½lida. Favor verificar se o link enviado no e-mail esta correto.';
+$strPreferHTMLEmail     = 'Prefiro receber e-mail em formato HTML';
+$strPreferTextEmail     = 'Prefiro receber e-mail em formato Texto';
+$strPreferredFormat      = 'Formato de e-mail preferido:';
 $strText                 = 'Texto';
 $strHTML                = 'HTML';
-$strPreferencesTitle    = 'Atualize suas informações';
-$strPreferencesInfo     = 'Verifique se as informações abaixo estão corretas e clique no botão "Atualizar"';
+$strPreferencesTitle    = 'Atualize seu cadastro';
+$strPreferencesInfo     = 'Favor confirmar se as informaï¿½ï¿½es abaixo estï¿½o corretas e clique no botï¿½o "Atualizar"';
 $strUpdatePreferences   = 'Atualizar';
-$strPreferencesEmailChanged = 'Seu endereço de email mudou. Visite a página apontada pelo link do email que você vai receber para confirmar o seu novo email.';
-$strYouAreBlacklisted = 'Seu email consta na "Lista Negra", o que significa que você solicitou que nenhuma mensagem de nossas listas fosse enviada para o seu endereço. <br/>
-Para receber nossas mensagens novamente é necessário que o administrador do sistema intervenha diretamente. Por favor, entre diretamente em contato conosco para nos informar que você deseja receber novamente nossas mensagens.';
-$strPreferencesNotificationSent = 'Você receberá uma mensagem com as mudanças';
-$strPreferencesUpdated = 'Suas informações foram atualizadas.';
+$strPreferencesEmailChanged = 'Seu e-mail foi alterado. Verifique a mensagem enviada para seu novo e-mail e clique no link para confirmar seu novo e-mail.';   
+$strYouAreBlacklisted = 'Seu e-mail esta em nossa "Black List", o que significa que voce solicitou nï¿½o mais receber nossa newsletter. <br />
+Caso queira receber nossos e-mails novamente, solicite esta alteraï¿½ï¿½o ao Administrador do nosso sistema. Favor contactar-nos diretamente para voltar a receber a nossa newsletter e 
+nos alteraremos o seu cadastro.';
+$strPreferencesNotificationSent = 'Voce receberï¿½ um e-mail com as alteraï¿½ï¿½es';
+$strPreferencesUpdated = 'Obrigado. Suas informaï¿½ï¿½es foram alteradas.';
 $strClickHere          = 'Clique aqui';
 $strThisLink           = 'este link';
-$strToUnsubscribe      = 'Se você deseja parar de receber nossas mensagens,';
-$strToUpdate           = 'Para atualizar suas informações e para cancelar sua inscrição acesse';
-$strSendHTML           = 'Enviar mensagem HTML';
+$strToUnsubscribe      = 'Se voce deseja nï¿½o receber mais a nossa newsletter, ';
+$strToUpdate           = 'Para atualizar o seu cadastro ou para descadastrar, visite';
+$strSendHTML           = 'Enviar HTML e-mail';
 $strYes                = 'Sim';
-$strNo                 = 'Não';
-$strUnsubscribe        = 'Cancelar inscrição';
-$strAllMailinglists    = 'Todas as listas';
-$strAttachmentIntro     = 'Esta mensagem tem arquivos anexados que podem ser vistos via browser:';
-$strLocation           = 'Local';
-$strFrequency           = 'Freqüência com que devemos enviar as mensagens';
-$strHourly             = 'De hora em hora';
-$strDaily               = 'Diariamente';
-$strWeekly             = 'Semanalmente';
-$strMonthly             = 'Mensalmente';
-$strChoosePassword      = 'Por favor, escolha uma senha';
-$strConfirmPassword    = 'Confirme sua senha';
-$strEnterPassword       = 'Digite sua senha';
-$strForgotPassword     = 'Esqueceu a senha?';
+$strNo                 = 'Nï¿½o';
+$strUnsubscribe        = 'Descadastrar';
+$strAllMailinglists    = 'Todas newsletters';
+$strAttachmentIntro     = 'Esta mensagem contem arquivos anexados que podem ser visualizados atravï¿½s de um browser web:';
+$strLocation           = 'Localizaï¿½ï¿½o';
+$strFrequency           = 'Qual a freqï¿½ï¿½ncia para envio de mensagens';
+$strHourly             = 'Hora em hora';
+$strDaily               = 'Diï¿½rio';
+$strWeekly             = 'Semanal';
+$strMonthly             = 'Mensal';
+$strChoosePassword      = 'Escolha uma senha';
+$strConfirmPassword    = 'Confirms sua senha';
+$strEnterPassword       = 'Entre sua senha';
+$strForgotPassword     = 'Esqueceu sua senha';
 $strPassword           = 'Senha';
-$strPassword2           = 'Confirme sua senha';
-$strPasswordsNoMatch    = 'Senhas diferentes';
-$strEmailsNoMatch     = 'O endereço de email digitado não foi encontrado';
-$strInvalidPassword     = 'Erro: email ou senha inválidos';
-$strPasswordSent        = 'Sua senha foi enviada por email. Você deve estar recebendo-a em alguns minutos';
-$strPasswordRemindSubject = 'Sua senha de acesso ao sistema';
-$strPasswordRemindMessage = 'Sua senha é ';
-$strPasswordRemindInfo = 'Para receber sua senha por email, digite seu endereço de email e clique no botão "'.$strForgotPassword.'".';
+$strPassword2           = 'Confirme a Senha';
+$strPasswordsNoMatch    = 'As senhas nï¿½o conferem';
+$strEmailsNoMatch     = 'Endereï¿½o de e-mail nï¿½o confere';
+$strInvalidPassword     = 'Erro: e-mail ou senha invï¿½lidos';
+$strPasswordSent        = 'Sua senha foi enviada por e-mail. Vocï¿½ receberï¿½ a mensagem em poucos minutos';
+$strPasswordRemindSubject = 'Sua senha para nossas newsletters';
+$strPasswordRemindMessage = 'Sua senha ï¿½  ';
+$strPasswordRemindInfo = 'Para receber sua senha por e-mail, favor informe seu e-mail e clique no botï¿½o "'.$strForgotPassword.'".';
 $strLogin               = 'Login';
-$strLoginTitle          = 'Digite seu endereço de email e sua senha';
-$strLoginInfo           = 'O acesso a esta página requer uma senha. Digite seu endereço de email e senha';
+$strLoginTitle          = 'Entre seu e-mail e senha';
+$strLoginInfo           = 'Esta pï¿½gina requer uma senha. Entre com seu e-mail e senha';
 $strPersonalLocationInfo = '
-  <p>O acesso a esta página requer a sua identificação pessoal, que pode ser encontrada nas mensagens enviadas a você pelo sistema.<br/>
-    Se você clicou em um link e chegou até aqui, certifique-se que o link estava completo. Pode acontecer de que o link foi quebrado em diversas linhas.</p>
-        <p>Se você não sabe o link completo, você pode solicitar que o mesmo seja enviado para você via email.
-	  Digite seu email e clique em "Continuar"';
-$strPersonalLocationSent = '<h1>Você deve estar recebendo uma mensagem com o link de sua identificação pessoal em breve</h1>';
-$strUserExists   = '<br/>Este endereço de email já está cadastrado no sistema com uma senha diferente';
-$strUserExistsExplanationStart = '<br/>Para obter sua senha clique ';
+  <p>Esta pï¿½gina requer uma identificaï¿½ï¿½o pessoal que pode ser encontrada em cada e-mail enviado para vocï¿½.<br />
+  Se voce clicou neste link e obteve este erro, certifique-se de copiar a linha inteira para o endereï¿½o no browser. 
+  Algumas vezes, no e-mail, o link ï¿½ quebrado em mais de uma linha.</p>
+  <p>Se voce nï¿½o conhece este link, vocï¿½ pode solicitar um e-mail com o link correto. Favor entre com seu e-mail e clique em  "Continuar"   
+';
+$strPersonalLocationSent = '<h3>Successo!</h3><p>Voce receberï¿½ uma mensagem com o seu localizado pessoal</p>';
+$strUserExists   = '<br/>Um usuario com este e-mail jï¿½ existe, e com uma senha diferente';
+$strUserExistsExplanationStart = '<br/>Para obter sua senha, clique ';
 $strUserExistsExplanationLink = 'aqui';
-$strUserExistsExplanationEnd = ' e você será direcionado à página onde poderá requisitar suas informações pessoais';
-$strForwardTitle = 'Reenviar a mensagem para alguém';
-$strForwardSubtitle = 'Reenviando a mensagem com assunto ';
-$strForwardEnterEmail = 'Por favor, entre com um endereço de email válido para o reenvio';
-$strForwardSuccessInfo ='A mensagem foi reenviada';
-$strForwardFailInfo = 'Reenvio falhou';
-$strForwardAlreadyDone = 'Esta mensagem já foi reenviada para este endereço anteriormente';
-$strForwardFooter = 'Esta mensagem foi enviada a você por [FORWARDEDBY].
-  Você não foi adicionado a esta lista. Se você desejar inscrever-se, acesse';
-$strForward = 'Reenviar';
-$strFwd = 'Fwd'; # short version of forward for email subject
+$strUserExistsExplanationEnd = ' para solicitar seu localizado pessoal';
+$strForwardTitle = 'Encaminhe uma mensagem para alguem';
+$strForwardSubtitle = 'Enceminhe a mensagem com o assunto ';
+$strForwardEnterEmail = 'Entre um e-mail vï¿½lido para encaminhar';
+$strForwardSuccessInfo ='A mensagem foi encaminhada';
+$strForwardFailInfo = 'Falha ao encaminhar a mensagem';
+$strForwardAlreadyDone = 'Esta mensagem jï¿½ foi encaminhada para este e-mail';
+$strForwardFooter = 'Esta mensagem foi encaminhara para vocï¿½ por [FORWARDEDBY].
+  Voce nï¿½o foi inscrito automaticamente a esta newsletter.
+  Para se inscrever a esta newsletter visite';
+$strForward = 'Encaminhar';
+$strFwd = 'Enc'; # short version of forward for email subject
 ?>

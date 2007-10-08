@@ -66,7 +66,7 @@ Vous pouvez ensuite rentrer dans le syst&egrave;me "mantis" et soumettre votre r
 <li>PHPlist version: <?php echo VERSION?></li>
 <li>PHP version: <?php echo phpversion()?></li>
 <li>Webserver: <?php echo getenv("SERVER_SOFTWARE")?></li>
-<li>Website: <a href="http://<?php echo getConfig("website")."$pageroot"?>"><?=getConfig("website")."$pageroot"?></a></li>
+<li>Website: <a href="http://<?php echo getConfig("website")."$pageroot"?>"><?php echo getConfig("website")."$pageroot"?></a></li>
 <li>Mysql Info: <?php echo mysql_get_server_info();?></li>
 <li>PHP Modules:<br/><ul>
 <?php

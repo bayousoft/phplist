@@ -272,7 +272,10 @@ function sendMailOriginal ($to,$subject,$message,$header = "",$parameters = "") 
         if(@mail($GLOBALS["developer_email"],$subject,$message,$header,$parameters)) {
           return 1;
         } else {
-          return mail($GLOBALS["developer_email"],$subject,$message,$header);
+          # Changed by Bas: Always ok, since the mac/xampp return false while sending and no error in /var/log/mail.log
+          # We are in developermode anyway, and errors are faked by code just above this.
+          mail($GLOBALS["developer_email"],$subject,$message,$header);
+          return 1;
         }
       }
     } else {
@@ -313,6 +316,9 @@ function sendMailPhpMailer ($to,$subject,$message) {
       print "Error: Running CVS version, but developer_email not set";
     }
   }
+  # 0008549: message envelope not passed to php mailer,
+  $mail->Sender = $GLOBALS["message_envelope"]; 
+  
   $mail->build_message(
       array(
         "html_charset" => getConfig("html_charset"),

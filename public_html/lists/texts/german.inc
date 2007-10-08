@@ -4,7 +4,7 @@
 
 $strCharSet             = 'ISO-8859-1';
 $strName                = 'Name';
-$strAddress             = 'Addresse';
+$strAddress             = 'Adresse';
 $strEmail               = 'E-Mail';
 $strTown                = 'Wohnort';
 $strPostcode            = 'Postfach';
@@ -48,12 +48,12 @@ $strPreferTextEmail     = 'Ich bevorzuge E-Mails im Text-Format';
 $strPreferredFormat	= 'Bevorzugtes Format f&uuml;r E-Mails:';
 $strText                = 'Text';
 $strHTML                = 'HTML';
-$strPreferencesTitle    = 'Einstellungen ÄAuml;ndern';
+$strPreferencesTitle    = 'Einstellungen &auml;ndern';
 $strPreferencesInfo     = 'Bitte best&auml;tigen Sie, daß die folgenden Informationen korrekt sind und dr&uuml;cken Sie den Update-Button';
 $strUpdatePreferences   = 'Update';
 $strPreferencesEmailChanged = 'Ihre E-Mail wurde ge&auml;ndert. Bitte besuchen Sie den Link, welcher in der  E-Mail genannt wird, die Sie an Ihre neue Adresse erhalten.';
-$strPreferencesNotificationSent = 'Sie werden eine E-Mail mit den ÄAuml;nderungen erhalten';
-$strPreferencesUpdated = 'Danke f&uuml;r Ihre ÄAuml;nderungen. Wir haben Ihre Informationen aktualisiert.';
+$strPreferencesNotificationSent = 'Sie werden eine E-Mail mit den &Auml;nderungen erhalten';
+$strPreferencesUpdated = 'Danke f&uuml;r Ihre &Auml;nderungen. Wir haben Ihre Informationen aktualisiert.';
 $strClickHere          = 'Dr&uuml;cken Sie hier';
 $strThisLink           = 'dieser Link';
 $strToUnsubscribe      = 'Um sich aus der Liste auszutragen, besuchen Sie';

@@ -46,6 +46,7 @@ if (isset($_POST["save"]) || isset($_POST["activate"]) || isset($_POST["deactiva
     SaveConfig("$item:$id",stripslashes($_POST[$item]),0);
   }
 
+  ## rewrite attributes
   Sql_Query(sprintf('delete from %s where id = %d and name like "attribute___"',
     $tables["subscribepage_data"],$id));
 
@@ -93,7 +94,7 @@ if (isset($_POST["save"]) || isset($_POST["activate"]) || isset($_POST["deactiva
 }
 ob_end_flush();
 
-## initialise
+## initialise values from defaults
 $data = array();
 $data["title"] = $GLOBALS['I18N']->get('Title of this set of lists');
 $data["button"] = $strSubmit;
@@ -115,6 +116,7 @@ $selected_lists = array();
 $attributedata = array();
 
 if ($id) {
+  ## Fill values from database
   $req = Sql_Query(sprintf('select * from %s where id = %d',$tables["subscribepage_data"],$id));
   while ($row = Sql_Fetch_Array($req)) {
     $data[$row["name"]] = $row["data"];
@@ -257,7 +259,7 @@ print '<tr><td colspan=2><h1>'.$GLOBALS['I18N']->get('Select the attributes to u
   ?>
   <table border=1 width=100% bgcolor="<?php echo $bgcol?>">
   <tr><td colspan=2 width=150><?php echo $GLOBALS['I18N']->get('Attribute')?>:<?php echo $row["id"] ?></td>
-  <td colspan=2><?php echo $GLOBALS['I18N']->get('Check this box to use this attribute in the page')?> <input type="checkbox" name="attr_use[<?php echo $row["id"] ?>]" value="1" <?=$checked[$row["id"]]?>></td></tr>
+  <td colspan=2><?php echo $GLOBALS['I18N']->get('Check this box to use this attribute in the page')?> <input type="checkbox" name="attr_use[<?php echo $row["id"] ?>]" value="1" <?php echo $checked[$row["id"]]?>></td></tr>
   <tr><td colspan=2><?php echo $GLOBALS['I18N']->get('Name')?>: </td><td colspan=2><h2><?php echo htmlspecialchars(stripslashes($row["name"])) ?></h2></td></tr>
   <tr><td colspan=2><?php echo $GLOBALS['I18N']->get('Type')?>: </td><td colspan=2><h2><?php echo $GLOBALS['I18N']->get($row["type"])?></h2></td></tr>
   <tr><td colspan=2><?php echo $GLOBALS['I18N']->get('Default Value')?>: </td><td colspan=2><input type=text name="attr_default[<?php echo $row["id"]?>]" value="<?php echo htmlspecialchars(stripslashes($value["default_value"])) ?>" size=40></td></tr>

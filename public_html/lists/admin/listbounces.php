@@ -1,4 +1,4 @@
-<?
+<?php
 #error_reporting(E_ALL);
 require_once dirname(__FILE__).'/accesscheck.php';
 print '<script language="javascript" type="text/javascript" src="js/jslib.js"></script>';

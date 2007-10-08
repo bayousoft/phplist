@@ -3,12 +3,14 @@ require_once dirname(__FILE__) . '/accesscheck.php';
 
 function parseRSSTemplate($template, $data) {
   foreach ($data as $key => $val) {
-    if (!preg_match("#^\d+$#", $key)) {
-      #      print "$key => $val<br/>";
-      $template = preg_replace('#\[' . preg_quote($key) . '\]#i', $val, $template);
-    }
-  }
-  $template = eregi_replace("\[[A-Z\. ]+\]", "", $template);
+    if (!preg_match("#^\d+$#",$key)) {
+#      print "$key => $val<br/>";
+      //0008919: $ symbols within feeds are interpreted as variables at send time
+      $val = str_replace('$','\$',$val);
+      $template = preg_replace('#\['.preg_quote($key).'\]#i',$val,$template);
+     }
+   }
+  $template = eregi_replace("\[[A-Z\. ]+\]","",$template);
   return $template;
 }
 

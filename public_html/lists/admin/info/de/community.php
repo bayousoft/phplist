@@ -126,7 +126,7 @@ Sie k&ouml;nnen dieses System auch benutzen, um <b>neue Features</b> vorzuschlag
   <li>phplist-Version: <?php echo VERSION?></li>
   <li>PHP-Version: <?php echo phpversion()?></li>
   <li>Webserver: <?php echo getenv("SERVER_SOFTWARE")?></li>
-  <li>Website: <a href="http://<?php echo getConfig("website")."$pageroot"?>"><?=getConfig("website")."$pageroot"?></a></li>
+  <li>Website: <a href="http://<?php echo getConfig("website")."$pageroot"?>"><?php echo getConfig("website")."$pageroot"?></a></li>
   <li>MySQL-Version: <?php echo mysql_get_server_info();?></li>
   <li>PHP-Module:<br/>
     <ul>

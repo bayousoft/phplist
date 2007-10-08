@@ -72,12 +72,15 @@ if (!isset($_GET['tab'])) $_GET['tab'] = '';
 if (!$id) {
   $defaulttemplate = getConfig('defaultmessagetemplate');
   Sql_Query(sprintf('insert into %s (subject,status,entered,sendformat,embargo,repeatuntil,owner,template,tofield,replyto)
-    values("(no subject)","draft",now(),"text and HTML",now(),now(),%d,%d,"","")',$GLOBALS["tables"]["message"],$_SESSION["logindetails"]["id"],$defaulttemplate));
+    values("(no subject)","draft",now(),"HTML",now(),now(),%d,%d,"","")',$GLOBALS["tables"]["message"],$_SESSION["logindetails"]["id"],$defaulttemplate));
   $id = Sql_Insert_id();
-  Redirect($_GET["page"]."&id=$id");
-  exit;
-
+  # 0008720: Using -p send from the commandline doesn't seem to work
+  if(!$GLOBALS["commandline"]){
+    Redirect($_GET["page"]."&id=$id");
+    exit;
+  }
 }
+
 if (isset($_GET['deleterule']) && $_GET["deleterule"]) {
   Sql_Query(sprintf('delete from %s where name = "criterion%d" and id = %d',$GLOBALS["tables"]["messagedata"],$_GET["deleterule"],$_GET["id"]));
   Redirect($_GET["page"]."&id=$id&tab=".$_GET["tab"]);
@@ -336,10 +339,13 @@ if ($send || $sendtest || $prepare || $save) {
     #  mark this  message  as listmessage for list  0
     $result  =  Sql_query("insert ignore into $tables[listmessage]  (messageid,listid,entered) values($messageid,0,now())");
   }
-
-  if (isset($_POST["excludelist"]) && is_array($_POST["excludelist"])) {
-    $exclude = join(",",$_POST["excludelist"]);
-    Sql_Query(sprintf('replace into %s (name,id,data) values("excludelist",%d,"%s")',$tables["messagedata"],$messageid,$exclude));
+  if (USE_LIST_EXCLUDE) {
+    if (isset($_POST["excludelist"]) && is_array($_POST["excludelist"])) {
+      $exclude = join(",",$_POST["excludelist"]);
+      Sql_Query(sprintf('replace into %s (name,id,data) values("excludelist",%d,"%s")',$tables["messagedata"],$messageid,$exclude));
+    } else {
+      Sql_Query(sprintf('replace into %s (name,id,data) values("excludelist",%d,"%s")',$tables["messagedata"],$messageid,0));
+    }
   }
 
 # we want to create a join on tables as follows, in order to find users who have their attributes to the values chosen
@@ -996,9 +1002,10 @@ if (!$done) {
     $formatting_content .= '>';
   }
 
-  $formatting_content .= $GLOBALS['I18N']->get("textandhtml").' <input type=radio name="sendformat" value="text and HTML" ';
-  $formatting_content .= $_POST["sendformat"]=="text and HTML" || !isset($_POST["sendformat"]) ?"checked":"";
-  $formatting_content .= '>';
+//  0009687: Confusing use of the word "Both", indicating one email with both text and html and not two emails
+//  $formatting_content .= $GLOBALS['I18N']->get("textandhtml").' <input type=radio name="sendformat" value="text and HTML" ';
+//  $formatting_content .= $_POST["sendformat"]=="text and HTML" || !isset($_POST["sendformat"]) ?"checked":"";
+//  $formatting_content .= '>';
 
   if (USE_PDF) {
     $formatting_content .= $GLOBALS['I18N']->get("textandpdf").' <input type=radio name="sendformat" value="text and PDF" ';
@@ -1435,7 +1442,7 @@ if (!$done) {
 
   </style>';
   $values_drop .= '<span id="values_span" class="values_span">';
-  $values_drop .= '<input class="criteria_element" name="criteria_values" id="criteria_values_text" size=15 type=text>';
+  $values_drop .= '<input class="criteria_element" name="criteria_values[]" id="criteria_values_text" size=15 type=text>';
 #  $values_drop .= '</span>';
 #  $values_drop .= '<span id="values_select">';
   $values_drop .= '<select class="criteria_element" name="criteria_values[]" id="criteria_values_select" multiple size=10></select>';

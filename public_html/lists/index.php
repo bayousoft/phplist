@@ -74,6 +74,10 @@ if (isset($_GET['id'])) {
 } else {
   $id = 0;
 }
+// What is id,
+// What is uid
+// What is userid
+// Why is there GET(id) and REQUEST(id)?
 
 if (isset($_GET['uid']) && $_GET["uid"]) {
   $req = Sql_Fetch_Row_Query(sprintf('select subscribepage,id,password,email from %s where uniqid = "%s"',
@@ -145,6 +149,8 @@ $login_required =
 if ($login_required && empty($_SESSION["userloggedin"])) {
   $canlogin = 0;
   if (!empty($_POST["login"])) {
+    # login button pushed, let's check formdata
+    
     if (empty($_POST["email"])) {
       $msg = $strEnterEmail;
     } elseif (empty($_POST["password"])) {
@@ -163,6 +169,7 @@ if ($login_required && empty($_SESSION["userloggedin"])) {
       $_SESSION["userloggedin"] = $_SERVER["REMOTE_ADDR"];
      }
    } elseif (!empty($_POST["forgotpassword"])) {
+    # forgot password button pushed
     if (!empty($_POST["email"]) && $_POST["email"] == $emailcheck) {
       sendMail ($emailcheck,$GLOBALS["strPasswordRemindSubject"],$GLOBALS["strPasswordRemindMessage"]." ".$userpassword,system_messageheaders());
       $msg = $GLOBALS["strPasswordSent"];
@@ -170,10 +177,12 @@ if ($login_required && empty($_SESSION["userloggedin"])) {
       $msg = $strPasswordRemindInfo;
     }
   } elseif (isset($_SESSION["userdata"]["email"]["value"]) && $_SESSION["userdata"]["email"]["value"] == $emailcheck) {
+    # Entry without any button pushed (first time) test and, if needed, ask for password
     $canlogin = $_SESSION["userloggedin"];
     $msg = $strEnterPassword;
   }
 } else {
+  # Logged into session or login not required 
   $canlogin = 1;
 }
 
@@ -409,13 +418,28 @@ function subscribePage($id) {
 
 function checkform() {
   for (i=0;i<fieldstocheck.length;i++) {
-    if (eval("document.subscribeform.elements[\'"+fieldstocheck[i]+"\'].value") == "") {
-      alert("'.$GLOBALS["strPleaseEnter"].' "+fieldnames[i]);
-      eval("document.subscribeform.elements[\'"+fieldstocheck[i]+"\'].focus()");
+    if (eval("document.subscribeform.elements[\'"+fieldstocheck[i]+"\'].type") == "checkbox") {
+      if (document.subscribeform.elements[fieldstocheck[i]].checked) {
+      } else {
+        alert("'.$GLOBALS["strPleaseEnter"].' "+fieldnames[i]);
+        eval("document.subscribeform.elements[\'"+fieldstocheck[i]+"\'].focus()");
+        return false;
+      }
+    }
+    else {
+      if (eval("document.subscribeform.elements[\'"+fieldstocheck[i]+"\'].value") == "") {
+        alert("'.$GLOBALS["strPleaseEnter"].' "+fieldnames[i]);
+        eval("document.subscribeform.elements[\'"+fieldstocheck[i]+"\'].focus()");
+        return false;
+      }
+    }
+  }
+  for (i=0;i<groupstocheck.length;i++) {
+    if (!checkGroup(groupstocheck[i],groupnames[i])) {
       return false;
     }
   }
-';
+  ';
 if ($data['emaildoubleentry']=='yes')
 {
 $html .='
@@ -436,10 +460,29 @@ function addFieldToCheck(value,name) {
   fieldstocheck[fieldstocheck.length] = value;
   fieldnames[fieldnames.length] = name;
 }
+var groupstocheck = new Array();
+var groupnames = new Array();
+function addGroupToCheck(value,name) {
+  groupstocheck[groupstocheck.length] = value;
+  groupnames[groupnames.length] = name;
+}
 
 function compareEmail()
 {
   return (document.subscribeform.elements["email"].value == document.subscribeform.elements["emailconfirm"].value);
+}
+function checkGroup(name,value) {
+  option = -1;
+  for (i=0;i<document.subscribeform.elements[name].length;i++) {
+    if (document.subscribeform.elements[name][i].checked) {
+      option = i;
+    }
+  }
+  if (option == -1) {
+    alert ("'.$GLOBALS["strPleaseEnter"].' "+value);
+    return false;
+  }
+  return true;
 }
 
 </script>';
@@ -555,8 +598,8 @@ function unsubscribePage($id) {
     @include dirname(__FILE__).'/texts/'.$pagedata['language_file'];
   }
   global $tables;
-  $res = $pagedata["header"];
   $res .= '<title>'.$GLOBALS["strUnsubscribeTitle"].'</title>';
+  $res = $pagedata["header"];
   if (isset($_GET["uid"])) {
     $req = Sql_Query("select * from $tables[user] where uniqid = \"".$_GET["uid"]."\"");
     $userdata = Sql_Fetch_Array($req);

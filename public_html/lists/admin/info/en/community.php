@@ -112,7 +112,7 @@ how well phplist is performing.</p></li>
 <li>PHP version: <?php echo phpversion()?></li>
 <li>Browser: <?php echo $_SERVER['HTTP_USER_AGENT']?></li>
 <li>Webserver: <?php echo $_SERVER['SERVER_SOFTWARE']?></li>
-<li>Website: <a href="http://<?php echo getConfig("website")."$pageroot"?>"><?=getConfig("website")."$pageroot"?></a></li>
+<li>Website: <a href="http://<?php echo getConfig("website")."$pageroot"?>"><?php echo getConfig("website")."$pageroot"?></a></li>
 <li>Mysql Info: <?php echo mysql_get_server_info();?></li>
 <li>PHP Modules:<br/><ul>
 <?php

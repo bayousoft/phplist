@@ -31,9 +31,17 @@ if ($noaccess) {
 if (!empty($_POST["change"])) {
   if (empty($_POST["id"])) {
     # new one
-    Sql_Query(sprintf('insert into %s (namelc,created) values("%s",now())',
+    $result = Sql_query(sprintf('SELECT count(*) FROM %s WHERE namelc="%s"',
       $tables["admin"],strtolower(normalize($_POST["loginname"]))));
-    $id = Sql_Insert_Id();
+    $totalres = Sql_fetch_Row($result);
+    $total = $totalres[0]; 
+    if (!$total) {
+      Sql_Query(sprintf('insert into %s (namelc,created) values("%s",now())',
+        $tables["admin"],strtolower(normalize($_POST["loginname"]))));
+      $id = Sql_Insert_Id();
+    } else {
+      $id = 0;
+    }
   } else {
     $id = sprintf('%d',$_POST["id"]);
   }

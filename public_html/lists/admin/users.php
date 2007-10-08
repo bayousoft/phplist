@@ -1,15 +1,17 @@
-
 <script language="Javascript" src="js/jslib.js" type="text/javascript"></script>
 <hr>
 
 <?php
+####################################################################
+# This file is a placeholder. Functionality is passed to commonlib #
+####################################################################
+
 require_once dirname(__FILE__).'/accesscheck.php';
 
 $columns = array("messages","lists","bounces","rss","blacklist");
 
 include dirname(__FILE__).'/commonlib/pages/users.php';
 return;
-
 
 
 if (!$_SESSION["userlistfilter"]) {

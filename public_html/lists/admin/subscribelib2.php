@@ -17,12 +17,13 @@ if (!$id && $_GET["page"] != "import1") {
 require_once dirname(__FILE__)."/date.php";
 $date = new Date();
 
+## Check if input is complete
 $allthere = 1;
 $subscribepagedata = PageData($id);
 if (isset($subscribepagedata['language_file']) && is_file(dirname(__FILE__).'/../texts/'.$subscribepagedata['language_file'])) {
   @include dirname(__FILE__).'/../texts/'.$subscribepagedata['language_file'];
 }
-$required = array();
+$required = array();   # id's of missing attribbutes
 if (sizeof($subscribepagedata)) {
   $attributes = explode('+',$subscribepagedata["attributes"]);
   foreach ($attributes as $attribute) {
@@ -54,7 +55,7 @@ if (sizeof($required)) {
       $thisonemissing = 0;
       if ($row["type"] != "hidden") {
         $thisonemissing = empty($_POST[$fieldname]);
-        if ($thisonemissing && isset($_POST[$fieldname]))
+        if ($thisonemissing)
           $missing .= $row["name"] .", ";
         $allthere = $allthere && !$thisonemissing;
       }
@@ -311,7 +312,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
 
   $blacklisted = isBlackListed($email);
   if ($blacklisted) {
-    $thankyoupage .= '<p>'.$GLOBALS['I18N']->get('YouAreBlacklisted').'</p>';
+    $thankyoupage .= '<p>'.$GLOBALS["strYouAreBlacklisted"].'</p>';
   }
   if ($sendrequest && $listsok) { #is_array($_POST["list"])) {
     if (sendMail($email, getConfig("subscribesubject:$id"), $subscribemessage,system_messageheaders($email),$envelope,1)) {
@@ -321,7 +322,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
      } else {
       print '<h3>'.$strEmailFailed.'</h3>';
       if ($blacklisted) {
-        print '<p>'.$GLOBALS['I18N']->get('YouAreBlacklisted').'</p>';
+        print '<p>'.$GLOBALS["strYouAreBlacklisted"].'</p>';
       }
     }
   } else {
@@ -581,10 +582,10 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
   $msg = '<div class="missing">'.$strEnterEmail.'</div><br/>';
 } elseif ((isset($_POST["subscribe"]) || isset($_POST["update"])) && !$validhost) {
   $msg = '<div class="missing">'.$strInvalidHostInEmail.'</div><br/>';
-} elseif ((isset($_POST["subscribe"]) || isset($_POST["update"])) && !isset($_POST["list"]) && !ALLOW_NON_LIST_SUBSCRIBE) {
-  $msg = '<div class="missing">'.$strEnterList.'</div><br/>';
 } elseif ((isset($_POST["subscribe"]) || isset($_POST["update"])) && $missing) {
   $msg = '<div class="missing">'."$strValuesMissing: $missing".'</div><br/>';
+} elseif ((isset($_POST["subscribe"]) || isset($_POST["update"])) && !isset($_POST["list"]) && !ALLOW_NON_LIST_SUBSCRIBE) {
+  $msg = '<div class="missing">'.$strEnterList.'</div><br/>';
 } else {
 #  $msg = 'Unknown Error';
 }
@@ -702,7 +703,7 @@ $html .= sprintf('
   <tr><td><div class="required">%s</div></td>
   <td class="attributeinput"><input type=text name=emailconfirm value="%s" size="%d">
   <script language="Javascript" type="text/javascript">addFieldToCheck("emailconfirm","%s");</script></td></tr>',
- 'Confirm email',htmlspecialchars(stripslashes($_REQUEST["emailconfirm"])),$textlinewidth,'Confirm email');
+  $GLOBALS["strConfirmEmail"],htmlspecialchars(stripslashes($_REQUEST["emailconfirm"])),$textlinewidth, $GLOBALS["$strConfirmEmail"]);
 }
 // BPM 12 May 2004 - Finish
 
@@ -730,6 +731,7 @@ $html .= sprintf('
   $pwdclass,$GLOBALS["strPassword2"],$textlinewidth,$js2);
    }
 
+## Write attribute fields
   switch($htmlchoice) {
     case "textonly":
       if (!isset($htmlemail))
@@ -818,12 +820,14 @@ $html .= sprintf('
             $checked = $data[$attr["id"]] ? "checked":"";
           $output[$attr["id"]] .= sprintf("\n".'<input type="checkbox" name="%s" value="on" %s class="attributeinput">',$fieldname,$checked);
           $output[$attr["id"]] .= sprintf("\n".'<span class="%s">%s</span>',$attr["required"] ? 'required' : 'attributename',stripslashes($attr["name"]));
+          if ($attr["required"])
+            $output[$attr["id"]] .= sprintf('<script language="Javascript" type="text/javascript">addFieldToCheck("%s","%s");</script>',$fieldname,$attr["name"]);
           break;
         case "radio":
           $output[$attr["id"]] .= sprintf("\n".'<tr><td colspan=2><div class="%s">%s</div>',$attr["required"] ? 'required' : 'attributename',stripslashes($attr["name"]));
           $values_request = Sql_Query("select * from $table_prefix"."listattr_".$attr["tablename"]." order by listorder,name");
           while ($value = Sql_Fetch_array($values_request)) {
-            if ($_POST[$fieldname])
+            if (!empty($_POST[$fieldname]))
               $checked = $_POST[$fieldname] == $value["id"] ? "checked":"";
             else if ($data[$attr["id"]])
               $checked = $data[$attr["id"]] == $value["id"] ? "checked":"";
@@ -832,13 +836,15 @@ $html .= sprintf('
             $output[$attr["id"]] .= sprintf('&nbsp;%s&nbsp;<input type=radio  class="attributeinput" name="%s" value="%s" %s>',
               $value["name"],$fieldname,$value["id"],$checked);
           }
+          if ($attr["required"])
+            $output[$attr["id"]] .= sprintf('<script language="Javascript" type="text/javascript">addGroupToCheck("%s","%s");</script>',$fieldname,$attr["name"]);
           break;
         case "select":
           $output[$attr["id"]] .= sprintf("\n".'<tr><td><div class="%s">%s</div>',$attr["required"] ? 'required' : 'attributename',stripslashes($attr["name"]));
           $values_request = Sql_Query("select * from $table_prefix"."listattr_".$attr["tablename"]." order by listorder,name");
           $output[$attr["id"]] .= sprintf('</td><td class="attributeinput"><!--%d--><select name="%s" class="attributeinput">',$data[$attr["id"]],$fieldname);
           while ($value = Sql_Fetch_array($values_request)) {
-            if ($_POST[$fieldname])
+            if (!empty($_POST[$fieldname]))
               $selected = $_POST[$fieldname] == $value["id"] ? "selected" : "";
             else if ($data[$attr["id"]])
               $selected = $data[$attr["id"]] == $value["id"] ? "selected":"";

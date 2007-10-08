@@ -127,7 +127,7 @@ un informe de errores.</p>
 <li>Versi&oacute;n PHPlist: <?php echo VERSION?></li>
 <li>Versi&oacute;n PHP: <?php echo phpversion()?></li>
 <li>Servidor web: <?php echo getenv("SERVER_SOFTWARE")?></li>
-<li>Sitio web: <a href="http://<?php echo getConfig("website")."$pageroot"?>"><?=getConfig("website")."$pageroot"?></a></li>
+<li>Sitio web: <a href="http://<?php echo getConfig("website")."$pageroot"?>"><?php echo getConfig("website")."$pageroot"?></a></li>
 <li>Informaci&oacute;n de MySQL: <?php echo mysql_get_server_info();?></li>
 <li>M&oacute;dulos de PHP:<br/><ul>
 <?php

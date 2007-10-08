@@ -1,7 +1,7 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 
-# $Id: editattributes.php,v 1.4 2005-12-02 00:57:15 mdethmers Exp $
+# $Id: editattributes.php,v 1.5 2007-10-08 17:22:43 mdethmers Exp $
 
 $id = !empty($_GET['id']) ? sprintf('%d',$_GET['id']) : 0;
 ob_end_flush();
@@ -53,8 +53,8 @@ switch ($data['type']) {
 ?>
 <script language="Javascript" src="js/jslib.js" type="text/javascript"></script>
 
-<br><?php echo PageLink2("editattributes",$GLOBALS['I18N']->get('AddNew'),"id=$id&action=new")?> <?=$data["name"]?>
-<br><a href="javascript:deleteRec2('<?php echo $GLOBALS['I18N']->get('SureToDeleteAll');?>','<?php echo PageURL2("editattributes",$GLOBALS['I18N']->get('DelAll'),"id=$id&deleteall=yes")?>');"><?=$GLOBALS['I18N']->get('DelAll');?></a>
+<br><?php echo PageLink2("editattributes",$GLOBALS['I18N']->get('AddNew'),"id=$id&action=new")?> <?php echo $data["name"]?>
+<br><a href="javascript:deleteRec2('<?php echo $GLOBALS['I18N']->get('SureToDeleteAll');?>','<?php echo PageURL2("editattributes",$GLOBALS['I18N']->get('DelAll'),"id=$id&deleteall=yes")?>');"><?php echo $GLOBALS['I18N']->get('DelAll');?></a>
 <hr><p>
 <?php echo formStart()?>
 <input type=hidden name="action" value="add">
@@ -66,12 +66,21 @@ switch ($data['type']) {
 
 if (isset($_POST["addnew"])) {
   $items = explode("\n", $_POST["itemlist"]);
+  $query = sprintf('SELECT MAX(listorder) AS listorder FROM %s',$table);
+  $maxitem = Sql_Fetch_Row_Query($query);
+  if (!Sql_Affected_Rows() || !is_numeric($maxitem[0])) {
+  $listorder = 1; # insert the listorder as it's in the textarea / start with 1
+  }
+  else {
+  $listorder = $maxitem[0]+1; # One more than the maximun
+  }
   while (list($key,$val) = each($items)) {
     $val = clean($val);
     if ($val != "") {
-      $query = sprintf('INSERT into %s (name) values("%s")',$table,$val);
+      $query = sprintf('INSERT into %s (name,listorder) values("%s","%s")',$table,$val,$listorder);
       $result = Sql_query($query);
     }
+    $listorder++;
   }
 }
 

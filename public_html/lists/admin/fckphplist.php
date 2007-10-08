@@ -29,7 +29,7 @@ if ($_GET["action"] == "js") {
   $smileys = substr($smileys,0,-1);
 
 ?>
-oTB_Items.Attribute      = new TBCombo( "Attributes"      , "doAttribute(this)"    , 'Attribute'    , '<?php echo $attnames?>', '<?=$attcodes?>') ;
+oTB_Items.Attribute      = new TBCombo( "Attributes"      , "doAttribute(this)"    , 'Attribute'    , '<?php echo $attnames?>', '<?php echo $attcodes?>') ;
 
 function doAttribute(combo)
 {
@@ -467,7 +467,7 @@ FCKConfig.FlashDlgHideAdvanced  = false ;
 
 FCKConfig.LinkBrowser = false ;
 
-FCKConfig.ImageBrowser = <?=$enable_image_upload?> ;
+FCKConfig.ImageBrowser = <?php echo $enable_image_upload?> ;
 // PHP
 FCKConfig.ImageBrowserURL = FCKConfig.BasePath + 'filemanager/browser/default/browser.html?Type=Image&Connector=connectors/phplist/connector.php'
 
@@ -509,7 +509,7 @@ FCKConfig.SmileyWindowWidth   = 320 ;
 FCKConfig.SmileyWindowHeight  = 240 ;
 
 if( window.console ) window.console.log( 'Config is loaded!' ) ;  // @Packager.Compactor.RemoveLine
-<?
+<?php
   exit;
 } elseif ($_GET['action'] == 'js3') {
   ob_end_clean();
@@ -728,7 +728,7 @@ FCKConfig.SmileyColumns = 8 ;
 FCKConfig.SmileyWindowWidth   = 320 ;
 FCKConfig.SmileyWindowHeight  = 240 ;
 
-<?
+<?php
   exit;
 
 } elseif ($_GET["action"]) {

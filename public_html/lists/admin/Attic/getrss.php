@@ -1,11 +1,11 @@
 <?php
 require_once 'accesscheck.php';
 if (!$GLOBALS['commandline']) {
-  ob_end_flush();
-  if (!MANUALLY_PROCESS_RSS) {
-    print $GLOBALS['I18N']->get('This page can only be called from the commandline');
-    return;
-  }
+	ob_end_flush();
+	if (!MANUALLY_PROCESS_RSS) {
+		print $GLOBALS['I18N']->get('This page can only be called from the commandline');
+		return;
+	}
 } else {
   ob_end_clean();
   print ClineSignature();

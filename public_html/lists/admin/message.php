@@ -68,9 +68,21 @@ echo "<table border=\"1>\"";
 
 while ($msg = Sql_fetch_array($result)) {
   foreach($DBstruct["message"] as $field => $val) {
-    printf('<tr><td valign="top">%s</td><td valign="top">%s</td></tr>',$GLOBALS['I18N']->get($field),$msg["htmlformatted"]?stripslashes($msg[$field]):nl2br(stripslashes($msg[$field])));
+    # Correct for bug 0009687
+    # Skip 'astextandhtml' and add this count to 'ashtml'
+    # change the name of sendformat
+    if ($field != 'ashtml') {
+      if ($field == 'astextandhtml') {
+        $field = 'ashtml';
+        $msg[$field] += $msg['astextandhtml'];
+      };
+      if ($field == 'sendformat' and $msg[$field] = 'text and HTML')
+        $msg[$field] = 'HTML';
+      printf('<tr><td valign="top">%s</td><td valign="top">%s</td></tr>',$GLOBALS['I18N']->get($field),$msg["htmlformatted"]?stripslashes($msg[$field]):nl2br(stripslashes($msg[$field])));
+    }  
   }
 }
+
 if (ALLOW_ATTACHMENTS) {
   print '<tr><td colspan=2><h3>' . $GLOBALS['I18N']->get('Attachments for this message') . '</h3></td></tr>';
   $req = Sql_Query("select * from {$tables["message_attachment"]},{$tables["attachment"]}

@@ -96,7 +96,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   # erase any placeholders that were not found
 #  $msg = ereg_replace("\[[A-Z ]+\]","",$msg);
   $user_att_values = getUserAttributeValues($email);
-  $userdata = Sql_Fetch_Array_Query(sprintf('select * from %s where email = "%s"',
+  $userdata = Sql_Fetch_Assoc_Query(sprintf('select * from %s where email = "%s"',
     $GLOBALS["tables"]["user"],$email));
 
   $url = getConfig("unsubscribeurl");$sep = ereg('\?',$url)?'&':'?';
@@ -150,7 +150,8 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   } else {
     $listowner = 0;
   }
-
+  
+## Fetch external content
   if ($GLOBALS["has_pear_http_request"] && preg_match("/\[URL:([^\s]+)\]/i",$content,$regs)) {
     while (isset($regs[1]) && strlen($regs[1])) {
       $url = $regs[1];
@@ -172,7 +173,13 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
       preg_match("/\[URL:([^\s]+)\]/i",$content,$regs);
     }
   }
+  
+#~Bas 0008857 
+// @@ Switched off for now, needs rigid testing, or config setting 
+// $content = mailto2href($content);
+// $content = encodeLinks($content);
 
+## Fill text and html versions depending on given versions.
   if ($cached[$messageid]["htmlformatted"]) {
     if (!$cached[$messageid]["textcontent"]) {
       $textcontent = stripHTML($content);
@@ -203,6 +210,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   }
   $textmessage = $textcontent;
 
+## Parse placeholders
   foreach (array("forwardform","forward","subscribe","preferences","unsubscribe","signature") as $item) {
     # hmm str_ireplace and stripos would be faster, presumably, but that's php5 only
     if (PHP5) {
@@ -316,7 +324,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
       }
     }
   }
-
+## RSS
   if (ENABLE_RSS && sizeof($rssitems)) {
     $rssentries = array();
     $request = join(",",$rssitems);
@@ -456,7 +464,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     # convert Text message
     # first find occurances of our top domain, to avoid replacing them later
 
-    ## hmm, this is no point, it's not just *our* topdomain, but any 
+    # hmm, this is no point, it's not just *our* topdomain, but any 
 
 if (0) {
     preg_match_all('#(https?://'.$GLOBALS['website'].'/?)\s+#mis',$textmessage,$links);
@@ -559,7 +567,7 @@ if (0) {
   $htmlmessage = eregi_replace("\[[A-Z\. ]+\]","",$htmlmessage);
   $textmessage = eregi_replace("\[[A-Z\. ]+\]","",$textmessage);
 
-  # check that the HTML message as proper <head> </head> and <body> </body> tags
+  ## check that the HTML message as proper <head> </head> and <body> </body> tags
   # some readers fail when it doesn't
   if (!preg_match("#<body.*</body>#ims",$htmlmessage)) {
     $htmlmessage = '<body>'.$htmlmessage.'</body>';
@@ -585,7 +593,7 @@ if (0) {
 #    $textmessage = preg_replace("/\r?\n/", "\r\n", $textmessage);
 #  }
 
-  # build the email
+  ## build the email
   if (!PHPMAILER) {
     $mail = new html_mime_mail(
       array('X-Mailer: PHPlist v'.VERSION,
@@ -617,13 +625,31 @@ if (0) {
   # so what do we actually send?
   switch($cached[$messageid]["sendformat"]) {
     case "HTML":
-      # send html to users who want it and text to everyone else
+//      # send html to users who want it and text to everyone else
+//      if ($htmlpref) {
+//        Sql_Query("update {$GLOBALS["tables"]["message"]} set ashtml = ashtml + 1 where id = $messageid");
+//        if (ENABLE_RSS && sizeof($rssitems))
+//          updateRSSStats($rssitems,"ashtml");
+//      #  dbg("Adding HTML ".$cached[$messageid]["templateid"]);
+//        $mail->add_html($htmlmessage,"",$cached[$messageid]["templateid"]);
+//        addAttachments($messageid,$mail,"HTML");
+//      } else {
+//        Sql_Query("update {$GLOBALS["tables"]["message"]} set astext = astext + 1 where id = $messageid");
+//        if (ENABLE_RSS && sizeof($rssitems))
+//          updateRSSStats($rssitems,"astext");
+//        $mail->add_text($textmessage);
+//        addAttachments($messageid,$mail,"text");
+//      }
+//      break;
+    case "both":
+    case "text and HTML":
+      # send one big file to users who want html and text to everyone else
       if ($htmlpref) {
         Sql_Query("update {$GLOBALS["tables"]["message"]} set ashtml = ashtml + 1 where id = $messageid");
         if (ENABLE_RSS && sizeof($rssitems))
           updateRSSStats($rssitems,"ashtml");
       #  dbg("Adding HTML ".$cached[$messageid]["templateid"]);
-        $mail->add_html($htmlmessage,"",$cached[$messageid]["templateid"]);
+        $mail->add_html($htmlmessage,$textmessage,$cached[$messageid]["templateid"]);
         addAttachments($messageid,$mail,"HTML");
       } else {
         Sql_Query("update {$GLOBALS["tables"]["message"]} set astext = astext + 1 where id = $messageid");
@@ -913,6 +939,98 @@ $replace = array ("\"",
   # $text = html_entity_decode ( $text , ENT_QUOTES , $GLOBALS['strCharSet'] );
   $text = html_entity_decode ( $text , ENT_QUOTES , 'UTF-8' );
 
+  return $text;
+}
+
+function mailto2href($text) {
+  # converts <mailto:blabla> link to <a href="blabla"> links
+  #~Bas 0008857
+  $text = preg_replace("/(.*@.*\..*) *<mailto:(\\1[^>]*)>/Umis","[URLTEXT]\\1[ENDURLTEXT][LINK]\\2[ENDLINK]\n",$text);
+  $text = preg_replace("/<mailto:(.*@.*\..*)(\?.*)?>/Umis","[URLTEXT]\\1[ENDURLTEXT][LINK]\\1\\2[ENDLINK]\n",$text);
+  $text = preg_replace("/\[URLTEXT\](.*)\[ENDURLTEXT\]\[LINK\](.*)\[ENDLINK\]/Umis",'<a href="mailto:\\2">\\1</a>',$text);
+  return $text;
+};
+
+function linkencode($p_url){
+  # URL Encode only the 'variable' parts of links, not the slashes in the path or the @ in an email address
+  # from http://ar.php.net/manual/nl/function.rawurlencode.php
+  # improved to handle mailto links properly
+  #~Bas 0008857
+
+  $uparts = @parse_url($p_url);
+
+  $scheme = array_key_exists('scheme',$uparts) ? $uparts['scheme'] : "";
+  $pass = array_key_exists('pass',$uparts) ? $uparts['pass']  : "";
+  $user = array_key_exists('user',$uparts) ? $uparts['user']  : "";
+  $port = array_key_exists('port',$uparts) ? $uparts['port']  : "";
+  $host = array_key_exists('host',$uparts) ? $uparts['host']  : "";
+  $path = array_key_exists('path',$uparts) ? $uparts['path']  : "";
+  $query = array_key_exists('query',$uparts) ? $uparts['query']  : "";
+  $fragment = array_key_exists('fragment',$uparts) ? $uparts['fragment']  : "";
+  
+  if(!empty($scheme))
+   if($scheme == "mailto") {
+     $scheme .= ':';
+   } else {
+     $scheme .= '://';
+   };
+   
+  if(!empty($pass) && !empty($user)) {
+   $user = rawurlencode($user).':';
+   $pass = rawurlencode($pass).'@';
+   } elseif(!empty($user))
+     $user .= '@';
+  
+  if(!empty($port) && !empty($host))
+     $host = ''.$host.':';
+  elseif(!empty($host))
+     $host=$host;
+  
+  if(!empty($path)){
+    $arr = preg_split("/([\/;=@])/", $path, -1, PREG_SPLIT_DELIM_CAPTURE); // needs php > 4.0.5.
+    $path = "";
+    foreach($arr as $var){
+      switch($var){
+        case "/":
+        case ";":
+        case "=":
+        case "@":
+        $path .= $var;
+          break;
+        default:
+          $path .= rawurlencode($var);
+      }
+    }
+    // legacy patch for servers that need a literal /~username
+    $path = str_replace("/%7E","/~",$path);
+  }
+  
+  if(!empty($query)){
+    $arr = preg_split("/([&=])/", $query, -1, PREG_SPLIT_DELIM_CAPTURE); // needs php > 4.0.5.
+    $query = "?";
+    foreach($arr as $var){
+      if( "&" == $var || "=" == $var )
+        $query .= $var;
+      else
+        $query .= rawurlencode($var);
+    }    
+  }
+  
+  if(!empty($fragment))
+    $fragment = '#'.urlencode($fragment);
+  
+  return implode('', array($scheme, $user, $pass, $host, $port, $path, $query, $fragment));
+}
+
+function encodeLinks($text) {
+  #~Bas Find and properly encode all links.
+  preg_match_all("/<a(.*)href=[\"\'](.*)[\"\']([^>]*)>/Umis", $text, $links);
+  
+  foreach ($links[0] as $matchindex => $fullmatch) {
+    $linkurl = $links[2][$matchindex];
+    $linkreplace = '<a' . $links[1][$matchindex] . ' href="' . linkencode($linkurl) . '"' . $links[3][$matchindex] .'>';
+    $text = str_replace($fullmatch,$linkreplace,$text);
+  }
   return $text;
 }
 

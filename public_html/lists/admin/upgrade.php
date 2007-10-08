@@ -336,6 +336,18 @@ if ($_GET["doit"] == 'yes') {
       break;
   }
 
+  ## mantis issue 9001, make sure that the "repeat" column in the messages table is renamed to repeatinterval
+  # to avoid a name clash with Mysql 5.
+  # problem is that this statement will fail if the DB is already running Mysql 5
+  if (Sql_Table_Column_Exists($GLOBALS['tables']['message'],'repeat')) {
+    Sql_Query(sprintf('alter ignore table %s change column repeat repeatinterval integer default 0',$GLOBALS['tables']['message']));
+  }
+  # check whether it worked and otherwise throw an error to say it needs to be done manually
+  if (Sql_Table_Column_Exists($GLOBALS['tables']['message'],'repeat')) {
+    print 'Error, unable to rename column "repeat" in the table '.$GLOBALS['tables']['message'].' to be "repeatinterval"<br/>
+      Please do this manually, refer to http://mantis.phplist.com/view.php?id=9001 for more information';
+  }
+
   # fix the new powered by image for the templates
   Sql_Query(sprintf('update %s set data = "%s",width=70,height=30 where filename = "powerphplist.png"',
     $tables["templateimage"],$newpoweredimage));

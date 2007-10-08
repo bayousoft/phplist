@@ -3,12 +3,12 @@
 require_once dirname(__FILE__).'/accesscheck.php';
 print '<script language="javascript" type="text/javascript" src="js/jslib.js"></script>';
 
-if (isset($_POST['delete']) && $_POST['delete']) {
+if (isset($_REQUEST['delete']) && $_REQUEST['delete']) {
   # delete the index in delete
-  print $GLOBALS['I18N']->get('deleting').' '.$_POST['delete']."..\n";
+  print $GLOBALS['I18N']->get('deleting').' '.$_REQUEST['delete']."..\n";
   if ($GLOBALS["require_login"] && !isSuperUser()) {
   } else {
-    deleteBounce($_POST['delete']);
+    deleteBounce($_REQUEST['delete']);
   }
   print $GLOBALS['I18N']->get('done') . "<br /><hr><br />\n";
 }

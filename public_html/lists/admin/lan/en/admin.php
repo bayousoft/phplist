@@ -15,6 +15,7 @@ for the "user", "users" and "members" pages.</li>
 <li>None: admin cannot see this page</li>
 <li>Owner: admin can see this page, but only see the content of the lists they own</li>
 </ul>
+<p>Note: Admin Password must be at least 4 characters long</p>
 ',
 'Edit Administrator' => 'Edit Administrator',
 'Admin Details' => 'Admin Details',
