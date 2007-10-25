@@ -132,6 +132,18 @@ if (isset($_GET['suspend'])) {
     print "... ".$GLOBALS['I18N']->get("failed");
   print"<br /><hr /><br /><p>\n";
 }
+#0012081: Add new 'Mark as sent' button
+if (isset($_GET['markSent'])) {
+  $markSent = sprintf('%d',$_GET['markSent']);
+  print $GLOBALS['I18N']->get('Marking as sent ')." $markSent ..";
+  $result = Sql_query(sprintf('update %s set status = "sent" where id = %d and (status = "suspended")',$tables["message"],$markSent));
+  $suc6 = Sql_Affected_Rows();
+  if ($suc6)
+    print "... ".$GLOBALS['I18N']->get("Done");
+  else
+    print "... ".$GLOBALS['I18N']->get("Failed");
+  print"<br /><hr /><br /><p>\n";
+}
 
 ### Switch tab
 switch ($_GET["type"]) {
@@ -305,6 +317,11 @@ if ($total) {
     if ($msg['status'] == 'inprocess' || $msg['status'] == 'submitted') {
       $status .= '<br/>'.
         PageLink2('messages&suspend='.$msg['id'],$GLOBALS['I18N']->get('Suspend Sending'));
+    }
+    #0012081: Add new 'Mark as sent' button
+    if ($msg['status'] == 'suspended') {
+      $status .= '<br/>'.
+        PageLink2('messages&markSent='.$msg['id'],$GLOBALS['I18N']->get('Mark as sent'));
     }
 
     $totalsent = $msg['astext'] + $msg['ashtml'] + $msg['astextandhtml'] + $msg['aspdf'] + $msg['astextandpdf'];
