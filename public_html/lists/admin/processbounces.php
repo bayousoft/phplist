@@ -518,8 +518,8 @@ while ($user = Sql_Fetch_Row($userid_req)) {
       keepLock($process_id);
     else
       ProcessError("Process Killed by other process");
-      if (sprintf('%d',$bounce["bounce"]) == $bounce["bounce"]) {
-        $cnt++;
+    if (sprintf('%d',$bounce["bounce"]) == $bounce["bounce"]) {
+      $cnt++;
       if ($cnt >= $bounce_unsubscribe_threshold) {
         $removed = 1;
         output(sprintf('unsubscribing %d -> %d bounces',$user[0],$cnt));
@@ -528,6 +528,10 @@ while ($user = Sql_Fetch_Row($userid_req)) {
         $emailreq = Sql_Fetch_Row_Query("select email from {$tables["user"]} where id = $user[0]");
         addUserHistory($emailreq[0],"Auto Unsubscribed","User auto unsubscribed for $cnt consecutive bounces");
         Sql_Query(sprintf('update %s set confirmed = 0 where id = %d',$tables["user"],$user[0]));
+        if(BLACKLIST_EMAIL_ON_BOUNCE) {
+          #0012262: blacklist email when email bounces
+          addEmailToBlackList($email, "$cnt consecutive bounces, threshold reached");
+        }
         $email_req = Sql_Fetch_Row_Query(sprintf('select email from %s where id = %d',$tables["user"],$user[0]));
         $unsubscribed_users .= $email_req[0]."\t\t($cnt)\t\t". $GLOBALS['scheme'].'//'.getConfig('website').$GLOBALS['adminpages'].'/?page=user&id='.$user[0]. "\n";
       }

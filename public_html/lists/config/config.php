@@ -109,6 +109,11 @@ $bounce_mailbox_purge_unprocessed = 1;
 # how many bounces in a row need to have occurred for a user to be marked unconfirmed
 $bounce_unsubscribe_threshold = 5;
 
+#  #0012262: blacklist email when consecutive bounces are over the threshold [Bas]
+# When only user is unconfirmed when consecutive bounces are over the threshold, 'mark all users 
+# confirmed' will cause a lot of useless bouncing (email that is, not pogo). It's better to blacklist 
+# the address so phplist will never try again. Default on. 
+define('BLACKLIST_EMAIL_ON_BOUNCE', 1);
 
 /*
 
@@ -362,7 +367,7 @@ Experimental Features
 
 */
 
-# email address validation level
+# email address validation level [Bas]
 # 0 = No email address validation. So PHPList can be used as a non-email-sending registration system.
 # 1 = phplist 2.10.4 style email validation.
 # 2 = RFC821 email validation without escaping and quoting of local part.
@@ -382,7 +387,6 @@ define("EMAIL_ADDRESS_VALIDATION_LEVEL",1);
 # list exclude will add the option to send a message to users who are on a list
 # except when they are on another list.
 # this is currently marked experimental
-
 define("USE_LIST_EXCLUDE",0);
 
 # admin authentication module.
