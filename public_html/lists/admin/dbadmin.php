@@ -168,7 +168,7 @@ if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
 
           case "delmsghistory" :
             flush();
-            $req = Sql_Query("select id,subject from {$tables["message"]}");
+            $req = Sql_Query("select id,subject from {$tables["message"]} where status is not null");
             $c = 0;
             print '<form method=post>';
             while ($row = Sql_Fetch_Array($req)) {
