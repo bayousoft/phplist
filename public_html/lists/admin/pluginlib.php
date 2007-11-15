@@ -21,25 +21,27 @@ if (is_dir(PLUGIN_ROOTDIR)) {
   asort($files);
   reset($files);
   foreach ($files as $file) {
-    list($name,$ext) = explode(".",$file);
-    if (preg_match("/[\w]+/",$name)) {
+    list($className,$ext) = explode(".",$file);
+    if (preg_match("/[\w]+/",$className)) {
       include_once PLUGIN_ROOTDIR."/" . $file;
-      if (class_exists($name)) {
-        eval("\$class = new ". $name ."();");
-        $GLOBALS["plugins"][$name] = $class;
+      if (class_exists($className)) {
+        eval("\$pluginInstance = new ". $className ."();");
+        if ($pluginInstance->enabled) {
+          $GLOBALS["plugins"][$className] = $pluginInstance;
+        }
       } else {
-     #   logEvent('Error initiliasing plugin'. $name);
+     #   logEvent('Error initiliasing plugin'. $className);
       }
-#      print "$name = $class<br/>";
+#      print "$className = $pluginInstance<br/>";
     }
   }
   $GLOBALS['pluginsendformats'] = array();
-  foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
-    $plugin_sendformats = $plugin->sendFormats();
+  foreach ($GLOBALS['plugins'] as $className => $pluginInstance) {
+    $plugin_sendformats = $pluginInstance->sendFormats();
     if (is_array($plugin_sendformats) && sizeof($plugin_sendformats)) {
       foreach ($plugin_sendformats as $val => $desc) {
         $val = preg_replace("/\W/",'',strtolower(trim($val)));
-        $GLOBALS['pluginsendformats'][$val] = $pluginname;
+        $GLOBALS['pluginsendformats'][$val] = $className;
       }
     }
   }
