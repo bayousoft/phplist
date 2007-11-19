@@ -49,7 +49,7 @@ $minbatchperiod = -1;
 # check for batch limits
 $ISPrestrictions = '';
 $ISPlockfile = '';
-$rssitems = array();
+//$rssitems = array(); //Obsolete by rssmanager plugin 
 $user_attribute_query = '';
 $lastsent = !empty($_GET['lastsent']) ? sprintf('%d',$_GET['lastsent']):0;
 $lastskipped = !empty($_GET['lastskipped']) ? sprintf('%d',$_GET['lastskipped']):0;
@@ -131,9 +131,10 @@ $nothingtodo = 0;
 $cached = array(); # cache the message from the database to avoid reloading it every time
 
 require_once dirname(__FILE__) .'/sendemaillib.php';
-if (ENABLE_RSS) {
-  require_once dirname(__FILE__) .'/rsslib.php';
-}
+//obsolete, moved to rssmanager plugin 
+//if (ENABLE_RSS) {
+//  require_once dirname(__FILE__) .'/plugins/rssmanager/rsslib.php';
+//}
 
 function my_shutdown () {
   global $script_stage,$reload;
@@ -321,7 +322,7 @@ if ($num_per_batch > 0) {
   return;
 }
 
-$rss_content_threshold = sprintf('%d',getConfig("rssthreshold"));
+//$rss_content_threshold = sprintf('%d',getConfig("rssthreshold")); // obsolete, moved to rssmanager plugin
 if ($reload) {
 #  output("Reload count: $reload");
 #  output("Total processed: ".$reload * $num_per_batch);
@@ -332,7 +333,8 @@ if ($reload) {
 $script_stage = 1; # we are active
 $notsent = $sent = $invalid = $unconfirmed = $cannotsend = 0;
 
-$messages = Sql_query("select id,userselection,rsstemplate,subject from ".$tables["message"]." where status != \"draft\" and status != \"sent\" and status != \"prepared\" and status != \"suspended\" and embargo < now() order by entered");
+//rsstemplate Leftover from the preplugin era
+$messages = Sql_query("select id,userselection,subject,rsstemplate from ".$tables["message"]." where status != \"draft\" and status != \"sent\" and status != \"prepared\" and status != \"suspended\" and embargo < now() order by entered");
 $num_messages = Sql_affected_rows();
 if (Sql_Has_Error($database_connection)) {  ProcessError(Sql_Error($database_connection)); }
 
@@ -365,7 +367,7 @@ while ($message = Sql_fetch_array($messages)) {
 
   $messageid = $message["id"];
   $userselection = $message["userselection"];
-  $rssmessage = $message["rsstemplate"];
+//  $rssmessage = $message["rsstemplate"]; // obsolete, moved to rssmanager plugin
 
   $msgdata = loadMessageData($messageid);
   if (!empty($msgdata['notify_start']) && !isset($msgdata['start_notified'])) {
@@ -380,12 +382,13 @@ while ($message = Sql_fetch_array($messages)) {
   }
 
   output($GLOBALS['I18N']->get('Processing message').' '. $messageid);
-  if (ENABLE_RSS && $message["rsstemplate"]) {
-    $processrss = 1;
-    output($GLOBALS['I18N']->get('Message').' '. $messageid.' '.$GLOBALS['I18N']->get('is an RSS feed for').' '. $GLOBALS['I18N']->get($rssmessage));
-  } else {
-    $processrss = 0;
-  }
+  
+//  if(isset($GLOBALS['plugins']['rssmanager']) && $GLOBALS['plugins']['rssmanager']->enabled && $message["rsstemplate"]) {
+// $processrss = 1;
+//    output($GLOBALS['I18N']->get('Message').' '. $messageid.' '.$GLOBALS['I18N']->get('is an rss feed for').' '. $GLOBALS['I18N']->get($rssmessage));
+//  } else {
+//    $processrss = 0;
+//  }
 
   flush();
   keepLock($send_process_id);
@@ -573,29 +576,40 @@ while ($message = Sql_fetch_array($messages)) {
       $users = Sql_query("select id,email,uniqid,htmlemail,rssfrequency,confirmed,blacklisted from {$tables['user']} where id = $userid");
 
       # pick the first one (rather historical)
-      $user = Sql_fetch_row($users);
+      $user = Sql_fetch_array($users); 
       if ($user[5] && is_email($user[1])) {
         $userid = $user[0];    # id of the user
         $useremail = $user[1]; # email of the user
         $userhash = $user[2];  # unique string of the user
         $htmlpref = $user[3];  # preference for HTML emails
-        $rssfrequency = $user[4];
+//        $rssfrequency = $user[4];
         $confirmed = $user[5];
         $blacklisted = $user[6];
 
-        if (ENABLE_RSS && $processrss) {
-          if ($rssfrequency == $message["rsstemplate"]) {
-            # output("User matches message frequency");
-            $rssitems = rssUserHasContent($userid,$messageid,$rssfrequency);
-            $cansend = sizeof($rssitems) && (sizeof($rssitems) > $rss_content_threshold);
-#            if (!$cansend)
-#              output("No content to send for this user ".sizeof($rssitems));
-          } else {
-            $cansend = 0;
-          }
-        } else {
+//obsolete, moved to rssmanager plugin 
+//        if (ENABLE_RSS && $pxrocessrss) {
+//          if ($rssfrequency == $message["rsstemplate"]) {
+//            # output("User matches message frequency");
+//            $rssitems = rssmanager::rssUserHasContent($userid,$messageid,$rssfrequency);
+//            $cansend = sizeof($rssitems) && (sizeof($rssitems) > $rss_content_threshold);
+//#            if (!$cansend)
+//#              output("No content to send for this user ".sizeof($rssitems));
+//          } else {
+//            $cansend = 0;
+//          }
+//        } else {
           $cansend = !$blacklisted;
-        }
+//        }
+
+## Ask plugins if they are ok with sending this message to this user
+reset($GLOBALS['plugins']);
+while ($cansend && $plugin = current($GLOBALS['plugins']) ) {
+  $cansend = $plugin->canSend($message, $user);
+  next($GLOBALS['plugins']);
+} 
+
+####################################
+# Throttling
 
         $throttled = 0;
         if ($cansend && USE_DOMAIN_THROTTLE) {
@@ -639,7 +653,7 @@ while ($message = Sql_fetch_array($messages)) {
               if (VERBOSE)
                 output($GLOBALS['I18N']->get('Sending').' '. $messageid.' '.$GLOBALS['I18N']->get('to').' '. $useremail);
               $timer = new timer();
-              $success = sendEmail($messageid,$useremail,$userhash,$htmlpref,$rssitems);
+              $success = sendEmail($messageid,$useremail,$userhash,$htmlpref); // $rssitems Obsolete by rssmanager plugin 
               if (VERBOSE) {
                 output($GLOBALS['I18N']->get('It took').' '.$timer->elapsed(1).' '.$GLOBALS['I18N']->get('seconds to send'));
               }
@@ -649,7 +663,10 @@ while ($message = Sql_fetch_array($messages)) {
           } else {
             $success = sendEmailTest($messageid,$useremail);
           }
-          if ($success) {
+
+          #############################
+          # tried to send email , process succes / failure
+          if ( $success) {
             if (USE_DOMAIN_THROTTLE) {
               list($mailbox,$domainname) = explode('@',$useremail);
               if ($domainthrottle[$domainname]['interval'] != $interval) {
@@ -661,14 +678,16 @@ while ($message = Sql_fetch_array($messages)) {
             }
             $sent++;
             $um = Sql_query("replace into {$tables['usermessage']} (entered,userid,messageid,status) values(now(),$userid,$messageid,\"sent\")");
-            if (ENABLE_RSS && $processrss) {
-              foreach ($rssitems as $rssitemid) {
-                $status = Sql_query("update {$tables['rssitem']} set processed = processed +1 where id = $rssitemid");
-                $um = Sql_query("replace into {$tables['rssitem_user']} (userid,itemid) values($userid,$rssitemid)");
-              }
-              Sql_Query("replace into {$tables["user_rss"]} (userid,last) values($userid,date_sub(now(),interval 15 minute))");
 
-              }
+//obsolete, moved to rssmanager plugin 
+//            if (ENABLE_RSS && $pxrocessrss) {
+//              foreach ($rssitems as $rssitemid) {
+//                $status = Sql_query("update {$tables['rssitem']} set processed = processed +1 where id = $rssitemid");
+//                $um = Sql_query("replace into {$tables['rssitem_user']} (userid,itemid) values($userid,$rssitemid)");
+//              }
+//              Sql_Query("replace into {$tables["user_rss"]} (userid,last) values($userid,date_sub(now(),interval 15 minute))");
+//
+//              }
            } else {
              $failed_sent++;
              if (VERBOSE) {
@@ -683,6 +702,7 @@ while ($message = Sql_fetch_array($messages)) {
                  $GLOBALS['tables']['user'],$useremail));
              }
            }
+           
            if ($script_stage < 5) {
              $script_stage = 5; # we have actually sent one user
            }
@@ -776,7 +796,7 @@ while ($message = Sql_fetch_array($messages)) {
     }
     $totaltime = $GLOBALS['processqueue_timer']->elapsed(1);
     $msgperhour = (3600/$totaltime) * $sent;
-    $secpermsg = $totaltime / $sent;
+    $secpermsg = $sent ? $totaltime / $sent : 0;
     $timeleft = ($num_users - $sent) * $secpermsg;
     $eta = date('D j M H:i',time()+$timeleft);
     setMessageData($messageid,'ETA',$eta);
@@ -821,6 +841,5 @@ while ($message = Sql_fetch_array($messages)) {
 
 if (!$num_messages)
   $script_stage = 6; # we are done
-# shutdown will take care of reporting
-
+# shutdown will take care of reporting  
 ?>
