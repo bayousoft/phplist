@@ -9,7 +9,8 @@ require_once dirname(__FILE__)."/accesscheck.php";
 if (!defined("REGISTER")) define("REGISTER",1);
 if (!defined("USE_PDF")) define("USE_PDF",0);
 if (!defined("VERBOSE")) define("VERBOSE",0);
-if (!defined("ENABLE_RSS")) define("ENABLE_RSS",0);
+// obsolete by rssmanager plugin
+// if (!defined("ENABLE_RSxS")) define("ENABLE_RSxS",0);
 if (!defined("ALLOW_ATTACHMENTS")) define("ALLOW_ATTACHMENTS",0);
 if (!defined("EMAILTEXTCREDITS")) define("EMAILTEXTCREDITS",0);
 if (!defined("PAGETEXTCREDITS")) define("PAGETEXTCREDITS",0);
@@ -1006,13 +1007,14 @@ if (!function_exists('formatbytes')) {
   }
 }
 
-function validateRssFrequency($freq = '') {
-  if (!$freq) return '';
-  if (in_array($freq,array_keys($GLOBALS['rssfrequencies']))) {
-    return $freq;
-  }
-  return '';
-}
+// Moved to subscribelib2, since itś only used there
+//function validaterssFrequency($freq = '') {
+//  if (!$freq) return '';
+//  if (in_array($freq,array_keys($GLOBALS['rssfrequencies']))) {
+//    return $freq;
+//  }
+//  return '';
+//}
 
 class timer {
   var $start;
