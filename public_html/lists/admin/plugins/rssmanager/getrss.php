@@ -1,11 +1,12 @@
 <?php
-require_once 'accesscheck.php';
+require_once dirname(__FILE__) . '/../../accesscheck.php';
+
 if (!$GLOBALS['commandline']) {
-	ob_end_flush();
-	if (!MANUALLY_PROCESS_RSS) {
-		print $GLOBALS['I18N']->get('This page can only be called from the commandline');
-		return;
-	}
+  ob_end_flush();
+  if (!MANUALLY_PROCESS_RSS) {
+    print $GLOBALS['I18N']->get('This page can only be called from the commandline');
+    return;
+  }
 } else {
   ob_end_clean();
   print ClineSignature();
@@ -13,7 +14,7 @@ if (!$GLOBALS['commandline']) {
   ob_start();
 }
 
-# @@@@ Not sure if this is 118nable.
+#@@Not sure if this is 118nable.
 function ProcessError($message) {
   print "$message";
   logEvent("Error: $message");
@@ -57,8 +58,8 @@ function finish($flag = "info", $message = 'finished') {
 $abort = ignore_user_abort(1);
 set_time_limit(600);
 
-include 'onyxrss/onyx-rss.php';
-error_reporting(0);
+require_once dirname(__FILE__) . '/../../onyxrss/onyx-rss.php'; 
+#error_reporting(0);
 $nothingtodo = 1;
 $mailreport = '';
 $process_id = getPageLock();
@@ -68,7 +69,8 @@ while ($feed = Sql_Fetch_Row($req)) {
   # this part runs per list that has a feed URL
   $nothingtodo = 0;
   output('<hr>' . $GLOBALS['I18N']->get('Parsing') . ' ' . $feed[0] . '..');
-  flush();
+  //flush();
+  flushBrowser();
   $report = $GLOBALS['I18N']->get('Parsing') . ' ' . $feed[0];
   $mailreport .= "\n$feed[0] ";
   $itemcount = 0;
@@ -105,7 +107,7 @@ while ($feed = Sql_Fetch_Row($req)) {
       $itemcount++;
       Sql_Query(sprintf('SELECT * FROM %s WHERE title = "%s" AND link = "%s" AND list = "%s"', 
         $tables["rssitem"], addslashes(substr($item["title"], 0, 100)), 
-        addslashes(substr($item["link"], 0, 100)), addslashes($feed[4])));
+        addslashes(substr($item["link"], 0, 100)), addslashes($feed[1])));
       if (!Sql_Affected_Rows()) {
         $newitemcount++;
         Sql_Query(sprintf(
@@ -127,7 +129,7 @@ while ($feed = Sql_Fetch_Row($req)) {
     $mailreport .= sprintf('-> %d items, %d new items' . "\n", $itemcount, $newitemcount);
   }
   flush();
-  # purpose unkown #@@ Remove in 2.11 if no purpose found
+  # purpose unkown #@B@ Remove in 2.11 if no purpose found
   Sql_Query(sprintf(
     'INSERT INTO %s (listid,type,entered,info) ' .
     'VALUES(%d,"retrieval",now(),"%s")', $tables["listrss"], $feed[1], $report));

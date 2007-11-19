@@ -1,20 +1,20 @@
 <script language="Javascript" src="js/jslib.js" type="text/javascript"></script>
 <?php
-require_once dirname(__FILE__) . '/accesscheck.php';
+require_once dirname(__FILE__) . '/../../accesscheck.php';
 
-if ($delete) {
-  # delete the index in delete
-  print "Deleting $delete ..";
-  $result = Sql_query("delete from " . $tables["rssitem"] . " where id = $delete");
-  $suc6 = Sql_Affected_Rows();
-  $result = Sql_query("delete from " . $tables["rssitem_data"] . " where itemid = $delete");
-  $result = Sql_query("delete from " . $tables["rssitem_user"] . " where itemid = $delete");
-  if ($suc6)
-    print "..Done";
-  else
-    print "..failed";
-  print "<br /><hr /><br />\n";
-}
+//if ($delete) {
+//  # delete the index in delete
+//  print "Deleting $delete ..";
+//  $result = Sql_query("delete from " . $tables["rssitem"] . " where id = $delete");
+//  $suc6 = Sql_Affected_Rows();
+//  $result = Sql_query("delete from " . $tables["rssitem_data"] . " where itemid = $delete");
+//  $result = Sql_query("delete from " . $tables["rssitem_user"] . " where itemid = $delete");
+//  if ($suc6)
+//    print "..Done";
+//  else
+//    print "..failed";
+//  print "<br /><hr /><br />\n";
+//}
 
 if ($GLOBALS["require_login"] && !isSuperUser()) {
   $access = accessLevel("viewrss");
@@ -39,7 +39,7 @@ if ($GLOBALS["require_login"] && !isSuperUser()) {
 } else {
   $querytables = $tables["rssitem"];
   $subselect = "";
-  if ($_GET["id"]) {
+  if (isset($_GET["id"]) && $_GET["id"]) {
     $pagingurl = '&id=' . $_GET["id"];
     $subselect = "where " . $tables["rssitem"] . ".list = " . $_GET["id"];
     print "RSS items for " . ListName($_GET["id"]) . "<br/>";
@@ -58,6 +58,7 @@ if (isset ($start) && $start > 0) {
   $start = 0;
 }
 print $total . " RSS Items</p>";
+if (!isset($pagingurl)) { $pagingurl= ""; }
 if ($total)
   printf('<table border=1><tr><td colspan=4 align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
             %s</td><td>%s</td></tr></table><p><hr>', $listing, PageLink2("viewrss$pagingurl", "&lt;&lt;", "start=0"), PageLink2("viewrss$pagingurl", "&lt;", sprintf('start=%d', max(0, $start -MAX_MSG_PP))), PageLink2("viewrss$pagingurl", "&gt;", sprintf('start=%d', min($total, $start +MAX_MSG_PP))), PageLink2("viewrss$pagingurl", "&gt;&gt;", sprintf('start=%d', $total -MAX_MSG_PP)));

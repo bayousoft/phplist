@@ -1,5 +1,5 @@
 <?php
-require_once dirname(__FILE__).'/accesscheck.php';
+require_once dirname(__FILE__) . '/../../accesscheck.php';
 
 if (isset($_POST['daysago'])) {
   $daysago = sprintf('%d',$_POST['daysago']);
@@ -27,9 +27,9 @@ if ($daysago) {
 print '<p>'.$GLOBALS['I18N']->get('Purge RSS items from database').'</p>';
 print '<p>'.$GLOBALS['I18N']->get('Enter the number of days to go back purging entries').'</p>';
 print '<p>'.$GLOBALS['I18N']->get('All entries that are older than the number of days you enter will be purged.').'</p>';
-print '<form method="post" action="">' .
-  '<input type=text name="daysago" value="30" size=7>' .
-  '<br><br>' .
-  '<input name="purge" value="Purge" type="submit">' .
-  '</form>';
+print '<form method="post" action="">' ;
+print '  <input type=text name="daysago" value="30" size=7>';
+print '  <input type=submit name="submit" value="Purge">';
+print '</form>';
+
 ?>
