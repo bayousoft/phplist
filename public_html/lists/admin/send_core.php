@@ -26,7 +26,7 @@ if (USETINYMCEMESG && file_exists(TINYMCEPATH)) {
 include $GLOBALS["coderoot"] . "date.php";
 
 $errormsg = '';
-$rss_content = '';
+//$rss_content = '';          //Obsolete by rssmanager plugin 
 $done = 0;
 $messageid = 0;
 $duplicate_atribute = 0; # not actually used it seems @@@ check
@@ -247,27 +247,34 @@ if ($send || $sendtest || $prepare || $save) {
       }
     }
   }
+  
+//Obsolete by rssmanager plugin
+//   if (ENABLE_RSS && $_POST["rsstemplate"]) {
+//    # mark previous RSS templates with this frequency and owner as sent
+//    # this should actually be much more complex than this:
+//    # templates should be allowed by list and therefore a subset of lists, but
+//    # for now we leave it like this
+//    # the trouble is that this may duplicate RSS messages to users, because
+//    # it can cause multiple template for lists. The user_rss should handle that, but it is
+//    # not guaranteed which message will be used.
+//#    Sql_Query(sprintf('update %s set status = "sent" where rsstemplate = "%s" and owner = %d',
+//#      $tables["message"],$_POST["rsstemplate"],$_SESSION["logindetails"]["id"]));
+//
+//
+//    # with RSS message we enforce repeat
+//    switch ($_POST["rsstemplate"]) {
+//      case "weekly": $_POST["repeatinterval"] = 10080; break;
+//      case "monthly": $_POST["repeatinterval"] = 40320; break;
+//      case "daily":
+//      default: $_POST["repeatinterval"] = 1440; break;
+//    }
+//    $_POST["repeatuntil"] = date("Y-m-d H:i:00",mktime(0,0,0,date("m"),date("d"),date("Y")+1));
+//  }
 
-  if (ENABLE_RSS && $_POST["rsstemplate"]) {
-    # mark previous RSS templates with this frequency and owner as sent
-    # this should actually be much more complex than this:
-    # templates should be allowed by list and therefore a subset of lists, but
-    # for now we leave it like this
-    # the trouble is that this may duplicate RSS messages to users, because
-    # it can cause multiple template for lists. The user_rss should handle that, but it is
-    # not guaranteed which message will be used.
-#    Sql_Query(sprintf('update %s set status = "sent" where rsstemplate = "%s" and owner = %d',
-#      $tables["message"],$_POST["rsstemplate"],$_SESSION["logindetails"]["id"]));
-
-
-    # with RSS message we enforce repeat
-    switch ($_POST["rsstemplate"]) {
-      case "weekly": $_POST["repeatinterval"] = 10080; break;
-      case "monthly": $_POST["repeatinterval"] = 40320; break;
-      case "daily":
-      default: $_POST["repeatinterval"] = 1440; break;
-    }
-    $_POST["repeatuntil"] = date("Y-m-d H:i:00",mktime(0,0,0,date("m"),date("d"),date("Y")+1));
+  ### allow plugins manipulate data or save it somewhere else
+  $plugintabs = array();
+  foreach ($GLOBALS['plugins'] as $plugin) {
+    $resultMsg = $plugin->sendMessageTabSave($id,$messagedata);
   }
 
   if (!$htmlformatted  && strip_tags($_POST["message"]) !=  $_POST["message"])
@@ -288,7 +295,7 @@ if ($send || $sendtest || $prepare || $save) {
       'htmlformatted = %d, '.
       'sendformat  =  "%s",  '.
       'template  =  %d,  '.
-      'rsstemplate = "%s"  '.
+      'rsstemplate = "%s"  '.         //Leftover from the preplugin era
       'where id  =  %d',
       $tables["message"],
       addslashes($subject),
@@ -305,7 +312,7 @@ if ($send || $sendtest || $prepare || $save) {
       $htmlformatted,
       $_POST["sendformat"],
       $_POST["template"],
-      $_POST["rsstemplate"],
+      $_POST["rsstemplate"],          //Leftover from the preplugin era
       $id);
 #    print $query;
     $result  =  Sql_query($query);
@@ -611,6 +618,7 @@ if ($send || $sendtest || $prepare || $save) {
     foreach ($emailaddresses as $address) {
       $address = trim($address);
       $result = Sql_query(sprintf('select id,email,uniqid,htmlemail,rssfrequency,confirmed from %s where email = "%s"',$tables["user"],$address));
+                                                                                                          //Leftover from the preplugin era
       if ($user = Sql_fetch_array($result)) {
         if (SEND_ONE_TESTMAIL) {
           $success = sendEmail($id, $address, $user["uniqid"], $user['htmlemail']);
@@ -1036,15 +1044,16 @@ if (!$done) {
     $formatting_content .= '</select></td></tr>';
   }
 
-  if (ENABLE_RSS) {
-    $rss_content .= '<tr><td colspan=2>'.$GLOBALS['I18N']->get("rssintro").'
-    </td></tr>';
-    $rss_content .= '<tr><td colspan=2><input type=radio name="rsstemplate" value="none">'.$GLOBALS['I18N']->get("none").' ';
-    foreach ($rssfrequencies as $key => $val) {
-      $rss_content .= sprintf('<input type=radio name="rsstemplate" value="%s" %s>%s ',$key,$_POST["rsstemplate"] == $key ? "checked":"",$val);
-    }
-    $rss_content .= '</td></tr>';
-  }
+//obsolete, moved to rssmanager plugin 
+//  if (ENABLE_RSS) {
+//    $rss_content .= '<tr><td colspan=2>'.$GLOBALS['I18N']->get("rssintro").'
+//    </td></tr>';
+//    $rss_content .= '<tr><td colspan=2><input type=radio name="rsstemplate" value="none">'.$GLOBALS['I18N']->get("none").' ';
+//    foreach ($rssfrequencies as $key => $val) {
+//      $rss_content .= sprintf('<input type=radio name="rsstemplate" value="%s" %s>%s ',$key,$_POST["rsstemplate"] == $key ? "checked":"",$val);
+//    }
+//    $rss_content .= '</td></tr>';
+//  }
 
   $maincontent .= '<tr><td colspan=2>'.Help("message").' '.$GLOBALS['I18N']->get("message").'. </td></tr>
 
@@ -1514,8 +1523,8 @@ if (!$done) {
       $tabs->addTab($GLOBALS['I18N']->get("Attach"),"$baseurl&amp;tab=Attach");
     }
     $tabs->addTab($GLOBALS['I18N']->get("Scheduling"),"$baseurl&amp;tab=Scheduling");
-#    if (USE_RSS) {
-#      $tabs->addTab("RSS","$baseurl&amp;tab=RSS");
+#    if (USE_rss) {
+#      $tabs->addTab("rss","$baseurl&amp;tab=rss");
 #    }
     $tabs->addTab($GLOBALS['I18N']->get("Criteria"),"$baseurl&amp;tab=Criteria");
     $tabs->addTab($GLOBALS['I18N']->get("Lists"),"$baseurl&amp;tab=Lists");
@@ -1599,7 +1608,7 @@ if (!$done) {
     case "Criteria": print $criteria_content; break;
     case "Format": print $formatting_content;break;
     case "Scheduling": print $scheduling_content;
-    case "RSS": print $rss_content;break;
+//    case "RSS": print $rss_content;break;            //Obsolete by rssmanager plugin
     case "Lists": $show_lists = 1;break;
     case "Review": print $review_content; break;
     case "Misc": print $misc_content; break;

@@ -36,8 +36,7 @@ if (!empty($_GET['id'])) {
 if ($id)
   echo "<br />".PageLink2("members",$GLOBALS['I18N']->get('Members of this list'),"id=$id");
 echo "<hr />";
-
-if (isset($_POST["save"]) && isset($_POST["listname"]) && $_POST["listname"]) {
+if (isset($_POST["save"]) && $_POST["save"] == $GLOBALS['I18N']->get('Save') && isset($_POST["listname"]) && $_POST["listname"]) {
   if ($GLOBALS["require_login"] && !isSuperUser())
     $owner = $_SESSION["logindetails"]["id"];
   if (!isset($_POST["active"])) $_POST["active"] = 0;
@@ -45,21 +44,26 @@ if (isset($_POST["save"]) && isset($_POST["listname"]) && $_POST["listname"]) {
 
   if ($id) {
     $query = sprintf('update %s set name="%s",description="%s",
-    active=%d,listorder=%d,prefix = "%s", owner = %d, rssfeed = "%s"
+    active=%d,listorder=%d,prefix = "%s", owner = %d
     where id=%d',$tables["list"],addslashes($_POST["listname"]),
     addslashes($_POST["description"]),$_POST["active"],$_POST["listorder"],
-    $_POST["prefix"],$_POST["owner"],$_POST["rssfeed"],$id);
+    $_POST["prefix"],$_POST["owner"],$id);
   } else {
     $query = sprintf('insert into %s
-      (name,description,entered,listorder,owner,prefix,rssfeed,active)
-      values("%s","%s",now(),%d,%d,"%s","%s",%d)',
+      (name,description,entered,listorder,owner,prefix,active)
+      values("%s","%s",now(),%d,%d,"%s",%d)',
       $tables["list"],addslashes($_POST["listname"]),addslashes($_POST["description"]),
-      $_POST["listorder"],$_POST["owner"],$_POST["prefix"],$_POST["rssfeed"],$_POST["active"]);
+      $_POST["listorder"],$_POST["owner"],$_POST["prefix"],$_POST["active"]);
   }
 #  print $query;
   $result = Sql_Query($query);
   if (!$id)
     $id = sql_insert_id();
+  ## allow plugins to save their fields
+  foreach ($GLOBALS['plugins'] as $plugin) {
+    $result = $result && $plugin->processEditList($id);
+  } 
+    
   Redirect('list');
   echo "<br><font color=red size=+1>" . $GLOBALS['I18N']->get('Record Saved') . ": $id</font><br>";
 }
@@ -70,11 +74,10 @@ if (!empty($id)) {
 } else {
   $list = array(
     'name' => '',
-    'rssfeed' => '',
+//    'rssfeed' => '',  //Obsolete by rssmanager plugin 
     'active' => 0,
     'listorder' => 0,
     'description' => '',
-
   );
 }
 ob_end_flush();
@@ -98,18 +101,24 @@ ob_end_flush();
 } else {
   print '<input type=hidden name="owner" value="'.$_SESSION["logindetails"]["id"].'">';
 }
-if (ENABLE_RSS) {
- if (!empty($list["rssfeed"])) {
-   $validate = sprintf('(<a href="http://feedvalidator.org/check?url=%s" target="_blank">%s</a>)',urlencode($list["rssfeed"]),$GLOBALS['I18N']->get('validate'));
-   $viewitems = PageLink2("viewrss&id=".$id,$GLOBALS['I18N']->get('View Items'));
- } else {
-   $validate = '';
-   $viewitems = '';
- }
- printf('<tr><td>%s %s %s</td><td><input type=text name="rssfeed" value="%s" size=50></td></tr>',
-   $GLOBALS['I18N']->get('RSS Source'), $validate,$viewitems,htmlspecialchars($list["rssfeed"]));
-}
+//obsolete, moved to rssmanager plugin 
+//if (ENABLE_RSS) {
+// if (!empty($list["rssfeed"])) {
+//   $validate = sprintf('(<a href="http://feedvalidator.org/check?url=%s" target="_blank">%s</a>)',urlencode($list["rssfeed"]),$GLOBALS['I18N']->get('validate'));
+//   $viewitems = PageLink2("viewrss&id=".$id,$GLOBALS['I18N']->get('View Items'));
+// } else {
+//   $validate = '';
+//   $viewitems = '';
+// }
+// printf('<tr><td>%s %s %s</td><td><input type=text name="rssfeed" value="%s" size=50></td></tr>',
+//   $GLOBALS['I18N']->get('rss Source'), $validate,$viewitems,htmlspecialchars($list["rssfeed"]));
+//}
 
+  ### allow plugins to add rows
+  foreach ($GLOBALS['plugins'] as $plugin) {
+    print $plugin->displayEditList($list);
+  } 
+  
 ?>
 <tr><td colspan=2><?php echo $GLOBALS['I18N']->get('List Description'); ?></td></tr>
 <tr><td colspan=2><textarea name="description" cols="55" rows="15"><?php echo htmlspecialchars(StripSlashes($list["description"])) ?></textarea></td></tr>

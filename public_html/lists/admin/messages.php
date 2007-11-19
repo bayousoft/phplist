@@ -57,8 +57,9 @@ if (!isset($_GET["type"]) && !empty($_SESSION["lastmessagetype"])) {
 #print PageLink2("messages&type=draft","Draft Messages").'&nbsp;&nbsp;&nbsp;';
 #print PageLink2("messages&type=queue","Queued Messages").'&nbsp;&nbsp;&nbsp;';
 #print PageLink2("messages&type=stat","Static Messages").'&nbsp;&nbsp;&nbsp;';
+//obsolete, moved to rssmanager plugin 
 #if (ENABLE_RSS) {
-#  print PageLink2("messages&type=rss","RSS Messages").'&nbsp;&nbsp;&nbsp;';
+#  print PageLink2("messages&type=rss","rss Messages").'&nbsp;&nbsp;&nbsp;';
 #}
 #print '</p>';
 
@@ -70,6 +71,7 @@ $tabs->addTab($GLOBALS['I18N']->get("queued"),PageUrl2("messages&type=queued"));
 if (USE_PREPARE) {
   $tabs->addTab($GLOBALS['I18N']->get("static"),PageUrl2("messages&type=static"));
 }
+//obsolete, moved to rssmanager plugin 
 #if (ENABLE_RSS) {
 #  $tabs->addTab("rss",PageUrl2("messages&type=rss"));
 #}
@@ -291,7 +293,7 @@ if ($total) {
         ',$msg["bouncecount"]):""
         );
     } else { ##Status <> sent
-      $status = $msg['status'].'<br/>'.$msg['rsstemplate'];
+//      $status = $msg['status'].'<br/>'.$msg['rsstemplate']; //Obsolete by rssmanager plugin 
       if ($msg['status'] == 'inprocess') {
 /*        $status .= '<br/>'.
         '<meta http-equiv="Refresh" content="300">'.
@@ -325,6 +327,11 @@ if ($total) {
     }
 
     $totalsent = $msg['astext'] + $msg['ashtml'] + $msg['astextandhtml'] + $msg['aspdf'] + $msg['astextandpdf'];
+
+    ## allow plugins to add information
+    foreach ($GLOBALS['plugins'] as $plugin) {
+      $plugin->displayMessages($msg, $status);
+    } 
 
     printf('
       <td>

@@ -71,14 +71,23 @@ if (isset($_POST["save"]) || isset($_POST["activate"]) || isset($_POST["deactiva
     Sql_Query(sprintf('replace into %s (id,name,data) values(%d,"lists","%s")',
        $tables["subscribepage_data"],$id,join(',',$_POST['list'])));
   }
-  if (ENABLE_RSS) {
-    Sql_Query(sprintf('replace into %s (id,name,data) values(%d,"rssintro","%s")',
-       $tables["subscribepage_data"],$id,$rssintro));
-    Sql_Query(sprintf('replace into %s (id,name,data) values(%d,"rss","%s")',
-       $tables["subscribepage_data"],$id,join(',',$rss)));
-    Sql_Query(sprintf('replace into %s (id,name,data) values(%d,"rssdefault","%s")',
-       $tables["subscribepage_data"],$id,$rssdefault));
-  }
+ 
+//obsolete, moved to rssmanager plugin 
+//  if (ENABLE_RSS) {
+//    Sql_Query(sprintf('replace into %s (id,name,data) values(%d,"rssintro","%s")',
+//       $tables["subscribepage_data"],$id,$rssintro));
+//    Sql_Query(sprintf('replace into %s (id,name,data) values(%d,"rss","%s")',
+//       $tables["subscribepage_data"],$id,join(',',$rss)));
+//    Sql_Query(sprintf('replace into %s (id,name,data) values(%d,"rssdefault","%s")',
+//       $tables["subscribepage_data"],$id,$rssdefault));
+//  }
+
+  ### Store plugin data
+  foreach ($GLOBALS['plugins'] as $plugin) {
+    $plugin->processSubscribePageEdit($id);
+  } 
+  
+
   if (!empty($_POST['activate'])) {
     Sql_Query(sprintf('update %s set active = 1 where id = %d',
       $tables["subscribepage"],$id));
@@ -109,9 +118,9 @@ $data["confirmationmessage"] = getConfig("confirmationmessage");
 $data["confirmationsubject"] = getConfig("confirmationsubject");
 $data["htmlchoice"] = "checkforhtml";
 $data["emaildoubleentry"] = "yes";
-$data["rssdefault"] = "daily";
-$data["rssintro"] = $GLOBALS['I18N']->get('Please indicate how often you want to receive messages');
-$rss = array_keys($rssfrequencies);
+$data["rssdefault"] = "daily";                                                                                                                          //Leftover from the preplugin era
+$data["rssintro"] = $GLOBALS['I18N']->get('Please indicate how often you want to receive messages');  //Leftover from the preplugin era
+//$rss = array_keys($rssfrequencies);   //Obsolete by rssmanager plugin
 $selected_lists = array();
 $attributedata = array();
 
@@ -124,11 +133,11 @@ if ($id) {
   $ownerreq = Sql_Fetch_Row_Query(sprintf('select owner from %s where id = %d',$GLOBALS['tables']['subscribepage'],$id));
   $data['owner'] = $ownerreq[0];
   $attributes = explode('+',$data["attributes"]);
-  if (isset($data['rss'])) {
-    $rss = explode(",",$data["rss"]);
-  } else { 
-    $rss = array();
-  }
+//  if (isset($data['rss'])) {                      //Obsolete by rssmanager plugin
+//    $rss = explode(",",$data["rss"]);
+//  } else { 
+//    $rss = array();
+//  }
   foreach ($attributes as $attribute) {
     if (!empty($data[sprintf('attribute%03d',$attribute)])) {
         list($attributedata[$attribute]["id"],
@@ -271,26 +280,32 @@ print '<tr><td colspan=2><h1>'.$GLOBALS['I18N']->get('Select the attributes to u
 
 print '</td></tr>';
 
-if (ENABLE_RSS) {
-  print '<tr><td colspan=2><h1>'.$GLOBALS['I18N']->get('RSS settings').'</h1></td></tr>';
-  printf('<tr><td valign=top>'.$GLOBALS['I18N']->get('Intro Text').'</td><td>
-  <textarea name=rssintro rows=3 cols=60>%s</textarea></td></tr>',
-    htmlspecialchars(stripslashes($data["rssintro"])));
-  foreach ($rssfrequencies as $key => $val) {
-    printf('<tr><td colspan=2><input type=checkbox name="rss[]" value="%s" %s> %s %s
-    (%s <input type=radio name="rssdefault" value="%s" %s>)
-    </td></tr>',
+//obsolete, moved to rssmanager plugin 
+//if (ENABLE_RSS) {
+//  print '<tr><td colspan=2><h1>'.$GLOBALS['I18N']->get('rss settings').'</h1></td></tr>';
+//  printf('<tr><td valign=top>'.$GLOBALS['I18N']->get('Intro Text').'</td><td>
+//  <textarea name=rssintro rows=3 cols=60>%s</textarea></td></tr>',
+//    htmlspecialchars(stripslashes($data["rssintro"])));
+//  foreach ($rssfrequencies as $key => $val) {
+//    printf('<tr><td colspan=2><input type=checkbox name="rss[]" value="%s" %s> %s %s
+//    (%s <input type=radio name="rssdefault" value="%s" %s>)
+//    </td></tr>',
+//
+//    $key,in_array($key,$rss)?"checked":"",
+//    $GLOBALS['I18N']->get('Offer option to receive'),
+//    $GLOBALS['I18N']->get($val),
+//    $GLOBALS['I18N']->get('default'),
+//    $key,$data["rssdefault"] == $key ? "checked":""
+//    );
+//  }
+//  print "<tr><td colspan=2><hr></td></tr>";
+//}
 
-    $key,in_array($key,$rss)?"checked":"",
-    $GLOBALS['I18N']->get('Offer option to receive'),
-    $GLOBALS['I18N']->get($val),
-    $GLOBALS['I18N']->get('default'),
-    $key,$data["rssdefault"] == $key ? "checked":""
-    );
-  }
-  print "<tr><td colspan=2><hr></td></tr>";
-}
-
+  ### allow plugins to add rows
+  foreach ($GLOBALS['plugins'] as $plugin) {
+    print $plugin->displaySubscribepageEdit($data);
+  } 
+  
 print '<tr><td colspan=2><h1>'.$GLOBALS['I18N']->get('Select the lists to offer').'</h1></td></tr>';
 
 $req = Sql_query("SELECT * FROM {$tables["list"]} $subselect order by listorder");

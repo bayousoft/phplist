@@ -42,15 +42,23 @@ $result = Sql_query("SELECT * FROM $tables[list] $subselect order by listorder")
 while ($row = Sql_fetch_array($result)) {
   $count = Sql_Fetch_Row_Query("select count(*) from {$tables['listuser']} where listid = {$row["id"]} ");
   $desc = stripslashes($row['description']);
-  if ($row['rssfeed']) {
-    $feed = $row['rssfeed'];
-    # reformat string, so it wraps if it's very long
-    $feed = ereg_replace("/","/ ",$feed);
-    $feed = ereg_replace("&","& ",$feed);
-    $desc = sprintf('%s: <a href="%s" target="_blank">%s</a><br /> ', $GLOBALS['I18N']->get('RSS source'), $row['rssfeed'], $feed) .
-    PageLink2("viewrss&id=".$row["id"],$GLOBALS['I18N']->get('(View Items)')) . '<br />'.
-    $desc;
-  }
+
+//Obsolete by rssmanager plugin 
+//  if ($row['rssfeed']) {
+//    $feed = $row['rssfeed'];
+//    # reformat string, so it wraps if it's very long
+//    $feed = ereg_replace("/","/ ",$feed);
+//    $feed = ereg_replace("&","& ",$feed);
+//    $desc = sprintf('%s: <a href="%s" target="_blank">%s</a><br /> ', $GLOBALS['I18N']->get('rss source'), $row['rssfeed'], $feed) .
+//    PageLink2("viewrss&id=".$row["id"],$GLOBALS['I18N']->get('(View Items)')) . '<br />'.
+//    $desc;
+//  }
+
+  ## allow plugins to add columns
+  foreach ($GLOBALS['plugins'] as $plugin) {
+    $desc = $plugin->displayLists($row) . $desc;
+  } 
+
   $html .= sprintf('
     <tr>
       <td valign="top">%d</td><td valign="top"><b>%s</b><br/>%d %s </td>

@@ -217,9 +217,10 @@ if (isset($id)) {
           PageLink2("members","&gt;",sprintf('start=%d&id=%d',min($total,$start+MAX_USER_PP),$id)),
           PageLink2("members","&gt;&gt;",sprintf('start=%d&id=%d',$total-MAX_USER_PP,$id)));
   }
-  $result = Sql_query("SELECT $tables[user].id,email,confirmed,rssfrequency FROM
-    {$tables["listuser"]},{$tables["user"]} where {$tables["listuser"]}.listid = $id and
-    {$tables["listuser"]}.userid = {$tables["user"]}.id order by confirmed desc,email $limit");
+//  $result = Sql_query("SELECT $tables[user].id,email,confirmed,rssfrequency FROM // so plugins can use all fields
+  $result = Sql_query("SELECT * FROM
+    {$tables["listuser"]},{$tables["user"]} WHERE {$tables["listuser"]}.listid = $id AND
+    {$tables["listuser"]}.userid = {$tables["user"]}.id ORDER BY confirmed desc,email $limit");
   print formStart('name=users');
   printf('<input type=hidden name="id" value="%d">',$id);
   ?>
@@ -250,18 +251,25 @@ if (isset($id)) {
       where {$tables["listmessage"]}.listid = $id and {$tables["listmessage"]}.messageid = {$tables["usermessage"]}.messageid
       and {$tables["usermessage"]}.userid = {$user["id"]}");
     $ls->addColumn($user["email"],$GLOBALS['I18N']->get("# msgs"),$msgcount[0]);
-    if (ENABLE_RSS) {
-      $msgcount = Sql_Fetch_Row_Query("select count(*) from {$tables["rssitem"]},{$tables["rssitem_user"]}
-        where {$tables["rssitem"]}.list = $id and {$tables["rssitem"]}.id = {$tables["rssitem_user"]}.itemid and
-        {$tables["rssitem_user"]}.userid = {$user["id"]}");
-      if ($msgcount[0])
-        $ls->addColumn($user["email"],$GLOBALS['I18N']->get("# rss"),$msgcount[0]);
-      if ($user["rssfrequency"])
-        $ls->addColumn($user["email"],$GLOBALS['I18N']->get("rss freq"),$user["rssfrequency"]);
-      $last = Sql_Fetch_Row_Query("select last from {$tables["user_rss"]} where userid = ".$user["id"]);
-      if ($last[0])
-        $ls->addColumn($user["email"],$GLOBALS['I18N']->get("last sent"),$last[0]);
-    }
+
+    ## allow plugins to add columns
+    foreach ($GLOBALS['plugins'] as $plugin) {
+      $plugin->displayUserColumn($user,  $user['email'], $ls);
+    } 
+
+// obsolete by rssmanager plugin
+//    if (ENABLE_RSS) {
+//      $msgcount = Sql_Fetch_Row_Query("select count(*) from {$tables["rssitem"]},{$tables["rssitem_user"]}
+//        where {$tables["rssitem"]}.list = $id and {$tables["rssitem"]}.id = {$tables["rssitem_user"]}.itemid and
+//        {$tables["rssitem_user"]}.userid = {$user["id"]}");
+//      if ($msgcount[0])
+//        $ls->addColumn($user["email"],$GLOBALS['I18N']->get("# rss"),$msgcount[0]);
+//      if ($user["rssfrequency"])
+//        $ls->addColumn($user["email"],$GLOBALS['I18N']->get("rss freq"),$user["rssfrequency"]);
+//      $last = Sql_Fetch_Row_Query("select last from {$tables["user_rss"]} where userid = ".$user["id"]);
+//      if ($last[0])
+//        $ls->addColumn($user["email"],$GLOBALS['I18N']->get("last sent"),$last[0]);
+//    }
     if (sizeof($columns)) {
       # let's not do this when not required, adds rather many db requests
       $attributes = getUserAttributeValues('',$user['id']);

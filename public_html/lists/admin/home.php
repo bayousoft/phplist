@@ -245,29 +245,31 @@ if (checkAccess("bounces")) {
 if ($some)
   print $ls->display();
 
-$some = 0;
-$ls = new WebblerListing($GLOBALS['I18N']->get('RSS Functions'));
-if (checkAccess("getrss") && MANUALLY_PROCESS_RSS) {
-  $some = 1;
-  $element = $GLOBALS['I18N']->get('getrss');
-  $ls->addElement($element,PageURL2("getrss"));
-  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Get RSS feeds'));
-}
-if (checkAccess("viewrss")) {
-  $some = 1;
-  $element = $GLOBALS['I18N']->get('viewrss');
-  $ls->addElement($element,PageURL2("viewrss"));
-  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('View RSS items'));
-}
-if (checkAccess("purgerss")) {
-  $some = 1;
-  $element = $GLOBALS['I18N']->get('purgerss');
-  $ls->addElement($element,PageURL2("purgerss"));
-  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Purge RSS items'));
-}
-
-if ($some && ENABLE_RSS)
-  print $ls->display();
+//obsolete, moved to rssmanager plugin
+//$some = 0;
+//$ls = new WebblerListing($GLOBALS['I18N']->get('rss Functions'));
+//if (checkAccess("getrss") && MANUALLY_PROCESS_rss) {
+//  $some = 1;
+//  $element = $GLOBALS['I18N']->get('getrss');
+//  $ls->addElement($element,PageURL2("getrss"));
+//  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Get rss feeds'));
+//}
+//if (checkAccess("viewrss")) {
+//  $some = 1;
+//  $element = $GLOBALS['I18N']->get('viewrss');
+//  $ls->addElement($element,PageURL2("viewrss"));
+//  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('View rss items'));
+//}
+//if (checkAccess("purgerss")) {
+//  $some = 1;
+//  $element = $GLOBALS['I18N']->get('purgerss');
+//  $ls->addElement($element,PageURL2("purgerss"));
+//  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Purge rss items'));
+//}
+//
+//obsolete, moved to rssmanager plugin 
+//if ($some && ENABLE_RSS && !array_key_exists("rssmanager", $GLOBALS["plugins"]))
+//  print $ls->display();
 
 
 $ls = new WebblerListing($GLOBALS['I18N']->get('Plugins'));
