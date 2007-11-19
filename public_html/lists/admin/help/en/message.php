@@ -9,7 +9,7 @@ while ($row = Sql_Fetch_Row($req))
   if (strlen($row[0]) < 20)
     printf ('<tr><td>%s</td><td>[%s]</td></tr>',$row[0],strtoupper($row[0]));
 print '</table>';
-if (ENABLE_RSS) {
+if (phplistPlugin::isEnabled('rssmanager')) {
 ?>
   <p>You can set up templates for messages that go out with RSS items. In order to do that click the "Scheduling" tab and indicate
   the frequency for the message. The message will then be used to send the list of items to users

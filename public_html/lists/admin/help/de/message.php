@@ -18,7 +18,7 @@ while ($row = Sql_Fetch_Row($req))
   if (strlen($row[0]) < 20)
     printf ('<tr><td>%s</td><td>[%s]</td></tr>',$row[0],strtoupper($row[0]));
 print '</table>';
-if (ENABLE_RSS) {
+if (phplistPlugin::isEnabled('rssmanager')) { 
 ?>
   <p>Sie k&ouml;nnen Templates definieren f&uuml;r Nachrichten, die Meldungen aus RSS-Feeds enthalten.
   Zu diesem Zweck wechseln Sie zuerst auf das Register "Termine" und definieren dort,

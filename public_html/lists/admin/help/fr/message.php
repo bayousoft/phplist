@@ -9,7 +9,7 @@ while ($row = Sql_Fetch_Row($req))
   if (strlen($row[0]) < 20)
     printf ('<tr><td>%s</td><td>[%s]</td></tr>',$row[0],strtoupper($row[0]));
 print '</table>';
-if (ENABLE_RSS) {
+if (phplistPlugin::isEnabled('rssmanager')) {
 ?>
 
   <p>Vous pouvez mettre en place des mod&egrave;les de messages pour des articles RSS.  Pour ce faire, cliquez sur l&rsquo;onglet "Envoi programm&eacute;" et s&eacute;lectionnez la fr&eacute;quence d&rsquo;envoi du message.  Le message sera ensuite utilis&eacute; pour envoyer la liste des articles aux utilisateurs sur les listes qui ont choisi cette fr&eacute;quence d&rsquo;envoi.  Il faut utiliser le code-raccourci [RSS] dans le corps de votre message pour indiquer l&rsquo;endroit o&ugrave; la liste doit appara&icirc;tre.</p>

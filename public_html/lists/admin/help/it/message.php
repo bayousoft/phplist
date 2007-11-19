@@ -10,7 +10,7 @@ while ($row = Sql_Fetch_Row($req))
   if (strlen($row[0]) < 20)
     printf ('<tr><td>%s</td><td>[%s]</td></tr>',$row[0],strtoupper($row[0]));
 print '</table>';
-if (ENABLE_RSS) {
+if (phplistPlugin::isEnabled('rssmanager')) {
 ?>
   <p>Puoi impostare dei template per i messaggi che vengono spediti con elementi RSS. Per fare questo clicca "Programma" e indica
   la frequenza per il messaggio. Il messaggio sar&agrave; poi usato per spedire la lista degli elementi agli utenti sulle liste che

@@ -393,11 +393,12 @@ $requiredVars = array(
 		"type"=> "hidden_constant",
 		"description"=> "Encoding for text emails",
 		"values"=> '"7bit"'),
-	"ENABLE_RSS"=> array(
-		"name"=> "ENABLE_RSS",
-		"type"=> "constant",
-		"description"=> "PHPlist can send RSS feeds to users. Feeds can be sent daily, weekly or monthly. To use the feature you need XML support in your PHP installation, and you need to set this constant to 1",
-		"values"=> 0),
+//obsolete, moved to rssmanager plugin 
+//	"ENABLE_RSS"=> array(
+//		"name"=> "ENABLE_RSS",
+//		"type"=> "constant",
+//		"description"=> "PHPlist can send RSS feeds to users. Feeds can be sent daily, weekly or monthly. To use the feature you need XML support in your PHP installation, and you need to set this constant to 1",
+//		"values"=> 0),
 	"MANUALLY_PROCESS_RSS"=> array(
 		"name"=> "MANUALLY_PROCESS_RSS",
 		"type"=> "hidden_constant",

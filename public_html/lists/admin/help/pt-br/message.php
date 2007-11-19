@@ -9,7 +9,7 @@ while ($row = Sql_Fetch_Row($req))
   if (strlen($row[0]) < 20)
     printf ('<tr><td>%s</td><td>[%s]</td></tr>',$row[0],strtoupper($row[0]));
 print '</table>';
-if (ENABLE_RSS) {
+if (phplistPlugin::isEnabled('rssmanager')) {
 ?>
   <p>Voc&ecirc; pode definir modelos para as mensagens que possuem elementos RSS. Para fazer isso clique na orelha "Scheduling" e indique a frequ&ecirc;ncia para a mensagem. A mensagem ser&aacute; usada para enviar uma lista de &iacute;tens para os usu&acute;rios das listas, que tiveram a frequ&ecirc;ncia configurada. Voc&ecirc; precisa usar os marcadores [RSS] nas suas mensagens para identificar para quais lista deve ser enviadas.</p>
 <?php }

@@ -9,7 +9,7 @@ while ($row = Sql_Fetch_Row($req))
   if (strlen($row[0]) < 20)
     printf ('<tr><td>%s</td><td>[%s]</td></tr>',$row[0],strtoupper($row[0]));
 print '</table>';
-if (ENABLE_RSS) {
+if (phplistPlugin::isEnabled('rssmanager')) {
 ?>
   <p>Puede crear patrones para los mensajes que se env&iacute;an con elementos RSS. Para ello pinche en la pesta&ntilde;a &#171;Calendario&#187; e indique la frecuencia del mensaje. El mensaje se utilizar&aacute; para enviar la lista de elementos a aquellos usuarios de las listas que hayan escojido esta frecuencia. Debe utilizar el marcador [RSS] en su mensaje para indicar el lugar en el que ir&aacute; la lista de elementos.</p>
 <?php }

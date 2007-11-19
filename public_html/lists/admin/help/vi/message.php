@@ -13,7 +13,7 @@ while ($row = Sql_Fetch_Row($req))
   if (strlen($row[0]) < 20)
     printf ('<tr><td>%s</td><td>[%s]</td></tr>',$row[0],strtoupper($row[0]));
 print '</table>';
-if (ENABLE_RSS) {
+if (phplistPlugin::isEnabled('rssmanager')) {
 ?>
   <p>B&#7841;n c&oacute; th&#7875; l&#7853;p s&atilde;n m&#7897;t th&#432; c&oacute; th&#7875; &#273;&#432;&#7907;c g&#7917;i  t&#7921; &#273;&#7897;ng  cho h&#7897;i vi&ecirc;n v&#7899;i giao th&#7913;c RSS. &#272;&#7875; l&agrave;m &#273;&#432;&#7907;c &#273;i&#7873;u n&agrave;y, h&atilde;y ch&#7885;n m&#7909;c &quot;&#272;&#7863;t l&#7883;ch&quot; v&agrave; ch&#7881; ra t&#7847;n su&#7845;t g&#7917;i th&#432;.  B&#7841;n c&#7847;n s&#7917; d&#7909;ng h&#7897;p ch&#7913;a [RSS] trong th&ocirc;ng &#273;i&#7879;p n&#417;i b&#7841;n mu&#7889;n th&#7875; hi&#7879;n n&#7897;i dung l&#7845;y v&#7873; t&#7915; ngu&#7891;n tin RSS .</p>
   <?php }
