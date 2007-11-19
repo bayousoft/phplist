@@ -522,7 +522,7 @@ define("TEXTEMAIL_ENCODING",'7bit');
 //# PHPlist can send rss feeds to users. Feeds can be sent daily, weekly or
 //# monthly. To use the feature you need XML support in your PHP installation, and you
 //# need to set this constant to 1
-//define("ENABLE_RSxS",0);
+//define("ENABLE_RSS",0);
 
 # if you have set up a cron to download the RSS entries, you can set this to be 0
 define("MANUALLY_PROCESS_RSS",1);
