@@ -10,7 +10,7 @@ if (!defined("REGISTER")) define("REGISTER",1);
 if (!defined("USE_PDF")) define("USE_PDF",0);
 if (!defined("VERBOSE")) define("VERBOSE",0);
 // obsolete by rssmanager plugin
-// if (!defined("ENABLE_RSxS")) define("ENABLE_RSxS",0);
+// if (!defined("ENABLE_RSS")) define("ENABLE_RSS",0);
 if (!defined("ALLOW_ATTACHMENTS")) define("ALLOW_ATTACHMENTS",0);
 if (!defined("EMAILTEXTCREDITS")) define("EMAILTEXTCREDITS",0);
 if (!defined("PAGETEXTCREDITS")) define("PAGETEXTCREDITS",0);

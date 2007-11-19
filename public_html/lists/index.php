@@ -385,7 +385,7 @@ function compareEmail()
   $html .= '</table>';
 
 //obsolete, moved to rssmanager plugin 
-//  if (ENABLE_RSxS) {
+//  if (ENABLE_RSS) {
 //    $html .= rssOptions($data,$userid);
 //   }
 foreach ($GLOBALS['plugins'] as $plugin) {
@@ -518,7 +518,7 @@ function checkGroup(name,value) {
   $html .= '</table>';
 
 //obsolete, moved to rssmanager plugin 
-//  if (ENABLE_RSxS) { // replaced bij display
+//  if (ENABLE_RSS) { // replaced bij display
 //    $html .= rssOptions($data);
 //   }
 
