@@ -16,7 +16,6 @@ if (!ini_get("register_globals") || ini_get("register_globals") == "off") {
     $$key = $val;
   }
 }
-
 require_once dirname(__FILE__) .'/commonlib/lib/magic_quotes.php';
 
 # setup commandline
@@ -111,6 +110,12 @@ require_once dirname(__FILE__).'/connect.php';
 include_once dirname(__FILE__)."/languages.php";
 include_once dirname(__FILE__)."/lib.php";
 require_once dirname(__FILE__)."/commonlib/lib/interfacelib.php";
+
+### Activate all plugins 
+foreach ($GLOBALS['plugins'] as $plugin) {
+  $plugin->activate();
+} 
+
 include_once dirname(__FILE__)."/pagetop.php";
 
 if ($GLOBALS["commandline"]) {
@@ -126,11 +131,12 @@ if ($GLOBALS["commandline"]) {
 
   # getopt is actually useless
   #$opt = getopt("p:");
-  if ($cline["p"]) {
-    if (isset($cline["p"]) && !in_array($cline["p"],$GLOBALS["commandline_pages"])) {
-      clineError($cline["p"]." does not process commandline");
-    } elseif (isset($cline["p"])) {
-      $_GET["page"] = $cline["p"];
+  $IsCommandlinePlugin = isset($cline['p']) && array_key_exists($cline['p'],$GLOBALS["commandlinePlugins"]);
+  if ($cline['p']) {
+    if (isset($cline['p']) && !in_array($cline['p'],$GLOBALS["commandline_pages"]) && !$IsCommandlinePlugin ) {
+      clineError($cline['p']." does not process commandline");
+    } elseif (isset($cline['p'])) {
+      $_GET['page'] = $cline['p'];
     }
   } else {
     clineUsage(" [other parameters]");
@@ -147,6 +153,7 @@ if (!isset($_GET['page']))
   $page = 'home';
 else
   $page = $_GET['page'];
+
 preg_match("/([\w_]+)/",$page,$regs);
 $page = $regs[1];
 if (!is_file($page.'.php') && !isset($_GET['pi'])) {
@@ -249,10 +256,14 @@ if (isset($GLOBALS["require_login"]) && $GLOBALS["require_login"]) {
 $include = '';
 include "header.inc";
 if ($page != '' && $page != 'install') {
-  preg_match("/([\w_]+)/",$page,$regs);
-  $include = $regs[1];
-  $include .= ".php";
-  $include = $page . ".php";
+  if ($IsCommandlinePlugin) {
+    $include =  'plugins/' . $GLOBALS["commandlinePlugins"][$page];
+  } else {
+    preg_match("/([\w_]+)/",$page,$regs);
+    $include = $regs[1];
+    $include .= ".php";
+    $include = $page . ".php";
+  } 
 } else {
   $include = "home.php";
 }
@@ -310,9 +321,6 @@ if ($page != "login") {
     Warn($GLOBALS['I18N']->get('magicquoteswarning'));
   if (ini_get("magic_quotes_runtime") && WARN_ABOUT_PHP_SETTINGS)
     Warn($GLOBALS['I18N']->get('magicruntimewarning'));
-  if (defined("ENABLE_RSS") && ENABLE_RSS && !function_exists("xml_parse") && WARN_ABOUT_PHP_SETTINGS)
-    Warn($GLOBALS['I18N']->get('noxml'));
-
   if (ALLOW_ATTACHMENTS && WARN_ABOUT_PHP_SETTINGS && (!is_dir($GLOBALS["attachment_repository"]) || !is_writable ($GLOBALS["attachment_repository"]))) {
     if (ini_get("open_basedir")) {
       Warn($GLOBALS['I18N']->get('warnopenbasedir'));
@@ -331,7 +339,7 @@ if (isset($_GET['page']) && $_GET['page'] == 'about') {
 if (empty($_GET['pi']) && is_file("info/".$_SESSION['adminlanguage']['info']."/$include")) {
   @include "info/".$_SESSION['adminlanguage']['info']."/$include";
 # include some information
-} elseif (isset($_GET['pi']) && is_object($GLOBALS['plugins'][$_GET['pi']])) {
+} elseif (isset($_GET['pi']) && !empty($GLOBALS['plugins'][$_GET['pi']]) && is_object($GLOBALS['plugins'][$_GET['pi']])) {
   if (is_file($GLOBALS['plugins'][$_GET['pi']]->coderoot.'/info/'.$_SESSION['adminlanguage']['info']."/$include")) {
     @include $GLOBALS['plugins'][$_GET['pi']] .'/info/'.$_SESSION['adminlanguage']['info']."/$include";
   }
