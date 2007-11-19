@@ -149,7 +149,12 @@ $lan = array (
   'Send it anyway, but unencrypted' => 'Send it anyway, but unencrypted',
   'Do not send it' => 'Do not send it',
   'All Active Lists' => 'All Active Lists',
-
+  
+  ## 2.11.5
+  'No RSS' => 'No RSS', 
+  'Daily' => 'Daily', 
+  'Weekly' => 'Weekly',
+  'Monthly' => 'Monthly'
 );
 
 ?>
