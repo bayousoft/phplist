@@ -23,7 +23,7 @@ if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
   exit;
 }
 if (0) {#isset($GLOBALS["developer_email"]) && $GLOBALS['show_dev_errors']) {
-  error_reporting(E_ALL);
+  error_reporting(E_ALL & ~E_NOTICE);
 } else {
   if (isset($error_level)) {
     error_reporting($error_level);
@@ -383,9 +383,17 @@ function compareEmail()
   $html .= '<table border=0>';
   $html .= ListAttributes($attributes,$attributedata,$data["htmlchoice"],$userid,$data['emaildoubleentry']);
   $html .= '</table>';
-  if (ENABLE_RSS) {
-    $html .= RssOptions($data,$userid);
-   }
+
+//obsolete, moved to rssmanager plugin 
+//  if (ENABLE_RSxS) {
+//    $html .= rssOptions($data,$userid);
+//   }
+foreach ($GLOBALS['plugins'] as $plugin) {
+  if ($plugin->enabled) {
+    $html .= $plugin->displaySubscriptionChoice($data,$userid);
+  }
+}
+
   $html .= ListAvailableLists($userid,$data["lists"]);
   if (isBlackListedID($userid)) {
     $html .= $GLOBALS["strYouAreBlacklisted"];
@@ -508,9 +516,18 @@ function checkGroup(name,value) {
   $html .= '<table border=0>';
   $html .= ListAttributes($attributes,$attributedata,$data["htmlchoice"],0,$data['emaildoubleentry']);
   $html .= '</table>';
-  if (ENABLE_RSS) {
-    $html .= RssOptions($data);
-   }
+
+//obsolete, moved to rssmanager plugin 
+//  if (ENABLE_RSxS) { // replaced bij display
+//    $html .= rssOptions($data);
+//   }
+
+  foreach ($GLOBALS['plugins'] as $plugin) {
+    dbg($plugin->name());
+    if ($plugin->enabled) {
+      $html .= $plugin->displaySubscriptionChoice($data);
+    }
+  }
   $html .= ListAvailableLists("",$data["lists"]);
 
   if (empty($data['button'])) {
