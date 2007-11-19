@@ -150,7 +150,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   } else {
     $listowner = 0;
   }
-  
+
 ## Fetch external content
   if ($GLOBALS["has_pear_http_request"] && preg_match("/\[URL:([^\s]+)\]/i",$content,$regs)) {
     while (isset($regs[1]) && strlen($regs[1])) {
@@ -173,9 +173,9 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
       preg_match("/\[URL:([^\s]+)\]/i",$content,$regs);
     }
   }
-  
+
 #~Bas 0008857 
-// @@ Switched off for now, needs rigid testing, or config setting 
+// @B@ Switched off for now, needs rigid testing, or config setting 
 // $content = mailto2href($content);
 // $content = encodeLinks($content);
 
@@ -324,34 +324,35 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
       }
     }
   }
-## RSS
-  if (ENABLE_RSS && sizeof($rssitems)) {
-    $rssentries = array();
-    $request = join(",",$rssitems);
-    $texttemplate = getConfig("rsstexttemplate");
-    $htmltemplate = getConfig("rsshtmltemplate");
-    $textseparatortemplate = getConfig("rsstextseparatortemplate");
-    $htmlseparatortemplate = getConfig("rsshtmlseparatortemplate");
-    $req = Sql_Query("select * from {$GLOBALS["tables"]["rssitem"]} where id in ($request) order by list,added");
-    $curlist = "";
-    while ($row = Sql_Fetch_array($req)) {
-      if ($curlist != $row["list"]) {
-        $row["listname"] = ListName($row["list"]);
-        $curlist = $row["list"];
-        $rssentries["text"] .= parseRSSTemplate($textseparatortemplate,$row);
-        $rssentries["html"] .= parseRSSTemplate($htmlseparatortemplate,$row);
-      }
 
-      $data_req = Sql_Query("select * from {$GLOBALS["tables"]["rssitem_data"]} where itemid = {$row["id"]}");
-      while ($data = Sql_Fetch_Array($data_req))
-        $row[$data["tag"]] = $data["data"];
-
-      $rssentries["text"] .= stripHTML(parseRSSTemplate($texttemplate,$row));
-      $rssentries["html"] .= parseRSSTemplate($htmltemplate,$row);
-    }
-    $htmlmessage = eregi_replace("\[RSS\]",$rssentries["html"],$htmlmessage);
-    $textmessage = eregi_replace("\[RSS\]",$rssentries["text"],$textmessage);
-  }
+// obsolete by rssmanager plugin
+//  if (ENABLE_RSS && sizeof($rssitems)) {
+//    $rssentries = array();
+//    $request = join(",",$rssitems);
+//    $texttemplate = getConfig("rsstexttemplate");
+//    $htmltemplate = getConfig("rsshtmltemplate");
+//    $textseparatortemplate = getConfig("rsstextseparatortemplate");
+//    $htmlseparatortemplate = getConfig("rsshtmlseparatortemplate");
+//    $req = Sql_Query("select * from {$GLOBALS["tables"]["rssitem"]} where id in ($request) order by list,added");
+//    $curlist = "";
+//    while ($row = Sql_Fetch_array($req)) {
+//      if ($curlist != $row["list"]) {
+//        $row["listname"] = ListName($row["list"]);
+//        $curlist = $row["list"];
+//        $rssentries["text"] .= parserssTemplate($textseparatortemplate,$row);
+//        $rssentries["html"] .= parserssTemplate($htmlseparatortemplate,$row);
+//      }
+//
+//      $data_req = Sql_Query("select * from {$GLOBALS["tables"]["rssitem_data"]} where itemid = {$row["id"]}");
+//      while ($data = Sql_Fetch_Array($data_req))
+//        $row[$data["tag"]] = $data["data"];
+//
+//      $rssentries["text"] .= stripHTML(parserssTemplate($texttemplate,$row));
+//      $rssentries["html"] .= parserssTemplate($htmltemplate,$row);
+//    }
+//    $htmlmessage = eregi_replace("\[rss\]",$rssentries["html"],$htmlmessage);
+//    $textmessage = eregi_replace("\[rss\]",$rssentries["text"],$textmessage);
+//  }
 
   if (is_array($userdata)) {
     foreach ($userdata as $name => $value) {
@@ -386,6 +387,20 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   if (!$destinationemail) {
     $destinationemail = $email;
   }
+
+  foreach ($GLOBALS['plugins'] as $plugin) {
+    $textmessage = $plugin->parseOutgoingTextMessage($messageid,$textmessage,$destinationemail, $userdata);
+    $htmlmessage = $plugin->parseOutgoingHTMLMessage($messageid,$htmlmessage,$destinationemail, $userdata);
+    $plugin_attachments = $plugin->getMessageAttachment($messageid,$mail->Body);
+    if (!empty($plugin_attachments[0]['content'])) {
+      foreach ($plugins_attachments as $plugin_attachment) {
+        $mail->add_attachment($plugin_attachment['content'],
+            basename($plugin_attachment["filename"]),
+            $plugin_attachment["mimetype"]);
+      }
+    }
+  }
+
   # this should move into a plugin
   if (!ereg('@',$destinationemail) && isset($GLOBALS["expand_unqualifiedemail"])) {
     $destinationemail .= $GLOBALS["expand_unqualifiedemail"];
@@ -431,7 +446,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 #    preg_match_all('/<a href=([^> ]*)([^>]*)>(.*)<\/a>/Umis',$htmlmessage,$links);
     $clicktrack_root = sprintf('%s://%s/lt.php',$GLOBALS["scheme"],$website.$GLOBALS["pageroot"]);
     for($i=0; $i<count($links[2]); $i++){
-      $link = cleanUrl($links[2][$i]);
+      $link = cleanUrl($links[2][$i]); //@B@ hier gaat het mis
       $link = str_replace('"','',$link);
       if (preg_match('/\.$/',$link)) {
         $link = substr($link,0,-1);
@@ -537,7 +552,7 @@ if (0) {
     }
   }
 
-  #
+  #@B@ Why is this done twice????
   if (eregi("\[LISTS\]",$htmlmessage)) {
     $lists = "";$listsarr = array();
     $req = Sql_Query(sprintf('select list.name from %s as list,%s as listuser where list.id = listuser.listid and listuser.userid = %d',$tables["list"],$tables["listuser"],$user_system_values["id"]));
@@ -550,24 +565,11 @@ if (0) {
     $textmessage = ereg_replace("\[LISTS\]",$lists_text,$textmessage);
   }
 
-  foreach ($GLOBALS['plugins'] as $plugin) {
-/*    $plugin_attachments = $plugin->getMessageAttachment($messageid,$mail->Body);
-    if (!empty($plugin_attachments[0]['content'])) {
-      foreach ($plugins_attachments as $plugin_attachment) {
-        $mail->add_attachment($plugin_attachment['content'],
-            basename($plugin_attachment["filename"]),
-            $plugin_attachment["mimetype"]);
-      }
-    }*/
-    $textmessage = $plugin->parseOutgoingTextMessage($messageid,$textmessage,$destinationemail);
-    $htmlmessage = $plugin->parseOutgoingHTMLMessage($messageid,$htmlmessage,$destinationemail);
-  }
-
   # remove any existing placeholders
   $htmlmessage = eregi_replace("\[[A-Z\. ]+\]","",$htmlmessage);
   $textmessage = eregi_replace("\[[A-Z\. ]+\]","",$textmessage);
 
-  ## check that the HTML message as proper <head> </head> and <body> </body> tags
+  # check that the HTML message as proper <head> </head> and <body> </body> tags
   # some readers fail when it doesn't
   if (!preg_match("#<body.*</body>#ims",$htmlmessage)) {
     $htmlmessage = '<body>'.$htmlmessage.'</body>';
@@ -593,7 +595,7 @@ if (0) {
 #    $textmessage = preg_replace("/\r?\n/", "\r\n", $textmessage);
 #  }
 
-  ## build the email
+  # build the email
   if (!PHPMAILER) {
     $mail = new html_mime_mail(
       array('X-Mailer: PHPlist v'.VERSION,
@@ -625,44 +627,33 @@ if (0) {
   # so what do we actually send?
   switch($cached[$messageid]["sendformat"]) {
     case "HTML":
-//      # send html to users who want it and text to everyone else
-//      if ($htmlpref) {
-//        Sql_Query("update {$GLOBALS["tables"]["message"]} set ashtml = ashtml + 1 where id = $messageid");
-//        if (ENABLE_RSS && sizeof($rssitems))
-//          updateRSSStats($rssitems,"ashtml");
-//      #  dbg("Adding HTML ".$cached[$messageid]["templateid"]);
-//        $mail->add_html($htmlmessage,"",$cached[$messageid]["templateid"]);
-//        addAttachments($messageid,$mail,"HTML");
-//      } else {
-//        Sql_Query("update {$GLOBALS["tables"]["message"]} set astext = astext + 1 where id = $messageid");
-//        if (ENABLE_RSS && sizeof($rssitems))
-//          updateRSSStats($rssitems,"astext");
-//        $mail->add_text($textmessage);
-//        addAttachments($messageid,$mail,"text");
-//      }
-//      break;
-    case "both":
-    case "text and HTML":
-      # send one big file to users who want html and text to everyone else
+      # send html to users who want it and text to everyone else
       if ($htmlpref) {
         Sql_Query("update {$GLOBALS["tables"]["message"]} set ashtml = ashtml + 1 where id = $messageid");
-        if (ENABLE_RSS && sizeof($rssitems))
-          updateRSSStats($rssitems,"ashtml");
-      #  dbg("Adding HTML ".$cached[$messageid]["templateid"]);
-        $mail->add_html($htmlmessage,$textmessage,$cached[$messageid]["templateid"]);
+
+        foreach ($GLOBALS['plugins'] as $plugin) {
+          $plugin->processSuccesFailure ($messageid, 'ashtml', $userdata);
+        }
+        $mail->add_html($htmlmessage,"",$cached[$messageid]["templateid"]);
+//        if (ENABLE_RSS && sizeof($rssitems))            //Obsolete by rssmanager plugin
+//          updateRSSStats($rssitems,"ashtml");
+//      #  dbg("Adding HTML ".$cached[$messageid]["templateid"]);
+//       $mail->add_html($htmlmessage,$textmessage,$cached[$messageid]["templateid"]);
         addAttachments($messageid,$mail,"HTML");
       } else {
         Sql_Query("update {$GLOBALS["tables"]["message"]} set astext = astext + 1 where id = $messageid");
-        if (ENABLE_RSS && sizeof($rssitems))
-          updateRSSStats($rssitems,"astext");
+        foreach ($GLOBALS['plugins'] as $plugin) {
+          $plugin->processSuccesFailure ($messageid, 'astext', $userdata);
+        }
         $mail->add_text($textmessage);
         addAttachments($messageid,$mail,"text");
       }
       break;
     case "PDF":
       # send a PDF file to users who want html and text to everyone else
-      if (ENABLE_RSS && sizeof($rssitems))
-        updateRSSStats($rssitems,"astext");
+      foreach ($GLOBALS['plugins'] as $plugin) {
+        $plugin->processSuccesFailure ($messageid, 'astext', $userdata);
+      }
       if ($htmlpref) {
         Sql_Query("update {$GLOBALS["tables"]["message"]} set aspdf = aspdf + 1 where id = $messageid");
         $pdffile = createPdf($textmessage);
@@ -696,8 +687,9 @@ if (0) {
       }
       break;
     case "text and PDF":
-      if (ENABLE_RSS && sizeof($rssitems))
-        updateRSSStats($rssitems,"astext");
+      foreach ($GLOBALS['plugins'] as $plugin) {
+        $plugin->processSuccesFailure ($messageid, 'astext', $userdata);
+      }
       # send a PDF file to users who want html and text to everyone else
       if ($htmlpref) {
         Sql_Query("update {$GLOBALS["tables"]["message"]} set astextandpdf = astextandpdf + 1 where id = $messageid");
@@ -733,8 +725,9 @@ if (0) {
       break;
     case "text":
       # send as text
-      if (ENABLE_RSS && sizeof($rssitems))
-        updateRSSStats($rssitems,"astext");
+      foreach ($GLOBALS['plugins'] as $plugin) {
+        $plugin->processSuccesFailure ($messageid, 'astext', $userdata);
+      }
       Sql_Query("update {$GLOBALS["tables"]["message"]} set astext = astext + 1 where id = $messageid");
        $mail->add_text($textmessage);
       addAttachments($messageid,$mail,"text");
@@ -746,8 +739,8 @@ if (0) {
       if (!empty($GLOBALS['pluginsendformats'][$cached[$messageid]["sendformat"]])) {
         # possibly handled by plugin
         $pl = $GLOBALS['plugins'][$GLOBALS['pluginsendformats'][$cached[$messageid]["sendformat"]]];
-        if (is_object($pl) && method_exists($pl,'constructMessage')) {
-          $handled_by_plugin = $pl->constructMessage($cached[$messageid]["sendformat"],$htmlmessage,$textmessage,$mail);
+        if (is_object($pl) && method_exists($pl,'parseFinalMessage')) {
+          $handled_by_plugin = $pl->parseFinalMessage($cached[$messageid]["sendformat"],$htmlmessage,$textmessage,$mail);
         }
       }
 
@@ -755,15 +748,17 @@ if (0) {
         # send one big file to users who want html and text to everyone else
         if ($htmlpref) {
           Sql_Query("update {$GLOBALS["tables"]["message"]} set astextandhtml = astextandhtml + 1 where id = $messageid");
-          if (ENABLE_RSS && sizeof($rssitems))
-            updateRSSStats($rssitems,"ashtml");
+        foreach ($GLOBALS['plugins'] as $plugin) {
+          $plugin->processSuccesFailure($messageid, 'ashtml', $userdata);
+        }
         #  dbg("Adding HTML ".$cached[$messageid]["templateid"]);
           $mail->add_html($htmlmessage,$textmessage,$cached[$messageid]["templateid"]);
           addAttachments($messageid,$mail,"HTML");
         } else {
           Sql_Query("update {$GLOBALS["tables"]["message"]} set astext = astext + 1 where id = $messageid");
-          if (ENABLE_RSS && sizeof($rssitems))
-            updateRSSStats($rssitems,"astext");
+          foreach ($GLOBALS['plugins'] as $plugin) {
+            $plugin->processSuccesFailure($messageid, 'astext', $userdata);
+          }
           $mail->add_text($textmessage);
           addAttachments($messageid,$mail,"text");
         }
