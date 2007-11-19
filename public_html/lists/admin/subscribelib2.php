@@ -17,6 +17,14 @@ if (!$id && $_GET["page"] != "import1") {
 require_once dirname(__FILE__)."/date.php";
 $date = new Date();
 
+function validateRssFrequency($freq = '') {
+  if (!$freq) return '';
+  if (in_array($freq,array_keys($GLOBALS['rssfrequencies']))) {
+    return $freq;
+  }
+  return '';
+}
+
 ## Check if input is complete
 $allthere = 1;
 $subscribepagedata = PageData($id);
@@ -941,38 +949,39 @@ function ListAllAttributes() {
   return ListAttributes($attributes,$attributedata,"checkforhtml");
 }
 
-function RSSOptions($data,$userid = 0) {
-  global $rssfrequencies,$tables;
-  if ($userid) {
-    $current = Sql_Fetch_Row_Query("select rssfrequency from {$GLOBALS["tables"]["user"]} where id = $userid");
-    $default = $current[0];
-  } else {
-    $default = '';
-  }
-  if (!$default || !in_array($default,array_keys($rssfrequencies))) {
-    $default = $data["rssdefault"];
-  }
-
-  $html = "\n<table>";
-  $html .= '<tr><td>'.$data["rssintro"].'</td></tr>';
-  $html .= '<tr><td>';
-  $options = explode(",",$data["rss"]);
-  if (!in_array($data["rssdefault"],$options)) {
-    array_push($options,$data["rssdefault"]);
-  }
-  if (sizeof($options) == 1) {
-    return sprintf('<input type="hidden" name="rssfrequency" value="%s">',$options[0]);
-  }
-
-  foreach ($options as $freq) {
-    if ($freq) {
-      $html .= sprintf('<input type=radio name="rssfrequency" value="%s" %s>&nbsp;%s&nbsp;',
-        $freq,$freq == $default ? "checked":"",$rssfrequencies[$freq]);
-    }
-  }
-  $html .= '</td></tr></table>';
-  if ($data["rssintro"])
-    return $html;
-}
+//obsolete, moved to rssmanager plugin 
+//function rssOptions($data,$userid = 0) {
+//  global $rssfrequencies,$tables;
+//  if ($userid) {
+//    $current = Sql_Fetch_Row_Query("select rssfrequency from {$GLOBALS["tables"]["user"]} where id = $userid");
+//    $default = $current[0];
+//  } else {
+//    $default = '';
+//  }
+//  if (!$default || !in_array($default,array_keys($rssfrequencies))) {
+//    $default = $data["rssdefault"];
+//  }
+//
+//  $html = "\n<table>";
+//  $html .= '<tr><td>'.$data["rssintro"].'</td></tr>';
+//  $html .= '<tr><td>';
+//  $options = explode(",",$data["rss"]);
+//  if (!in_array($data["rssdefault"],$options)) {
+//    array_push($options,$data["rssdefault"]);
+//  }
+//  if (sizeof($options) == 1) {
+//    return sprintf('<input type="hidden" name="rssfrequency" value="%s">',$options[0]);
+//  }
+//
+//  foreach ($options as $freq) {
+//    if ($freq) {
+//      $html .= sprintf('<input type=radio name="rssfrequency" value="%s" %s>&nbsp;%s&nbsp;',
+//        $freq,$freq == $default ? "checked":"",$rssfrequencies[$freq]);
+//    }
+//  }
+//  $html .= '</td></tr></table>';
+//  if ($data["rssintro"])
+//    return $html;
+//}
 
 ?>
