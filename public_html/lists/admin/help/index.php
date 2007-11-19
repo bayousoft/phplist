@@ -1,6 +1,6 @@
 <?php
 ob_start();
-error_reporting(0);
+#error_reporting(0);
 if (!empty($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
 #  print '<!-- using '.$_SERVER["ConfigFile"].'-->'."\n";
   include $_SERVER["ConfigFile"];
