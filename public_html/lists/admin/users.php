@@ -8,7 +8,7 @@
 
 require_once dirname(__FILE__).'/accesscheck.php';
 
-$columns = array("messages","lists","bounces","rss","blacklist");
+$columns = array("messages","lists","bounces","blacklist");
 
 include dirname(__FILE__).'/commonlib/pages/users.php';
 return;
@@ -307,7 +307,7 @@ return;
 //   $ls->addColumn($user["email"],"&nbsp;",$user["display"]);
 //  $ls->addColumn($user["email"],"lists",$membership[0]);
 //  $ls->addColumn($user["email"],"msgs",$nummsgs[0]);
-//  if (ENABLE_RSS) {
+//  if (ENABLE_rss) {
 //    $rss = Sql_query("SELECT count(*) FROM ".$tables["rssitem_user"]." where userid = ".$user["id"]);
 //    $nummsgs = Sql_fetch_row($rss);
 //    $ls->addColumn($user["email"],"rss",$nummsgs[0]);
