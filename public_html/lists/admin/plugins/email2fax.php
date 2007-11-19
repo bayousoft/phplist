@@ -18,10 +18,15 @@ class email2fax extends phplistPlugin {
 
   function email2fax() {
     parent::phplistplugin();
+  }
+  
+  function activate() {
+    parent :: activate();
     foreach ($this->configvars as $var => $desc) {
       $this->config[$var] = $this->getConfig($var);
     }
     $this->getFaxAttributeName();
+    return true;
   }
 
   function getFaxAttributeName() {
@@ -71,7 +76,7 @@ class email2fax extends phplistPlugin {
     return 1;
   }
 
-  function constructMessage($sendformat,$htmlmessage,$textmessage,&$mail) {
+  function parseFinalMessage($sendformat,$htmlmessage,$textmessage,&$mail) {
     if ($sendformat != 'fax') {
       return 0;
     }

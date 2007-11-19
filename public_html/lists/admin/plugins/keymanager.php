@@ -9,7 +9,7 @@ class keymanager extends phplistPlugin {
   var $LE = "\r\n";
   var $enabled = 1;
 
-  var $DBstruct = array(
+  var $DBstructkm = array(
     'keymanager_keys' => array(
       'id' => array('integer not null primary key auto_increment','ID'),
       'keyid' => array('varchar(255) not null','Key ID'),
@@ -36,6 +36,10 @@ class keymanager extends phplistPlugin {
 
   function keymanager() {
     parent::phplistplugin();
+  }
+
+  function activate() {
+    parent :: activate();
 #    error_reporting(E_ALL);
     $keyring = $this->getConfig('keyringlocation');
     if (is_dir($keyring) && is_writable($keyring)) {
@@ -52,10 +56,11 @@ class keymanager extends phplistPlugin {
      #   logevent("Invalid keyring location: ".$keyring);
       }
     }
+    return true;
   }
 
   function initialise() {
-    foreach ($this->DBstruct as $table => $structure) {
+    foreach ($this->DBstructkm as $table => $structure) {
       print $table.'<br/>';
       Sql_Create_Table($table,$structure);
     }
