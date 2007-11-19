@@ -541,7 +541,7 @@ div.emailfooter a { font-size: 11px; color: #ff6600; font-style: normal; font-fa
 # do not do anything with this line
 "last one" => "blah");
 
-if (defined("ENABLE_RSS") && ENABLE_RSS) {
+//if (defined("ENABLE_RSS") && ENABLE_RSS) { //@B@ Has to move to plugin!
   $default_config["rssthreshold"] = array (
     4,
     "Minimum amount of items to send in an RSS feed",
@@ -590,7 +590,7 @@ if (defined("ENABLE_RSS") && ENABLE_RSS) {
     "textarea"
   );
 
-}
+//}
 
 #if (USEFCK) {
 $default_config["fckeditor_width"] = array (

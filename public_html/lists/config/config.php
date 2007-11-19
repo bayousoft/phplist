@@ -509,7 +509,7 @@ define('USE_ADVANCED_BOUNCEHANDLING',0);
 
 =========================================================================
 
-Advanced Features, HTML editor, RSS, Attachments, Plugins. PDF creation
+Advanced Features, HTML editor, Attachments, Plugins. PDF creation
 
 =========================================================================
 
@@ -521,13 +521,14 @@ Advanced Features, HTML editor, RSS, Attachments, Plugins. PDF creation
 define("HTMLEMAIL_ENCODING","quoted-printable");
 define("TEXTEMAIL_ENCODING",'7bit');
 
+//##### rssmanager plugin #####
+//obsolete, moved to rssmanager plugin 
+//# PHPlist can send rss feeds to users. Feeds can be sent daily, weekly or
+//# monthly. To use the feature you need XML support in your PHP installation, and you
+//# need to set this constant to 1
+//define("ENABLE_RSxS",0);
 
-# PHPlist can send RSS feeds to users. Feeds can be sent daily, weekly or
-# monthly. To use the feature you need XML support in your PHP installation, and you
-# need to set this constant to 1
-define("ENABLE_RSS",0);
-
-# if you have set up a cron to download the RSS entries, you can set this to be 0
+# rssmanager plugin: if you have set up a cron to download the RSS entries, you can set this to be 0
 define("MANUALLY_PROCESS_RSS",1);
 
 # the FCKeditor is now included in PHPlist, but the use of it is experimental
