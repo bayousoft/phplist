@@ -1,12 +1,13 @@
 #!/bin/bash
 DATE=`date +"%Y-%m-%d %H:%M"`;
+CVSROOT=:ext:basovink@phplist.cvs.sourceforge.net:/cvsroot/phplist
 
 #cvs2cl.pl --prune -r -t --hide-filenames
 if [ -f BRANCH ]; then
   . BRANCH
-  cvs log -r$BRANCH >> cvslog
+  cvs -d$CVSROOT log -r$BRANCH >> cvslog
 else 
-  cvs log >> cvslog
+  cvs -d$CVSROOT log >> cvslog
 fi
 #cvs2cl.pl -F phplist-version-2-10-x --prune -t --hide-filenames --stdin < cvslog
 cvs2cl.pl --prune -b -r -t --hide-filenames --stdin < cvslog
@@ -14,7 +15,7 @@ echo "Changelog for phplist $BRANCH $DATE" > cl
 echo >> cl
 cat ChangeLog >> cl
 mv -f cl ChangeLog
-rm -f cvslog
+#rm -f cvslog
 # make one for languages as well
 
 exit;
