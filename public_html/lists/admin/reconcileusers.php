@@ -130,8 +130,15 @@ if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
         set_time_limit(600);
         switch ($_GET["option"]) {
           case "markallconfirmed":
-          info( $GLOBALS['I18N']->get("Marking all users confirmed"));
-            Sql_Query("update {$tables["user"]} set confirmed = 1");
+              $list = sprintf('%d',$_GET["list"]);
+              if ( $list == 0 ) {
+                info( $GLOBALS['I18N']->get("Marking all users confirmed"));
+                Sql_Query("update {$tables["user"]} set confirmed = 1");
+              } else {
+                info( sprintf( $GLOBALS['I18N']->get("Marking all users on list %s confirmed"), ListName($list) ) );
+                Sql_Query( sprintf('UPDATE %s, %s SET confirmed =1 WHERE  %s.id = %s.userid AND %s.listid= %d',
+                  $tables['user'],$tables['listuser'], $tables['user'], $tables['listuser'], $tables['listuser'], $list) );
+              }
             $total =Sql_Affected_Rows();
             print "$total ".$GLOBALS['I18N']->get('users apply')."<br/>";
             break;
@@ -395,8 +402,30 @@ $total = $totalres[0];
 print "<p><b>".$total." ".$GLOBALS['I18N']->get('Users')."</b>";
 print $find ? " ".$GLOBALS['I18N']->get("found"): " ".$GLOBALS['I18N']->get("in the database");
 print "</p>";
-?>
 
+function snippetListsSelector ($optionAll = false) {
+  static $optionList;
+  if ( empty( $optionList ) ) {
+    global $tables;
+    $optionList = '';
+    
+    $req = Sql_Query(sprintf('select id,name from %s order by listorder',$tables["list"]));
+    while ($row = Sql_Fetch_Row($req)) {
+      $optionList .= sprintf ('<option value="%d">%s</option>',$row[0],stripslashes($row[1]));
+    }
+  }
+
+  $result = '<select name="list">;';
+  if ( $optionAll ) {
+    $result .= sprintf ('<option value="0">%s</option>', $GLOBALS['I18N']->get('-All-') );
+  }
+  $result .= $optionList;
+  $result .= '</select>';
+
+  return $result;  
+}
+
+?>
 
 <p><?php echo PageLink2("reconcileusers&option=nolists",$GLOBALS['I18N']->get("Delete all users who are not subscribed to any list"))?>
 <p><?php echo PageLink2("reconcileusers&option=invalidemail",$GLOBALS['I18N']->get("Find users who have an invalid email"))?>
@@ -405,24 +434,32 @@ print "</p>";
 <p><?php echo PageLink2("reconcileusers&option=deleteinvalidemail",$GLOBALS['I18N']->get("Delete users who have an invalid email"))?>
 <p><?php echo PageLink2("reconcileusers&option=markallhtml",$GLOBALS['I18N']->get("Mark all users to receive HTML"))?>
 <p><?php echo PageLink2("reconcileusers&option=markalltext",$GLOBALS['I18N']->get("Mark all users to receive text"))?>
-<p><?php echo PageLink2("reconcileusers&option=markallconfirmed",$GLOBALS['I18N']->get("Mark all users confirmed"))?>
 <p><?php echo $GLOBALS['I18N']->get('To try to (automatically)')?> <?php echo PageLink2("reconcileusers&option=fixinvalidemail",$GLOBALS['I18N']->get("Fix emails for users who have an invalid email"))?>
 <p><?php echo PageLink2("reconcileusers&option=removestaleentries",$GLOBALS['I18N']->get("Remove Stale entries from the database"))?>
 <p><?php echo PageLink2("reconcileusers&option=mergeduplicates",$GLOBALS['I18N']->get("Merge Duplicate Users"))?>
+
 <hr>
 <form method=get>
+<input type=hidden name="page" value="reconcileusers">
+<input type=hidden name="option" value="markallconfirmed">
+<p>
+<?php 
+  echo sprintf( $GLOBALS['I18N']->get("Mark all users on list %s confirmed"), snippetListsSelector(true) );
+?>
+<input type=submit value="<?php echo $GLOBALS['I18N']->get('Click here')?>">
+</p></form>
 
+<hr>
+<form method=get>
 <input type=hidden name="page" value="reconcileusers">
 <input type=hidden name="option" value="nolistsnewlist">
-<p><?php echo $GLOBALS['I18N']->get('To move all users who are not subscribed to any list to')?>
- <select name="list">
-<?php
-$req = Sql_Query(sprintf('select id,name from %s order by listorder',$tables["list"]));
-while ($row = Sql_Fetch_Row($req)) {
-  printf ('<option value="%d">%s</option>',$row[0],stripslashes($row[1]));
-}
+<p>
+<?php 
+  echo sprintf( $GLOBALS['I18N']->get('To move all users who are not subscribed to any list to %s'), snippetListsSelector() );
 ?>
-</select><input type=submit value="<?php echo $GLOBALS['I18N']->get('Click here')?>"></form>
+<input type=submit value="<?php echo $GLOBALS['I18N']->get('Click here')?>">
+</p></form>
+
 <hr>
 <form method=get>
 <input type=hidden name="page" value="reconcileusers">

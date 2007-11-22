@@ -44,7 +44,7 @@ $lan = array(
   'Delete users who have an invalid email' => 'Delete users who have an invalid email',
   'Mark all users to receive HTML' => 'Mark all users to receive HTML',
   'Mark all users to receive text' => 'Mark all users to receive text',
-  'Mark all users confirmed' => 'Mark all users confirmed',
+  'Mark all users confirmed' => 'Mark all users confirmed', // obsolete from 2.11.4
   'Fix emails for users who have an invalid email' => 'Fix emails for users who have an invalid email',
   'Remove Stale entries from the database' => 'Remove Stale entries from the database',
   'Merge Duplicate Users' => 'Merge Duplicate Users',
@@ -70,6 +70,10 @@ subscription. The instructions on how to confirm are below.
   # new in 2.10.1
   'Delete Tagged Users' => 'Delete Tagged Users',
 
-
+  # new in 2.11.4
+  'Mark all users on list %s confirmed' => 'Mark all users on list %s confirmed',
+  'Marking all users on list %s confirmed' => 'Marking all users on list %s confirmed',
+  '-All-' => '-All-',
+  'To move all users who are not subscribed to any list to %s' => 'To move all users who are not subscribed to any list to %s',
 );
 ?>
