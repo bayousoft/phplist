@@ -35,12 +35,13 @@ $GLOBALS["database_module"] = basename($GLOBALS["database_module"]);
 $GLOBALS["language_module"] = basename($GLOBALS["language_module"]);
 
 require_once dirname(__FILE__).'/admin/'.$GLOBALS["database_module"];
+
+# load default english and language
 require_once dirname(__FILE__)."/texts/english.inc";
-if (is_file($_SERVER['DOCUMENT_ROOT'].'/'.$GLOBALS["language_module"])) {
-  include_once $_SERVER['DOCUMENT_ROOT'].'/'.$GLOBALS["language_module"];
-} else {
-  include_once dirname(__FILE__)."/texts/".$GLOBALS["language_module"];
-}
+include_once dirname(__FILE__)."/texts/".$GLOBALS["language_module"];
+# Allow customisation per installation
+include_once $_SERVER['DOCUMENT_ROOT'].'/'.$GLOBALS["language_module"]; 
+
 require_once dirname(__FILE__)."/admin/defaultconfig.inc";
 require_once dirname(__FILE__).'/admin/connect.php';
 include_once dirname(__FILE__)."/admin/languages.php";
