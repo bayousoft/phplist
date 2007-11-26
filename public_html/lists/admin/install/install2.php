@@ -3,6 +3,8 @@ require('configvars.php');
 
 print $GLOBALS["I18N"]->get($_SESSION["printeable"]);
 
+$bouncesTest = processPopTest($_SESSION["bounce_mailbox_host"], $_SESSION["bounce_mailbox_user"], $_SESSION["bounce_mailbox_password"]);
+
 if ($bouncesTest == TRUE) {
   print $GLOBALS["I18N"]->get(sprintf('<p class="explain">'.$GLOBALS["popAccountOk"].'</p>'));
 }
@@ -19,9 +21,6 @@ if ($test_connection2 == FALSE) {
 }
 
 print $GLOBALS["I18N"]->get(editVariable($securityVars,'name', 'text'));
-
-$bouncesTest = processPopTest($_SESSION["bounce_mailbox_host"], $_SESSION["bounce_mailbox_user"], $_SESSION["bounce_mailbox_password"]);
-
 
 
 ?>

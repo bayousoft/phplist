@@ -4,6 +4,8 @@ require('requiredvars.php');
 
 print $GLOBALS["I18N"]->get($_SESSION["printeable"]);
 
+checkSessionCheckboxes();
+
 print $GLOBALS["I18N"]->get(sprintf('<div class="explain">%s</div>',$GLOBALS["strFinalValuesText"]));
 
 print $GLOBALS["I18N"]->get(showFinalValues($generalVars,'name', $_SESSION));

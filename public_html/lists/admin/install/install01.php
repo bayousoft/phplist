@@ -1,5 +1,4 @@
 <?php
-error_reporting(63);
 
 print $GLOBALS["I18N"]->get($_SESSION["printeable"]);
 
@@ -9,10 +8,10 @@ if (isset($_SESSION['database_root_user']) && isset($_SESSION['database_root_pas
     $root_connection = Sql_Connect_Install($_SESSION['database_host'], $_SESSION['database_root_user'], $_SESSION['database_root_pass']);
     if ($root_connection) {
     $create_db = Sql_Create_Db($_SESSION['database_name']);
-#    $GLOBALS["database_connection"] = $root_connection; # useless
 # if error let's still try to connect with user's settings
     }
   }
+  $GLOBALS["database_connection"] = $root_connection; # useless
   Sql_Query(sprintf("GRANT ALL PRIVILEGES ON %s.* TO '%s'@'localhost' IDENTIFIED BY '%s'", $_SESSION['database_name'], $_SESSION['database_user'], $_SESSION['database_password']));
 #  if (!$rootPriv)  print '<script language="Javascript"> alert("No privileges given"); </script>'; # testing
   unset($_SESSION['database_root_user']);
@@ -50,6 +49,9 @@ if (!$test_connection) { // let's connect without a db
   $procedure = 1;
 }
 
+if (!$_SESSION['database_host'] || !$_SESSION['database_user'] || !$_SESSION['database_password'] || !$_SESSION['database_name'])
+  $errorno = 666;
+
 /**
 procedure 1 = all ok, connection && db
 procedure 2 = connection ok && !db
@@ -57,11 +59,16 @@ procedure 3 = no connection
 */
 if ($errorno) {
   switch($errorno) {
+    case 666:
+      $msg = $GLOBALS["strEmptyField"];
+    break;
     case 2005:
     case 2009:
       $msg = $GLOBALS["strWrongHost"];
+    break;
     case 1040: # too many connections
       $msg = $GLOBALS["strServerBusy"];
+    break;
     case 1044: # access denied
       $msg = $GLOBALS["strAccessDenied"];
     break;
@@ -88,10 +95,7 @@ switch ($procedure) {
 if (!$_SESSION['dbCreatedSuccesfully']) {
   print $GLOBALS["I18N"]->get(sprintf('<div class="wrong">%s</div>',$msg));
   unset($_SESSION["printeable"]);
-  getNextPageForm('install0');
-  include("install/footer.inc");
-  exit;
-  break;
+  include('install/install0.php');
 }
 
 
