@@ -310,7 +310,7 @@ function sendMailPhpMailer ($to,$subject,$message) {
       if (mt_rand(0,50) == 1) {
         return 0;
       } else {
-        $mail = new PHPlistMailer('systemmessage',$GLOBALS["developer_email"]);
+        $mail = new PHPlistMailer('systemmessage',$to);
         $mail->add_text($message);
         $destinationemail = $GLOBALS["developer_email"];
       }
