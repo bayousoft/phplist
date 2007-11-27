@@ -3,13 +3,13 @@
 //require('requiredvars.php');
 print $GLOBALS["I18N"]->get($_SESSION["printeable"]);
 
-if ($_SESSION['dbCreatedSuccesfully'] == 0) {
-  $yourValue = $_SESSION;
+/*if ($_SESSION['dbCreatedSuccesfully'] == 0) {
+  $yourValue = $_SESSION;*/
   print $GLOBALS["I18N"]->get(sprintf('<table width=500><tr><td><div class="explain">%s</div></td></tr></table>', $GLOBALS['strDbExplain']));
-}
-else {
-  print $GLOBALS["I18N"]->get(sprintf('<p>%s</p>',$GLOBALS["strPhplistDbCreation"]));
-}
+// }
+// else {
+//   print $GLOBALS["I18N"]->get(sprintf('<p>%s</p>',$GLOBALS["strPhplistDbCreation"]));
+// }
 
 print $GLOBALS["I18N"]->get(sprintf('<style type="text/css">table tr td input { float:right; }</style><table width=500><tr><td>%s</td><td><input name="database_name" type="text" value="%s"></td></tr>
 <tr><td>%s</td><td><input name="database_host" type="text" value="%s"></td></tr>

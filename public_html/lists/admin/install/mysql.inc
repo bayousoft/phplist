@@ -22,7 +22,7 @@ function Sql_Connect($host,$user,$password,$database) {
 #    print "<p>$dbm</p><p>Cannot connect to Database, please check your configuration</p>";
 #    return $errno;
 #  }
-  return $db;
+  return $res;
 }
 
 function Sql_Error ($dbconnection,$errno = 0) {

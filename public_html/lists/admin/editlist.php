@@ -90,7 +90,7 @@ ob_end_flush();
 <tr><td><?php echo $GLOBALS['I18N']->get('List name'); ?>:</td><td><input type=text name="listname" value="<?php echo  htmlspecialchars(StripSlashes($list["name"]))?>"></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('Check this box to make this list active (listed)'); ?></td><td><input type="checkbox" name="active" value="1" <?php echo $list["active"] ? 'checked' : ""; ?>></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('Order for listing'); ?></td><td><input type=text name="listorder" value="<?php echo $list["listorder"] ?>" size="5"></td></tr>
-<!--tr><td><?php echo $GLOBALS['I18N']->get('Subject Prefix'); ?></td><td><input type=text name="prefix" value="<?php echo $list["prefix"]; ?>" size="5"></td></tr-->
+<!--tr><td><?php echo $GLOBALS['I18N']->get('Subject Prefix'); ?></td><td><input type=text name="prefix" value="<?php echo $list["prefix"]; ?>" size="5"></td></tr>-->
 <?php if ($GLOBALS["require_login"] && (isSuperUser() || accessLevel("editlist") == "all")) {
   print '<tr><td>' . $GLOBALS['I18N']->get('Owner') . '</td><td><select name="owner">';
   $admins = $GLOBALS["admin_auth"]->listAdmins();

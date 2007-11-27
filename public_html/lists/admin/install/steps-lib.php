@@ -558,8 +558,7 @@ function Sql_Connect_Install($host,$user,$password) {
 
 
 function Sql_Create_Db ($databaseToCreate) {
-  $creatingDb = mysql_query(sprintf('CREATE DATABASE %s;',$databaseToCreate));
-    return $creatingDb;
+  return sql_query('CREATE DATABASE `'.$databaseToCreate.'`',$GLOBALS["database_connection"]);
 }
 
 function Sql_Close ($connection) {

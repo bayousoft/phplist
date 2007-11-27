@@ -6,6 +6,7 @@ if (isset($_SESSION['database_root_user']) && isset($_SESSION['database_root_pas
   $root_connection = Sql_Connect($_SESSION['database_host'], $_SESSION['database_root_user'], $_SESSION['database_root_pass'], $_SESSION['database_name']);
   if (!$root_connection) {
     $root_connection = Sql_Connect_Install($_SESSION['database_host'], $_SESSION['database_root_user'], $_SESSION['database_root_pass']);
+    $GLOBALS["database_connection"] = $test_connection;
     if ($root_connection) {
     $create_db = Sql_Create_Db($_SESSION['database_name']);
 # if error let's still try to connect with user's settings
@@ -17,8 +18,6 @@ if (isset($_SESSION['database_root_user']) && isset($_SESSION['database_root_pas
   unset($_SESSION['database_root_user']);
   unset($_SESSION['database_root_pass']);
   sql_query("FLUSH PRIVILEGES"); # this will help on windows and mac machines
-}
-if ($root_connection) {
   Sql_Close($root_connection);
 }
 sleep(2);
@@ -46,7 +45,8 @@ if (!$test_connection) { // let's connect without a db
     $procedure = 3;
   }
 } else {
-  $procedure = 1;
+  $errorno = sql_errorno();
+  $procedure = $errorno ? 2 : 1;
 }
 
 if (!$_SESSION['database_host'] || !$_SESSION['database_user'] || !$_SESSION['database_password'] || !$_SESSION['database_name'])
@@ -73,7 +73,7 @@ if ($errorno) {
       $msg = $GLOBALS["strAccessDenied"];
     break;
     case 0:
-    default:
+//     default:
       $msg = $GLOBALS["strAccessDenied"];
     break;
   }
@@ -100,3 +100,7 @@ if (!$_SESSION['dbCreatedSuccesfully']) {
 
 
 ?>
+
+<script language="Javascript" type="text/javascript">
+alert('errorno = <?=$errorno?> db cretion = <?=$create_db?>  procedure = <?=$procedure?> connection = <?=$test_connection?>\n CREATE DATABASE <?=sprintf("%s",$_SESSION["database_name"])?>');
+</script>
