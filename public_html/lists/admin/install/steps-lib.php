@@ -47,7 +47,7 @@ function editVariable($keyAr,$value,$type) {
           break;
           case "scalar_int":
           if (isset($val["type_value"]) && $val["type_value"] == "bool") {
-            if ($val["values"]) { $options[$val[$value]] = "checked"; } else { $options[$val[$value]] = ""; }
+            if (($val["values"] && !isset($_SESSION[$val[$value]])) || $_SESSION[$val[$value]] == 1) { $options[$val[$value]] = "checked"; } else { $options[$val[$value]] = ""; }
             $newtype[$val[$value]] = "checkbox";
             $realValue = '';
           }
@@ -68,7 +68,7 @@ function editVariable($keyAr,$value,$type) {
           break;
           case "constant":
           if (isset($val["type_value"]) && $val["type_value"] == "bool") {
-            if ($val["values"]) { $options[$val[$value]] = "checked"; } else { $options[$val[$value]] = ""; }
+            if (($val["values"] && !isset($_SESSION[$val[$value]])) || $_SESSION[$val[$value]] == 1) { $options[$val[$value]] = "checked"; } else { $options[$val[$value]] = ""; }
             $newtype[$val[$value]] = "checkbox";
             $realValue = '';
           }
@@ -475,17 +475,17 @@ function checkSessionCheckboxes() {
 
   foreach ($GLOBALS["requiredVars"] as $key => $val) {
      if (isset($val["type_value"]) && $val["type_value"] == "bool" && in_array($key,explode(",",$_SESSION["check"]))) {
-//     print '<p>'.$key.' -- <b>'.$_POST[$key].'</b></p>';
-//'<div style="display: block; border: 1px black solid; color:red;">'.$key.' ==> '.$_SESSION[$key].' ==> '.$val["values"].'</div>';
       if ($val["values"] == 1) {
         if (!isset($_POST[$key]))
           $_SESSION[$key] = 0;
+        else
+          $_SESSION[$key] = 1;
       } else {
         if (isset($_POST[$key]))
           $_SESSION[$key] = 1;
+        else
+          $_SESSION[$key] = 0;
       }
-//    print '<div style="display: block; border: 1px black solid;">'.$key.' ==> '.$_SESSION[$key].' ==> '.$val["values"].' ==> '.$_POST[$key].'</div>';
-
     }
   }
 

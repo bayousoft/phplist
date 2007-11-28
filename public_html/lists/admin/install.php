@@ -91,7 +91,7 @@ $_SESSION["printeable"] .= '</td></tr></table>';
 require_once("install/define.php");
 
 include('install/footer.inc');
-print_r($_SESSION); # test
+//print_r($_SESSION); # test
 ob_end_flush();
 
 ?>

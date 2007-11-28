@@ -101,6 +101,6 @@ if (!$_SESSION['dbCreatedSuccesfully']) {
 
 ?>
 
-<script language="Javascript" type="text/javascript">
+<!--<script language="Javascript" type="text/javascript">
 alert('errorno = <?=$errorno?> db cretion = <?=$create_db?>  procedure = <?=$procedure?> connection = <?=$test_connection?>\n CREATE DATABASE <?=sprintf("%s",$_SESSION["database_name"])?>');
-</script>
+</script>-->
