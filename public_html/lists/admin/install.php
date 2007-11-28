@@ -12,7 +12,7 @@ if (isset($_GET['page'])) {
 foreach ($_POST as $key => $val) {
   $_SESSION[$key] = $val;
 }
-//print_r($_POST); # test
+
 require("install/english.inc");
 include("install/".$_SESSION["language_module"]."");
 require("install/mysql.inc");
@@ -91,7 +91,7 @@ $_SESSION["printeable"] .= '</td></tr></table>';
 require_once("install/define.php");
 
 include('install/footer.inc');
-//print_r($_SESSION); # test
+print_r($_SESSION); # test
 ob_end_flush();
 
 ?>
