@@ -502,11 +502,11 @@ if (empty($value)) {
   $name = $value;
 }
 $_SESSION[$name] = $_SESSION[$name]?$_SESSION[$name]:'english.inc';
-$gestor = opendir('../texts');
-  if ($gestor && $language = readdir($gestor)) {
+$gestor = opendir('../texts/');
+  if ($gestor ) { /*&& $language = readdir($gestor)  <== this takes out the english file... */
     $res .= '<select name="'.$name.'" '.$valueChange.'>';
     while (FALSE !== ($lang = readdir($gestor))) {
-      if (strlen($lang) > 3 ) {
+      if (strlen($lang) > 3 && !preg_match("/~/",str_replace(".inc","",$lang))) {
         $res .= '<option value="'.$lang.'"';
         if ($lang == $_SESSION[$name]) {
           $res .= ' selected="selected"';
