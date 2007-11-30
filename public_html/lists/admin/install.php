@@ -12,7 +12,7 @@ if (isset($_GET['page'])) {
 foreach ($_POST as $key => $val) {
   $_SESSION[$key] = $val;
 }
-
+//print_r($_SESSION);
 require("install/english.inc");
 include("install/".$_SESSION["language_module"]."");
 require("install/mysql.inc");
@@ -60,22 +60,22 @@ if ($_SESSION["page"]) {
   $_SESSION["history"] = array_unique($_SESSION["history"]);
 }
 
-
+$page2 = "pages";
 if (isset($Page) && in_array($Page, $_SESSION["history"])) {
   $getpage = sprintf("%s",$Page);
   $page = $_SESSION["page"]!=$getpage?$getpage:$_SESSION["page"];
   if (preg_match("/([\w_]+)/",$page,$regs)) {
   $page = $regs[1];
   }
-  if (!is_file('install/'.$page.'.php') ) {
+  if (!is_file('install/'.$page2.'.php') ) {
     $page = 'home';
   }
-  getNextPageForm($page);
+  getNextPageForm($page,$page2);
 }
 
 else {
   $page = 'home';
-  getNextPageForm($page);
+  getNextPageForm($page,$page2);
 }
 
 print checkScalarInt($_SESSION, $GLOBALS['requiredVars']);
