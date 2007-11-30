@@ -1,92 +1,93 @@
 <?php
 
-function editVariable($keyAr,$value,$type) {
+function editVariable($keyAr,$value,$type,$section) {
   $res = '';
   foreach ($keyAr as $key => $val) {
-    if ($type == 'text' && !isset($_SESSION[$val[$value]])) { // lets define the value, if default or request one
-      $realValue = $val["values"];
-    }
-    else {
-      $realValue = $_SESSION[$val[$value]];
-    }
-    if ($key[$value]) {
-      if ($type == 'text' && $val[$value] !== 'database_name' && $val[$value] !== 'database_user' && $val[$value] !== 'database_password' && $val[$value] !== 'database_host') {
-        if ($val['type'] == 'scalar' || $val['type'] == 'scalar_int' || $val['type'] ==  'constant') {
-          $res .= '<img src="images/break-el.gif" height="1" width="100%"><div class="value_name">';
-          $res .= $key.'</div>';
-          $res .= '<div class="description"><span>Info:</span> '.$GLOBALS["str".$val['name']."_desc"];
-          $res .= '</div><br />';
-        }
+    if ($val["section"] == $section) {
+      if ($type == 'text' && !isset($_SESSION[$val[$value]])) { // lets define the value, if default or request one
+        $realValue = $val["values"];
       }
-      switch ($val['type']) {
-        case "scalar":
-          if ($_SESSION['dbCreatedSuccesfully'] == 1) {
-            if ($val[$value] == 'database_name' || $val[$value] == 'database_user' || $val[$value] == 'database_password' || $val[$value] == 'database_host') {
-              $res .= '<input type="hidden" value="'.$realValue;
-              $res .= '" name="'.$val[$value].'">';
-              break 1;
+      else {
+        $realValue = $_SESSION[$val[$value]];
+      }
+      if ($key[$value]) {
+        if ($type == 'text' && $val[$value] !== 'database_name' && $val[$value] !== 'database_user' && $val[$value] !== 'database_password' && $val[$value] !== 'database_host') {
+          if ($val['type'] == 'scalar' || $val['type'] == 'scalar_int' || $val['type'] ==  'constant') {
+            $res .= '<img src="images/break-el.gif" height="1" width="100%"><div class="value_name">';
+            $res .= $key.'</div>';
+            $res .= '<div class="description"><span>Info:</span> '.$GLOBALS["str".$val['name']."_desc"];
+            $res .= '</div><br />';
+          }
+        }
+        switch ($val['type']) {
+          case "scalar":
+            if ($_SESSION['dbCreatedSuccesfully'] == 1) {
+              if ($val[$value] == 'database_name' || $val[$value] == 'database_user' || $val[$value] == 'database_password' || $val[$value] == 'database_host') {
+                $res .= '<input type="hidden" value="'.$realValue;
+                $res .= '" name="'.$val[$value].'">';
+                break 1;
+              }
             }
-          }
-
-          if ($val[$value] == 'message_envelope') {
-            $realValue = ($_SESSION[$val[$value]]?$_SESSION[$val[$value]]:'bounces@'.$_SERVER["SERVER_NAME"]);
-            $res .= '<input type="'.$type.'" value="'.$realValue;
-            $res .= '" name="'.$val[$value].'"> ';
-          }
-          elseif ($val[$value] == 'language_module' && $type == 'text') {
-            $res .= languagePack($val[$value],"");
-          } elseif ($val[$value] == 'pageroot' || $val[$value] == 'adminpages') {
-            $res .= pageGetOpt($val[$value],$type);
-          }/* elseif ($val[$value] == 'adminpages') {
-            $res .= pageGetOpt($val[$value]);
-          }*/
-          else {
-            $res .= '<input type="'.$type.'" value="'.$realValue;
-            $res .= '" name="'.$val[$value].'"> ';
-          }
-          break;
-          case "scalar_int":
-          if (isset($val["type_value"]) && $val["type_value"] == "bool") {
-            if (($val["values"] && !isset($_SESSION[$val[$value]])) || $_SESSION[$val[$value]] == 1) { $options[$val[$value]] = "checked"; } else { $options[$val[$value]] = ""; }
-            $newtype[$val[$value]] = "checkbox";
-            $realValue = '';
-          }
-          $res .= '<input type="'.($newtype[$val[$value]]?$newtype[$val[$value]]:$type).'" '.$options[$val[$value]].' value="'.$realValue;
-          $res .= '" name="'.$val[$value].'" > '.($newtype[$val[$value]] ? "Activate or deactive <strong>".$val[$value]."</strong>" : "");
-          $addtocheck .= $val[$value].',';
-/*          $res .= ' <script type="text/javascript" language="JavaScript">';
-          $res .= sprintf("addFieldToCheck(\"%s\"); ", $val[$value]);
-          $res .= '  </script>';*/
-          break;
-          case "hidden_scalar":
-          $res .= '<input type="hidden" value="'.$val["values"];
-          $res .= '" name="'.$val[$value].'">';
-          break;
-          case "hidden_scalar_int":
-          $res .= '<input type="hidden" value="'.$val["values"];
-          $res .= '" name="'.$val[$value].'">';
-          break;
-          case "constant":
-          if (isset($val["type_value"]) && $val["type_value"] == "bool") {
-            if (($val["values"] && !isset($_SESSION[$val[$value]])) || $_SESSION[$val[$value]] == 1) { $options[$val[$value]] = "checked"; } else { $options[$val[$value]] = ""; }
-            $newtype[$val[$value]] = "checkbox";
-            $realValue = '';
-          }
-          $res .= '<input type="'.($newtype[$val[$value]]?$newtype[$val[$value]]:$type).'" '.$options[$val[$value]].' value="'.$realValue.'" name="'.$val[$value].'"> '.($newtype[$val[$value]] ? "Activate or deactive <strong>".$val[$value]."</strong>" : "");
-          $addtocheck .= $val[$value].',';
-/*          $res .= ' <script type="text/javascript" language="JavaScript">';
-          $res .= sprintf("addFieldToCheck(\"%s\"); ", $val[$value]);
-          $res .= '  </script>';*/
-          break;
-          case "hidden_constant":
-          $res .= '<input type="hidden" value="'.$val["values"].'" name="'.$val[$value].'">';
-          break;
-          case "hidden_array":
-          $res .= '<input type="hidden" value="'.$val["values"].'" name="'.$val[$value].'">';
-          break;
-          case "commented":
-          $res .= '<input type="hidden" value="'.$val["values"].'" name="'.$val[$value].'">';
-          break;
+  
+            if ($val[$value] == 'message_envelope') {
+              $realValue = ($_SESSION[$val[$value]]?$_SESSION[$val[$value]]:'bounces@'.$_SERVER["SERVER_NAME"]);
+              $res .= '<input type="'.$type.'" value="'.$realValue;
+              $res .= '" name="'.$val[$value].'"> ';
+            }
+            elseif ($val[$value] == 'language_module' && $type == 'text') {
+              $res .= languagePack($val[$value],"");
+            } elseif ($val[$value] == 'pageroot' || $val[$value] == 'adminpages') {
+              $res .= pageGetOpt($val[$value],$type);
+            }/* elseif ($val[$value] == 'adminpages') {
+              $res .= pageGetOpt($val[$value]);
+            }*/
+            else {
+              $res .= '<input type="'.$type.'" value="'.$realValue;
+              $res .= '" name="'.$val[$value].'"> ';
+            }
+            break;
+            case "scalar_int":
+            if (isset($val["type_value"]) && $val["type_value"] == "bool") {
+              if (($val["values"] && !isset($_SESSION[$val[$value]])) || $_SESSION[$val[$value]] == 1) { $options[$val[$value]] = "checked"; } else { $options[$val[$value]] = ""; }
+              $newtype[$val[$value]] = "checkbox";
+              $realValue = '';
+            }
+            $res .= '<input type="'.($newtype[$val[$value]]?$newtype[$val[$value]]:$type).'" '.$options[$val[$value]].' value="'.$realValue;
+            $res .= '" name="'.$val[$value].'" > '.($newtype[$val[$value]] ? "Activate or deactive <strong>".$val[$value]."</strong>" : "");
+            $addtocheck .= $val[$value].',';
+  /*          $res .= ' <script type="text/javascript" language="JavaScript">';
+            $res .= sprintf("addFieldToCheck(\"%s\"); ", $val[$value]);
+            $res .= '  </script>';*/
+            break;
+            case "hidden_scalar":
+            $res .= '<input type="hidden" value="'.$val["values"];
+            $res .= '" name="'.$val[$value].'">';
+            break;
+            case "hidden_scalar_int":
+            $res .= '<input type="hidden" value="'.$val["values"];
+            $res .= '" name="'.$val[$value].'">';
+            break;
+            case "constant":
+            if (isset($val["type_value"]) && $val["type_value"] == "bool") {
+              if (($val["values"] && !isset($_SESSION[$val[$value]])) || $_SESSION[$val[$value]] == 1) { $options[$val[$value]] = "checked"; } else { $options[$val[$value]] = ""; }
+              $newtype[$val[$value]] = "checkbox";
+              $realValue = '';
+            }
+            $res .= '<input type="'.($newtype[$val[$value]]?$newtype[$val[$value]]:$type).'" '.$options[$val[$value]].' value="'.$realValue.'" name="'.$val[$value].'"> '.($newtype[$val[$value]] ? "Activate or deactive <strong>".$val[$value]."</strong>" : "");
+            $addtocheck .= $val[$value].',';
+  /*          $res .= ' <script type="text/javascript" language="JavaScript">';
+            $res .= sprintf("addFieldToCheck(\"%s\"); ", $val[$value]);
+            $res .= '  </script>';*/
+            break;
+            case "hidden_constant":
+            $res .= '<input type="hidden" value="'.$val["values"].'" name="'.$val[$value].'">';
+            break;
+            case "hidden_array":
+            $res .= '<input type="hidden" value="'.$val["values"].'" name="'.$val[$value].'">';
+            break;
+            case "commented":
+            $res .= '<input type="hidden" value="'.$val["values"].'" name="'.$val[$value].'">';
+            break;
         }
         $_SESSION["check"] = $addtocheck;
 
@@ -102,6 +103,7 @@ function editVariable($keyAr,$value,$type) {
         $res .= $GLOBALS['$strValueNotFound'];
       }
     }
+  }
   return $res;
 }
 function writeToConfig($key, $requiredVars2) {
@@ -332,7 +334,7 @@ $result .= '</table>';
 return $result;
 }
 
-function getNextPageForm ($actualPage) {
+function getNextPageForm ($actualPage, $pages) {
 
   switch ($actualPage) {
   case 'home':
@@ -448,7 +450,7 @@ function getNextPageForm ($actualPage) {
   print $GLOBALS["I18N"]->get('
        <form action="./?page='.$nextpage.'" method="post" name="subscribeform">
   <input type="hidden" name="page" value="'.$nextpage.'">');
-  include("install/$actualPage.php");
+  include("install/$pages.php");
   print $GLOBALS["I18N"]->get('<div id="maincontent_install"><div class="install_start"><a href="javascript:installsubscribeform();" class="formsubmit">' . $textSubmit . '</a></span><br /><br /></div></div>');
   print $GLOBALS["I18N"]->get('    <script language="Javascript" type="text/javascript">
     var submitted = false;
