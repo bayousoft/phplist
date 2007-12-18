@@ -233,13 +233,12 @@ if (isset($id)) {
   </script>
   <input type=checkbox name="checkall" onClick="checkAll()"><?php echo $GLOBALS['I18N']->get("Tag all users in this page");?>
   <?php
-  
   $columns = array();
   $columns = explode(',',getConfig('membership_columns'));
   $columns = array('country','Lastname');
   $ls = new WebblerListing($GLOBALS['I18N']->get("Members"));
   while ($user = Sql_fetch_array($result)) {
-     $ls->addElement($user["email"],PageUrl2("user&id=".$user["id"]));
+    $ls->addElement($user["email"],PageUrl2("user&id=".$user["id"]));
     $ls->addColumn($user["email"],$GLOBALS['I18N']->get("confirmed"),$user["confirmed"]?$GLOBALS["img_tick"]:$GLOBALS["img_cross"]);
     if ($access != "view")
     $ls->addColumn($user["email"],$GLOBALS['I18N']->get("tag"),sprintf('<input type=checkbox name="user[%d]" value="1">',$user["id"]));
@@ -254,7 +253,7 @@ if (isset($id)) {
 
     ## allow plugins to add columns
     foreach ($GLOBALS['plugins'] as $plugin) {
-      $plugin->displayUserColumn($user,  $user['email'], $ls);
+      $plugin->displayUsers($user,  $user['email'], $ls);
     } 
 
 // obsolete by rssmanager plugin
