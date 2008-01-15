@@ -1,6 +1,6 @@
 <?php
 
-require("install/interfacelib.php");
+require("commonlib/lib/interfacelib.php");
 require("structure.php");
 
 $usertable_prefix = $GLOBALS["requiredVars"]["usertable_prefix"]["values"];
