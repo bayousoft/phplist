@@ -1,6 +1,7 @@
 <?php
 
 @ob_start();
+session_start();
 $er = error_reporting(0);
 # check for commandline and cli version
 if (!isset($_SERVER["SERVER_NAME"]) && !PHP_SAPI == "cli") {
