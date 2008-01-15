@@ -641,8 +641,13 @@ if (!function_exists("getconfig")) {
 		}
 		*/
 		$toget = $item;
-		if ($hasconf)
-			$req = Sql_Query("select value from {$tables["config"]} where item = \"$toget\"");
+		if ($hasconf) {
+			$query
+			= " select value"
+			. " from {$tables["config"]}"
+			. " where item = ?";
+			$req = Sql_Query_Params($query, array($toget));
+		}
 		if (!Sql_Affected_Rows() || !$hasconf) {
 			if (isset ($default_config[$item])) {
 				$value = $default_config[$item][0];

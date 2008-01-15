@@ -36,6 +36,7 @@ $commandline_pages = array('send','processqueue','processbounces','import','upgr
 if (isset($message_envelope))
   $envelope = "-f$message_envelope";
 $database_connection = Sql_Connect($database_host,$database_user,$database_password,$database_name);
+Sql_Query("set search_path to $database_schema");  // Sql_Query_Params won't work here.
 
 if (!empty($GLOBALS["SessionTableName"])) {
   include_once dirname(__FILE__)."/sessionlib.php";
@@ -146,7 +147,7 @@ function SaveConfig($item,$value,$editable=1,$ignore_errors = 0) {
 		if ($value == "true" || $value == "yes") {
     $value = 1;
   }
-	Sql_Query(sprintf('replace into %s (item,value,editable) values("%s","%s",%d)', $tables["config"], $item, addslashes($value), $editable), $ignore_errors);
+  return Sql_Replace( $tables["config"], array('item'=>$item, 'value'=>$value, 'editable'=>$editable), 'item');
 }
 
 /*

@@ -26,6 +26,7 @@ $GLOBALS['compression_used'] = $zlib_compression || $gzhandler;
 # http://www.hardened-php.net/globals-problem
 $GLOBALS['language_module'] = $language_module;
 $GLOBALS['database_module'] = $database_module;
+$GLOBALS['adodb_inc_file'] = $adodb_inc_file;
 $GLOBALS['show_dev_errors'] = $show_dev_errors;
 if (empty($GLOBALS['language_module'])) {
   $GLOBALS['language_module'] = 'english.inc';

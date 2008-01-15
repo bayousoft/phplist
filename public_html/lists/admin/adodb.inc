@@ -1,5 +1,4 @@
 <?php
-require_once dirname(__FILE__).'/accesscheck.php';
 
 # configuration to make PHPlist work via AdoDB
 # which will make it work with any database supported by AdoDB
@@ -51,6 +50,25 @@ function Sql_Query($query,$ignore = 0) {
   }
 }
 
+function sqllog($msg,$logfile = "") {
+  print "Need to implement sqllog";
+}
+
+function db_db_Query($query,$database,$db_connection) {
+  print "Need to implement db_db_Query";
+}
+
+function Sql_Query_Params($query,$params,$ignore = 0) {
+  $result = $GLOBALS["adodb_connection"]->Execute($query,$params);
+  $GLOBALS["adodb_lastresult"] = $result;
+  if ($result) {
+    return $result;
+  } else {
+    Sql_Error($GLOBALS["adodb_connection"]->ErrNo());
+    return 0;
+  }
+}
+
 function Sql_Verbose_Query($query) {
   if (preg_match("/dev$/",VERSION))
     print "<b>$query</b><br>\n";
@@ -61,6 +79,10 @@ function Sql_Verbose_Query($query) {
 function Sql_Fetch_Array(&$dbresult) {
   $array = $dbresult->fetchRow();
   return $array;
+}
+
+function Sql_Fetch_Assoc($dbresult) {
+  print "Need to implement Sql_Fetch_Assoc";
 }
 
 function Sql_Fetch_Row(&$dbresult) {
@@ -107,14 +129,30 @@ function Sql_Insert_id() {
   return $GLOBALS["adodb_connection"]->insert_id();
 }
 
+function Sql_Result($result,$index,$column) {
+  print "Need to implement Sql_Result";
+}
+
+function Sql_Free_Result($dbresult) {
+  print "Need to implement Sql_Free_Result";
+};
+
 function Sql_Table_exists($table) {
+  global $database_name, $database_schema;
   if (isset($GLOBALS["dbtables"]) && is_array($GLOBALS["dbtables"])) {
     if (isset($GLOBALS["dbtables"][$table]))
       return 1;
   }
   if (!isset($GLOBALS["dbtables"]) || !is_array($GLOBALS["dbtables"])) {
     $GLOBALS["dbtables"] = array();
-    $req = Sql_Query("show tables");
+    # adodb::MetaTables() doesn't honor search_path.
+    # information_schema only lists tables that you have some permission on.
+    $query
+    = " select table_name"
+    . " from information_schema.tables"
+    . " where table_catalog = ?"
+    . "   and table_schema = ?";
+    $req = Sql_Query_Params($query,array($database_name,$database_schema));
     while ($row = Sql_Fetch_Row($req)) {
   #    print $row[0]."<br/>";
       $GLOBALS["dbtables"][$row[0]] = $row[0];
@@ -122,6 +160,8 @@ function Sql_Table_exists($table) {
   #      return 1;
     }
   }
+  if (!isset($GLOBALS["dbtables"][$table]))
+    echo "<br>adodb.ste <b>Need table $table</b>";
   return isset($GLOBALS["dbtables"][$table]);
 }
 
@@ -149,6 +189,10 @@ function Sql_create_Table ($table,$structure) {
   $query .= "\n)";
   # submit it to the database
   $res = Sql_Verbose_Query($query);
+}
+
+function Sql_Replace ($table,$values,$pk) {
+  return $GLOBALS["adodb_connection"]->Replace($table, $values, $pk, $autoquote = true);
 }
 
 ?>
