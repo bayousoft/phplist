@@ -262,3 +262,5 @@ class phplist_I18N {
 }
 
 $I18N = new phplist_I18N();
+
+?>
