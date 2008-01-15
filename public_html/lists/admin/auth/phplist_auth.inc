@@ -64,4 +64,3 @@ class admin_auth {
 }
 
 ?>
-

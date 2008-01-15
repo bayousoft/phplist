@@ -152,6 +152,3 @@ function Sql_create_Table ($table,$structure) {
 }
 
 ?>
-
-
-?>
