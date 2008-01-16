@@ -68,13 +68,18 @@ while (list($table, $tablename) = each($tables)) {
   if ($table != $tablename) {
     $ls->addColumn($table,"real name",$tablename);
   }
-  $req = Sql_Query("show columns from $tablename");
+	$query
+	= " select column_name, data_type"
+  . " from information_schema.columns"
+	. " where table_schema = ?"
+  . "   and table_name = ?";
+  $req = Sql_Query_Params($query, array('phplist',$tablename));
   $columns = array();
   if (!Sql_Affected_Rows()) {
     $ls->addColumn($table,"exist",$GLOBALS["img_cross"]);
   }
   while ($row = Sql_Fetch_Array($req)) {
-    $columns[strtolower($row["Field"])] = $row["Type"];
+    $columns[strtolower($row["column_name"])] = $row["data_type"];
   }
   $tls = new WebblerListing($table);
   $struct = $DBstruct[$table];

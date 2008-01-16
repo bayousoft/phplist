@@ -18,8 +18,19 @@ if (!$listid) {
   return;
 }
 
-$req = Sql_Query(sprintf('select listid,userid,count(bounce) as numbounces from %s listuser, %s umb where listuser.userid = umb.user and listuser.listid = %d and date_add(time,interval 6 month) > now() group by umb.user order by listuser.listid',$GLOBALS['tables']['listuser'],$GLOBALS['tables']['user_message_bounce'],$listid));
-$total = Sql_Affected_Rows();
+$query
+= ' select lu.listid, lu.userid, count(umb.bounce) as numbounces'
+. ' from %s lu'
+. '    join %s umb'
+. '       on lu.userid = umb.user'
+. ' where current_timestamp < umb."time" + interval \'6 months\''
+. '   and lu.listid = ?'
+. ' group by lu.listid, lu.userid'
+. ' order by lu.listid'
+;
+$query = sprintf($query, $GLOBALS['tables']['listuser'], $GLOBALS['tables']['user_message_bounce']);
+$req = Sql_Query_Params($query, array($listid));
+$total = Sql_Num_Rows($req);
 $limit = '';
 $numpp = 150;
 
@@ -36,7 +47,7 @@ if ($total > 500 && $_GET['type'] != 'dl') {
           PageLink2('listbounces&id='.$listid,"&lt;",sprintf('s=%d',max(0,$s-$numpp))),
           PageLink2('listbounces&id='.$listid,"&gt;",sprintf('s=%d',min($total,$s+$numpp))),
           PageLink2('listbounces&id='.$listid,"&gt;&gt;",sprintf('s=%d',$total-$numpp)));
-  $req = Sql_Query(sprintf('select listid,userid,count(bounce) as numbounces from %s listuser, %s umb where listuser.userid = umb.user and listuser.listid = %d  and date_add(time,interval 6 month) > now() group by umb.user order by listuser.listid %s',$GLOBALS['tables']['listuser'],$GLOBALS['tables']['user_message_bounce'],$listid,$limit));
+  $req = Sql_Query(sprintf('select listid,userid,count(bounce) as numbounces from %s listuser, %s umb where listuser.userid = umb.user and listuser.listid = %d  and date_add(time,interval 6 month) > current_timestamp group by umb.user order by listuser.listid %s',$GLOBALS['tables']['listuser'],$GLOBALS['tables']['user_message_bounce'],$listid,$limit));
 }
 
 print '<p>'.PageLink2('listbounces','Select another list');

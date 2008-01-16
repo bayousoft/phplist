@@ -197,14 +197,23 @@ class PHPlistMailer extends PHPMailer {
     }
 
     function image_exists($templateid,$filename) {
-      $req = Sql_Query(sprintf('select * from %s where template = %d and (filename = "%s" or filename = "%s")',
-        $GLOBALS["tables"]["templateimage"],$templateid,$filename,basename($filename)));
-      return Sql_Affected_Rows();
+      $query
+      = ' select *'
+      . ' from ' . $GLOBALS['tables']['templateimage']
+      . ' where template = ?'
+      . '   and (filename = ? or filename = ?)';
+      $rs = Sql_Query_Params($query, array($templateid, $filename, basename($filename)));
+      return Sql_Num_Rows($rs);
     }
 
      function get_template_image($templateid,$filename){
-      $req = Sql_Fetch_Row_Query(sprintf('select data from %s where template = %d and (filename = "%s" or filename = "%s")',
-        $GLOBALS["tables"]["templateimage"],$templateid,$filename,basename($filename)));
+      $query
+      = ' select data'
+      . ' from ' . $GLOBALS['tables']['templateimage']
+      . ' where template = ?'
+      . '   and (filename = ? or filename= ?)';
+      $rs = Sql_Query_Params($query, array($templateid, $filename, basename($filename)));
+      $req = Sql_Fetch_Row($rs);
       return $req[0];
     }
 

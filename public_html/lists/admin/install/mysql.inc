@@ -111,7 +111,7 @@ function Sql_Fetch_Assoc_Query($query) {
   return Sql_Fetch_Assoc($req);
 }
 
-function Sql_Insert_id() {
+function Sql_Insert_Id() {
   return mysql_insert_id($GLOBALS["database_connection"]);
 }
 

@@ -83,8 +83,12 @@ if (isset($_GET['id'])) {
 // Why is there GET(id) and REQUEST(id)?
 
 if (isset($_GET['uid']) && $_GET["uid"]) {
-  $req = Sql_Fetch_Row_Query(sprintf('select subscribepage,id,password,email from %s where uniqid = "%s"',
-    $tables["user"],$_GET["uid"]));
+  $query
+  = ' select subscribepage, id, password, email'
+  . ' from ' . $tables['user']
+  . ' where uniqid = ?';
+  $rs = Sql_Query_Params($query, array($_GET['uid']));
+  $req = Sql_Fetch_Row($rs);
   $id = $req[0];
   $userid = $req[1];
   $userpassword = $req[2];
@@ -97,8 +101,12 @@ if (isset($_GET['uid']) && $_GET["uid"]) {
   $userpassword = $req[2];
   $emailcheck = $req[3];
 } elseif (isset($_REQUEST["unsubscribeemail"])) {
-  $req = Sql_Fetch_Row_Query(sprintf('select subscribepage,id,password,email from %s where email = "%s"',
-    $tables["user"],$_REQUEST["unsubscribeemail"]));
+  $query
+  = ' select subscribepage, id, password, email'
+  . ' from ' . $tables['user']
+  . ' where email = ?';
+  $rs = Sql_Query_Params($query, array($_REQUEST['unsubscribeemail']));
+  $req = Sql_Fetch_Row($rs);
   $id = $req[0];
   $userid = $req[1];
   $userpassword = $req[2];
@@ -247,10 +255,14 @@ if ($login_required && empty($_SESSION["userloggedin"]) && !$canlogin) {
   }
   print '<title>'.$GLOBALS["strSubscribeTitle"].'</title>';
   print $data["header"];
-  $req = Sql_Query(sprintf('select * from %s where active',$tables["subscribepage"]));
-  if (Sql_Affected_Rows()) {
+  $query = 'select * from ' . $tables['subscribepage'] . ' where active = 1';
+  $req = Sql_Query($query);
+  if (Sql_Num_Rows($req)) {
     while ($row = Sql_Fetch_Array($req)) {
-      $intro = Sql_Fetch_Row_Query(sprintf('select data from %s where id = %d and name = "intro"',$tables["subscribepage_data"],$row["id"]));
+      $query = 'select data from %s where id = ? and name = \'intro\'';
+      $query = sprintf($query, $tables['subscribepage_data']);
+      $rs = Sql_Query_Params($query, array($row['id']));
+      $intro = Sql_Fetch_Row($rs);
       print $intro[0];
       printf('<p><a href="./?p=subscribe&id=%d">%s</a></p>',$row["id"],$row["title"]);
      }
@@ -621,7 +633,8 @@ function unsubscribePage($id) {
   $res .= '<title>'.$GLOBALS["strUnsubscribeTitle"].'</title>';
   $res = $pagedata["header"];
   if (isset($_GET["uid"])) {
-    $req = Sql_Query("select * from $tables[user] where uniqid = \"".$_GET["uid"]."\"");
+    $query = sprintf('select * from %s where uniqid = ?', $tables['user']);
+    $req = Sql_Query_Params($query, $_GET['uid']);
     $userdata = Sql_Fetch_Array($req);
     $email = $userdata["email"];
     if (UNSUBSCRIBE_JUMPOFF) {
@@ -637,7 +650,12 @@ function unsubscribePage($id) {
     } else {
       $email = $_POST["unsubscribeemail"];
     }
-    $query = Sql_Fetch_Row_Query("select id,email from {$tables["user"]} where email = \"$email\"");
+    $query
+    = ' select id, email'
+    . ' from ' . $tables['user']
+    . ' where email = ?';
+    $rs = Sql_Query_Params($query, array($email));
+    $query = Sql_Fetch_Row($rs);
     $userid = $query[0];
     $email = $query[1];
     if (!$userid) {
@@ -650,7 +668,8 @@ function unsubscribePage($id) {
         array_push($subscriptions,$row[0]);
       }
 
-      $result = Sql_query("delete from {$tables["listuser"]} where userid = \"$userid\"");
+      $query = 'delete from ' . $tables['listuser'] . ' where userid = ?';
+      $result = Sql_Query_Params($query, array($userid));
       $lists = "  * ".$GLOBALS["strAllMailinglists"]."\n";
       # add user to blacklist
       addUserToBlacklist($email,nl2br(strip_tags($_POST['unsubscribereason'])));
@@ -698,7 +717,15 @@ function unsubscribePage($id) {
     return $res;
   }
 
-  $current = Sql_Fetch_Array_query("SELECT list.id as listid,user.uniqid as userhash, user.password as password FROM $tables[list] as list,$tables[listuser] as listuser,$tables[user] as user where list.id = listuser.listid and user.id = listuser.userid and user.email = \"$email\"");
+  $query
+  = ' select l.id as listid, u.uniqid as userhash, u.password as password'
+  . ' from %s as l, %s as lu, %s as u'
+  . '  where l.id = lu.listid'
+  . '    and u.id = lu.userid'
+  . '    and u.email = ?';
+  $query = sprintf($query, $tables['list'], $tables['listuser'], $tables['user']);
+  $rs = Sql_Query_Params($query, array($email));
+  $current = Sql_Fetch_Array($rs);
   $some = $current["listid"];
   if (ASKFORPASSWORD && !empty($user['password'])) {
     # it is safe to link to the preferences page, because it will still ask for
@@ -800,13 +827,13 @@ function forwardPage($id) {
             $info = $GLOBALS["strForwardSuccessInfo"];
             sendAdminCopy("Message Forwarded",$userdata["email"] . " has forwarded a message $mid to $forwardemail",$messagelists);
             Sql_Query(sprintf('insert into %s (user,message,forward,status,time)
-              values(%d,%d,"%s","sent",now())',
+              values(%d,%d,"%s","sent",current_timestamp)',
               $tables['user_message_forward'],$userdata['id'],$mid,$forwardemail));
           } else {
             $info = $GLOBALS["strForwardFailInfo"];
             sendAdminCopy("Message Forwarded",$userdata["email"] . " tried forwarding a message $mid to $forwardemail but failed",$messagelists);
             Sql_Query(sprintf('insert into %s (user,message,forward,status,time)
-              values(%d,%d,"%s","failed",now())',
+              values(%d,%d,"%s","failed",current_timestamp)',
               $tables['user_message_forward'],$userdata['id'],$mid,$forwardemail));
           }
         }

@@ -112,9 +112,9 @@ while ($feed = Sql_Fetch_Row($req)) {
         $newitemcount++;
         Sql_Query(sprintf(
           'INSERT INTO %s (title,link,source,list,added) ' .
-          'VALUES("%s","%s","%s",%d,now())', $tables["rssitem"], addslashes($item["title"]), 
+          'VALUES("%s","%s","%s",%d,current_timestamp)', $tables["rssitem"], addslashes($item["title"]), 
           addslashes($item['link']), addslashes($feed[0]), $feed[1]));
-        $itemid = Sql_Insert_Id();
+        $itemid = Sql_Insert_Id($tables['rssitem'], 'id');
         foreach ($item as $key => $val) {
           if ($key != 'title' && $key != 'link') {
             Sql_Query(sprintf(
@@ -132,7 +132,7 @@ while ($feed = Sql_Fetch_Row($req)) {
   # purpose unkown #@B@ Remove in 2.11 if no purpose found
   Sql_Query(sprintf(
     'INSERT INTO %s (listid,type,entered,info) ' .
-    'VALUES(%d,"retrieval",now(),"%s")', $tables["listrss"], $feed[1], $report));
+    'VALUES(%d,"retrieval",current_timestamp,"%s")', $tables["listrss"], $feed[1], $report));
   logEvent($report);
 }
 if ($nothingtodo) {

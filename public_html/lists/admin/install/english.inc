@@ -7,6 +7,7 @@ $strPhplistDbWrongOk = '<p class="allwrong">Default database and/or user/pass ar
 $strPhplistDefaultDbOk = '<p class="allok">Hmm, the default settings for database connection worked ok. You dont want to use phplist with these values, is not safe, you better change them and create a user for the database before continue.</p>';
 $strDbname = 'Database name : ';
 $strDbhost = 'Database host, usually \'localhost\' : ';
+$strDbschema = 'Database schema, usually \'phplist\' : ';
 $strDbuser = 'Database user, previously created : ';
 $strDbpass = 'Database pass of your user : ';
 $strDbCreatedOk = 'Database created succesfully. The next step will create a config file for your system here.';

@@ -139,8 +139,7 @@ function setMessageData($msgid,$name,$value) {
   if (is_array($value) || is_object($value)) {
     $value = 'SER:'.serialize($value);
   }
-  Sql_Query(sprintf('replace into %s set id = %d,name = "%s", data = "%s"',
-    $GLOBALS['tables']['messagedata'],$msgid,addslashes($name),addslashes($value)));
+  Sql_Replace($GLOBALS['tables']['messagedata'], array('id' => $msgid, 'name' => $name, 'data' => $value), array('name', 'id'));
 #  print "setting $name for $msgid to $value";
 #  exit;
 }
@@ -498,8 +497,13 @@ function logEvent($msg) {
     $p = 'unknown page';
   }
   if (Sql_Table_Exists($tables["eventlog"]))
-  Sql_Query(sprintf('insert into %s (entered,page,entry) values(now(),"%s","%s")',$tables["eventlog"],
-    $p,addslashes($msg)));
+  $query
+  = ' insert into %s'
+  . '    (entered,page,entry)'
+  . ' values'
+  . '    (current_timestamp, ?, ?)';
+  $query = sprintf($query, $tables["eventlog"]);
+  Sql_Query_Params($query, array($p, $msg));
 }
 
 ### process locking stuff
@@ -508,10 +512,16 @@ function getPageLock($force = 0) {
   $thispage = $GLOBALS["page"];
   ## allow killing other processes
   if ($force) {
-    Sql_query("delete from ".$tables["sendprocess"]." where page = \"$thispage\" ");
+    Sql_Query_Params("delete from $tables['sendprocess'] where page = ?", array($thispage));
   }
 
-  $running_req = Sql_query("select now() - modified,id from ".$tables["sendprocess"]." where page = \"$thispage\" and alive order by started desc");
+  $query
+  = ' select current_timestamp - modified, id'
+  . ' from ' . $tables['sendprocess']
+  . ' where page = ?'
+  . '   and alive = 1'
+  . ' order by started desc';
+  $running_req = Sql_Query_Params($query, array($thispage));
   $running_res = Sql_Fetch_row($running_req);
   $waited = 0;
   while ($running_res[1]) { # a process is already running
@@ -536,11 +546,22 @@ function getPageLock($force = 0) {
       output($GLOBALS['I18N']->get('We have been waiting too long, I guess the other process is still going ok'));
       exit;
     }
-    $running_req = Sql_query("select now() - modified,id from ".$tables["sendprocess"]." where page = \"$thispage\" and alive order by started desc");
+    $query
+    = ' select current_timestamp - modified, id'
+    . ' from ' . $tables['sendprocess']
+    . ' where page = ?'
+    . '   and alive = 1'
+    . ' order by started desc';
+    $running_req = Sql_Query_Params($query, array($thispage));
     $running_res = Sql_Fetch_row($running_req);
   }
-  $res = Sql_query('insert into '.$tables["sendprocess"].' (started,page,alive,ipaddress) values(now(),"'.$thispage.'",1,"'.getenv("REMOTE_ADDR").'")');
-  $send_process_id = Sql_Insert_Id();
+  $query
+  = ' insert into ' . $tables['sendprocess']
+  . '    (started, page, alive, ipaddress)'
+  . ' values'
+  . '    (current_timestamp, ?, 1, ?)';
+  $res = Sql_Query_Params($query, array($thispage, getenv('REMOTE_ADDR')));
+  $send_process_id = Sql_Insert_Id($tables['sendprocess'], 'id');
   $abort = ignore_user_abort(1);
   return $send_process_id;
 }
@@ -614,11 +635,11 @@ function setPageCache($url,$lastmodified = 0,$content) {
 #  if (isset($GLOBALS['developer_email'])) return;
   Sql_Query(sprintf('delete from %s where url = "%s"',$GLOBALS["tables"]["urlcache"],$url));
   Sql_Query(sprintf('insert into %s (url,lastmodified,added,content)
-    values("%s",%d,now(),"%s")',$GLOBALS["tables"]["urlcache"],$url,$lastmodified,addslashes($content)));
+    values("%s",%d,current_timestamp,"%s")',$GLOBALS["tables"]["urlcache"],$url,$lastmodified,addslashes($content)));
 }
 
 function clearPageCache () {
-  Sql_Query(sprintf('delete from %s',$GLOBALS["tables"]["urlcache"]));
+  Sql_Query('delete from ' . $GLOBALS['tables']['urlcache']);
 }
 
 function removeJavascript($content) {
@@ -835,7 +856,12 @@ function adminName($id) {
   if (is_object($GLOBALS["admin_auth"])) {
     return $GLOBALS["admin_auth"]->adminName($id);
   }
-  $req = Sql_Fetch_Row_Query(sprintf('select loginname from %s where id = %d',$GLOBALS["tables"]["admin"],$id));
+  $query
+  = ' select loginname'
+  . ' from ' . $GLOBALS['tables']['admin']
+  . ' where id = ?';
+  $rs = Sql_Query_Params($query, array($id));
+  $req = Sql_Fetch_Row($rs);
   return $req[0] ? $req[0] : "<font color=red>Nobody</font>";
 }
 
@@ -863,12 +889,21 @@ function addSubscriberStatistics($item = '',$amount,$list = 0) {
       $time = mktime(0,0,0,date('m'),date('d'),date('Y'));
       break;
   }
-  Sql_Query(sprintf('update %s set value = value + %d where unixdate = %d and item = "%s" and listid = %d',
-    $GLOBALS['tables']['userstats'],$amount,$time,$item,$list));
+  $query
+  = ' update ' . $GLOBALS['tables']['userstats']
+  . ' set value = value + ?'
+  . ' where unixdate = ?'
+  . '   and item = ?'
+  . '   and listid = ?';
+  Sql_Query_Params($query, array($amount, $time, $item, $list));
   $done = Sql_Affected_Rows();
   if (!$done) {
-    Sql_Query(sprintf('insert into %s set value = %d,unixdate = %d,item = "%s",listid = %d',
-      $GLOBALS['tables']['userstats'],$amount,$time,$item,$list));
+    $query
+    = ' insert into ' . $GLOBALS['tables']['userstats']
+    . '   (value, unixdate, item, listid)'
+    . ' values'
+    . '   (?, ?, ?, ?)';
+    Sql_Query_Params($query, array($amount, $time, $item, $list));
   }
 }
 

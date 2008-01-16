@@ -11,7 +11,12 @@ function editVariable($keyAr,$value,$type,$section) {
         $realValue = $_SESSION[$val[$value]];
       }
       if ($key[$value]) {
-        if ($type == 'text' && $val[$value] !== 'database_name' && $val[$value] !== 'database_user' && $val[$value] !== 'database_password' && $val[$value] !== 'database_host') {
+        if ($type == 'text'
+        && $val[$value] !== 'database_name'
+        && $val[$value] !== 'database_schema'
+        && $val[$value] !== 'database_user'
+        && $val[$value] !== 'database_password'
+        && $val[$value] !== 'database_host') {
           if ($val['type'] == 'scalar' || $val['type'] == 'scalar_int' || $val['type'] ==  'constant') {
             $res .= '<img src="images/break-el.gif" height="1" width="100%"><div class="value_name">';
             $res .= $key.'</div>';
@@ -22,7 +27,11 @@ function editVariable($keyAr,$value,$type,$section) {
         switch ($val['type']) {
           case "scalar":
             if ($_SESSION['dbCreatedSuccesfully'] == 1) {
-              if ($val[$value] == 'database_name' || $val[$value] == 'database_user' || $val[$value] == 'database_password' || $val[$value] == 'database_host') {
+              if ($val[$value] == 'database_name'
+              || $val[$value] == 'database_schema'
+              || $val[$value] == 'database_user'
+              || $val[$value] == 'database_password'
+              || $val[$value] == 'database_host') {
                 $res .= '<input type="hidden" value="'.$realValue;
                 $res .= '" name="'.$val[$value].'">';
                 break 1;
@@ -93,7 +102,12 @@ function editVariable($keyAr,$value,$type,$section) {
 
         if ($type == 'text') {
           if ($val['type'] == 'scalar' || $val['type'] == 'scalar_int' || $val['type'] ==  'constant') {
-            if ($type == 'text' && $val[$value] !== 'database_name' && $val[$value] !== 'database_user' && $val[$value] !== 'database_password' && $val[$value] !== 'database_host') {
+            if ($type == 'text'
+            && $val[$value] !== 'database_name'
+            && $val[$value] !== 'database_schema'
+            && $val[$value] !== 'database_user'
+            && $val[$value] !== 'database_password'
+            && $val[$value] !== 'database_host') {
               $res .= '<br /><br />';
             }
           }

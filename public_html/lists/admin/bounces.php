@@ -16,10 +16,10 @@ if (isset($_REQUEST['delete']) && $_REQUEST['delete']) {
 if (isset($_GET['action']) && $_GET['action']) {
   switch($_GET['action']) {
     case "deleteunidentified":
-      Sql_Query(sprintf('delete from %s where comment = "unidentified bounce" and date_add(date,interval 2 month) < now()',$tables["bounce"]));
+      Sql_Query(sprintf('delete from %s where comment = "unidentified bounce" and date_add(date,interval 2 month) < current_timestamp',$tables["bounce"]));
       break;
     case "deleteprocessed":
-      Sql_Query(sprintf('delete from %s where comment != "not processed" and date_add(date,interval 2 month) < now()',$tables["bounce"]));
+      Sql_Query(sprintf('delete from %s where comment != "not processed" and date_add(date,interval 2 month) < current_timestamp',$tables["bounce"]));
       break;
     case "deleteall":
       Sql_Query(sprintf('delete from %s',$tables["bounce"]));
@@ -44,16 +44,16 @@ if (isset($_GET['s'])) {
 } else {
   $s = 0;
 }
-$where = ' where status != "unidentified bounce" ';
 
 print $total . ' '.$GLOBALS['I18N']->get('bounces') . " <br/>";
 if ($total > MAX_USER_PP) {
+  $limit = MAX_USER_PP;
+  $offset = 0;
   if (isset($s) && $s) {
     $listing = $GLOBALS['I18N']->get('listing') . " $s " . $GLOBALS['I18N']->get('to') . ($s + MAX_USER_PP);
-    $limit = "limit $s,".MAX_USER_PP;
+    $offset = $s;
   } else {
     $listing = $GLOBALS['I18N']->get('listing') . " 1 " . $GLOBALS['I18N']->get('to') ." 50";
-    $limit = "limit 0,50";
     $s = 0;
   }
   printf ('<table border=1><tr><td colspan=4 align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
@@ -63,9 +63,11 @@ if ($total > MAX_USER_PP) {
           PageLink2("bounces","&lt;",sprintf('s=%d',max(0,$s-MAX_USER_PP)).$find_url),
           PageLink2("bounces","&gt;",sprintf('s=%d',min($total,$s+MAX_USER_PP)).$find_url),
           PageLink2("bounces","&gt;&gt;",sprintf('s=%d',$total-MAX_USER_PP).$find_url));
-  $result = Sql_query(sprintf('select * from %s %s order by date desc %s',$tables["bounce"],$where,$limit));
+  $query = sprintf('select * from %s where status != ? order by date desc limit $limit offset $offset', $tables['bounce']);
+  $result = Sql_Query_Params($query, array('unidentified bounce'));
 } else {
-  $result = Sql_Query(sprintf('select * from %s %s order by date desc',$tables["bounce"],$where));
+  $query = sprintf('select * from %s where status != ? order by date desc', $tables['bounce']);
+  $result = Sql_Query_Params($query, array('unidentified bounce'));
 }
 #  $result = Sql_Verbose_Query(sprintf('select * from %s where status not like "bounced list message%%" order by date desc',$tables["bounce"]));
 #  $result = Sql_Verbose_Query(sprintf('select * from %s where data like "%%systemmessage%%" order by date desc',$tables["bounce"]));
@@ -80,7 +82,7 @@ printf("[
    PageURL2("bounces",$GLOBALS['I18N']->get('delete'),"s=$s&action=deleteall"),
    PageURL2("bounces",$GLOBALS['I18N']->get('delete'),"s=$s&action=reset"));
 
-if (!Sql_Affected_Rows())
+if (!Sql_Num_Rows($result))
   print "<p>" . $GLOBALS['I18N']->get('no unprocessed bounces available') . "</p>";
 
 print "<table><tr><td></td><td>" . $GLOBALS['I18N']->get('message') . "</td><td>" . $GLOBALS['I18N']->get('user') . "</td><td>" . $GLOBALS['I18N']->get('date') . "</td></tr>";

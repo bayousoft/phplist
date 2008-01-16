@@ -34,11 +34,11 @@ if ($_POST['resend'] && is_array($_POST['list'])) {
     $res = Sql_query("select * from $tables[list]");
     while($list = Sql_fetch_array($res))
       if ($list["active"])
-        $result = Sql_query("insert into $tables[listmessage] (messageid,listid,entered) values($id,$list[id],now())");
+        $result = Sql_query("insert into $tables[listmessage] (messageid,listid,entered) values($id,$list[id],current_timestamp)");
   } else {
     foreach($_POST['list'] as $key => $val) {
       if ($val == 'signup') {
-        $result = Sql_query("insert into $tables[listmessage] (messageid,listid,entered) values($id,$key,now())");
+        $result = Sql_query("insert into $tables[listmessage] (messageid,listid,entered) values($id,$key,current_timestamp)");
       }
     }
   }
@@ -60,7 +60,7 @@ if ($returnpage) {
 print '<p>'.PageLink2('send&amp;id='.$id,$GLOBALS['I18N']->get('Edit this message')).'</p>';
 
 $result = Sql_query("SELECT * FROM {$tables['message']} where id = $id $owner_select_and");
-if (!Sql_Affected_Rows()) {
+if (!Sql_Num_Rows($result)) {
   print $GLOBALS['I18N']->get('No such message');
   return;
 }
@@ -88,7 +88,7 @@ if (ALLOW_ATTACHMENTS) {
   $req = Sql_Query("select * from {$tables["message_attachment"]},{$tables["attachment"]}
     where {$tables["message_attachment"]}.attachmentid = {$tables["attachment"]}.id and
     {$tables["message_attachment"]}.messageid = $id");
-  if (!Sql_Affected_Rows())
+  if (!Sql_Num_Rows($req))
     print '<tr><td colspan=2>' . $GLOBALS['I18N']->get('No attachments') . '</td></tr>';
   while ($att = Sql_Fetch_array($req)) {
     printf ('<tr><td>%s:</td><td>%s</td></tr>', $GLOBALS['I18N']->get('Filename') ,$att["remotefile"]);
@@ -102,8 +102,8 @@ if (ALLOW_ATTACHMENTS) {
 print '<tr><td colspan="2"<h3>' . $GLOBALS['I18N']->get('Lists this message has been sent to') . ':</h3></td></tr>';
 
 $lists_done = array();
-$result = Sql_Query("select $tables[list].name,$tables[list].id from $tables[listmessage],$tables[list] where $tables[listmessage].messageid = $id and $tables[listmessage].listid = $tables[list].id");
-if (!Sql_Affected_Rows())
+$result = Sql_Query("select l.name, l.id from $tables[listmessage] lm, $tables[list] l where lm.messageid = $id and lm.listid = l.id");
+if (!Sql_Num_Rows($result))
   print '<tr><td colspan="2">' . $GLOBALS['I18N']->get('None yet') . '</td></tr>';
 while ($lst = Sql_fetch_array($result)) {
   array_push($lists_done,$lst[id]);

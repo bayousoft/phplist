@@ -305,7 +305,7 @@ date('Y') + 1));
       Sql_Query("update {$tables['rssitem']} set processed = processed +1 where id = $rssitemid");
       Sql_Query("replace into {$tables['rssitem_user']} (userid,itemid) values({$userdata['id']},$rssitemid)");
     }
-    Sql_Query("replace into {$tables["user_rss"]} (userid,last) values({$userdata['id']},date_sub(now(),interval 15 minute))");
+    Sql_Query("replace into {$tables["user_rss"]} (userid,last) values({$userdata['id']},date_sub(current_timestamp,interval 15 minute))");
     return true;
   }
 
@@ -459,7 +459,7 @@ $key, $subscribePageData['rssdefault'] == $key ? 'checked' : '');
     }
 
     $cansend_req= Sql_Query(sprintf('
-                                            SELECT date_add(last,%s) < now() FROM %s 
+                                            SELECT date_add(last,%s) < current_timestamp FROM %s 
                                             WHERE userid = %d', $interval, $tables['user_rss'], $userid));
     $exists= Sql_Affected_Rows();
     $cansend= Sql_Fetch_Row($cansend_req);

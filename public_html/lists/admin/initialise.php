@@ -11,9 +11,9 @@ while (list($table, $val) = each($DBstruct)) {
     if ($table == "attribute") {
       $req = Sql_Query("select tablename from {$tables["attribute"]}");
       while ($row = Sql_Fetch_Row($req))
-        Sql_Query("drop table if exists $table_prefix"."listattr_$row[0]",1);
+        Sql_Drop_Table($table_prefix . 'listattr_' . $row[0]);
      }
-    Sql_query("drop table if exists $tables[$table]");
+    Sql_Drop_Table($tables[$table]);
   }
   $query = "CREATE TABLE $tables[$table] (\n";
   while (list($column, $struct) = each($DBstruct[$table])) {
@@ -42,7 +42,7 @@ while (list($table, $val) = each($DBstruct)) {
     if (!$error || $force) {
       if ($table == "admin") {
         # create a default admin
-        Sql_Query(sprintf('insert into %s values(0,"%s","%s","%s",now(),now(),"%s","%s",now(),%d,0)',
+        Sql_Query(sprintf('insert into %s values(0,"%s","%s","%s",current_timestamp,current_timestamp,"%s","%s",current_timestamp,%d,0)',
           $tables["admin"],"admin","admin","",$adminname,"phplist",1));
       } elseif ($table == "task") {
         while (list($type,$pages) = each ($system_pages)) {
@@ -62,14 +62,17 @@ while (list($table, $val) = each($DBstruct)) {
 
 if ($success) {
   # mark the database to be our current version
-  Sql_Query(sprintf('replace into %s (item,value,editable) values("version","%s",0)',
-    $tables["config"],VERSION));
+  Sql_Replace($tables['config'], array('item' => 'version', 'value' => VERSION, 'editable' => 0), 'item');
   # mark now to be the last time we checked for an update
-  Sql_Query(sprintf('replace into %s (item,value,editable) values("updatelastcheck",now(),0)',
-    $tables["config"]));
+  Sql_Replace($tables['config'], array('item' => "'updatelastcheck'", 'value' => 'current_timestamp', 'editable' => '0'), 'item', false);
   # add a testlist
   $info = $GLOBALS['I18N']->get("List for testing.");
-  $result = Sql_query("insert into {$tables["list"]} (name,description,entered,active,owner) values(\"test\",\"$info\",now(),0,1)");
+  $stmt
+  = ' insert into ' . $tables['list']
+  . '   (name, description, entered, active, owner)'
+  . ' values'
+  . '   (?, ?, current_timestamp, ?, ?)';
+  $result = Sql_Query_Params($stmt, array('test', $info, '0', '1'));
   $body = '
     Version: '.VERSION."\r\n".
    ' Url: '.getConfig("website").$pageroot."\r\n";

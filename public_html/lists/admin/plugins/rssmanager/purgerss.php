@@ -14,7 +14,7 @@ if (!$_SESSION['logindetails']['superuser']) {
 
 $count = 0;
 if ($daysago) {
-  $req = Sql_Query(sprintf('select id from %s where date_add(added,interval %d day) < now()',$GLOBALS['tables']['rssitem'],$daysago));
+  $req = Sql_Query(sprintf('select id from %s where date_add(added,interval %d day) < current_timestamp',$GLOBALS['tables']['rssitem'],$daysago));
   while ($row = Sql_Fetch_Row($req)) {
     Sql_Query(sprintf('delete from %s where itemid = %d',$GLOBALS['tables']['rssitem_data'],$row[0]));
     Sql_Query(sprintf('delete from %s where itemid = %d',$GLOBALS['tables']['rssitem_user'],$row[0]));

@@ -111,11 +111,11 @@ if (isset($_GET['resend'])) {
   $resend = sprintf('%d',$_GET['resend']);
   # requeue the message in $resend
   print $GLOBALS['I18N']->get("Requeuing")." $resend ..";
-  $result = Sql_query("update ".$tables["message"]." set status = \"submitted\",sendstart = now() where id = $resend");
+  $result = Sql_Query("update ${tables['message']} set status = 'submitted', sendstart = current_timestamp where id = $resend");
   $suc6 = Sql_Affected_Rows();
   # only send it again to users, if we are testing, otherwise only to new users
   if (TEST)
-    $result = Sql_query("delete from ".$tables["usermessage"]." where messageid = $resend");
+    $result = Sql_query("delete from ${tables['usermessage']} where messageid = $resend");
   if ($suc6)
     print "... ".$GLOBALS['I18N']->get("Done");
   else
@@ -147,15 +147,16 @@ if (isset($_GET['markSent'])) {
   print"<br /><hr /><br /><p>\n";
 }
 
+$cond = array();
 ### Switch tab
 switch ($_GET["type"]) {
   case "queued":
 #    $subselect = ' status in ("submitted") and (rsstemplate is NULL or rsstemplate = "") ';
-    $subselect = ' status in ("submitted","suspended") ';
+    $cond[] = " status in ('submitted', 'suspended') ";
     $url_keep = '&type=queued';
     break;
   case "static":
-    $subselect = ' status in ("prepared") ';
+    $cond[] = " status in ('prepared') ";
     $url_keep = '&type=static';
     break;
 #  case "rss":
@@ -163,36 +164,35 @@ switch ($_GET["type"]) {
 #    $url_keep = '&type=sent';
 #    break;
   case "draft":
-    $subselect = ' status in ("draft") ';
+    $cond[] = " status in ('draft') ";
     $url_keep = '&type=draft';
     break;
   case "sent":
   default:
-    $subselect = ' status in ("sent","inprocess") ';
+    $cond[] = " status in ('sent', 'inprocess') ";
     $url_keep = '&type=sent';
     break;
 }
 
 ### Query messages from db
-if( !$GLOBALS["require_login"] || $_SESSION["logindetails"]['superuser'] ){
-  $subselect= ' where '.$subselect;
-} else {
-  $subselect = 'WHERE owner = ' . $_SESSION["logindetails"]['id'] .' and '.$subselect;
+if ($GLOBALS['require_login'] && !$_SESSION['logindetails']['superuser']) {
+  $cond[] = ' owner = ' . $_SESSION['logindetails']['id'];
 }
-$req = Sql_query("SELECT count(*) FROM " . $tables["message"].' '.$subselect);
-
+$where = ' where ' . join(' and ', $cond);
+$req = Sql_query('select count(*) from ' . $tables['message']. $where);
 $total_req = Sql_Fetch_Row($req);
 $total = $total_req[0];
 $end = isset($start) ? $start + MAX_MSG_PP : MAX_MSG_PP;
 if ($end > $total) $end = $total;
 
 ## Browse buttons table
+$limit = MAX_MSG_PP;
+$offset = 0;
 if (isset($start) && $start > 0) {
   $listing = $GLOBALS['I18N']->get("Listing message")." $start ".$GLOBALS['I18N']->get("to")." " . $end;
-  $limit = "limit $start,".MAX_MSG_PP;
+  $offset = $start;
 } else {
   $listing =  $GLOBALS['I18N']->get("Listing message 1 to")." ".$end;
-  $limit = "limit 0,".MAX_MSG_PP;
   $start = 0;
 }
   print $total. " ".$GLOBALS['I18N']->get("Messages")."</p>";
@@ -217,7 +217,7 @@ if ($_GET["type"] == "draft") {
 ## messages table
 if ($total) {
   print "<td>".$GLOBALS['I18N']->get("Message info")."</td><td>".$GLOBALS['I18N']->get("Status")."</td><td>".$GLOBALS['I18N']->get("Action")."</td></tr>";
-  $result = Sql_query("SELECT * FROM ".$tables["message"]." $subselect order by status,entered desc $limit");
+  $result = Sql_query("SELECT * FROM ".$tables["message"]." $subselect order by status,entered desc limit $limit offset $offset");
   while ($msg = Sql_fetch_array($result)) {
     $uniqueviews = Sql_Fetch_Row_Query("select count(userid) from {$tables["usermessage"]} where viewed is not null and messageid = ".$msg["id"]);
     #$clicks = Sql_Fetch_Row_Query("select sum(clicked) from {$tables["linktrack"]} where messageid = ".$msg["id"]);

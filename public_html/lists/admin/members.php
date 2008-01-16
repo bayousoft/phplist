@@ -10,8 +10,9 @@ switch ($access) {
   case "owner":
     $subselect = " where owner = ".$_SESSION["logindetails"]["id"];
     if ($id) {
-      Sql_Query("select id from ".$tables["list"]. $subselect . " and id = $id");
-      if (!Sql_Affected_Rows()) {
+      $query = "select id from " . $tables['list'] . $subselect . " and id = ?";
+      $rs = Sql_Query_Params($query, array($id));
+      if (!Sql_Num_Rows($rs)) {
         Fatal_Error($GLOBALS['I18N']->get("You do not have enough priviliges to view this page"));
         return;
       }
@@ -85,7 +86,8 @@ if (isset($_REQUEST["processtags"]) && $access != "view") {
     }
   }
   if ($_POST["tagaction_all"] != "nothing") {
-    $req = Sql_Query(sprintf('select userid from %s where listid = %d',$tables["listuser"],$id));
+    $query = sprintf('select userid from %s where listid = ?', $tables['listuser']);
+    $req = Sql_Query_Params($query, array($id));
     switch ($_POST["tagaction_all"]) {
       case "move":
         $cnt = 0;
@@ -119,8 +121,10 @@ if (isset($_REQUEST["processtags"]) && $access != "view") {
 }
 if (isset($_POST["add"])) {
   if ($_POST["new"]) {
-    $result = Sql_query(sprintf('select * from %s where email = "%s"',$tables["user"],$_POST["new"]));
-    if (Sql_affected_rows()) {
+    // TODO Validate email address.
+    $query = sprintf('select * from %s where email = ?', $tables['user']);
+    $result = Sql_Query_Params($query, array($_POST['new']));
+    if (Sql_Num_rows($result)) {
       print "<p>".$GLOBALS['I18N']->get("Users found, click add to add this user").":<br /><ul>\n";
       while ($user = Sql_fetch_array($result)) {
         printf ("<li>[ ".PageLink2("members",$GLOBALS['I18N']->get("Add"),"add=1&id=$id&doadd=".$user["id"])." ] %s <br />\n",
@@ -154,15 +158,20 @@ if (isset($_POST["add"])) {
 if (isset($_REQUEST["doadd"])) {
   if ($_POST["action"] == "insert") {
     $email = trim($_POST["email"]);
+    #TODO validate email address.
     print $GLOBALS['I18N']->get("Inserting user")." $email";
-    $result = Sql_query(sprintf('
-      insert into %s (email,entered,confirmed,htmlemail,uniqid)
-       values("%s",now(),1,%d,"%s")',
-      $tables["user"],$email,$htmlemail,getUniqid()));
-    $userid = Sql_insert_id();
-    $query = "insert into $tables[listuser] (userid,listid,entered)
- values($userid,$id,now())";
-    $result = Sql_query($query);
+    Sql_Start_Transaction();
+    $query
+    = ' insert into %s (email, entered, confirmed, htmlemail, uniqid)'
+    . ' values(?, current_timestamp, 1, ?, ?)';
+    $query = sprintf($query, $tables['user']);
+    $result = Sql_Query_Params($query, array($email, $htmlemail, getUniqid()));
+    $userid = Sql_Insert_Id($tables['user'], 'id');
+    $query
+    = ' insert into %s (userid, listid, entered)'
+    . ' values (?, ?, current_timestamp)';
+    $query = sprintf($query, $tables['listuser']);
+    $result = Sql_Query_Params($query, array($userid, $id));
     # remember the users attributes
     $res = Sql_Query("select * from $tables[attribute]");
     while ($row = Sql_Fetch_Array($res)) {
@@ -175,38 +184,45 @@ if (isset($_REQUEST["doadd"])) {
         }
         $value = join(",",$newval);
       }
-      Sql_Query(sprintf('replace into %s (attributeid,userid,value) values("%s","%s","%s")',
-        $tables["user_attribute"],$row["id"],$userid,$value));
+      $res1 = Sql_Replace($tables['user_attribute'], array('attributeid' => $row['id'], 'userid' => $userid, 'value' => $value), 'id');
     }
   } else {
-    $query = "replace into $tables[listuser] (userid,listid,entered)
- values({$_REQUEST["doadd"]},$id,now())";
-    $result = Sql_query($query);
+    $res2 = Sql_Replace($tables['listuser'], array('userid' => "'" . $_REQUEST['doadd'] . "'", 'listid' => $id, 'entered' => 'current_timestamp'), array('userid', 'listid'), false);
   }
+  Sql_Commit_Transaction();
   echo "<br /><font color=red size=+2>".$GLOBALS['I18N']->get("User added")."</font><br />";
 }
 if (isset($_REQUEST["delete"])) {
   $delete = sprintf('%d',$_REQUEST["delete"]);
   # single delete the index in delete
   print $GLOBALS['I18N']->get("Deleting")." $delete ..\n";
-  $query = "delete from {$tables["listuser"]} where listid = $id and userid = $delete";
-  $result = Sql_query($query);
+  $query
+  = ' delete from ' . $tables['listuser']
+  . ' where listid = ?'
+  . '   and userid = ?';
+  $result = Sql_Query_Params($query, array($id, $delete));
   print "... ".$GLOBALS['I18N']->get("Done")."<br />\n";
   Redirect("members&id=$id");
 }
 if (isset($id)) {
-  $result = Sql_query("SELECT count(*) FROM {$tables["listuser"]},{$tables["user"]}
-    where listid = $id and userid = {$tables["user"]}.id");
+  $query
+  = ' select count(*)'
+  . ' from %s lu'
+  . '    join %s u'
+  . '       on lu.userid = u.id'
+  . ' where lu.listid = ?';
+  $query = sprintf($query, $tables['listuser'], $tables['user']);
+  $result = Sql_Query_Params($query, array($id));
   $row = Sql_Fetch_row($result);
   $total = $row[0];
   print "$total ".$GLOBALS['I18N']->get("Users on this list")."<p>";
+  $offset = 0;
   if ($total > MAX_USER_PP) {
     if (isset($start) && $start) {
       $listing = $GLOBALS['I18N']->get("Listing user")." $start ".$GLOBALS['I18N']->get("to")." " . ($start + MAX_USER_PP);
-      $limit = "limit $start,".MAX_USER_PP;
+      $offset = $start;
     } else {
       $listing = $GLOBALS['I18N']->get("Listing user 1 to 50");
-      $limit = "limit 0,50";
       $start = 0;
     }
   printf ('<table border=1><tr><td colspan=4 align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
@@ -218,9 +234,17 @@ if (isset($id)) {
           PageLink2("members","&gt;&gt;",sprintf('start=%d&id=%d',$total-MAX_USER_PP,$id)));
   }
 //  $result = Sql_query("SELECT $tables[user].id,email,confirmed,rssfrequency FROM // so plugins can use all fields
-  $result = Sql_query("SELECT * FROM
-    {$tables["listuser"]},{$tables["user"]} WHERE {$tables["listuser"]}.listid = $id AND
-    {$tables["listuser"]}.userid = {$tables["user"]}.id ORDER BY confirmed desc,email $limit");
+  $query
+  = ' select u.*'
+  . " from %s lu"
+  . "    join %s u"
+  . '       on lu.userid = u.id'
+  . ' where lu.listid = ?'
+  . ' order by confirmed desc, email'
+  . ' limit ' . MAX_USER_PP . ' offset ' . $offset;
+// TODO Consider using a subselect.  select user where uid in select uid from list
+  $query=sprintf($query, $tables['listuser'], $tables['user'] );
+  $result = Sql_Query_Params($query, array($id));
   print formStart('name=users');
   printf('<input type=hidden name="id" value="%d">',$id);
   ?>
@@ -246,9 +270,16 @@ if (isset($id)) {
      $ls->addColumn($user["email"],$GLOBALS['I18N']->get("del"),
       sprintf('<a href="javascript:deleteRec(\'%s\');">'.$GLOBALS['I18N']->get('Del').'</a>',
         PageURL2("members","","start=$start&id=$id&delete=".$user["id"])));
-    $msgcount = Sql_Fetch_Row_Query("select count(*) from {$tables["listmessage"]},{$tables["usermessage"]}
-      where {$tables["listmessage"]}.listid = $id and {$tables["listmessage"]}.messageid = {$tables["usermessage"]}.messageid
-      and {$tables["usermessage"]}.userid = {$user["id"]}");
+    $query
+    = ' select count(*)'
+    . ' from %s lm, %s um'
+    . ' where lm.messageid = um.messageid'
+    . '   and lm.listid = ?'
+    . '   and um.userid = ?';
+    // TODO: Could left join with above query.
+    $query = sprintf($query, $tables['listmessage'], $tables['usermessage']);
+    $rs = Sql_Query_Params($query, array($id, $user['id']));
+    $msgcount = Sql_Fetch_Row($rs);
     $ls->addColumn($user["email"],$GLOBALS['I18N']->get("# msgs"),$msgcount[0]);
 
     ## allow plugins to add columns

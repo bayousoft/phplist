@@ -12,16 +12,22 @@ if (isset($_GET['delete'])) {
   $delete = sprintf('%d',$_GET['delete']);
   # delete the index in delete
   print $GLOBALS['I18N']->get('Deleting') . " $delete ..\n";
-  $result = Sql_query("delete from $tables[list] where id = $delete");
-  $result = Sql_query("delete from $tables[listuser] where listid = $delete");
-  $result = Sql_query("delete from $tables[listmessage] where listid = $delete");
+  $result = Sql_Query_Params("delete from $tables[list] where id = ?", array($delete));
+  $result = Sql_Query_Params("delete from $tables[listuser] where listid = ?", array($delete));
+  $result = Sql_Query_Params("delete from $tables[listmessage] where listid = ?", array($delete));
   print '..' . $GLOBALS['I18N']->get('Done') . "<br /><hr /><br />\n";
 }
 
 if (isset($_POST['listorder']) && is_array($_POST['listorder']))
-  while (list($key,$val) = each ($_POST['listorder']))
-  Sql_Query(sprintf('update %s set listorder = %d, active = %d where id = %d',
-    $tables["list"],$val,!empty($_POST['active'][$key]),$key));
+  while (list($key,$val) = each ($_POST['listorder'])) {
+    $active = empty($_POST['active'][$key]) ? '0' : '1';
+    $query
+    = ' update %s'
+    . ' set listorder = ?, active = ?'
+    . ' where id = ?';
+    $query = sprintf($query, $tables['list']);
+    Sql_Query_Params($query, array($val, $active, $key));
+  }
 
 $access = accessLevel('list');
 switch ($access) {
@@ -38,9 +44,19 @@ switch ($access) {
 }
 
 $html = '';
-$result = Sql_query("SELECT * FROM $tables[list] $subselect order by listorder");
+$query
+= ' select *'
+. ' from ' . $tables['list']
+. $subselect
+. ' order by listorder';
+$result = Sql_query($query);
 while ($row = Sql_fetch_array($result)) {
-  $count = Sql_Fetch_Row_Query("select count(*) from {$tables['listuser']} where listid = {$row["id"]} ");
+  $query
+  = ' select count(*)'
+  . ' from ' . $tables['listuser']
+  . ' where listid = ?';
+  $rsc = Sql_Query_Params($query, array($row["id"]));
+  $count = Sql_Fetch_Row($rsc);
   $desc = stripslashes($row['description']);
 
 //Obsolete by rssmanager plugin 

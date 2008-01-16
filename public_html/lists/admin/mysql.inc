@@ -144,6 +144,11 @@ function Sql_Query($query,$ignore = 0) {
   return $result;
 }
 
+function Sql_Query_Params($query,$ignore = 0) {
+  // TODO
+  print "mysql.Sql_Query_Params() needs to be implemented.";
+}
+
 function sqllog($msg,$logfile = "") {
   if (!$logfile) return;
   $fp = @fopen($logfile,"a");
@@ -206,7 +211,7 @@ function Sql_Num_Rows($result = "") {
   return mysql_num_rows($result);
 }
 
-function Sql_Insert_id() {
+function Sql_Insert_Id() {
   return mysql_insert_id($GLOBALS["database_connection"]);
 }
 
@@ -259,6 +264,11 @@ function Sql_create_Table ($table,$structure) {
   $query .= "\n)";
   # submit it to the database
   $res = Sql_Query($query);
+}
+
+function Sql_Replace ($table,$values,$pk) {
+  // TODO
+  print "mysql.Sql_Replace() needs to be implemented.";
 }
 
 ?>

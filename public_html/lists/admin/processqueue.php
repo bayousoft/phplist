@@ -105,7 +105,7 @@ if ($num_per_batch && $batch_period) {
   # check how many were sent in the last batch period and take off that
   # amount from this batch
   $original_num_per_batch = $num_per_batch;
-  $recently_sent = Sql_Fetch_Row_Query(sprintf('select count(*) from %s where date_add(entered,interval %d second) > now() and status = "sent"',
+  $recently_sent = Sql_Fetch_Row_Query(sprintf('select count(*) from %s where date_add(entered,interval %d second) > current_timestamp and status = "sent"',
     $tables["usermessage"],$batch_period));
   $num_per_batch -= $recently_sent[0];
 
@@ -334,8 +334,14 @@ $script_stage = 1; # we are active
 $notsent = $sent = $invalid = $unconfirmed = $cannotsend = 0;
 
 //rsstemplate Leftover from the preplugin era
-$messages = Sql_query("select id,userselection,subject,rsstemplate from ".$tables["message"]." where status != \"draft\" and status != \"sent\" and status != \"prepared\" and status != \"suspended\" and embargo < now() order by entered");
-$num_messages = Sql_affected_rows();
+$query
+= " select id, userselection, subject, rsstemplate"
+. " from ${tables['message']}"
+. " where status not in ('draft', 'sent', 'prepared', 'suspended')"
+. "   and embargo < current_timestamp"
+. " order by entered";
+$messages = Sql_query($query);
+$num_messages = Sql_Num_Rows($messages);
 if (Sql_Has_Error($database_connection)) {  ProcessError(Sql_Error($database_connection)); }
 
 if ($num_messages) {
@@ -354,7 +360,6 @@ if ($num_messages) {
   }
 }
 
-Sql_query("SET SQL_BIG_TABLES=1");
 $script_stage = 2; # we know the messages to process
 include_once "footer.inc";
 if (!$num_per_batch) {
@@ -377,7 +382,7 @@ while ($message = Sql_fetch_array($messages)) {
         sprintf($GLOBALS['I18N']->get('phplist has started sending the message with subject %s'),$message['subject']."\n".
         sprintf($GLOBALS['I18N']->get('to view the progress of this message, go to %s'),getConfig('website').$GLOBALS['adminpages'].'/?page=messages&type=sent')));
     }
-    Sql_Query(sprintf('insert ignore into %s (name,id,data) values("start_notified",%d,now())',
+    Sql_Query(sprintf('insert ignore into %s (name,id,data) values("start_notified",%d,current_timestamp)',
       $GLOBALS['tables']['messagedata'],$messageid));
   }
 
@@ -392,19 +397,28 @@ while ($message = Sql_fetch_array($messages)) {
 
   flush();
   keepLock($send_process_id);
-  $status = Sql_query('update '.$tables["message"].' set status = "inprocess" where id = '.$messageid);
-  $sendstart = Sql_query('update '.$tables["message"].' set sendstart = now() where sendstart is NULL and id = '.$messageid);
+  $query
+  = " update ${tables['message']}"
+  . " set status = 'inprocess'"
+  . " where id = ?";
+  $status = Sql_Query_Params($query, array($messageid));
+  $query
+  = " update ${tables['message']}"
+  . " set sendstart = current_timestamp"
+  . " where sendstart is null and id = ?";
+  $sendstart = Sql_Query_Params($query, array($messageid));
   output($GLOBALS['I18N']->get('Looking for users'));
   if (Sql_Has_Error($database_connection)) {  ProcessError(Sql_Error($database_connection)); }
 
   # make selection on attribute, users who at least apply to the attributes
   # lots of ppl seem to use it as a normal mailinglist system, and do not use attributes.
   # Check this and take anyone in that case.
-  $numattr = Sql_Fetch_Row_Query("select count(*) from ".$tables["attribute"]);
+  $rs = Sql_Query('select count(*) from ' . $tables['attribute']);
+  $numattr = Sql_Fetch_Row($rs);
 
   if ($userselection && $numattr[0]) {
-    $res = Sql_query($userselection);
-    $num_users = Sql_Affected_rows($res);
+    $res = Sql_Query($userselection);
+    $num_users = Sql_Num_Rows($res);
     output($num_users.' '.$GLOBALS['I18N']->get('users apply for attributes, now checking lists'));
     $user_list = "";
     while ($row = Sql_Fetch_row($res)) {
@@ -415,7 +429,11 @@ while ($message = Sql_fetch_array($messages)) {
       $user_attribute_query = " and listuser.userid in ($user_list)";
     else {
       output($GLOBALS['I18N']->get('No users apply for attributes'));
-      $status = Sql_query("update {$tables["message"]} set status = \"sent\",sent = now() where id = \"$messageid\"");
+      $query
+      = " update ${tables['message']}"
+      . " set status = 'sent', sent = current_timestamp"
+      . " where id = ?";
+      $status = Sql_Query_Params($query, array($messageid));
       finish("info","Message $messageid: \nNo users apply for attributes, ie nothing to do");
       $script_stage = 6;
       # we should actually continue with the next message
@@ -466,11 +484,19 @@ while ($message = Sql_fetch_array($messages)) {
 */
 
   if (USE_LIST_EXCLUDE) {
-    $excluded_lists = Sql_Fetch_Row_Query(sprintf('select data from %s where name = "excludelist" and id = %d',
-      $GLOBALS["tables"]["messagedata"],$messageid));
+    $query
+    = " select data"
+    . " from ${GLOBALS['tables']['messagedata']}"
+    . " where name='excludelist'"
+    . "   and id = ?";
+    $rs = Sql_Query_Params($query, array($messageid));
+    $excluded_lists = Sql_Fetch_Row($rs);
     if (strlen($excluded_lists[0])) {
-      $req = Sql_Query(sprintf('select listuser.userid from %s as listuser where listid in (%s)',
-        $GLOBALS["tables"]["listuser"],$excluded_lists[0]));
+      $query
+      = " select userid"
+      . " from ${GLOBALS['tables']['listuser']}"
+      . " where listid in (${excluded_lists[0]})";
+      $req = Sql_Query($query);
       while ($row = Sql_Fetch_Row($req)) {
         array_push($skipusers,$row[0]);
       }
@@ -479,8 +505,6 @@ while ($message = Sql_fetch_array($messages)) {
     if (sizeof($skipusers))
       $exclusion .= " and listuser.userid not in (".join(",",$skipusers).")";
   }
-
-  $userconfirmed = ' and user.confirmed and !user.blacklisted ';
 
 /*
   ## 8478
@@ -497,31 +521,31 @@ while ($message = Sql_fetch_array($messages)) {
     $userconfirmed,
     $exclusion,
     $user_attribute_query);*/
-  $query = sprintf('select distinct user.id from
-  (%s as listuser,
-  %s as user,
-  %s as listmessage)
-  left join %s as usermessage
-  on (usermessage.messageid = %d and usermessage.userid = listuser.userid)
-  where
-  listmessage.messageid = %d and
-  listmessage.listid = listuser.listid and
-  user.id = listuser.userid and
-  usermessage.userid IS NULL
-  %s %s %s',
-  $tables['listuser'], $tables['user'], $tables['listmessage'], $tables['usermessage'],
-  $messageid, $messageid,
-  $userconfirmed, $exclusion, $user_attribute_query);
+  $query
+  = ' select distinct u.id'
+  . ' from %s as listuser'
+  . '    cross join %s as u'
+  . '    cross join %s as listmessage'
+  . '    left join %s as um'
+  . '       on (um.messageid = ? and um.userid = listuser.userid)'
+  . ' where true'
+  . '   and listmessage.messageid = ?'
+  . '   and listmessage.listid = listuser.listid'
+  . '   and u.id = listuser.userid'
+  . '   and um.userid IS NULL'
+  . '   and u.confirmed = 1 and u.blacklisted <> 1'
+  . ' %s %s';
+  $query = sprintf($query, $tables['listuser'], $tables['user'], $tables['listmessage'], $tables['usermessage'], $exclusion, $user_attribute_query);
 
   if (VERBOSE) {
     output($query);
   }
 
-  $userids = Sql_query($query);
+  $userids = Sql_Query_Params($query, array($messageid, $messageid));
   if (Sql_Has_Error($database_connection)) {  ProcessError(Sql_Error($database_connection)); }
 
   # now we have all our users to send the message to
-  $num_users = Sql_affected_rows();
+  $num_users = Sql_Num_Rows($userids);
   if ($skipped >= 10000) {
     $num_users -= $skipped;
   }
@@ -534,15 +558,15 @@ while ($message = Sql_fetch_array($messages)) {
     $batch_total = $num_users;
     if ($num_per_batch > 0) {
       #$query .= sprintf(' limit 0,%d',$num_per_batch);
-      $userids = Sql_query("$query");
+      $userids = Sql_Query_Params($query, array($messageid, $messageid));
       if (Sql_Has_Error($database_connection)) {  ProcessError(Sql_Error($database_connection)); }
     } else {
       output($GLOBALS['I18N']->get('No users to process for this batch'));
-      $userids = Sql_Query(sprintf('select * from %s where id = 0',$tables["user"]));
+      $userids = Sql_Query("select * from ${tables['user']} where id = 0");
     }
   }
-  $affrows = Sql_Affected_Rows();
-  while ($userdata = Sql_fetch_row($userids)) {
+  $affrows = Sql_Num_Rows($userids);
+  while ($userdata = Sql_Fetch_Row($userids)) {
     if ($num_per_batch && $sent >= $num_per_batch) {
       output($GLOBALS['I18N']->get('batch limit reached').": $sent ($num_per_batch)");
       $GLOBALS["wait"] = $batch_period;
@@ -569,7 +593,7 @@ while ($message = Sql_fetch_array($messages)) {
 
     # check whether the user has already received the message
     $um = Sql_query("select entered from {$tables['usermessage']} where userid = $userdata[0] and messageid = $messageid");
-    if (!Sql_Affected_Rows()) {
+    if (!Sql_Num_Rows($um)) {
       if ($script_stage < 4)
         $script_stage = 4; # we know a user
       $someusers = 1;
@@ -677,7 +701,7 @@ while ($cansend && $plugin = current($GLOBALS['plugins']) ) {
               }
             }
             $sent++;
-            $um = Sql_query("replace into {$tables['usermessage']} (entered,userid,messageid,status) values(now(),$userid,$messageid,\"sent\")");
+            $um = Sql_Replace($tables['usermessage'], array('entered' => 'current_timestamp', 'userid' => $userid, 'messageid' => $messageid, 'status' => "'sent'"), array('userid', 'messageid'), false);
 
 //obsolete, moved to rssmanager plugin 
 //            if (ENABLE_RSS && $pxrocessrss) {
@@ -685,7 +709,7 @@ while ($cansend && $plugin = current($GLOBALS['plugins']) ) {
 //                $status = Sql_query("update {$tables['rssitem']} set processed = processed +1 where id = $rssitemid");
 //                $um = Sql_query("replace into {$tables['rssitem_user']} (userid,itemid) values($userid,$rssitemid)");
 //              }
-//              Sql_Query("replace into {$tables["user_rss"]} (userid,last) values($userid,date_sub(now(),interval 15 minute))");
+//              Sql_Query("replace into {$tables["user_rss"]} (userid,last) values($userid,date_sub(current_timestamp,interval 15 minute))");
 //
 //              }
            } else {
@@ -741,7 +765,7 @@ while ($cansend && $plugin = current($GLOBALS['plugins']) ) {
           if (VERBOSE) {
             output($GLOBALS['I18N']->get('not sending to ').$useremail);
           }
-          $um = Sql_query("replace into {$tables['usermessage']} (entered,userid,messageid,status) values(now(),$userid,$messageid,\"not sent\")");
+          $um = Sql_query("replace into {$tables['usermessage']} (entered,userid,messageid,status) values(current_timestamp,$userid,$messageid,\"not sent\")");
         }
 
         # update possible other users matching this email as well,
@@ -763,7 +787,7 @@ while ($cansend && $plugin = current($GLOBALS['plugins']) ) {
           # when running from commandline we mark it as sent, otherwise we might get
           # stuck when using batch processing
          # if ($GLOBALS["commandline"]) {
-            $um = Sql_query("replace into {$tables['usermessage']} (entered,userid,messageid,status) values(now(),$userid,$messageid,\"unconfirmed user\")");
+            $um = Sql_query("replace into {$tables['usermessage']} (entered,userid,messageid,status) values(current_timestamp,$userid,$messageid,\"unconfirmed user\")");
          # }
         } elseif ($user[1] || $user[0]) {
           if (VERBOSE)
@@ -771,7 +795,7 @@ while ($cansend && $plugin = current($GLOBALS['plugins']) ) {
           logEvent("Invalid email, userid $user[0], email $user[1]");
           # mark it as sent anyway
           if ($userid)
-            $um = Sql_query("replace into {$tables['usermessage']} (entered,userid,messageid,status) values(now(),$userid,$messageid,\"invalid email\")");
+            $um = Sql_query("replace into {$tables['usermessage']} (entered,userid,messageid,status) values(current_timestamp,$userid,$messageid,\"invalid email\")");
           $invalid++;
         }
       }
@@ -812,17 +836,22 @@ while ($cansend && $plugin = current($GLOBALS['plugins']) ) {
       output($GLOBALS['I18N']->get('Hmmm, No users found to send to'));
     if (!$failed_sent) {
       repeatMessage($messageid);
-      $status = Sql_query(sprintf('update %s set status = "sent",sent = now() where id = %d',$GLOBALS['tables']['message'],$messageid));
+      $status = Sql_query(sprintf('update %s set status = "sent",sent = current_timestamp where id = %d',$GLOBALS['tables']['message'],$messageid));
       if (!empty($msgdata['notify_end']) && !isset($msgdata['end_notified'])) {
         $notifications = explode(',',$msgdata['notify_end']);
         foreach ($notifications as $notification) {
           sendMail($notification,$GLOBALS['I18N']->get('Message Sending has finished'),
             sprintf($GLOBALS['I18N']->get('phplist has finished sending the message with subject %s'),$message['subject']));
         }
-        Sql_Query(sprintf('insert ignore into %s (name,id,data) values("end_notified",%d,now())',
+        Sql_Query(sprintf('insert ignore into %s (name,id,data) values("end_notified",%d,current_timestamp)',
           $GLOBALS['tables']['messagedata'],$messageid));
       }
-      $timetaken = Sql_Fetch_Row_query("select sent,sendstart from {$tables['message']} where id = \"$messageid\"");
+      $query
+      = " select sent, sendstart"
+      . " from ${tables['message']}"
+      . " where id = ?";
+      $rs = Sql_Query_Params($query, array($messageid));
+      $timetaken = Sql_Fetch_Row($rs);
       output($GLOBALS['I18N']->get('It took').' '.timeDiff($timetaken[0],$timetaken[1]).' '.$GLOBALS['I18N']->get('to send this message'));
       sendMessageStats($messageid);
     }

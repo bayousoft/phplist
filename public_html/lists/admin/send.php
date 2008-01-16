@@ -82,8 +82,8 @@ if ($done) {
 
 /*if (!$_GET["id"]) {
   Sql_Query(sprintf('insert into %s (subject,status,entered)
-    values("(no subject)","draft",now())',$GLOBALS["tables"]["message"]));
-  $id = Sql_Insert_id();
+    values("(no subject)","draft",current_timestamp)',$GLOBALS["tables"]["message"]));
+  $id = Sql_Insert_Id($GLOBALS['tables']['message'], 'id');
   Redirect("send&id=$id");
 }
 */
@@ -109,7 +109,7 @@ while ($row = Sql_fetch_array($result)) {
   if ($_GET["id"]) {
     $sendtolist = Sql_Query(sprintf('select * from %s where
       messageid = %d and listid = %d',$tables["listmessage"],$_GET["id"],$row["id"]));
-    $checked = Sql_Affected_Rows();
+    $checked = Sql_Num_Rows($sendtolist);
   }
   $list_content .= sprintf('<li><input type=checkbox name="targetlist[%d]" value="%d" ',$row["id"],$row["id"]);
   if ($checked || (isset($_POST["targetlist"][$row["id"]]) && $_POST["targetlist"][$row["id"]]))

@@ -42,7 +42,7 @@ if (isset($_GET['delete']) && $_GET['delete']) {
 if (isset($_GET['action']) && $_GET['action']) {
   switch($_GET['action']) {
     case 'deleteprocessed':
-      Sql_Query(sprintf('delete from %s where date_add(entered,interval 2 month) < now()',$tables["eventlog"]));
+      Sql_Query(sprintf('delete from %s where date_add(entered,interval 2 month) < current_timestamp',$tables["eventlog"]));
       break;
     case 'deleteall':
       Sql_Query(sprintf('delete from %s %s',$tables["eventlog"],$where));
@@ -72,9 +72,13 @@ if ($total > MAX_USER_PP) {
           PageLink2("eventlog","&lt;",sprintf('start=%d',max(0,$start-MAX_USER_PP)).$find_url),
           PageLink2("eventlog","&gt;",sprintf('start=%d',min($total,$start+MAX_USER_PP)).$find_url),
           PageLink2("eventlog","&gt;&gt;",sprintf('start=%d',$total-MAX_USER_PP).$find_url));
-  $result = Sql_query(sprintf('select * from %s %s order by entered desc,id desc %s',$tables["eventlog"],$where,$limit));
+  $query = 'select * from %s %s order by entered desc, id desc %s';
+  $query = sprintf($query, $tables['eventlog'], $where, $limit);
+  $result = Sql_query($query);
 } else {
-  $result = Sql_Query(sprintf('select * from %s %s order by entered desc, id desc',$tables["eventlog"],$where));
+  $query = 'select * from %s %s order by entered desc, id desc';
+  $query = sprintf($query, $tables['eventlog'], $where);
+  $result = Sql_Query($query);
 }
 
 printf("[ <a href=\"javascript:deleteRec2('%s','%s');\">%s</a> |
@@ -87,7 +91,7 @@ printf("[ <a href=\"javascript:deleteRec2('%s','%s');\">%s</a> |
    PageURL2("eventlog","Delete","start=$start&action=deleteall$find_url"),
    $GLOBALS['I18N']->get('Delete all'));
 
-   if (!Sql_Affected_Rows()) {
+   if (!Sql_Num_Rows($result)) {
      print '<p>' . $GLOBALS['I18N']->get('No events available') . '</p>';
    }
 print '<br/><br/>';

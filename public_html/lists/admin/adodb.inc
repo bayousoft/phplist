@@ -3,14 +3,15 @@
 # configuration to make PHPlist work via AdoDB
 # which will make it work with any database supported by AdoDB
 
-if (is_file($GLOBALS["adodb_inc_file"])) {
-  require_once $GLOBALS["adodb_inc_file"];
+require_once dirname(__FILE__).'/../config/site.php';
+
+if (is_readable($site['adodb_inc_file'])) {
+  require_once $site['adodb_inc_file'];
 } else {
   print("ADOdb specified, but inc file cannot be found");
-  exit;
 }
 
-$GLOBALS["adodb_connection"] = ADONewConnection($GLOBALS["adodb_driver"]);
+$GLOBALS['adodb_connection'] = ADONewConnection($site['adodb_driver']);
 #$GLOBALS["adodb_connection"]->debug = true;
 
 $GLOBALS["adodb_lastresult"] = "";
@@ -23,12 +24,21 @@ function Sql_Connect($host,$user,$password,$database) {
   return 0;
 }
 
+function Sql_Set_Search_Path($searchpath) {
+  global $site;
+  if (!in_array($site['adodb_driver'], array('postgres64, postgres7, postgres8'))
+    return true;
+  $GLOBALS['searchpath'] = $searchpath;
+  return Sql_Query("set search_path to $searchpath");
+}
+
 function Sql_has_error ($dbconnection) {
   return 0;
 }
 
 function Sql_Error ($errno = 0) {
   $msg = $GLOBALS["adodb_connection"]->ErrorMsg();
+  $msg .= "<br>backtrace . " . print_r(debug_backtrace(), true);
   return '<div id="dberror" style="position: relative;
       background-color: #aa0000;
       border: 2px solid #000000;
@@ -45,7 +55,11 @@ function Sql_Query($query,$ignore = 0) {
   if ($result) {
     return $result;
   } else {
-    Sql_Error($GLOBALS["adodb_connection"]->ErrNo());
+    echo "<br>adodb.sq error with $query ";
+    echo Sql_Error($GLOBALS['adodb_connection']->ErrorNo());
+    // TODO Check if in transaction.
+    echo "<br>adodb.sq FAIL";
+    $GLOBALS['adodb_connection']->FailTrans();
     return 0;
   }
 }
@@ -56,17 +70,27 @@ function Sql_Query_Params($query,$params,$ignore = 0) {
   if ($result) {
     return $result;
   } else {
-    Sql_Error($GLOBALS["adodb_connection"]->ErrNo());
+    echo "<br>adodb.sqp error with $query with params "; print_r( $params );
+    echo Sql_Error($GLOBALS['adodb_connection']->ErrorNo());
+    // TODO Check if in transaction.
+    echo "<br>adodb.sqp FAIL";
+    $GLOBALS['adodb_connection']->FailTrans();
     return 0;
   }
 }
 
-function sqllog($msg,$logfile = "") {
-  print "Need to implement sqllog";
-}
-
-function db_db_Query($query,$database,$db_connection) {
-  print "Need to implement db_db_Query";
+function Sql_Replace($table, $values, $pk, $autoquote=true) {
+  $result = $GLOBALS['adodb_connection']->Replace($table, $values, $pk, $autoquote);
+  $GLOBALS['adodb_lastresult'] = $result;
+  if ($result) {
+    return $result;
+  } else {
+    echo "<br>adodb.sq error with replace on table $table";
+    echo Sql_Error($GLOBALS['adodb_connection']->ErrorNo());
+    echo "<br>adodb.sq FAIL";
+    $GLOBALS['adodb_connection']->FailTrans();
+    return 0;
+  }
 }
 
 function Sql_Verbose_Query($query) {
@@ -77,12 +101,13 @@ function Sql_Verbose_Query($query) {
 }
 
 function Sql_Fetch_Array(&$dbresult) {
-  $array = $dbresult->fetchRow();
+  $array = $dbresult->FetchRow();
   return $array;
 }
 
 function Sql_Fetch_Assoc($dbresult) {
-  print "Need to implement Sql_Fetch_Assoc";
+  $row = $dbresult->FetchRow();
+  return $row;
 }
 
 function Sql_Fetch_Row(&$dbresult) {
@@ -102,40 +127,27 @@ function Sql_Fetch_Array_Query($query) {
 }
 
 function Sql_Affected_Rows() {
-  if (is_object($GLOBALS["adodb_lastresult"])) {
-#    print "is object".$GLOBALS["adodb_lastresult"]->RecordCount();
-#    print '<hr/>';
-#    print_r($GLOBALS["adodb_lastresult"]);
-#    print '<hr/>';
-    if ($GLOBALS["adodb_lastresult"]->RecordCount())
-      return $GLOBALS["adodb_lastresult"]->RecordCount();
-  }
+  # This should be removed when all appropriated Sql_Affected_Rows() are
+  # converted to Sql_Num_Rows().
+  # Inserts return ADORecordSet_empty withouth sql attribute.  This should 
+  # probably be flipped to include just the record set type that selects
+  # return.
+  if (get_class($GLOBALS['adodb_lastresult']) != 'ADORecordSet_empty'
+    && stripos($GLOBALS['adodb_lastresult']->sql, 'select') !== false)
+    {
+    echo "<br>adocb.Sql_Affected_Rows():  Use Sql_Num_Rows() after select queries";
+    Sql_Error();
+    }
   return $GLOBALS["adodb_connection"]->affected_rows();
 }
 
 function Sql_Num_Rows($result="") {
-  if (is_object($GLOBALS["adodb_lastresult"])) {
-#    print "is object".$GLOBALS["adodb_lastresult"]->RecordCount();
-#    print '<hr/>';
-#    print_r($GLOBALS["adodb_lastresult"]);
-#    print '<hr/>';
-    if ($GLOBALS["adodb_lastresult"]->RecordCount())
-      return $GLOBALS["adodb_lastresult"]->RecordCount();
-  }
-  return $GLOBALS["adodb_connection"]->affected_rows();
+  return $result->RecordCount();
 }
 
-function Sql_Insert_id() {
-  return $GLOBALS["adodb_connection"]->insert_id();
+function Sql_Insert_Id($table, $column) {
+  return $GLOBALS['adodb_connection']->insert_id($table, $column);
 }
-
-function Sql_Result($result,$index,$column) {
-  print "Need to implement Sql_Result";
-}
-
-function Sql_Free_Result($dbresult) {
-  print "Need to implement Sql_Free_Result";
-};
 
 function Sql_Table_exists($table) {
   global $database_name, $database_schema;
@@ -191,8 +203,37 @@ function Sql_create_Table ($table,$structure) {
   $res = Sql_Verbose_Query($query);
 }
 
-function Sql_Replace ($table,$values,$pk) {
-  return $GLOBALS["adodb_connection"]->Replace($table, $values, $pk, $autoquote = true);
+# Check if it exists first.
+# Tables should have foreign key constraints.  Cascade will drop
+# tables that depend on this table first.
+function Sql_Drop_Table($tablename, $cascade='') {
+  # If the dbtables stuff from Sql_Table_Exists is cleared up,
+  # then just use that.
+  $query
+  . ' select count(*)'
+  . ' from information_schema.tables'
+  . ' where table_schema = ?'
+  . '   and table_name = ?';
+  $rs = Sql_Query_Params($query, array($GLOBALS['searchpath'], $tablename));
+  $row = Sql_Fetch_Row($rs);
+  if ($row[0] == 0)
+    return;
+//else if ($row[0] != 1)
+//  throw an exception
+  else {
+    Sql_Query("drop table $tablename $cascade");
+  }
 }
+
+function Sql_Start_Transaction() {
+  $GLOBALS['adodb_connection']->StartTrans();
+}
+
+function Sql_Commit_Transaction() {
+  $result = $GLOBALS['adodb_connection']->CompleteTrans();
+  echo $result ? "COMMIT" : "ROLLBACK";
+  return $result;
+}
+
 
 ?>

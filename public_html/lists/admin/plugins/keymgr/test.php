@@ -20,7 +20,7 @@ if (isset($_POST['content']) && isset($_POST['passphrase']) && isset($_POST['sig
     'PGP test '.$_POST['signemail']
   );
   $result  =  Sql_query($query);
-  $messageid = Sql_Insert_id();
+  $messageid = Sql_Insert_Id($GLOBALS['tables']['message'], 'id');
 
 #  foreach (array(1,0) as $htmlformatted) {
   $htmlformatted = 1;

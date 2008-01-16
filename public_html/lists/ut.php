@@ -27,13 +27,20 @@ include_once dirname(__FILE__)."/admin/languages.php";
 
 if ($_GET["u"] && $_GET["m"]) {
   $_GET['u'] = preg_replace('/\W/','',$_GET['u']);
-  $userid = Sql_Fetch_Row_Query(sprintf('select id from %s where uniqid = "%s"',
-    $GLOBALS["tables"]["user"],$_GET["u"]));
+  $query = sprintf('select id from %s where uniqid = ?', $GLOBALS['tables']['user']);
+  $rs = Sql_Query_Params($query, array($_GET['u']));
+  $userid = Sql_Fetch_Row($rs);
   if ($userid[0]) {
-    Sql_Query(sprintf('update %s set viewed = now() where messageid = %d and userid = %d',
-      $GLOBALS["tables"]["usermessage"],$_GET["m"],$userid[0]));
-    Sql_Query(sprintf('update %s set viewed = viewed + 1 where id = %d',
-      $GLOBALS["tables"]["message"],$_GET["m"]));
+    $query
+    = ' update %s set viewed = current_timestamp'
+    . ' where messageid = ? and userid = ?';
+    $query = sprintf($query, $GLOBALS['tables']['usermessage']);
+    Sql_Query_Params($query, array($_GET['m'], $userid[0]));
+    $query
+    = ' update %s set viewed = viewed + 1'
+    . ' where id = ?';
+    $query = sprintf($query, $GLOBALS['tables']['message']);
+    Sql_Query_Params($query, array($_GET['m']));
   }
 }
 

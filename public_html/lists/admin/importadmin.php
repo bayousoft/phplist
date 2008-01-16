@@ -81,7 +81,7 @@ if(isset($import)) {
 
         if (!$test_import) {
           Sql_Query(sprintf('insert into %s (name,type,listorder,default_value,required,tablename) values("%s","%s",0,"",0,"%s")', $tables["adminattribute"],addslashes($attribute),"textline",$lc_name));
-          $attid = Sql_Insert_id();
+          $attid = Sql_Insert_Id($tables['adminattribute'], 'id');
         } else $attid = 0;
       } else {
         $d = Sql_Fetch_Row($req);
@@ -178,10 +178,10 @@ if(isset($import)) {
           }
           $query = sprintf('INSERT INTO %s
             (email,loginname,namelc,created,modifiedby,password,superuser,disabled)
-            values("%s","%s","%s",now(),"%s","%s",0,0)',
+            values("%s","%s","%s",current_timestamp,"%s","%s",0,0)',
             $tables["admin"],$email,$loginname,normalize($loginname),adminName($_SESSION["logindetails"]["id"]),$data["password"]);
           $result = Sql_query($query);
-          $adminid = Sql_insert_id();
+          $adminid = Sql_Insert_Id($tables['admin'], 'id');
           $count_email_add++;
           $some = 1;
         }
@@ -196,12 +196,14 @@ if(isset($import)) {
             switch ($att[0]) {
               case "select":
               case "radio":
-                $val = Sql_Query("select id from $table_prefix"."adminattr_$att[1] where name = \"$value\"");
+                $query = "select id from ${table_prefix}adminattr_$att[1] where name = ?";
+                $val = Sql_Query_Params($query, array($value));
                 # if we don't have this value add it
-                if (!Sql_Affected_Rows()) {
-                  Sql_Query("insert into $table_prefix"."adminattr_$att[1] (name) values(\"$value\")");
+                if (!Sql_Num_Rows($val)) {
+                  $tn = $table_prefix . 'adminattr_' . $att[1];
+                  Sql_Query_Params("insert into $tn (name) values (?)", array($value));
                   Warn($GLOBALS['I18N']->get("Value")." $value ".$GLOBALS['I18N']->get("added to attribute")." $att[2]");
-                  $att_value = Sql_Insert_Id();
+                  $att_value = Sql_Insert_Id($tn, 'id');
                 } else {
                   $d = Sql_Fetch_Row($val);
                   $att_value = $d[0];

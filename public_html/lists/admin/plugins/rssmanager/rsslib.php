@@ -41,7 +41,7 @@ trigger_error('Remove rsslib from your includes, it\'s functions are now static 
 //  }
 //
 //  $cansend_req = Sql_Query(sprintf('
-//    SELECT date_add(last,%s) < now() FROM %s 
+//    SELECT date_add(last,%s) < current_timestamp FROM %s 
 //    WHERE userid = %d', 
 //    $interval, $tables["user_rss"], $userid));
 //  $exists = Sql_Affected_Rows();

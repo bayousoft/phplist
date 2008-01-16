@@ -140,7 +140,7 @@ function processBounce ($link,$num,$header) {
     addslashes($header),
     addslashes($body)));
 
-  $bounceid = Sql_Insert_id();
+  $bounceid = Sql_Insert_Id($tables['bounce'], 'id');
   if ($msgid == "systemmessage" && $userid) {
     Sql_Query(sprintf('update %s
       set status = "bounced system message",

@@ -43,22 +43,29 @@ if (isset($_POST["save"]) && $_POST["save"] == $GLOBALS['I18N']->get('Save') && 
   $_POST['listname'] = removeXss($_POST['listname']);
 
   if ($id) {
-    $query = sprintf('update %s set name="%s",description="%s",
-    active=%d,listorder=%d,prefix = "%s", owner = %d
-    where id=%d',$tables["list"],addslashes($_POST["listname"]),
-    addslashes($_POST["description"]),$_POST["active"],$_POST["listorder"],
-    $_POST["prefix"],$_POST["owner"],$id);
+    $query
+    = ' update %s'
+    . ' set name = ?, description = ?, active = ?,'
+    . '     listorder = ?, prefix = ?, owner = ?'
+    . ' where id = ?';
+    $query = sprintf($query, $tables['list']);
+    $result = Sql_Query_Params($query, array($_POST['listname'],
+       $_POST['description'], $_POST['active'], $_POST['listorder'],
+       $_POST['prefix'], $_POST['owner'], $id));
   } else {
-    $query = sprintf('insert into %s
-      (name,description,entered,listorder,owner,prefix,active)
-      values("%s","%s",now(),%d,%d,"%s",%d)',
-      $tables["list"],addslashes($_POST["listname"]),addslashes($_POST["description"]),
-      $_POST["listorder"],$_POST["owner"],$_POST["prefix"],$_POST["active"]);
+    $query
+    = ' insert into %s'
+    . '    (name, description, entered, listorder, owner, prefix, active)'
+    . ' values'
+    . '    (?, ?, current_timestamp, ?, ?, ?, ?)';
+    $query = sprintf($query, $tables['list']);
   }
 #  print $query;
-  $result = Sql_Query($query);
+  $result = Sql_Query_Params($query, array($id, $_POST['listname'],
+     $_POST['description'], $_POST['listorder'], $_POST['owner'],
+     $_POST['prefix'], $_POST['active']));
   if (!$id)
-    $id = sql_insert_id();
+    $id = Sql_Insert_Id($tables['list'], 'id');
   ## allow plugins to save their fields
   foreach ($GLOBALS['plugins'] as $plugin) {
     $result = $result && $plugin->processEditList($id);

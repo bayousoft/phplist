@@ -30,7 +30,13 @@ if (!isset($checkinterval)) {
   $checkinterval = 7;
 }
 if ($checkinterval && !defined('IN_WEBBLER')) {
-  $needscheck = Sql_Fetch_Row_Query(sprintf('select date_add(value,interval %d day) < now() as needscheck from %s where item = "updatelastcheck"',$checkinterval,$tables["config"]));
+  $query
+  = ' select cast(value as timestamp) + \'%d days\' < current_timestamp as needscheck'
+  . ' from %s'
+  . ' where item = ?';
+  $query = sprintf( $query, $checkinterval, $tables["config"] );
+  $req = Sql_Query_Params($query, array('updatelastcheck'));
+  $needscheck = Sql_Fetch_Row($req);
   if ($needscheck[0]) {
     @ini_set("user_agent",NAME." (phplist version ".VERSION.")");
     @ini_set("default_socket_timeout",5);
@@ -51,8 +57,8 @@ if ($checkinterval && !defined('IN_WEBBLER')) {
         print '<a href="http://www.phplist.com/files/phplist-'.$latestversion.'.tgz">'.$GLOBALS['I18N']->get('Download').'</a></div>';
       }
     }
-    Sql_Query(sprintf('replace into %s (item,value,editable) values("updatelastcheck",now(),0)',
-      $tables["config"]));
+    $values = array('item'=>"'updatelastcheck'", 'value'=>'current_timestamp', 'editable'=>'0');
+    Sql_Replace($tables['config'], $values, 'item', false);
   }
 }
 

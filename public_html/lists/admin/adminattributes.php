@@ -10,8 +10,8 @@ if (isset($_POST["action"]) && $_POST["action"] == $GLOBALS['I18N']->get('SaveCh
         # it is a new one
         $lc_name = substr(preg_replace("/\W/","", strtolower($_POST["name"][0])),0,10);
         if ($lc_name == "") Fatal_Error($GLOBALS['I18N']->get('NameNotEmpty')." $lc_name");
-        Sql_Query("select * from {$tables['adminattribute']} where tablename = \"$lc_name\"");
-        if (Sql_Num_Rows()) Fatal_Error($GLOBALS['I18N']->get('NameNotUnique'));
+        $rs = Sql_Query("select * from {$tables['adminattribute']} where tablename = \"$lc_name\"");
+        if (Sql_Num_Rows($rs)) Fatal_Error($GLOBALS['I18N']->get('NameNotUnique'));
 
         $query = sprintf('insert into %s
         (name,type,listorder,default_value,required,tablename)
@@ -22,7 +22,7 @@ if (isset($_POST["action"]) && $_POST["action"] == $GLOBALS['I18N']->get('SaveCh
         $_POST["listorder"][0],
         addslashes($_POST["default"][0]),$_POST["required"][0],$lc_name);
         Sql_Query($query);
-        $insertid = Sql_Insert_id();
+        $insertid = Sql_Insert_Id($tables['adminattribute'], 'id');
 
         # text boxes and hidden fields do not have their own table
         if ($_POST["type"][$id] != "textline" && $_POST["type"]["id"] != "hidden") {
@@ -57,7 +57,7 @@ if (isset($_POST["action"]) && $_POST["action"] == $GLOBALS['I18N']->get('SaveCh
       $res = Sql_Query("select tablename,type from {$tables['adminattribute']} where id = $id");
       $row = Sql_Fetch_Row($res);
       if ($row[1] != "hidden" && $row[1] != "textline")
-        Sql_Query("drop table $table_prefix"."adminattr_$row[0]");
+        Sql_Drop_Table($table_prefix . 'adminattr_' . $row[0]);
       Sql_Query("delete from {$tables['adminattribute']} where id = $id");
       # delete all admin attributes as well
       Sql_Query("delete from {$tables['admin_attribute']} where adminattributeid = $id");

@@ -71,9 +71,16 @@ if (!isset($_GET['tab'])) $_GET['tab'] = '';
 
 if (!$id) {
   $defaulttemplate = getConfig('defaultmessagetemplate');
-  Sql_Query(sprintf('insert into %s (subject,status,entered,sendformat,embargo,repeatuntil,owner,template,tofield,replyto)
-    values("(no subject)","draft",now(),"HTML",now(),now(),%d,%d,"","")',$GLOBALS["tables"]["message"],$_SESSION["logindetails"]["id"],$defaulttemplate));
-  $id = Sql_Insert_id();
+  $query
+  = " insert into %s"
+  . "    (subject, status, entered, sendformat, embargo"
+  . "    , repeatuntil, owner, template, tofield, replyto)"
+  . " values"
+  . "    ('(no subject)', 'draft', current_timestamp, 'HTML'"
+  . "    , current_timestamp, current_timestamp, ?, ?, '', '')";
+  $query = sprintf($query, $GLOBALS['tables']['message']);
+  Sql_Query_Params($query, array($_SESSION['logindetails']['id'], $defaulttemplate));
+  $id = Sql_Insert_Id($GLOBALS['tables']['message'], 'id');
   # 0008720: Using -p send from the commandline doesn't seem to work
   if(!$GLOBALS["commandline"]){
     Redirect($_GET["page"]."&id=$id");
@@ -98,7 +105,7 @@ if ($id) {
   require $GLOBALS["coderoot"] . "structure.php";  // This gets the database structures into DBStruct
 
   $result = Sql_query("SELECT * FROM {$tables["message"]} where id = $id $ownership");
-  if (!Sql_Affected_Rows()) {
+  if (!Sql_Num_Rows($result)) {
     print $GLOBALS['I18N']->get("noaccess");
     $done = 1;
     return;
@@ -279,43 +286,41 @@ if ($send || $sendtest || $prepare || $save) {
 
   if (!$htmlformatted  && strip_tags($_POST["message"]) !=  $_POST["message"])
     $errormsg = '<span  class="error">'.$GLOBALS['I18N']->get("htmlusedwarning").'</span>';
-
-  $query = sprintf('update %s  set  '.
-      'subject = "%s", '.
-      'fromfield = "%s", '.
-      'tofield = "%s", '.
-      'replyto = "%s", '.
-      'embargo = "%s", '.
-      'repeatinterval  =  %d,  '.
-      'repeatuntil = "%s", '.
-      'message = "%s", '.
-      'textmessage = "%s", '.
-      'footer  =  "%s",  '.
-      'status = "%s", '.
-      'htmlformatted = %d, '.
-      'sendformat  =  "%s",  '.
-      'template  =  %d,  '.
-      'rsstemplate = "%s"  '.         //Leftover from the preplugin era
-      'where id  =  %d',
-      $tables["message"],
-      addslashes($subject),
-      addslashes($from),
-      addslashes($_POST["tofield"]),
-      addslashes($_POST["replyto"]),
-      $_POST["embargo"],
-      $_POST["repeatinterval"],
-      $_POST["repeatuntil"],
-      addslashes($_POST["message"]),
-      addslashes($_POST["textmessage"]),
-      addslashes($_POST["footer"]),
-      $status,
-      $htmlformatted,
-      $_POST["sendformat"],
-      $_POST["template"],
-      $_POST["rsstemplate"],          //Leftover from the preplugin era
-      $id);
+  $query = sprintf('update %s  set '
+     . '  subject = ?'
+     . ', fromfield = ?'
+     . ', tofield = ?'
+     . ', replyto = ?'
+     . ', embargo = ?'
+     . ', repeatinterval = ?'
+     . ', repeatuntil = ?'
+     . ', message = ?'
+     . ', textmessage = ?'
+     . ', footer = ?'
+     . ', status = ?'
+     . ', htmlformatted = ?'
+     . ', sendformat  =  ?'
+     . ', template  =  ?'
+     . ', rsstemplate = ?'         //Leftover from the preplugin era
+     . ' where id = ?', $tables["message"]);
+  $result = Sql_Query_Params($query, array(
+       $subject
+     , $from
+     , $_POST["tofield"]
+     , $_POST["replyto"]
+     , $_POST["embargo"]
+     , $_POST["repeatinterval"]
+     , $_POST["repeatuntil"]
+     , $_POST["message"]
+     , $_POST["textmessage"]
+     , $_POST["footer"]
+     , $status
+     , $htmlformatted ? '1' : '0'
+     , $_POST["sendformat"]
+     , $_POST["template"]
+     , $_POST["rsstemplate"]          //Leftover from the preplugin era
+     , $id));
 #    print $query;
-    $result  =  Sql_query($query);
     $messageid = $id;
 #    print "Message ID: $id";
     #    exit;
@@ -334,17 +339,22 @@ if ($send || $sendtest || $prepare || $save) {
       while($row = Sql_fetch_array($res))  {
         $listid  =  $row["id"];
         if ($row["active"] || $_POST["targetlist"]["all"] == "on")  {
-          $result  =  Sql_query("insert ignore into $tables[listmessage]  (messageid,listid,entered) values($messageid,$listid,now())");
+          $result  =  Sql_query("insert ignore into $tables[listmessage]  (messageid,listid,entered) values($messageid,$listid,current_timestamp)");
         }
       }
     } else {
       foreach($_POST["targetlist"] as $listid => $val) {
-        $result = Sql_query("insert ignore into $tables[listmessage]  (messageid,listid,entered) values($messageid,$listid,now())");
+        $query
+        = ' insert into ' . $tables['listmessage']
+        . '    (messageid,listid,entered)'
+        . ' values'
+        . '    (?, ?, current_timestamp)';
+        $result = Sql_Query_Params($query, array($messageid, $listid));
       }
     }
   } else {
     #  mark this  message  as listmessage for list  0
-    $result  =  Sql_query("insert ignore into $tables[listmessage]  (messageid,listid,entered) values($messageid,0,now())");
+    $result  =  Sql_query("insert ignore into $tables[listmessage]  (messageid,listid,entered) values($messageid,0,current_timestamp)");
   }
   if (USE_LIST_EXCLUDE) {
     if (isset($_POST["excludelist"]) && is_array($_POST["excludelist"])) {
@@ -533,7 +543,7 @@ if ($send || $sendtest || $prepare || $save) {
           $tables["attachment"],
           basename($newfile),$remotename,$type,$description,$file_size)
           );
-          $attachmentid = Sql_Insert_id();
+          $attachmentid = Sql_Insert_Id($tables['attachement'], 'id');
           Sql_query(sprintf('insert into %s (messageid,attachmentid) values(%d,%d)',
           $tables["message_attachment"],$messageid,$attachmentid));
           if (is_file($tmpfile)) {
@@ -554,7 +564,7 @@ if ($send || $sendtest || $prepare || $save) {
           $tables["attachment"],
           $_POST["localattachment".$att_cnt],$type,$description,filesize($_POST["localattachment".$att_cnt]))
         );
-        $attachmentid = Sql_Insert_id();
+        $attachmentid = Sql_Insert_Id($tables['attachment'], 'id');
         Sql_query(sprintf('insert into %s (messageid,attachmentid) values(%d,%d)',
         $tables["message_attachment"],$messageid,$attachmentid));
         print Info($GLOBALS['I18N']->get("addingattachment")." ".$att_cnt. " mime: $type");
@@ -617,7 +627,12 @@ if ($send || $sendtest || $prepare || $save) {
 
     foreach ($emailaddresses as $address) {
       $address = trim($address);
-      $result = Sql_query(sprintf('select id,email,uniqid,htmlemail,rssfrequency,confirmed from %s where email = "%s"',$tables["user"],$address));
+      $query
+      = ' select id, email, uniqid, htmlemail, rssfrequency, confirmed'
+      . ' from %s'
+      . ' where email = ?';
+      $query = sprintf($query, $tables['user']);
+      $result = Sql_Query_Params($query, array($address));
                                                                                                           //Leftover from the preplugin era
       if ($user = Sql_fetch_array($result)) {
         if (SEND_ONE_TESTMAIL) {
@@ -1034,7 +1049,7 @@ if (!$done) {
   $formatting_content .= '</td></tr>';
 
   $req = Sql_Query("select id,title from {$tables["template"]} order by listorder");
-  if (Sql_affected_Rows()) {
+  if (Sql_Num_Rows($req)) {
     $formatting_content .= '<tr><td>'.Help("usetemplate").' '.$GLOBALS['I18N']->get("usetemplate").': </td>
       <td><select name="template"><option value=0>-- '.$GLOBALS['I18N']->get("selectone").'</option>';
     $req = Sql_Query("select id,title from {$tables["template"]} order by listorder");
@@ -1587,7 +1602,7 @@ if (!$done) {
         $exclude = '';
       }
       
-      $htmlcnt = Sql_Fetch_Row_Query(sprintf('select count(distinct userid) from %s listuser,%s user where user.htmlemail and user.id = listuser.userid and listuser.listid in (%s) %s',
+      $htmlcnt = Sql_Fetch_Row_Query(sprintf('select count(distinct userid) from %s listuser,%s u where u.htmlemail and u.id = listuser.userid and listuser.listid in (%s) %s',
         $GLOBALS['tables']['listuser'],$GLOBALS['tables']['user'],join(',',array_keys($lists)),$exclude),1);
       $textcnt = Sql_Fetch_Row_Query(sprintf('select count(distinct userid) from %s listuser,%s user where !user.htmlemail and user.id = listuser.userid and listuser.listid in (%s) %s',
         $GLOBALS['tables']['listuser'],$GLOBALS['tables']['user'],join(',',array_keys($lists)),$exclude),1);

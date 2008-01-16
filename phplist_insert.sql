@@ -216,7 +216,7 @@ INSERT INTO phplist_config VALUES ('defaultmessagetemplate','0',1,NULL);
 INSERT INTO phplist_config VALUES ('fckeditor_width','600',1,NULL);
 --INSERT INTO phplist_config VALUES ('domain','phplist.com',0,NULL);
 --INSERT INTO phplist_config VALUES ('website','cvs.phplist.com',0,NULL);
-INSERT INTO phplist_config VALUES ('xormask',md5(now()),0,NULL);
+INSERT INTO phplist_config VALUES ('xormask',md5(current_timestamp),0,NULL);
 INSERT INTO phplist_config VALUES ('admin_address','webmaster@[DOMAIN]',1,NULL);
 INSERT INTO phplist_config VALUES ('admin_addresses','',1,NULL);
 INSERT INTO phplist_config VALUES ('forwardurl','http://[WEBSITE]/lists/?p=forward',1,NULL);
@@ -804,11 +804,11 @@ INSERT INTO phplist_user_blacklist VALUES ('billgates@microsoft.com','2005-09-08
 
 INSERT INTO phplist_user_blacklist_data VALUES ('billgates@microsoft.com','reason','I\\''m not really that interested in your newsletter anymore. Sorry.');
 
-INSERT INTO phplist_user_user VALUES (1,'html@testdomain.com',1,'2002-05-31 09:50:42','2005-09-08 15:37:06','fccc8f74d93746c87b283118a1782d4a',1,0,0,'','',NULL,0,'','',0);
-INSERT INTO phplist_user_user VALUES (3,'blahblah@localhost.localdomain',1,'2002-05-31 09:51:36','2006-12-13 01:47:59','ca17bbd22c9b6e4f46873da6b24fc886',1,0,0,'','',NULL,0,'','',0);
-INSERT INTO phplist_user_user VALUES (4,'anotheruser@anotherdomain.com',1,'2002-05-31 09:52:18','2005-09-08 15:38:14','a407ffbc6f4aa66a2fc5635af0342a33',1,0,0,'','',NULL,0,'','',0);
-INSERT INTO phplist_user_user VALUES (5,'user4@hotmail.com',0,'2002-05-31 12:15:59','2005-09-08 15:39:11','7304ea28bb8ab6733f923cf3ea7451ec',0,0,0,'','',NULL,0,'','',0);
-INSERT INTO phplist_user_user VALUES (8,'billgates@microsoft.com',1,'2003-10-20 01:06:40','2005-09-08 15:42:14','60de27fe99c566f73d03c29959ba7d3b',1,0,2,'daily','iwantyourmoney','2003-10-20 01:06:40',0,'','',1);
+INSERT INTO phplist_user_user VALUES (1,'html@testdomain.com',1,'0','2002-05-31 09:50:42','2005-09-08 15:37:06','fccc8f74d93746c87b283118a1782d4a',1,0,0,'','',NULL,0,'','',0);
+INSERT INTO phplist_user_user VALUES (3,'blahblah@localhost.localdomain',1,'0','2002-05-31 09:51:36','2006-12-13 01:47:59','ca17bbd22c9b6e4f46873da6b24fc886',1,0,0,'','',NULL,0,'','',0);
+INSERT INTO phplist_user_user VALUES (4,'anotheruser@anotherdomain.com',1,'0','2002-05-31 09:52:18','2005-09-08 15:38:14','a407ffbc6f4aa66a2fc5635af0342a33',1,0,0,'','',NULL,0,'','',0);
+INSERT INTO phplist_user_user VALUES (5,'user4@hotmail.com',0,'0','2002-05-31 12:15:59','2005-09-08 15:39:11','7304ea28bb8ab6733f923cf3ea7451ec',0,0,0,'','',NULL,0,'','',0);
+INSERT INTO phplist_user_user VALUES (8,'billgates@microsoft.com',1,'0','2003-10-20 01:06:40','2005-09-08 15:42:14','60de27fe99c566f73d03c29959ba7d3b',1,0,2,'daily','iwantyourmoney','2003-10-20 01:06:40',0,'','',1);
 
 INSERT INTO phplist_user_user_attribute VALUES (1,1,'HTML Test');
 INSERT INTO phplist_user_user_attribute VALUES (1,3,'Blah');

@@ -208,10 +208,10 @@ if(isset($_REQUEST['import'])) {
           include_once "userlib.php";
           $uniqid = getUniqid();
 
-      $query = sprintf('INSERT INTO %s (email,entered,confirmed,uniqid,htmlemail) values("%s",now(),%d,"%s","%s")',
+      $query = sprintf('INSERT INTO %s (email,entered,confirmed,uniqid,htmlemail) values("%s",current_timestamp,%d,"%s","%s")',
           $tables["user"],$email,$notify != "yes",$uniqid,$htmlemail);
           $result = Sql_query($query);
-          $userid = Sql_insert_id();
+          $userid = Sql_Insert_Id($tables['user'], 'id');
 
           $count_email_add++;
           $some = 1;
@@ -229,7 +229,7 @@ if(isset($_REQUEST['import'])) {
         $addition = 0;
         $listoflists = "";
         while (list($key,$listid) = each($lists)) {
-          $query = "replace INTO ".$tables["listuser"]." (userid,listid,entered) values($userid,$listid,now())";
+          $query = "replace INTO ".$tables["listuser"]." (userid,listid,entered) values($userid,$listid,current_timestamp)";
           $result = Sql_query($query);
           # if the affected rows is 2, the user was already subscribed
           $addition = $addition || Sql_Affected_Rows() == 1;

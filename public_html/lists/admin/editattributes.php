@@ -1,7 +1,7 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 
-# $Id: editattributes.php,v 1.5 2007-10-08 17:22:43 mdethmers Exp $
+# $Id: editattributes.php,v 1.6 2008-01-16 05:41:28 brian_252 Exp $
 
 $id = !empty($_GET['id']) ? sprintf('%d',$_GET['id']) : 0;
 ob_end_flush();
@@ -173,12 +173,12 @@ if (isset($_GET["action"]) && $_GET["action"] == "new") {
 <?php
 }
 
-$result = Sql_query("SELECT * FROM $table order by listorder,name");
-$num = Sql_Affected_Rows();
+$rs = Sql_query("select * from $table order by listorder, name");
+$num = Sql_Num_Rows($rs);
 if ($num < 100 && $num > 25)
   printf('<input type=submit name=action value="%s"><br />',$GLOBALS["I18N"]->get("changeorder"));
 
-while ($row = Sql_Fetch_array($result)) {
+while ($row = Sql_Fetch_array($rs)) {
   printf( '<a href="javascript:deleteRec(\'%s\');">'.$GLOBALS['I18N']->get('Delete').'</a> |',PageURL2("editattributes","","id=$id&delete=".$row["id"]));
   if ($num < 100)
     printf(' <input type=text name="listorder[%d]" value="%s" size=5>',$row["id"],$row["listorder"]);

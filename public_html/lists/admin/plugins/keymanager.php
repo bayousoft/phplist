@@ -244,7 +244,7 @@ class keymanager extends phplistPlugin {
       Sql_Query(sprintf('
         insert into keymanager_keys set id = 0,keyid = "%s",email = "%s",name="%s",fingerprint ="%s", can_encrypt = %d,can_sign=%d',
           $key['keyid'],$key['uid']['email'],$key['uid']['name'],$key['fingerprint'],$key['can_encrypt'],$key['can_sign'],$existing[0]));
-      $id = Sql_Insert_id();
+      $id = Sql_Insert_Id('keymanager_keys', 'id');
     }
     foreach ($key as $k=>$v) {
       if (is_array($v)) {

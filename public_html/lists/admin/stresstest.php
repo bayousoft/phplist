@@ -76,13 +76,13 @@ function fill($prefix,$listid) {
       next($values[$val]);
     }
 
-    $query = sprintf('insert into %s (email,entered,confirmed) values("testuser%s",now(),1)',
+    $query = sprintf('insert into %s (email,entered,confirmed) values("testuser%s",current_timestamp,1)',
       $tables["user"], $prefix . '-' . $i . '@' . $domain);
     $result = Sql_query($query,0);
 
-    $userid = Sql_insert_id();
+    $userid = Sql_Insert_Id($tables['user'], 'id');
     if ($userid) {
-      $result = Sql_query("replace into $tables[listuser] (userid,listid,entered) values($userid,$listid,now())");
+      $result = Sql_query("replace into $tables[listuser] (userid,listid,entered) values($userid,$listid,current_timestamp)");
       reset($data);
       while (list($key,$val) = each ($data))
         if ($key && $val)

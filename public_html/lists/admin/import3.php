@@ -356,14 +356,14 @@ if (!$_POST["server"] || !$_POST["user"] || !$_POST["password"] || !is_array($_P
       if ($_POST["attributeone"] == "create") {
         $req = Sql_Query(sprintf('insert into %s (name,type)
           values("First Name","textline")',$tables["attribute"]));
-         $firstname_att_id = Sql_Insert_id();
+         $firstname_att_id = Sql_Insert_Id($tables['attribute'], 'id');
        } else {
         $firstname_att_id = $_POST["attributeone"];
       }
       if ($_POST["attributetwo"] == "create") {
         $req = Sql_Query(sprintf('insert into %s (name,type)
           values("Last Name","textline")',$tables["attribute"]));
-         $lastname_att_id = Sql_Insert_id();
+         $lastname_att_id = Sql_Insert_Id($tables['attribute'], 'id');
        } else {
         $lastname_att_id = $_POST["attributetwo"];
       }
@@ -371,7 +371,7 @@ if (!$_POST["server"] || !$_POST["user"] || !$_POST["password"] || !is_array($_P
       if ($_POST["attributeone"] == "create") {
         $req = Sql_Query(sprintf('insert into %s (name,type)
           values("Name","textline")',$tables["attribute"]));
-         $name_att_id = Sql_Insert_id();
+         $name_att_id = Sql_Insert_Id($tables['attribute'], 'id');
        } else {
         $name_att_id = $_POST["attributeone"];
       }
@@ -424,10 +424,10 @@ if (!$_POST["server"] || !$_POST["user"] || !$_POST["password"] || !is_array($_P
           $uniqid = getUniqid();
 
           $query = sprintf('INSERT INTO %s (email,entered,confirmed,uniqid,htmlemail)
-             values("%s",now(),%d,"%s",%d)',
+             values("%s",current_timestamp,%d,"%s",%d)',
              $tables["user"],$importuser["email"],$_POST["notify"] != "yes",$uniqid,$_POST["markhtml"]?"1":"0");
           $result = Sql_query($query);
-          $userid = Sql_insert_id();
+          $userid = Sql_Insert_Id($tables['user'], 'id');
 
           $count_email_add++;
           $some = 1;
@@ -449,7 +449,7 @@ if (!$_POST["server"] || !$_POST["user"] || !$_POST["password"] || !is_array($_P
         $addition = 0;
         $listoflists = "";
         while (list($key,$listid) = each($lists)) {
-          $query = "replace INTO ".$tables["listuser"]." (userid,listid,entered) values($userid,$listid,now())";
+          $query = "replace INTO ".$tables["listuser"]." (userid,listid,entered) values($userid,$listid,current_timestamp)";
           $result = Sql_query($query);
           # if the affected rows is 2, the user was already subscribed
           $addition = $addition || Sql_Affected_Rows() == 1;

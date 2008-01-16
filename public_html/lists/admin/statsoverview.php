@@ -11,12 +11,17 @@ if (isset($_GET['id'])) {
 
 $addcomparison = 0;
 $access = accessLevel('statsoverview');
+$and = '';
+$and_params = array();
 #print "Access Level: $access";
 switch ($access) {
   case 'owner':
-    $subselect = ' and owner = ' . $_SESSION["logindetails"]["id"];
+    $and = ' and owner = ?';
+    $and_params[] = $_SESSION['logindetails']['id']
     if ($id) {
-      $allow = Sql_Fetch_Row_query(sprintf('select owner from %s where id = %d %s',$GLOBALS['tables']['message'],$id,$subselect));
+      $query = sprintf('select owner from %s where id = ? and owner = ?', $GLOBALS['tables']['message']);
+      $rs = Sql_Query_Params($query, array($id, $_SESSION['logindetails']['id']));
+      $allow = Sql_Fetch_Row($rs);
       if ($allow[0] != $_SESSION["logindetails"]["id"]) {
         print $GLOBALS['I18N']->get('You do not have access to this page');
         return;
@@ -25,11 +30,11 @@ switch ($access) {
     $addcomparison = 1;
     break;
   case 'all':
-    $subselect = '';
     break;
   case 'none':
   default:
-    $subselect = ' where id = 0';
+    $and = ' and id = ?';
+    $and_params[] = 0;
     print $GLOBALS['I18N']->get('You do not have access to this page');
     return;
     break;
@@ -37,13 +42,27 @@ switch ($access) {
 
 if (!$id) {
   print $GLOBALS['I18N']->get('Select Message to view');
-  $timerange = ' and date_add(msg.entered,interval 6 month) > now()';
+  $timerange = ' and msg.entered + interval \'6 months\' > current_timestamp';
   #$timerange = '';
-  $limit = 'limit 10';
 
-  $req = Sql_Query(sprintf('select msg.owner,msg.id as messageid,count(um.viewed) as views, count(um.status) as total,subject,date_format(sent,"%%e %%b %%Y") as sent,bouncecount as bounced from %s um,%s msg where um.messageid = msg.id %s %s
-    group by msg.id order by msg.entered desc %s',
-    $GLOBALS['tables']['usermessage'],$GLOBALS['tables']['message'],$subselect,$timerange,$limit));
+  // TODO Use join syntax.
+  $query
+  = ' select msg.owner, msg.id as messageid'
+  . '   , count(um.viewed) as views'
+  . '   , count(um.status) as total'
+  . '   , subject'
+  . '   , to_char(sent, \'dd Mon YYYY\') as sent'
+  . '   , bouncecount as bounced'
+  . ' from %s um, %s msg'
+  . ' where um.messageid = msg.id'
+  . ' %s'
+  . ' %s'
+  . ' group by msg.id, msg.owner, subject, sent, bounced, msg.entered'
+  . ' order by msg.entered desc'
+  . ' limit 10';
+  $query = sprintf($query, $GLOBALS['tables']['usermessage'], $GLOBALS['tables']['message'], $and, $timerange);
+  $params = array_merge(array(), $and_params);
+  $req = Sql_Query_Params($query, $params);
   if (!Sql_Affected_Rows()) {
     print '<p>'.$GLOBALS['I18N']->get('There are currently no messages to view').'</p>';
   }
@@ -76,7 +95,10 @@ if (!$id) {
 
 
 print '<h1>'.$GLOBALS['I18N']->get('View Details for a Message').'</h1>';
-$messagedata = Sql_Fetch_Array_query("SELECT * FROM {$tables['message']} where id = $id $subselect");
+$query = "select * from ${tables['message']} where id = ? $and";
+$params = array_merge(array($id), $and_params);
+$rs = Sql_Query_Params($query, $params);
+$messagedata = Sql_Fetch_Array($rs);
 print '<table>
 <tr><td>'.$GLOBALS['I18N']->get('Subject').'<td><td>'.$messagedata['subject'].'</td></tr>
 <tr><td>'.$GLOBALS['I18N']->get('Entered').'<td><td>'.$messagedata['entered'].'</td></tr>
@@ -86,19 +108,27 @@ print '<table>
 
 $ls = new WebblerListing($GLOBALS['I18N']->get('Message Open Statistics'));
 
-$req = Sql_Query(sprintf('select um.userid
-    from %s um,%s msg where um.messageid = %d and um.messageid = msg.id and um.viewed is not null %s
-    group by userid',
-    $GLOBALS['tables']['usermessage'],$GLOBALS['tables']['message'],$id,$subselect));
+// TODO Use join syntax.
+$query
+= ' select um.userid'
+. ' from %s um, %s msg'
+. ' where um.messageid = ?'
+. '   and um.messageid = msg.id'
+. '   and um.viewed is not null'
+. '%s'
+. ' group by userid';
+$query = sprintf($query, $GLOBALS['tables']['usermessage'], $GLOBALS['tables']['message'], $and);
+$params = array_merge(array($id), $and_params);
+$req = Sql_Query_Params($query, $params));
 
 $total = Sql_Affected_Rows();
 $start = sprintf('%d',$_GET['start']);
+$offset = 0;
 if (isset($start) && $start > 0) {
   $listing = sprintf($GLOBALS['I18N']->get("Listing user %d to %d"),$start,$start + MAX_USER_PP);
-  $limit = "limit $start,".MAX_USER_PP;
+  $offset = $start;
 } else {
   $listing =  sprintf($GLOBALS['I18N']->get("Listing user %d to %d"),1,MAX_USER_PP);
-  $limit = "limit 0,".MAX_USER_PP;
   $start = 0;
 }
 if ($id) {
@@ -117,12 +147,24 @@ if ($total) {
           PageLink2("mviews$url_keep","&gt;&gt;",sprintf('start=%d',$total-MAX_USER_PP)));
 }
 
-$req = Sql_Query(sprintf('select userid,email,um.entered as sent,min(um.viewed) as firstview,
-    max(um.viewed) as lastview, count(um.viewed) as viewcount,
-    abs(unix_timestamp(um.entered) - unix_timestamp(um.viewed)) as responsetime
-    from %s um, %s user, %s msg where um.messageid = %d and um.messageid = msg.id and um.userid = user.id and um.viewed is not null %s
-    group by userid %s',
-    $GLOBALS['tables']['usermessage'],$GLOBALS['tables']['user'],$GLOBALS['tables']['message'],$id,$subselect,$limit));
+// BUG here with unix_timestamp.
+// TODO Use join syntax.
+$query
+= 'select userid, email, um.entered as sent, min(um.viewed) as firstview'
+. '  , max(um.viewed) as lastview, count(um.viewed) as viewcount'
+. '  , abs(unix_timestamp(um.entered) - unix_timestamp(um.viewed)) as responsetime'
+. 'from %s um, %s user, %s msg'
+. 'where um.messageid = ?'
+. ' and um.messageid = msg.id'
+. ' and um.userid = user.id'
+. ' and um.viewed is not null'
+. '%s'
+. ' group by userid'
+. ' limit ' . MAX_USER_PP
+. ' offset ?';
+$query = sprintf($query, $GLOBALS['tables']['usermessage'], $GLOBALS['tables']['user'], $GLOBALS['tables']['message'], $and);
+$params = array_merge(array($id), $and_params, array($offset));
+$req = Sql_Query_Params($query, $params);
 $summary = array();
 while ($row = Sql_Fetch_Array($req)) {
   $element = '<!--'.$row['userid'].'-->'.$row['email'];

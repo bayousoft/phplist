@@ -132,7 +132,7 @@ class phplist extends DefaultPlugin {
   }
 
   function addUserToList($userid,$listid) {
-    Sql_Query(sprintf('replace into %s (userid,listid,entered) values(%d,%d,now())',
+    Sql_Query(sprintf('replace into %s (userid,listid,entered) values(%d,%d,current_timestamp)',
       $this->tables["listuser"],$userid,$listid));
     return 1;
   }
@@ -145,11 +145,11 @@ class phplist extends DefaultPlugin {
 
   function addEmail($email,$password = "") {
     Sql_Query(sprintf('insert into user set email = "%s",
-      entered = now(),password = "%s",
-      passwordchanged = now(),disabled = 0,
+      entered = current_timestamp,password = "%s",
+      passwordchanged = current_timestamp,disabled = 0,
       uniqid = "%s",htmlemail = 1
       ', $email,$password,getUniqid()),1);
-    $id = Sql_Insert_Id();
+    $id = Sql_Insert_Id('user', 'id');
     if (is_array($_SESSION["userdata"])) {
       saveUserByID($id,$_SESSION["userdata"]);
     }

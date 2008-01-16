@@ -165,10 +165,10 @@ return;
 //
 //if (isset($add)) {
 //  if (isset($new)) {
-//    $query = "insert into ".$tables["user"]." (email,entered) values(\"$new\",now())";
+//    $query = "insert into ".$tables["user"]." (email,entered) values(\"$new\",current_timestamp)";
 //    $result = Sql_query($query);
-//    $userid = Sql_insert_id();
-//    $query = "insert into ".$tables["listuser"]." (userid,listid,entered) values($userid,$id,now())";
+//    $userid = Sql_Insert_Id($tables['user'], 'id');
+//    $query = "insert into ".$tables["listuser"]." (userid,listid,entered) values($userid,$id,current_timestamp)";
 //    $result = Sql_query($query);
 //  }
 //  echo "<br><font color=red size=+2>User added</font><br>";

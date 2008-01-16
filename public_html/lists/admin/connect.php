@@ -36,7 +36,7 @@ $commandline_pages = array('send','processqueue','processbounces','import','upgr
 if (isset($message_envelope))
   $envelope = "-f$message_envelope";
 $database_connection = Sql_Connect($database_host,$database_user,$database_password,$database_name);
-Sql_Query("set search_path to $database_schema");  // Sql_Query_Params won't work here.
+Sql_Set_Search_Path($database_schema);
 
 if (!empty($GLOBALS["SessionTableName"])) {
   include_once dirname(__FILE__)."/sessionlib.php";
@@ -228,10 +228,20 @@ function checkAccess($page) {
   if (!$GLOBALS["require_login"] || isSuperUser())
     return 1;
   # check whether it Is a page to protect
-  Sql_Query("select id from {$tables["task"]} where page = \"$page\"");
-  if (!Sql_Affected_Rows())
+  $query = sprintf("select id from %s where page = ?", $tables['task']);
+  $rs = Sql_Query_Params($query, array($page));
+  if (!Sql_Num_Rows( $rs ))
+    {
     return 1;
-	$req = Sql_Query(sprintf('select level from %s,%s where adminid = %d and page = "%s" and %s.taskid = %s.id', $tables["task"], $tables["admin_task"], $_SESSION["logindetails"]["id"], $page, $tables["admin_task"], $tables["task"]));
+    }
+  $query
+  = ' select level'
+  . ' from %s t, %s at'
+  . ' where at.taskid = t.id'
+  . '   and adminid = ?'
+  . '   and t.page = ?';
+  $query = sprintf($query, $tables['task'], $tables['admin_task']);
+  $req = Sql_Query_Params($query, array($_SESSION["logindetails"]["id"], $page));
   $row = Sql_Fetch_Row($req);
   if (!$row[0])
     return 0;
@@ -616,8 +626,8 @@ function upgradeTableOld($table,$tablestructure) {
     array_push($records,$rec);
   }
 
-  Sql_Query("drop table $table");
-  Sql_Create_table($table,$tablestructure);
+  Sql_Drop_Table($table);
+  Sql_Create_Table($table,$tablestructure);
 
   foreach ($records as $record) {
 #    while (list($key,$val) = each ($record))
@@ -666,8 +676,8 @@ function upgradeTable($table,$tablestructure) {
   }
   fclose($fp);
 
-  Sql_Query("drop table if exists $table");
-  Sql_Create_table($table,$tablestructure);
+  Sql_Drop_Table($table);
+  Sql_Create_Table($table,$tablestructure);
 
   $fp=fopen($fname,"r");
   if (!$fp) {
@@ -720,8 +730,8 @@ function upgradeTable2($table,$tablestructure) {
   if (is_file("$tmpdir/$filename"))
     unlink("$tmpdir/$filename");
   if (Sql_Verbose_Query("select * from $table into outfile '$tmpdir/$filename'")) {
-    Sql_Query("drop table $table");
-    Sql_Create_table($table,$tablestructure);
+    Sql_Drop_Table($table);
+    Sql_Create_Table($table,$tablestructure);
     Sql_Query("load data infile '$tmpdir/$filename' into $table IGNORE");
   } else {
     print '<p>Error: Cannot dump old database tables. Please make sure you have the correct Database and File permissions.</p>
@@ -743,7 +753,7 @@ function Help($topic,$text = '?') {
 function PageData($id) {
   global $tables;
   $req = Sql_Query(sprintf('select * from %s where id = %d',$tables["subscribepage_data"],$id));
-  if (!Sql_Affected_Rows()) {
+  if (!Sql_Num_Rows($req)) {
     $data = array();
     $data["header"] = getConfig("pageheader");
     $data["footer"] = getConfig("pagefooter");
@@ -949,16 +959,27 @@ function repeatMessage($msgid) {
   # get the future embargo, either "repeat" minutes after the old embargo
   # or "repeat" after this very moment to make sure that we're not sending the
   # message every time running the queue when there's no embargo set.
-  $msgdata = Sql_Fetch_Array_Query(
-    sprintf('select *,date_add(embargo,interval repeatinterval minute) as newembargo,
-      date_add(now(),interval repeatinterval minute) as newembargo2, date_add(embargo,interval repeatinterval minute) > now() as isfuture
-      from %s where id = %d and repeatuntil > now()',$GLOBALS["tables"]["message"],$msgid));
+  $query
+  = 'select *'
+  . '  , embargo + cast(repeatinterval || \' minute\' as interval) as newembargo'
+  . '  , current_timestamp + cast(repeatinterval || \' minute\' as interval) as newembargo2'
+  . '  , current_timestamp < embargo + cast(repeatinterval || \'minute\' as interval) as isfuture'
+  . ' from %s'
+  . ' where id = ?'
+  . '   and current_timestamp < repeatuntil';
+  $query = sprintf($query, $GLOBALS['tables']['message']);
+  $rs = Sql_Query_Params($query, array($msgid));
+  $msgdata = Sql_Fetch_Array($rs);
   if (!$msgdata["id"] || !$msgdata["repeatinterval"]) return;
 
   # copy the new message
-  Sql_Query(sprintf('
-    insert into %s (entered) values(now())',$GLOBALS["tables"]["message"]));
-  $id = Sql_Insert_id();
+  $query
+  = ' insert into ' . $GLOBALS['tables']['message']
+  . '    (entered)'
+  . ' values'
+  . '    (current_timestamp)';
+  Sql_Query($query);
+  $id = Sql_Insert_Id($GLOBALS['tables']['message'], 'id');
   require dirname(__FILE__).'/structure.php';
   if (!is_array($DBstruct["message"])) {
     logEvent("Error including structure when trying to duplicate message $msgid");
@@ -986,8 +1007,8 @@ function repeatMessage($msgid) {
       $loopcnt++;
       $msgdata = Sql_Fetch_Array_Query(
           sprintf('select *,date_add(embargo,interval %d minute) as newembargo,
-            date_add(now(),interval %d minute) as newembargo2, date_add(embargo,interval %d minute) > now() as isfuture
-            from %s where id = %d and repeatuntil > now()',$repeatinterval,$repeatinterval,$repeatinterval,
+            date_add(current_timestamp,interval %d minute) as newembargo2, date_add(embargo,interval %d minute) > current_timestamp as isfuture
+            from %s where id = %d and repeatuntil > current_timestamp',$repeatinterval,$repeatinterval,$repeatinterval,
             $GLOBALS["tables"]["message"],$msgid));
       if ($loopcnt > 15) {
         logEvent("Unable to find new embargo date too many exclusions? for message $msgid");
@@ -1010,7 +1031,7 @@ function repeatMessage($msgid) {
   # lists
   $req = Sql_Query(sprintf('select listid from %s where messageid = %d',$GLOBALS["tables"]["listmessage"],$msgid));
   while ($row = Sql_Fetch_Row($req)) {
-    Sql_Query(sprintf('insert into %s (messageid,listid,entered) values(%d,%d,now())',
+    Sql_Query(sprintf('insert into %s (messageid,listid,entered) values(%d,%d,current_timestamp)',
       $GLOBALS["tables"]["listmessage"],$id,$row[0]));
   }
 
@@ -1030,7 +1051,7 @@ function repeatMessage($msgid) {
       values("%s","%s","%s","%s",%d)',
       $GLOBALS["tables"]["attachment"],addslashes($row["filename"]),addslashes($row["remotefile"]),
       addslashes($row["mimetype"]),addslashes($row["description"]),$row["size"]));
-    $attid = Sql_Insert_id();
+    $attid = Sql_Insert_Id($GLOBALS['tables']['attachment'], 'id');
     Sql_Query(sprintf('insert into %s (messageid,attachmentid) values(%d,%d)',
       $GLOBALS["tables"]["message_attachment"],$id,$attid));
   }

@@ -96,8 +96,10 @@ print $bouncels->display();
 
 if (isBlackListed($user["email"])) {
   print "<h3>" . $GLOBALS['I18N']->get('user is Blacklisted since') . " ";
-  $blacklist_info = Sql_Fetch_Array_Query(sprintf('select * from %s where email = "%s"',
-    $tables["user_blacklist"],$user["email"]));
+  $query = ' select * from  %s where email = ?';
+  $query = sprintf($query, $tables["user_blacklist"]);
+  $rs = Sql_Query_Params($query, array($user['email']));
+  $blacklist_info = Sql_Fetch_Array($rs);
   print $blacklist_info["added"]."</h3><br/>";
   print '';
   print "<a href=\"javascript:deleteRec2('" . $GLOBALS['I18N']->get('are you sure you want to delete this user from the blacklist') . "?\\n"
