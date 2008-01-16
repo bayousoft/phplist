@@ -50,14 +50,6 @@ function Sql_Query($query,$ignore = 0) {
   }
 }
 
-function sqllog($msg,$logfile = "") {
-  print "Need to implement sqllog";
-}
-
-function db_db_Query($query,$database,$db_connection) {
-  print "Need to implement db_db_Query";
-}
-
 function Sql_Query_Params($query,$params,$ignore = 0) {
   $result = $GLOBALS["adodb_connection"]->Execute($query,$params);
   $GLOBALS["adodb_lastresult"] = $result;
@@ -67,6 +59,14 @@ function Sql_Query_Params($query,$params,$ignore = 0) {
     Sql_Error($GLOBALS["adodb_connection"]->ErrNo());
     return 0;
   }
+}
+
+function sqllog($msg,$logfile = "") {
+  print "Need to implement sqllog";
+}
+
+function db_db_Query($query,$database,$db_connection) {
+  print "Need to implement db_db_Query";
 }
 
 function Sql_Verbose_Query($query) {
