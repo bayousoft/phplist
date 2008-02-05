@@ -7,7 +7,7 @@ $lan = array(
   'new rules found' => 'trovato una nuova regola',
   'bounces not matched' => 'Respinto non corrispondente',
   'bounces matched to existing rules' => 'Respinto corrisponde alla regola esistente',
-‾
+
 );
 
 ?>

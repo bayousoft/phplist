@@ -559,12 +559,17 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
         $ok = 0;
       }
     } else {
-      if (sendMail($email, getConfig("updatesubject"), $message, system_messageheaders($email),$envelope)) {
+      if ( $_GET["p"] == "preferences" ) {
+        #0013134: turn off the confirmation email when an existing subscriber changes preference.
         $ok = 1;
-        sendAdminCopy("Lists information changed","\n".$data["email"] . " has changed their information\n\n$history_entry",$subscriptions);
-        addUserHistory($email,"Change",$history_entry);
-      } else {
-        $ok = 0;
+      } else { 
+        if ( sendMail($email, getConfig("updatesubject"), $message, system_messageheaders($email),$envelope)) {
+          $ok = 1;
+          sendAdminCopy("Lists information changed","\n".$data["email"] . " has changed their information\n\n$history_entry",$subscriptions);
+          addUserHistory($email,"Change",$history_entry);
+        } else {
+          $ok = 0;
+        }
       }
     }
   } else {
@@ -575,7 +580,12 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
     if ($emailchanged)
       echo $strPreferencesEmailChanged;
     print "<br/>";
-    echo $strPreferencesNotificationSent;
+    if ( $_GET["p"] == "preferences" ) {
+      #0013134: turn off the confirmation email when an existing subscriber changes preference.
+      $ok = 1;
+    } else { 
+      echo $strPreferencesNotificationSent;
+    }
   } else {
     print '<h3>'.$strEmailFailed.'</h3>';
   }

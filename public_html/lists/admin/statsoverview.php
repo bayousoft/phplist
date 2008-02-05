@@ -17,7 +17,7 @@ $and_params = array();
 switch ($access) {
   case 'owner':
     $and = ' and owner = ?';
-    $and_params[] = $_SESSION['logindetails']['id']
+    $and_params[] = $_SESSION['logindetails']['id'];
     if ($id) {
       $query = sprintf('select owner from %s where id = ? and owner = ?', $GLOBALS['tables']['message']);
       $rs = Sql_Query_Params($query, array($id, $_SESSION['logindetails']['id']));
@@ -119,7 +119,7 @@ $query
 . ' group by userid';
 $query = sprintf($query, $GLOBALS['tables']['usermessage'], $GLOBALS['tables']['message'], $and);
 $params = array_merge(array($id), $and_params);
-$req = Sql_Query_Params($query, $params));
+$req = Sql_Query_Params($query, $params);
 
 $total = Sql_Affected_Rows();
 $start = sprintf('%d',$_GET['start']);

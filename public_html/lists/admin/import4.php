@@ -267,7 +267,7 @@ if (!$_POST["remote_host"] ||
           case "radio":
             $query = sprintf('select name from %slistattr_%s where id = ?',
               $_POST['remote_prefix'], $att['tablename']);
-            $rs = Sql_Query_Params($query, array($att['value']);
+            $rs = Sql_Query_Params($query, array($att['value']));
             $valreq = Sql_Fetch_Row($rs);
             $value = $valreq[0];
             break;

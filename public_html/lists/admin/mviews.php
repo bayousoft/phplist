@@ -125,7 +125,7 @@ where um.messageid = ?
 group by userid, email, um.entered, um.viewed
 order by firstview
 limit ' . MAX_USER_PP . ' offset %s',
-    $GLOBALS['tables']['usermessage'], $GLOBALS['tables']['user'], $GLOBALS['tables']['message'], $subselect, $offset)
+    $GLOBALS['tables']['usermessage'], $GLOBALS['tables']['user'], $GLOBALS['tables']['message'], $subselect, $offset);
 $req = Sql_Query_Params($query, array($id));
 $summary = array();
 while ($row = Sql_Fetch_Array($req)) {

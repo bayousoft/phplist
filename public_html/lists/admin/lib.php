@@ -512,7 +512,7 @@ function getPageLock($force = 0) {
   $thispage = $GLOBALS["page"];
   ## allow killing other processes
   if ($force) {
-    Sql_Query_Params("delete from $tables['sendprocess'] where page = ?", array($thispage));
+    Sql_Query_Params("delete from {$tables['sendprocess']} where page = ?", array($thispage));
   }
 
   $query
