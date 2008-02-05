@@ -58,8 +58,8 @@ $strPreferencesTitle    = 'Inovovat preference';
 $strPreferencesInfo     = 'Pros�m, potvr�te spr�vnost informace kliknut�m na tla��tko "Inovace"';
 $strUpdatePreferences   = 'Inovace';
 $strPreferencesEmailChanged = 'Va�e emailov� adresa je zm�n�na. Klikn�te na odkaz v potvrzuj�c�m emailu, kter� obdr��te, a potvr�te registraci, pros�m.';
-$strYouAreBlacklisted = 'Va�e emailov� adresa je na blokov�na, proto�e bylo po�adov�no zru�it zas�l�n� email�. <br/>
-Kontaktujte administr�tora tohoto webu, kter� na va�i ��dost zas�l�n� obnov�. ';
+$strYouAreBlacklisted = 'Va�e emailov� adresa je na blokov�na, proto�e bylo po�adov�no zru�it zas�l�n� email�. ' .
+    '<br/> Kontaktujte administr�tora tohoto webu, kter� na va�i ��dost zas�l�n� obnov�. ';
 $strPreferencesNotificationSent = 'Obdr��te email, obsahuj�c� zm�ny';
 $strPreferencesUpdated = 'D�kujeme, inovovali jsme Va�e data.';
 $strClickHere          = 'Klikn�te zde';
@@ -70,17 +70,6 @@ $strSendHTML           = 'Zaslat HTML form�t';
 $strYes                = 'Ano';
 $strNo                 = 'Ne';
 $strUnsubscribe        = 'Odhl�sit';
-<<<<<<< czech.inc
-$strAllMailinglists    = 'V�echny zpravodaje';
-$strAttachmentIntro	   = 'Tato zpr�va obsahuje p��lohy, kter� m�ete otev��t pomoc� prohl�e�e:';
-$strLocation		   = 'M�sto';
-$strFrequency		   = 'Jak �asto V�m pos�l�me zpr�vy';
-$strHourly			   = 'Ka�dou hodinu';
-$strDaily			   = 'Denn�';
-$strWeekly			   = 'T�dn�';
-$strMonthly			   = 'M�s��n�';
-$strChoosePassword 	   = 'Zadejte heslo, pros�m';
-=======
 $strAllMailinglists    = 'V�echny info seznamy';
 $strAttachmentIntro     = 'Tato zpr�va obsahuje p��lohy, kter� m�ete otev��t pomoc� prohl�e�e:';
 $strLocation           = 'M�sto';
@@ -90,48 +79,7 @@ $strDaily               = 'Denn�';
 $strWeekly             = 'T�dn�';
 $strMonthly             = 'M�s��n�';
 $strChoosePassword      = 'Zadejte heslo, pros�m';
->>>>>>> 1.3.4.1
 $strConfirmPassword    = 'Potvr�te heslo, pros�m';
-<<<<<<< czech.inc
-$strEnterPassword	   = 'Zadejte heslo, pros�m';
-$strForgotPassword	   = 'Heslo zapomenuto';
-$strPassword		   = 'Heslo';
-$strPassword2		   = 'Potvr�te heslo';
-$strPasswordsNoMatch   = 'Hesla se neshoduj�';
-$strEmailsNoMatch      = 'Zadan� emailov� adresa se neshoduje';
-$strInvalidPassword	   = 'CHYBA: Neplatn� email, nebo heslo';
-$strPasswordSent 	   = 'Heslo V�m bylo zasl�no elektronickou po�tou.';
-$strPasswordRemindSubject = 'Heslo pro zpravodaje: ';
-$strPasswordRemindMessage = 'Heslo je: ';
-$strPasswordRemindInfo = 'Pro zasl�n� hesla elektronickou po�tou, vlo�te svoj�  email adresu a klikn�te na "'.$strForgotPassword.'" kl�vesu.';
-$strLogin			   = 'P�ihl�sit';
-$strLoginTitle 		   = 'Zadejte, pros�m, Va�e heslo a emailovou adresu.';
-$strLoginInfo		   = 'Tato str�nka vy�aduje p��stupov� heslo. Zadejte, pros�m, Va�e heslo a emailovou adresu.';
-$strPersonalLocationInfo = '
-	<p>Tato str�nka vy�aduje identifikaci, kter� je obsa�ena v ka�d� emailov� z�slice, kterou zas�l�me.<br/>
-  Pokud jste po kliknut� na odkaz z�skal tuto chybovou hl�ku, ujist�te se, pros�m, �e cel� odkaz je na jedin�m ��dku a je �pln�.
-  N�kdy je po�tovn�m klientem odkaz zalomen na v�ce ��dk�.</p>
-  <p>Pokud odkaz nem�te, zadejte, pros�m, svoji emailovou adresu, a obdr��te potvrzovac� email.
-  zadejte, pros�m, svoji emailovou adresu a klikn�te na "Pokra�ovat".';
-$strPersonalLocationSent = '<h1>V�born�! V n�kolika minut�ch obdr��te na vlo�enou adresu pot�ebn� informace. D�kujeme.</h1>';
-$strUserExists   = '<br/>U�ivatel se zadanou adresou existuje a li�� se heslo';
-$strUserExistsExplanationStart = '<br/>Chcete-li z�skat Va�e heslo, klikn�te ';
-$strUserExistsExplanationLink = '<-- zde';
-$strUserExistsExplanationEnd = ' a budete p�esm�rov�ni';
-$strForwardTitle = 'P�eposlat zpr�vu jin� osob�';
-$strForwardSubtitle = 'P�eposlat zpr�vu s p�edm�tem ';
-$strForwardEnterEmail = 'Zadejte emailovou adresu, na kterou chcete zpr�vu p�eposlat';
-$strForwardSuccessInfo ='Zpr�va p�eposl�na';
-$strForwardFailInfo = 'Zpr�va nep�eposl�na, odesl�n� selhalo';
-$strForwardAlreadyDone = 'Zpr�va �sp�n� p�eposl�na na zadanou adresu';
-$strForwardFooter = 'Zpr�va p�eposl�na z adresy [FORWARDEDBY].
-  P�eposl�n� neznamen� registraci k odb�ru zpravodaje. Pokud se chcete zaregistrovat, klikn�te na';
-$strForward = 'P�eposlat';
-$strFwd = 'Fwd'; # short version of forward for email subject
-?>
-
-
-=======
 $strEnterPassword       = 'Zadejte heslo, pros�m';
 $strForgotPassword     = 'Zapomenut� heslo';
 $strPassword           = 'Heslo';
@@ -168,4 +116,3 @@ $strForwardFooter = 'Tuto zpr�vu V�m p�epos�l� [FORWARDEDBY].
 $strForward = 'Forward';
 $strFwd = 'Fwd'; # short version of forward for email subject
 ?>
->>>>>>> 1.3.4.1
