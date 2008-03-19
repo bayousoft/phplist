@@ -2,9 +2,9 @@
 # script to replace short php tags <? with long one <?php
 
 echo "replacing <? with <?php"
-for i in `fgrep -rilI -e "<? " public_html*`; do
+for i in `fgrep -rilI -e "<?" public_html*`; do
    echo $i;
-   sed -i "s/<? /<?php /" $i;
+   sed -i "s/<?/<?php/" $i;
 done
 # remove accidentally doubled ones
 echo "replacing <?phpphp with <?php"
