@@ -2,6 +2,7 @@
 require_once dirname(__FILE__).'/accesscheck.php';
 ob_end_flush();
 $upgrade_required = 0;
+
 if (Sql_Table_exists($tables["config"],1)) {
   $dbversion = getConfig("version");
   if ($dbversion != VERSION && !defined("IN_WEBBLER")) {
@@ -31,7 +32,7 @@ if (!isset($checkinterval)) {
 }
 if ($checkinterval && !defined('IN_WEBBLER')) {
   $query
-  = ' select cast(value as timestamp) + \'%d days\' < current_timestamp as needscheck'
+  = ' select cast(value as date) + \'%d days\' < current_timestamp as needscheck'
   . ' from %s'
   . ' where item = ?';
   $query = sprintf( $query, $checkinterval, $tables["config"] );
