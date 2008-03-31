@@ -17,6 +17,7 @@ switch ($access) {
     $ownership = " and id = 0";
     break;
 }
+$some = 0;
 
 # handle commandline
 if ($GLOBALS["commandline"]) {
