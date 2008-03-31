@@ -33,6 +33,8 @@
 
 require_once dirname(__FILE__).'/accesscheck.php';
 
+$subselect = '';
+
 if( !$GLOBALS["require_login"] || $_SESSION["logindetails"]['superuser'] ){
   $ownerselect_and = '';
   $ownerselect_where = '';
@@ -220,7 +222,11 @@ if ($total) {
   $result = Sql_query("SELECT * FROM ".$tables["message"]." $subselect order by status,entered desc limit $limit offset $offset");
   while ($msg = Sql_fetch_array($result)) {
     $uniqueviews = Sql_Fetch_Row_Query("select count(userid) from {$tables["usermessage"]} where viewed is not null and messageid = ".$msg["id"]);
+
+    ## need a better way to do this, it's way to slow
     #$clicks = Sql_Fetch_Row_Query("select sum(clicked) from {$tables["linktrack"]} where messageid = ".$msg["id"]);
+    $clicks = array(0);
+
     $messagedata = loadMessageData($msg['id']);
     printf ('<tr><td valign="top"><table>
       <tr><td valign="top">'.$GLOBALS['I18N']->get("From:").'</td><td valign="top">%s</td></tr>
@@ -245,6 +251,7 @@ if ($total) {
       $clicked = '';
     }
     
+    $status = '';
     ## Rightmost two columns per message
     if ($msg['status'] == 'sent') {
       $status = $GLOBALS['I18N']->get("Sent").": ".$msg['sent'].'<br/>'.$GLOBALS['I18N']->get("Time to send").': '.timeDiff($msg["sendstart"],$msg["sent"]);
