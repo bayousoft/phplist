@@ -35,6 +35,8 @@ $commandline_pages = array('send','processqueue','processbounces','import','upgr
 
 if (isset($message_envelope))
   $envelope = "-f$message_envelope";
+
+$database_schema = '';
 $database_connection = Sql_Connect($database_host,$database_user,$database_password,$database_name);
 Sql_Set_Search_Path($database_schema);
 
@@ -107,7 +109,6 @@ foreach ($GLOBALS["DBstructphplist"] as $tablename => $tablecolumns) {
 # unset the struct arrays, DBStruct and tables globals remain for the rest of the program
 unset($GLOBALS["DBstructuser"]);
 unset($GLOBALS["DBstructphplist"]);
-
 
 $commandlinePlugins = array();
 if (sizeof($GLOBALS["plugins"])) {
@@ -541,7 +542,7 @@ function PageLink2($name,$desc="",$url="") {
       return "";#'<!-- '.$desc.'-->';
 		elseif ($name == "processbounces" && !MANUALLY_PROCESS_BOUNCES) return ""; #'<!-- '.$desc.'-->';
     else {
-      if (!preg_match("/&pi=/i",$name) && $_GET["pi"] && is_object($GLOBALS["plugins"][$_GET["pi"]])) {
+      if (!preg_match("/&pi=/i",$name) && isset($_GET["pi"]) && isset($GLOBALS["plugins"][$_GET["pi"]]) && is_object($GLOBALS["plugins"][$_GET["pi"]])) {
         $pi = '&pi='.$_GET["pi"];
       } else {
         $pi = "";
