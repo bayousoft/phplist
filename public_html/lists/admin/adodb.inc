@@ -26,8 +26,9 @@ function Sql_Connect($host,$user,$password,$database) {
 
 function Sql_Set_Search_Path($searchpath) {
   global $site;
-  if (!in_array($site['adodb_driver'], array('postgres64', 'postgres7', 'postgres8')) )
+  if (!in_array($site['adodb_driver'], array('postgres64, postgres7, postgres8'))) {
     return true;
+  }
   $GLOBALS['searchpath'] = $searchpath;
   return Sql_Query("set search_path to $searchpath");
 }
