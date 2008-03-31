@@ -1567,14 +1567,14 @@ if (!$done) {
     }
   }
 
-  if ($messagedata['htmlsize']) {
+  if (!empty($messagedata['htmlsize'])) {
     $misc_content .= $GLOBALS['I18N']->get('Estimated size of HTML email').': '.formatBytes($messagedata['htmlsize']).'<br/>';
   }
-  if ($messagedata['textsize']) {
+  if (!empty($messagedata['textsize'])) {
     $misc_content .= $GLOBALS['I18N']->get('Estimated size of text email').': '.formatBytes($messagedata['textsize']).'<br/>';
   }
 
-  if ($messagedata['textsize'] || $messagedata['htmlsize']) {
+  if (!empty($messagedata['textsize']) || !empty($messagedata['htmlsize'])) {
     if (is_array($messagedata['targetlist']) && sizeof($messagedata['targetlist'])) {
       $lists = $messagedata['targetlist'];
       if (isset($messagedata['excludelist'])) {
