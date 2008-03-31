@@ -531,18 +531,20 @@ if( window.console ) window.console.log( 'Config is loaded!' ) ;  // @Packager.C
   $smileypath = $_SERVER["DOCUMENT_ROOT"].$GLOBALS["pageroot"].'/images/smiley';
   $smileyextensions = array('gif');
   $smileys = '';
-  if ($dir = opendir($smileypath)) {
-    while (false !== ($file = readdir($dir)))
-    {
-      if (ereg('\.',$file)) {
-        list($fname,$ext) = explode(".",$file);
-        if (in_array($ext,$smileyextensions)) {
-          $smileys .= '"'.$file.'",';
+  if (is_dir($smileypath)) {
+    if ($dir = opendir($smileypath)) {
+      while (false !== ($file = readdir($dir)))
+      {
+        if (ereg('\.',$file)) {
+          list($fname,$ext) = explode(".",$file);
+          if (in_array($ext,$smileyextensions)) {
+            $smileys .= '"'.$file.'",';
+          }
         }
       }
     }
+    $smileys = substr($smileys,0,-1);
   }
-  $smileys = substr($smileys,0,-1);
 
 ?>
 /*
