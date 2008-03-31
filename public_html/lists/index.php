@@ -850,13 +850,42 @@ function forwardPage($id) {
     @include dirname(__FILE__).'/texts/'.$data['language_file'];
   }
 
-  $res = '<title>'.$GLOBALS["strForwardTitle"].'</title>';
-  $res .= $data["header"];
-  $res .= '<h1>'.$subtitle.'</h1>';
-  $res .= '<h2>'.$info.'</h2>';
-  $res .= $html;
-  $res .= "<P>".$GLOBALS["PoweredBy"].'</p>';
-  $res .= $data["footer"];
+  $remote_content = '';
+  if (preg_match("/\[URL:([^\s]+)\]/i",$messagedata['message'],$regs)) {
+    if (isset($regs[1]) && strlen($regs[1])) {
+      $url = $regs[1];
+      if (!preg_match('/^http/i',$url)) {
+        $url = 'http://'.$url;
+      }
+      $remote_content = fetchUrl($url);
+    }
+  }
+
+  if (!empty($remote_content) && preg_match('/\[FORWARDFORM\]/',$remote_content,$regs)) {
+    $form = '<form method="get">';
+    $form .= sprintf('<input type=hidden name="mid" value="%d">',$mid);
+    $form .= sprintf('<input type=hidden name="id" value="%d">',$id);
+    $form .= sprintf('<input type=hidden name="uid" value="%s">',$userdata['uniqid']);
+    $form .= sprintf('<input type=hidden name="p" value="forward">');
+    $form .= sprintf('<input type=text name="email" value="%s" size=35 class="attributeinput">',$forwardemail);
+    $form .= sprintf('<input type=submit value="%s"></form>',$GLOBALS['strContinue']);
+    ### @@@ hmm, might want a flag instead, but trying to keep changes to a minimum
+    if ($info == $GLOBALS['strForwardEnterEmail']) {
+      ## this indicates it's the initial page, not a follow up one.
+      $remote_content = str_replace($regs[0],$info.$form,$remote_content);
+    } else {
+      $remote_content = str_replace($regs[0],$info,$remote_content);
+    }
+    $res = $remote_content;
+  } else {
+    $res = '<title>'.$GLOBALS["strForwardTitle"].'</title>';
+    $res .= $data["header"];
+    $res .= '<h1>'.$subtitle.'</h1>';
+    $res .= '<h2>'.$info.'</h2>';
+    $res .= $html;
+    $res .= "<P>".$GLOBALS["PoweredBy"].'</p>';
+    $res .= $data["footer"];
+  }
   return $res;
 }
 ?>

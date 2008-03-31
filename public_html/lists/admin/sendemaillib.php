@@ -212,6 +212,9 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   $textmessage = $textcontent;
 
 ## Parse placeholders
+
+  ### @@@TODO don't use forward and forward form in a forwarded message as it'll fail
+
   foreach (array("forwardform","forward","subscribe","preferences","unsubscribe","signature") as $item) {
     # hmm str_ireplace and stripos would be faster, presumably, but that's php5 only
     if (PHP5) {
@@ -266,9 +269,11 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   $html["footer"] = eregi_replace("\[SUBSCRIBE\]",$html["subscribe"],$html['footer']);
   $text["footer"] = eregi_replace("\[PREFERENCES\]",$text["preferences"],$text["footer"]);
   $html["footer"] = eregi_replace("\[PREFERENCES\]",$html["preferences"],$html["footer"]);
-  $text["footer"] = eregi_replace("\[FORWARD\]",$text["forward"],$text["footer"]);
-  $html["footer"] = eregi_replace("\[FORWARD\]",$html["forward"],$html["footer"]);
-  $html["footer"] = eregi_replace("\[FORWARDFORM\]",$html["forwardform"],$html["footer"]);
+  if ($hash != 'forwarded') {
+    $text["footer"] = eregi_replace("\[FORWARD\]",$text["forward"],$text["footer"]);
+    $html["footer"] = eregi_replace("\[FORWARD\]",$html["forward"],$html["footer"]);
+    $html["footer"] = eregi_replace("\[FORWARDFORM\]",$html["forwardform"],$html["footer"]);
+  }
   if (sizeof($forwardedby) && isset($forwardedby['email'])) {
     $html["footer"] = eregi_replace("\[FORWARDEDBY]",$forwardedby["email"],$html["footer"]);
     $text["footer"] = eregi_replace("\[FORWARDEDBY]",$forwardedby["email"],$text["footer"]);
@@ -292,6 +297,49 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     $textmessage = eregi_replace("\[SIGNATURE\]",$text["signature"],$textmessage);
   else
     $textmessage .= "\n".$text["signature"];
+
+  ### addition to handle [FORWARDURL:Message ID:Link Text] (link text optional)
+
+  while (preg_match('/\[FORWARD:([^\]]+)\]/Uxm',$htmlmessage,$regs)) {
+    $newforward = $regs[1];
+    $matchtext = $regs[0];
+    if (strpos($newforward,':')) {
+      ## using FORWARDURL:messageid:linktext
+      list($forwardmessage,$forwardtext) = explode(':',$newforward);
+    } else {
+      $forwardmessage = sprintf('%d',$newforward);
+      $forwardtext = 'this link';
+    }
+    if (!empty($forwardmessage)) {
+      $url = getConfig("forwardurl");$sep = ereg('\?',$url)?'&':'?';
+      $forwardurl = sprintf('%s%suid=%s&mid=%d',$url,$sep,$hash,$forwardmessage);
+      $htmlmessage = str_replace($matchtext,'<a href="'.$forwardurl.'">'.$forwardtext.'</a>',$htmlmessage);
+    } else {
+      ## make sure to remove the match, otherwise, it'll be an eternal loop
+      $htmlmessage = str_replace($matchtext,'',$htmlmessage);
+    }
+  }
+
+  ## the text message has to be parsed seperately, because the line might wrap if the text for the link is long, so the match text is different
+  while (preg_match('/\[FORWARD:([^\]]+)\]/Uxm',$textmessage,$regs)) {
+    $newforward = $regs[1];
+    $matchtext = $regs[0];
+    if (strpos($newforward,':')) {
+      ## using FORWARDURL:messageid:linktext
+      list($forwardmessage,$forwardtext) = explode(':',$newforward);
+    } else {
+      $forwardmessage = sprintf('%d',$newforward);
+      $forwardtext = 'this link';
+    }
+    if (!empty($forwardmessage)) {
+      $url = getConfig("forwardurl");$sep = ereg('\?',$url)?'&':'?';
+      $forwardurl = sprintf('%s%suid=%s&mid=%d',$url,$sep,$hash,$forwardmessage);
+      $textmessage = str_replace($matchtext,$forwardtext.' '.$forwardurl,$textmessage);
+    } else {
+      ## make sure to remove the match, otherwise, it'll be an eternal loop
+      $textmessage = str_replace($matchtext,'',$textmessage);
+    }
+  }
 
 #  $req = Sql_Query(sprintf('select filename,data from %s where template = %d',
 #    $GLOBALS["tables"]["templateimage"],$cached[$messageid]["templateid"]));
