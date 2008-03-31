@@ -36,6 +36,7 @@ class keymanager extends phplistPlugin {
 
   function keymanager() {
     parent::phplistplugin();
+    if (!class_exists('gnupg')) $this->enabled = 0;
   }
 
   function activate() {
