@@ -78,10 +78,10 @@ if (!defined('STRUCTUREVERSION')) {
       ),
       "user_blacklist_data" => array(
           "email" => array("varchar(255) not null unique","Email"),
-          "name" => array("varchar(100) not null","Name of Dataitem"),
+          "name" => array("varchar(100) not null","Name of Data Item"),
           "data" => array("text",""),
           "index_1" => array("emailidx (email)",""),
-          "index_2" => array("emailnameidx (email,name)",""),
+#          "index_2" => array("emailnameidx (email,name)",""), ## @@@ index too big??
       ),
       "list" => array ( # a list in the system
           "id" => array("integer not null primary key auto_increment","ID"),
