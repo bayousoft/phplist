@@ -1,12 +1,11 @@
 <?php
 
-@ob_start();
-session_start();
-$er = error_reporting(0);
 # check for commandline and cli version
 if (!isset($_SERVER["SERVER_NAME"]) && !PHP_SAPI == "cli") {
   print "Warning: commandline only works well with the cli version of PHP";
 }
+@ob_start();
+session_start();
 
 if (!ini_get("register_globals") || ini_get("register_globals") == "off") {
   # fix register globals, for now, should be phased out gradually
@@ -86,14 +85,12 @@ $GLOBALS["pagestats"]["number_of_queries"] = 0;
 
 if (!$GLOBALS["commandline"] && isset($GLOBALS["developer_email"]) && $_SERVER['HTTP_HOST'] != 'cvs.phplist.com' && $GLOBALS['show_dev_errors']) {
   error_reporting(E_ALL & ~E_NOTICE);
+  error_reporting(E_ALL);
   ini_set('display_errors',1);
   foreach ($_REQUEST as $key => $val) {
     unset($$key);
   }
-  #error_reporting(0);
 } else {
-#  error_reporting($er);
-#  error_reporting(0);
   if (isset($error_level)) {
     error_reporting($error_level);
   } else {
@@ -112,10 +109,12 @@ include_once dirname(__FILE__)."/languages.php";
 include_once dirname(__FILE__)."/lib.php";
 require_once dirname(__FILE__)."/commonlib/lib/interfacelib.php";
 
-### Activate all plugins 
-foreach ($GLOBALS['plugins'] as $plugin) {
-  $plugin->activate();
-} 
+if (Sql_Table_exists($tables["config"],1)) {
+  ### Activate all plugins 
+  foreach ($GLOBALS['plugins'] as $plugin) {
+    $plugin->activate();
+  } 
+}
 
 include_once dirname(__FILE__)."/pagetop.php";
 
@@ -439,11 +438,11 @@ if (ereg("dev",VERSION)) {
 }
 
 if (isset($GLOBALS["commandline"]) && $GLOBALS["commandline"]) {
-  ob_clean();
+  @ob_clean();
   exit;
 } elseif (!isset($_GET["omitall"])) {
   if (!$GLOBALS['compression_used']) {
-    ob_end_flush();
+    @ob_end_flush();
   }
   include_once "footer.inc";
 }
