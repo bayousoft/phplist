@@ -1,6 +1,6 @@
 <FilesMatch "\.(php|inc)$">
 Order allow,deny
-deny from all
+Deny from all
 </FilesMatch>
 <FilesMatch "(index.php|connector.php|upload.php)$">
 Order allow,deny

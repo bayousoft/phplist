@@ -486,7 +486,7 @@ while ($message = Sql_fetch_array($messages)) {
   if (USE_LIST_EXCLUDE) {
     $query
     = " select data"
-    . " from {$GLOBALS['tables']['messagedata']}"
+    . " from ".$GLOBALS['tables']['messagedata']
     . " where name='excludelist'"
     . "   and id = ?";
     $rs = Sql_Query_Params($query, array($messageid));
@@ -494,7 +494,7 @@ while ($message = Sql_fetch_array($messages)) {
     if (strlen($excluded_lists[0])) {
       $query
       = " select userid"
-      . " from {$GLOBALS['tables']['listuser']}"
+      . " from ". $GLOBALS['tables']['listuser']
       . " where listid in (${excluded_lists[0]})";
       $req = Sql_Query($query);
       while ($row = Sql_Fetch_Row($req)) {
