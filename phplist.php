@@ -131,6 +131,19 @@ class phplist extends DefaultPlugin {
     return $list;
   }
 
+### @@@ Only activate this, once upgrade from "List Subscription" fields in forms works
+### 07.08.20
+
+//   function formBuilderFields() {
+//     # return options for formbuilder
+//     $lists = $this->getListsAsArray();
+//     $res = array();
+//     foreach ($lists as $listid => $listdesc) {
+//       $res[$listid] = 'Subscribe to '.$listdesc;
+//     }
+//     return $res;
+//   }
+
   function addUserToList($userid,$listid) {
     Sql_Query(sprintf('replace into %s (userid,listid,entered) values(%d,%d,current_timestamp)',
       $this->tables["listuser"],$userid,$listid));
