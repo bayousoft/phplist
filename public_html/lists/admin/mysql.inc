@@ -144,9 +144,14 @@ function Sql_Query($query,$ignore = 0) {
   return $result;
 }
 
-function Sql_Query_Params($query,$ignore = 0) {
-  // TODO
-  print "mysql.Sql_Query_Params() needs to be implemented.";
+function Sql_Query_Params($query,$params,$ignore = 0) {
+#  dbg($query);
+  foreach ($params as $par) {
+    $qmark = strpos  ( $query  , '?');
+    $query = substr($query,0,$qmark).'"'.$par.'"'.substr($query,$qmark+1);
+  }
+#  dbg($query);
+  return Sql_Query($query);
 }
 
 function sqllog($msg,$logfile = "") {
@@ -267,8 +272,18 @@ function Sql_create_Table ($table,$structure) {
 }
 
 function Sql_Replace ($table,$values,$pk) {
-  // TODO
-  print "mysql.Sql_Replace() needs to be implemented.";
+
+  $query = ' replace into '.$table.' set ';
+  foreach ($values as $key => $val) {
+    $query .= ' '.$key .'="'.mysql_escape_string($val).'",';
+  }
+  $query = substr($query,0,-1);
+  return Sql_Query($query);
 }
+
+function Sql_Set_Search_Path($searchpath) {
+  return;
+}
+
 
 ?>
