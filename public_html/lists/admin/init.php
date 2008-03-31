@@ -1,13 +1,13 @@
 <?php
 
 # initialisation stuff
-
 # record the start time(usec) of script
 $now =  gettimeofday();
 $GLOBALS["pagestats"] = array();
 $GLOBALS["pagestats"]["time_start"] = $now["sec"] * 1000000 + $now["usec"];
 $GLOBALS["pagestats"]["number_of_queries"] = 0;
 
+$IsCommandlinePlugin = '';
 $zlib_compression = ini_get('zlib.output_compression');
 # hmm older versions of PHP don't have this, but then again, upgrade php instead?
 if (function_exists('ob_list_handlers')) {
