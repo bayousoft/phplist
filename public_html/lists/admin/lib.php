@@ -29,6 +29,7 @@ if (!defined("DEFAULT_MIMETYPE")) define("DEFAULT_MIMETYPE","application/octet-s
 if (!defined("USE_REPETITION")) define("USE_REPETITION",0);
 if (!defined("USE_EDITMESSAGE")) define("USE_EDITMESSAGE",0);
 if (!defined("FCKIMAGES_DIR")) define("FCKIMAGES_DIR","uploadimages");
+if (!defined('UPLOADIMAGES_DIR')) define('UPLOADIMAGES_DIR','images');
 if (!defined("USE_MANUAL_TEXT_PART")) define("USE_MANUAL_TEXT_PART",0);
 if (!defined("ALLOW_NON_LIST_SUBSCRIBE")) define("ALLOW_NON_LIST_SUBSCRIBE",0);
 if (!defined("MAILQUEUE_BATCH_SIZE")) define("MAILQUEUE_BATCH_SIZE",0);
@@ -496,7 +497,10 @@ function logEvent($msg) {
   } else {
     $p = 'unknown page';
   }
-  if (Sql_Table_Exists($tables["eventlog"]))
+  if (!Sql_Table_Exists($tables["eventlog"])) {
+    return;
+  }
+
   $query
   = ' insert into %s'
   . '    (entered,page,entry)'
@@ -512,14 +516,14 @@ function getPageLock($force = 0) {
   $thispage = $GLOBALS["page"];
   ## allow killing other processes
   if ($force) {
-    Sql_Query_Params("delete from {$tables['sendprocess']} where page = ?", array($thispage));
+    Sql_Query_Params("delete from ".$tables['sendprocess']." where page = ?",array($thispage));
   }
 
   $query
   = ' select current_timestamp - modified, id'
   . ' from ' . $tables['sendprocess']
   . ' where page = ?'
-  . '   and alive = 1'
+  . ' and alive = 1'
   . ' order by started desc';
   $running_req = Sql_Query_Params($query, array($thispage));
   $running_res = Sql_Fetch_row($running_req);
