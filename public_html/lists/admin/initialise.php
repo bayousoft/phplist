@@ -3,11 +3,12 @@ require_once dirname(__FILE__).'/accesscheck.php';
 
 include dirname(__FILE__).'/structure.php';
 ob_end_flush();
+$force = !empty($_GET['force']);
 
 print "<h3>".$GLOBALS['I18N']->get("Creating tables")."</h3><br />\n";
 $success = 1;
 while (list($table, $val) = each($DBstruct)) {
-  if (isset($force)) {
+  if ($force) {
     if ($table == "attribute") {
       $req = Sql_Query("select tablename from {$tables["attribute"]}");
       while ($row = Sql_Fetch_Row($req))
@@ -31,7 +32,7 @@ while (list($table, $val) = each($DBstruct)) {
 
   # submit it to the database
   echo $GLOBALS['I18N']->get("Initialising table")." <b>$table</b>";
-  if (!isset($force) && Sql_Table_Exists($tables[$table])) {
+  if (!$force && Sql_Table_Exists($tables[$table])) {
     Error( $GLOBALS['I18N']->get("Table already exists").'<br />');
     echo "... ".$GLOBALS['I18N']->get("failed")."<br />\n";
     $success = 0;
@@ -42,8 +43,7 @@ while (list($table, $val) = each($DBstruct)) {
     if (!$error || $force) {
       if ($table == "admin") {
         # create a default admin
-        Sql_Query(sprintf('insert into %s values(0,"%s","%s","%s",current_timestamp,current_timestamp,"%s","%s",current_timestamp,%d,0)',
-          $tables["admin"],"admin","admin","",$adminname,"phplist",1));
+        Sql_Query(sprintf('insert into %s (loginname,namelc,email,created,modified,  password,passwordchanged,superuser,disabled) values("%s","%s","%s",current_timestamp,current_timestamp,"%s",current_timestamp,%d,0)',$tables["admin"],"admin","admin","","phplist",1));
       } elseif ($table == "task") {
         while (list($type,$pages) = each ($system_pages)) {
           foreach ($pages as $page => $access_level)
