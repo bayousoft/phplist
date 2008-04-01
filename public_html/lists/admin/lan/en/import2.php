@@ -80,7 +80,7 @@ $lan = array(
 'uploadlimits' => 'The following limits are set by your server:<br/>
 Maximum size of a total data sent to server: <b>%s</b><br/>
 Maximum size of each individual file: <b>%s</b>
-<br/>PHPlist will not process files larger than 1Mb',
+<br/>PHPlist will not process files larger than %dMb',
 'testoutput_blurb' => 'If you check "Test Output", you will get the list of parsed emails on screen, and the database will not be filled with the information. This is useful to find out whether the format of your file is correct. It will only show the first 50 records.',
 'warnings_blurb' => 'If you check "Show Warnings", you will get warnings for invalid records. Warnings will only be shown if you check "Test Output". They will be ignored when actually importing. ',
 'omitinvalid_blurb' => 'If you check "Omit Invalid", invalid records will not be added. Invalid records are records without an email. Any other attributes will be added automatically, ie if the country of a record is not found, it will be added to the list of countries.',

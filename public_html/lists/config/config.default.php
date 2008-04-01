@@ -352,6 +352,11 @@ define('USE_ADMIN_DETAILS_FOR_MESSAGES',1);
 # test emails are sent to
 define('SEND_ONE_TESTMAIL',0);
 
+# when using the import2 option you can set this to allow phplist handle bigger files
+# server restrictions might apply too though, so you must be careful and check with your sysadmin first
+# the value here is in megabytes, so 64 will be 64Mb
+# define('IMPORT_FILESIZE',64);
+
 /*
 
 =========================================================================
