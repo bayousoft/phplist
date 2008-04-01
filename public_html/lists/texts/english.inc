@@ -107,9 +107,14 @@ $strUserExistsExplanationEnd = ' to go to the page where you can request your pe
 $strForwardTitle = 'Forward a Message to Someone';
 $strForwardSubtitle = 'Forwarding the message with subject ';
 $strForwardEnterEmail = 'Please enter a valid email address to forward to';
+$strForwardInvalidEmail = '%s is not a valid email address';
+$strForwardEnterEmails = 'Please enter a maximum of %s valid email addresses to forward to in this box, one per line';
+$strForwardPersonalNote = 'You can enter a plain text message (of maximum %d characters) that will be prepended to the forwarded mail';
 $strForwardSuccessInfo ='The message has been forwarded';
 $strForwardFailInfo = 'Forwarding the message failed';
 $strForwardAlreadyDone = 'This message has already been successfully forwarded to that email address';
+$strForwardCountReached = 'Maximum amount of forwards reached';
+$strForwardNoteLimitReached = 'Maximum length of personal note reached';
 $strForwardFooter = 'This message has been forwarded to you by [FORWARDEDBY].
   You have not been automatically subscribed to this newsletter.
   To subscribe to this newsletter go to';

@@ -10,7 +10,7 @@ else
   cvs -d$CVSROOT log >> cvslog
 fi
 #cvs2cl.pl -F phplist-version-2-10-x --prune -t --hide-filenames --stdin < cvslog
-cvs2cl.pl --prune -b -r -t --hide-filenames --stdin < cvslog
+./scripts/cvs2cl.pl --prune -b -r -t --hide-filenames --stdin < cvslog
 echo "Changelog for phplist $BRANCH $DATE" > cl
 echo >> cl
 cat ChangeLog >> cl

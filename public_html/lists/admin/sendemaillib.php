@@ -19,11 +19,18 @@ if (!function_exists("output")) {
   function output($text) {
    }
 }
-
 function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$forwardedby = array()) {
   global $strThisLink,$PoweredByImage,$PoweredByText,$cached,$website;
   if ($email == "")
     return 0;
+  #0013076: different content when forwarding 'to a friend'
+  if (FORWARD_ALTERNATIVE_CONTENT) {
+    $forwardContent = sizeof( $forwardedby ) > 0;
+    $messagedata = loadMessageData($messageid);
+  } else {
+    $forwardContent = 0;
+  }
+
   if (empty($cached[$messageid])) {
     $domain = getConfig("domain");
     $message = Sql_query("select * from {$GLOBALS["tables"]["message"]} where id = $messageid");
@@ -58,15 +65,18 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 
     $cached[$messageid]["fromname"] = trim($cached[$messageid]["fromname"]);
     $cached[$messageid]["to"] = $message["tofield"];
-    $cached[$messageid]["subject"] = $message["subject"];
-    $cached[$messageid]["replyto"] = $message["replyto"];
-    $cached[$messageid]["content"] = $message["message"];
-    if (USE_MANUAL_TEXT_PART) {
+    #0013076: different content when forwarding 'to a friend'
+    $cached[$messageid]["subject"] = $forwardContent ? $messagedata["forwardsubject"] : $message["subject"];
+    $cached[$messageid]["replyto"] =$message["replyto"];
+    #0013076: different content when forwarding 'to a friend'
+    $cached[$messageid]["content"] = $forwardContent ? $messagedata["forwardmessage"] : $message["message"];
+    if (USE_MANUAL_TEXT_PART && !$forwardContent) {
       $cached[$messageid]["textcontent"] = $message["textmessage"];
     } else {
       $cached[$messageid]["textcontent"] = '';
     }
-    $cached[$messageid]["footer"] = $message["footer"];
+    #0013076: different content when forwarding 'to a friend'
+    $cached[$messageid]["footer"] = $forwardContent ? $messagedata["forwardfooter"] : $message["footer"];
     $cached[$messageid]["htmlformatted"] = $message["htmlformatted"];
     $cached[$messageid]["sendformat"] = $message["sendformat"];
     if ($message["template"]) {
@@ -95,7 +105,14 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 
   # erase any placeholders that were not found
 #  $msg = ereg_replace("\[[A-Z ]+\]","",$msg);
-  $user_att_values = getUserAttributeValues($email);
+
+#0011857: forward to friend, retain attributes
+  if ($hash == 'forwarded' && defined('KEEPFORWARDERATTRIBUTES') && KEEPFORWARDERATTRIBUTES) {
+    $user_att_values = getUserAttributeValues($forwardedby['email']);
+  } else {
+    $user_att_values = getUserAttributeValues($email);
+  } 
+  
   $query = sprintf('select * from %s where email = ?', $GLOBALS["tables"]["user"]);
   $rs = Sql_Query_Params($query, array($email));
   $userdata = Sql_Fetch_Assoc($rs);
@@ -105,6 +122,14 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   $text["unsubscribe"] = sprintf('%s%suid=%s',$url,$sep,$hash);
   $html["unsubscribeurl"] = sprintf('%s%suid=%s',$url,$sep,$hash);
   $text["unsubscribeurl"] = sprintf('%s%suid=%s',$url,$sep,$hash);
+
+  #0013076: Blacklisting posibility for unknown users
+  $url = getConfig("blacklisturl");$sep = ereg('\?',$url)?'&':'?';
+  $html["blacklist"] = sprintf('<a href="%s%semail=%s">%s</a>',$url,$sep,$email,$strThisLink);
+  $text["blacklist"] = sprintf('%s%semail=%s',$url,$sep,$email);
+  $html["blacklisturl"] = sprintf('%s%semail=%s',$url,$sep,$email);
+  $text["blacklisturl"] = sprintf('%s%semail=%s',$url,$sep,$email);
+  
   $url = getConfig("subscribeurl");$sep = ereg('\?',$url)?'&':'?';
   $html["subscribe"] = sprintf('<a href="%s">%s</a>',$url,$strThisLink);
   $text["subscribe"] = sprintf('%s',$url);
@@ -215,12 +240,13 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 
   ### @@@TODO don't use forward and forward form in a forwarded message as it'll fail
 
-  foreach (array("forwardform","forward","subscribe","preferences","unsubscribe","signature") as $item) {
+  #0013076: Blacklisting posibility for unknown users
+  foreach (array("forwardform","forward","subscribe","preferences","unsubscribe","signature", 'blacklist') as $item) {
     # hmm str_ireplace and stripos would be faster, presumably, but that's php5 only
     if (PHP5) {
       if (stripos($htmlmessage,'['.$item.']')) {
         $htmlmessage = str_ireplace('\['.$item.'\]',$html[$item],$htmlmessage);
-        unset($html[$item]);
+        unset($html[$item]); # @@@ not sure, it allows only using any item once, which may not be desired
       }
       if (stripos($textmessage,'['.$item.']')) {
         $textmessage = str_ireplace('['.$item.']',$text[$item],$textmessage);
@@ -237,8 +263,9 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
       }
     }
   }
+  #0013076: Blacklisting posibility for unknown users
 
-  foreach (array("forwardurl","subscribeurl","preferencesurl","unsubscribeurl") as $item) {
+   foreach (array("forwardurl","subscribeurl","preferencesurl","unsubscribeurl",'blacklisturl') as $item) {
     if (PHP5) {
       if (stripos($htmlmessage,'['.$item.']')) {
         $htmlmessage = str_ireplace('['.$item.']',$html[$item],$htmlmessage);
@@ -259,12 +286,15 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     $text['footer'] = $cached[$messageid]["footer"];
     $html['footer'] = $cached[$messageid]["footer"];
   } else {
-    $text['footer'] = getConfig('forwardfooter');
+    #0013076: different content when forwarding 'to a friend'
+    if( FORWARD_ALTERNATIVE_CONTENT ) {
+      $text['footer'] = $messagedata["forwardfooter"];
+    } else {
+      $text['footer'] = getConfig('forwardfooter');
+    }
     $html['footer'] = $text['footer'];
   }
 
-  $text["footer"] = eregi_replace("\[UNSUBSCRIBE\]",$text["unsubscribe"],$text['footer']);
-  $html["footer"] = eregi_replace("\[UNSUBSCRIBE\]",$html["unsubscribe"],$html['footer']);
   $text["footer"] = eregi_replace("\[SUBSCRIBE\]",$text["subscribe"],$text['footer']);
   $html["footer"] = eregi_replace("\[SUBSCRIBE\]",$html["subscribe"],$html['footer']);
   $text["footer"] = eregi_replace("\[PREFERENCES\]",$text["preferences"],$text["footer"]);
@@ -277,6 +307,13 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   if (sizeof($forwardedby) && isset($forwardedby['email'])) {
     $html["footer"] = eregi_replace("\[FORWARDEDBY]",$forwardedby["email"],$html["footer"]);
     $text["footer"] = eregi_replace("\[FORWARDEDBY]",$forwardedby["email"],$text["footer"]);
+    $text["footer"] = eregi_replace("\[BLACKLIST\]",$text["blacklist"],$text['footer']);
+    $html["footer"] = eregi_replace("\[BLACKLIST\]",$html["blacklist"],$html['footer']);
+    $text["footer"] = eregi_replace("\[UNSUBSCRIBE\]",$text["blacklist"],$text['footer']);
+    $html["footer"] = eregi_replace("\[UNSUBSCRIBE\]",$html["blacklist"],$html['footer']);
+  } else {
+    $text["footer"] = eregi_replace("\[UNSUBSCRIBE\]",$text["unsubscribe"],$text['footer']);
+    $html["footer"] = eregi_replace("\[UNSUBSCRIBE\]",$html["unsubscribe"],$html['footer']);
   }
 
   $html["footer"] = '<div class="emailfooter">'.nl2br($html["footer"]).'</div>';
@@ -413,7 +450,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
       }
     }
   }
-
+  
   $destinationemail = '';
   if (is_array($user_att_values)) {
     foreach ($user_att_values as $att_name => $att_value) {
@@ -614,7 +651,13 @@ if (0) {
     $textmessage = ereg_replace("\[LISTS\]",$lists_text,$textmessage);
   }
 
-  # remove any existing placeholders
+  #0011996: forward to friend - personal message
+  if (FORWARD_PERSONAL_NOTE_SIZE && $hash = 'forwarded' && !empty($forwardedby['personalNote']) ) {
+    $htmlmessage =  nl2br($forwardedby['personalNote']) . '<br/>' .  $htmlmessage;
+    $textmessage = $forwardedby['personalNote'] . "\n" . $textmessage;
+  }
+  
+  ## remove any existing placeholders
   $htmlmessage = eregi_replace("\[[A-Z\. ]+\]","",$htmlmessage);
   $textmessage = eregi_replace("\[[A-Z\. ]+\]","",$textmessage);
 
@@ -658,6 +701,10 @@ if (0) {
     ));
   } else {
     $mail = new PHPlistMailer($messageid,$destinationemail);
+    if ($forwardedby) {
+      $mail->add_received();
+    }
+    #$mail->IsSMTP();
     $mail->addCustomHeader("List-Help: <".$text["preferences"].">");
     $mail->addCustomHeader("List-Unsubscribe: <".$text["unsubscribe"].">");
     $mail->addCustomHeader("List-Subscribe: <".getConfig("subscribeurl").">");

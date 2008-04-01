@@ -7,6 +7,7 @@ Some useful placeholders are:
 <li>DOMAIN - the text you type for your domain
 <li>SUBSCRIBEURL - the location of the subscribe page
 <li>UNSUBSCRIBEURL - the location of the unsubscribe page
+<li>BLACKLISTURL - the location of the unsubscribe page for unknown users
 <li>PREFERENCESURL - the location of the page where users can update their details
 <li>CONFIRMATIONURL - the location of the page where users have to confirm their subscription
 </ul>

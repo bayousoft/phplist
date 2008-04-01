@@ -71,6 +71,24 @@ class PHPlistMailer extends PHPMailer {
       $this->find_html_images($templateid);
     }
 
+    function add_received()
+    {
+      #0013076: Yellow Moon Baker Ross - New phpList Development
+      # Add a line like Received: from [10.1.2.3] by website.example.com with HTTP; 01 Jan 2003 12:34:56 -0000
+      # more info: http://www.spamcop.net/fom-serve/cache/369.html
+      $ip_address = $_SERVER['REMOTE_ADDR'];
+      if ( $_SERVER['REMOTE_HOST'] ) {
+        $ip_domain = $_SERVER['REMOTE_HOST'];        
+      } else {
+        $ip_domain = gethostbyaddr($ip_address);
+      }
+      $hostname = $_SERVER["HTTP_HOST"];
+      $request_time = date('r',$_SERVER['REQUEST_TIME']);
+      $receivedstring = "Received: from $ip_domain [$ip_address] by $hostname with HTTP; $request_time";
+    	$this->addCustomHeader($receivedstring);      
+    }
+    
+    
     function add_text($text) {
       if (!$this->Body) {
         $this->IsHTML(false);
@@ -159,13 +177,20 @@ class PHPlistMailer extends PHPMailer {
 
       preg_match_all('/"([^"]+\.('.implode('|', $extensions).'))"/Ui', $this->Body, $images);
 
-      for($i=0; $i<count($images[1]); $i++){
+      for($i=0; $i<count($images[1]); $i++) {
         if($this->image_exists($templateid,$images[1][$i])){
           $html_images[] = $images[1][$i];
           $this->Body = str_replace($images[1][$i], basename($images[1][$i]), $this->Body);
         }
+          ## addition for filesystem images
+        if (EMBEDUPLOADIMAGES) {
+          if($this->filesystem_image_exists($images[1][$i])){
+            $filesystem_images[] = $images[1][$i];
+            $this->Body = str_replace($images[1][$i], basename($images[1][$i]), $this->Body);
+          }
+        }
+        ## end addition
       }
-
       if(!empty($html_images)){
         // If duplicate images are embedded, they may show up as attachments, so remove them.
         $html_images = array_unique($html_images);
@@ -178,6 +203,20 @@ class PHPlistMailer extends PHPMailer {
           }
         }
       }
+        ## addition for filesystem images
+      if(!empty($filesystem_images)){
+        // If duplicate images are embedded, they may show up as attachments, so remove them.
+        $filesystem_images = array_unique($filesystem_images);
+        sort($filesystem_images);
+        for($i=0; $i<count($filesystem_images); $i++){
+          if($image = $this->get_filesystem_image($filesystem_images[$i])){
+            $content_type = $this->image_types[substr($filesystem_images[$i], strrpos($filesystem_images[$i], '.') + 1)];
+            $cid = $this->add_html_image($image, basename($filesystem_images[$i]), $content_type);
+            $this->Body = str_replace(basename($filesystem_images[$i]), "cid:$cid", $this->Body);#@@@
+          }
+        }
+      }
+        ## end addition
     }
 
     function add_html_image($contents, $name = '', $content_type='application/octet-stream') {
@@ -195,6 +234,25 @@ class PHPlistMailer extends PHPMailer {
 
       return $cid;
     }
+
+        ## addition for filesystem images
+    function filesystem_image_exists($filename) {
+      ##  find the image referenced and see if it's on the server
+      $elements = parse_url($filename);
+      $localfile = basename($elements['path']);
+      return is_file($_SERVER['DOCUMENT_ROOT'].$GLOBALS['pageroot'].'/'.FCKIMAGES_DIR.'/'.$localfile);
+    }
+
+    function get_filesystem_image($filename) {
+      ## get the image contents
+      $elements = parse_url($filename);
+      $localfile = basename($elements['path']);
+      if (is_file($_SERVER['DOCUMENT_ROOT'].$GLOBALS['pageroot'].'/'.FCKIMAGES_DIR.'/'.$localfile)) {
+        return base64_encode( file_get_contents($_SERVER['DOCUMENT_ROOT'].$GLOBALS['pageroot'].'/'.FCKIMAGES_DIR.'/'.$localfile));
+      } 
+      return 0;
+    }
+    ## end addition
 
     function image_exists($templateid,$filename) {
       $query

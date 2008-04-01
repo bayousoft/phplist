@@ -8,6 +8,7 @@ require_once dirname(__FILE__).'/admin/init.php';
 $_GET = removeXss($_GET);
 $_POST = removeXss($_POST);
 $_REQUEST = removeXss($_REQUEST);
+$_SERVER = removeXss($_SERVER);
 
 if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
 #  print '<!-- using '.$_SERVER["ConfigFile"].'-->'."\n";
@@ -22,6 +23,7 @@ if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
   print "Error, cannot find config file\n";
   exit;
 }
+
 if (0) {#isset($GLOBALS["developer_email"]) && $GLOBALS['show_dev_errors']) {
   error_reporting(E_ALL & ~E_NOTICE);
 } else {
@@ -31,6 +33,7 @@ if (0) {#isset($GLOBALS["developer_email"]) && $GLOBALS['show_dev_errors']) {
     error_reporting($er);
   }
 }
+
 $GLOBALS["database_module"] = basename($GLOBALS["database_module"]);
 $GLOBALS["language_module"] = basename($GLOBALS["language_module"]);
 
@@ -69,9 +72,10 @@ if (!isset($_POST) && isset($HTTP_POST_VARS)) {
   by the developers  but also helps build interest, traffic and use of
   PHPlist, which is beneficial to it's future development.
 
-  Michiel Dethmers, Tincan Ltd 2000,2006
+  Michiel Dethmers, Tincan Ltd 2000-2008
 */
 include "admin/pagetop.php";
+
 if (isset($_GET['id'])) {
   $id = sprintf('%d',$_GET['id']);
 } else {
@@ -81,6 +85,7 @@ if (isset($_GET['id'])) {
 // What is uid
 // What is userid
 // Why is there GET(id) and REQUEST(id)?
+## who's asking MD
 
 if (isset($_GET['uid']) && $_GET["uid"]) {
   $query
@@ -239,6 +244,8 @@ if ($login_required && empty($_SESSION["userloggedin"]) && !$canlogin) {
       case "confirm":
          print ConfirmPage($id);
         break;
+      #0013076: Blacklisting posibility for unknown users
+      case "blacklist":
       case "unsubscribe":
         print UnsubscribePage($id);
         break;
@@ -403,11 +410,11 @@ function compareEmail()
 //  if (ENABLE_RSS) {
 //    $html .= rssOptions($data,$userid);
 //   }
-foreach ($GLOBALS['plugins'] as $plugin) {
-  if ($plugin->enabled) {
-    $html .= $plugin->displaySubscriptionChoice($data,$userid);
+  foreach ($GLOBALS['plugins'] as $plugin) {
+    if ($plugin->enabled) {
+      $html .= $plugin->displaySubscriptionChoice($data,$userid);
+    }
   }
-}
 
   $html .= ListAvailableLists($userid,$data["lists"]);
   if (isBlackListedID($userid)) {
@@ -630,8 +637,8 @@ function unsubscribePage($id) {
     @include dirname(__FILE__).'/texts/'.$pagedata['language_file'];
   }
   global $tables;
-  $res .= '<title>'.$GLOBALS["strUnsubscribeTitle"].'</title>';
-  $res = $pagedata["header"];
+  $res = '<title>'.$GLOBALS["strUnsubscribeTitle"].'</title>'."\n";  
+  $res .= $pagedata["header"];
   if (isset($_GET["uid"])) {
     $query = sprintf('select * from %s where uniqid = ?', $tables['user']);
     $req = Sql_Query_Params($query, $_GET['uid']);
@@ -642,25 +649,57 @@ function unsubscribePage($id) {
       $_POST["email"] = $email;
       $_POST["unsubscribereason"] = '"Jump off" set, reason not requested';
     }
-  }
-
-  if (isset($_POST["unsubscribe"]) && (isset($_POST["email"]) || isset($_POST["unsubscribeemail"])) && isset($_POST["unsubscribereason"])) {
-    if (isset($_POST["email"])) {
-      $email = trim($_POST["email"]);
+  } else {
+    if (isset($_REQUEST['email'])) {
+      $email = $_REQUEST['email'];
     } else {
-      $email = $_POST["unsubscribeemail"];
+      $email = $_REQUEST['unsubscribeemail'];
     }
-    $query
-    = ' select id, email'
-    . ' from ' . $tables['user']
-    . ' where email = ?';
-    $rs = Sql_Query_Params($query, array($email));
-    $query = Sql_Fetch_Row($rs);
-    $userid = $query[0];
-    $email = $query[1];
+    if (!validateEmail($email)) {
+      $email = '';
+    }
+    
+    #0013076: Blacklisting posibility for unknown users
+    # Set flag for blacklisting 
+    $blacklist = $_GET['p'] == 'blacklist';
+    
+    # only proceed when user has confirm the form 
+    if ($blacklist && is_email($_REQUEST['unsubscribeemail']) ) {
+      $_POST["unsubscribe"] = 1;
+      $_POST["unsubscribereason"] = 'Forwarded receiver requested blacklist';
+    }
+  }
+  
+//bg(isset($_POST['unsubscribe']) && (isset($_REQUEST['email']) || isset($_REQUEST['unsubscribeemail'])) && isset($_REQUEST['unsubscribereason']),'if');
+//bg(isset($_POST['unsubscribe']) ,'1');
+//bg((isset($_REQUEST['email']) || isset($_REQUEST['unsubscribeemail'])) ,'2');
+//bg(isset($_POST['unsubscribereason']),'3');
+
+  if (isset($_POST["unsubscribe"]) && !empty($email) && isset($_POST["unsubscribereason"])) {
+    #0013076: Blacklisting posibility for unknown users
+      // It would be better to do this above, where the email is set for the other cases.
+      // But to prevent vulnaribilities let's keep it here for now. [bas]
+    if ( !$blacklist ) {
+
+      $query
+      = ' select id, email'
+      . ' from ' . $tables['user']
+      . ' where email = ?';
+      $rs = Sql_Query_Params($query, array($email));
+      $query = Sql_Fetch_Row($rs);
+      $userid = $query[0];
+      $email = $query[1];
+    }
+
     if (!$userid) {
-      $res .= 'Error: '.$GLOBALS["strUserNotFound"];
-      logEvent("Request to unsubscribe non-existent user: ".substr($_POST["email"],0,150));
+      #0013076: Blacklisting posibility for unknown users
+      if ( $blacklist && $email) {
+        addUserToBlacklist($email,$_POST['unsubscribereason']);
+        addSubscriberStatistics('forwardblacklist',1);
+      } else {       
+        $res .= 'Error: '.$GLOBALS["strUserNotFound"];
+        logEvent("Request to unsubscribe non-existent user: ".substr($email,0,150));
+      }
     } else {
       $subscriptions = array();
       $listsreq = Sql_Query(sprintf('select listid from %s where userid = %d',$GLOBALS['tables']['listuser'],$userid));
@@ -682,8 +721,14 @@ function unsubscribePage($id) {
       addSubscriberStatistics('unsubscription',1);
     }
 
-    if ($userid)
+    if ($userid) {
       $res .= '<h1>'.$GLOBALS["strUnsubscribeDone"] ."</h1><P>";
+    }
+
+    #0013076: Blacklisting posibility for unknown users
+    if ($blacklist) {
+      $res .= '<h1>'.$GLOBALS["strYouAreBlacklisted"] ."</h1><P></p>";
+    }
     $res .= $GLOBALS["PoweredBy"].'</p>';
     $res .= $pagedata["footer"];
     return $res;
@@ -702,6 +747,9 @@ function unsubscribePage($id) {
   }
   if (!isset($msg)) {
     $msg = '';
+  }
+  if (!validateEmail($email)) {
+    $email = '';
   }
 
   $res .= '<b>'. $GLOBALS["strUnsubscribeInfo"].'</b><br>'.
@@ -744,7 +792,10 @@ function unsubscribePage($id) {
   $finaltext = eregi_replace('\[preferencesurl\]',$pref_url.$sep.'uid='.$hash,$finaltext);
 
   if (!$some) {
-    $res .= "<b>".$GLOBALS["strNoListsFound"]."</b></ul>";
+    #0013076: Blacklisting posibility for unknown users
+    if (!$blacklist) {
+      $res .= "<b>".$GLOBALS["strNoListsFound"]."</b></ul>";
+    }
     $res .= '<p><input type=submit value="'.$GLOBALS["strResubmit"].'">';
   } else {
     list($r,$c) = explode(",",getConfig("textarea_dimensions"));
@@ -763,92 +814,164 @@ function unsubscribePage($id) {
   return $res;
 }
 
+########################################
 function forwardPage($id) {
   global $tables,$envelope;
-  $html = '';
+  $ok = true;
   $subtitle = '';
-  if (!isset($_GET["uid"]) || !$_GET['uid'])
+  $info = '';
+  $html = '';
+  $form = '';
+  
+  ## Check requirements
+  
+  # user
+  if (!isset($_REQUEST["uid"]) || !$_REQUEST['uid'])
     FileNotFound();
 
+  $firstpage = 1; ## is this the initial page or a followup
+  
+  # forward addresses
   $forwardemail = '';
-  if (isset($_GET['email'])) {
-    $forwardemail = $_GET['email'];
+  if (isset($_REQUEST['email']) && !empty($_REQUEST['email'])) {
+    $firstpage = 0;
+    $forwardPeriodCount = Sql_Fetch_Array_Query(sprintf('select count(user) from %s where date_add(time,interval %s) >= now() and user = %d and status ="sent" ',
+      $tables['user_message_forward'],FORWARD_EMAIL_PERIOD, $userdata['id']));
+    $forwardemail = stripslashes($_REQUEST['email']);
+    $emails = explode("\n",$forwardemail);
+    $emails = trimArray($emails);
+    $forwardemail = implode("\n", $emails);
+    #0011860: forward to friend, multiple emails 
+    $emailCount = $forwardPeriodCount[0];
+    foreach ( $emails as $index => $email) {
+      $emails[$index] = trim($email);
+      if( is_email($email) ) {
+        $emailCount++;  
+      } else {
+        $info .= sprintf('<BR />' . $GLOBALS['strForwardInvalidEmail'], $email);
+        $ok = false;
+      }
+    }
+    if ( $emailCount > FORWARD_EMAIL_COUNT ) {
+      $info.= '<BR />' . $GLOBALS["strForwardCountReached"];
+      $ok = false;
+    } 
+  } else {  
+    $ok = false;
   }
+  
+  # message
   $mid = 0;
-  if (isset($_GET['mid'])) {
-    $mid = sprintf('%d',$_GET['mid']);
+  if (isset($_REQUEST['mid'])) {
+    $mid = sprintf('%d',$_REQUEST['mid']);
     $req = Sql_Query(sprintf('select * from %s where id = %d',$tables["message"],$mid));
     $messagedata = Sql_Fetch_Array($req);
     $mid = $messagedata['id'];
     if ($mid) {
       $subtitle = $GLOBALS['strForwardSubtitle'].' '.stripslashes($messagedata['subject']);
     }
-  }
-  $req = Sql_Query("select * from {$tables["user"]} where uniqid = \"".$_GET["uid"]."\"");
-  $userdata = Sql_Fetch_Array($req);
+  } #mid set
 
-  $req = Sql_Query(sprintf('select * from %s where email = "%s"',$tables["user"],$forwardemail));
-  $forwarduserdata = Sql_Fetch_Array($req);
-
-  if ($userdata["id"] && $mid) {
-    if (!is_email($forwardemail)) {
-      $info = $GLOBALS['strForwardEnterEmail'];
-      $html .= '<form method="get">';
-      $html .= sprintf('<input type=hidden name="mid" value="%d">',$mid);
-      $html .= sprintf('<input type=hidden name="id" value="%d">',$id);
-      $html .= sprintf('<input type=hidden name="uid" value="%s">',$userdata['uniqid']);
-      $html .= sprintf('<input type=hidden name="p" value="forward">');
-      $html .= sprintf('<input type=text name="email" value="%s" size=35 class="attributeinput">',$forwardemail);
-      $html .= sprintf('<input type=submit value="%s"></form>',$GLOBALS['strContinue']);
-    } else {
-      # check whether the email to forward exists and whether they have received the message
-      if ($forwarduserdata['id']) {
-        $sent = Sql_Fetch_Row_Query(sprintf('select entered from %s where userid = %d and messageid = %d',
-          $tables['usermessage'],$forwarduserdata['id'],$mid));
-        # however even if that's the case, we don't want to reveal this information
+  #0011996: forward to friend - personal message
+  # text cannot be longer than max, to prevent very long text with only linefeeds total cannot be longer than twice max
+  if (FORWARD_PERSONAL_NOTE_SIZE && isset($_REQUEST['personalNote']) ) {
+      if (strlen(strip_newlines($_REQUEST['personalNote'])) > FORWARD_PERSONAL_NOTE_SIZE || strlen($_REQUEST['personalNote']) > FORWARD_PERSONAL_NOTE_SIZE  * 2  ) {
+        $info .= '<BR />' . $GLOBALS['strForwardNoteLimitReached'];            
+        $ok = false;
       }
+    $personalNote = strip_tags(htmlspecialchars_decode($_REQUEST['personalNote']));
+    $userdata['personalNote'] = $personalNote;
+  }
+  
+  ## get userdata
+  $req = Sql_Query("select * from {$tables["user"]} where uniqid = \"".$_REQUEST["uid"]."\"");
+  $userdata = Sql_Fetch_Array($req);
+  
+  if ($userdata["id"] && $mid) {
+    if ($ok && count($emails)) { ## All is well, send it 
+      require_once 'admin/sendemaillib.php';
+      #0011860: forward to friend, multiple emails 
+      ## remember the lists for this message in order to notify only those admins
+      ## that own them
+      $messagelists = array();
+      $messagelistsreq = Sql_Query(sprintf('select listid from %s where messageid = %d',$GLOBALS['tables']['listmessage'],$mid));
+      while ($row = Sql_Fetch_Row($messagelistsreq)) {
+        array_push($messagelists,$row[0]);
+      }
+      foreach ( $emails as $index => $email) {
+        #0011860: forward to friend, multiple emails 
+        $done = Sql_Fetch_Array_Query(sprintf('select user,status,time from %s where forward = "%s" and message = %d',
+        $tables['user_message_forward'],$email,$mid));
+        $info .= '<BR />' . $email . ': ';
+        if ($done['status'] === 'sent') {
+          $info .= $GLOBALS['strForwardAlreadyDone'];
+        } else {
+          if (!TEST) {
+            # forward the message
+            # sendEmail will take care of blacklisting
 
-      $done = Sql_Fetch_Array_Query(sprintf('select user,status,time from %s where forward = "%s" and message = %d',
-        $tables['user_message_forward'],$forwardemail,$mid));
-      if ($done['status'] === 'sent') {
-        $info = $GLOBALS['strForwardAlreadyDone'];
-      } else {
-        $messagelists = array();
-        $messagelistsreq = Sql_Query(sprintf('select listid from %s where messageid = %d',$GLOBALS['tables']['listmessage'],$mid));
-        while ($row = Sql_Fetch_Row($messagelistsreq)) {
-          array_push($messagelists,$row[0]);
-        }
+### CHECK $email vs $forwardemail
 
-        if (!TEST) {
-          # forward the message
-          require 'admin/sendemaillib.php';
-          # sendEmail will take care of blacklisting
-          if (sendEmail($mid,$forwardemail,'forwarded',$userdata['htmlemail'],array(),$userdata)) {
-            $info = $GLOBALS["strForwardSuccessInfo"];
-            sendAdminCopy("Message Forwarded",$userdata["email"] . " has forwarded a message $mid to $forwardemail",$messagelists);
-            Sql_Query(sprintf('insert into %s (user,message,forward,status,time)
-              values(%d,%d,"%s","sent",current_timestamp)',
-              $tables['user_message_forward'],$userdata['id'],$mid,$forwardemail));
-          } else {
-            $info = $GLOBALS["strForwardFailInfo"];
-            sendAdminCopy("Message Forwarded",$userdata["email"] . " tried forwarding a message $mid to $forwardemail but failed",$messagelists);
-            Sql_Query(sprintf('insert into %s (user,message,forward,status,time)
-              values(%d,%d,"%s","failed",current_timestamp)',
-              $tables['user_message_forward'],$userdata['id'],$mid,$forwardemail));
+            if (sendEmail($mid,$email,'forwarded',$userdata['htmlemail'],array(),$userdata)) {
+              $info .= $GLOBALS["strForwardSuccessInfo"];
+              sendAdminCopy("Message Forwarded",$userdata["email"] . " has forwarded a message $mid to $email",$messagelists);
+              Sql_Query(sprintf('insert into %s (user,message,forward,status,time)
+                 values(%d,%d,"%s","sent",now())',
+                $tables['user_message_forward'],$userdata['id'],$mid,$email));
+            } else {
+              $info .= $GLOBALS["strForwardFailInfo"];
+              sendAdminCopy("Message Forwarded",$userdata["email"] . " tried forwarding a message $mid to $email but failed",$messagelists);
+              Sql_Query(sprintf('insert into %s (user,message,forward,status,time)
+                values(%d,%d,"%s","failed",now())',
+                $tables['user_message_forward'],$userdata['id'],$mid,$email));
+                $ok = false;
+            }
           }
         }
-      }
-
-    }
-
-  } else {
-    logEvent("Forward request from invalid user ID: ".substr($_GET["uid"],0,150));
-    $info = $GLOBALS["strForwardFailInfo"];
+      } # function findOrSend      }
+    } #ok & emails
+        
+  } else { # no valid sender
+    logEvent("Forward request from invalid user ID: ".substr($_REQUEST["uid"],0,150));
+    $info .= '<BR />' . $GLOBALS["strForwardFailInfo"];
+    $ok = false;
   }
   $data = PageData($id);
   if (isset($data['language_file']) && is_file(dirname(__FILE__).'/texts/'.$data['language_file'])) {
     @include dirname(__FILE__).'/texts/'.$data['language_file'];
   }
+
+## BAS Multiple Forward
+  ## build response page
+  $form = '<form method="post" action="">';
+  $form .= sprintf('<input type=hidden name="mid" value="%d">',$mid);
+  $form .= sprintf('<input type=hidden name="id" value="%d">',$id);
+  $form .= sprintf('<input type=hidden name="uid" value="%s">',$userdata['uniqid']);
+  $form .= sprintf('<input type=hidden name="p" value="forward">');
+  if (!$ok) {
+    #0011860: forward to friend, multiple emails 
+    if (FORWARD_EMAIL_COUNT == 1) {
+      $form .= '<BR /><H2>' .$GLOBALS['strForwardEnterEmail'] . '</H2>';
+      $form .= sprintf('<input type=text name="email" value="%s" size=50 class="attributeinput">',$forwardemail);
+    } else {
+      $form .= '<BR /><H2>' .sprintf($GLOBALS['strForwardEnterEmails'], FORWARD_EMAIL_COUNT) . '</H2>';
+      $form .= sprintf('<textarea name="email" rows=10 cols=50 class="attributeinput">%s</textarea>', $forwardemail);
+    }
+
+    #0011996: forward to friend - personal message
+    if (FORWARD_PERSONAL_NOTE_SIZE ) {
+      $form .= sprintf('<h2>' . $GLOBALS['strForwardPersonalNote'] . '</H2>', FORWARD_PERSONAL_NOTE_SIZE);
+      $cols=50;
+      $rows=min(10,ceil(FORWARD_PERSONAL_NOTE_SIZE / 40));
+
+      $form .=sprintf('<BR/><textarea type=text name="personalNote" rows=%d cols=%d class="attributeinput">%s</textarea>', $rows, $cols, $personalNote);
+    }
+    $form .= sprintf('<br /><input type=submit value="%s"></form>',$GLOBALS['strContinue']);
+  }
+
+### END BAS
+
+### Michiel, remote response page
 
   $remote_content = '';
   if (preg_match("/\[URL:([^\s]+)\]/i",$messagedata['message'],$regs)) {
@@ -862,16 +985,8 @@ function forwardPage($id) {
   }
 
   if (!empty($remote_content) && preg_match('/\[FORWARDFORM\]/',$remote_content,$regs)) {
-    $form = '<form method="get">';
-    $form .= sprintf('<input type=hidden name="mid" value="%d">',$mid);
-    $form .= sprintf('<input type=hidden name="id" value="%d">',$id);
-    $form .= sprintf('<input type=hidden name="uid" value="%s">',$userdata['uniqid']);
-    $form .= sprintf('<input type=hidden name="p" value="forward">');
-    $form .= sprintf('<input type=text name="email" value="%s" size=35 class="attributeinput">',$forwardemail);
-    $form .= sprintf('<input type=submit value="%s"></form>',$GLOBALS['strContinue']);
-    ### @@@ hmm, might want a flag instead, but trying to keep changes to a minimum
-    if ($info == $GLOBALS['strForwardEnterEmail']) {
-      ## this indicates it's the initial page, not a follow up one.
+    if ($firstpage) {
+      ## this is the initial page, not a follow up one.
       $remote_content = str_replace($regs[0],$info.$form,$remote_content);
     } else {
       $remote_content = str_replace($regs[0],$info,$remote_content);
@@ -881,11 +996,16 @@ function forwardPage($id) {
     $res = '<title>'.$GLOBALS["strForwardTitle"].'</title>';
     $res .= $data["header"];
     $res .= '<h1>'.$subtitle.'</h1>';
-    $res .= '<h2>'.$info.'</h2>';
-    $res .= $html;
+    if ($ok) {
+      $res .= '<h2>'.$info.'</h2>';
+    } else {
+      $res .= '<div class="missing">'.$info.'</div>';
+    }
+    $res .= $form;
     $res .= "<P>".$GLOBALS["PoweredBy"].'</p>';
     $res .= $data["footer"];
   }
+### END MICHIEL
   return $res;
 }
 ?>

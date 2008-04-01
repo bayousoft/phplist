@@ -182,6 +182,7 @@ if(isset($_REQUEST['import'])) {
         flush();
       }
       if(strlen($email) > 4) {
+        $email = addslashes($email);
         // Annoying hack => Much too time consuming. Solution => Set email in users to UNIQUE()
         $result = Sql_query("SELECT id,uniqid FROM ".$tables["user"]." WHERE email = '$email'");
         if (Sql_affected_rows()) {

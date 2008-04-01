@@ -23,9 +23,9 @@ $query
 . ' from %s lu'
 . '    join %s umb'
 . '       on lu.userid = umb.user'
-. ' where current_timestamp < umb."time" + interval \'6 months\''
-. '   and lu.listid = ?'
-. ' group by lu.listid, lu.userid'
+. ' where current_timestamp < umb.time + "6 months"'
+. '   and lu.listid = ? '
+. ' group by lu.listid '
 . ' order by lu.listid'
 ;
 $query = sprintf($query, $GLOBALS['tables']['listuser'], $GLOBALS['tables']['user_message_bounce']);
@@ -53,7 +53,7 @@ if ($total > 500 && $_GET['type'] != 'dl') {
 print '<p>'.PageLink2('listbounces','Select another list');
 print '&nbsp;'.PageLink2('listbounces&type=dl&&amp;id='.$listid,'Download emails');
 print '</p>';
-if ($_GET['type'] == 'dl') {
+if (isset($_GET['type']) && $_GET['type'] == 'dl') {
   ob_end_clean();
   Header("Content-type: text/plain");
   $filename = 'Bounces on '.listName($listid);
@@ -81,8 +81,8 @@ while ($row = Sql_Fetch_Array($req)) {
   $ls->addColumn($row['userid'],$GLOBALS['I18N']->get('email'),$userdata['email']);
   $ls->addColumn($row['userid'],$GLOBALS['I18N']->get('# bounces'),$row['numbounces']);
 }
-if ($_GET['type'] != 'dl') {
+if (isset($_GET['type']) && $_GET['type'] != 'dl') {
   print $ls->display();
 } else {
-  exit;
+  return;
 }

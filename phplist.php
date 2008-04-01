@@ -1,4 +1,4 @@
-<?
+<?php
 # class to become plugin for the webbler http://demo.tincan.co.uk
 # this file is not used in the standalone version
 
@@ -210,6 +210,8 @@ class phplist extends DefaultPlugin {
       $value = eregi_replace('\[PREFERENCESURL\]', $url.$sep.'uid='.$uniqid, $value);
     }
     $value = eregi_replace('\[SUBSCRIBEURL\]', $this->getConfig("subscribeurl"), $value);
+   #0013076: Blacklisting posibility for unknown users
+    $value = eregi_replace('\[BLACKLISTURL\]', $this->getConfig("blacklisturl"), $value);
     if ($value == "0") {
       $value = "false";
     } elseif ($value == "1") {

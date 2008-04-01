@@ -155,12 +155,18 @@ if ($id) {
 // from the database or from the previous $_POST
 #if (get_magic_quotes_gpc()) {
   $_POST["msgsubject"] = stripslashes($_POST["msgsubject"]);
+  #0013076: different content when forwarding 'to a friend'
+  $_POST["forwardsubject"] = stripslashes($_POST["forwardsubject"]);
   $_POST["from"] = stripslashes($_POST["from"]);
   $_POST["tofield"] = stripslashes($_POST["tofield"]);
   $_POST["replyto"] = stripslashes($_POST["replyto"]);
   $_POST["message"] = stripslashes($_POST["message"]);
+  #0013076: different content when forwarding 'to a friend'
+  $_POST["forwardmessage"] = stripslashes($_POST["forwardmessage"]);
   $_POST["textmessage"] = stripslashes($_POST["textmessage"]);
   $_POST["footer"] = stripslashes($_POST["footer"]);
+  #0013076: different content when forwarding 'to a friend'
+  $_POST["forwardfooter"] = stripslashes($_POST["forwardfooter"]);
 #}
 
 #input checking#######################
@@ -362,6 +368,14 @@ if ($send || $sendtest || $prepare || $save) {
       Sql_Query(sprintf('replace into %s (name,id,data) values("excludelist",%d,"%s")',$tables["messagedata"],$messageid,$exclude));
     } else {
       Sql_Query(sprintf('replace into %s (name,id,data) values("excludelist",%d,"%s")',$tables["messagedata"],$messageid,0));
+    }
+  }
+
+  #0013076: different content when forwarding 'to a friend'
+  if (FORWARD_ALTERNATIVE_CONTENT && $_GET['tab'] == 'Forward') {
+    foreach( array('forwardsubject', 'forwardmessage', 'forwardfooter') as $var) {
+      Sql_Query(sprintf('replace into %s (name,id,data) values("%s",%d,"%s")',
+        $tables["messagedata"], $var, $messageid, addslashes($_REQUEST[$var])));
     }
   }
 
@@ -635,12 +649,19 @@ if ($send || $sendtest || $prepare || $save) {
       $result = Sql_Query_Params($query, array($address));
                                                                                                           //Leftover from the preplugin era
       if ($user = Sql_fetch_array($result)) {
-        if (SEND_ONE_TESTMAIL) {
-          $success = sendEmail($id, $address, $user["uniqid"], $user['htmlemail']);
+        if ( FORWARD_ALTERNATIVE_CONTENT && $_GET['tab'] == 'Forward') {
+          if (SEND_ONE_TESTMAIL) {
+            $success = sendEmail($id, $address, $user["uniqid"], $user['htmlemail'], array(), array($address) );
+          } else {
+            $success = sendEmail($id, $address, $user["uniqid"], 1,  array(), array($address) ) && sendEmail($id, $address, $user["uniqid"], 0,  array(), array($address));
+          }
         } else {
-          $success = sendEmail($id, $address, $user["uniqid"], 0) && sendEmail($id, $address, $user["uniqid"], 1);
+          if (SEND_ONE_TESTMAIL) {
+            $success = sendEmail($id, $address, $user["uniqid"], $user['htmlemail']);
+          } else {
+            $success = sendEmail($id, $address, $user["uniqid"], 1) && sendEmail($id, $address, $user["uniqid"], 0);
+          }
         }
-;
         print $GLOBALS['I18N']->get("sentemailto").": $address ";
         if (!$success) {
           print $GLOBALS['I18N']->get('failed');
@@ -677,6 +698,19 @@ if ($send || $sendtest || $prepare || $save) {
 
 # load all message data
 $messagedata = loadMessageData($id);
+
+#0013076: different content when forwarding 'to a friend'
+if (FORWARD_ALTERNATIVE_CONTENT) {
+  foreach( array('forwardsubject', 'forwardmessage', 'forwardfooter') as $var) {
+  	if (isset($_REQUEST[$var])) {
+      ${$var} = $_REQUEST[$var];
+    } else {
+      ${$var} = $messagedata[$var];
+    }
+  }
+  if (!$forwardfooter)
+    $forwardfooter = getConfig("forwardfooter");
+}
 
 ##############################
 # Stacked attributes, processing and calculation
@@ -907,6 +941,37 @@ if (!$done) {
     $enctype = '';
   }
 
+  #$baseurl = sprintf('./?page=%s&amp;id=%d',$_GET["page"],$_GET["id"]);
+  if ($_GET["id"]) {
+    $tabs = new WebblerTabs();
+    $tabs->addTab($GLOBALS['I18N']->get("Content"),"$baseurl&amp;tab=Content");
+    if (FORWARD_ALTERNATIVE_CONTENT) {
+      $tabs->addTab($GLOBALS['I18N']->get("Forward"),"$baseurl&amp;tab=Forward");
+    }
+    $tabs->addTab($GLOBALS['I18N']->get("Format"),"$baseurl&amp;tab=Format");
+    if (ALLOW_ATTACHMENTS) {
+      $tabs->addTab($GLOBALS['I18N']->get("Attach"),"$baseurl&amp;tab=Attach");
+    }
+    $tabs->addTab($GLOBALS['I18N']->get("Scheduling"),"$baseurl&amp;tab=Scheduling");
+#    if (USE_RSS) {
+#      $tabs->addTab("RSS","$baseurl&amp;tab=RSS");
+#    }
+    $tabs->addTab($GLOBALS['I18N']->get("Criteria"),"$baseurl&amp;tab=Criteria");
+    $tabs->addTab($GLOBALS['I18N']->get("Lists"),"$baseurl&amp;tab=Lists");
+#    $tabs->addTab("Review and Send","$baseurl&amp;tab=Review");
+    $tabs->addTab($GLOBALS['I18N']->get("Misc"),"$baseurl&amp;tab=Misc");
+
+    if ($_GET["tab"]) {
+      $tabs->setCurrent($GLOBALS['I18N']->get($_GET["tab"]));
+    } else {
+      $tabs->setCurrent($GLOBALS['I18N']->get("Content"));
+    }
+    if (defined("WARN_SAVECHANGES")) {
+      $tabs->addLinkCode(' onClick="return savechanges();" ');
+    }
+    print $tabs->display();
+  }
+
   ?>
   <p></p>
   <script language="Javascript">
@@ -947,7 +1012,12 @@ if (!$done) {
   }
 
   $formatting_content = '<table>';
-  $maincontent = '<table>';
+  
+  #0013076: different content when forwarding 'to a friend'
+  $tmp = '<table>';
+  $maincontent = $tmp;
+  $forwardcontent = $tmp;
+
   $scheduling_content = '<table>';
   $maincontent .= '
   <tr><td>'.Help("subject").' '.$GLOBALS['I18N']->get("Subject").':</td>
@@ -960,6 +1030,19 @@ if (!$done) {
     <td><input type=text name=from
     value="'.htmlentities($from,ENT_QUOTES,'UTF-8').'" size=40></td></tr>
   <tr><td colspan=2>
+
+  </td></tr>';
+
+  #0013076: different content when forwarding 'to a friend'
+  $forwardcontent .= $GLOBALS['I18N']->get("When a user forwards to a friend," .
+  " the friend will receive this message instead of the one on the content tab.").
+  '<tr><td>'.Help("subject").' '.$GLOBALS['I18N']->get("Subject").':</td>
+    <td><input type=text name="forwardsubject"
+    value="'.htmlentities($forwardsubject,ENT_QUOTES,'UTF-8').'" size=40></td></tr>
+  <tr>
+    <td colspan=2>
+    </td></tr>
+  <td colspan=2>
 
   </td></tr>';
 
@@ -1070,9 +1153,12 @@ if (!$done) {
 //    $rss_content .= '</td></tr>';
 //  }
 
-  $maincontent .= '<tr><td colspan=2>'.Help("message").' '.$GLOBALS['I18N']->get("message").'. </td></tr>
+  #0013076: different content when forwarding 'to a friend'
+  $tmp = '<tr><td colspan=2>'.Help("message").' '.$GLOBALS['I18N']->get("message").'. </td></tr>
 
   <tr><td colspan=2>';
+  $maincontent .= $tmp; 
+  $forwardcontent .= $tmp;
 
   if ($usefck) {
     $oFCKeditor = new FCKeditor('message') ;
@@ -1126,16 +1212,20 @@ if (!$done) {
         ."   });\n"
         ."</script>\n"
         ."<textarea name='message' id='message' cols='65' rows='20'>{$_POST['message']}</textarea>";
-
+        
   } else {
-
-    $maincontent .= '<textarea name=message cols=65 rows=20>'.htmlspecialchars($_POST["message"]).'</textarea>';
-
+    $maincontent    .= '<textarea name=message cols=65 rows=20>'.htmlspecialchars($_POST["message"]).'</textarea>';
   }
 
-  $maincontent .= '
+  #0013076: different content when forwarding 'to a friend'
+  $forwardcontent .= '<textarea name=forwardmessage cols=65 rows=20>'.htmlspecialchars($forwardmessage).'</textarea>';
+
+  #0013076: different content when forwarding 'to a friend'
+  $tmp = '
   </td></tr>
   ';
+  $maincontent .= $tmp;
+  $forwardcontent .= $tmp;
 
   if (USE_MANUAL_TEXT_PART) {
   $maincontent .= '<tr><td colspan=2>
@@ -1146,11 +1236,17 @@ if (!$done) {
   </td></tr>';
   }
 
+  #0013076: different content when forwarding 'to a friend'
   $maincontent .= '<tr><td colspan=2>'.$GLOBALS['I18N']->get("messagefooter").'. <br/>
     '.$GLOBALS['I18N']->get("messagefooterexplanation").'<br/>'.
     $GLOBALS['I18N']->get("use [FORWARD] to add a personalised URL to forward the message to someone else.").
   '.</td></tr>
   <tr><td colspan=2><textarea name=footer cols=65 rows=5>'.$footer.'</textarea></td></tr>
+  </table>';
+  $forwardcontent .= '<tr><td colspan=2>'.$GLOBALS['I18N']->get("forwardfooter").'. <br/>
+    '.$GLOBALS['I18N']->get("messageforwardfooterexplanation").'<br/>'.
+  '.</td></tr>
+  <tr><td colspan=2><textarea name=forwardfooter cols=65 rows=5>'.$forwardfooter.'</textarea></td></tr>
   </table>';
 
   if (ALLOW_ATTACHMENTS) {
@@ -1626,7 +1722,8 @@ if (!$done) {
 //    case "RSS": print $rss_content;break;            //Obsolete by rssmanager plugin
     case "Lists": $show_lists = 1;break;
     case "Review": print $review_content; break;
-    case "Misc": print $misc_content; break;
+    case "Misc": print $notification_content; break;
+    case "Forward": print $forwardcontent; break;
     default:
       $isplugin = 0;
       foreach ($plugintabs as $tabname => $tabcontent) {

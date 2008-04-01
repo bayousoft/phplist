@@ -245,11 +245,19 @@ $default_config = array (
   # the location of your unsubscribe script:
 "unsubscribeurl" => array (
   $GLOBALS['scheme'] . "://[WEBSITE]$pageroot/?p=unsubscribe",
-  "URL where users can unsubscribe",
+  "URL where known users can unsubscribe",
   "text"
 ),
 
-  # the location of your confirm script:
+  #0013076: Blacklisting posibility for unknown users
+  # the location of your blacklist script:
+"blacklisturl" => array (
+  $GLOBALS['scheme'] . "://[WEBSITE]$pageroot/?p=blacklist",
+  "URL where unknown users can unsubscribe (blacklist)",
+  "text"
+),
+
+# the location of your confirm script:
 "confirmationurl" => array (
   $GLOBALS['scheme'] . "://[WEBSITE]$pageroot/?p=confirm",
   "URL where users have to confirm their subscription",
@@ -461,7 +469,7 @@ $default_config = array (
 ),
 
 "forwardfooter" => array (
-  "--\n$strForwardFooter\n\n [SUBSCRIBE]\n",
+  "--\n$strForwardFooter\n\n [SUBSCRIBE]\nClick [BLACKLIST] to refuse further email from this website",
 
   "Footer used when a message has been forwarded",
   "textarea"
@@ -619,7 +627,7 @@ if (!TEST && REGISTER && defined("VERSION")) {
 } else
 	$PoweredBy = '<center><a href="http://www.phplist.com"><img src="images/power-phplist.png" width=88 height=31 title="powered by phplist" alt="powered by phplist" border="0"></a></center>';
 
-if (!function_exists("getconfig")) {
+if (!function_exists("getconfig")) { 
 	function getConfig($item) {
 		global $default_config, $domain, $website, $tables;
 
@@ -704,7 +712,8 @@ if (!function_exists("getconfig")) {
 	while (list ($item, $values) = each($default_config)) {
 		$val = getConfig($item);
 		if (!isset ($val)) {
-			if ($item == 'preferencesurl' || $item == 'unsubscribeurl' || $item == 'subscribeurl' || $item == 'forwardurl' || $item == 'confirmationurl') {
+			#0013076: Blacklisting posibility for unknown users
+			if ($item == 'preferencesurl' || $item == 'unsubscribeurl' || $item == 'blacklisturl' || $item == 'subscribeurl' || $item == 'forwardurl' || $item == 'confirmationurl') {
 				$base = getConfig('public_baseurl');
 				$sep = ereg('\?', $base) ? '&amp;' : '?';
 				if (trim($base) != '') {
@@ -712,10 +721,14 @@ if (!function_exists("getconfig")) {
 						case "preferencesurl" :
 							$values[0] = $base . $sep . 'p=preferences';
 							break;
-						case "unsubscribeurl" :
-							$values[0] = $base . $sep . 'p=unsubscribe';
-							break;
-						case "subscribeurl" :
+            case "unsubscribeurl" :
+              $values[0] = $base . $sep . 'p=unsubscribe';
+              break;
+            #0013076: Blacklisting posibility for unknown users
+            case "blacklisturl" :              
+              $values[0] = $base . $sep . 'p=blacklist';
+              break;
+            case "subscribeurl" :
 							$values[0] = $base . $sep . 'p=subscribe';
 							break;
 						case "forwardurl" :
@@ -760,9 +773,9 @@ function getUserConfig($item, $userid = 0) {
 		# do some backwards compatibility:
 		# hmm, reverted back to old system
 
-		$url = getConfig("unsubscribeurl");
-		$sep = ereg('\?', $url) ? '&' : '?';
-		$value = eregi_replace('\[UNSUBSCRIBEURL\]', $url . $sep . 'uid=' . $uniqid, $value);
+    $url = getConfig("unsubscribeurl");
+    $sep = ereg('\?', $url) ? '&' : '?';
+    $value = eregi_replace('\[UNSUBSCRIBEURL\]', $url . $sep . 'uid=' . $uniqid, $value);
 		$url = getConfig("confirmationurl");
 		$sep = ereg('\?', $url) ? '&' : '?';
 		$value = eregi_replace('\[CONFIRMATIONURL\]', $url . $sep . 'uid=' . $uniqid, $value);

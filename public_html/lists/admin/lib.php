@@ -81,6 +81,14 @@ if (function_exists('stripos')) {
 } else {
   define('PHP5',0);
 }  
+if (!defined('FORWARD_ALTERNATIVE_CONTENT')) define('FORWARD_ALTERNATIVE_CONTENT',0);
+if (!defined('KEEPFORWARDERATTRIBUTES')) define('KEEPFORWARDERATTRIBUTES',0);
+if (!defined('FORWARD_EMAIL_COUNT') ) define('FORWARD_EMAIL_COUNT',1);
+if (FORWARD_EMAIL_COUNT < 1) {Error('FORWARD_EMAIL_COUNT must be > (int) 0');}
+# allows FORWARD_EMAIL_COUNT forwards per user per period in mysql interval terms default one day  
+if (!defined('FORWARD_EMAIL_PERIOD') ) define('FORWARD_EMAIL_PERIOD', '1 day');
+if (!defined('FORWARD_PERSONAL_NOTE_SIZE')) define('FORWARD_PERSONAL_NOTE_SIZE',0);
+if (!defined('EMBEDUPLOADIMAGES')) define('EMBEDUPLOADIMAGES',0);
 
 if (!isset($GLOBALS["export_mimetype"])) $GLOBALS["export_mimetype"] = 'application/csv';
 if (!isset($GLOBALS["admin_auth_module"])) $GLOBALS["admin_auth_module"] = 'phplist_auth.inc';
@@ -433,6 +441,8 @@ function previewTemplate($id,$adminid = 0,$text = "", $footer = "") {
     $template = eregi_replace("\[FOOTER\]",$footer,$template);
   $template = preg_replace("#\[CONTENT\]#",$text,$template);
   $template = eregi_replace("\[UNSUBSCRIBE\]",sprintf('<a href="%s">%s</a>',getConfig("unsubscribeurl"),$GLOBALS["strThisLink"]),$template);
+  #0013076: Blacklisting posibility for unknown users
+  $template = eregi_replace("\[BLACKLIST\]",sprintf('<a href="%s">%s</a>',getConfig("blacklisturl"),$GLOBALS["strThisLink"]),$template);
   $template = eregi_replace("\[PREFERENCES\]",sprintf('<a href="%s">%s</a>',getConfig("preferencesurl"),$GLOBALS["strThisLink"]),$template);
   if (!EMAILTEXTCREDITS) {
     $template = eregi_replace("\[SIGNATURE\]",$GLOBALS["PoweredByImage"],$template);
@@ -1044,6 +1054,13 @@ if (!function_exists('formatbytes')) {
     else
     return sprintf('%dBytes',$value);
   }
+}
+
+function strip_newlines( $str, $placeholder = '' ) {
+  $str = str_replace(chr(13) . chr(10), $placeholder , $str);
+  $str = str_replace(chr(10), $placeholder , $str);
+  $str = str_replace(chr(13), $placeholder , $str);
+  return $str;
 }
 
 // Moved to subscribelib2, since itś only used there
