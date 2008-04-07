@@ -1713,7 +1713,7 @@ if (!$done) {
     }
   }
 
-  print $tabs->display();
+//  print $tabs->display();
   switch ($_GET["tab"]) {
     case "Attach": print $att_content; break;
     case "Criteria": print $criteria_content; break;
