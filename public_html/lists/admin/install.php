@@ -15,7 +15,8 @@ foreach ($_POST as $key => $val) {
 //print_r($_SESSION);
 require("install/english.inc");
 include("install/".$_SESSION["language_module"]."");
-require("adodb.inc");
+//require("adodb.inc");
+require("mysql.inc");
 require("install/steps-lib.php");
 include("install/header-install.inc");
 require("install/requiredvars.php");
