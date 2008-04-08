@@ -354,7 +354,7 @@ define('SEND_ONE_TESTMAIL',0);
 
 # when using the import2 option you can set this to allow phplist handle bigger files
 # server restrictions might apply too though, so you must be careful and check with your sysadmin first
-# the value here is in megabytes, so 64 will be 64Mb
+# the value here is in megabytes, so 64 will be 64MB
 # define('IMPORT_FILESIZE',64);
 
 /*
