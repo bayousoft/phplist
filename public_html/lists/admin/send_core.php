@@ -29,6 +29,7 @@ $errormsg = '';
 //$rss_content = '';          //Obsolete by rssmanager plugin 
 $done = 0;
 $messageid = 0;
+$forwardsubject = $forwardmessage = $forwardfooter = '';
 $duplicate_atribute = 0; # not actually used it seems @@@ check
 $embargo = new date("embargo");
 $embargo->useTime = true;
@@ -156,17 +157,17 @@ if ($id) {
 #if (get_magic_quotes_gpc()) {
   $_POST["msgsubject"] = stripslashes($_POST["msgsubject"]);
   #0013076: different content when forwarding 'to a friend'
-  $_POST["forwardsubject"] = stripslashes($_POST["forwardsubject"]);
+  $_POST["forwardsubject"] = isset($_POST["forwardsubject"])  ? stripslashes($_POST["forwardsubject"]):'';
   $_POST["from"] = stripslashes($_POST["from"]);
   $_POST["tofield"] = stripslashes($_POST["tofield"]);
   $_POST["replyto"] = stripslashes($_POST["replyto"]);
   $_POST["message"] = stripslashes($_POST["message"]);
   #0013076: different content when forwarding 'to a friend'
-  $_POST["forwardmessage"] = stripslashes($_POST["forwardmessage"]);
+  $_POST["forwardmessage"] = isset($_POST["forwardmessage"]) ? stripslashes($_POST["forwardmessage"]):'';
   $_POST["textmessage"] = stripslashes($_POST["textmessage"]);
   $_POST["footer"] = stripslashes($_POST["footer"]);
   #0013076: different content when forwarding 'to a friend'
-  $_POST["forwardfooter"] = stripslashes($_POST["forwardfooter"]);
+  $_POST["forwardfooter"] = isset($_POST["forwardfooter"]) ? stripslashes($_POST["forwardfooter"]):'';
 #}
 
 #input checking#######################
