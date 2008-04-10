@@ -7,6 +7,7 @@
 require_once dirname(__FILE__).'/accesscheck.php';
 
 print formStart();
+$some = 0;
 
 if (isset($_GET['delete'])) {
   $delete = sprintf('%d',$_GET['delete']);
