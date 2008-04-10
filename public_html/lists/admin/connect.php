@@ -582,7 +582,12 @@ function PageURL2($name,$desc = "",$url="") {
 }
 
 function Redirect($page) {
-  $website = getConfig("website");
+  if (!empty($_SERVER['HTTP_HOST'])) {
+    $website = $_SERVER['HTTP_HOST'];
+  } else {
+    ## could check SERVER_NAME as well
+    $website = getConfig("website");
+  }
   Header("Location: ".$GLOBALS['scheme']."://".$website.$GLOBALS["adminpages"]."/?page=$page");
   exit;
 }
