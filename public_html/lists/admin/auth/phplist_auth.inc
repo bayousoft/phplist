@@ -34,7 +34,7 @@ class admin_auth {
 
   function validateAccount($id) {
     $query
-    = ' select id, disabled'
+    = ' select id, disabled,password'
     . ' from %s'
     . ' where id = ?';
     $query = sprintf($query, $GLOBALS['tables']['admin']);
@@ -42,6 +42,8 @@ class admin_auth {
     $noaccess_req = Sql_Fetch_Row($req);
     if (!$noaccess_req[0]) {
       return array(0,"No such account");
+    } elseif (sha1($noaccess_req[2]) != $_SESSION["logindetails"]["passhash"]) {
+      return array(0,"Your session does not match your password.  If you just changed your password, simply log back in.");
     } elseif ($noaccess_req[1]) {
       return array(0,"your account has been disabled");
     }

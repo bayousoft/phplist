@@ -216,6 +216,7 @@ if (isset($GLOBALS["require_login"]) && $GLOBALS["require_login"]) {
         "adminname" => $_REQUEST["login"],
         "id" => $loginresult[0],
         "superuser" => $admin_auth->isSuperUser($loginresult[0]),
+        "passhash" => sha1($_REQUEST["password"]),
       );
       if ($_POST["page"] && $_POST["page"] != "") {
         $page = $_POST["page"];
