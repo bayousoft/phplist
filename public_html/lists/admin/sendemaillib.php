@@ -63,6 +63,28 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     ## this has weird effects when used with only one word, so take it out for now
 #    $cached[$messageid]["fromname"] = eregi_replace("@","",$cached[$messageid]["fromname"]);
 
+   if (ereg("([^ ]+@[^ ]+)",$message["replyto"],$regs)) {
+      # if there is an email in the from, rewrite it as "name <email>"
+      $message["replyto"] = ereg_replace($regs[0],"",$message["replyto"]);
+      $cached[$messageid]["replytoemail"] = $regs[0];
+      # if the email has < and > take them out here
+      $cached[$messageid]["replytoemail"] = ereg_replace("<","",$cached[$messageid]["replytoemail"]);
+      $cached[$messageid]["replytoemail"] = ereg_replace(">","",$cached[$messageid]["replytoemail"]);
+      # make sure there are no quotes around the name
+      $cached[$messageid]["replytoname"] = ereg_replace('"',"",ltrim(rtrim($message["replyto"])));
+    } elseif (ereg(" ",$message["replyto"],$regs)) {
+      # if there is a space, we need to add the email
+      $cached[$messageid]["replytoname"] = $message["replyto"];
+      $cached[$messageid]["replytoemail"] = "listmaster@$domain";
+    } else {
+      $cached[$messageid]["replytoemail"] = $message["replyto"] . "@$domain";
+
+      ## makes more sense not to add the domain to the word, but the help says it does
+      ## so let's keep it for now
+      $cached[$messageid]["replytoname"] = $message["replyto"] . "@$domain";
+    }
+    
+    $cached[$messageid]["replytoname"] = trim($cached[$messageid]["replytoname"]);    
     $cached[$messageid]["fromname"] = trim($cached[$messageid]["fromname"]);
     $cached[$messageid]["to"] = $message["tofield"];
     #0013076: different content when forwarding 'to a friend'
@@ -880,7 +902,10 @@ if (0) {
       $fromemail = $forwardedby['email'];
       $subject = $GLOBALS['strFwd'].': '.$cached[$messageid]["subject"];
     }
-
+    
+    if (!empty($cached[$messageid]["replytoemail"])) {
+      $mail->AddReplyTo($cached[$messageid]["replytoemail"],$cached[$messageid]["replytoname"]);
+    }
     if (!$mail->send("", $destinationemail, $fromname, $fromemail, $subject)) {
       logEvent("Error sending message $messageid to $email ($destinationemail)");
       return 0;
