@@ -31,7 +31,7 @@ $GLOBALS["img_cross"] = '<img src="images/cross.gif" alt="No">';
 $checkboxgroup_storesize = 1; # this will allow 10000 options for checkboxes
 
 # identify pages that can be run on commandline
-$commandline_pages = array('send','processqueue','processbounces','import','upgrade','convertstats'); // ,'getrss' //Obsolete by rssmanager plugin 
+$commandline_pages = array('send','processqueue','processbounces','import','upgrade','convertstats'); // ,'getrss' //Obsolete by rssmanager plugin
 
 if (isset($message_envelope))
   $envelope = "-f$message_envelope";
@@ -126,7 +126,7 @@ if (!$xormask) {
 }
 define('XORmask',$xormask);
 
-//obsolete, moved to rssmanager plugin 
+//obsolete, moved to rssmanager plugin
 //$GLOBALS['rssfrequencies'] = array(
 //#  "hourly" => $strHourly, # to be added at some other point
 //  "daily" => $strDaily,
@@ -142,6 +142,9 @@ $GLOBALS["mail_error_count"] = 0;
 
 function SaveConfig($item,$value,$editable=1,$ignore_errors = 0) {
   global $tables;
+  ## in case DB hasn't been initialised
+  $hasconf = Sql_Table_Exists($tables["config"]);
+  if (!$hasconf) return;
   if ($value == "false" || $value == "no") {
     $value = 0;
 	} else
@@ -374,7 +377,7 @@ function Fatal_Error($msg) {
       print '<div align="center" class="error">'."Fatal Error: $msg </div>";
     }
     $message = '
-  
+
     An error has occurred in the Mailinglist System
     URL: '.$_SERVER["REQUEST_URI"].'
     Error: ' . $msg;
@@ -395,9 +398,9 @@ function Warn($msg) {
   } else {
     print '<div align=center class="error">'.$GLOBALS["I18N"]->get("warning").": $msg </div>";
     $message = '
-  
+
     An warning has occurred in the Mailinglist System
-  
+
     ' . $msg;
   }
 #  sendMail(getConfig("report_address"),"Mail list warning",$message,"");
@@ -764,7 +767,7 @@ function Help($topic,$text = '?') {
 ### moved to debuglib
 // function dbg($variable, $description = 'Value', $table_started = 0) {
 // 	# WARNING recursive
-// 
+//
 // 	if (isset ($GLOBALS["developer_email"])) {
 // 		if (!$table_started)
 // 			echo "<ul type='circle' style='border:1px solid #a0a0a0;padding-bottom:4px;padding-right:4px'>\n<li>{" . getenv("REQUEST_URI") . "} ";
