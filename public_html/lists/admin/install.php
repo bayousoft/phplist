@@ -22,7 +22,9 @@ require("install/requiredvars.php");
 require("languages.php");
 
 //error_reporting(E_ALL & E_STRICT);
-#error_reporting(0);
+if (!isset($GLOBALS['developer_email'])) {
+  error_reporting(0);
+}
 checkSessionCheckboxes();
 ?>
 <div class="install_start wrong">
