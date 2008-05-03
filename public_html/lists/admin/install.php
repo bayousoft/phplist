@@ -1,9 +1,7 @@
 <?php
 
-
-ob_start();
-
-session_start();
+@ob_start();
+@session_start();
 
 if (isset($_GET['page'])) {
   $Page = sprintf("%s",$_GET['page']);
@@ -13,36 +11,36 @@ foreach ($_POST as $key => $val) {
   $_SESSION[$key] = $val;
 }
 //print_r($_SESSION);
-require("install/english.inc");
-include("install/".$_SESSION["language_module"]."");
-//require("adodb.inc");
-require("mysql.inc");
+
+# for now just in english, I guess
+require(dirname(__FILE__).'/../texts/installer/english.inc');
+
+require(dirname(__FILE__).'/mysql.inc');
 require("install/steps-lib.php");
 include("install/header-install.inc");
 require("install/requiredvars.php");
 require("languages.php");
+
 //error_reporting(E_ALL & E_STRICT);
-error_reporting(0);
+#error_reporting(0);
 checkSessionCheckboxes();
 ?>
 <div class="install_start wrong">
 
 <?php
 
-$listsDirPath = substr($_SERVER['PHP_SELF'], 0, -15);
-$configFilePath = "../config/config.php";
-if (!file_exists($configFilePath)) {
+if (!file_exists($configfile)) {
   if (!is_writable("../config")) {
     print $GLOBALS["I18N"]->get(sprintf('%s<hr>',$GLOBALS["strConfigIsNotAndDirNotWri"]));
   }
   willNotContinue();
 }
 else {
-  if (!is_writable($configFilePath)) {
+  if (!is_writable($configfile)) {
     print $GLOBALS["I18N"]->get(sprintf('%s',$GLOBALS["strConfigIsNotWritable"]));
     willNotContinue();
   }
-  if (filesize($configFilePath) > 1) {
+  if (filesize($configfile) > 1) {
     print $GLOBALS["I18N"]->get(sprintf('<br><br>%s',$GLOBALS["strConfigHasContent"]));
     willNotContinue();
   }
@@ -54,9 +52,9 @@ else {
 
 
 if (!$_SESSION["history"]) {
-$_SESSION["history"] = array();
+  $_SESSION["history"] = array();
 }
-if ($_SESSION["page"]) {
+if (!empty($_SESSION["page"])) {
   array_push($_SESSION["history"],$_SESSION["page"]);
   $_SESSION["history"] = array_unique($_SESSION["history"]);
 }

@@ -37,7 +37,7 @@ function editVariable($keyAr,$value,$type,$section) {
                 break 1;
               }
             }
-  
+
             if ($val[$value] == 'message_envelope') {
               $realValue = ($_SESSION[$val[$value]]?$_SESSION[$val[$value]]:'bounces@'.$_SERVER["SERVER_NAME"]);
               $res .= '<input type="'.$type.'" value="'.$realValue;
@@ -424,23 +424,25 @@ function getNextPageForm ($actualPage, $pages) {
   }
 
   if ($actualPage == 'home') {
-    print $GLOBALS["I18N"]->get('
-<div id="language_change">
-  <SCRIPT language="JavaScript" type="text/javascript">
-    function langChange(){
-    var lang_change=this.window.document.lang_change;
-    if(lang_change.language_module.selectedIndex==0)return false;
-    lang_change.submit();return true;
+    if (isset($GLOBALS["I18N"]) && is_object($GLOBALS["I18N"])) {
+      print $GLOBALS["I18N"]->get('
+  <div id="language_change">
+    <SCRIPT language="JavaScript" type="text/javascript">
+      function langChange(){
+      var lang_change=this.window.document.lang_change;
+      if(lang_change.language_module.selectedIndex==0)return false;
+      lang_change.submit();return true;
+      }
+    </SCRIPT>
+    <p>
+    <form name="lang_change" action="" method=POST>
+    '.languagePack("","langChange();").'
+    </form>
+    '/*.$GLOBALS["I18N"]->get($GLOBALS["strLanguageOpt"])*/.'
+    </p>
+  </div>
+    ');
     }
-  </SCRIPT>
-  <p>
-  <form name="lang_change" action="" method=POST>
-  '.languagePack("","langChange();").'
-  </form>
-  '/*.$GLOBALS["I18N"]->get($GLOBALS["strLanguageOpt"])*/.'
-  </p>
-</div>
-  ');
   }
 /*
     <script language="Javascript" type="text/javascript">
@@ -461,22 +463,26 @@ function getNextPageForm ($actualPage, $pages) {
       }
 
 */
-  print $GLOBALS["I18N"]->get('
-       <form action="./?page='.$nextpage.'" method="post" name="subscribeform">
-  <input type="hidden" name="page" value="'.$nextpage.'">');
+  if (isset($GLOBALS["I18N"]) && is_object($GLOBALS["I18N"])) {
+    print $GLOBALS["I18N"]->get('
+        <form action="./?page='.$nextpage.'" method="post" name="subscribeform">
+    <input type="hidden" name="page" value="'.$nextpage.'">');
+  }
   include("install/$pages.php");
-  print $GLOBALS["I18N"]->get('<div id="maincontent_install"><div class="install_start"><a href="javascript:installsubscribeform();" class="formsubmit">' . $textSubmit . '</a></span><br /><br /></div></div>');
-  print $GLOBALS["I18N"]->get('    <script language="Javascript" type="text/javascript">
-    var submitted = false;
-    function installsubscribeform() {
-      if (!submitted) {
-        submitted = true;
-        document.subscribeform.submit();
+  if (isset($GLOBALS["I18N"]) && is_object($GLOBALS["I18N"])) {
+    print $GLOBALS["I18N"]->get('<div id="maincontent_install"><div class="install_start"><a href="javascript:installsubscribeform();" class="formsubmit">' . $textSubmit . '</a></span><br /><br /></div></div>');
+    print $GLOBALS["I18N"]->get('    <script language="Javascript" type="text/javascript">
+      var submitted = false;
+      function installsubscribeform() {
+        if (!submitted) {
+          submitted = true;
+          document.subscribeform.submit();
+        }
       }
-    }
-    </script>
-  <noscript><input type="submit" name="submit" value="'.$textSubmit.'"></noscript>');
-  print $GLOBALS["I18N"]->get('</form>');
+      </script>
+    <noscript><input type="submit" name="submit" value="'.$textSubmit.'"></noscript>');
+    print $GLOBALS["I18N"]->get('</form>');
+  }
 #  }
   return;
 }
@@ -490,7 +496,7 @@ function willNotContinue() {
 function checkSessionCheckboxes() {
 
   foreach ($GLOBALS["requiredVars"] as $key => $val) {
-     if (isset($val["type_value"]) && $val["type_value"] == "bool" && in_array($key,explode(",",$_SESSION["check"]))) {
+     if (isset($_SESSION["check"]) && isset($val["type_value"]) && $val["type_value"] == "bool" && in_array($key,explode(",",$_SESSION["check"]))) {
       if ($val["values"] == 1) {
         if (!isset($_POST[$key]))
           $_SESSION[$key] = 0;
