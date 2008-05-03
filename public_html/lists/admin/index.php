@@ -37,46 +37,32 @@ if (php_sapi_name() == "cli") {
   header("Pragma: no-cache");                                   // HTTP/1.0
 }
 
-if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"]) && filesize($_SERVER["ConfigFile"]) > 1) {
-  print '<!-- using (server)'.$_SERVER["ConfigFile"].'-->'."\n";
-  include $_SERVER["ConfigFile"];
-} elseif (isset($cline["c"]) && is_file($cline["c"]) && filesize($cline["c"]) > 1) {
-  print '<!-- using (cline)'.$cline["c"].' -->'."\n";
-  include $cline["c"];
-} elseif (isset($_ENV["CONFIG"]) && is_file($_ENV["CONFIG"]) && filesize($_ENV["CONFIG"]) > 1) {
+$configfile = '';
+if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
+  #print '<!-- using (server)'.$_SERVER["ConfigFile"].'-->'."\n";
+  $configfile = $_SERVER["ConfigFile"];
+} elseif (isset($cline["c"]) && is_file($cline["c"])) {
+  #print '<!-- using (cline)'.$cline["c"].' -->'."\n";
+  $configfile = $cline["c"];
+
+# obsolete, set Config in Linux environment, use -c /path/to/config instead
+/*} elseif (isset($_ENV["CONFIG"]) && is_file($_ENV["CONFIG"]) && filesize($_ENV["CONFIG"]) > 1) {
 #  print '<!-- using '.$_ENV["CONFIG"].'-->'."\n";
-  include $_ENV["CONFIG"];
-} elseif (is_file("../config/config.php") && filesize("../config/config.php") > 1) {
-  print '<!-- using (common)../config/config.php -->'."\n";
-  include "../config/config.php";
-}
-elseif (is_file($_SERVER["ConfigFile"]) && filesize($_SERVER["ConfiFile"]) < 2) {
-  $installer = 1;
-  include('install.php');
-  exit;
-}
-elseif (is_file($cline["c"]) && filesize($cline["c"]) < 2) {
-  $installer = 1;
-  include('install.php');
-  exit;
-}
-elseif (is_file($_ENV["CONFIG"]) && filesize($_ENV["CONFIG"]) < 2) {
-  $installer = 1;
-  include('install.php');
-  exit;
-}
-elseif (is_file("../config/config.php") && filesize("../config/config.php") < 2) {
-  $installer = 1;
-  include('install.php');
-  exit;
-}
-else {
-//  print "Error, cannot find config file. Installer will be run\n";
-  $installer = 1;
-  include('install.php');
-  exit;
+  include $_ENV["CONFIG"];*/
+} elseif (is_file(dirname(__FILE__).'/../config/config.php')) {
+#  print '<!-- using (common)../config/config.php -->'."\n";
+  $configfile = "../config/config.php";
 }
 
+if (filesize($configfile) > 2) {
+  print '<!-- using config '.$configfile.'-->';
+  include $configfile;
+} else {
+  $GLOBALS['installer'] = 1;
+  include(dirname(__FILE__).'/install.php');
+  exit;
+}
+exit;
 # record the start time(usec) of script
 $now =  gettimeofday();
 $GLOBALS["pagestats"] = array();
@@ -110,10 +96,10 @@ include_once dirname(__FILE__)."/lib.php";
 require_once dirname(__FILE__)."/commonlib/lib/interfacelib.php";
 
 if (Sql_Table_exists($tables["config"],1)) {
-  ### Activate all plugins 
+  ### Activate all plugins
   foreach ($GLOBALS['plugins'] as $plugin) {
     $plugin->activate();
-  } 
+  }
 }
 
 include_once dirname(__FILE__)."/pagetop.php";
@@ -264,7 +250,7 @@ if ($page != '' && $page != 'install') {
     $include = $regs[1];
     $include .= ".php";
     $include = $page . ".php";
-  } 
+  }
 } else {
   $include = "home.php";
 }
