@@ -62,7 +62,7 @@ if (filesize($configfile) > 2) {
   include(dirname(__FILE__).'/install.php');
   exit;
 }
-exit;
+#exit;
 # record the start time(usec) of script
 $now =  gettimeofday();
 $GLOBALS["pagestats"] = array();

@@ -1,6 +1,6 @@
 <?php
 
-@ob_start();
+ob_start();
 @session_start();
 
 if (isset($_GET['page'])) {
@@ -13,8 +13,7 @@ foreach ($_POST as $key => $val) {
 //print_r($_SESSION);
 
 # for now just in english, I guess
-require(dirname(__FILE__).'/../texts/installer/english.inc');
-
+require('install/english.inc');
 require(dirname(__FILE__).'/mysql.inc');
 require("install/steps-lib.php");
 include("install/header-install.inc");
@@ -23,7 +22,7 @@ require("languages.php");
 
 //error_reporting(E_ALL & E_STRICT);
 if (!isset($GLOBALS['developer_email'])) {
-  error_reporting(0);
+  error_reporting(63);
 }
 checkSessionCheckboxes();
 ?>
@@ -53,7 +52,7 @@ else {
 <?php
 
 
-if (!$_SESSION["history"]) {
+if (!isset($_SESSION["history"])) {
   $_SESSION["history"] = array();
 }
 if (!empty($_SESSION["page"])) {
@@ -68,9 +67,9 @@ if (isset($Page) && in_array($Page, $_SESSION["history"])) {
   if (preg_match("/([\w_]+)/",$page,$regs)) {
   $page = $regs[1];
   }
-  if (!is_file('install/'.$page2.'.php') ) {
+/*  if (!is_file('install/'.$page2.'.php') ) {
     $page = 'home';
-  }
+  }*/
   getNextPageForm($page,$page2);
 }
 

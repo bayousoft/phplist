@@ -1,6 +1,6 @@
 <?php
 
-print $GLOBALS["I18N"]->get($_SESSION["printeable"]);
+if (isset($_SESSION["printeable"])) print $GLOBALS["I18N"]->get($_SESSION["printeable"]);
 $type = "text";
 switch ($actualPage) {
 
@@ -19,17 +19,17 @@ switch ($actualPage) {
     <tr><td>%s</td><td><input name="database_user" type="text" value="%s"></td></tr>
     <tr><td>%s</td><td><input name="database_password" type="text" value="%s"></td></tr>
     <tr><td></td><td></td></tr></table>'
-, $GLOBALS["strDbname"], $_SESSION['database_name']
-, $GLOBALS["strDbhost"], $_SESSION['database_host']
+, $GLOBALS["strDbname"], (isset($_SESSION['database_name'])?$_SESSION['database_name']:'')
+, $GLOBALS["strDbhost"], (isset($_SESSION['database_host'])?$_SESSION['database_host']:'')
 //, $GLOBALS["strDbschema"], $_SESSION['database_schema']
-, $GLOBALS["strDbuser"], $_SESSION['database_user']
-, $GLOBALS["strDbpass"], $_SESSION['database_password']));
+, $GLOBALS["strDbuser"], (isset($_SESSION['database_user'])?$_SESSION['database_user']:'')
+, $GLOBALS["strDbpass"], (isset($_SESSION['database_password'])?$_SESSION['database_password']:'')));
     // <tr><td>%s</td><td><input name="database_schema" type="text" value="%s"></td></tr>
     print $GLOBALS["I18N"]->get(sprintf('<table width=500>
     <tr><td colspan=2><div class="explain">%s</div></td></tr>
     <tr><td>%s</td><td><input name="database_root_user" type="text" value="%s"></td></tr>
     <tr><td>%s</td><td><input name="database_root_pass" type="text" value="%s"></td></tr>
-    </table>',$GLOBALS["strDbroot"],$GLOBALS["strDbrootuser"], $_SESSION['database_root_user'], $GLOBALS["strDbrootpass"], $_SESSION['database_root_pass']));
+    </table>',$GLOBALS["strDbroot"],$GLOBALS["strDbrootuser"], (isset($_SESSION['database_root_user'])?$_SESSION['database_root_user']:''), $GLOBALS["strDbrootpass"], (isset($_SESSION['database_root_pass'])?$_SESSION['database_root_pass']:'')));
   break;
   case "install01":
     $editable = "";
@@ -67,17 +67,17 @@ switch ($actualPage) {
         $GLOBALS["database_connection"] = $test_connection2;
         $create_db = Sql_Create_Db($_SESSION['database_name']);
         if (!$create_db) {
-          $errorno = Sql_has_error();
+          $errorno = Sql_has_error($GLOBALS["database_connection"]);
           $procedure = 2;
         } else {
           $procedure = 1;
         }
       } else {
-        $errorno = Sql_has_error();
+        $errorno = Sql_has_error($GLOBALS["database_connection"]);
         $procedure = 3;
       }
     } else {
-      $errorno = Sql_has_error();
+      $errorno = Sql_has_error($GLOBALS["database_connection"]);
       $procedure = $errorno ? 2 : 1;
     }
     
@@ -175,7 +175,7 @@ switch ($actualPage) {
       print $GLOBALS["I18N"]->get(sprintf('<p class="wrong">%s</p>',$GLOBALS["strTmpNotWritable"]));
     }
     else {
-      print $GLOBALS["I18N"]->get(sprintf('%s',$$GLOBALS["strTmpIsOk"]));
+      print $GLOBALS["I18N"]->get(sprintf('%s',$GLOBALS["strTmpIsOk"]));
     }
   break;
   case "final_install":
@@ -186,8 +186,9 @@ switch ($actualPage) {
  break;
   case "write_install":
     writeToConfig($_SESSION, $GLOBALS["requiredVars"]);
-    $yourPath = $_SESSION['adminpages'];
+    $yourPath = (isset($_SESSION['adminpages'])?$_SESSION['adminpages']:'');
     print $GLOBALS["I18N"]->get(sprintf('<br><br>%s<a href="%s">here</a>',$GLOBALS['strGoToInitialiseDb'], $yourPath));
+    include('install/define.php');
     include('install/footer.inc');
     cleanSession();
     exit;
@@ -202,14 +203,14 @@ switch ($actualPage) {
 
 }
 
-if ($editable) {
+if (isset($editable)) {
   $edit = explode(",",$editable);
   foreach ($edit as $section) {
     print $GLOBALS["I18N"]->get(editVariable($GLOBALS["requiredVars"],'name', 'text', $section));
   }
 }
 
-if ($showfinalvalues) {
+if (isset($showfinalvalues)) {
 
   print $GLOBALS["I18N"]->get(showFinalValues($GLOBALS["requiredVars"],'name', $_SESSION));
 

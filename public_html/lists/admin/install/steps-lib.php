@@ -13,7 +13,7 @@ function editVariable($keyAr,$value,$type,$section) {
       if ($key[$value]) {
         if ($type == 'text'
         && $val[$value] !== 'database_name'
-        && $val[$value] !== 'database_schema'
+//        && $val[$value] !== 'database_schema'
         && $val[$value] !== 'database_user'
         && $val[$value] !== 'database_password'
         && $val[$value] !== 'database_host') {
@@ -24,11 +24,12 @@ function editVariable($keyAr,$value,$type,$section) {
             $res .= '</div><br />';
           }
         }
+        $addtocheck = '';
         switch ($val['type']) {
           case "scalar":
             if ($_SESSION['dbCreatedSuccesfully'] == 1) {
               if ($val[$value] == 'database_name'
-              || $val[$value] == 'database_schema'
+//              || $val[$value] == 'database_schema'
               || $val[$value] == 'database_user'
               || $val[$value] == 'database_password'
               || $val[$value] == 'database_host') {
@@ -39,7 +40,7 @@ function editVariable($keyAr,$value,$type,$section) {
             }
 
             if ($val[$value] == 'message_envelope') {
-              $realValue = ($_SESSION[$val[$value]]?$_SESSION[$val[$value]]:'bounces@'.$_SERVER["SERVER_NAME"]);
+              $realValue = (isset($_SESSION[$val[$value]])?$_SESSION[$val[$value]]:'bounces@'.$_SERVER["SERVER_NAME"]);
               $res .= '<input type="'.$type.'" value="'.$realValue;
               $res .= '" name="'.$val[$value].'"> ';
             }
@@ -61,8 +62,8 @@ function editVariable($keyAr,$value,$type,$section) {
               $newtype[$val[$value]] = "checkbox";
               $realValue = '';
             }
-            $res .= '<input type="'.($newtype[$val[$value]]?$newtype[$val[$value]]:$type).'" '.$options[$val[$value]].' value="'.$realValue;
-            $res .= '" name="'.$val[$value].'" > '.($newtype[$val[$value]] ? "Activate or deactive <strong>".$val[$value]."</strong>" : "");
+            $res .= '<input type="'.(isset($newtype[$val[$value]])?$newtype[$val[$value]]:$type).'" '.(isset($options[$val[$value]])?$options[$val[$value]]:'').' value="'.$realValue;
+            $res .= '" name="'.$val[$value].'" > '.(isset($newtype[$val[$value]]) ? "Activate or deactive <strong>".$val[$value]."</strong>" : "");
             $addtocheck .= $val[$value].',';
   /*          $res .= ' <script type="text/javascript" language="JavaScript">';
             $res .= sprintf("addFieldToCheck(\"%s\"); ", $val[$value]);
@@ -78,11 +79,11 @@ function editVariable($keyAr,$value,$type,$section) {
             break;
             case "constant":
             if (isset($val["type_value"]) && $val["type_value"] == "bool") {
-              if (($val["values"] && !isset($_SESSION[$val[$value]])) || $_SESSION[$val[$value]] == 1) { $options[$val[$value]] = "checked"; } else { $options[$val[$value]] = ""; }
+              if ((isset($val["values"]) && !isset($_SESSION[$val[$value]])) || $_SESSION[$val[$value]] == 1) { $options[$val[$value]] = "checked"; } else { $options[$val[$value]] = ""; }
               $newtype[$val[$value]] = "checkbox";
               $realValue = '';
             }
-            $res .= '<input type="'.($newtype[$val[$value]]?$newtype[$val[$value]]:$type).'" '.$options[$val[$value]].' value="'.$realValue.'" name="'.$val[$value].'"> '.($newtype[$val[$value]] ? "Activate or deactive <strong>".$val[$value]."</strong>" : "");
+            $res .= '<input type="'.(isset($newtype[$val[$value]])?$newtype[$val[$value]]:$type).'" '.(isset($options[$val[$value]])?$options[$val[$value]]:'').' value="'.$realValue.'" name="'.$val[$value].'"> '.(isset($newtype[$val[$value]]) ? "Activate or deactive <strong>".$val[$value]."</strong>" : "");
             $addtocheck .= $val[$value].',';
   /*          $res .= ' <script type="text/javascript" language="JavaScript">';
             $res .= sprintf("addFieldToCheck(\"%s\"); ", $val[$value]);
@@ -104,7 +105,7 @@ function editVariable($keyAr,$value,$type,$section) {
           if ($val['type'] == 'scalar' || $val['type'] == 'scalar_int' || $val['type'] ==  'constant') {
             if ($type == 'text'
             && $val[$value] !== 'database_name'
-            && $val[$value] !== 'database_schema'
+//            && $val[$value] !== 'database_schema'
             && $val[$value] !== 'database_user'
             && $val[$value] !== 'database_password'
             && $val[$value] !== 'database_host') {
@@ -123,151 +124,142 @@ function editVariable($keyAr,$value,$type,$section) {
 function writeToConfig($key, $requiredVars2) {
   if (!empty($key)) {
 #  $configDir = $_SERVER['DOCUMENT_ROOT'].'/lists/config';
-  if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
-    $nameConfigFile = $_SERVER['ConfigFile'];
-  } elseif (is_file("../config/config.php")) {
-    $nameConfigFile = "../config/config.php";
-  }
-
-
-#  $nameConfigFile = $_SERVER['DOCUMENT_ROOT'].'/lists/config/config.php';
-  $myConfigFile = fopen($nameConfigFile, 'a');
-  if (!$myConfigFile || $myConfigFile == FALSE) {
-    $chmod = chmod($nameConfigFile, 0666); //Try to chmod if is not writeable
-    $myConfigFile = fopen($nameConfigFile, 'a'); // Try to open again
-    if (!$myConfigFile || $myConfigFile == FALSE) {
-      $chmod = chmod($nameConfigFile, 0646); //Try to chmod if is not writeable
+    if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
+      $nameConfigFile = $_SERVER['ConfigFile'];
+    } elseif (is_file("../config/config.php")) {
+      $nameConfigFile = "../config/config.php";
+    }
+  
+  
+  #  $nameConfigFile = $_SERVER['DOCUMENT_ROOT'].'/lists/config/config.php';
+    $myConfigFile = fopen($nameConfigFile, 'a');
+    if (!isset($myConfigFile) || $myConfigFile == FALSE) {
       $myConfigFile = fopen($nameConfigFile, 'w'); // Try to open
-      if (!$myConfigFile) {
+      if (!isset($myConfigFile)) {
         print $GLOBALS["I18N"]->get(sprintf('<div class="wrong">%s (%s)</div>',$GLOBALS['noConfigAndChmod'], $nameConfigFile));
       }
-      elseif (!$chmod || $chmod == FALSE) {
-      return FALSE;
-      }
     }
-  }
-  if ($myConfigFile) {
-    print $GLOBALS["I18N"]->get(sprintf('<p>%s</p>',$GLOBALS['creatingConfig']));
-    $configInfoToWrite = '';
-    $configInfoToWrite .= '<?php';
-    foreach ($key as $configInfo => $val) {
-      if (empty($val)) $val=0;
-      if ($requiredVars2[$configInfo]) {
-#      }
-#      else {
-      $configInfoToWrite .= "\n";
-      $configInfoToWrite .= '# ';
-      $configInfoToWrite .= $GLOBALS["str".$requiredVars2[$configInfo]["name"]."_desc"];
-      $configInfoToWrite .= "\n";
-      switch ($requiredVars2[$configInfo]["type"]) {
-      case 'constant' :
-      $configInfoToWrite .= "\n";
-      $configInfoToWrite .= 'define("';
-      $configInfoToWrite .= $configInfo;
-      $configInfoToWrite .= '",';
-      $configInfoToWrite .= $val;
-      $configInfoToWrite .= ');';
-      $configInfoToWrite .= "\n";
-      break;
-      case 'hidden_constant' :
-      $configInfoToWrite .= "\n";
-      $configInfoToWrite .= 'define("';
-      $configInfoToWrite .= $configInfo;
-      $configInfoToWrite .= '",';
-      $configInfoToWrite .= $requiredVars2[$configInfo]['values'];
-      $configInfoToWrite .= ');';
-      $configInfoToWrite .= "\n";
-      break;
-      case 'hidden_array' :
-      $configInfoToWrite .= "\n";
-      $configInfoToWrite .= '$';
-      $configInfoToWrite .= $configInfo;
-      $configInfoToWrite .= ' = array(';
-      if (is_array($requiredVars2[$configInfo]['values'])) {
-      for ($i=0;$i < count($requiredVars2[$configInfo]['values']);$i++) {
-      $configInfoToWrite .= '"';
-      $configInfoToWrite .= $requiredVars2[$configInfo]['values'][$i];
-      $configInfoToWrite .= '"';
-      if ($i == count($requiredVars2[$configInfo]['values'])-1) {
-      break 1;
+    if ($myConfigFile) {
+      print $GLOBALS["I18N"]->get(sprintf('<p>%s</p>',$GLOBALS['creatingConfig']));
+      $configInfoToWrite = '';
+      $configInfoToWrite .= '<?php';
+      foreach ($key as $configInfo => $val) {
+        if (empty($val)) $val=0;
+        if (isset($requiredVars2[$configInfo])) {
+    #      }
+    #      else {
+          $configInfoToWrite .= "\n";
+          $configInfoToWrite .= '# ';
+          $configInfoToWrite .= $GLOBALS["str".$requiredVars2[$configInfo]["name"]."_desc"];
+          $configInfoToWrite .= "\n";
+          switch ($requiredVars2[$configInfo]["type"]) {
+            case 'constant' :
+            $configInfoToWrite .= "\n";
+            $configInfoToWrite .= 'define("';
+            $configInfoToWrite .= $configInfo;
+            $configInfoToWrite .= '",';
+            $configInfoToWrite .= $val;
+            $configInfoToWrite .= ');';
+            $configInfoToWrite .= "\n";
+            break;
+            case 'hidden_constant' :
+            $configInfoToWrite .= "\n";
+            $configInfoToWrite .= 'define("';
+            $configInfoToWrite .= $configInfo;
+            $configInfoToWrite .= '",';
+            $configInfoToWrite .= $requiredVars2[$configInfo]['values'];
+            $configInfoToWrite .= ');';
+            $configInfoToWrite .= "\n";
+            break;
+            case 'hidden_array' :
+            $configInfoToWrite .= "\n";
+            $configInfoToWrite .= '$';
+            $configInfoToWrite .= $configInfo;
+            $configInfoToWrite .= ' = array(';
+            if (is_array($requiredVars2[$configInfo]['values'])) {
+            for ($i=0;$i < count($requiredVars2[$configInfo]['values']);$i++) {
+            $configInfoToWrite .= '"';
+            $configInfoToWrite .= $requiredVars2[$configInfo]['values'][$i];
+            $configInfoToWrite .= '"';
+            if ($i == count($requiredVars2[$configInfo]['values'])-1) {
+            break 1;
+            }
+            $configInfoToWrite .= ',';
+            }
+            $configInfoToWrite .= ')';
+            $configInfoToWrite .= ";\n";
+            break 1;
+            }
+            $configInfoToWrite .= '"';
+            $configInfoToWrite .= $val;
+            $configInfoToWrite .= '")';
+            $configInfoToWrite .= ";\n";
+            break;
+            case 'commented' :
+            $configInfoToWrite .= "\n";
+            break;
+            case 'scalar_int' :
+            $configInfoToWrite .= "\n";
+            $configInfoToWrite .= '$';
+            $configInfoToWrite .= $configInfo;
+            $configInfoToWrite .= ' = ';
+            $configInfoToWrite .= $val;
+            $configInfoToWrite .= ";\n";
+            break;
+            case 'hidden_scalar_int' :
+            $configInfoToWrite .= "\n";
+            $configInfoToWrite .= '$';
+            $configInfoToWrite .= $configInfo;
+            $configInfoToWrite .= ' = ';
+            $configInfoToWrite .= $val;
+            $configInfoToWrite .= ";\n";
+            if ($configInfo == 'error_level') {
+              break 2;
+            } else {
+              break;
+            }
+            default:
+            $configInfoToWrite .= "\n";
+            $configInfoToWrite .= '$';
+            $configInfoToWrite .= $configInfo;
+            $configInfoToWrite .= ' = ';
+            $configInfoToWrite .= '"';
+            $configInfoToWrite .= $val;
+            $configInfoToWrite .= '"';
+            $configInfoToWrite .= ";\n";
+          }
+        }
       }
-      $configInfoToWrite .= ',';
-      }
-      $configInfoToWrite .= ')';
-      $configInfoToWrite .= ";\n";
-      break 1;
-      }
-      $configInfoToWrite .= '"';
-      $configInfoToWrite .= $val;
-      $configInfoToWrite .= '")';
-      $configInfoToWrite .= ";\n";
-      break;
-      case 'commented' :
+      $configInfoToWrite .= '?>';
       $configInfoToWrite .= "\n";
-      break;
-      case 'scalar_int' :
-      $configInfoToWrite .= "\n";
-      $configInfoToWrite .= '$';
-      $configInfoToWrite .= $configInfo;
-      $configInfoToWrite .= ' = ';
-      $configInfoToWrite .= $val;
-      $configInfoToWrite .= ";\n";
-      break;
-      case 'hidden_scalar_int' :
-      $configInfoToWrite .= "\n";
-      $configInfoToWrite .= '$';
-      $configInfoToWrite .= $configInfo;
-      $configInfoToWrite .= ' = ';
-      $configInfoToWrite .= $val;
-      $configInfoToWrite .= ";\n";
-      if ($configInfo == 'error_level') {
-        break 2;
+      $configText = sprintf('%s',$configInfoToWrite);
+      substr($configText,1);
+      $myConfigFileOpen = fwrite($myConfigFile, $configText);
+      $configCreatedValue = 0;
+      if (!$myConfigFileOpen) {
+        print $GLOBALS["I18N"]->get(sprintf('%s', $GLOBALS['cantWriteToConfig']));
       }
       else {
-        break;
+        if (file_exists($nameConfigFile) && filesize($nameConfigFile) > 2) {
+          print $GLOBALS["I18N"]->get(sprintf("<br /><b>%s</b>", $GLOBALS['configCreatedOk']));
+          $configCreatedValue = 1;
+          $configPerms = substr(sprintf('%o', fileperms($nameConfigFile)), -4);
+          if ($configPerms !== '0644') {
+              print $GLOBALS["I18N"]->get(printf('<p class="wrong">%s %s%s</p>', $GLOBALS['strConfigPerms'], $configPerms, $GLOBALS['strChangeChmod']));
+          }
+        }
+        else {
+          print $GLOBALS["I18N"]->get(printf("%s", $GLOBALS['configDoesntExist']));
+        }
       }
-      default:
-      $configInfoToWrite .= "\n";
-      $configInfoToWrite .= '$';
-      $configInfoToWrite .= $configInfo;
-      $configInfoToWrite .= ' = ';
-      $configInfoToWrite .= '"';
-      $configInfoToWrite .= $val;
-      $configInfoToWrite .= '"';
-      $configInfoToWrite .= ";\n";
-      }
-      }
+  
+  #    $chmodBack = chmod($nameConfigFile, 0644);
+  #    if (!$chmodBack) {
+  #      print $GLOBALS["I18N"]->get(sprintf($strChModBack));
+  #    }
+    $close = fclose($myConfigFile);
+    return TRUE;
     }
-    $configInfoToWrite .= '?>';
-    $configInfoToWrite .= "\n";
-    $configText = sprintf('%s',$configInfoToWrite);
-    substr($configText,1);
-    $myConfigFileOpen = fwrite($myConfigFile, $configText);
-    $configCreatedValue = 0;
-    if (!$myConfigFileOpen) {
-      print $GLOBALS["I18N"]->get(sprintf('%s', $GLOBALS['cantWriteToConfig']));
-    }
-    else {
-      if (file_exists($nameConfigFile)) {
-        print $GLOBALS["I18N"]->get(sprintf("<br /><b>%s</b>", $GLOBALS['configCreatedOk']));
-        $configCreatedValue = 1;
-      }
-      else {
-        print $GLOBALS["I18N"]->get(printf("%s", $GLOBALS['configDoesntExist']));
-      }
-    }
-
-    $chmodBack = chmod($nameConfigFile, 0644);
-    if (!$chmodBack) {
-      print $GLOBALS["I18N"]->get(sprintf($strChModBack));
-      $configPerms = substr(sprintf('%o', fileperms($nameConfigFile)), -4);
-      if ($configPerms !== '0644') {
-        print $GLOBALS["I18N"]->get(printf('<p class="wrong">%s %s%s</p>', $GLOBALS['strConfigPerms'], $configPerms, $GLOBALS['strChangeChmod']));
-      }
-    }
-  $close = fclose($myConfigFile);
-  return TRUE;
-  }
   }
   else {  // We dont want an empty config file
     return FALSE; # write something instead an empty config // This is ok, cant be an empty config, fixed
@@ -277,9 +269,9 @@ function writeToConfig($key, $requiredVars2) {
 function checkScalarInt($sessionValues, $requiredVars) {
 
   foreach ($sessionValues as $key => $val) {
-    if (is_numeric($requiredVars[$key]['values'])) {
+    $msg = '';
+    if (isset($requiredVars[$key]['values']) && is_numeric($requiredVars[$key]['values'])) {
 //      $val = intval($val);
-
       if (!is_numeric($val) && !isset($requiredVars[$key]["type_value"])) {
         $msg = $GLOBALS["I18N"]->get('<p style="color:#000fff;"><b>'.$key.'</b>'.$GLOBALS['strErraticValue'].'<span style="color:#f00;">'.$val.'</span><br />');
         if (preg_match('/[0-9]+/', $val, $matches)) {
@@ -465,8 +457,8 @@ function getNextPageForm ($actualPage, $pages) {
 */
   if (isset($GLOBALS["I18N"]) && is_object($GLOBALS["I18N"])) {
     print $GLOBALS["I18N"]->get('
-        <form action="./?page='.$nextpage.'" method="post" name="subscribeform">
-    <input type="hidden" name="page" value="'.$nextpage.'">');
+        <form action="./?page='.(isset($nextpage)?$nextpage:'').'" method="post" name="subscribeform">
+    <input type="hidden" name="page" value="'.(isset($nextpage)?$nextpage:'').'">');
   }
   include("install/$pages.php");
   if (isset($GLOBALS["I18N"]) && is_object($GLOBALS["I18N"])) {
@@ -489,6 +481,7 @@ function getNextPageForm ($actualPage, $pages) {
 
 function willNotContinue() {
   print $GLOBALS["I18N"]->get(sprintf('<div class="wrong"><br /><br />%s</div>',$GLOBALS['strReload']));
+  include("install/define.php");
   include("install/footer.inc");
   exit;
 }
@@ -515,6 +508,7 @@ function checkSessionCheckboxes() {
 
 function languagePack($value = "", $onChange = "") {
 $res = '';
+$valueChange = '';
 if (!empty($onChange)) {
   $valueChange = 'onChange="'.$onChange.'"';
 }
@@ -523,7 +517,7 @@ if (empty($value)) {
 } else {
   $name = $value;
 }
-$_SESSION[$name] = $_SESSION[$name]?$_SESSION[$name]:'english.inc';
+if (!isset($_SESSION[$name])) $_SESSION[$name] = 'english.inc';
 $gestor = opendir('../texts/');
   if ($gestor ) { /*&& $language = readdir($gestor)  <== this takes out the english file... */
     $res .= '<select name="'.$name.'" '.$valueChange.'>';
