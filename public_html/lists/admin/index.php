@@ -69,8 +69,9 @@ $GLOBALS["pagestats"] = array();
 $GLOBALS["pagestats"]["time_start"] = $now["sec"] * 1000000 + $now["usec"];
 $GLOBALS["pagestats"]["number_of_queries"] = 0;
 
-if (!$GLOBALS["commandline"] && isset($GLOBALS["developer_email"]) && $_SERVER['HTTP_HOST'] != 'cvs.phplist.com' && $GLOBALS['show_dev_errors']) {
-  error_reporting(E_ALL & ~E_NOTICE);
+if (!$GLOBALS["commandline"] && isset($GLOBALS["developer_email"]) && $_SERVER['HTTP_HOST'] != 'cvs.phplist.com' && !empty($GLOBALS['show_dev_errors'])) {
+#  error_reporting(E_ALL & ~E_NOTICE);
+  ## in developer mode, show all errors and force "registered globals off"
   error_reporting(E_ALL);
   ini_set('display_errors',1);
   foreach ($_REQUEST as $key => $val) {
@@ -79,8 +80,6 @@ if (!$GLOBALS["commandline"] && isset($GLOBALS["developer_email"]) && $_SERVER['
 } else {
   if (isset($error_level)) {
     error_reporting($error_level);
-  } else {
-    error_reporting($er);
   }
 }
 
@@ -304,8 +303,8 @@ if ($page != "login") {
   #  Error("Register Globals in your php.ini needs to be <b>on</b> instead of ".ini_get("register_globals") );
   if (ini_get("safe_mode") && WARN_ABOUT_PHP_SETTINGS)
     Warn($GLOBALS['I18N']->get('safemodewarning'));
-  if (!ini_get("magic_quotes_gpc") && WARN_ABOUT_PHP_SETTINGS)
-    Warn($GLOBALS['I18N']->get('magicquoteswarning'));
+/*  if (!ini_get("magic_quotes_gpc") && WARN_ABOUT_PHP_SETTINGS)
+    Warn($GLOBALS['I18N']->get('magicquoteswarning'));*/
   if (ini_get("magic_quotes_runtime") && WARN_ABOUT_PHP_SETTINGS)
     Warn($GLOBALS['I18N']->get('magicruntimewarning'));
   if (ALLOW_ATTACHMENTS && WARN_ABOUT_PHP_SETTINGS && (!is_dir($GLOBALS["attachment_repository"]) || !is_writable ($GLOBALS["attachment_repository"]))) {
