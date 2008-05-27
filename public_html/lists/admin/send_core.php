@@ -26,7 +26,7 @@ if (USETINYMCEMESG && file_exists(TINYMCEPATH)) {
 include $GLOBALS["coderoot"] . "date.php";
 
 $errormsg = '';
-//$rss_content = '';          //Obsolete by rssmanager plugin 
+//$rss_content = '';          //Obsolete by rssmanager plugin
 $done = 0;
 $messageid = 0;
 $forwardsubject = $forwardmessage = $forwardfooter = '';
@@ -261,7 +261,7 @@ if ($send || $sendtest || $prepare || $save) {
       }
     }
   }
-  
+
 //Obsolete by rssmanager plugin
 //   if (ENABLE_RSS && $_POST["rsstemplate"]) {
 //    # mark previous RSS templates with this frequency and owner as sent
@@ -1013,7 +1013,7 @@ if (!$done) {
   }
 
   $formatting_content = '<table>';
-  
+
   #0013076: different content when forwarding 'to a friend'
   $tmp = '<table>';
   $maincontent = $tmp;
@@ -1143,7 +1143,7 @@ if (!$done) {
     $formatting_content .= '</select></td></tr>';
   }
 
-//obsolete, moved to rssmanager plugin 
+//obsolete, moved to rssmanager plugin
 //  if (ENABLE_RSS) {
 //    $rss_content .= '<tr><td colspan=2>'.$GLOBALS['I18N']->get("rssintro").'
 //    </td></tr>';
@@ -1158,7 +1158,7 @@ if (!$done) {
   $tmp = '<tr><td colspan=2>'.Help("message").' '.$GLOBALS['I18N']->get("message").'. </td></tr>
 
   <tr><td colspan=2>';
-  $maincontent .= $tmp; 
+  $maincontent .= $tmp;
   $forwardcontent .= $tmp;
 
   if ($usefck) {
@@ -1213,7 +1213,7 @@ if (!$done) {
         ."   });\n"
         ."</script>\n"
         ."<textarea name='message' id='message' cols='65' rows='20'>{$_POST['message']}</textarea>";
-        
+
   } else {
     $maincontent    .= '<textarea name=message cols=65 rows=20>'.htmlspecialchars($_POST["message"]).'</textarea>';
   }
@@ -1688,9 +1688,9 @@ if (!$done) {
         while ($row = Sql_Fetch_Row($req)) {
           if (($allactive && $row[1]) || $all) {
             $lists[$row[0]] = $row[0];
-          } 
+          }
         }
-      } 
+      }
       unset($lists['all']);
       unset($lists['allactive']);
       if (isset($messagedata['excludelist']) && trim($messagedata['excludelist']) != '') {
@@ -1698,12 +1698,15 @@ if (!$done) {
       } else {
         $exclude = '';
       }
-      
+
       $htmlcnt = Sql_Fetch_Row_Query(sprintf('select count(distinct userid) from %s listuser,%s u where u.htmlemail and u.id = listuser.userid and listuser.listid in (%s) %s',
         $GLOBALS['tables']['listuser'],$GLOBALS['tables']['user'],join(',',array_keys($lists)),$exclude),1);
       $textcnt = Sql_Fetch_Row_Query(sprintf('select count(distinct userid) from %s listuser,%s user where !user.htmlemail and user.id = listuser.userid and listuser.listid in (%s) %s',
         $GLOBALS['tables']['listuser'],$GLOBALS['tables']['user'],join(',',array_keys($lists)),$exclude),1);
       if ($htmlcnt[0] || $textcnt[0]) {
+        if (!isset($messagedata['textsize'])) $messagedata['textsize'] = 0;
+        if (!isset($messagedata['htmlsize'])) $messagedata['htmlsize'] = 0;
+
         $misc_content .= $GLOBALS['I18N']->get('Estimated size of mailout').': '.formatBytes($htmlcnt[0] * $messagedata['htmlsize'] + $textcnt[0] * $messagedata['textsize']).'<br/>';
         ## remember this to see how well the estimate was
         Sql_Query(sprintf('replace into %s set name = "estimatedsize",id=%d,data = "%s"',$GLOBALS['tables']['messagedata'],$id,$htmlcnt[0] * $messagedata['htmlsize'] + $textcnt[0] * $messagedata['textsize']));
@@ -1723,7 +1726,7 @@ if (!$done) {
 //    case "RSS": print $rss_content;break;            //Obsolete by rssmanager plugin
     case "Lists": $show_lists = 1;break;
     case "Review": print $review_content; break;
-    case "Misc": print $notification_content; break;
+    case "Misc": print $misc_content; break;
     case "Forward": print $forwardcontent; break;
     default:
       $isplugin = 0;
