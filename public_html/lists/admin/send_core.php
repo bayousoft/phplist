@@ -633,8 +633,10 @@ if ($send || $sendtest || $prepare || $save) {
       print "<font color=red size=+2>".$GLOBALS['I18N']->get("notargetemail")."</font><br>";
     }
 
-    if (isset($cached))
-    unset($cached[$id]);
+    if (isset($cached[$id])) {
+      unset($cached[$id]);
+    }
+    clearPageCache();
     include "sendemaillib.php";
 
     // OK, let's get to sending!
