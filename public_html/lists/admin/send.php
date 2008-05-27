@@ -69,6 +69,40 @@ if ($GLOBALS["commandline"]) {
 #  print "Sending message with subject ".$_POST["subject"]. " to ". $lists."\n";
 }
 ob_start();
+
+### check for draft messages
+
+if (!empty($_GET['delete'])) {
+  if ($_GET['delete'] == 'alldraft') {
+    $req = Sql_Query(sprintf('select id from %s where status = "draft" %s',$GLOBALS['tables']['message'],$ownership));
+    while ($row = Sql_Fetch_Row($req)) {
+      deleteMessage($row[0]);
+    }
+  } else {
+    deleteMessage(sprintf('%d',$_GET['delete']));
+  }
+}
+
+
+$req = Sql_Query(sprintf('select id,entered,subject,unix_timestamp(now()) - unix_timestamp(entered) as age from %s where status = "draft" %s',$GLOBALS['tables']['message'],$ownership));
+$numdraft = Sql_Num_Rows($req);
+if ($numdraft > 0 && !isset($_GET['id']) && !isset($_GET['new'])) {
+  print '<p>'.PageLink2('send&new=1',$I18N->get('start a new message')).'</p>';
+  print '<h1>'.$I18N->get('Choose an existing draft message to work on').'</h1>';
+  $ls = new WebblerListing($I18N->get('Draft messages'));
+  while ($row = Sql_Fetch_Array($req)) {
+    $element = '<!--'.$row['id'].'-->'.$row['subject'];
+    $ls->addElement($element);
+    $ls->addColumn($element,$I18N->get('edit'),PageLink2('send&amp;id='.$row['id'],$I18N->get('edit')));
+    $ls->addColumn($element,$I18N->get('entered'),$row['entered']);
+    $ls->addColumn($element,$I18N->get('ago'),secs2time($row['age']));
+    $ls->addColumn($element,$I18N->get('del'),PageLink2('send&delete='.$row['id'],$I18N->get('delete')));
+  }
+  $ls->addButton($I18N->get('delete all'),PageUrl2('send&delete=alldraft'));
+  print $ls->display();
+  return;
+}
+
 include "send_core.php";
 
 if ($done) {
@@ -103,7 +137,7 @@ $list_content .= '<li><input type=checkbox name="targetlist[allactive]"
     $list_content .= "checked";
 $list_content .= '>'.$GLOBALS['I18N']->get('All Active Lists').'</li>';
 
-$result = Sql_query("SELECT * FROM $tables[list] $subselect");
+$result = Sql_query("SELECT * FROM $tables[list] $subselect order by name");
 while ($row = Sql_fetch_array($result)) {
   # check whether this message has been marked to send to a list (when editing)
   $checked = 0;
@@ -137,7 +171,7 @@ if (USE_LIST_EXCLUDE) {
     $GLOBALS["tables"]["messagedata"],$_GET["id"]));
   $excluded_lists = explode(",",$dbdata[0]);
 
-  $result = Sql_query(sprintf('SELECT * FROM %s %s',$GLOBALS["tables"]["list"],$subselect));
+  $result = Sql_query(sprintf('SELECT * FROM %s %s order by name',$GLOBALS["tables"]["list"],$subselect));
   while ($row = Sql_fetch_array($result)) {
     $checked = in_array($row["id"],$excluded_lists);
     $list_content .= sprintf('<li><input type=checkbox name="excludelist[%d]" value="%d" ',$row["id"],$row["id"]);
