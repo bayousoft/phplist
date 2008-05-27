@@ -11,6 +11,17 @@ require_once dirname(__FILE__).'/date.php';
 #}
 $id = sprintf('%d',isset($_GET["id"]) ? $_GET['id']:0);
 $delete = sprintf('%d',isset($_GET['delete']) ? $_GET["delete"]:0);
+if (isset($_GET['findby'])) {
+  $findby = $_GET['findby'];
+} else {
+  $findby = '';
+}
+if (isset($_GET['find'])) { ## those notices are driving me nuts ...
+  $find = $_GET['find']; ## I guess we should check on validity of it as well
+} else {
+  $find = '';
+}
+
 $date = new Date();
 
 $access = accessLevel("user");
@@ -53,7 +64,7 @@ if (isset($start))
   echo "<br />".PageLink2("users","Back to the list of users","start=$start&unconfirmed=".$_GET["unconfirmed"])."\n";
 if ($find)
   echo "<br />".PageLink2("users","Back to the search results","start=$start&find=".urlencode($find)."&findby=".urlencode($findby)."&unconfirmed=".$_GET["unconfirmed"]."\n");
-if ($returnpage) {
+if (!empty($_GET['returnpage'])) { ## @@@ hmm, this needs checking
   if ($returnoption) {
     $more = "&option=".$returnoption;
    }
