@@ -120,7 +120,7 @@ function Sql_Query($query,$ignore = 0) {
           @mysql_query(sprintf('insert into querycount set count = count + 1 , query = "%s",phplist = 1',$store));
         }
       }
-    }  
+    }
   }
   $GLOBALS["pagestats"]["number_of_queries"]++;
   $result = mysql_query($query,$GLOBALS["database_connection"]);
@@ -146,10 +146,16 @@ function Sql_Query($query,$ignore = 0) {
 
 function Sql_Query_Params($query,$params,$ignore = 0) {
 #  dbg($query);
-  foreach ($params as $par) {
+  foreach ($params as $index => $par) {
     $qmark = strpos  ( $query  , '?');
-    $query = substr($query,0,$qmark).'"'.$par.'"'.substr($query,$qmark+1);
+    ## first replace the ? with some other placeholder, in case the parameters contain ? themselves
+    $query = substr($query,0,$qmark).'"PARAM'.$index.'MARAP"'.substr($query,$qmark+1);
   }
+
+  foreach ($params as $index => $par) {
+    $query = str_replace('PARAM'.$index.'MARAP',sql_escape($par),$query);
+  }
+
 #  dbg($query);
   return Sql_Query($query);
 }
@@ -269,6 +275,10 @@ function Sql_create_Table ($table,$structure) {
   $query .= "\n)";
   # submit it to the database
   $res = Sql_Query($query);
+}
+
+function sql_escape($text) {
+  return mysql_real_escape_string($text);
 }
 
 function Sql_Replace ($table,$values,$pk) {
