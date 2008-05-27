@@ -512,7 +512,7 @@ if( window.console ) window.console.log( 'Config is loaded!' ) ;  // @Packager.C
 <?php
   exit;
 } elseif ($_GET['action'] == 'js3') {
-  ob_end_clean();
+  @ob_end_clean();
   header('Content-type: text/plain');
   $req = Sql_query(sprintf('select name from %s where type in ("textline","select") order by listorder',$GLOBALS['tables']['attribute']));
   $attnames = ';preferences url;unsubscribe url';
@@ -550,21 +550,21 @@ if( window.console ) window.console.log( 'Config is loaded!' ) ;  // @Packager.C
 /*
  * FCKeditor - The text editor for internet
  * Copyright (C) 2003-2006 Frederico Caldeira Knabben
- * 
+ *
  * Licensed under the terms of the GNU Lesser General Public License:
  *    http://www.opensource.org/licenses/lgpl-license.php
- * 
+ *
  * For further information visit:
  *    http://www.fckeditor.net/
- * 
+ *
  * "Support Open Source software. What about a donation today?"
- * 
+ *
  * File Name: fckconfig.js
  *  Editor configuration settings.
- *  
+ *
  *  Follow this link for more information:
  *  http://wiki.fckeditor.net/Developer%27s_Guide/Configuration/Configurations_Settings
- * 
+ *
  * File Authors:
  *    Frederico Caldeira Knabben (fredck@fckeditor.net)
  */
@@ -678,17 +678,17 @@ FCKConfig.ImageDlgHideAdvanced  = false ;
 
 FCKConfig.FlashDlgHideAdvanced  = false ;
 
-// The following value defines which File Browser connector and Quick Upload 
+// The following value defines which File Browser connector and Quick Upload
 // "uploader" to use. It is valid for the default implementaion and it is here
-// just to make this configuration file cleaner. 
-// It is not possible to change this value using an external file or even 
-// inline when creating the editor instance. In that cases you must set the 
+// just to make this configuration file cleaner.
+// It is not possible to change this value using an external file or even
+// inline when creating the editor instance. In that cases you must set the
 // values of LinkBrowserURL, ImageBrowserURL and so on.
 // Custom implementations should just ignore it.
 var _FileBrowserLanguage  = 'asp' ; // asp | aspx | cfm | lasso | perl | php | py
 var _QuickUploadLanguage  = 'asp' ; // asp | aspx | cfm | lasso | php
 
-// Don't care about the following line. It just calculates the correct connector 
+// Don't care about the following line. It just calculates the correct connector
 // extension to use for the default File Browser (Perl uses "cgi").
 var _FileBrowserExtension = _FileBrowserLanguage == 'perl' ? 'cgi' : _FileBrowserLanguage ;
 
