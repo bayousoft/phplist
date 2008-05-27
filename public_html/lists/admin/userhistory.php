@@ -30,7 +30,7 @@ switch ($access) {
     $subselect = " and ".$tables["list"].".id = 0";break;
 }
 
-if ($_GET["unblacklist"]) {
+if (isset($_GET["unblacklist"])) {
   $unblacklist = sprintf('%d',$_GET["unblacklist"]);
   unBlackList($unblacklist);
   Redirect("userhistory&id=".$unblacklist);
