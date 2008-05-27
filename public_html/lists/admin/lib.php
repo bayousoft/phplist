@@ -677,6 +677,7 @@ function setPageCache($url,$lastmodified = 0,$content) {
 
 function clearPageCache () {
   Sql_Query('delete from ' . $GLOBALS['tables']['urlcache']);
+  unset($GLOBALS['urlcache']);
 }
 
 function removeJavascript($content) {
