@@ -33,7 +33,7 @@
 
 require_once dirname(__FILE__).'/accesscheck.php';
 
-$subselect = '';
+$subselect = $where = '';
 
 if( !$GLOBALS["require_login"] || $_SESSION["logindetails"]['superuser'] ){
   $ownerselect_and = '';
@@ -59,7 +59,7 @@ if (!isset($_GET["type"]) && !empty($_SESSION["lastmessagetype"])) {
 #print PageLink2("messages&type=draft","Draft Messages").'&nbsp;&nbsp;&nbsp;';
 #print PageLink2("messages&type=queue","Queued Messages").'&nbsp;&nbsp;&nbsp;';
 #print PageLink2("messages&type=stat","Static Messages").'&nbsp;&nbsp;&nbsp;';
-//obsolete, moved to rssmanager plugin 
+//obsolete, moved to rssmanager plugin
 #if (ENABLE_RSS) {
 #  print PageLink2("messages&type=rss","rss Messages").'&nbsp;&nbsp;&nbsp;';
 #}
@@ -68,12 +68,13 @@ if (!isset($_GET["type"]) && !empty($_SESSION["lastmessagetype"])) {
 ### Print tabs
 $tabs = new WebblerTabs();
 $tabs->addTab($GLOBALS['I18N']->get("sent"),PageUrl2("messages&type=sent"));
+$tabs->addTab($GLOBALS['I18N']->get("active"),PageUrl2("messages&type=active"));
 $tabs->addTab($GLOBALS['I18N']->get("draft"),PageUrl2("messages&type=draft"));
-$tabs->addTab($GLOBALS['I18N']->get("queued"),PageUrl2("messages&type=queued"));#
+#$tabs->addTab($GLOBALS['I18N']->get("queued"),PageUrl2("messages&type=queued"));#
 if (USE_PREPARE) {
   $tabs->addTab($GLOBALS['I18N']->get("static"),PageUrl2("messages&type=static"));
 }
-//obsolete, moved to rssmanager plugin 
+//obsolete, moved to rssmanager plugin
 #if (ENABLE_RSS) {
 #  $tabs->addTab("rss",PageUrl2("messages&type=rss"));
 #}
@@ -169,9 +170,13 @@ switch ($_GET["type"]) {
     $cond[] = " status in ('draft') ";
     $url_keep = '&type=draft';
     break;
+  case "active":
+    $cond[] = " status in ('inprocess','submitted', 'suspended') ";
+    $url_keep = '&type=active';
+    break;
   case "sent":
   default:
-    $cond[] = " status in ('sent', 'inprocess') ";
+    $cond[] = " status in ('sent') ";
     $url_keep = '&type=sent';
     break;
 }
@@ -181,6 +186,7 @@ if ($GLOBALS['require_login'] && !$_SESSION['logindetails']['superuser']) {
   $cond[] = ' owner = ' . $_SESSION['logindetails']['id'];
 }
 $where = ' where ' . join(' and ', $cond);
+
 $req = Sql_query('select count(*) from ' . $tables['message']. $where);
 $total_req = Sql_Fetch_Row($req);
 $total = $total_req[0];
@@ -216,11 +222,16 @@ if ($_GET["type"] == "draft") {
 <tr>
 <?php
 
+$ls = new WebblerListing($I18N->get('messages'));
+
 ## messages table
 if ($total) {
   print "<td>".$GLOBALS['I18N']->get("Message info")."</td><td>".$GLOBALS['I18N']->get("Status")."</td><td>".$GLOBALS['I18N']->get("Action")."</td></tr>";
-  $result = Sql_query("SELECT * FROM ".$tables["message"]." $subselect order by status,entered desc limit $limit offset $offset");
+  $result = Sql_query("SELECT * FROM ".$tables["message"]." $where order by status,entered desc limit $limit offset $offset");
   while ($msg = Sql_fetch_array($result)) {
+    $listingelement = $msg['id'];
+
+
     $uniqueviews = Sql_Fetch_Row_Query("select count(userid) from {$tables["usermessage"]} where viewed is not null and messageid = ".$msg["id"]);
 
     ## need a better way to do this, it's way to slow
@@ -250,12 +261,12 @@ if ($total) {
     } else {
       $clicked = '';
     }
-    
+
     $status = '';
     ## Rightmost two columns per message
     if ($msg['status'] == 'sent') {
       $status = $GLOBALS['I18N']->get("Sent").": ".$msg['sent'].'<br/>'.$GLOBALS['I18N']->get("Time to send").': '.timeDiff($msg["sendstart"],$msg["sent"]);
-      
+
       if ($msg['viewed']) {
         $viewed = sprintf('<tr><td></td>
           <td align="right" colspan=2>
@@ -300,7 +311,7 @@ if ($total) {
         ',$msg["bouncecount"]):""
         );
     } else { ##Status <> sent
-//      $status = $msg['status'].'<br/>'.$msg['rsstemplate']; //Obsolete by rssmanager plugin 
+//      $status = $msg['status'].'<br/>'.$msg['rsstemplate']; //Obsolete by rssmanager plugin
       if ($msg['status'] == 'inprocess') {
 /*        $status .= '<br/>'.
         '<meta http-equiv="Refresh" content="300">'.
@@ -338,7 +349,14 @@ if ($total) {
     ## allow plugins to add information
     foreach ($GLOBALS['plugins'] as $plugin) {
       $plugin->displayMessages($msg, $status);
-    } 
+    }
+
+    $deletelink = '';
+    if ($msg['status'] == 'draft') {
+      ## only draft messages should be deletable, the rest isn't
+      $deletelink = sprintf('<a href="javascript:deleteRec(\'%s\');">'.$GLOBALS['I18N']->get("delete").'</a>',
+PageURL2("messages$url_keep","","delete=".$msg["id"]));
+    }
 
     printf('
       <td>
@@ -348,7 +366,7 @@ if ($total) {
       %s<br />
       %s<br />
       %s
-      <a href="javascript:deleteRec(\'%s\');">'.$GLOBALS['I18N']->get("delete").'</a>
+      %s
       </td>
       </tr>',
       $status.
@@ -357,7 +375,7 @@ if ($total) {
       $msg['status'] != 'inprocess' ? PageLink2("messages",$GLOBALS['I18N']->get("Requeue"),"resend=".$msg["id"]) : $totalsent." ".$GLOBALS['I18N']->get("sent"),
       $msg["status"] != 'prepared' ? PageLink2("send",$GLOBALS['I18N']->get("Edit"),"id=".$msg["id"]) : PageLink2("preparesend",$GLOBALS['I18N']->get("Edit"),"id=".$msg["id"]),
       $clicks[0] && CLICKTRACK ? PageLink2("mclicks",$GLOBALS['I18N']->get("click stats"),"id=".$msg["id"]).'<br/>':'',
-      PageURL2("messages$url_keep","","delete=".$msg["id"])
+      $deletelink
     );
   }
 }
