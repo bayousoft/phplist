@@ -80,12 +80,12 @@ if (function_exists('stripos')) {
   define('PHP5',1);
 } else {
   define('PHP5',0);
-}  
+}
 if (!defined('FORWARD_ALTERNATIVE_CONTENT')) define('FORWARD_ALTERNATIVE_CONTENT',0);
 if (!defined('KEEPFORWARDERATTRIBUTES')) define('KEEPFORWARDERATTRIBUTES',0);
 if (!defined('FORWARD_EMAIL_COUNT') ) define('FORWARD_EMAIL_COUNT',1);
 if (FORWARD_EMAIL_COUNT < 1) {Error('FORWARD_EMAIL_COUNT must be > (int) 0');}
-# allows FORWARD_EMAIL_COUNT forwards per user per period in mysql interval terms default one day  
+# allows FORWARD_EMAIL_COUNT forwards per user per period in mysql interval terms default one day
 if (!defined('FORWARD_EMAIL_PERIOD') ) define('FORWARD_EMAIL_PERIOD', '1 day');
 if (!defined('FORWARD_PERSONAL_NOTE_SIZE')) define('FORWARD_PERSONAL_NOTE_SIZE',0);
 if (!defined('EMBEDUPLOADIMAGES')) define('EMBEDUPLOADIMAGES',0);
@@ -328,8 +328,8 @@ function sendMailPhpMailer ($to,$subject,$message) {
     }
   }
   # 0008549: message envelope not passed to php mailer,
-  $mail->Sender = $GLOBALS["message_envelope"]; 
-  
+  $mail->Sender = $GLOBALS["message_envelope"];
+
   $mail->build_message(
       array(
         "html_charset" => getConfig("html_charset"),
@@ -407,17 +407,39 @@ function timeDiff($time1,$time2) {
   }
   if ($diff == 0)
     return $GLOBALS['I18N']->get('very little time');
-  $hours = (int)($diff / 3600);
-  $mins = (int)(($diff - ($hours * 3600)) / 60);
-  $secs = (int)($diff - $hours * 3600 - $mins * 60);
+  return secs2time($diff);
+}
+
+function secs2time($secs) {
+  $years = $days = $hours = $mins = 0;
+  $hours = (int)($secs / 3600);
+  if ($hours > 24) {
+    $days = (int)($hours / 24);
+    $hours = $hours - (24 * $days);
+  }
+  if ($days > 365) { ## a well, an estimate
+    $years = (int) ($days / 365);
+    $days = $days - ($years * 365);
+  }
+  $mins = (int)($secs % 60);
+  $secs = (int)($secs - $hours * 3600 - $mins * 60);
 
   $res = '';
-  if ($hours)
-    $res = $hours . " hours";
-  if ($mins)
+  if ($years) {
+    $res .= $years .' years';
+  }
+  if ($days) {
+    $res .= ' '.$days .' days';
+  }
+  if ($hours) {
+    $res .= ' '.$hours . " hours";
+  }
+  if ($mins) {
     $res .= " ".$mins . " mins";
-  if ($secs)
+  }
+  if ($secs) {
     $res .= " ".$secs . " secs";
+  }
   return $res;
 }
 
