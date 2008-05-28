@@ -146,11 +146,17 @@ function Sql_Query($query,$ignore = 0) {
 
 function Sql_Query_Params($query,$params,$ignore = 0) {
 #  dbg($query);
+#  dbg($params);
   foreach ($params as $index => $par) {
     $qmark = strpos  ( $query  , '?');
-    ## first replace the ? with some other placeholder, in case the parameters contain ? themselves
-    $query = substr($query,0,$qmark).'"PARAM'.$index.'MARAP"'.substr($query,$qmark+1);
+    if ($qmark === FALSE) {
+      dbg("Error, more parameters than placeholders");
+    } else {
+      ## first replace the ? with some other placeholder, in case the parameters contain ? themselves
+      $query = substr($query,0,$qmark).'"PARAM'.$index.'MARAP"'.substr($query,$qmark+1);
+    }
   }
+#  dbg($query);
 
   foreach ($params as $index => $par) {
     $query = str_replace('PARAM'.$index.'MARAP',sql_escape($par),$query);
