@@ -371,6 +371,12 @@ if (checkAccess($page,"") || $page == 'about') {
       print Error("cannot parse $include");
       print '<p>Sorry, an error occurred. This is a bug. Please <a href="http://mantis.tincan.co.uk">report the bug to the Bug Tracker</a><br/>Sorry for the inconvenience</a></p>';
     } else {
+      if (!empty($_SESSION['action_result'])) {
+        print '<div class="actionresult">'.$_SESSION['action_result'].'</div>';
+        unset($_SESSION['action_result']);
+      }
+
+
       if (isset($GLOBALS['developer_email'])) {
         include $include;
       } else {
