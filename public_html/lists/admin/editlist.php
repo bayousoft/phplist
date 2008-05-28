@@ -39,8 +39,11 @@ echo "<hr />";
 if (isset($_POST["save"]) && $_POST["save"] == $GLOBALS['I18N']->get('Save') && isset($_POST["listname"]) && $_POST["listname"]) {
   if ($GLOBALS["require_login"] && !isSuperUser())
     $owner = $_SESSION["logindetails"]["id"];
+
   if (!isset($_POST["active"])) $_POST["active"] = 0;
   $_POST['listname'] = removeXss($_POST['listname']);
+  ## prefix isn't used any more
+  $_POST['prefix'] = '';
 
   if ($id) {
     $query
@@ -61,7 +64,7 @@ if (isset($_POST["save"]) && $_POST["save"] == $GLOBALS['I18N']->get('Save') && 
     $query = sprintf($query, $tables['list']);
   }
 #  print $query;
-  $result = Sql_Query_Params($query, array($id, $_POST['listname'],
+  $result = Sql_Query_Params($query, array($_POST['listname'],
      $_POST['description'], $_POST['listorder'], $_POST['owner'],
      $_POST['prefix'], $_POST['active']));
   if (!$id)
@@ -69,10 +72,10 @@ if (isset($_POST["save"]) && $_POST["save"] == $GLOBALS['I18N']->get('Save') && 
   ## allow plugins to save their fields
   foreach ($GLOBALS['plugins'] as $plugin) {
     $result = $result && $plugin->processEditList($id);
-  } 
-    
+  }
+
+  $_SESSION['action_result'] = $GLOBALS['I18N']->get('Record Saved') . ": $id";
   Redirect('list');
-  echo "<br><font color=red size=+1>" . $GLOBALS['I18N']->get('Record Saved') . ": $id</font><br>";
 }
 
 if (!empty($id)) {
@@ -81,7 +84,7 @@ if (!empty($id)) {
 } else {
   $list = array(
     'name' => '',
-//    'rssfeed' => '',  //Obsolete by rssmanager plugin 
+//    'rssfeed' => '',  //Obsolete by rssmanager plugin
     'active' => 0,
     'listorder' => 0,
     'description' => '',
@@ -108,7 +111,7 @@ ob_end_flush();
 } else {
   print '<input type=hidden name="owner" value="'.$_SESSION["logindetails"]["id"].'">';
 }
-//obsolete, moved to rssmanager plugin 
+//obsolete, moved to rssmanager plugin
 //if (ENABLE_RSS) {
 // if (!empty($list["rssfeed"])) {
 //   $validate = sprintf('(<a href="http://feedvalidator.org/check?url=%s" target="_blank">%s</a>)',urlencode($list["rssfeed"]),$GLOBALS['I18N']->get('validate'));
@@ -124,8 +127,8 @@ ob_end_flush();
   ### allow plugins to add rows
   foreach ($GLOBALS['plugins'] as $plugin) {
     print $plugin->displayEditList($list);
-  } 
-  
+  }
+
 ?>
 <tr><td colspan=2><?php echo $GLOBALS['I18N']->get('List Description'); ?></td></tr>
 <tr><td colspan=2><textarea name="description" cols="55" rows="15"><?php echo htmlspecialchars(StripSlashes($list["description"])) ?></textarea></td></tr>
