@@ -163,6 +163,8 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   $text["forward"] = sprintf('%s%suid=%s&mid=%d',$url,$sep,$hash,$messageid);
   $html["forwardurl"] = sprintf('%s%suid=%s&mid=%d',$url,$sep,$hash,$messageid);
   $text["forwardurl"] = $text["forward"];
+  $html["messageid"] = sprintf('%d',$messageid);
+  $text["messageid"] = sprintf('%d',$messageid);
   $url = getConfig("public_baseurl");
   # make sure there are no newlines, otherwise they get turned into <br/>s
   $html["forwardform"] = sprintf('<form method="get" action="%s" name="forwardform" class="forwardform"><input type=hidden name="uid" value="%s" /><input type=hidden name="mid" value="%d" /><input type=hidden name="p" value="forward" /><input type=text name="email" value="" class="forwardinput" /><input name="Send" type="submit" value="%s" class="forwardsubmit"/></form>',$url,$hash,$messageid,$GLOBALS['strForward']);
@@ -317,6 +319,8 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     $html['footer'] = $text['footer'];
   }
 
+  $text["footer"] = eregi_replace("\[MESSAGEID\]",$text["messageid"],$text['footer']);
+  $html["footer"] = eregi_replace("\[MESSAGEID\]",$html["messageid"],$html['footer']);
   $text["footer"] = eregi_replace("\[SUBSCRIBE\]",$text["subscribe"],$text['footer']);
   $html["footer"] = eregi_replace("\[SUBSCRIBE\]",$html["subscribe"],$html['footer']);
   $text["footer"] = eregi_replace("\[PREFERENCES\]",$text["preferences"],$text["footer"]);
