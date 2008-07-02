@@ -2,34 +2,30 @@
 
 if (isset($_SESSION["printeable"])) print $GLOBALS["I18N"]->get($_SESSION["printeable"]);
 $type = "text";
-switch ($actualPage) {
 
-  case "install0":
-    $editable = "";
-    /*if ($_SESSION['dbCreatedSuccesfully'] == 0) {
-      $yourValue = $_SESSION;*/
-      print $GLOBALS["I18N"]->get(sprintf('<table width=500><tr><td><div class="explain">%s</div></td></tr></table>', $GLOBALS['strDbExplain']));
-    // }
-    // else {
-    //   print $GLOBALS["I18N"]->get(sprintf('<p>%s</p>',$GLOBALS["strPhplistDbCreation"]));
-    // }
-    
-    print $GLOBALS["I18N"]->get(sprintf('<style type="text/css">table tr td input { float:right; }</style><table width=500><tr><td>%s</td><td><input name="database_name" type="text" value="%s"></td></tr>
-    <tr><td>%s</td><td><input name="database_host" type="text" value="%s"></td></tr>
-    <tr><td>%s</td><td><input name="database_user" type="text" value="%s"></td></tr>
-    <tr><td>%s</td><td><input name="database_password" type="text" value="%s"></td></tr>
-    <tr><td></td><td></td></tr></table>'
+$pvbuf = $GLOBALS["I18N"]->get(sprintf('<table width=500><tr><td><div class="explain">%s</div></td></tr></table>', $GLOBALS['strDbExplain']));
+$pvbuf .= $GLOBALS["I18N"]->get(sprintf('<style type="text/css">table tr td input { float:right; }</style><table width=500><tr><td>%s</td><td><input name="database_name" type="text" value="%s"></td></tr>
+<tr><td>%s</td><td><input name="database_host" type="text" value="%s"></td></tr>
+<tr><td>%s</td><td><input name="database_user" type="text" value="%s"></td></tr>
+<tr><td>%s</td><td><input name="database_password" type="text" value="%s"></td></tr>
+<tr><td></td><td></td></tr></table>'
 , $GLOBALS["strDbname"], (isset($_SESSION['database_name'])?$_SESSION['database_name']:'')
 , $GLOBALS["strDbhost"], (isset($_SESSION['database_host'])?$_SESSION['database_host']:'')
 //, $GLOBALS["strDbschema"], $_SESSION['database_schema']
 , $GLOBALS["strDbuser"], (isset($_SESSION['database_user'])?$_SESSION['database_user']:'')
 , $GLOBALS["strDbpass"], (isset($_SESSION['database_password'])?$_SESSION['database_password']:'')));
-    // <tr><td>%s</td><td><input name="database_schema" type="text" value="%s"></td></tr>
-    print $GLOBALS["I18N"]->get(sprintf('<table width=500>
-    <tr><td colspan=2><div class="explain">%s</div></td></tr>
-    <tr><td>%s</td><td><input name="database_root_user" type="text" value="%s"></td></tr>
-    <tr><td>%s</td><td><input name="database_root_pass" type="text" value="%s"></td></tr>
-    </table>',$GLOBALS["strDbroot"],$GLOBALS["strDbrootuser"], (isset($_SESSION['database_root_user'])?$_SESSION['database_root_user']:''), $GLOBALS["strDbrootpass"], (isset($_SESSION['database_root_pass'])?$_SESSION['database_root_pass']:'')));
+// <tr><td>%s</td><td><input name="database_schema" type="text" value="%s"></td></tr>
+$pvbuf .= $GLOBALS["I18N"]->get(sprintf('<table width=500>
+<tr><td colspan=2><div class="explain">%s</div></td></tr>
+<tr><td>%s</td><td><input name="database_root_user" type="text" value="%s"></td></tr>
+<tr><td>%s</td><td><input name="database_root_pass" type="text" value="%s"></td></tr>
+</table>',$GLOBALS["strDbroot"],$GLOBALS["strDbrootuser"], (isset($_SESSION['database_root_user'])?$_SESSION['database_root_user']:''), $GLOBALS["strDbrootpass"], (isset($_SESSION['database_root_pass'])?$_SESSION['database_root_pass']:'')));
+
+switch ($actualPage) {
+
+  case "install0":
+    $editable = "";
+    print $pvbuf;
   break;
   case "install01":
     $editable = "";
@@ -37,13 +33,13 @@ switch ($actualPage) {
       $root_connection = Sql_Connect($_SESSION['database_host'], $_SESSION['database_root_user'], $_SESSION['database_root_pass'], $_SESSION['database_name']);
       if (!$root_connection) {
         $root_connection = Sql_Connect_Install($_SESSION['database_host'], $_SESSION['database_root_user'], $_SESSION['database_root_pass']);
-        $GLOBALS["database_connection"] = $test_connection;
+        $GLOBALS["database_connection"] = $root_connection;
         if ($root_connection) {
-        $create_db = Sql_Create_Db($_SESSION['database_name']);
-    # if error let's still try to connect with user's settings
+          $create_db = Sql_Create_Db($_SESSION['database_name']);
+          # if error let's still try to connect with user's settings
         }
       }
-      $GLOBALS["database_connection"] = $root_connection; # useless
+      $GLOBALS["database_connection"] = ($root_connection?$root_connection:''); # useless
       Sql_Query(sprintf("GRANT ALL PRIVILEGES ON %s.* TO '%s'@'localhost' IDENTIFIED BY '%s'", $_SESSION['database_name'], $_SESSION['database_user'], $_SESSION['database_password']));
     #  if (!$rootPriv)  print '<script language="Javascript"> alert("No privileges given"); </script>'; # testing
       unset($_SESSION['database_root_user']);
@@ -83,12 +79,13 @@ switch ($actualPage) {
     
     if (!$_SESSION['database_host'] || !$_SESSION['database_user'] || !$_SESSION['database_password'] || !$_SESSION['database_name'])
       $errorno = 666;
-    
     /**
     procedure 1 = all ok, connection && db
     procedure 2 = connection ok && !db
     procedure 3 = no connection
     */
+    $errorno = (!isset($GLOBALS["database_connection"]) ? 1044 : ''); // case no connection at all
+//    print "<hr><hr><hr>".$errorno." == ".$procedure."<hr><hr>"; exit;
     if ($errorno) {
       switch($errorno) {
         case 666:
@@ -125,10 +122,11 @@ switch ($actualPage) {
         $_SESSION['dbCreatedSuccesfully'] = 0;
       break;
     }
-    if (!$_SESSION['dbCreatedSuccesfully']) {
+    if (empty($_SESSION['dbCreatedSuccesfully'])) {
       print $GLOBALS["I18N"]->get(sprintf('<div class="wrong">%s</div>',$msg));
       unset($_SESSION["printeable"]);
-      include('install/install0.php');
+      print $pvbuf;
+//      include('install/install0.php');
     }
   break;
   case "install1":
@@ -147,13 +145,13 @@ switch ($actualPage) {
       print $GLOBALS["I18N"]->get(sprintf('<p class="allwrong explain">%s%s</p>', $GLOBALS["popAccountKo"], $_SESSION["bounce_mailbox_host"]));
     }
     
-    $test_connection2 = Sql_Connect($_SESSION["database_host"], $_SESSION["database_user"],$_SESSION["database_password"], $_SESSION["database_name"]);
+/*    $test_connection2 = Sql_Connect($_SESSION["database_host"], $_SESSION["database_user"],$_SESSION["database_password"], $_SESSION["database_name"]);
     
     if ($test_connection2 == FALSE) {
       print $GLOBALS["I18N"]->get(sprintf('<div class="wrong">%s</div><br>',$GLOBALS["strStillNoConnection"]));
       $canNotConnect = 1;
       willNotContinue();
-    }
+    }*/
   break;
   case "install3":
     $editable = "debbuging";
@@ -180,19 +178,18 @@ switch ($actualPage) {
   break;
   case "final_install":
     $editable = "";
-    checkSessionCheckboxes();
+//    checkSessionCheckboxes();
     print $GLOBALS["I18N"]->get(sprintf('<div class="explain">%s</div>',$GLOBALS["strFinalValuesText"]));
     $showfinalvalues = 1; 
  break;
   case "write_install":
     writeToConfig($_SESSION, $GLOBALS["requiredVars"]);
     $yourPath = (isset($_SESSION['adminpages'])?$_SESSION['adminpages']:'');
-    print $GLOBALS["I18N"]->get(sprintf('<br><br>%s<a href="%s">here</a>',$GLOBALS['strGoToInitialiseDb'], $yourPath));
+    print $GLOBALS["I18N"]->get(sprintf('<br><br>%s<a href="%s?page=initialise&firstinstall=1">here</a>',$GLOBALS['strGoToInitialiseDb'], $yourPath));
     include('install/define.php');
     include('install/footer.inc');
     cleanSession();
     exit;
-
   break;
 
   case "home":

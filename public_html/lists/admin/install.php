@@ -4,17 +4,15 @@ ob_start();
 @session_start();
 
 if (isset($_GET['page'])) {
-  $Page = sprintf("%s",$_GET['page']);
+  $Page = sprintf("%s",strip_tags($_GET['page']));
 }
-
 foreach ($_POST as $key => $val) {
-  $_SESSION[$key] = $val;
+  $_SESSION[$key] = strip_tags($val);
 }
-//print_r($_SESSION);
-
+print_r($_SESSION);
 # for now just in english, I guess
 require('install/english.inc');
-require(dirname(__FILE__).'/mysql.inc');
+require(dirname(__FILE__).'/install/mysql.inc');
 require("install/steps-lib.php");
 include("install/header-install.inc");
 require("install/requiredvars.php");
@@ -22,9 +20,9 @@ require("languages.php");
 
 //error_reporting(E_ALL & E_STRICT);
 if (!isset($GLOBALS['developer_email'])) {
-  error_reporting(63);
+  error_reporting(0);
 }
-checkSessionCheckboxes();
+//checkSessionCheckboxes();
 ?>
 <div class="install_start wrong">
 
@@ -60,28 +58,24 @@ if (!empty($_SESSION["page"])) {
   $_SESSION["history"] = array_unique($_SESSION["history"]);
 }
 
-$page2 = "pages";
+#$page2 = "pages";
 if (isset($Page) && in_array($Page, $_SESSION["history"])) {
   $getpage = sprintf("%s",$Page);
   $page = $_SESSION["page"]!=$getpage?$getpage:$_SESSION["page"];
   if (preg_match("/([\w_]+)/",$page,$regs)) {
   $page = $regs[1];
   }
-/*  if (!is_file('install/'.$page2.'.php') ) {
-    $page = 'home';
-  }*/
-  getNextPageForm($page,$page2);
+  getNextPageForm($page);
 }
 
 else {
-  $page = 'home';
-  getNextPageForm($page,$page2);
+  getNextPageForm("home");
 }
 
-print checkScalarInt($_SESSION, $GLOBALS['requiredVars']);
+print $GLOBALS["I18N"]->get(checkScalarInt($_SESSION, $GLOBALS['requiredVars']));
 $_SESSION["printeable"] = '<table width=500><tr><td>';
 for ($i=0;$i<count($_SESSION["history"]);$i++) {
-  $_SESSION["printeable"] .= sprintf('<a href="./?page=%s">Step %s</a> >> ', $_SESSION["history"][$i], $i);
+  $_SESSION["printeable"] .= sprintf('<a href="./?page=%s">'.$GLOBALS["I18N"]->get($GLOBALS["strStep"]).' %s</a> >> ', $_SESSION["history"][$i], $i);
 }
 $_SESSION["printeable"] .= '</td></tr></table>';
 
@@ -91,7 +85,16 @@ $_SESSION["printeable"] .= '</td></tr></table>';
 require_once("install/define.php");
 
 include('install/footer.inc');
-//print_r($_SESSION); # test
+/*
+print "<table>";
+foreach ($GLOBALS["requiredVars"] as $key => $val) {
+  print "<tr><td>POST name=$key val=".$_POST[$key]."</td>";
+  print "<td>\nSESSION name=$key val=".$_SESSION[$key]."</td>";
+  print "<td>\n RequiredVars name=$key val=".$val["values"]."</td></tr>";
+}
+print "</table>";
+*/
+
 ob_end_flush();
 
 ?>

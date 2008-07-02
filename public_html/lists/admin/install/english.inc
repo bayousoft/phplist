@@ -233,4 +233,12 @@ $strServerBusy = 'There\'s an error in your details. Seems to be that the databa
 $strCuoldNotCreateDb = "Could not create database";
 $strDoingDbCheck = '<p>Doing database checking for exiting tables.<br/>If database tables exists Installer won\'t create them again, but you can create them once the config system is operating.</p>';
 $strEmptyField = 'You have left fields empty, please check your database details.';
+$strValInfo = 'Info:';
+$strActivateDeactivate = 'Activate or deactive ';
+$strYes = 'Yes';
+$strNo = 'No';
+$strStartInst = 'Start the Installer';
+$strNextStep = 'Next step';
+$strWriteToConfig = 'Write to config now!';
+$strStep = 'Step';
 ?>

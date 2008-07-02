@@ -25,6 +25,10 @@ function Sql_Connect($host,$user,$password,$database) {
   return $res;
 }
 
+function Sql_has_error ($dbconnection) {
+  return mysql_errno($dbconnection);
+}
+
 function Sql_Error ($dbconnection,$errno = 0) {
   $msg = mysql_error($dbconnection);
   if (empty($GLOBALS['commandline'])) {
@@ -62,7 +66,7 @@ function Sql_Query($query,$ignore = 0) {
       }
     }  
   }
-  $GLOBALS["pagestats"]["number_of_queries"]++;
+//  $GLOBALS["pagestats"]["number_of_queries"]++;
   $result = mysql_query($query,$GLOBALS["database_connection"]);
 /*  if (!$ignore) {
     if (Sql_Check_Error($GLOBALS["database_connection"]))

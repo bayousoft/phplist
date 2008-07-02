@@ -2,12 +2,12 @@
 
 
 $requiredVars = array(
-        "developer_email"=> array(
-                "name"=> "developer_email",
-                "type"=> "scalar",
-                "description"=> "Only for Dev versions. Set the developer email here",
-                "values"=> "developer@localhost",
-                "section" => "general"),
+#        "developer_email"=> array(
+#                "name"=> "developer_email",
+#                "type"=> "scalar",
+#                "description"=> "Only for Dev versions. Set the developer email here",
+#                "values"=> "developer@localhost",
+#                "section" => "general"),
 	"language_module"=> array(
 		"name"=> "language_module",
 		"type"=> "scalar",
