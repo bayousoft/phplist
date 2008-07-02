@@ -535,6 +535,7 @@ switch($value) {
   case "adminpages":
   default:
     preg_match("/([\w\/]+)/", $_SERVER["REQUEST_URI"], $page);
+    $page[0] = substr($page[0], 0, -1);
   break;
 }
 
