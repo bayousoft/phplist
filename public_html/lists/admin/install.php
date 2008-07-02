@@ -9,14 +9,14 @@ if (isset($_GET['page'])) {
 foreach ($_POST as $key => $val) {
   $_SESSION[$key] = strip_tags($val);
 }
-print_r($_SESSION);
+//print_r($_SESSION);
 # for now just in english, I guess
-require('install/english.inc');
+require(dirname(__FILE__).'/install/english.inc');
 require(dirname(__FILE__).'/install/mysql.inc');
-require("install/steps-lib.php");
-include("install/header-install.inc");
-require("install/requiredvars.php");
-require("languages.php");
+require(dirname(__FILE__)."/install/steps-lib.php");
+include(dirname(__FILE__)."/install/header-install.inc");
+require(dirname(__FILE__)."/install/requiredvars.php");
+require(dirname(__FILE__)."/languages.php");
 
 //error_reporting(E_ALL & E_STRICT);
 if (!isset($GLOBALS['developer_email'])) {
