@@ -393,20 +393,20 @@ function getNextPageForm ($actualPage) { # function getNextPageForm ($actualPage
   case 'install2':
   case 'install3':
   case 'install4':
-  case 'install5':
-  case 'install6':
+//  case 'install5':
+//  case 'install6':
   $nextpage = 'install'.($res[0]+1);
   $prevpage = 'install'.($res[0]-1);
   $textSubmit = $GLOBALS["I18N"]->get($GLOBALS["strNextStep"]);
   break;
-  case 'install7':
+  case 'install5':
   $nextpage = 'final_install';
   $prevpage = 'install'.($res[0]-1);
   $textSubmit = $GLOBALS["I18N"]->get($GLOBALS["strNextStep"]);
   break;
   case 'final_install':
   $nextpage = 'write_install';
-  $prevpage = 'install7';
+  $prevpage = 'install5';
   $textSubmit = $GLOBALS["I18N"]->get($GLOBALS["strWriteToConfig"]);
   break;
   case 'write_install':
