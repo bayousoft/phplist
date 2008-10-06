@@ -204,7 +204,7 @@ switch ($actualPage) {
 if (isset($editable)) {
   $edit = explode(",",$editable);
   foreach ($edit as $section) {
-    print $GLOBALS["I18N"]->get(editVariable($GLOBALS["requiredVars"],'name', 'text', $section));
+    print $GLOBALS["I18N"]->get(editVariable($GLOBALS["requiredVars"], $section));
   }
 }
 
