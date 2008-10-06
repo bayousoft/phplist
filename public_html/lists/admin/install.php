@@ -6,6 +6,7 @@ ob_start();
 if (isset($_GET['page'])) {
   $Page = sprintf("%s",strip_tags($_GET['page']));
 }
+# clean all the input variables
 foreach ($_POST as $key => $val) {
   $_SESSION[$key] = strip_tags($val);
 }
@@ -21,17 +22,17 @@ require(dirname(__FILE__)."/languages.php");
 //error_reporting(E_ALL & E_STRICT);
 if (!isset($GLOBALS['developer_email'])) {
   error_reporting(0);
+} else {
+  error_reporting(E_ALL & E_STRICT);
 }
 //checkSessionCheckboxes();
 ?>
 <div class="install_start wrong">
 
 <?php
-
+# soemthing is wrong with the config file
 if (!file_exists($configfile)) {
-  if (!is_writable("../config")) {
-    print $GLOBALS["I18N"]->get(sprintf('%s<hr>',$GLOBALS["strConfigIsNotAndDirNotWri"]));
-  }
+  print $GLOBALS["I18N"]->get(sprintf('%s<hr>',$GLOBALS["strConfigIsNotAndDirNotWri"]));
   willNotContinue();
 }
 else {
@@ -49,7 +50,7 @@ else {
 </div>
 <?php
 
-
+# initialise and set the history bar of pages
 if (!isset($_SESSION["history"])) {
   $_SESSION["history"] = array();
 }
