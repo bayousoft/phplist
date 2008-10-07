@@ -210,6 +210,6 @@ if (isset($editable)) {
 
 if (isset($showfinalvalues)) {
 
-  print $GLOBALS["I18N"]->get(showFinalValues($GLOBALS["requiredVars"],'name', $_SESSION));
+  print $GLOBALS["I18N"]->get(showFinalValues($GLOBALS["requiredVars"], $_SESSION));
 
 }

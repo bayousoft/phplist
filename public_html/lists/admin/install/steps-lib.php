@@ -15,7 +15,7 @@ function editVariable($config_vars,$section) {
   foreach ($config_vars as $key => $val) {
     $variables++;
     if ($val["section"] == $section) {
-      if (!isset($_SESSION[$val["name"]])) { // lets define the value, if default or request one
+      if (!isset($_SESSION[$val["name"]])) { // lets define the value, if default or edited one
         $realValue = $val["values"];
       }
       else {
@@ -43,16 +43,14 @@ function editVariable($config_vars,$section) {
               || $val["name"] == 'database_user'
               || $val["name"] == 'database_password'
               || $val["name"] == 'database_host') {
-                $res .= '<input type="hidden" value="'.$realValue;
-                $res .= '" name="'.$val["name"].'" />';
+                $res .= getInput($val["name"], $realValue, "hidden");
                 break 1;
               }
             }
 
             if ($val["name"] == 'message_envelope') {
               $realValue = (isset($_SESSION[$val["name"]])?$_SESSION[$val["name"]]:'bounces@'.$_SERVER["SERVER_NAME"]);
-              $res .= '<input type="text" value="'.$realValue;
-              $res .= '" name="'.$val["name"].'" /> ';
+              $res .= getInput($val["name"], $realValue, "text");
             }
             elseif ($val["name"] == 'language_module') {
               $res .= languagePack($val["name"],"");
@@ -62,8 +60,7 @@ function editVariable($config_vars,$section) {
               $res .= pageGetOpt($val["name"]);
             }*/
             else {
-              $res .= '<input type="text" value="'.$realValue;
-              $res .= '" name="'.$val["name"].'" /> ';
+              $res .= getInput($val["name"], $realValue, "text");
             }
             break;
             case "scalar_int":
@@ -72,19 +69,19 @@ function editVariable($config_vars,$section) {
               else $checked = ($_SESSION[$val["name"]] == 1) ? 1 : 0;
 
               $res .= $GLOBALS["I18N"]->get($GLOBALS["strActivateDeactivate"])."<strong>".$val["name"]."</strong><br />";
-              $res .= '<input type="radio" '.(($checked == 1)?"checked":'').' value="1" name="'.$val["name"].'"/> '.$GLOBALS["I18N"]->get($GLOBALS["strYes"]);
-              $res .= '<input type="radio" '.(($checked == 0)?"checked":'').' value="0" name="'.$val["name"].'"/>'.$GLOBALS["I18N"]->get($GLOBALS["strNo"]);
+              $res .= getInput($val["name"], 1, "radio", (($checked == 1)?"checked":''));
+              $res .= $GLOBALS["I18N"]->get($GLOBALS["strYes"]);
+              $res .= getInput($val["name"], 0, "radio", (($checked == 0)?"checked":''));
+              $res .= $GLOBALS["I18N"]->get($GLOBALS["strNo"]);
             } else {
-              $res .= '<input type="text" value="'.$val["values"].'" name="'.$val["name"].'"/>';
+              $res .= getInput($val["name"], $val["values"], "text");
             }
             break;
             case "hidden_scalar":
-            $res .= '<input type="hidden" value="'.$val["values"];
-            $res .= '" name="'.$val["name"].'"/>';
+              $res .= getInput($val["name"], $val["values"], "hidden");
             break;
             case "hidden_scalar_int":
-            $res .= '<input type="hidden" value="'.$val["values"];
-            $res .= '" name="'.$val["name"].'"/>';
+              $res .= getInput($val["name"], $val["values"], "hidden");
             break;
             case "constant":
             if (isset($val["type_value"]) && $val["type_value"] == "bool") {
@@ -92,22 +89,24 @@ function editVariable($config_vars,$section) {
               else $checked = ($_SESSION[$val["name"]] == 1) ? 1 : 0;
 
               $res .= $GLOBALS["I18N"]->get($GLOBALS["strActivateDeactivate"])."<strong>".$val["name"]."</strong><br />";
-              $res .= '<input type="radio" '.(($checked == 1)?"checked":'').' value="1" name="'.$val["name"].'"/> '.$GLOBALS["I18N"]->get($GLOBALS["strYes"]);
-              $res .= '<input type="radio" '.(($checked == 0)?"checked":'').' value="0" name="'.$val["name"].'"/>'.$GLOBALS["I18N"]->get($GLOBALS["strNo"]);
+              $res .= getInput($val["name"], 1, "radio", (($checked == 1)?"checked":''));
+              $res .= $GLOBALS["I18N"]->get($GLOBALS["strYes"]);
+              $res .= getInput($val["name"], 0, "radio", (($checked == 0)?"checked":''));
+              $res .= $GLOBALS["I18N"]->get($GLOBALS["strNo"]);
             } else {
-              $res .= '<input type="text" value="'.$val["values"].'" name="'.$val["name"].'"/>';
+              $res .= getInput($val["name"], $val["values"], "text");
             }
 #            if (isset($_POST[$val["name"]]))
 #              $addtocheck .= $val["name"].',';
             break;
             case "hidden_constant":
-            $res .= '<input type="hidden" value="'.$val["values"].'" name="'.$val["name"].'"/>';
+              $res .= getInput($val["name"], $val["values"], "hidden");
             break;
             case "hidden_array":
-            $res .= '<input type="hidden" value="'.$val["values"].'" name="'.$val["name"].'"/>';
+              $res .= getInput($val["name"], $val["values"], "hidden");
             break;
             case "commented":
-            $res .= '<input type="hidden" value="'.$val["values"].'" name="'.$val["name"].'"/>';
+              $res .= getInput($val["name"], $val["values"], "hidden");
             break;
         }
 //        $_SESSION["check"] .= $addtocheck;
@@ -131,28 +130,80 @@ function editVariable($config_vars,$section) {
   return $res;
 }
 
-# deprecated function // using radio buttons
-
-function checkSessionCheckboxes() {
-  foreach ($GLOBALS["requiredVars"] as $key => $val) {
-     if (isset($_SESSION["check"]) && isset($val["type_value"]) && $val["type_value"] == "bool" && in_array($_POST[$key],explode(",",$_SESSION["check"]))) {
-      if ($val["values"] == 1) {
-        if (!isset($_POST[$key])) {
-          $_SESSION[$key] = 0; }
-        else {
-          $_SESSION[$key] = 1; }
-      } else {
-        if (empty($_POST[$key])) {
-          $_SESSION[$key] = 1; }
-        else {
-          $_SESSION[$key] = 0; }
-      }
-    }
-  }
+/**
+  getInput function to get the editable inputs of the config variables
+  @param $name
+    name att of the input
+  @param $value
+    value of the input
+  @param $type
+    type of the input
+  @param $extra
+    extra attributes of the type checked="checked", onChange="doSomething" for the input
+  @returns
+    input of type radio, text or hidden
+**/
+function getInput($name, $value, $type, $extra = "") {
+  return sprintf('<input type="%s" name="%s" value="%s" %s />', $type ,$name, $value, $extra);
 }
 
-function writeToConfig($key, $requiredVars2) {
-  if (!empty($key)) {
+/**
+  getVarForConfig function to get the kind of variable to write in the config file, of the type $type
+  @param $type
+    type of the variable
+  @param $name
+    name of the constant or variable
+  @param $val
+    value of the constant or variable
+  @param $extra
+    extra attributes (not in use right now)
+  @returns
+    the correct syntax to write php format of constants and variables in the config file
+**/
+function getVarForConfig($type, $name, $val, $extra = "") {
+  $res = "";
+  switch ($type) {
+    case "constant":
+    case "hidden_constant":
+      $res .= sprintf("\ndefine(\"%s\", \"%s\");\n", $name, $val);
+    break;
+    case "hidden_array":
+      $res .= sprintf('$%s = array(', $name);
+      if (is_array($val)) {
+        for ($i=0;$i < count($val);$i++) {
+          $res .= sprintf('"%s"', $val[$i]);
+          if ($i == count($val)-1) {
+            break 1;
+          }
+          $res .= ',';
+        }
+        $res .= ");\n";
+        break 1;
+      }
+      $res .= sprintf('"%s");', $val);
+    break;
+    case 'commented':
+    break;
+    case 'scalar_int':
+    case "hidden_scalar_int":
+    default:
+      $res .= sprintf('$%s = %s;', $name, $val);
+    break;
+  }
+  return $res;
+}
+
+/**
+  writeToConfig function to write the contents of the $_SESSION variable if it is inside the $requiredVars array
+  @param $session_vars
+    array $_SESSION containing all the configuration variables
+  @param $req_vars
+    array of all the configuration taken from the requiredVars.php file, with all the default content
+  @returns
+    TRUE if it could write the config file succesfully or else FALSE
+**/
+function writeToConfig($session_vars, $req_vars) {
+  if (!empty($session_vars)) {
 #  $configDir = $_SERVER['DOCUMENT_ROOT'].'/lists/config';
     if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
       $nameConfigFile = $_SERVER['ConfigFile'];
@@ -173,80 +224,33 @@ function writeToConfig($key, $requiredVars2) {
       print $GLOBALS["I18N"]->get(sprintf('<p>%s</p>',$GLOBALS['creatingConfig']));
       $configInfoToWrite = '';
       $configInfoToWrite .= '<?php';
-      foreach ($key as $configInfo => $val) {
+      foreach ($session_vars as $key_name => $val) {
         if (empty($val)) $val=0;
-        if (isset($requiredVars2[$configInfo])) {
-    #      }
-    #      else {
+        if (isset($req_vars[$key_name])) {
           $configInfoToWrite .= "\n";
-          $configInfoToWrite .= '# ';
-          $configInfoToWrite .= $GLOBALS["str".$requiredVars2[$configInfo]["name"]."_desc"];
+          $configInfoToWrite .= sprintf('# %s',$GLOBALS["str".$req_vars[$key_name]["name"]."_desc"]);
           $configInfoToWrite .= "\n";
           $configInfoToWrite .= "\n";
-          switch ($requiredVars2[$configInfo]["type"]) {
-            case 'constant' :
-            $configInfoToWrite .= 'define("';
-            $configInfoToWrite .= $configInfo;
-            $configInfoToWrite .= '",';
-            $configInfoToWrite .= $val;
-            $configInfoToWrite .= ');';
-            break;
+          switch ($req_vars[$key_name]["type"]) {
             case 'hidden_constant' :
-            $configInfoToWrite .= 'define("';
-            $configInfoToWrite .= $configInfo;
-            $configInfoToWrite .= '",';
-            $configInfoToWrite .= $requiredVars2[$configInfo]['values'];
-            $configInfoToWrite .= ');';
-            break;
             case 'hidden_array' :
-            $configInfoToWrite .= '$';
-            $configInfoToWrite .= $configInfo;
-            $configInfoToWrite .= ' = array(';
-            if (is_array($requiredVars2[$configInfo]['values'])) {
-            for ($i=0;$i < count($requiredVars2[$configInfo]['values']);$i++) {
-            $configInfoToWrite .= '"';
-            $configInfoToWrite .= $requiredVars2[$configInfo]['values'][$i];
-            $configInfoToWrite .= '"';
-            if ($i == count($requiredVars2[$configInfo]['values'])-1) {
-            break 1;
-            }
-            $configInfoToWrite .= ',';
-            }
-            $configInfoToWrite .= ')';
-            $configInfoToWrite .= ";\n";
-            break 1;
-            }
-            $configInfoToWrite .= '"';
-            $configInfoToWrite .= $val;
-            $configInfoToWrite .= '")'.";";
-            break;
             case 'commented' :
+            $var_name = $key_name;
+            $var_value = $req_vars[$key_name]['values'];
             break;
-            case 'scalar_int' :
-            $configInfoToWrite .= '$';
-            $configInfoToWrite .= $configInfo;
-            $configInfoToWrite .= ' = ';
-            $configInfoToWrite .= $val.";";
-            break;
-            case 'hidden_scalar_int' :
-            $configInfoToWrite .= '$';
-            $configInfoToWrite .= $configInfo;
-            $configInfoToWrite .= ' = ';
-            $configInfoToWrite .= $val.";";
-            if ($configInfo == 'error_level') {
-              break 2;
-            } else {
-              break;
-            }
             default:
-            $configInfoToWrite .= '$';
-            $configInfoToWrite .= $configInfo;
-            $configInfoToWrite .= ' = ';
-            $configInfoToWrite .= '"';
-            $configInfoToWrite .= $val;
-            $configInfoToWrite .= '";';
+            case 'constant':
+            case 'scalar_int' :
+            case 'hidden_scalar_int' :
+            $var_name = $key_name;
+            $var_value = $val;
+            if ($key_name == 'error_level') {
+              break 2;
+            }
+            break;
           }
-        $configInfoToWrite .= "\n";
+          $configInfoToWrite .= getVarForConfig($req_vars[$key_name]["type"], $var_name, $var_value);
+          $configInfoToWrite .= "\n";
         }
       }
       $configInfoToWrite .= "\n\n?>";
@@ -280,24 +284,33 @@ function writeToConfig($key, $requiredVars2) {
   }
 }
 
-function checkScalarInt($sessionValues, $requiredVars) {
+/**
+  checkScalarInt function checks on every default value of the $requiredVars array taken from requiredVars.php whether it is a numeric value; if it is, check the edited value and tries to correct it in the $_SESSION array if the edited value is not numeric.
+  @param $session_vars
+    array $_SESSION containing all the configuration variables
+  @param $req_vars
+    array of all the configuration taken from the requiredVars.php file, with all the default content
+  @returns
+    a message if any correction was made
+**/
+function checkScalarInt($session_vars, $req_vars) {
 
-  foreach ($sessionValues as $key => $val) {
+  foreach ($session_vars as $key => $val) {
     $msg = '';
     if (!is_array($var)) {
       $_SESSION[$key] = cleanVar($_SESSION[$key]);
     }
-    if (isset($requiredVars[$key]['values']) && is_numeric($requiredVars[$key]['values'])) {
+    if (isset($req_vars[$key]['values']) && is_numeric($req_vars[$key]['values'])) {
 //      $val = intval($val);
-      if (!is_numeric($val) && !isset($requiredVars[$key]["type_value"])) {
+      if (!is_numeric($val) && !isset($req_vars[$key]["type_value"])) {
         $msg = $GLOBALS["I18N"]->get('<p style="color:#000fff;"><strong>'.$key.'</strong>'.$GLOBALS['strErraticValue'].'<span style="color:#f00;">'.$val.'</span><br />');
         if (preg_match('/[0-9]+/', $val, $matches)) {
           $msg .= $GLOBALS["I18N"]->get(sprintf('%s <strong>%s</strong></p>', $GLOBALS['strChangedForThis'], $matches[0]));
           $_SESSION[$key] = $matches[0];
         }
         else {
-          $msg .= $GLOBALS["I18N"]->get(sprintf('%s <strong>%s</strong></p>', $GLOBALS['strChangedForThis'], $requiredVars[$key]['values']));
-          $_SESSION[$key] = $requiredVars[$key]['values'];
+          $msg .= $GLOBALS["I18N"]->get(sprintf('%s <strong>%s</strong></p>', $GLOBALS['strChangedForThis'], $req_vars[$key]['values']));
+          $_SESSION[$key] = $req_vars[$key]['values'];
         }
       }
     }
@@ -305,6 +318,13 @@ function checkScalarInt($sessionValues, $requiredVars) {
   return $msg;
 }
 
+/**
+  cleanVar cleans the given variable or array, removing ",',\,?,[,]
+  @param $var
+    array or variable to clean
+  @returns
+    the given variable or array with the replacements made
+**/
 function cleanVar($var) {
 
   $strip = array('"',"'",'\\',"?","[","]");
@@ -313,6 +333,17 @@ function cleanVar($var) {
 
 }
 
+/**
+  processPopTest implementation of the processPop function of phplist for the installer
+  @param $server
+    server for the pop account
+  @param $user
+    user for the account
+  @param $password
+    password for the given user in $user
+  @returns
+    TRUE if the connection was successfull; else FALSE
+**/
 function processPopTest ($server,$user,$password) {
 $port =  $_REQUEST["bounce_mailbox_port"];
 if (!$port) {
@@ -329,33 +360,37 @@ if (!$link) {
 return TRUE;
 }
 
-function showFinalValues($keyVar,$value2, $request) { // this will also make no-empty values
+/**
+  showFinalValues function to show a table based html with the values which will be written to the config file
+  @param $session_vars
+    array $_SESSION containing all the configuration variables
+  @param $req_vars
+    array of all the configuration taken from the requiredVars.php file, with all the default content
+  @returns
+    html of final values to write to the config file
+**/
+function showFinalValues($req_vars, $session_vars) { # somebody please work on this to use css based html"
 
 $result = '';
 $result .= '<table width=100% align="right" border="1">';
-foreach ($keyVar as $fin => $finVal) {
-  if (($finVal["type"] != "commented" && $finVal["type"] != "hidden_constant" && $finVal["type"] != "hidden_scalar_int" && $finVal["type"] != "hidden_scalar") && $finVal["name"] != "database_password" && $finVal["name"] != "userhistory_systeminfo" ) {
+foreach ($req_vars as $key => $val) {
+  if (($val["type"] != "commented" && $val["type"] != "hidden_constant" && $val["type"] != "hidden_scalar_int" && $val["type"] != "hidden_scalar") && $val["name"] != "database_password" && $val["name"] != "userhistory_systeminfo" ) {
     $result .= '<tr><td width="50%">';
-    $result .= $finVal["name"];
+    $result .= $val["name"];
     $result .= ' => </td>';
-    if (!isset($request[$finVal[$value2]]) || $request[$finVal[$value2]] == $finVal["values"]) {
-    $result .= '<td width="50%"><span style="color:red;">';
-    $result .= $finVal["values"];
-    $result .= "</span></td></tr>";
+    if (!isset($session_vars[$val["name"]]) || $session_vars[$val["name"]] == $val["values"]) {
+      $result .= '<td width="50%"><span style="color:red;">';
+      $result .= $val["values"];
+      $result .= "</span></td></tr>";
     }
-/*  elseif ($finVal["type"] == "commented") {
-  $result .= '<td width="50%">';
-  $result .= 'Do not worry about this one, ;)';
-  $result .= '</td></tr>';
-  } */ // hidden_constant, Hmm maybe - Yes, it's now hidden
-    elseif (isset($request[$finVal[$value2]]) && empty($request[$finVal[$value2]])) {
-    $result .= '<td width="50%">';
-    $result .= '0';
-    $result .= "</td></tr>";
+    elseif (isset($session_vars[$val["name"]]) && empty($session_vars[$val["name"]])) {
+      $result .= '<td width="50%">';
+      $result .= '0';
+      $result .= "</td></tr>";
     } else {
-    $result .= '<td width="50%">';
-    $result .= $request[$finVal[$value2]];
-    $result .= "</td></tr>";
+      $result .= '<td width="50%">';
+      $result .= $session_vars[$val["name"]];
+      $result .= "</td></tr>";
     }
 
   }
@@ -363,6 +398,14 @@ foreach ($keyVar as $fin => $finVal) {
 $result .= '</table>';
 return $result;
 }
+
+/**
+  getNextPageForm function to show a form to the next page
+  @param $actualPage
+    string of the page to show; pages are now inside the pages.php file
+  @returns
+    prints html of the form for the next page with all the editable inputs for this page
+**/
 
 function getNextPageForm ($actualPage) { # function getNextPageForm ($actualPage, $pages)
 
@@ -488,6 +531,12 @@ function getNextPageForm ($actualPage) { # function getNextPageForm ($actualPage
   return;
 }
 
+/**
+  willNotContinue function will print an error message and won't continue with installation unless you correct what the message says
+  @returns
+    void
+**/
+
 function willNotContinue() {
   print $GLOBALS["I18N"]->get(sprintf('<div class="wrong"><br /><br />%s</div>',$GLOBALS['strReload']));
   include("install/define.php");
@@ -495,6 +544,15 @@ function willNotContinue() {
   exit;
 }
 
+/**
+  languagePack function to show select html input with all the available languages in the "texts" directory
+  @param $value
+    the name of the select attribute
+  @param $onChange
+    extra attributes for the select input, of the type onClick="doSomething"
+  @returns
+    html of the language files user can use; else the english.inc default one
+**/
 function languagePack($value = "", $onChange = "") {
 $res = '';
 $valueChange = '';
@@ -531,6 +589,13 @@ $gestor = opendir('../texts/');
 return $res;
 }
 
+/**
+  pageGetOpt function to load the message_envelope input with a default value of the type listbounces@servername
+  @param $value
+    the name of input attribute
+  @returns
+    getInput with the corrected value
+**/
 function pageGetOpt($value) {
 
 switch($value) {
@@ -544,11 +609,22 @@ switch($value) {
   break;
 }
 
-return '<input type="text" value="'.$page[0].'" name="'.$value.'"/> ';
+return getInput($value, $page[0], "text");
+#'<input type="text" value="'.$page[0].'" name="'.$value.'"/> ';
 
 }
 
-
+/**
+  Sql_Connect_Install implementation of the Sql_function for phplist, but to connect to a server without a database
+  @param $host
+    the server database's host
+  @param $user
+    username with access to the server database host
+  @param $password
+    password for the given user in $user
+  @returns
+    TRUE if it could connect to the server; else FALSE
+**/
 function Sql_Connect_Install($host,$user,$password) {
   if ($host && $user) {
     $db = mysql_connect($host, $user ,$password);
@@ -562,15 +638,33 @@ function Sql_Connect_Install($host,$user,$password) {
   }
 }
 
-
+/**
+  Sql_Create_Db function to create the database
+  @param $databaseToCreate
+    database name to create
+  @returns
+    resource of the query. TRUE if created; else FALSE
+**/
 function Sql_Create_Db ($databaseToCreate) {
-  return sql_query('CREATE DATABASE `'.$databaseToCreate.'`',$GLOBALS["database_connection"]);
+  global $database_connection;
+  return sql_query('CREATE DATABASE `'.$databaseToCreate.'`',$database_connection);
 }
-
+/**
+  Sql_Close function to close the server database connection
+  @param $connection
+    connection link resource
+  @returns
+    resource of the query. TRUE if closed; else FALSE
+**/
 function Sql_Close ($connection) {
   return mysql_close($connection);
 }
 
+/**
+  cleanSession function to unset and destroy all the session cookies
+  @returns
+    void
+**/
 function cleanSession() {
 
 /*  if (is_array($vars)) {
@@ -581,6 +675,26 @@ function cleanSession() {
     session_destroy();
 #  }
   return;
+}
+
+# deprecated function // using radio buttons
+
+function checkSessionCheckboxes() {
+  foreach ($GLOBALS["requiredVars"] as $key => $val) {
+     if (isset($_SESSION["check"]) && isset($val["type_value"]) && $val["type_value"] == "bool" && in_array($_POST[$key],explode(",",$_SESSION["check"]))) {
+      if ($val["values"] == 1) {
+        if (!isset($_POST[$key])) {
+          $_SESSION[$key] = 0; }
+        else {
+          $_SESSION[$key] = 1; }
+      } else {
+        if (empty($_POST[$key])) {
+          $_SESSION[$key] = 1; }
+        else {
+          $_SESSION[$key] = 0; }
+      }
+    }
+  }
 }
 
 ?>
