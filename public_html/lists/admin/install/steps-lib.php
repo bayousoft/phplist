@@ -253,8 +253,7 @@ function writeToConfig($session_vars, $req_vars) {
           $configInfoToWrite .= "\n";
         }
       }
-      $configInfoToWrite .= "\n\n?>";
-      $configInfoToWrite .= "\n";
+      $configInfoToWrite .= "\n\n?>\n";
       $configText = sprintf('%s',$configInfoToWrite);
       substr($configText,1);
       $myConfigFileOpen = fwrite($myConfigFile, $configText);
