@@ -165,7 +165,7 @@ function getVarForConfig($type, $name, $val, $extra = "") {
   switch ($type) {
     case "constant":
     case "hidden_constant":
-      $res .= sprintf("\ndefine(\"%s\", %s);\n", $name, $val);
+      $res .= sprintf("define(\"%s\", %s);", $name, $val);
     break;
     case "hidden_array":
       $res .= sprintf('$%s = array(', $name);
