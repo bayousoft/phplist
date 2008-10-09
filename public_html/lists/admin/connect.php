@@ -15,7 +15,7 @@ if (is_file(dirname(__FILE__) .'/../../../VERSION')) {
 define("VERSION",$version.'dev');
 
 include_once dirname(__FILE__)."/commonlib/lib/userlib.php";
-include_once dirname(__FILE__)."/commonlib/lib/debuglib.php";
+include_once dirname(__FILE__)."/commonlib/lib/bdebuglib.php";
 
 # set some variables
 if (!isset ($_GET["pi"]))
