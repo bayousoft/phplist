@@ -204,15 +204,11 @@ function getVarForConfig($type, $name, $val, $extra = "") {
 **/
 function writeToConfig($session_vars, $req_vars) {
   if (!empty($session_vars)) {
-#  $configDir = $_SERVER['DOCUMENT_ROOT'].'/lists/config';
     if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
       $nameConfigFile = $_SERVER['ConfigFile'];
     } elseif (is_file("../config/config.php")) {
       $nameConfigFile = "../config/config.php";
     }
-  
-  
-  #  $nameConfigFile = $_SERVER['DOCUMENT_ROOT'].'/lists/config/config.php';
     $myConfigFile = fopen($nameConfigFile, 'a');
     if (!isset($myConfigFile) || $myConfigFile == FALSE) {
       $myConfigFile = fopen($nameConfigFile, 'w'); // Try to open
@@ -244,13 +240,13 @@ function writeToConfig($session_vars, $req_vars) {
             case 'hidden_scalar_int' :
             $var_name = $key_name;
             $var_value = $val;
-            if ($key_name == 'error_level') {
-              break 2;
-            }
             break;
           }
           $configInfoToWrite .= getVarForConfig($req_vars[$key_name]["type"], $var_name, $var_value);
           $configInfoToWrite .= "\n";
+          if ($key_name == 'error_level') {
+            break 1;
+          }
         }
       }
       $configInfoToWrite .= "\n\n?>\n";
@@ -300,7 +296,6 @@ function checkScalarInt($session_vars, $req_vars) {
       $_SESSION[$key] = cleanVar($_SESSION[$key]);
     }
     if (isset($req_vars[$key]['values']) && is_numeric($req_vars[$key]['values'])) {
-//      $val = intval($val);
       if (!is_numeric($val) && !isset($req_vars[$key]["type_value"])) {
         $msg = $GLOBALS["I18N"]->get('<p style="color:#000fff;"><strong>'.$key.'</strong>'.$GLOBALS['strErraticValue'].'<span style="color:#f00;">'.$val.'</span><br />');
         if (preg_match('/[0-9]+/', $val, $matches)) {
