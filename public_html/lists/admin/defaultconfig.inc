@@ -1,6 +1,5 @@
 <?php
 
-
 # default configuration. These values can be changed
 # via the admin page, so you do not need to edit them here
 # they are used to initialise things

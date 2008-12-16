@@ -375,8 +375,10 @@ if ($send || $sendtest || $prepare || $save) {
   #0013076: different content when forwarding 'to a friend'
   if (FORWARD_ALTERNATIVE_CONTENT && $_GET['tab'] == 'Forward') {
     foreach( array('forwardsubject', 'forwardmessage', 'forwardfooter') as $var) {
-      Sql_Query(sprintf('replace into %s (name,id,data) values("%s",%d,"%s")',
-        $tables["messagedata"], $var, $messageid, addslashes($_REQUEST[$var])));
+      if (isset($_REQUEST[$var])) {
+        Sql_Query(sprintf('replace into %s (name,id,data) values("%s",%d,"%s")',
+          $tables["messagedata"], $var, $messageid, sql_escape($_REQUEST[$var])));
+      }
     }
   }
 

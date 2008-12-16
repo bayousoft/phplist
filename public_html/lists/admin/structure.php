@@ -443,13 +443,12 @@ if (!defined('STRUCTUREVERSION')) {
   
   );
     
-    if (sizeof($GLOBALS["plugins"])) {
+    if (!empty($GLOBALS["plugins"]) && sizeof($GLOBALS["plugins"])) {
       foreach ($GLOBALS["plugins"] as $pluginName => $plugin) {
         $DBstructphplist = array_merge($DBstructphplist, $plugin->DBstruct);
       }
     }
     
     $DBstruct = $DBstructuser  + $DBstructphplist; # order of tables is essential for smooth upgrade
-  
 }
 ?>

@@ -17,12 +17,12 @@ class phplist extends DefaultPlugin {
     $GLOBALS["table_prefix"] = 'phplist_';
 
     if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
-      include $_SERVER["ConfigFile"];
+      include_once $_SERVER["ConfigFile"];
       $this->message_envelope = $message_envelope;
       $this->developer_email = $developer_email;
       $this->table_prefix = $table_prefix;
     }
-    include $config["code_root"]."/uploader/plugins/phplist/".$this->coderoot()."/structure.php";
+    require_once $config["code_root"]."/uploader/plugins/phplist/".$this->coderoot()."/structure.php";
     $this->DBstructure = $DBstruct;
 
     $this->tables = array(
@@ -448,7 +448,7 @@ class phplist extends DefaultPlugin {
     global $config,$tables;
     $doit = "yes";
     $tables = $this->tables;
-    include $config["code_root"].'/'.$config["uploader_dir"].'/plugins/phplist/'.$this->coderoot()."/upgrade.php";
+    include_once $config["code_root"].'/'.$config["uploader_dir"].'/plugins/phplist/'.$this->coderoot()."/upgrade.php";
   }
 
   function version() {
