@@ -44,10 +44,12 @@ if (!empty($GLOBALS["SessionTableName"])) {
   include_once dirname(__FILE__)."/sessionlib.php";
 }
 
-if (!isset($table_prefix))
+if (!isset($table_prefix)) {
   $table_prefix = "";
-if (!isset($usertable_prefix))
+}
+if (!isset($usertable_prefix)) {
   $usertable_prefix = $table_prefix;
+}
 
 // Will be build from from structure.php by the code further below
 //$tables = array(
@@ -1166,5 +1168,37 @@ function trimArray($array) {
 
 register_shutdown_function("phplist_shutdown");
 
+function secs2time($secs) {
+  $years = $days = $hours = $mins = 0;
+  $hours = (int)($secs / 3600);
+  if ($hours > 24) {
+    $days = (int)($hours / 24);
+    $hours = $hours - (24 * $days);
+  }
+  if ($days > 365) { ## a well, an estimate
+    $years = (int) ($days / 365);
+    $days = $days - ($years * 365);
+  }
+  $mins = (int)($secs % 60);
+  $secs = (int)($secs - $hours * 3600 - $mins * 60);
+
+  $res = '';
+  if ($years) {
+    $res .= $years .' years';
+  }
+  if ($days) {
+    $res .= ' '.$days .' days';
+  }
+  if ($hours) {
+    $res .= ' '.$hours . " hours";
+  }
+  if ($mins) {
+    $res .= " ".$mins . " mins";
+  }
+  if ($secs) {
+    $res .= " ".$secs . " secs";
+  }
+  return $res;
+}
 
 ?>
