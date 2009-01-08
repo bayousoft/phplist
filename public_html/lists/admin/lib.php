@@ -5,7 +5,6 @@ require_once dirname(__FILE__)."/accesscheck.php";
 
 #error_reporting(63);
 
-
 $domain = getConfig("domain");
 $website = getConfig("website");
 if (!$GLOBALS["message_envelope"]) {
@@ -44,6 +43,7 @@ if( !isset($GLOBALS["developer_email"]) ) {
   ini_set('error_prepend_string','<P><font color=red style=\"{font-size: 12px}\">Sorry a software error occurred:</font><br/>
     Please <a href="http://mantis.phplist.com">report a bug</a> when reporting the bug, please include URL and the entire content of this page.<br/>');
 }
+
 function listName($id) {
   global $tables;
   $req = Sql_Fetch_Row_Query(sprintf('select name from %s where id = %d',$tables["list"],$id));
@@ -760,7 +760,7 @@ function cleanUrl($url,$disallowed_params = array('PHPSESSID')) {
   return $uri;
 }
 
-function adminName($id) {
+function adminName($id = 0) {
   if (!$id) {
     $id = $_SESSION["logindetails"]["id"];
   }

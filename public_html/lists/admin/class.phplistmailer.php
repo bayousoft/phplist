@@ -24,7 +24,7 @@ class PHPlistMailer extends PHPMailer {
 
     function PHPlistMailer($messageid,$email) {
     #  parent::PHPMailer();
-      parent::SetLanguage('en','phpmailer/language/');
+      parent::SetLanguage('en', dirname(__FILE__) . 'phpmailer/language/');
       $this->addCustomHeader("X-Mailer: phplist v".VERSION);
       $this->addCustomHeader("X-MessageID: $messageid");
       $this->addCustomHeader("X-ListMember: $email");
@@ -71,7 +71,7 @@ class PHPlistMailer extends PHPMailer {
       $this->find_html_images($templateid);
     }
 
-    function add_received()
+    function add_timestamp()
     {
       #0013076: Yellow Moon Baker Ross - New phpList Development
       # Add a line like Received: from [10.1.2.3] by website.example.com with HTTP; 01 Jan 2003 12:34:56 -0000
@@ -84,8 +84,8 @@ class PHPlistMailer extends PHPMailer {
       }
       $hostname = $_SERVER["HTTP_HOST"];
       $request_time = date('r',$_SERVER['REQUEST_TIME']);
-      $receivedstring = "Received: from $ip_domain [$ip_address] by $hostname with HTTP; $request_time";
-    	$this->addCustomHeader($receivedstring);      
+      $sTimeStamp = "from $ip_domain [$ip_address] by $hostname with HTTP; $request_time";
+    	$this->addTimeStamp($sTimeStamp);      
     }
     
     

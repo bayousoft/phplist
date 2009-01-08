@@ -88,17 +88,17 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     $cached[$messageid]["fromname"] = trim($cached[$messageid]["fromname"]);
     $cached[$messageid]["to"] = $message["tofield"];
     #0013076: different content when forwarding 'to a friend'
-    $cached[$messageid]["subject"] = $forwardContent ? $messagedata["forwardsubject"] : $message["subject"];
+    $cached[$messageid]["subject"] = $forwardContent ? stripslashes($messagedata["forwardsubject"]) : $message["subject"];
     $cached[$messageid]["replyto"] =$message["replyto"];
     #0013076: different content when forwarding 'to a friend'
-    $cached[$messageid]["content"] = $forwardContent ? $messagedata["forwardmessage"] : $message["message"];
+    $cached[$messageid]["content"] = $forwardContent ? stripslashes($messagedata["forwardmessage"]) : $message["message"];
     if (USE_MANUAL_TEXT_PART && !$forwardContent) {
       $cached[$messageid]["textcontent"] = $message["textmessage"];
     } else {
       $cached[$messageid]["textcontent"] = '';
     }
     #0013076: different content when forwarding 'to a friend'
-    $cached[$messageid]["footer"] = $forwardContent ? $messagedata["forwardfooter"] : $message["footer"];
+    $cached[$messageid]["footer"] = $forwardContent ? stripslashes($messagedata["forwardfooter"]) : $message["footer"];
     $cached[$messageid]["htmlformatted"] = $message["htmlformatted"];
     $cached[$messageid]["sendformat"] = $message["sendformat"];
     if ($message["template"]) {
@@ -151,6 +151,12 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   $text["blacklist"] = sprintf('%s%semail=%s',$url,$sep,$email);
   $html["blacklisturl"] = sprintf('%s%semail=%s',$url,$sep,$email);
   $text["blacklisturl"] = sprintf('%s%semail=%s',$url,$sep,$email);
+
+  #0013076: Problem found during testing: mesage part must be parsed correctly as well.  
+  if ($forwardContent) {
+    $html["unsubscribe"] = $html["blacklist"];
+    $text["unsubscribe"] = $text["blacklist"];
+  }
   
   $url = getConfig("subscribeurl");$sep = ereg('\?',$url)?'&':'?';
   $html["subscribe"] = sprintf('<a href="%s">%s</a>',$url,$strThisLink);
@@ -165,7 +171,8 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   $text["forwardurl"] = $text["forward"];
   $html["messageid"] = sprintf('%d',$messageid);
   $text["messageid"] = sprintf('%d',$messageid);
-  $url = getConfig("public_baseurl");
+  $url = getConfig("forwardurl");
+
   # make sure there are no newlines, otherwise they get turned into <br/>s
   $html["forwardform"] = sprintf('<form method="get" action="%s" name="forwardform" class="forwardform"><input type=hidden name="uid" value="%s" /><input type=hidden name="mid" value="%d" /><input type=hidden name="p" value="forward" /><input type=text name="email" value="" class="forwardinput" /><input name="Send" type="submit" value="%s" class="forwardsubmit"/></form>',$url,$hash,$messageid,$GLOBALS['strForward']);
   $text["signature"] = "\n\n-- Powered by PHPlist, www.phplist.com --\n\n";
@@ -265,11 +272,11 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   ### @@@TODO don't use forward and forward form in a forwarded message as it'll fail
 
   #0013076: Blacklisting posibility for unknown users
-  foreach (array("forwardform","forward","subscribe","preferences","unsubscribe","signature", 'blacklist') as $item) {
+  foreach (array("forwardform","subscribe","preferences","unsubscribe","signature", 'blacklist') as $item) {
     # hmm str_ireplace and stripos would be faster, presumably, but that's php5 only
     if (PHP5) {
       if (stripos($htmlmessage,'['.$item.']')) {
-        $htmlmessage = str_ireplace('\['.$item.'\]',$html[$item],$htmlmessage);
+        $htmlmessage = str_ireplace('['.$item.']',$html[$item],$htmlmessage);
         unset($html[$item]); # @@@ not sure, it allows only using any item once, which may not be desired
       }
       if (stripos($textmessage,'['.$item.']')) {
@@ -289,7 +296,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   }
   #0013076: Blacklisting posibility for unknown users
 
-   foreach (array("forwardurl","subscribeurl","preferencesurl","unsubscribeurl",'blacklisturl') as $item) {
+   foreach (array("forward","forwardurl","subscribeurl","preferencesurl","unsubscribeurl",'blacklisturl') as $item) {
     if (PHP5) {
       if (stripos($htmlmessage,'['.$item.']')) {
         $htmlmessage = str_ireplace('['.$item.']',$html[$item],$htmlmessage);
@@ -312,7 +319,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   } else {
     #0013076: different content when forwarding 'to a friend'
     if( FORWARD_ALTERNATIVE_CONTENT ) {
-      $text['footer'] = $messagedata["forwardfooter"];
+      $text['footer'] = stripslashes($messagedata["forwardfooter"]);
     } else {
       $text['footer'] = getConfig('forwardfooter');
     }
@@ -331,6 +338,8 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     $html["footer"] = eregi_replace("\[FORWARDFORM\]",$html["forwardform"],$html["footer"]);
   }
   if (sizeof($forwardedby) && isset($forwardedby['email'])) {
+    $htmlmessage    = eregi_replace("\[FORWARDEDBY]",$forwardedby["email"],$htmlmessage);
+    $textmessage    = eregi_replace("\[FORWARDEDBY]",$forwardedby["email"],$textmessage);
     $html["footer"] = eregi_replace("\[FORWARDEDBY]",$forwardedby["email"],$html["footer"]);
     $text["footer"] = eregi_replace("\[FORWARDEDBY]",$forwardedby["email"],$text["footer"]);
     $text["footer"] = eregi_replace("\[BLACKLIST\]",$text["blacklist"],$text['footer']);
@@ -728,7 +737,7 @@ if (0) {
   } else {
     $mail = new PHPlistMailer($messageid,$destinationemail);
     if ($forwardedby) {
-      $mail->add_received();
+      $mail->add_timestamp();
     }
     #$mail->IsSMTP();
     $mail->addCustomHeader("List-Help: <".$text["preferences"].">");

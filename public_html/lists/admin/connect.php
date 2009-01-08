@@ -756,40 +756,9 @@ function upgradeTable2($table,$tablestructure) {
     unlink("$tmpdir/$filename");
 }
 
-
 function Help($topic,$text = '?') {
   return sprintf('<a href="javascript:help(\'help/?topic=%s\')">%s</a>',$topic,$text);
 }
-
-//function dbg($msg) {
-//  # bit of shorthand
-//  Debug($msg);
-//}
-
-### moved to debuglib
-// function dbg($variable, $description = 'Value', $table_started = 0) {
-// 	# WARNING recursive
-//
-// 	if (isset ($GLOBALS["developer_email"])) {
-// 		if (!$table_started)
-// 			echo "<ul type='circle' style='border:1px solid #a0a0a0;padding-bottom:4px;padding-right:4px'>\n<li>{" . getenv("REQUEST_URI") . "} ";
-// 		echo "<i>$description</i>: ";
-// 		if (is_array($variable)) {
-// 			echo "(array)[" . count($variable) . "]";
-// 			echo "<ul type='circle' style='border:1px solid #a0a0a0;padding-bottom:4px;padding-right:4px'>\n";
-// 			foreach ($variable as $key => $value) {
-// 				echo "<li>\"{$key}\" => ";
-// 				dbg($value, '', TRUE);
-// 				echo "</li>\n";
-// 			}
-// 			echo "</ul>\n";
-// 		} else
-// 			echo "(" . gettype($variable) . ") '{$variable}'\n";
-// 		if (!$table_started)
-// 			echo "</li></ul>\n";
-// 	}
-// }
-
 #
 #
 function PageData($id) {

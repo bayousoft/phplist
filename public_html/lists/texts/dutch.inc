@@ -107,12 +107,14 @@ $strUserExists   = '<br/>Een gebruiker met deze email bestaat reeds en onze best
 $strUserExistsExplanationStart = '<br/>Om uw wachtwoord te verkrijgen, klik';
 $strUserExistsExplanationLink = 'hier';
 $strUserExistsExplanationEnd = ' om naar de pagina te gaan waar u uw persoonlijke locatie kunt aanvragen';
+$strExplainBlacklist = 'De email die u hier invult wordt vastgelegd in onze database met als enig doel het blokkeren van verder emails naar dit adres.';
 $strForwardTitle = 'Stuur een bericht door aan iemand';
 $strForwardSubtitle = 'Bericht wordt doorgestuurd met volgend onderwerp';
 $strForwardEnterEmail = 'Geef aub een geldig email adres om het bericht naar door te sturen';
 $strForwardSuccessInfo ='Het bericht is doorgestuurd';
 $strForwardFailInfo = 'Het doorsturen van het bericht is mislukt';
-$strForwardAlreadyDone = 'Dit bericht is als met succes doorgestuurd naar dat adres';
+$strForwardBlacklistedEmail = 'Ontvanger heeft verzocht geen mail te ontvangen van dit systeem.';
+$strForwardAlreadyDone = 'Dit bericht is al met succes doorgestuurd naar dat adres';
 $strForwardFooter = 'Dit bericht is doorgestuurd naar u door [FORWARDEDBY].
   U bent niet automatisch toegevoegd aan onze nieuwsbrief.
   Om je in te schrijven voor deze nieuwsbrief, ga naar';

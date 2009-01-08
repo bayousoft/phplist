@@ -708,9 +708,9 @@ $messagedata = loadMessageData($id);
 if (FORWARD_ALTERNATIVE_CONTENT) {
   foreach( array('forwardsubject', 'forwardmessage', 'forwardfooter') as $var) {
   	if (isset($_REQUEST[$var])) {
-      ${$var} = $_REQUEST[$var];
+      ${$var} = stripslashes($_REQUEST[$var]);
     } else {
-      ${$var} = $messagedata[$var];
+      ${$var} = stripslashes($messagedata[$var]);
     }
   }
   if (!$forwardfooter)

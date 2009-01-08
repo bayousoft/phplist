@@ -206,10 +206,14 @@ if(isset($_REQUEST['import'])) {
           // Create unique number
           mt_srand((double)microtime()*1000000);
           $randval = mt_rand();
-          include_once "userlib.php";
+          include_once dirname(__FILE__)."/commonlib/lib/userlib.php";
           $uniqid = getUniqid();
 
+/*<<<<<<< .working
       $query = sprintf('INSERT INTO %s (email,entered,confirmed,uniqid,htmlemail) values("%s",current_timestamp,%d,"%s","%s")',
+=======*/
+          $query = sprintf('INSERT INTO %s (email,entered,confirmed,uniqid,htmlemail) values("%s",now(),%d,"%s","%s")',
+// >>>>>>> .merge-right.r1462
           $tables["user"],$email,$notify != "yes",$uniqid,$htmlemail);
           $result = Sql_query($query);
           $userid = Sql_Insert_Id($tables['user'], 'id');
@@ -234,10 +238,14 @@ if(isset($_REQUEST['import'])) {
           $result = Sql_query($query);
           # if the affected rows is 2, the user was already subscribed
           $addition = $addition || Sql_Affected_Rows() == 1;
-          $listoflists .= "  * ".$listname[$key]."\n";
+          if (!empty($_POST['listname'][$key])) {
+            $listoflists .= "  * ".$_POST['listname'][$key]."\n";
+          }
         }
-        if ($addition)
+        if ($addition) {
           $additional_emails++;
+        }
+
         $subscribemessage = ereg_replace('\[LISTS\]', $listoflists, getUserConfig("subscribemessage",$userid));
         if (!TEST && $notify == "yes" && $addition) {
           sendMail($email, getConfig("subscribesubject"), $subscribemessage,system_messageheaders(),$envelope);

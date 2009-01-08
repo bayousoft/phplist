@@ -301,5 +301,4 @@ function Sql_Set_Search_Path($searchpath) {
   return;
 }
 
-
 ?>

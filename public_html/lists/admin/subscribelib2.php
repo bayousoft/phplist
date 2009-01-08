@@ -29,8 +29,16 @@ function validateRssFrequency($freq = '') {
 $allthere = 1;
 $subscribepagedata = PageData($id);
 if (isset($subscribepagedata['language_file']) && is_file(dirname(__FILE__).'/../texts/'.$subscribepagedata['language_file'])) {
-  @include dirname(__FILE__).'/../texts/'.$subscribepagedata['language_file'];
+  @include_once dirname(__FILE__).'/../texts/'.$subscribepagedata['language_file'];
 }
+# Allow customisation per installation
+if (is_file($_SERVER['DOCUMENT_ROOT'].'/'.$GLOBALS["language_module"])) {
+  include_once $_SERVER['DOCUMENT_ROOT'].'/'.$GLOBALS["language_module"];
+}
+if (is_file($_SERVER['DOCUMENT_ROOT'].'/'.$data['language_file'])) {
+  include_once $_SERVER['DOCUMENT_ROOT'].'/'.$data['language_file'];
+}
+
 $required = array();   # id's of missing attribbutes
 if (sizeof($subscribepagedata)) {
   $attributes = explode('+',$subscribepagedata["attributes"]);
@@ -321,6 +329,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
   $blacklisted = isBlackListed($email);
   if ($blacklisted) {
     $thankyoupage .= '<p>'.$GLOBALS["strYouAreBlacklisted"].'</p>';
+    return 1;
   }
   if ($sendrequest && $listsok) { #is_array($_POST["list"])) {
     if (sendMail($email, getConfig("subscribesubject:$id"), $subscribemessage,system_messageheaders($email),$envelope,1)) {
@@ -592,7 +601,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
   print "<P>".$PoweredBy.'</p>';
   print $subscribepagedata["footer"];
   // exit;
-  // Instead of exiting here, we return 2. So in lists/index.php
+  // Instead of exiting here, we return 3. So in lists/index.php
   // We can decide, whether to show preferences page or not.
   ## mantis issue 6508
   return 3; 
@@ -721,7 +730,7 @@ $html .= sprintf('
   <tr><td><div class="required">%s</div></td>
   <td class="attributeinput"><input type=text name=emailconfirm value="%s" size="%d">
   <script language="Javascript" type="text/javascript">addFieldToCheck("emailconfirm","%s");</script></td></tr>',
-  $GLOBALS["strConfirmEmail"],htmlspecialchars(stripslashes($_REQUEST["emailconfirm"])),$textlinewidth, $GLOBALS["$strConfirmEmail"]);
+  $GLOBALS["strConfirmEmail"],htmlspecialchars(stripslashes($_REQUEST["emailconfirm"])),$textlinewidth, $GLOBALS["strConfirmEmail"]);
 }
 // BPM 12 May 2004 - Finish
 

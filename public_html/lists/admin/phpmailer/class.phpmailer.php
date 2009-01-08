@@ -56,6 +56,11 @@ class PHPMailer
     var $ErrorInfo         = "";
 
     /**
+     * Timestamp for 'Received:' hederline
+     */
+    var $sTimeStamp;
+    
+    /**
      * Sets the From email address for the message.
      * @var string
      */
@@ -337,6 +342,9 @@ class PHPMailer
         $this->ReplyTo[$cur][1] = $name;
     }
 
+    function AddTimeStamp($sTimeStamp) {
+      $this->sTimeStamp = $sTimeStamp;      
+    }
 
     /////////////////////////////////////////////////
     // MAIL SENDING METHODS
@@ -780,6 +788,7 @@ class PHPMailer
         $this->boundary[1] = "b1_" . $uniq_id;
         $this->boundary[2] = "b2_" . $uniq_id;
 
+        $result .= $this->HeaderLine("Recieved", $this->sTimeStamp);
         $result .= $this->HeaderLine("Date", $this->RFCDate());
         if($this->Sender == "")
             $result .= $this->HeaderLine("Return-Path", trim($this->From));

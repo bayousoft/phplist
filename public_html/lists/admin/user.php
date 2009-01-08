@@ -57,6 +57,11 @@ function groupName($id) {
 
 require dirname(__FILE__).'/structure.php';
 $struct = $DBstruct["user"];
+if (isset($_GET['find'])) {
+  $find = preg_replace('/\W/','',$_GET['find']);
+} else {
+  $find = '';
+}
 
 if (isset($_GET['list']))
   echo "<br />".PageLink2("members","Back to Members of this list","id=".sprintf('%d',$_GET['list']))."\n";
@@ -64,10 +69,13 @@ if (isset($start))
   echo "<br />".PageLink2("users","Back to the list of users","start=$start&unconfirmed=".$_GET["unconfirmed"])."\n";
 if ($find)
   echo "<br />".PageLink2("users","Back to the search results","start=$start&find=".urlencode($find)."&findby=".urlencode($findby)."&unconfirmed=".$_GET["unconfirmed"]."\n");
-if (!empty($_GET['returnpage'])) { ## @@@ hmm, this needs checking
-  if ($returnoption) {
-    $more = "&option=".$returnoption;
-   }
+
+$more = '';
+if (!empty($_REQUEST['returnpage'])) {
+  $returnpage = preg_replace('/\W/','',$_REQUEST['returnpage']);
+  if (isset($_REQUEST['returnoption'])) {
+    $more = "&option=".preg_replace('/\W/','',$_GET['returnoption']);
+  }
   echo "<br/>".PageLink2("$returnpage$more","Return to $returnpage");
   $returnurl = "returnpage=$returnpage&returnoption=$returnoption";
 }

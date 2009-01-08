@@ -16,6 +16,8 @@ if (!ini_get("register_globals") || ini_get("register_globals") == "off") {
     $$key = $val;
   }
 }
+
+$cline = array();
 require_once dirname(__FILE__) .'/commonlib/lib/magic_quotes.php';
 
 # setup commandline
