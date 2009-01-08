@@ -112,9 +112,7 @@ class phplistPlugin {
         return $html;
     }
   }
-  # abstract method to be overriden
-  function displayUsers($user, $email, $listing){
-  }
+
 
   ############################################################
   # Main interface hooks
