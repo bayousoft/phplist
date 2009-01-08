@@ -2,6 +2,12 @@
 <script language="Javascript" src="js/jslib.js" type="text/javascript"></script>
 
 <?php
+#Variable initialisation to avoid PHP notices.
+if (isset($_GET['admin']))
+	$admin = (int) $_GET['admin'];
+else
+	$admin = 0;
+
 require_once dirname(__FILE__).'/accesscheck.php';
 
 $start = sprintf('%d',!empty($_GET['start'])?$_GET['start']:0);
@@ -12,6 +18,16 @@ $struct = $DBstruct["admin"];
 $id = !empty($_REQUEST["id"]) ? sprintf('%d',$_REQUEST["id"]) : 0;
 
 echo "<hr /><br />";
+
+#Update password?
+if (isset($_POST['update']) && isset($_POST['id'])){
+  if ($_POST['update']=="1"){
+  	$adminId = $_POST['id'];
+  	sendPasswordMailTo($_POST['id'], $_POST['email']);
+   	print $GLOBALS['I18N']->get("An email was sent to your address. This will allow you to change your password").".<BR></BR>";
+ }
+}
+
 $noaccess = 0;
 $accesslevel = accessLevel("admin");
 switch ($accesslevel) {
@@ -53,7 +69,13 @@ if (!empty($_POST["change"])) {
       if (strstr($val[1],':'))
         list($a,$b) = explode(":",$val[1]);
       if ($a != "sys" && isset($_POST[$key]))
-        Sql_Query("update {$tables["admin"]} set $key = \"".addslashes($_POST[$key])."\" where id = $id");
+      #if the key is 'password', check if it needs to be encrypted.
+        if ($key == 'password' && ENCRYPT_PASSWORDS==1) {
+          $encryptedkey = md5($_POST[$key]);
+          Sql_Query("update {$tables["admin"]} set $key = \"".addslashes($encryptedkey)."\" where id = $id");          
+        }
+        else
+          Sql_Query("update {$tables["admin"]} set $key = \"".addslashes($_POST[$key])."\" where id = $id");
     }
     if (is_array($_POST["attribute"]))
       while (list($key,$val) = each ($_POST["attribute"])) {
@@ -123,17 +145,28 @@ while (list ($key,$val) = each ($struct)) {
   if (empty($data[$key])) $data[$key] = '';
   if (strstr($val[1],':'))
     list($a,$b) = explode(":",$val[1]);
-  if ($a == "sys")
+  if ($a == "sys") {
+  	#If key is 'password', locate two radio buttons to allow an update.
+  	if ($b == 'Password') {
+  		printf('<tr><td>%s (%s)</td><td>%s<input type=radio name="update" value=\'0\' checked>%s</input><input type=radio name="update" value=\'1\'>%s</input></td></tr>', $GLOBALS['I18N']->get('Password'), $GLOBALS['I18N']->get('hidden'), $GLOBALS['I18N']->get('Update it?'), $GLOBALS['I18N']->get('No'), $GLOBALS['I18N']->get('Yes'));
+  	} else {
     printf('<tr><td>%s</td><td>%s</td></tr>',$GLOBALS['I18N']->get($b),$data[$key]);
-  elseif ($key == "loginname" && $data[$key] == "admin") {
+    }
+  } elseif ($key == "loginname" && $data[$key] == "admin") {
     printf('<tr><td>'.$GLOBALS['I18N']->get('Login Name').'</td><td>admin</td></tr>');
     print('<input type=hidden name="loginname" value="admin">');
-  } elseif ($key == "superuser" || $key == "disabled") {
-    if ($accesslevel == "all") {
-      printf('<tr><td>%s</td><td><input type="text" name="%s" value="%s" size=30></td></tr>'."\n",$GLOBALS['I18N']->get($val[1]),$key,stripslashes($data[$key]));
-    }
+  } 
+  	elseif ($key == "superuser" || $key == "disabled") {
+      if ($accesslevel == "all") {
+      	#If key is 'superuser' or 'disable' locate a boolean combo box.
+        printf('<tr><td>%s</td><td>', $GLOBALS['I18N']->get($val[1]));
+	    printf('<select name="%s" size="1">', $key);
+	    print('<option value="1" '.(!empty($data[$key])?' selected':'').'>'.$GLOBALS['I18N']->get('Yes').'</option>');
+	    print('<option value="0" '.(empty($data[$key])?' selected':'').'>'.$GLOBALS['I18N']->get('No').'</option></select>');
+		print('</td></tr>'."\n");
+      }
   } elseif (!empty($val[1]) && !strpos($key,'_')) {
-    printf('<tr><td>%s</td><td><input type="text" name="%s" value="%s" size=30></td></tr>'."\n",$GLOBALS['I18N']->get($val[1]),$key,stripslashes($data[$key]));
+      printf('<tr><td>%s</td><td><input type="text" name="%s" value="%s" size=30></td></tr>'."\n",$GLOBALS['I18N']->get($val[1]),$key,stripslashes($data[$key]));
   }
 }
 $res = Sql_Query("select

@@ -96,6 +96,34 @@ function HTMLselect ($name, $table, $column, $value) {
   return $res;
 }
 
+#Send email with a random encrypted token.
+function sendPasswordMailTo ($adminId, $email){
+  #Retrieve the admin login name.
+  $SQLquery = sprintf('select loginname from %s where id=%d;', $GLOBALS['tables']['admin'], $adminId);
+  $row = Sql_Fetch_Row_Query($SQLquery);
+  $adminName = $row[0];
+  $msg = $GLOBALS['I18N']->get('A new e-mail has been sent to your address.');	
+  #Check if the token is not present in the database yet.  
+  while(1){
+    #Randomize the token to be encrypted and insert it into the db.
+    $date = date("U"); $random = rand(1, $date);
+    $key = md5($date ^ $random);
+  	$SQLquery = sprintf("select * from %s where key_value = '%s'", $GLOBALS['tables']['admin_password_request'], $key);
+  	$row = Sql_Fetch_Row_Query($SQLquery);
+  	//echo "<script text='javascript'>alert('".($row[0]=='')."');</script>";
+  	if($row[0]=='') break;
+  }
+  $query = sprintf("insert into %s(date, admin, key_value) values (now(), %d, '%s');", $GLOBALS['tables']['admin_password_request'], $adminId, $key);
+  Sql_Query($query);
+  #Build the email body to be sent, and finally send it.
+  $emailBody = $GLOBALS['I18N']->get('Hello, '.$adminName)."\n\n";
+  $emailBody.= $GLOBALS['I18N']->get('You have requested a new password at PHPList.')."\n\n";
+  $emailBody.= $GLOBALS['I18N']->get('To enter a new one, please visit the following link:')."\n\n";
+  $emailBody.= sprintf('http://phplist-dev.local/lists/admin/?page=login&token=%s', $key)."\n\n";
+  $emailBody.= $GLOBALS['I18N']->get('You have 24 hours left to change your password. After that, your token won\'t be valid.');
+  sendMail ($email, $GLOBALS['I18N']->get('New password'), "\n\n".$emailBody);
+}
+
 function sendMail ($to,$subject,$message,$header = "",$parameters = "",$skipblacklistcheck = 0) {
   if (TEST)
     return 1;

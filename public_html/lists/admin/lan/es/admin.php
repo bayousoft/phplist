@@ -32,6 +32,8 @@ $lan = array(
   permisos actual como configuraci&oacute;n por defecto',
 'Done' => 'Listo',
 'OK' => 'OK',
+'Yes' => 'Si',
+'No' => 'No',
 'Deleting' => 'Borrando',
 'Login Name (max 25 chars)' => 'Nombre de usuario (m&aacute;ximo 25 caracteres)',
 'Access Details' => 'Ver detalles',

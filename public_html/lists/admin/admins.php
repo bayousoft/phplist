@@ -3,6 +3,20 @@
 <hr>
 
 <?php
+#Variable initialisation to avoid PHP notices.
+if (isset($_GET['start']))
+	$start = (int) $_GET['start'];
+else
+	$start = 0;
+if (isset($_GET['remember_find']))
+	$remember_find = (string) $_GET['remember_find'];
+else
+	$remember_find = '';
+if (isset($_GET['find']))
+	$find = (int) $_GET['find'];
+else
+	$find = 0;
+	
 require_once dirname(__FILE__).'/accesscheck.php';
 $external = $require_login && $GLOBALS["admin_auth_module"] != 'phplist_auth.inc';
 

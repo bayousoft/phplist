@@ -252,7 +252,7 @@ if (!defined('STRUCTUREVERSION')) {
           "created" => array("datetime","sys:Time Created"),
           "modified" => array("timestamp","sys:Time modified"),
           "modifiedby" => array("varchar(25)","sys:Modified by"),
-          "password" => array("varchar(255)","Password"),
+          "password" => array("varchar(255)","sys:Password"),
           "passwordchanged" => array("date","sys:Last time password was changed"),
           "superuser" => array("tinyint default 0","Is this user Super Admin?"),
           "disabled" => array("tinyint default 0","Is this account disabled?"),
@@ -273,6 +273,12 @@ if (!defined('STRUCTUREVERSION')) {
           "adminid" => array("integer not null","id of admin"),
           "value" => array("varchar(255)","Value of this attribute for this admin"),
           "primary key" => array("(adminattributeid,adminid)","PKey")
+      ),
+      "admin_password_request" => array( # password changes
+          "id_key" => array ("integer not null primary key auto_increment", "Id"),
+          "date" => array ("datetime", "When the password change request was made"),
+          "admin" => array ("integer", "Admin's Id"),
+          "key_value" => array ("varchar (32) not null", "Key")
       ),
       "task" => array(
           "id" => array("integer not null primary key auto_increment","ID"),

@@ -209,6 +209,16 @@ if (isset($GLOBALS["require_login"]) && $GLOBALS["require_login"]) {
         $page = $_POST["page"];
       }
     }
+  #If passwords are encrypted and a password recovery request was made, send mail to the admin of the given email address.
+  } elseif (ENCRYPT_PASSWORDS && isset($_REQUEST["forgotpassword"])){
+  	  $adminId = $GLOBALS["admin_auth"]->adminIdForEmail($_REQUEST['forgotpassword']);
+      if($adminId){
+      	sendPasswordMailTo($adminId, $_REQUEST["forgotpassword"]);
+      	$msg = $GLOBALS['I18N']->get('An email was sent to your address.');
+      } else {
+      	$msg = $GLOBALS['I18N']->get('cannotsendpassword');
+      }
+      $page = "login";
   } elseif (isset($_REQUEST["forgotpassword"])) {
     $pass = $GLOBALS["admin_auth"]->getPassword($_REQUEST["forgotpassword"]);
     if ($pass) {
