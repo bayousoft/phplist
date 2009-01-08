@@ -1,21 +1,22 @@
 #!/bin/bash
 DATE=`date +"%Y-%m-%d %H:%M"`;
-CVSROOT=:ext:basovink@phplist.cvs.sourceforge.net:/cvsroot/phplist
+
+## THIS NEEDS UPDATING FOR CHANGE TO SUBVERSION
+exit;
 
 #cvs2cl.pl --prune -r -t --hide-filenames
 if [ -f BRANCH ]; then
   . BRANCH
-  cvs -d$CVSROOT log -r$BRANCH >> cvslog
+  cvs log -r$BRANCH >> cvslog
 else 
-  cvs -d$CVSROOT log >> cvslog
+  cvs log >> cvslog
 fi
-#cvs2cl.pl -F phplist-version-2-10-x --prune -t --hide-filenames --stdin < cvslog
-./scripts/cvs2cl.pl --prune -b -r -t --hide-filenames --stdin < cvslog
-echo "Changelog for phplist $BRANCH $DATE" > cl
-echo >> cl
-cat ChangeLog >> cl
-mv -f cl ChangeLog
-#rm -f cvslog
+scripts/cvs2cl.pl -F phplist-version-2-10-x --prune -t --hide-filenames --stdin < cvslog
+echo "Changelog for phplist $BRANCH $DATE" > ChangeLog
+echo >> ChangeLog
+cat cvslognice changelog.presf >> ChangeLog
+rm -f cvslognice
+rm -f cvslog
 # make one for languages as well
 
 exit;
