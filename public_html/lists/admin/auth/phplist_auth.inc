@@ -12,20 +12,25 @@ class admin_auth {
     $query = sprintf($query, $GLOBALS['tables']['admin']);
     $req = Sql_Query_Params($query, array($login));
     $admindata = Sql_Fetch_Array($req);
+    $encryptedPass = md5($password);
+    $passwordDB = $admindata[0];    
     #Password encryption verification.
-    if(ENCRYPT_PASSWORDS==1 && (strlen($admindata[0])<32)) { //Passwords are encrypted but the actual is not.
-      #Encrypt the actual password in the DB before performing the validation below.
-      $encryptedPass = md5($password);
+    if(ENCRYPT_PASSWORDS==1 && (strlen($passwordDB)<32)) { //Passwords are encrypted but the actual is not.
+      #Encrypt the actual DB password before performing the validation below.
+      $encryptedPassDB = md5($passwordDB);
       $query = "update %s set password = '%s' where loginname = ?";
-      $query = sprintf($query, $GLOBALS['tables']['admin'], $encryptedPass);
+      $query = sprintf($query, $GLOBALS['tables']['admin'], $encryptedPassDB);
+      $passwordDB = $encryptedPassDB;
       $req = Sql_Query_Params($query, array($login));
     }
+    else if (strlen($passwordDB)==32) {
+    	$encryptedPassDB = $passwordDB;
+	}
     if ($admindata["disabled"]) {
       return array(0,"your account has been disabled");
-        #Password validation.
-    } elseif (
-      (ENCRYPT_PASSWORDS && $admindata[0] && $admindata[0] == md5($password)) ||
-   	  (!ENCRYPT_PASSWORDS && $admindata[0] && $admindata[0] == $password)) {
+    } elseif (#Password validation.
+      (ENCRYPT_PASSWORDS && $passwordDB && $encryptedPass == $encryptedPassDB) ||
+   	  (!ENCRYPT_PASSWORDS && $passwordDB && $password == $passwordDB)) {
       return array($admindata["id"],"OK");
     } else {
       return array(0,"invalid password");

@@ -19,15 +19,6 @@ $id = !empty($_REQUEST["id"]) ? sprintf('%d',$_REQUEST["id"]) : 0;
 
 echo "<hr /><br />";
 
-#Update password?
-if (isset($_POST['update']) && isset($_POST['id'])){
-  if ($_POST['update']=="1"){
-  	$adminId = $_POST['id'];
-  	sendPasswordMailTo($_POST['id'], $_POST['email']);
-   	print $GLOBALS['I18N']->get("An email was sent to your address. This will allow you to change your password").".<BR></BR>";
- }
-}
-
 $noaccess = 0;
 $accesslevel = accessLevel("admin");
 switch ($accesslevel) {
@@ -44,6 +35,23 @@ if ($noaccess) {
   return;
 }
 
+#Update password?
+if (isset($_POST['update']) && $_POST['update'] && isset($id)){
+  $adminId = $id;
+  if (ENCRYPT_PASSWORDS){
+  	//Send token email.
+  	sendPasswordMailTo($_POST['id'], $_POST['email']);
+  }
+  /*else {
+  	//Retrieve the actual password and send a reminder.
+  	$query = sprintf("select password from %s where id = %d", $tables["admin"], $adminId);
+  	$row = SQL_fetch_row_query($query);
+  	
+    sendMail ($_POST['email'],$GLOBALS['I18N']->get('yourpassword'),"\n\n".$GLOBALS['I18N']->get('yourpasswordis')." $row[0]");    
+  }
+  print $GLOBALS['I18N']->get("An email was sent to your address. This will allow you to ".(ENCRYPT_PASSWORDS?"change":"recover")." your password").".<BR></BR>";*/
+}
+
 if (!empty($_POST["change"])) {
   if (empty($_POST["id"])) {
     # new one
@@ -52,8 +60,8 @@ if (!empty($_POST["change"])) {
     $totalres = Sql_fetch_Row($result);
     $total = $totalres[0]; 
     if (!$total) {
-      Sql_Query(sprintf('insert into %s (namelc,created) values("%s",current_timestamp)',
-        $tables["admin"],strtolower(normalize($_POST["loginname"]))));
+      Sql_Query(sprintf('insert into %s (loginname,namelc,created) values("%s","%s",current_timestamp)',
+        $tables["admin"],strtolower(normalize($_POST["loginname"])),strtolower(normalize($_POST["loginname"]))));
       $id = Sql_Insert_Id($tables['admin'], 'id');
     } else {
       $id = 0;
@@ -68,14 +76,13 @@ if (!empty($_POST["change"])) {
       $a = $b = '';
       if (strstr($val[1],':'))
         list($a,$b) = explode(":",$val[1]);
-      if ($a != "sys" && isset($_POST[$key]))
-      #if the key is 'password', check if it needs to be encrypted.
-        if ($key == 'password' && ENCRYPT_PASSWORDS==1) {
-          $encryptedkey = md5($_POST[$key]);
-          Sql_Query("update {$tables["admin"]} set $key = \"".addslashes($encryptedkey)."\" where id = $id");          
-        }
-        else
-          Sql_Query("update {$tables["admin"]} set $key = \"".addslashes($_POST[$key])."\" where id = $id");
+      if ($a != "sys" && isset($_POST[$key])){
+        Sql_Query("update {$tables["admin"]} set $key = \"".addslashes($_POST[$key])."\" where id = $id");        
+      }
+    }
+    ## check for password changes
+    if (isset($_POST['password'])) {
+      Sql_Query("update {$tables["admin"]} set password = \"".addslashes($_POST['password'])."\" where id = $id");
     }
     if (is_array($_POST["attribute"]))
       while (list($key,$val) = each ($_POST["attribute"])) {
@@ -146,11 +153,15 @@ while (list ($key,$val) = each ($struct)) {
   if (strstr($val[1],':'))
     list($a,$b) = explode(":",$val[1]);
   if ($a == "sys") {
-  	#If key is 'password', locate two radio buttons to allow an update.
-  	if ($b == 'Password') {
-  		printf('<tr><td>%s (%s)</td><td>%s<input type=radio name="update" value=\'0\' checked>%s</input><input type=radio name="update" value=\'1\'>%s</input></td></tr>', $GLOBALS['I18N']->get('Password'), $GLOBALS['I18N']->get('hidden'), $GLOBALS['I18N']->get('Update it?'), $GLOBALS['I18N']->get('No'), $GLOBALS['I18N']->get('Yes'));
+  	#If key is 'password' and the passwords are encrypted, locate two radio buttons to allow an update.
+  	if ($b == 'Password' && ENCRYPT_PASSWORDS){
+  	  printf('<tr><td>%s (%s)</td><td>%s<input type=radio name="update" value=\'0\' checked>%s</input><input type=radio name="update" value=\'1\'>%s</input></td></tr>', $GLOBALS['I18N']->get('Password'), $GLOBALS['I18N']->get('hidden'), (ENCRYPT_PASSWORDS?$GLOBALS['I18N']->get('Update it?'):$GLOBALS['I18N']->get('Remind it?')), $GLOBALS['I18N']->get('No'), $GLOBALS['I18N']->get('Yes'));
   	} else {
-    printf('<tr><td>%s</td><td>%s</td></tr>',$GLOBALS['I18N']->get($b),$data[$key]);
+  		if ($b != 'Password'){
+    	  printf('<tr><td>%s</td><td>%s</td></tr>',$GLOBALS['I18N']->get($b),$data[$key]);
+    	} else {
+    		printf('<tr><td>%s</td><td><input type="text" name="%s" value="%s" size=30></td></tr>'."\n",$GLOBALS['I18N']->get('Password'),$key,stripslashes($data[$key]));
+		}
     }
   } elseif ($key == "loginname" && $data[$key] == "admin") {
     printf('<tr><td>'.$GLOBALS['I18N']->get('Login Name').'</td><td>admin</td></tr>');

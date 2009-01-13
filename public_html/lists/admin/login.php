@@ -4,6 +4,7 @@ require_once dirname(__FILE__).'/accesscheck.php';
 if (TEST)
   print $GLOBALS['I18N']->get('default login is')." admin, ".$GLOBALS['I18N']->get('with password')." phplist";
 
+$page = '';
 if (isset($_GET['page']) && $_GET["page"]) {
   $page = $_GET["page"];
   if (!is_file($page.".php") || $page == "logout") {
@@ -27,7 +28,6 @@ if (!navigator.cookieEnabled) {
 <?php
 function footer(){
   echo "<form method=\"post\" action=\"\">";
-  echo "  <input type=\"hidden\" name=\"page\" value=\"$page\">";
   echo "  <p align=\"center\"><hr width=50% size=3>";
   echo $GLOBALS['I18N']->get('forgot password').":";
   echo $GLOBALS['I18N']->get('enter your email').": <input type=text name=\"forgotpassword\" value=\"\" size=30>";
@@ -43,29 +43,34 @@ function deleteOldTokens(){
   $query = Sql_Query($SQLquery);
 }
 
-if (ENCRYPT_PASSWORDS) {
+//if (ENCRYPT_PASSWORDS) {
   if(isset($_POST['password1']) && isset($_POST['password2'])) {
     $p1 = $_POST['password1'];
     $p2 = $_POST['password2'];
     $admin = $_POST['name'];
     if($p1==$p2) {
       #Database update.
-      $SQLquery=sprintf("update %s set password='%s', passwordchanged=now() where loginname = '%s';", $GLOBALS['tables']['admin'], md5($p1), $admin);
+      if (ENCRYPT_PASSWORDS) {
+        $SQLquery=sprintf("update %s set password='%s', passwordchanged=now() where loginname = '%s';", $GLOBALS['tables']['admin'], md5($p1), $admin);
+      }
+      else {
+        $SQLquery=sprintf("update %s set password='%s', passwordchanged=now() where loginname = '%s';", $GLOBALS['tables']['admin'], $p1, $admin);
+      }
       $query = Sql_Query($SQLquery);
       #Retrieve the id.
       $SQLquery=sprintf("select id from %s where loginname = '%s';", $GLOBALS['tables']['admin'], $admin);
       $row = Sql_Fetch_Row_Query($SQLquery);
       if ($row[0]) {
         echo("Your password was changed succesfully.\n");
-        echo("To return, click: <a href='?page=home'>Home</a>.\n");      	  	
+        echo("To return, click: <a href='/lists/admin/'>Home</a>.\n");
         #Token deletion.
         $SQLquery=sprintf("delete from %s where admin = %d;", $GLOBALS['tables']['admin_password_request'], $row[0]);
         $query = Sql_Query($SQLquery);
       }
     } else {
-      echo("Your passwords are different.");
+        echo("Your passwords are different.");
     }
-  } elseif(isset($_GET['token'])) {
+  } elseif (isset($_GET['token'])) {
     $SQLquery = sprintf("select date, admin from %s where key_value = '".$_GET['token']."';", $GLOBALS['tables']['admin_password_request']);
     print "\n";
     $row = Sql_Fetch_Row_Query($SQLquery);
@@ -94,11 +99,10 @@ if (ENCRYPT_PASSWORDS) {
       echo "</form>";
     } else {
       echo "Unknown token or time expired (More than 24 hrs. passed since the notification email was sent).<br><br>";
-          echo "To return and log in again, click: <a href='?page=home'>login</a>.<br><br>";
-    }
-    deleteOldTokens();
-  }
-} else {
+      echo "To return and log in again, click: <a href='?page=home'>login</a>.<br><br>";
+	  deleteOldTokens();
+  	}
+  } else {
   echo "<form method=\"post\" action=\"\">\n";
   echo "  <input type=hidden name=\"page\" value=\"$page\">\n";
   echo "  <table width=100% border=0 cellpadding=2 cellspacing=0>\n";
@@ -110,7 +114,5 @@ if (ENCRYPT_PASSWORDS) {
   echo "  </table>";
   echo "</form>";
   footer();
-}
+  }
 ?>
-
-
