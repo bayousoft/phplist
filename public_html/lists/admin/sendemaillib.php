@@ -701,7 +701,7 @@ if (0) {
   if (!preg_match("#<body.*</body>#ims",$htmlmessage)) {
     $htmlmessage = '<body>'.$htmlmessage.'</body>';
   }
-  if (!preg_match("#<head>.*</head>#ims",$htmlmessage)) {
+  if (!preg_match("#<head.*</head>#ims",$htmlmessage)) {
     if (!$adddefaultstyle) {
      $defaultstyle = "";
     }
@@ -709,7 +709,7 @@ if (0) {
         <meta content="text/html;charset='.$cached[$messageid]["html_charset"].'" http-equiv="Content-Type">
         <title></title>'.$defaultstyle.'</head>'.$htmlmessage;
   }
-  if (!preg_match("#<html>.*</html>#ims",$htmlmessage)) {
+  if (!preg_match("#<html.*</html>#ims",$htmlmessage)) {
     $htmlmessage = '<html>'.$htmlmessage.'</html>';
   }
 
