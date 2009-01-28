@@ -4,18 +4,20 @@
 if (!isset($_SERVER["SERVER_NAME"]) && !PHP_SAPI == "cli") {
   print "Warning: commandline only works well with the cli version of PHP";
 }
+if (isset($_REQUEST['_SERVER'])) { exit; }
+
 @ob_start();
 session_start();
 
-if (!ini_get("register_globals") || ini_get("register_globals") == "off") {
-  # fix register globals, for now, should be phased out gradually
-  # sure, this gets around the entire reason that register globals
-  # should be off, but going through three years of code takes a long time....
-
-  foreach ($_REQUEST as $key => $val) {
-    $$key = $val;
-  }
-}
+// if (!ini_get("register_globals") || ini_get("register_globals") == "off") {
+//   # fix register globals, for now, should be phased out gradually
+//   # sure, this gets around the entire reason that register globals
+//   # should be off, but going through three years of code takes a long time....
+// 
+//   foreach ($_REQUEST as $key => $val) {
+//     $$key = $val;
+//   }
+// }
 
 $cline = array();
 require_once dirname(__FILE__) .'/commonlib/lib/magic_quotes.php';
