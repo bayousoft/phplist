@@ -95,7 +95,7 @@ if ($numdraft > 0 && !isset($_GET['id']) && !isset($_GET['new'])) {
     $ls->addElement($element);
     $ls->addColumn($element,$I18N->get('edit'),PageLink2('send&amp;id='.$row['id'],$I18N->get('edit')));
     $ls->addColumn($element,$I18N->get('entered'),$row['entered']);
-    $ls->addColumn($element,$I18N->get('ago'),secs2time($row['age']));
+    $ls->addColumn($element,$I18N->get('age'),secs2time($row['age']));
     $ls->addColumn($element,$I18N->get('del'),PageLink2('send&delete='.$row['id'],$I18N->get('delete')));
   }
   $ls->addButton($I18N->get('delete all'),PageUrl2('send&delete=alldraft'));
