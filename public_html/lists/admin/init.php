@@ -152,12 +152,6 @@ if (!defined("WORKAROUND_OUTLOOK_BUG") && defined("USE_CARRIAGE_RETURNS")) {
 if (!isset($GLOBALS["blacklist_gracetime"])) $GLOBALS["blacklist_gracetime"] = 5;
 if (!isset($GLOBALS["message_envelope"])) $GLOBALS["message_envelope"] = '';
 
-if (!isset($database_host) || !isset($database_user) || !isset($database_password) || !isset($database_name)) {
- # print $GLOBALS['I18N']->get('Database details incomplete, please check your config file');
-  print 'Database details incomplete, please check your config file';
-  exit;
-}
-
 function removeXss($string) {
   if (is_array($string)) {
     $return = array();

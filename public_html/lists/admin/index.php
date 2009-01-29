@@ -66,6 +66,12 @@ if (filesize($configfile) > 2) {
   include(dirname(__FILE__).'/install.php');
   exit;
 }
+if (!isset($database_host) || !isset($database_user) || !isset($database_password) || !isset($database_name)) {
+ # print $GLOBALS['I18N']->get('Database details incomplete, please check your config file');
+  print 'Database details incomplete, please check your config file';
+  exit;
+}
+
 #exit;
 # record the start time(usec) of script
 $now =  gettimeofday();
