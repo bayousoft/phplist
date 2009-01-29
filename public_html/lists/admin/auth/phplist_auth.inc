@@ -22,10 +22,9 @@ class admin_auth {
       $query = sprintf($query, $GLOBALS['tables']['admin'], $encryptedPassDB);
       $passwordDB = $encryptedPassDB;
       $req = Sql_Query_Params($query, array($login));
-    }
-    else if (strlen($passwordDB)==32) {
+    } else if (strlen($passwordDB)==32) {
     	$encryptedPassDB = $passwordDB;
-	}
+	  }
     if ($admindata["disabled"]) {
       return array(0,"your account has been disabled");
     } elseif (#Password validation.
