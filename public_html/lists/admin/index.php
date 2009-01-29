@@ -308,9 +308,9 @@ if (LANGUAGE_SWITCH) {
 if ($page != "login") {
   if (ereg("dev",VERSION) && !TEST) {
     if ($GLOBALS["developer_email"]) {
-      Info("Running CVS version. All emails will be sent to ".$GLOBALS["developer_email"]);
+      Info("Running DEV version. All emails will be sent to ".$GLOBALS["developer_email"]);
     } else {
-      Info("Running CVS version, but developer email is not set");
+      Info("Running DEV version, but developer email is not set");
     }
   }
   #if (!ini_get("register_globals") && WARN_ABOUT_PHP_SETTINGS)
