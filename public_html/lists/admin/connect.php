@@ -51,52 +51,6 @@ if (!isset($usertable_prefix)) {
   $usertable_prefix = $table_prefix;
 }
 
-// Will be build from from structure.php by the code further below
-//$tables = array(
-//  "user" => $usertable_prefix . "user",
-//  "user_history" => $usertable_prefix . "user_history",
-//  "list" => $table_prefix . "list",
-//  "listuser" => $table_prefix . "listuser",
-//  "user_blacklist" => $table_prefix . "user_blacklist",
-//  "user_blacklist_data" => $table_prefix . "user_blacklist_data",
-//  "message" => $table_prefix . "message",
-//  "messagedata" => $table_prefix. "messagedata",
-//  "listmessage" => $table_prefix . "listmessage",
-//  "usermessage" => $table_prefix . "usermessage",
-//  "attribute" => $usertable_prefix . "attribute",
-//  "user_attribute" => $usertable_prefix . "user_attribute",
-//  "sendprocess" => $table_prefix . "sendprocess",
-//  "template" => $table_prefix . "template",
-//  "templateimage" => $table_prefix . "templateimage",
-//  "bounce" => $table_prefix ."bounce",
-//  "user_message_bounce" => $table_prefix . "user_message_bounce",
-//  "user_message_forward" => $table_prefix . 'user_message_forward',
-//  "config" => $table_prefix . "config",
-//  "admin" => $table_prefix . "admin",
-//  "adminattribute" => $table_prefix . "adminattribute",
-//  "admin_attribute" => $table_prefix . "admin_attribute",
-//  "admin_task" => $table_prefix . "admin_task",
-//  "task" => $table_prefix . "task",
-//  "subscribepage" => $table_prefix."subscribepage",
-//  "subscribepage_data" => $table_prefix . "subscribepage_data",
-//  "eventlog" => $table_prefix . "eventlog",
-//  "attachment" => $table_prefix."attachment",
-//  "message_attachment" => $table_prefix . "message_attachment",
-////  "rssitem" => $table_prefix . "rssitem",
-////  "rssitem_data" => $table_prefix . "rssitem_data",
-////  "user_rss" => $table_prefix . "user_rss",
-////  "rssitem_user" => $table_prefix . "rssitem_user",
-////  "listrss" => $table_prefix . "listrss",
-//  "urlcache" => $table_prefix . "urlcache",
-//  'linktrack' => $table_prefix.'linktrack',
-//  'linktrack_forward' => $table_prefix.'linktrack_forward',
-//  'linktrack_userclick' => $table_prefix.'linktrack_userclick',
-//  'linktrack_ml' => $table_prefix.'linktrack_ml',
-//  'linktrack_uml_click' => $table_prefix.'linktrack_uml_click',
-//  'userstats' => $table_prefix .'userstats',
-//  'bounceregex' => $table_prefix.'bounceregex',
-//  'bounceregex_bounce' => $table_prefix.'bounceregex_bounce',
-//);
 
 include_once dirname(__FILE__)."/pluginlib.php";
 include_once dirname(__FILE__)."/structure.php";
@@ -1140,6 +1094,7 @@ register_shutdown_function("phplist_shutdown");
 function secs2time($secs) {
   $years = $days = $hours = $mins = 0;
   $hours = (int)($secs / 3600);
+  $secs = $secs - ($hours * 3600);
   if ($hours > 24) {
     $days = (int)($hours / 24);
     $hours = $hours - (24 * $days);
@@ -1148,8 +1103,8 @@ function secs2time($secs) {
     $years = (int) ($days / 365);
     $days = $days - ($years * 365);
   }
-  $mins = (int)($secs % 60);
-  $secs = (int)($secs - $hours * 3600 - $mins * 60);
+  $mins = (int)($secs / 60);
+  $secs = (int)($secs % 60);
 
   $res = '';
   if ($years) {
@@ -1165,9 +1120,12 @@ function secs2time($secs) {
     $res .= " ".$mins . " mins";
   }
   if ($secs) {
-    $res .= " ".$secs . " secs";
+    $res .= " ".sprintf('%02d',$secs) . " secs";
   }
   return $res;
+}
+
+function dbg() {
 }
 
 ?>
