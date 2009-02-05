@@ -35,7 +35,7 @@ if (isset($subscribepagedata['language_file']) && is_file(dirname(__FILE__).'/..
 if (is_file($_SERVER['DOCUMENT_ROOT'].'/'.$GLOBALS["language_module"])) {
   include_once $_SERVER['DOCUMENT_ROOT'].'/'.$GLOBALS["language_module"];
 }
-if (is_file($_SERVER['DOCUMENT_ROOT'].'/'.$data['language_file'])) {
+if (isset($data['language_file']) && is_file($_SERVER['DOCUMENT_ROOT'].'/'.$data['language_file'])) {
   include_once $_SERVER['DOCUMENT_ROOT'].'/'.$data['language_file'];
 }
 
