@@ -224,7 +224,7 @@ if ($login_required && empty($_SESSION["userloggedin"]) && !$canlogin) {
       @include dirname(__FILE__).'/texts/'.$data['language_file'];
     }
     # Allow customisation per installation
-    if (is_file($_SERVER['DOCUMENT_ROOT'].'/'.$data['language_file'])) {
+    if (isset($data['language_file']) && is_file($_SERVER['DOCUMENT_ROOT'].'/'.$data['language_file'])) {
       include_once $_SERVER['DOCUMENT_ROOT'].'/'.$data['language_file'];
     }
     
