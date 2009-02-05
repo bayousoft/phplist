@@ -48,7 +48,7 @@ if (!defined("REGISTER")) define("REGISTER",1);
 if (!defined("USE_PDF")) define("USE_PDF",0);
 if (!defined("VERBOSE")) define("VERBOSE",0);
 if (!defined("TEST")) define("TEST",1);
-if (!defined("DEVSITE")) define("DEVSITE",0);
+//if (!defined("DEVSITE")) define("DEVSITE",0); //This cannot be set nowhere this way, and unset it will evaluate to false anyway
 
 // obsolete by rssmanager plugin
 // if (!defined("ENABLE_RSS")) define("ENABLE_RSS",0);
