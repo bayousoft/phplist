@@ -293,7 +293,7 @@ function sendAdminCopy($subject,$message,$lists = array()) {
     $sent = array();
     foreach ($mails as $admin_mail) {
       $admin_mail = trim($admin_mail);
-      if (!$sent[$admin_mail] && $admin_mail) {
+      if ( !isset($sent[$admin_mail]) && isset($admin_mail) ) {
         sendMail($admin_mail,$subject,$message,system_messageheaders($admin_mail));
         logEvent('Sending admin copy to '.$admin_mail);
         $sent[$admin_mail] = 1;
