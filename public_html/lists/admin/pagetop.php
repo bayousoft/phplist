@@ -22,3 +22,9 @@
 <meta name="Powered-By" content="phplist version <?php echo VERSION?>" />
 <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $strCharSet?>" />
 
+<?
+foreach ( $GLOBALS['config']['head'] as $sHtml ) {
+  print $sHtml;
+  print "\n";
+}
+?>
