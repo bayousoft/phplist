@@ -9,7 +9,7 @@ require("languages.php");
 
 $_SESSION["installType"] = (!$itype)?"BASIC":$itype;
 
-include("omar/lib/header.inc");
+include("installer/lib/header.inc");
 
 if ($page == ""){
    include("installer/home.php");
