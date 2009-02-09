@@ -54,11 +54,11 @@ class rssmanager extends phplistPlugin {
   //  );
 
   function rssmanager() {
-    parent :: phplistplugin();
+    parent::phplistplugin();
   }
 
   function activate() {
-    parent :: activate();
+    parent::activate();
 
     $GLOBALS['rssfrequencies']= array (
         #  'hourly' => $strHourly, # to be added at some other point
