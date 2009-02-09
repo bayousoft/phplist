@@ -749,7 +749,6 @@ function getUserConfig($item, $userid = 0) {
 	$hasconf = Sql_Table_Exists($tables["config"]);
 	$value = '';
 	if ($hasconf) {
-    $item = 
 		$query = 'select value from ' . $tables['config'] . ' where item = ?';
 		$req = Sql_Query_Params($query, array($item));
 		if (!Sql_Num_Rows($req)) {
