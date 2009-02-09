@@ -48,7 +48,7 @@ if (!defined("REGISTER")) define("REGISTER",1);
 if (!defined("USE_PDF")) define("USE_PDF",0);
 if (!defined("VERBOSE")) define("VERBOSE",0);
 if (!defined("TEST")) define("TEST",1);
-//if (!defined("DEVSITE")) define("DEVSITE",0); //This cannot be set nowhere this way, and unset it will evaluate to false anyway
+if (!defined("DEVSITE")) define("DEVSITE",0);
 
 // obsolete by rssmanager plugin
 // if (!defined("ENABLE_RSS")) define("ENABLE_RSS",0);
@@ -151,18 +151,4 @@ if (!defined("WORKAROUND_OUTLOOK_BUG") && defined("USE_CARRIAGE_RETURNS")) {
 }
 if (!isset($GLOBALS["blacklist_gracetime"])) $GLOBALS["blacklist_gracetime"] = 5;
 if (!isset($GLOBALS["message_envelope"])) $GLOBALS["message_envelope"] = '';
-
-function removeXss($string) {
-  if (is_array($string)) {
-    $return = array();
-    foreach ($string as $key => $val) {
-      $return[removeXss($key)] = removeXss($val);
-    }
-    return $return;
-  }
-  #$string = preg_replace('/<script/im','&lt;script',$string);
-  $string = htmlspecialchars($string);
-  return $string;
-}
-
 ?>
