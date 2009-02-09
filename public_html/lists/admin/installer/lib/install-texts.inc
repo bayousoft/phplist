@@ -5,6 +5,11 @@
 $strPhplistDbCreation = 'Now let\'s try to create the db. Fill in the form bellow to do it.';
 $strPhplistDbWrongOk = '<p class="allwrong">Default database and/or user/pass are wrong, that\'s ok, let\'s continue.</p>';
 $strPhplistDefaultDbOk = '<p class="allok">Hmm, the default settings for database connection worked ok. You dont want to use phplist with these values, is not safe, you better change them and create a user for the database before continue.</p>';
+$strBmenvelope = "Email address: "; //"Message envelope: ";
+$strBmhost = "Mailbox Host: ";
+$strBmuser = "User: ";
+$strBmpass = "Password: ";
+
 $strDbname = 'Database name : ';
 $strDbhost = 'Database host, usually \'localhost\' : ';
 $strDbschema = 'Database schema, usually \'phplist\' : ';
@@ -27,6 +32,12 @@ $configDoesntExist = 'Config file doesnt exists, something went wrong...';
 //$goodConfigFile = 'Your config file is ready for writing (mmm, maybe we have to check if it\'s empty...).';
 $strConfigIsNotAndDirNotWri = 'Warning: Your config file doesnt exists, and phplist cannot write into the lists/config directory. Please either create a config.php file with write permissions, or change permissions to the lists/config directory to be executable (ie 755) before continue.';
 $strConfigIsNotWritable = 'Warning: Your config file is not writable, please change the permissions of the lists/config/config.php file to be writable (ie 666, 646, 777, etc).';
+$strConfigIsNotWritable = 'Warning: Your config file is not writable, please change the permissions of it and try to complete the installation again!';
+$strConfigDirNoWritable = "Error: PHPList cannot write the configuration file into {path}. This is a permission matter, please, change it to let the applicacion complete its work.";
+
+$strConfigWasRewrited = 'Your config file exists yet, The application writed this file again, preserving the original configuration file';
+$strConfigWrited = 'Your config file was writed Ok!<br/>The installation was finished, enjoy it';
+$strConfigExists = 'Your config file exists, you must remove it write the configuration again';
 $strConfigPerms = 'Notice: Your config permissions are now';
 $strChangeChmod = ', phplist could not change it, if you can, please change permissions to 0644 to your lists/config/config.php file. It won\' affect your installation or security, but would be good to keep it 644.';
 $strIntroInstaller = '<p>Phplist installer will help you to create your database and config file for the system in several steps. Please keep in mind that if permissions are not well set up phplist won\'t be able to create either your db or your config file. The best thing to do first is to check if you have the right permissions so the installer will work well. Installer will need write permission on the lists/config/config.php file. You can probably do this through ftp, or if you have console access do chmod 646 lists/config/config.php.</p>
@@ -51,6 +62,9 @@ $strDbExplain = 'Here you will try to create/check your phplist database. You wo
 Try not to use special characters like "\'-/*%", keep it simple using letter, numbers and "_".';
 $strExplainInstall1 = 'Please read one and each of the following descriptions.
 Keep in mind that using wrong values in the field can cause a parse error in the Config file and will make the whole system stop working';
+$strExplainInstall1 = 'This data are referer to the email address where the refused email must return.
+this mean you must enter e email address where you want all mails witch can\'t be delivered will be received.
+Consider all data are required, you must not forget any one of it';
 $strFinalValuesText = 'These values (plus some no-editable-now values) will be written into your config file. You can always change these values later editing the config file.<br/>Values in red are the ones you haven\'t changed, or are the same as the default value.';
 $strDbroot = 'Aditionally you can give the root user and pass. The Installer then will create a user for your database, the database if it doesn\'t exist and will give permissions to that user only for that database. Root user and pass will be destroyed after used, and won\'t be written in the config file or any other place.
 <p>Something to be aware of is the actual mysql host used. When creating a mysql user, the host for the database should be something like \'localhost\', and phplist will used that as default. If you are not sure about this, create the user yourself and don\'t use the options below.</p>';
@@ -238,6 +252,7 @@ $strActivateDeactivate = 'Activate ';
 $strYes = 'Yes';
 $strNo = 'No';
 $strStartInst = 'Start the Installer';
+$strReadyToInstall = 'Right now you are ready to complete the entire installation of PHPList.<br/>If you want to continue, only click in the next link bellow, if not...<br/>Well, only left this page out!';
 $strNextStep = 'Next step';
 $strWriteToConfig = 'Write to config now!';
 $strStep = 'Step';

@@ -10,7 +10,7 @@ if (!function_exists("mysql_connect")) {
 
 function Sql_Connect($host,$user,$password,$database) {
   if ($host && $user)
-    $db = mysql_connect($host , $user ,$password );
+    $db = @mysql_connect($host , $user ,$password );
 #  $errno = mysql_errno();
   if (!$db) {
     return FALSE;

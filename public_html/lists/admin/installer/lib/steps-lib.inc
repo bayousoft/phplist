@@ -1,5 +1,196 @@
 <?php
+/*
+function getPostVariables(&$params)
 
+this function are setting globals variables using the POST variables
+of the HTML form. This HTML variables are created using the "parameters"
+array. This function not only set the HTML elements as PHP global variables,
+it change the "default" value of each defined-element in the current structure
+is used (array) with the POST value returned.
+*/
+
+function writeConfigFile($file){
+   global $parameters;
+
+   $fp = @fopen($file,"w");
+
+   if (!$fp) return false;
+
+   fwrite($fp, "<?php");
+
+   foreach($parameters as $group){
+      fwrite($fp, $group["file_description"]);
+
+      $group_p = $group["parameters"];
+
+      foreach($group_p as $variable){
+         $variable["default"] = (isset($_SESSION[$variable["name"]]))?$_SESSION[$variable["name"]]:$variable["default"];
+
+         fwrite($fp, $variable["file_description"]); // escribo descripcion del parametro
+
+         if ($variable["commented"]){
+            $linevar = "#"; // agrego "#" al principio si es que debe estar comentada por default
+         }
+         else $linevar = "";
+
+         switch($variable["type"]){
+            case "variable":
+               $linevar.= 
+               "$".$variable["name"].
+               " = ".
+               ((is_numeric($variable["default"]))?$variable["default"]:"\"".$variable["default"]."\"").
+               ";";
+               break;
+   
+            case "constant":
+               $linevar.=
+               "define(".
+               "'".$variable["name"]."'".
+               ", ".
+               ((is_numeric($variable["default"]))?$variable["default"]:"\"".$variable["default"]."\"").
+               ");";
+               break;
+ 
+            case "array":
+               $arrval = explode("|",$variable["default"]);
+
+               for($i=0; $i<sizeof($arrval); $i++){
+                  $arrval[$i] = (is_numeric($arrval[$i]))?$arrval[$i]:"'".$arrval[$i]."'";
+               }
+
+               $linevar.=
+               "$".$variable["name"]." = array(".implode(",",$arrval).");";
+               break;
+         }
+
+         $linevar.= "\n";
+
+         fwrite($fp, $linevar); // escribo declaracion del parametro
+      }
+
+      fwrite($fp, "\n\n");
+   }
+
+   fwrite($fp, "?>");
+   fclose($fp);
+
+   return true;
+}
+
+function getSessionData(&$params){
+   for ($i=0; $i<sizeof($params); $i++){
+      $varname = $params[$i]["name"];
+
+      if (isset($_SESSION[$varname])){
+         global $$varname;
+
+         $$varname = $_SESSION[$varname];
+
+         $params[$i]["default"] = $_SESSION[$varname];
+      }
+   }
+}
+
+function setSessionData($params){
+   for ($i=0; $i<sizeof($params); $i++){
+      $varname = $params[$i]["name"];
+
+      global $$varname;
+
+      if (isset($$varname)){
+         $_SESSION[$varname] = $$varname;
+      }
+   }
+}
+
+function getPostVariables(&$params){
+   global $_POST;
+
+   for($i=0; $i<sizeof($params); $i++){
+      $varname = $params[$i]["name"];
+
+      if (isset($_POST[$varname])){
+         global $$varname;
+
+         $$varname = $_POST[$varname];
+
+         $params[$i]["default"] = $_POST[$varname];
+      }
+   }
+}
+
+function genPHPVariables($params){
+   for($i=0; $i<sizeof($params); $i++){
+      if ($params[$i]["visible"]){
+         $varname = $params[$i]["name"];
+         $varvalue= $params[$i]["default"];
+
+         global $$varname;
+
+         $$varname = $varvalue;
+      }
+   }
+}
+
+function getHTMLElements($params){
+   for($i=0; $i<sizeof($params); $i++){
+      if ($params[$i]["visible"]){
+         $name = $params[$i]["name"];
+         $desc = $GLOBALS["I18N"]->get($params[$i]["appl_description"]);
+         $type = $params[$i]["type"];
+         $value= $params[$i]["default"];
+
+         $htmlList[] = genHTMLElement($name, $desc, $value, $type);
+      }
+   }
+
+   return implode("\n", $htmlList);
+}
+
+function genHTMLElement($name, $des="", $default="", $type="variable"){
+   $des = (!$des)?$name:$des;
+
+   switch($type){
+      case "variable":
+      case "constant":
+         $element = "    <input type='text' name='$name' value='$default'>\n";
+         break;
+
+      case "array":
+         $arr = explode("|", $default);
+         
+         $element = "    <select name='$name'>\n";
+
+         for ($i=0; $i<sizeof($arr); $i++){
+            $element.= "      <option value='$arr[$i]'>$arr[$i]\n";
+         }
+
+         $element.= "    </select>\n";
+         break;
+   }
+
+   $element = "<tr>\n".
+              "  <td>$des</td>\n".
+              "  <td>\n".
+              $element.
+              "  </td>\n".
+              "</tr>";
+
+   return $element;
+}
+
+function breadcrumb($page=0){
+   $bread[] = "<a href='?page='>Home</a>";
+
+   for ($i=0; $i<$page; $i++){
+      $bread[] = "<a href='?page=$i'>".$GLOBALS["I18N"]->get($GLOBALS["strStep"])." $i</a>";
+   }
+
+   $bread[] = "Step $page";
+
+
+   return implode("&nbsp;&raquo;&nbsp;", $bread);
+}
 
 /**
   editVariable function to get the editable inputs of the config variables
@@ -338,19 +529,23 @@ function cleanVar($var) {
   @returns
     TRUE if the connection was successfull; else FALSE
 **/
-function processPopTest ($server,$user,$password) {
+function processPopTest ($envelope,$server,$user,$password) {
 $port =  $_REQUEST["bounce_mailbox_port"];
 if (!$port) {
   $port = '110/pop3/notls';
 }
 set_time_limit(6000);
-$link=imap_open("{".$server.":".$port."}INBOX",$user,$password,CL_EXPUNGE);
-if (!$link) {
-  $link=imap_open("{".$server.":".$port."}INBOX",$user,$password);
+
+$link=@imap_open("{".$server.":".$port."}INBOX",$user,$password,CL_EXPUNGE);
+
+if (!$link){
+  $link=@imap_open("{".$server.":".$port."}INBOX",$user,$password);
 }
-if (!$link) {
-  return FALSE;
+
+if (!$link){
+   return FALSE;
 }
+
 return TRUE;
 }
 
@@ -548,39 +743,45 @@ function willNotContinue() {
     html of the language files user can use; else the english.inc default one
 **/
 function languagePack($value = "", $onChange = "") {
-$res = '';
-$valueChange = '';
-if (!empty($onChange)) {
-  $valueChange = 'onChange="'.$onChange.'"';
-}
-if (empty($value)) {
-  $name = 'language_module';
-} else {
-  $name = $value;
-}
-if (!isset($_SESSION[$name])) $_SESSION[$name] = 'english.inc';
-$gestor = opendir('../texts/');
-  if ($gestor ) { /*&& $language = readdir($gestor)  <== this takes out the english file... */
-    $res .= '<select name="'.$name.'" '.$valueChange.'>';
-    while (FALSE !== ($lang = readdir($gestor))) {
-      if (strlen($lang) > 3 && !preg_match("/~/",str_replace(".inc","",$lang))) {
-        $res .= '<option value="'.$lang.'"';
-        if ($lang == $_SESSION[$name]) {
-          $res .= ' selected="selected"';
-        }
-        $res .= '>';
-        $res .= str_replace(".inc","",$lang);
-        $res .= '</option>';
+   $res = '';
+   $valueChange = '';
+   if (!empty($onChange)) {
+     $valueChange = 'onChange="'.$onChange.'"';
+   }
+   if (empty($value)) {
+     $name = 'language_module';
+   } else {
+     $name = $value;
+   }
+   if (!isset($_SESSION[$name])) $_SESSION[$name] = 'english.inc';
+   
+   $gestor = opendir('../texts/');
+   
+   if ($gestor ){ /*&& $language = readdir($gestor)  <== this takes out the english file... */
+      $res .= '<select name="'.$name.'" '.$valueChange.'>';
+   
+      while (FALSE !== ($lang = readdir($gestor))) {
+         if (strlen($lang) > 3 && !preg_match("/~/",str_replace(".inc","",$lang))) {
+            $res .= '<option value="'.$lang.'"';
+   
+            if ($lang == $_SESSION[$name]) {
+               $res .= ' selected="selected"';
+            }
+   
+            $res .= '>';
+            $res .= str_replace(".inc","",$lang);
+            $res .= '</option>';
+         }
       }
-    }
-    $res .= '</select>';
-  }
-  else {
-    $res .= '<select name="'.$name.'" type=text>';
-    $res .= '<option value="english.inc">english.inc</option>';
-    $res .= '</select>';
-  }
-return $res;
+      $res .= '</select>';
+   }
+   else {
+      $res .= '<select name="'.$name.'" type=text>';
+      $res .= '<option value="english.inc">english.inc</option>';
+      $res .= '</select>';
+   }
+   
+   return $res;
 }
 
 /**
@@ -608,6 +809,67 @@ return getInput($value, $page[0], "text");
 
 }
 
+function check_connection($host, $user, $pass, $dbname){
+   $errno = 0;
+   $msg   = "";
+
+   if ($host && $user && $pass){
+      $conn = @mysql_connect($host, $user ,$pass);
+
+      if (!$conn){
+         $errno = mysql_errno();
+      }
+      else{
+         if ($dbname){
+            $res = @mysql_select_db($dbname, $conn);
+
+            if (!$res){
+               $creating = 1;
+               $errno = mysql_errno($conn);
+
+               $res = mysql_query("CREATE DATABASE $dbname", $conn);
+
+               if (!$res){
+                  $errno = mysql_errno($conn);
+                  $created = 0;
+               }
+               else{
+                  $errno = 0;
+                  $created = 1;
+               }
+            }
+
+         }
+      }
+   }
+   else{
+      if (!$host)
+          $errno = 6661;
+      else if (!$user)
+              $errno = 6662;
+           else if (!$pass)
+                   $errno = 6663;
+   }
+
+   switch ($errno){
+      case 2003: 
+      case 2004: 
+      case 2005: $msg = $GLOBALS["I18N"]->get("problem to connect to this server");    break;
+      case 1040: $msg = $GLOBALS["I18N"]->get("server busy"); break;
+      case 1044: 
+      case 1045: $msg = $GLOBALS["I18N"]->get("User or password are wrong, check it"); break;
+      case 1049: $msg = $GLOBALS["I18N"]->get("database '$dbname' not exists".(($creating)?" and can't be created, check permission for the user":"")); break;
+      case 1006: $msg = $GLOBALS["I18N"]->get("You can't create database '$dbname', contact your sysadmin"); break;
+      case 1007: $msg = $GLOBALS["I18N"]->get("The database '$dbname' exists, you can't create it again"); break;
+      case 6661: $msg = $GLOBALS["I18N"]->get("The database host must be supplied"); break;
+      case 6662: $msg = $GLOBALS["I18N"]->get("The database user must be supplied"); break;
+      case 6663: $msg = $GLOBALS["I18N"]->get("The database password must be supplied"); break;
+      case 0   : $msg = $GLOBALS["I18N"]->get("Database connection OK".(($creating)?" - Database $dbname was created":"")); break;
+   }
+
+   return "$errno|$msg|$created";
+}
+
 /**
   Sql_Connect_Install implementation of the Sql_function for phplist, but to connect to a server without a database
   @param $host
@@ -620,16 +882,17 @@ return getInput($value, $page[0], "text");
     TRUE if it could connect to the server; else FALSE
 **/
 function Sql_Connect_Install($host,$user,$password) {
-  if ($host && $user) {
-    $db = mysql_connect($host, $user ,$password);
-    $errno = mysql_errno();
-    if ($db) {
-      return $db;
-    }
-    if ($errno) {
-      return FALSE;
-    }
-  }
+   if ($host && $user) {
+      $db = mysql_connect($host, $user ,$password);
+      $errno = mysql_errno();
+
+      if ($db) {
+         return $db;
+      }
+      if ($errno) {
+         return FALSE;
+      }
+   }
 }
 
 /**
