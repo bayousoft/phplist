@@ -81,6 +81,8 @@ if (sizeof($required)) {
       $missing = '';
     }
   }
+} else {
+  $missing = ''; // http://en.wikipedia.org/wiki/Invariant_(computer_science)
 }
 
 #
