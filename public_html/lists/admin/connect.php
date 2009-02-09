@@ -747,10 +747,10 @@ function PageData($id) {
     $data['lists'] = join(',',$lists);
     $data['intro'] = $GLOBALS['strSubscribeInfo'];
     $data['emaildoubleentry'] = 'yes';
-    $data['rssdefault'] = 'daily';                                                                                                                           //Leftover from the preplugin era
     $data['thankyoupage'] = '';
-    $data['rssintro'] = $GLOBALS['I18N']->get('Please indicate how often you want to receive messages'); //Leftover from the preplugin era
-    $data['rss'] = join(',',array_keys($GLOBALS['rssfrequencies']));                                                                   //Leftover from the preplugin era
+//    $data['rssdefault'] = 'daily'; //Leftover from the preplugin era, to be moved to plugin somehow
+//    $data['rssintro'] = $GLOBALS['I18N']->get('Please indicate how often you want to receive messages'); //Leftover from the preplugin era, to be moved to plugin somehow
+//    $data['rss'] = join(',',array_keys($GLOBALS['rssfrequencies'])); //Leftover from the preplugin era, to be moved to plugin somehow
     return $data;
   }
   while ($row = Sql_Fetch_Array($req)) {
