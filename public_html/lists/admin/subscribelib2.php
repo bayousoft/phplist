@@ -239,6 +239,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
     $res = Sql_Query("select * from ".$GLOBALS["tables"]["attribute"]." where id in ($attids)");
     while ($row = Sql_Fetch_Array($res)) {
       $fieldname = "attribute" .$row["id"];
+      if ( !array_key_exists( $fieldname, $_POST) ) continue; 
       $value = $_POST[$fieldname];
   #    if ($value != "") {
         if (is_array($value)) {
@@ -889,7 +890,7 @@ $html .= sprintf('
           while ($value = Sql_Fetch_array($values_request)) {
             if (!empty($_POST[$fieldname]))
               $selected = $_POST[$fieldname] == $value["id"] ? "selected" : "";
-            else if ($data[$attr["id"]])
+            elseif ($data[$attr["id"]])
               $selected = $data[$attr["id"]] == $value["id"] ? "selected":"";
             else
               $selected = $attr["default_value"] == $value["name"] ? "selected":"";
@@ -905,13 +906,15 @@ $html .= sprintf('
           $values_request = Sql_Query("select * from $table_prefix"."listattr_".$attr["tablename"]." order by listorder,name");
           $output[$attr["id"]] .= sprintf('</td></tr>');
           while ($value = Sql_Fetch_array($values_request)) {
-            if (is_array($_POST[$fieldname]))
+          	$selected = '';
+            if (is_array($_POST[$fieldname])) {
               $selected = in_array($value["id"],$_POST[$fieldname]) ? "checked" : "";
-            else if ($data[$attr["id"]]) {
+            } elseif ($data[$attr["id"]]) {
               $selection = explode(",",$data[$attr["id"]]);
               $selected = in_array($value["id"],$selection) ? "checked":"";
             }
-            $output[$attr["id"]] .= sprintf('<tr><td colspan=2 class="attributeinput"><input type=checkbox name="%s[]"  class="attributeinput" value="%s" %s> %s</td></tr>',$fieldname,$value["id"],$selected,stripslashes($value["name"]));
+            $output[$attr["id"]] .= sprintf('<tr><td colspan=2 class="attributeinput"><input type=checkbox name="%s[]"  class="attributeinput" value="%s" %s> %s</td></tr>',
+              $fieldname, $value["id"], $selected, stripslashes( $value["name"]) );
           }
           break;
         case "textline":
