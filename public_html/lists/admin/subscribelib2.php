@@ -444,7 +444,14 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
     $storepassword = "";
   }
 
-  $rssfrequency = validateRssFrequency($_POST['rssfrequency']);
+  # We want all these to be set, albeit to empty string
+  foreach ( array('rssfrequency', 'htmlemail') as $sUnsubscribeFormVar ) {
+	  if ( !isset($_POST[$sUnsubscribeFormVar]) ) {
+	    $_POST[$sUnsubscribeFormVar] = '';
+	  }
+  }
+
+  $rssfrequency = validateRssFrequency( $_POST['rssfrequency'] );
   $query = sprintf('update %s set email = "%s", %s htmlemail = %d, rssfrequency = "%s" where id = %d',
     $GLOBALS["tables"]["user"],addslashes($_POST["email"]),$storepassword,$_POST["htmlemail"],$rssfrequency,$userid);
  #print $query;
@@ -485,6 +492,13 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
     $lists = "No Lists";
   if ($lists == "")
     $lists = "No Lists";
+
+  # We want all these to be set, albeit to empty string
+  foreach ( array('datachange', 'rssfrequency', 'htmlemail', 'information_changed', 'emailchanged') as $sUnsubscribeVar ) {
+  	if ( !isset( ${$sUnsubscribeVar} ) ) {
+    	${$sUnsubscribeVar} = '';
+    }
+  }
 
   $datachange .= "$strEmail : ".$email . "\n";
   if ($subscribepagedata["htmlchoice"] != "textonly"
@@ -693,7 +707,7 @@ function ListAttributes($attributes,$attributedata,$htmlchoice = 0,$userid = 0,$
     $htmlemail = $current["htmlemail"];
     # override with posted info
     foreach ($current as $key => $val) {
-      if ($_POST[$key] && $key != "password") {
+      if ( isset($_POST[$key]) && $key != "password" ) {
         $current[$key] = $val;
       }
     }
