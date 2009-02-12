@@ -189,7 +189,10 @@ if (isset($_REQUEST["doadd"])) {
   } else {
     $res2 = Sql_Replace($tables['listuser'], array('userid' => "'" . $_REQUEST['doadd'] . "'", 'listid' => $id, 'entered' => 'current_timestamp'), array('userid', 'listid'), false);
   }
+
+  if ($database_module == 'adodb.inc')
   Sql_Commit_Transaction();
+
   echo "<br /><font color=red size=+2>".$GLOBALS['I18N']->get("User added")."</font><br />";
 }
 if (isset($_REQUEST["delete"])) {
