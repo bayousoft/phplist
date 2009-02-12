@@ -850,7 +850,7 @@ $html .= sprintf('
         # post values take precedence
         $val = Sql_Fetch_Row_Query(sprintf('select value from %s where
           attributeid = %d and userid = %d',$GLOBALS["tables"]["user_attribute"],$attr["id"],$userid));
-        $_POST[$postvalue] = $val[0];
+        $_POST[$fieldname] = $val[0];
       } elseif (!isset($_POST[$fieldname])) {
         $_POST[$fieldname] = 0;
       }
