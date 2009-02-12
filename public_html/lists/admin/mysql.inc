@@ -147,6 +147,9 @@ function Sql_Query($query,$ignore = 0) {
 function Sql_Query_Params($query,$params,$ignore = 0) {
 #  dbg($query);
 #  dbg($params);
+
+  if (!is_array($params)) $params = Array($params);
+
   foreach ($params as $index => $par) {
     $qmark = strpos  ( $query  , '?');
     if ($qmark === FALSE) {
