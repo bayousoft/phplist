@@ -175,7 +175,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
     # read the current values to compare changes
     $old_data = Sql_fetch_array($result);
     if (ASKFORPASSWORD && $old_data["password"]) {
-      if (ENCRYPT_PASSWORDS) {//ENCRYPTPASSWORD
+      if (ENCRYPTPASSWORDS) {
         $canlogin = md5($_POST["password"]) == $old_data["password"];
       } else {
         $canlogin = $_POST["password"] == $old_data["password"];
@@ -199,7 +199,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
   }
 
   if (ASKFORPASSWORD && $_POST["password"]) {
-    if (ENCRYPT_PASSWORDS) {//ENCRYPTPASSWORD
+    if (ENCRYPTPASSWORDS) {
       $newpassword = sprintf('%s',md5($_POST["password"]));
      } else {
       $newpassword = sprintf('%s',$_POST["password"]);
@@ -390,7 +390,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
     $checkpassword = '';
     $allow = 0;
     # either they have to give the current password, or given two new ones
-    if (ENCRYPT_PASSWORDS) {//ENCRYPTPASSWORD
+    if (ENCRYPT_PASSWORDS) {
       $checkpassword = sprintf('%s',md5($_POST["password"]));
      } else {
       $checkpassword = sprintf('%s',$_POST["password"]);
@@ -426,7 +426,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
   $history_entry = 'http://'.getConfig("website").$GLOBALS["adminpages"].'/?page=user&id='.$userid."\n\n";
 
   if (ASKFORPASSWORD && $_POST["password"]) {
-    if (ENCRYPT_PASSWORDS) {//ENCRYPTPASSWORD
+    if (ENCRYPTPASSWORDS) {
       $newpassword = sprintf('%s',md5($_POST["password"]));
      } else {
       $newpassword = sprintf('%s',$_POST["password"]);

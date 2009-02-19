@@ -173,7 +173,7 @@ if ($login_required && empty($_SESSION["userloggedin"])) {
     } elseif (empty($_POST["password"])) {
       $msg = $strEnterPassword;
     } else {
-      if (ENCRYPT_PASSWORDS) {//ENCRYPTPASSWORD
+      if (ENCRYPTPASSWORDS) {
         $canlogin = md5($_POST["password"]) == $userpassword && $_POST["email"] == $emailcheck;
       } else {
         $canlogin = $_POST["password"] == $userpassword && $_POST["email"] == $emailcheck;
@@ -312,7 +312,7 @@ function LoginPage($id,$userid,$email = "",$msg = "") {
   $html .= '<tr><td>'.$GLOBALS["strPassword"].'</td><td><input type=password name="password" value="'.$_POST["password"].'" size="30"></td></tr>';
   $html .= '</table>';
    $html .= '<p><input type=submit name="login" value="'.$GLOBALS["strLogin"].'"></p>';
-  if (ENCRYPT_PASSWORDS) {//ENCRYPTPASSWORD
+  if (ENCRYPTPASSWORDS) {
     $html .= sprintf('<a href="mailto:%s?subject=%s">%s</a>',getConfig("admin_address"),$GLOBALS["strForgotPassword"],$GLOBALS["strForgotPassword"]);
   } else {
     $html .= '<input type=submit name="forgotpassword" value="'.$GLOBALS["strForgotPassword"].'">';
