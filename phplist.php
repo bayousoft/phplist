@@ -22,7 +22,7 @@ class phplist extends DefaultPlugin {
       $this->developer_email = $developer_email;
       $this->table_prefix = $table_prefix;
     }
-    require_once $config["code_root"]."/uploader/plugins/phplist/".$this->coderoot()."/structure.php";
+    require_once dirname(__FILE__)."/uploader/plugins/phplist/".$this->coderoot()."/structure.php";
     $this->DBstructure = $DBstruct;
 
     $this->tables = array(

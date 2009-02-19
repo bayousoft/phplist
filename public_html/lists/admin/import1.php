@@ -366,7 +366,7 @@ function addFieldToCheck(value,name) {
 <tr><td colspan=2><?php echo $GLOBALS['I18N']->get('If you are going to send notification to users, you may want to add a little delay between messages')?></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('Notification throttle')?>:</td><td><input type="text" name="throttle_import" size=5> <?php echo $GLOBALS['I18N']->get('(default is nothing, will send as fast as it can)')?></td></tr>
 <?php
-include_once $GLOBALS["coderoot"] ."subscribelib2.php";
+include_once dirname(__FILE__)."/subscribelib2.php";
 print ListAllAttributes();
 ?>
 
@@ -374,4 +374,3 @@ print ListAllAttributes();
 </table>
 <?php } ?>
 
-</p>

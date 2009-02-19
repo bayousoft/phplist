@@ -59,7 +59,7 @@ if (!defined("USEFCK")) define("USEFCK",1);
 if (!defined("ASKFORPASSWORD")) define("ASKFORPASSWORD",0);
 if (!defined("UNSUBSCRIBE_REQUIRES_PASSWORD")) define("UNSUBSCRIBE_REQUIRES_PASSWORD",0);
 if (!defined("UNSUBSCRIBE_JUMPOFF")) define("UNSUBSCRIBE_JUMPOFF",0);
-if (!defined("ENCRYPTPASSWORD")) define("ENCRYPTPASSWORD",0);
+//if (!defined("ENCRYPTPASSWORD")) define("ENCRYPTPASSWORD",0);
 if (!defined("PHPMAILER")) define("PHPMAILER",0);
 if (!defined('PHPMAILERHOST')) define("PHPMAILERHOST",'');
 if (!defined("MANUALLY_PROCESS_QUEUE")) define("MANUALLY_PROCESS_QUEUE",1);
@@ -73,10 +73,10 @@ if (!defined("FCKIMAGES_DIR")) define("FCKIMAGES_DIR","uploadimages");
 if (!defined('UPLOADIMAGES_DIR')) define('UPLOADIMAGES_DIR','images');
 if (!defined("USE_MANUAL_TEXT_PART")) define("USE_MANUAL_TEXT_PART",0);
 if (!defined("ALLOW_NON_LIST_SUBSCRIBE")) define("ALLOW_NON_LIST_SUBSCRIBE",0);
-if (!defined("MAILQUEUE_BATCH_SIZE")) define("MAILQUEUE_BATCH_SIZE",0);
-if (!defined("MAILQUEUE_BATCH_PERIOD")) define("MAILQUEUE_BATCH_PERIOD",3600);
-if (!defined('MAILQUEUE_THROTTLE')) define('MAILQUEUE_THROTTLE',0);
-if (!defined('MAILQUEUE_AUTOTHROTTLE')) define('MAILQUEUE_AUTOTHROTTLE',0);
+if (!defined("MAILQUEUE_BATCH_SIZE")) define("MAILQUEUE_BATCH_SIZE",150); //Changed for test. (old value = 0)
+if (!defined("MAILQUEUE_BATCH_PERIOD")) define("MAILQUEUE_BATCH_PERIOD",1800); //Changed for test. (old value = 3600)
+if (!defined('MAILQUEUE_THROTTLE')) define('MAILQUEUE_THROTTLE',20); //Changed for test. (old value = 0)
+if (!defined('MAILQUEUE_AUTOTHROTTLE')) define('MAILQUEUE_AUTOTHROTTLE',1); //Changed for test. (old value = 0)
 if (!defined("NAME")) define("NAME",'phplist');
 if (!defined("USE_OUTLOOK_OPTIMIZED_HTML")) define("USE_OUTLOOK_OPTIMIZED_HTML",0);
 if (!defined("EXPORT_EXCEL")) define("EXPORT_EXCEL",0);
@@ -116,7 +116,7 @@ if (!defined('SEND_LISTADMIN_COPY')) define('SEND_LISTADMIN_COPY',0);
 if (!defined('EMAIL_ADDRESS_VALIDATION_LEVEL')) define('EMAIL_ADDRESS_VALIDATION_LEVEL',2);
 if (!defined('BLACKLIST_EMAIL_ON_BOUNCE')) define('BLACKLIST_EMAIL_ON_BOUNCE',1);
 if (!defined('MANUALLY_PROCESS_BOUNCES')) define('MANUALLY_PROCESS_BOUNCES',1);
-if (!defined('ENCRYPT_PASSWORDS')) define('ENCRYPT_PASSWORDS',0);
+if (!defined('ENCRYPT_PASSWORDS')) define('ENCRYPT_PASSWORDS',1);
 if (!defined('PASSWORD_CHANGE_TIMEFRAME')) define('PASSWORD_CHANGE_TIMEFRAME','1 day');
 
 ## fairly crude way to determine php version, but mostly needed for the stripos

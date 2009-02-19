@@ -6,7 +6,7 @@
 require_once dirname(__FILE__).'/accesscheck.php';
 
 if (!is_object("date")) {
-  include $GLOBALS["coderoot"] . "date.php";
+  include dirname(__FILE__) . "/date.php";
 }
 
 ob_end_flush();

@@ -23,7 +23,7 @@ if (USETINYMCEMESG && file_exists(TINYMCEPATH)) {
   $useTinyMCE = 1;
 }
 
-include $GLOBALS["coderoot"] . "date.php";
+include dirname(__FILE__)."/date.php";
 
 $errormsg = '';
 //$rss_content = '';          //Obsolete by rssmanager plugin
@@ -103,7 +103,7 @@ ob_end_flush();
 if ($id) {
   // Load message attributes / values
 
-  require $GLOBALS["coderoot"] . "structure.php";  // This gets the database structures into DBStruct
+  require dirname(__FILE__)."/structure.php";  // This gets the database structures into DBStruct
 
   $result = Sql_query("SELECT * FROM {$tables["message"]} where id = $id $ownership");
   if (!Sql_Num_Rows($result)) {

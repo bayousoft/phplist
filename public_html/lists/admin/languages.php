@@ -117,6 +117,8 @@ class phplist_I18N {
   var $basedir = '';
 
   function phplist_I18N() {
+    if (isset($_SESSION['adminlanguage']))
+      $_SESSION['adminlanguage'] = preg_replace('/\W/','',$_SESSION['adminlanguage']);
     $this->basedir = dirname(__FILE__).'/lan/';
     if (isset($_SESSION['adminlanguage']) && is_dir($this->basedir.$_SESSION['adminlanguage']['iso'])) {
       $this->language = $_SESSION['adminlanguage']['iso'];
@@ -196,7 +198,7 @@ class phplist_I18N {
   function get($text) {
     $this->basedir = dirname(__FILE__).'/lan/';
     if (isset($_GET["page"]))
-      $page = $_GET["page"];
+      $page = basename($_GET["page"]);
     else
       $page = "home";
 

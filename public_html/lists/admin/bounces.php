@@ -63,7 +63,7 @@ if ($total > MAX_USER_PP) {
           PageLink2("bounces","&lt;",sprintf('s=%d',max(0,$s-MAX_USER_PP)).$find_url),
           PageLink2("bounces","&gt;",sprintf('s=%d',min($total,$s+MAX_USER_PP)).$find_url),
           PageLink2("bounces","&gt;&gt;",sprintf('s=%d',$total-MAX_USER_PP).$find_url));
-  $query = sprintf('select * from %s where status != ? order by date desc limit $limit offset $offset', $tables['bounce']);
+  $query = sprintf("select * from %s where status != ? order by date desc limit $limit offset $offset", $tables['bounce']);
   $result = Sql_Query_Params($query, array('unidentified bounce'));
 } else {
   $query = sprintf('select * from %s where status != ? order by date desc', $tables['bounce']);

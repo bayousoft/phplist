@@ -38,6 +38,7 @@ else
 preg_match("/([\w_]+)/",$topic,$regs);
 $topic = $regs[1];
 $include = '';
+$topic = basename($topic);
 if ($topic) {
   if (is_file($_SESSION['adminlanguage']['iso'].'/'.$topic.".php")) {
     $include = $_SESSION['adminlanguage']['iso'].'/'.$topic . ".php";

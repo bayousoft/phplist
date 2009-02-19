@@ -6,7 +6,7 @@ require_once dirname(__FILE__).'/accesscheck.php';
 if (PHPMAILER && is_file(dirname(__FILE__).'/phpmailer/class.phpmailer.php')) {
   # phplistmailer, extended of the popular phpmail class
   # this is still very experimental
-  include_once $GLOBALS["coderoot"] . "class.phplistmailer.php";
+  include_once dirname(__FILE__)."/class.phplistmailer.php";
 } else {
   if (USE_OUTLOOK_OPTIMIZED_HTML) {
     require_once dirname(__FILE__)."/class.html.mime.mail-outlookfix.inc";
