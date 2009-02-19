@@ -1128,4 +1128,34 @@ function secs2time($secs) {
 function dbg() {
 }
 
+function printobject($object) {
+  if (!is_object($object)) {
+    print "Not an object";
+    return;
+  }
+  $class = get_class($object);
+  print "Class: $class<br/>";
+  $vars = get_object_vars ($object);
+  print "Vars:";
+  printArray($vars);
+}
+
+function printarray($array){
+  if (is_object($array)) return printObject($array);
+  if (!is_array($array)) return;
+  while(list($key,$value) = each($array)){
+   if (is_array($value)) {
+     echo $key."(array):<blockquote>";
+     printarray($value);//recursief!!
+     echo "</blockquote>";
+   } elseif (is_object($value)){
+     echo $key."(object):<blockquote>";
+     printobject($value);
+     echo "</blockquote>";
+   } else{
+     echo $key."==>".$value."<br />";
+   }
+  }
+}
+
 ?>
