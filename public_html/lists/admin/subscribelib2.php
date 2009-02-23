@@ -390,7 +390,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
     $checkpassword = '';
     $allow = 0;
     # either they have to give the current password, or given two new ones
-    if (ENCRYPT_PASSWORDS) {
+    if (ENCRYPTPASSWORDS) {
       $checkpassword = sprintf('%s',md5($_POST["password"]));
      } else {
       $checkpassword = sprintf('%s',$_POST["password"]);
