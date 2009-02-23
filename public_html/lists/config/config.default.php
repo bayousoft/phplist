@@ -309,16 +309,16 @@ define("ALLOW_NON_LIST_SUBSCRIBE",0);
 
 # define the amount of emails you want to send per period. If 0, batch processing
 # is disabled and messages are sent out as fast as possible
-define("MAILQUEUE_BATCH_SIZE",150); //Changed for test. (old value = 0)
+define("MAILQUEUE_BATCH_SIZE",0);
 
 # define the length of one batch processing period, in seconds (3600 is an hour)
-define("MAILQUEUE_BATCH_PERIOD",1800); //Changed for test. (old value = 3600)
+define("MAILQUEUE_BATCH_PERIOD",3600); 
 
 # to avoid overloading the server that sends your email, you can add a little delay
 # between messages that will spread the load of sending
 # you will need to find a good value for your own server
 # value is in seconds (or you can play with the autothrottle below)
-define('MAILQUEUE_THROTTLE',20); //Changed for test. (old value = 0)
+define('MAILQUEUE_THROTTLE',0); 
 
 # year ranges. If you use dates, by default the drop down for year will be from
 # three years before until 10 years after this the current value for year. If there
