@@ -38,7 +38,7 @@ if ($noaccess) {
 #Update password?
 if (isset($_POST['update']) && $_POST['update'] && isset($id)){
   $adminId = $id;
-  if (ENCRYPT_PASSWORDS){
+  if (ENCRYPT_ADMIN_PASSWORDS){
   	//Send token email.
   	sendPasswordMailTo($_POST['id'], $_POST['email']);
   }
@@ -49,7 +49,7 @@ if (isset($_POST['update']) && $_POST['update'] && isset($id)){
   	
     sendMail ($_POST['email'],$GLOBALS['I18N']->get('yourpassword'),"\n\n".$GLOBALS['I18N']->get('yourpasswordis')." $row[0]");    
   }
-  print $GLOBALS['I18N']->get("An email was sent to your address. This will allow you to ".(ENCRYPT_PASSWORDS?"change":"recover")." your password").".<BR></BR>";*/
+  print $GLOBALS['I18N']->get("An email was sent to your address. This will allow you to ".(ENCRYPT_ADMIN_PASSWORDS?"change":"recover")." your password").".<BR></BR>";*/
 }
 
 if (!empty($_POST["change"])) {
@@ -154,8 +154,8 @@ while (list ($key,$val) = each ($struct)) {
     list($a,$b) = explode(":",$val[1]);
   if ($a == "sys") {
   	#If key is 'password' and the passwords are encrypted, locate two radio buttons to allow an update.
-  	if ($b == 'Password' && ENCRYPT_PASSWORDS){
-  	  printf('<tr><td>%s (%s)</td><td>%s<input type=radio name="update" value=\'0\' checked>%s</input><input type=radio name="update" value=\'1\'>%s</input></td></tr>', $GLOBALS['I18N']->get('Password'), $GLOBALS['I18N']->get('hidden'), (ENCRYPT_PASSWORDS?$GLOBALS['I18N']->get('Update it?'):$GLOBALS['I18N']->get('Remind it?')), $GLOBALS['I18N']->get('No'), $GLOBALS['I18N']->get('Yes'));
+  	if ($b == 'Password' && ENCRYPT_ADMIN_PASSWORDS){
+  	  printf('<tr><td>%s (%s)</td><td>%s<input type=radio name="update" value=\'0\' checked>%s</input><input type=radio name="update" value=\'1\'>%s</input></td></tr>', $GLOBALS['I18N']->get('Password'), $GLOBALS['I18N']->get('hidden'), (ENCRYPT_ADMIN_PASSWORDS?$GLOBALS['I18N']->get('Update it?'):$GLOBALS['I18N']->get('Remind it?')), $GLOBALS['I18N']->get('No'), $GLOBALS['I18N']->get('Yes'));
   	} else {
   		if ($b != 'Password'){
     	  printf('<tr><td>%s</td><td>%s</td></tr>',$GLOBALS['I18N']->get($b),$data[$key]);

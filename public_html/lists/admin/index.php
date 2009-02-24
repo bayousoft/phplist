@@ -218,7 +218,7 @@ if (isset($GLOBALS["require_login"]) && $GLOBALS["require_login"]) {
       }
     }
   #If passwords are encrypted and a password recovery request was made, send mail to the admin of the given email address.
-  } elseif (ENCRYPT_PASSWORDS && isset($_REQUEST["forgotpassword"])){
+  } elseif (ENCRYPT_ADMIN_PASSWORDS && isset($_REQUEST["forgotpassword"])){
   	  $adminId = $GLOBALS["admin_auth"]->adminIdForEmail($_REQUEST['forgotpassword']);
       if($adminId){
       	sendPasswordMailTo($adminId, $_REQUEST["forgotpassword"]);

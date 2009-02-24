@@ -15,7 +15,7 @@ class admin_auth {
     $encryptedPass = md5($password);
     $passwordDB = $admindata[0];    
     #Password encryption verification.
-    if(ENCRYPT_PASSWORDS==1 && (strlen($passwordDB)<32)) { //Passwords are encrypted but the actual is not.
+    if(ENCRYPT_ADMIN_PASSWORDS==1 && (strlen($passwordDB)<32)) { //Passwords are encrypted but the actual is not.
       #Encrypt the actual DB password before performing the validation below.
       $encryptedPassDB = md5($passwordDB);
       $query = "update %s set password = '%s' where loginname = ?";
@@ -28,8 +28,8 @@ class admin_auth {
     if ($admindata["disabled"]) {
       return array(0,"your account has been disabled");
     } elseif (#Password validation.
-      (ENCRYPT_PASSWORDS && $passwordDB && $encryptedPass == $encryptedPassDB) ||
-   	  (!ENCRYPT_PASSWORDS && $passwordDB && $password == $passwordDB)) {
+      (ENCRYPT_ADMIN_PASSWORDS && $passwordDB && $encryptedPass == $encryptedPassDB) ||
+   	  (!ENCRYPT_ADMIN_PASSWORDS && $passwordDB && $password == $passwordDB)) {
       return array($admindata["id"],"OK");
     } else {
       return array(0,"invalid password");
@@ -57,7 +57,7 @@ class admin_auth {
     $noaccess_req = Sql_Fetch_Row($req);
     if (!$noaccess_req[0]) {
       return array(0,"No such account");
-    } elseif (!ENCRYPT_PASSWORDS && sha1($noaccess_req[2]) != $_SESSION["logindetails"]["passhash"]) {
+    } elseif (!ENCRYPT_ADMIN_PASSWORDS && sha1($noaccess_req[2]) != $_SESSION["logindetails"]["passhash"]) {
       return array(0,"Your session does not match your password.  If you just changed your password, simply log back in.");
     } elseif ($noaccess_req[1]) {
       return array(0,"your account has been disabled");

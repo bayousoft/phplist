@@ -116,7 +116,7 @@ if (!defined('SEND_LISTADMIN_COPY')) define('SEND_LISTADMIN_COPY',0);
 if (!defined('EMAIL_ADDRESS_VALIDATION_LEVEL')) define('EMAIL_ADDRESS_VALIDATION_LEVEL',2);
 if (!defined('BLACKLIST_EMAIL_ON_BOUNCE')) define('BLACKLIST_EMAIL_ON_BOUNCE',1);
 if (!defined('MANUALLY_PROCESS_BOUNCES')) define('MANUALLY_PROCESS_BOUNCES',1);
-if (!defined('ENCRYPT_PASSWORDS')) define('ENCRYPT_PASSWORDS',1);
+if (!defined('ENCRYPT_ADMIN_PASSWORDS')) define('ENCRYPT_ADMIN_PASSWORDS',0);
 if (!defined('PASSWORD_CHANGE_TIMEFRAME')) define('PASSWORD_CHANGE_TIMEFRAME','1 day');
 
 ## fairly crude way to determine php version, but mostly needed for the stripos
