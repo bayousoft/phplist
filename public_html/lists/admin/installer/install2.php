@@ -22,6 +22,8 @@ if ($_SESSION["session_ok"] != 1){
 include("lib/parameters.inc");
 
 $inTheSame = 1;
+$msg       = "";
+$errno     = "";
 
 if ($submited){
    /* The code above take the mission to write in config.php file
@@ -69,7 +71,7 @@ if ($submited){
       else{
          $errno = 0;
          $msg   = $GLOBALS["I18N"]->get($GLOBALS["strConfigWrited"]);
-         header("Location:?page=end");
+         header("Location:?");
       }
    }
 }
@@ -94,7 +96,7 @@ table tr td input { float:right; }
 </style>
 
 <?
-if ($errno){
+if ($errno || !$submited){
 ?>
 <table width=500>
   <tr>

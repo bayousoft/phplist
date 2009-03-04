@@ -49,8 +49,10 @@ if ($submited){
    }
 }
 else{
-   getSessionData($database_def);
+   $msg = "";
    $inTheSame = 1;
+
+   getSessionData($database_def);
 
    $HTMLElements = getHTMLElements($database_def); 
 }

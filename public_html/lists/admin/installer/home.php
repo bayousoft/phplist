@@ -11,8 +11,10 @@
 
 $_SESSION["session_ok"] = 1;
 
+$page = (!is_int($page))?0:$page;
 include("installer/lib/js_nextPage.inc");
-?>
+
+/*
 <div id="language_change">
   <script language="JavaScript" type="text/javascript">
   function langChange(){
@@ -28,9 +30,10 @@ include("installer/lib/js_nextPage.inc");
   <form name="lang_change" action="" method=POST>
   <?echo languagePack("","langChange();")?>
   </form>
-  <?'/*.$GLOBALS["I18N"]->get($GLOBALS["strLanguageOpt"])*/.'?>
   </p>
 </div>
+*/
+?>
 
 <div id="phplist_logo_header">
   <span class="phplist_logo_span"><img src="images/phplist-logo.png" title="phplist"></span>

@@ -51,9 +51,10 @@ if ($submited){
    }
 }
 else{
-   getSessionData($bounce_def);
+   $msg = "";
    $inTheSame = 1;
 
+   getSessionData($bounce_def);
    $HTMLElements = getHTMLElements($bounce_def); 
 }
 

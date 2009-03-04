@@ -8,6 +8,8 @@ array. This function not only set the HTML elements as PHP global variables,
 it change the "default" value of each defined-element in the current structure
 is used (array) with the POST value returned.
 */
+function newMenu(){
+}
 
 function writeConfigFile($file){
    global $parameters;
@@ -50,6 +52,21 @@ function writeConfigFile($file){
                ((is_numeric($variable["default"]))?$variable["default"]:"\"".$variable["default"]."\"").
                ");";
                break;
+
+            case "included":
+               $linevar.=
+               "include('".$variable["name"]."');";
+               break;
+ 
+            case "required":
+               $linevar.=
+               "require('".$variable["name"]."');";
+               break;
+ 
+            case "call":
+               $linevar.=
+               "$".$variable["name"]." = ".$variable["default"].";";
+               break;
  
             case "array":
                $arrval = explode("|",$variable["default"]);
@@ -63,9 +80,14 @@ function writeConfigFile($file){
                break;
          }
 
-         $linevar.= "\n";
+
+         if (!isset($variable["file_description_after"]))
+              $linevar.= "\n";
+         else $linevar.= "";
+
 
          fwrite($fp, $linevar); // escribo declaracion del parametro
+         fwrite($fp, $variable["file_description_after"]); // escribo descripcion posterior del parametro
       }
 
       fwrite($fp, "\n\n");
@@ -530,23 +552,28 @@ function cleanVar($var) {
     TRUE if the connection was successfull; else FALSE
 **/
 function processPopTest ($envelope,$server,$user,$password) {
-$port =  $_REQUEST["bounce_mailbox_port"];
-if (!$port) {
-  $port = '110/pop3/notls';
-}
-set_time_limit(6000);
+   $port =  (isset($_REQUEST["bounce_mailbox_port"]))?$_REQUEST["bounce_mailbox_port"]:false;
 
-$link=@imap_open("{".$server.":".$port."}INBOX",$user,$password,CL_EXPUNGE);
+   if (!$port) {
+      $port = '110/pop3/notls';
+   }
+   set_time_limit(6000);
 
-if (!$link){
-  $link=@imap_open("{".$server.":".$port."}INBOX",$user,$password);
-}
+   $current = error_reporting(0);
 
-if (!$link){
-   return FALSE;
-}
+   $link = @imap_open("{".$server.":".$port."}INBOX",$user,$password,CL_EXPUNGE+OP_SILENT);
 
-return TRUE;
+   if (!$link){
+      $link = @imap_open("{".$server.":".$port."}INBOX",$user,$password);
+   }
+
+   error_reporting($current);
+
+   if (!$link){
+      return FALSE;
+   }
+
+   return TRUE;
 }
 
 /**
@@ -559,33 +586,41 @@ return TRUE;
     html of final values to write to the config file
 **/
 function showFinalValues($req_vars, $session_vars) { # somebody please work on this to use css based html"
-
-$result = '';
-$result .= '<table width=100% align="right" border="1">';
-foreach ($req_vars as $key => $val) {
-  if (($val["type"] != "commented" && $val["type"] != "hidden_constant" && $val["type"] != "hidden_scalar_int" && $val["type"] != "hidden_scalar") && $val["name"] != "database_password" && $val["name"] != "userhistory_systeminfo" ) {
-    $result .= '<tr><td width="50%">';
-    $result .= $val["name"];
-    $result .= ' => </td>';
-    if (!isset($session_vars[$val["name"]]) || $session_vars[$val["name"]] == $val["values"]) {
-      $result .= '<td width="50%"><span style="color:red;">';
-      $result .= $val["values"];
-      $result .= "</span></td></tr>";
-    }
-    elseif (isset($session_vars[$val["name"]]) && empty($session_vars[$val["name"]])) {
-      $result .= '<td width="50%">';
-      $result .= '0';
-      $result .= "</td></tr>";
-    } else {
-      $result .= '<td width="50%">';
-      $result .= $session_vars[$val["name"]];
-      $result .= "</td></tr>";
-    }
-
-  }
-}
-$result .= '</table>';
-return $result;
+   $result = '';
+   $result .= '<table width=100% align="right" border="1">';
+   
+   foreach ($req_vars as $key => $val){
+      if (($val["type"] != "commented" && 
+           $val["type"] != "hidden_constant" && 
+           $val["type"] != "hidden_scalar_int" && 
+           $val["type"] != "hidden_scalar") && 
+           $val["name"] != "database_password" && 
+           $val["name"] != "userhistory_systeminfo" ) {
+         $result .= '<tr><td width="50%">';
+         $result .= $val["name"];
+         $result .= ' => </td>';
+   
+         if (!isset($session_vars[$val["name"]]) || $session_vars[$val["name"]] == $val["values"]) {
+            $result .= '<td width="50%"><span style="color:red;">';
+            $result .= $val["values"];
+            $result .= "</span></td></tr>";
+         }
+         elseif (isset($session_vars[$val["name"]]) && empty($session_vars[$val["name"]])) {
+            $result .= '<td width="50%">';
+            $result .= '0';
+            $result .= "</td></tr>";
+         }
+         else{
+            $result .= '<td width="50%">';
+            $result .= $session_vars[$val["name"]];
+            $result .= "</td></tr>";
+         }
+   
+      }
+   }
+   
+   $result .= '</table>';
+   return $result;
 }
 
 /**
@@ -810,8 +845,9 @@ return getInput($value, $page[0], "text");
 }
 
 function check_connection($host, $user, $pass, $dbname){
-   $errno = 0;
-   $msg   = "";
+   $errno  = 0;
+   $msg    = "";
+   $created= "";
 
    if ($host && $user && $pass){
       $conn = @mysql_connect($host, $user ,$pass);

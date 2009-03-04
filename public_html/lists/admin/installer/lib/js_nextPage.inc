@@ -6,14 +6,18 @@ if ($_SESSION["installType"] == "BASIC")
      $maxPage = 3;
 else $maxPage = 5;
 
+
+if (isset($inTheSame))
 if ($inTheSame)
-     $nextPage = (isset($page) && $page != "")?$page:0;
-else $nextPage = (isset($page) && $page != "")?$page+1:0;
+     $nextPage = ($page != "")?$page:0;
+else $nextPage = ($page != "")?$page+1:0;
 
 if ($page+1 < $maxPage)
      $textSubmit = $GLOBALS["I18N"]->get($GLOBALS["strNextStep"]);
 else $textSubmit = $GLOBALS["I18N"]->get($GLOBALS["strWriteToConfig"]);
 
+//echo "PP: $page<br>";
+//echo "NP: $nextPage";
 
 ?>
 <script language="Javascript" type="text/javascript">
