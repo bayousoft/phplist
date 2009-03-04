@@ -11,6 +11,7 @@ require("languages.php");
 
 // Trata de tomar el paso de la instalacion por POST, sino tre nada, lo intenta por GET
 $page     = (isset($_POST["page"]))?$_POST["page"]:"";
+$config['head'][0] = '<title>phpList installer</title>';
 $submited = (isset($_POST["submited"]))?$_POST["submited"]:"";
 $itype    = (isset($_GET["itype"]))?$_GET["itype"]:"";
 $inTheSame= 0;
@@ -43,7 +44,7 @@ if (!isset($page) || $page == ""){
 $control = ($page * 1)."";
 
 
-//include("installer/lib/header.inc");
+include "pagetop.php";
 include("header.inc");
 
 if (!isset($page) || $page == "" || ($control != $page)){
