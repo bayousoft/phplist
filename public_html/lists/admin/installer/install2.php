@@ -16,7 +16,7 @@ if ($_SESSION["session_ok"] != 1){
 
 
 /***************************************************
-  This script use only the structure BOUNCE_DEF
+  This script use the completly PARAMETERS structure
 ***************************************************/
 
 include("lib/parameters.inc");
@@ -32,46 +32,47 @@ if ($submited){
       It's the final Step (2)
    */
 
-   // Database writing
-   $path = "../config/";
-
-
-   if (is_file($path."config.php")){
-      /*
-      CODE TO TRY TO REWRITE config.php IF EXISTS (can't by done cause permission problem)
-      if (!is_readable($path."config.php")){
-         $errno = 1;
-         $msg   = $GLOBALS["I18N"]->get($GLOBALS["strConfigIsNotWritable"]);
+   if (!is_writable(dirname($configfile))){
+      $errno = 1;
+      $msg   = $GLOBALS["I18N"]->get(sprintf($GLOBALS["strConfigDirNotWritable"],dirname($configfile)));
+   }
+   else{
+      if (is_file($configfile)){
+         if (!is_writable($configfile)){
+            $errno = 1;
+            $msg   = $GLOBALS["I18N"]->get($GLOBALS["strConfigNotWritable"]);
+         }
+         else{
+            copy($configfile, $configfile.".ori");
+            $stat  = writeConfigFile($configfile);
+     
+            if (!$stat){
+               $errno = 1;
+               $msg   = $GLOBALS["I18N"]->get($GLOBALS["strConfigRewriteError"]);
+            }
+            else{
+               $errno = 0;
+               $link_o = "<a href=?>";
+               $link_c = "</a>";
+               $msg    = $GLOBALS["I18N"]->get($GLOBALS["strConfigRewrited"]);
+            }
+         }
       }
       else{
-         copy($path."config.php", $path."config.php.ori");
-         $stat  = writeConfigFile();
-
+         $stat = writeConfigFile($configfile);
+   
          if (!$stat){
             $errno = 1;
             $msg   = $GLOBALS["I18N"]->get($GLOBALS["strConfigRewriteError"]);
          }
          else{
             $errno = 0;
-            $msg   = $GLOBALS["I18N"]->get($GLOBALS["strConfigWasRewrited"]);
+            $link_o = "<a href=?>";
+            $link_c = "</a>";
+            $msg    = $GLOBALS["I18N"]->get($GLOBALS["strConfigWrited"]);
+            $msg    = $GLOBALS["I18N"]->get($GLOBALS["strConfigWrited"]);
+            //header("Location:?");
          }
-      }
-      */
-      $errno = 1;
-      $msg   = $GLOBALS["I18N"]->get($GLOBALS["strConfigExists"]);
-   }
-   else{
-      $stat  = writeConfigFile($path."config.php");
-
-      if (!$stat){
-         $errno = 1;
-         $texto = str_replace("{path}","'$path'",$GLOBALS["strConfigDirNoWritable"]);
-         $msg   = $GLOBALS["I18N"]->get($texto);
-      }
-      else{
-         $errno = 0;
-         $msg   = $GLOBALS["I18N"]->get($GLOBALS["strConfigWrited"]);
-         header("Location:?");
       }
    }
 }
@@ -114,4 +115,12 @@ if ($errno || !$submited){
 <?php
 include("installer/lib/nextStep.inc");
 ?>
+<?}else{?>
+<table width=500>
+  <tr>
+    <td>
+    <div class="explain"><?echo $GLOBALS["I18N"]->get(sprintf($GLOBALS['strReadyToUse'],$link_o,$link_c))?></div>
+    </td>
+  </tr>
+</table>
 <?}?>

@@ -59,6 +59,13 @@ else{
 }
 
 include("installer/lib/js_nextPage.inc");
+
+$mailacc  = $GLOBALS["I18N"]->get($GLOBALS['strJsMailAccount']);
+$mailvalidacc = $GLOBALS["I18N"]->get($GLOBALS['strJsMailValidAccount']);
+$mailhost = $GLOBALS["I18N"]->get($GLOBALS['strJsMailHost']);
+$mailuser = $GLOBALS["I18N"]->get($GLOBALS['strJsMailUser']);
+$mailpass = $GLOBALS["I18N"]->get($GLOBALS['strJsMailPass']);
+
 ?>
 <br>
 <br>
@@ -70,7 +77,7 @@ table tr td input { float:right; }
 <table width=500>
   <tr>
     <td>
-    <div class="explain"><?echo $GLOBALS["I18N"]->get($GLOBALS['strExplainInstall1'])?></div>
+    <div class="explain"><?echo $GLOBALS["I18N"]->get($GLOBALS['strExplainInstall'])?></div>
     </td>
   </tr>
 </table>
@@ -89,14 +96,14 @@ function validation(){
    var frm = document.pageForm;
    
    if (frm.message_envelope.value == ""){
-      alert("You must enter mail account");
+      alert("<?echo $mailacc?>");
       frm.message_envelope.focus();
 
       return false;
    }
    else
    if (!validarEmail(frm.message_envelope.value)){
-      alert("You must enter a valid mail account");
+      alert("<?echo $mailvalidacc?>");
       frm.message_envelope.focus();
       frm.message_envelope.select();
 
@@ -105,6 +112,7 @@ function validation(){
 
    if (frm.bounce_mailbox_host.value == ""){
       alert("You must enter the mail server (host) for this account");
+      alert("<?echo $mailhost?>");
       frm.bounce_mailbox_host.focus();
 
       return false;
@@ -112,6 +120,7 @@ function validation(){
    
    if (frm.bounce_mailbox_user.value == ""){
       alert("You must enter the user for connect to the mail server (host)");
+      alert("<?echo $mailuser?>");
       frm.bounce_mailbox_user.focus();
 
       return false;
@@ -119,6 +128,7 @@ function validation(){
    
    if (frm.bounce_mailbox_password.value == ""){
       alert("You must enter the password for this user");
+      alert("<?echo $mailpass?>");
       frm.bounce_mailbox_password.focus();
 
       return false;

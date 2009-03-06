@@ -26,7 +26,7 @@ General settings for language and database
 
 =========================================================================*/";
 $database_def[0]["name"] = "language_module";
-$database_def[0]["default"] = "enlish.inc";
+$database_def[0]["default"] = "english.inc";
 $database_def[0]["visible"] = 0;
 $database_def[0]["commented"] = 0;
 $database_def[0]["type"] = "variable";
@@ -144,82 +144,82 @@ $bounce_def[2]["file_description"] = "
 # frontend. Read README.commandline to find out how to set it up on the
 # commandline\n";
 
-$bounce_def[2]["name"] = "bounce_mailbox_host";
-$bounce_def[2]["default"] = "localhost";
-$bounce_def[2]["visible"] = 1;
-$bounce_def[2]["commented"] = 0;
-$bounce_def[2]["type"] = "variable";
-$bounce_def[2]["appl_description"] = "Mailbox Host";
-$bounce_def[2]["file_description"] = "\n# when the protocol is pop, specify these three\n";
-
-$bounce_def[3]["name"] = "bounce_mailbox_user";
-$bounce_def[3]["default"] = "popuser";
+$bounce_def[3]["name"] = "bounce_mailbox_host";
+$bounce_def[3]["default"] = "localhost";
 $bounce_def[3]["visible"] = 1;
 $bounce_def[3]["commented"] = 0;
 $bounce_def[3]["type"] = "variable";
-$bounce_def[3]["appl_description"] = "User";
-$bounce_def[3]["file_description"] = "";
+$bounce_def[3]["appl_description"] = "Mailbox Host";
+$bounce_def[3]["file_description"] = "\n# when the protocol is pop, specify these three\n";
 
-$bounce_def[4]["name"] = "bounce_mailbox_password";
-$bounce_def[4]["default"] = "password";
+$bounce_def[4]["name"] = "bounce_mailbox_user";
+$bounce_def[4]["default"] = "popuser";
 $bounce_def[4]["visible"] = 1;
 $bounce_def[4]["commented"] = 0;
 $bounce_def[4]["type"] = "variable";
-$bounce_def[4]["appl_description"] = "Password";
+$bounce_def[4]["appl_description"] = "User";
 $bounce_def[4]["file_description"] = "";
 
-$bounce_def[5]["name"] = "bounce_mailbox_port";
-$bounce_def[5]["default"] = "110/pop3/notls";
-$bounce_def[5]["visible"] = 0;
+$bounce_def[5]["name"] = "bounce_mailbox_password";
+$bounce_def[5]["default"] = "password";
+$bounce_def[5]["visible"] = 1;
 $bounce_def[5]["commented"] = 0;
 $bounce_def[5]["type"] = "variable";
-$bounce_def[5]["appl_description"] = "";
-$bounce_def[5]["file_description"] = "
-# the \"port\" is the remote port of the connection to retrieve the emails
-# the default should be fine but if it doesn't work, you can try the second
-# one. To do that, add a # before the first line and take off the one before the
-# second line\n";
+$bounce_def[5]["appl_description"] = "Password";
+$bounce_def[5]["file_description"] = "";
 
-$bounce_def[6]["name"] = "bounce_mailbox";
-$bounce_def[6]["default"] = "/var/spool/mail/listbounces";
+$bounce_def[6]["name"] = "bounce_mailbox_port";
+$bounce_def[6]["default"] = "110/pop3/notls";
 $bounce_def[6]["visible"] = 0;
 $bounce_def[6]["commented"] = 0;
 $bounce_def[6]["type"] = "variable";
 $bounce_def[6]["appl_description"] = "";
 $bounce_def[6]["file_description"] = "
-# when the protocol is mbox specify this one
-# it needs to be a local file in mbox format, accessible to your webserver user\n";
+# the \"port\" is the remote port of the connection to retrieve the emails
+# the default should be fine but if it doesn't work, you can try the second
+# one. To do that, add a # before the first line and take off the one before the
+# second line\n";
 
-$bounce_def[7]["name"] = "bounce_mailbox_purge";
-$bounce_def[7]["default"] = "1";
+$bounce_def[7]["name"] = "bounce_mailbox";
+$bounce_def[7]["default"] = "/var/spool/mail/listbounces";
 $bounce_def[7]["visible"] = 0;
 $bounce_def[7]["commented"] = 0;
 $bounce_def[7]["type"] = "variable";
 $bounce_def[7]["appl_description"] = "";
 $bounce_def[7]["file_description"] = "
-# set this to 0 if you want to keep your messages in the mailbox. this is potentially
-# a problem, because bounces will be counted multiple times, so only do this if you are
-# testing things.\n";
+# when the protocol is mbox specify this one
+# it needs to be a local file in mbox format, accessible to your webserver user\n";
 
-$bounce_def[8]["name"] = "bounce_mailbox_purge_unprocessed";
+$bounce_def[8]["name"] = "bounce_mailbox_purge";
 $bounce_def[8]["default"] = "1";
 $bounce_def[8]["visible"] = 0;
 $bounce_def[8]["commented"] = 0;
 $bounce_def[8]["type"] = "variable";
 $bounce_def[8]["appl_description"] = "";
 $bounce_def[8]["file_description"] = "
+# set this to 0 if you want to keep your messages in the mailbox. this is potentially
+# a problem, because bounces will be counted multiple times, so only do this if you are
+# testing things.\n";
+
+$bounce_def[9]["name"] = "bounce_mailbox_purge_unprocessed";
+$bounce_def[9]["default"] = "1";
+$bounce_def[9]["visible"] = 0;
+$bounce_def[9]["commented"] = 0;
+$bounce_def[9]["type"] = "variable";
+$bounce_def[9]["appl_description"] = "";
+$bounce_def[9]["file_description"] = "
 # set this to 0 if you want to keep unprocessed messages in the mailbox. Unprocessed
 # messages are messages that could not be matched with a user in the system
 # messages are still downloaded into PHPlist, so it is safe to delete them from
 # the mailbox and view them in PHPlist\n";
 
-$bounce_def[9]["name"] = "bounce_unsucribe_threshold";
-$bounce_def[9]["default"] = "5";
-$bounce_def[9]["visible"] = 0;
-$bounce_def[9]["commented"] = 0;
-$bounce_def[9]["type"] = "variable";
-$bounce_def[9]["appl_description"] = "";
-$bounce_def[7]["file_description"] = "\n# how many bounces in a row need to have occurred for a user to be marked unconfirmed\n";
+$bounce_def[10]["name"] = "bounce_unsucribe_threshold";
+$bounce_def[10]["default"] = "5";
+$bounce_def[10]["visible"] = 0;
+$bounce_def[10]["commented"] = 0;
+$bounce_def[10]["type"] = "variable";
+$bounce_def[10]["appl_description"] = "";
+$bounce_def[10]["file_description"] = "\n# how many bounces in a row need to have occurred for a user to be marked unconfirmed\n";
 
 $parameters[1]["parameters"] = $bounce_def;
 
@@ -237,7 +237,7 @@ $parameters[2]["file_description"] = "
 
 Settings for installation definitions
 
-=========================================================================*/\n";
+=========================================================================*/";
 
 $installation_def[0]["name"] = "installation_name";
 $installation_def[0]["default"] = "PHPlist";
@@ -285,7 +285,7 @@ $parameters[3]["file_description"] = "
 
 Security related settings
 
-=========================================================================*/\n";
+=========================================================================*/";
 
 $security_def[0]["name"] = "require_login";
 $security_def[0]["default"] = "1";
@@ -303,20 +303,22 @@ $security_def[1]["name"] = "MAXLIST";
 $security_def[1]["default"] = "1";
 $security_def[1]["visible"] = 0;
 $security_def[1]["commented"] = 0;
-$security_def[1]["type"] = "variable";
+$security_def[1]["type"] = "constant";
 $security_def[1]["appl_description"] = "";
 $security_def[1]["file_description"] = "\n# if you use login, how many lists can be created per administrator\n";
 
 $security_def[2]["name"] = "commandline_users";
 $security_def[2]["default"] = "admin";
 $security_def[2]["visible"] = 0;
-$security_def[2]["commented"] = 1;
+$security_def[2]["commented"] = 0;
 $security_def[2]["type"] = "array";
 $security_def[2]["appl_description"] = "";
 $security_def[2]["file_description"] = "
 # if you use commandline, you will need to identify the users who are allowed to run
-# the script. See README.commandline for more info
-# or you can use the following to disable the check (take off the # in front of the line)\n";
+# the script. See README.commandline for more info\n";
+$security_def[2]["file_description_after"] = "
+# or you can use the following to disable the check (take off the # in front of the line)
+# ".'$comandline_users = array();'."\n";
 
 $security_def[3]["name"] = "ASKFORPASSWORD";
 $security_def[3]["default"] = "0";
@@ -351,7 +353,7 @@ $security_def[5]["file_description"] = "
 # if a user should immediately be unsubscribed, when using their personal URL, instead of
 # the default way, which will ask them for a reason, set this to 1\n";
 
-$security_def[6]["name"] = "blacklist_grace";
+$security_def[6]["name"] = "blacklist_gracetime";
 $security_def[6]["default"] = "5";
 $security_def[6]["visible"] = 0;
 $security_def[6]["commented"] = 0;
@@ -415,10 +417,10 @@ $parameters[4]["file_description"] = "
 
 Debugging and informational
 
-=========================================================================*/\n";
+=========================================================================*/";
 
 $debuginf_def[0]["name"] = "TEST";
-$debuginf_def[0]["default"] = "1";
+$debuginf_def[0]["default"] = "0";
 $debuginf_def[0]["visible"] = 0;
 $debuginf_def[0]["commented"] = 0;
 $debuginf_def[0]["type"] = "constant";
@@ -468,7 +470,8 @@ $debuginf_def[4]["commented"] = 0;
 $debuginf_def[4]["type"] = "constant";
 $debuginf_def[4]["appl_description"] = "";
 $debuginf_def[4]["file_description"] = "
-# if you want to use \r\n for formatting messages set the 0 to 1
+# if you want to use \r\n 
+# for formatting messages set the 0 to 1
 # see also http://www.securityfocus.com/archive/1/255910
 # this is likely to break things for other mailreaders, so you should
 # only use it if all your users have Outlook (not Express)\n";
@@ -528,7 +531,7 @@ $parameters[5]["file_description"] = "
 
 Feedback to developers
 
-=========================================================================*/\n";
+=========================================================================*/";
 
 $develop_def[0]["name"] = "REGISTER";
 $develop_def[0]["default"] = "1";
@@ -608,7 +611,7 @@ $parameters[6]["file_description"] = "
 
 Miscellaneous
 
-=========================================================================*/\n";
+=========================================================================*/";
 
 $miscell_def[0]["name"] = "NUMCRITERIAS";
 $miscell_def[0]["default"] = "2";
@@ -662,7 +665,7 @@ $miscell_def[4]["name"] = "MAILQUEUE_THROTTLE";
 $miscell_def[4]["default"] = "0";
 $miscell_def[4]["visible"] = 0;
 $miscell_def[4]["commented"] = 0;
-$miscell_def[4]["type"] = "variable";
+$miscell_def[4]["type"] = "constant";
 $miscell_def[4]["appl_description"] = "";
 $miscell_def[4]["file_description"] = "
 # to avoid overloading the server that sends your email, you can add a little delay
@@ -724,7 +727,7 @@ $miscell_def[9]["name"] = "SEND_ONE_TESTMAIL";
 $miscell_def[9]["default"] = "0";
 $miscell_def[9]["visible"] = 0;
 $miscell_def[9]["commented"] = 0;
-$miscell_def[9]["type"] = "variable";
+$miscell_def[9]["type"] = "constant";
 $miscell_def[9]["appl_description"] = "";
 $miscell_def[9]["file_description"] = "
 # test emails
@@ -749,7 +752,7 @@ $parameters[7]["file_description"] = "
 
 Experimental Features
 
-=========================================================================*/\n";
+=========================================================================*/";
 
 $experim_def[0]["name"] = "USE_LIST_EXCLUDE";
 $experim_def[0]["default"] = "0";
@@ -763,7 +766,7 @@ $experim_def[0]["file_description"] = "
 # this is currently marked experimental\n";
 
 $experim_def[1]["name"] = "admin_auth_module";
-$experim_def[1]["default"] = "0";
+$experim_def[1]["default"] = "/usr/local/etc/auth.inc";
 $experim_def[1]["visible"] = 0;
 $experim_def[1]["commented"] = 1;
 $experim_def[1]["type"] = "variable";
@@ -779,10 +782,9 @@ $experim_def[1]["file_description"] = "
 # phplist will look for a file in that directory, or you can enter the full path to the file
 
 # eg
-#$admin_auth_module = 'phplist_auth.inc';
+#\$admin_auth_module = 'phplist_auth.inc';
 
-# or
-#$admin_auth_module = '/usr/local/etc/auth.inc';\n";
+# or\n";
 
 $experim_def[2]["name"] = "STACKED_ATTRIBUTE_SELECTION";
 $experim_def[2]["default"] = "0";
@@ -949,7 +951,7 @@ $parameters[8]["file_description"] = "
 
 Advanced Features, HTML editor, RSS, Attachments, Plugins. PDF creation
 
-=========================================================================*/\n";
+=========================================================================*/";
 
 $advanced_def[0]["name"] = "HTMLEMAIL_ENCODING";
 $advanced_def[0]["default"] = "quoted-printable";
@@ -1176,67 +1178,73 @@ $advanced_def[20]["type"] = "constant";
 $advanced_def[20]["appl_description"] = "";
 $advanced_def[20]["file_description"] = "
 # if you want to be able to send your messages as PDF attachments, you need to install
-# FPDF (http://www.fpdf.org), and include this sentence in this file at this line:
-# require('fpdf.php').
-# after that, uncoment this variable and 4 next.\n";
+# FPDF (http://www.fpdf.org), and set this variables accordingly:\n";
 
-$advanced_def[21]["name"] = "USE_PDF";
-$advanced_def[21]["default"] = "1";
+$advanced_def[21]["name"] = "fpdf.php";
+$advanced_def[21]["default"] = "";
 $advanced_def[21]["visible"] = 0;
 $advanced_def[21]["commented"] = 1;
-$advanced_def[21]["type"] = "constant";
+$advanced_def[21]["type"] = "required";
 $advanced_def[21]["appl_description"] = "";
 $advanced_def[21]["file_description"] = "";
 
-$advanced_def[22]["name"] = "pdf_font";
-$advanced_def[22]["default"] = "Times";
+$advanced_def[22]["name"] = "USE_PDF";
+$advanced_def[22]["default"] = "1";
 $advanced_def[22]["visible"] = 0;
 $advanced_def[22]["commented"] = 1;
-$advanced_def[22]["type"] = "variable";
+$advanced_def[22]["type"] = "constant";
 $advanced_def[22]["appl_description"] = "";
 $advanced_def[22]["file_description"] = "";
 
-$advanced_def[23]["name"] = "pdf_fontstyle";
-$advanced_def[23]["default"] = "";
+$advanced_def[23]["name"] = "pdf_font";
+$advanced_def[23]["default"] = "Times";
 $advanced_def[23]["visible"] = 0;
 $advanced_def[23]["commented"] = 1;
 $advanced_def[23]["type"] = "variable";
 $advanced_def[23]["appl_description"] = "";
 $advanced_def[23]["file_description"] = "";
 
-$advanced_def[24]["name"] = "pdf_fontsize";
-$advanced_def[24]["default"] = "14";
+$advanced_def[24]["name"] = "pdf_fontstyle";
+$advanced_def[24]["default"] = "";
 $advanced_def[24]["visible"] = 0;
 $advanced_def[24]["commented"] = 1;
 $advanced_def[24]["type"] = "variable";
 $advanced_def[24]["appl_description"] = "";
 $advanced_def[24]["file_description"] = "";
 
-$advanced_def[25]["name"] = "export_mimetype";
-$advanced_def[25]["default"] = "application/csv";
+$advanced_def[25]["name"] = "pdf_fontsize";
+$advanced_def[25]["default"] = "14";
 $advanced_def[25]["visible"] = 0;
-$advanced_def[25]["commented"] = 0;
+$advanced_def[25]["commented"] = 1;
 $advanced_def[25]["type"] = "variable";
 $advanced_def[25]["appl_description"] = "";
-$advanced_def[25]["file_description"] = "
+$advanced_def[25]["file_description"] = "";
+
+$advanced_def[26]["name"] = "export_mimetype";
+$advanced_def[26]["default"] = "application/csv";
+$advanced_def[26]["visible"] = 0;
+$advanced_def[26]["commented"] = 0;
+$advanced_def[26]["type"] = "variable";
+$advanced_def[26]["appl_description"] = "";
+$advanced_def[26]["file_description"] = "
 # the mime type for the export files. You can try changing this to
 # application/vnd.ms-excel to make it open automatically in excel\n";
 
-$advanced_def[26]["name"] = "EXPORT_EXCEL";
-$advanced_def[26]["default"] = "0";
-$advanced_def[26]["visible"] = 0;
-$advanced_def[26]["commented"] = 0;
-$advanced_def[26]["type"] = "constant";
-$advanced_def[26]["appl_description"] = "";
-$advanced_def[26]["file_description"] = "\n# if you want to use export format optimized for Excel, set this one to 1\n";
-
-$advanced_def[27]["name"] = "USE_REPETITION";
+$advanced_def[27]["name"] = "EXPORT_EXCEL";
 $advanced_def[27]["default"] = "0";
 $advanced_def[27]["visible"] = 0;
 $advanced_def[27]["commented"] = 0;
 $advanced_def[27]["type"] = "constant";
 $advanced_def[27]["appl_description"] = "";
-$advanced_def[27]["file_description"] = "
+$advanced_def[27]["file_description"] = "\n# if you want to use export format optimized for Excel, set this one to 1\n";
+
+$advanced_def[28]["name"] = "USE_REPETITION";
+$advanced_def[28]["default"] = "0";
+$advanced_def[28]["visible"] = 0;
+$advanced_def[28]["commented"] = 0;
+$advanced_def[28]["type"] = "constant";
+$advanced_def[28]["appl_description"] = "";
+$advanced_def[28]["file_description"] = "
 # Repetition. This adds the option to repeat the same message in the future.
 # After the message has been sent, this option will cause the system to automatically
 # create a new message with the same content. Be careful with it, because you may
@@ -1244,13 +1252,13 @@ $advanced_def[27]["file_description"] = "
 # the embargo of the message will be increased with the repetition interval you choose
 # also read the README.repetition for more info\n";
 
-$advanced_def[28]["name"] = "USE_PREPARE";
-$advanced_def[28]["default"] = "0";
-$advanced_def[28]["visible"] = 0;
-$advanced_def[28]["commented"] = 0;
-$advanced_def[28]["type"] = "constant";
-$advanced_def[28]["appl_description"] = "";
-$advanced_def[28]["file_description"] = "
+$advanced_def[29]["name"] = "USE_PREPARE";
+$advanced_def[29]["default"] = "0";
+$advanced_def[29]["visible"] = 0;
+$advanced_def[29]["commented"] = 0;
+$advanced_def[29]["type"] = "constant";
+$advanced_def[29]["appl_description"] = "";
+$advanced_def[29]["file_description"] = "
 # Prepare a message. This system allows you to create messages as a super admin
 # that can then be reviewed and selected by sub admins to send to their own lists
 # it is old functionality that is quite confusing, and therefore by default it
@@ -1258,166 +1266,185 @@ $advanced_def[28]["file_description"] = "
 # use it, or are a new user, it is better to leave it off. It has nothing to
 # do with being able to edit messages.\n";
 
-$advanced_def[29]["name"] = "KEEPFORWARDERATTRIBUTES";
-$advanced_def[29]["default"] = "0";
-$advanced_def[29]["visible"] = 0;
-$advanced_def[29]["commented"] = 0;
-$advanced_def[29]["type"] = "constant";
-$advanced_def[29]["appl_description"] = "";
-$advanced_def[29]["file_description"] = "
+$advanced_def[30]["name"] = "KEEPFORWARDERATTRIBUTES";
+$advanced_def[30]["default"] = "0";
+$advanced_def[30]["visible"] = 0;
+$advanced_def[30]["commented"] = 0;
+$advanced_def[30]["type"] = "constant";
+$advanced_def[30]["appl_description"] = "";
+$advanced_def[30]["file_description"] = "
 #0011857: forward to friend, retain attributes
 # When forwarding ('to a friend') the message will be using the attributes of the destination email by default.
 # This often means the message gets stripped of al its attributes. 
 # When setting this constant to 1, the message will use the attributes of the forwarding user. It can be used
 # to connect the destinatory to the forwarder and/or reward the forwarder.\n";
 
-$advanced_def[30]["name"] = "FORWARD_EMAIL_COUNT";
-$advanced_def[30]["default"] = "1";
-$advanced_def[30]["visible"] = 0;
-$advanced_def[30]["commented"] = 0;
-$advanced_def[30]["type"] = "constant";
-$advanced_def[30]["appl_description"] = "";
-$advanced_def[30]["file_description"] = "
-#0011860: forward to friend, multiple emails
-# This setting defines howmany email addresses you can enter in the forward page.
-# Default is 1 to not change behaviour from previous version.\n";
-
-$advanced_def[31]["name"] = "FORWARD_PERSONAL_NOTE_SIZE";
-$advanced_def[31]["default"] = "0";
+$advanced_def[31]["name"] = "FORWARD_EMAIL_COUNT";
+$advanced_def[31]["default"] = "1";
 $advanced_def[31]["visible"] = 0;
 $advanced_def[31]["commented"] = 0;
 $advanced_def[31]["type"] = "constant";
 $advanced_def[31]["appl_description"] = "";
 $advanced_def[31]["file_description"] = "
-#0011996: forward to friend - personal message
-# Allow user to add a personal note when forwarding 'to a friend'
-# 0 will turn this option off. default is 0 to not change behaviour from previous version.
-# 500 is recommended as a sound value to write a little introductory note to a friend
-#The note is prepeded to both text and html messages and will be stripped of all html \n";
+#0011860: forward to friend, multiple emails
+# This setting defines howmany email addresses you can enter in the forward page.
+# Default is 1 to not change behaviour from previous version.\n";
 
-$advanced_def[32]["name"] = "FORWARD_ALTERNATIVE_CONTENT";
+$advanced_def[32]["name"] = "FORWARD_PERSONAL_NOTE_SIZE";
 $advanced_def[32]["default"] = "0";
 $advanced_def[32]["visible"] = 0;
 $advanced_def[32]["commented"] = 0;
 $advanced_def[32]["type"] = "constant";
 $advanced_def[32]["appl_description"] = "";
 $advanced_def[32]["file_description"] = "
+#0011996: forward to friend - personal message
+# Allow user to add a personal note when forwarding 'to a friend'
+# 0 will turn this option off. default is 0 to not change behaviour from previous version.
+# 500 is recommended as a sound value to write a little introductory note to a friend
+#The note is prepeded to both text and html messages and will be stripped of all html \n";
+
+$advanced_def[33]["name"] = "FORWARD_ALTERNATIVE_CONTENT";
+$advanced_def[33]["default"] = "0";
+$advanced_def[33]["visible"] = 0;
+$advanced_def[33]["commented"] = 0;
+$advanced_def[33]["type"] = "constant";
+$advanced_def[33]["appl_description"] = "";
+$advanced_def[33]["file_description"] = "
 #0013076: different content when forwarding 'to a friend'
 # Allow admin to enter a different message that will be sent when forwarding 'to a friend'
 # This will show an extra tab in the message dialog. \n";
 
-$advanced_def[33]["name"] = "FORWARD_FRIEND_COUNT_ATTRIBUTE";
-$advanced_def[33]["default"] = "FriendCount";
-$advanced_def[33]["visible"] = 0;
-$advanced_def[33]["commented"] = 1;
-$advanced_def[33]["type"] = "constant";
-$advanced_def[33]["appl_description"] = "";
-$advanced_def[33]["file_description"] = "
+$advanced_def[34]["name"] = "FORWARD_FRIEND_COUNT_ATTRIBUTE";
+$advanced_def[34]["default"] = "FriendCount";
+$advanced_def[34]["visible"] = 0;
+$advanced_def[34]["commented"] = 1;
+$advanced_def[34]["type"] = "constant";
+$advanced_def[34]["appl_description"] = "";
+$advanced_def[34]["file_description"] = "
 #0013845 Lead Ref Scheme
 # When this setting has a value <> \'\' all succesfull handovers to the MTA will be counted
 # and saved in the attribute with the name of this setting.\n";
 
-$advanced_def[34]["name"] = "PHPMAILER";
-$advanced_def[34]["default"] = "1";
-$advanced_def[34]["visible"] = 0;
-$advanced_def[34]["commented"] = 0;
-$advanced_def[34]["type"] = "constant";
-$advanced_def[34]["appl_description"] = "";
-$advanced_def[34]["file_description"] = "
-# If you want to use the PHPMailer class from phpmailer.sourceforge.net, set the following
-# to 1. If you tend to send out html emails, it is recommended to do so.\n";
-
-$advanced_def[35]["name"] = "PHPMAILERHOST";
-$advanced_def[35]["default"] = "";
+$advanced_def[35]["name"] = "PHPMAILER";
+$advanced_def[35]["default"] = "1";
 $advanced_def[35]["visible"] = 0;
 $advanced_def[35]["commented"] = 0;
 $advanced_def[35]["type"] = "constant";
 $advanced_def[35]["appl_description"] = "";
 $advanced_def[35]["file_description"] = "
+# If you want to use the PHPMailer class from phpmailer.sourceforge.net, set the following
+# to 1. If you tend to send out html emails, it is recommended to do so.\n";
+
+$advanced_def[36]["name"] = "PHPMAILERHOST";
+$advanced_def[36]["default"] = "";
+$advanced_def[36]["visible"] = 0;
+$advanced_def[36]["commented"] = 0;
+$advanced_def[36]["type"] = "constant";
+$advanced_def[36]["appl_description"] = "";
+$advanced_def[36]["file_description"] = "
 # To use a SMTP please give your server hostname here, leave it blank to use the standard
 # PHP mail() command.\n";
 
-$advanced_def[36]["name"] = "phpmailer_smtpuser";
-$advanced_def[36]["default"] = "smtpuser";
-$advanced_def[36]["visible"] = 0;
-$advanced_def[36]["commented"] = 1;
-$advanced_def[36]["type"] = "variable";
-$advanced_def[36]["appl_description"] = "";
-$advanced_def[36]["file_description"] = "
-# if you want to use smtp authentication when sending the email uncomment the following
-# two lines and set the username and password to be the correct ones\n";
-
-$advanced_def[37]["name"] = "phpmailer_smtppassword";
-$advanced_def[37]["default"] = "smtpassword";
+$advanced_def[37]["name"] = "phpmailer_smtpuser";
+$advanced_def[37]["default"] = "smtpuser";
 $advanced_def[37]["visible"] = 0;
 $advanced_def[37]["commented"] = 1;
 $advanced_def[37]["type"] = "variable";
 $advanced_def[37]["appl_description"] = "";
-$advanced_def[37]["file_description"] = "";
+$advanced_def[37]["file_description"] = "
+# if you want to use smtp authentication when sending the email uncomment the following
+# two lines and set the username and password to be the correct ones\n";
 
-$advanced_def[38]["name"] = "tmpdir";
-$advanced_def[38]["default"] = "/tmp";
+$advanced_def[38]["name"] = "phpmailer_smtppassword";
+$advanced_def[38]["default"] = "smtpassword";
 $advanced_def[38]["visible"] = 0;
-$advanced_def[38]["commented"] = 0;
+$advanced_def[38]["commented"] = 1;
 $advanced_def[38]["type"] = "variable";
 $advanced_def[38]["appl_description"] = "";
-$advanced_def[38]["file_description"] = "
+$advanced_def[38]["file_description"] = "";
+
+$advanced_def[39]["name"] = "tmpdir";
+$advanced_def[39]["default"] = "/tmp";
+$advanced_def[39]["visible"] = 0;
+$advanced_def[39]["commented"] = 0;
+$advanced_def[39]["type"] = "variable";
+$advanced_def[39]["appl_description"] = "";
+$advanced_def[39]["file_description"] = "
 # tmpdir. A location where phplist can write some temporary files if necessary
 # Make sure it is writable by your webserver user, and also check that you have
 # open_basedir set to allow access to this directory. Linux users can leave it as it is.
 # this directory is used for all kinds of things, mostly uploading of files (like in
 # import), creating PDFs and more\n";
 
-$advanced_def[39]["name"] = "form_action";
-$advanced_def[39]["default"] = "index.php";
-$advanced_def[39]["visible"] = 0;
-$advanced_def[39]["commented"] = 1;
-$advanced_def[39]["type"] = "variable";
-$advanced_def[39]["appl_description"] = "";
-$advanced_def[39]["file_description"] = "
+$advanced_def[40]["name"] = "form_action";
+$advanced_def[40]["default"] = "index.php";
+$advanced_def[40]["visible"] = 0;
+$advanced_def[40]["commented"] = 1;
+$advanced_def[40]["type"] = "variable";
+$advanced_def[40]["appl_description"] = "";
+$advanced_def[40]["file_description"] = "
 # if you are on Windoze, and/or you are not using apache, in effect when you are getting
 # \"Method not allowed\" errors you will want to uncomment this
 # ie take off the #-character in the next line
 # using this is not guaranteed to work, sorry. Easier to use Apache instead :-)\n";
 
-$advanced_def[40]["name"] = "database_module";
-$advanced_def[40]["default"] = "mysql.inc";
-$advanced_def[40]["visible"] = 0;
-$advanced_def[40]["commented"] = 0;
-$advanced_def[40]["type"] = "variable";
-$advanced_def[40]["appl_description"] = "";
-$advanced_def[40]["file_description"] = "
+$advanced_def[41]["name"] = "database_module";
+$advanced_def[41]["default"] = "mysql.inc";
+$advanced_def[41]["visible"] = 0;
+$advanced_def[41]["commented"] = 0;
+$advanced_def[41]["type"] = "variable";
+$advanced_def[41]["appl_description"] = "";
+$advanced_def[41]["file_description"] = "
 # select the database module to use
 # anyone wanting to submit other database modules is
 # very welcome!\n";
 
-$advanced_def[41]["name"] = "SessionTableName";
-$advanced_def[41]["default"] = "phplistsessions";
-$advanced_def[41]["visible"] = 0;
-$advanced_def[41]["commented"] = 1;
-$advanced_def[41]["type"] = "variable";
-$advanced_def[41]["appl_description"] = "";
-$advanced_def[41]["file_description"] = "
+$advanced_def[42]["name"] = "SessionTableName";
+$advanced_def[42]["default"] = "phplistsessions";
+$advanced_def[42]["visible"] = 0;
+$advanced_def[42]["commented"] = 1;
+$advanced_def[42]["type"] = "variable";
+$advanced_def[42]["appl_description"] = "";
+$advanced_def[42]["file_description"] = "
 # you can store sessions in the database instead of the default place by assigning
 # a tablename to this value. The table will be created and will not use any prefixes
 # this only works when using mysql and only for administrator sessions\n";
 
-$advanced_def[42]["name"] = "error_level";
-$advanced_def[42]["default"] = "error_reporting(0)";
-$advanced_def[42]["visible"] = 0;
-$advanced_def[42]["commented"] = 0;
-$advanced_def[42]["type"] = "variable";
-$advanced_def[42]["appl_description"] = "";
-$advanced_def[42]["file_description"] = "
+$advanced_def[43]["name"] = "database_module";
+$advanced_def[43]["default"] = "adodb.inc";
+$advanced_def[43]["visible"] = 0;
+$advanced_def[43]["commented"] = 1;
+$advanced_def[43]["type"] = "variable";
+$advanced_def[43]["appl_description"] = "";
+$advanced_def[43]["file_description"] = "
 # there is now support for the use of ADOdb http://php.weblogs.com/ADODB
 # this is still experimental, and any findings should be reported in the
 # bugtracker
-# in order to use it, define the following settings:
-#$database_module = 'adodb.inc';
-#$adodb_inc_file = '/path/to/adodb_inc.php';
-#$adodb_driver = 'mysql';
+# in order to use it, define the following settings:\n";
 
-# if you want more trouble, make this 63 (very unlikely you will like the result)\n";
+$advanced_def[44]["name"] = "adodb_inc_file";
+$advanced_def[44]["default"] = "/path/to/adodb_inc.php";
+$advanced_def[44]["visible"] = 0;
+$advanced_def[44]["commented"] = 1;
+$advanced_def[44]["type"] = "variable";
+$advanced_def[44]["appl_description"] = "";
+$advanced_def[44]["file_description"] = "";
+
+$advanced_def[45]["name"] = "adodb_driver";
+$advanced_def[45]["default"] = "mysql";
+$advanced_def[45]["visible"] = 0;
+$advanced_def[45]["commented"] = 1;
+$advanced_def[45]["type"] = "variable";
+$advanced_def[45]["appl_description"] = "";
+$advanced_def[45]["file_description"] = "";
+
+$advanced_def[46]["name"] = "error_level";
+$advanced_def[46]["default"] = "error_reporting(0)";
+$advanced_def[46]["visible"] = 0;
+$advanced_def[46]["commented"] = 0;
+$advanced_def[46]["type"] = "call";
+$advanced_def[46]["appl_description"] = "";
+$advanced_def[46]["file_description"] = "\n# if you want more trouble, make this 63 (very unlikely you will like the result)\n";
 
 $parameters[8]["parameters"] = $advanced_def;
 ?>

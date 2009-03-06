@@ -59,6 +59,12 @@ else{
 
 
 include("installer/lib/js_nextPage.inc");
+
+$dbname = $GLOBALS["I18N"]->get($GLOBALS['strJsDbName']);
+$dbhost = $GLOBALS["I18N"]->get($GLOBALS['strJsDbHost']);
+$dbuser = $GLOBALS["I18N"]->get($GLOBALS['strJsDbUser']);
+$dbpass = $GLOBALS["I18N"]->get($GLOBALS['strJsDbPass']);
+
 ?>
 
 <br>
@@ -81,28 +87,28 @@ function validation(){
    var frm = document.pageForm;
    
    if (frm.database_name.value == ""){
-      alert("You must enter a database name");
+      alert("<?echo $dbname?>");
       frm.database_name.focus();
 
       return false;
    }
    
    if (frm.database_host.value == ""){
-      alert("You must enter database host");
+      alert("<?echo $dbhost?>");
       frm.database_host.focus();
 
       return false;
    }
    
    if (frm.database_user.value == ""){
-      alert("You must enter database user");
+      alert("<?echo $dbuser?>");
       frm.database_user.focus();
 
       return false;
    }
    
    if (frm.database_password.value == ""){
-      alert("You must enter database password");
+      alert("<?echo $dbpass?>");
       frm.database_password.focus();
 
       return false;
