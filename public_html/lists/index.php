@@ -1,7 +1,7 @@
 <?php
 
 ob_start();
-$er = error_reporting(0); 
+//$er = error_reporting(0); 
 require_once dirname(__FILE__) .'/admin/commonlib/lib/magic_quotes.php';
 ## none of our parameters can contain html for now
 $_GET = removeXss($_GET);
@@ -627,7 +627,7 @@ function unsubscribePage($id) {
   global $data, $tables;
   $res = '<title>'.$GLOBALS["strUnsubscribeTitle"].'</title>'."\n";  
   $res .= $data["header"];
-  if (isset($_GET["uid"])) {
+  if (isset($_GET["uid"])){
     $query = sprintf('select * from %s where uniqid = ?', $tables['user']);
     $req = Sql_Query_Params($query, $_GET['uid']);
     $userdata = Sql_Fetch_Array($req);

@@ -33,6 +33,23 @@ include("installer/lib/js_nextPage.inc");
   </p>
 </div>
 */
+
+$errno = 0;
+$msg   = "";
+
+if (!is_writable(dirname($configfile))){
+   $errno = 1;
+   $msg   = $GLOBALS["I18N"]->get(sprintf($GLOBALS["strConfigDirNotWritable"],dirname($configfile)));
+}
+else{
+   if (is_file($configfile)){
+      if (!is_writable($configfile)){
+         $errno = 1;
+         $msg   = $GLOBALS["I18N"]->get($GLOBALS["strConfigNotWritable"]);
+      }
+   }
+}
+
 ?>
 
 <div id="phplist_logo_header">
@@ -41,6 +58,9 @@ include("installer/lib/js_nextPage.inc");
 </div>
 <div id="maincontent_install">
   <div class="intro_install"><?php print $GLOBALS["I18N"]->get(sprintf('%s',$GLOBALS["strIntroInstaller"]));?></div>
+<?  if ($errno){ ?>
+  <div class="allwrong"><br><?php print $msg?></div>
+<?}?>
 </div>
 
 <script type="text/javascript">
@@ -57,5 +77,6 @@ function validation(){
 </form>
 
 <?php
+if (!$errno)
 include("installer/lib/nextStep.inc");
 ?>
