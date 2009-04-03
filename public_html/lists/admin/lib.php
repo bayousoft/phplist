@@ -695,7 +695,7 @@ function fetchUrl($url,$userdata = array()) {
     'allowRedirects' => 1,
     'method' => 'HEAD',
   );
-  $headreq =& new HTTP_Request($url,$request_parameters);
+  $headreq = new HTTP_Request($url,$request_parameters);
   $headreq->addHeader('User-Agent', 'phplist v'.VERSION.' (http://www.phplist.com)');
   if (!PEAR::isError($headreq->sendRequest(false))) {
     $code = $headreq->getResponseCode();
@@ -713,7 +713,7 @@ function fetchUrl($url,$userdata = array()) {
     $cache = getPageCache($url,$lastmodified);
     if (!$cache) {
       $request_parameters['method'] = 'GET';
-      $req =& new HTTP_Request($url,$request_parameters);
+      $req = new HTTP_Request($url,$request_parameters);
       $req->addHeader('User-Agent', 'phplist v'.VERSION.' (http://www.phplist.com)');
       logEvent('Fetching '.$url);
       if (VERBOSE && function_exists('output')) {
