@@ -62,7 +62,7 @@ if (!empty($GLOBALS["SessionTableName"])) {
 }
 @session_start();
 
-if (isset($_POST['setlanguage']) && $_POST['setlanguage'] && is_array($LANGUAGES[$_POST['setlanguage']])) {
+if (isset($_POST['setlanguage']) && !empty($_POST['setlanguage']) && is_array($LANGUAGES[$_POST['setlanguage']])) {
   $_SESSION['adminlanguage'] = array(
     "info" => $_POST['setlanguage'],
     "iso" => $_POST['setlanguage'],
@@ -117,14 +117,15 @@ class phplist_I18N {
   var $basedir = '';
 
   function phplist_I18N() {
-    if (isset($_SESSION['adminlanguage']))
-      $_SESSION['adminlanguage'] = preg_replace('/\W/','',$_SESSION['adminlanguage']);
     $this->basedir = dirname(__FILE__).'/lan/';
     if (isset($_SESSION['adminlanguage']) && is_dir($this->basedir.$_SESSION['adminlanguage']['iso'])) {
       $this->language = $_SESSION['adminlanguage']['iso'];
     } else {
-      print "Not set or found: ".$_SESSION['adminlanguage'];
-      exit;
+#      logEvent('Invalid language '.$_SESSION['adminlanguage']['iso']);
+#      print "Not set or found: ".$_SESSION['adminlanguage']['iso'];
+      unset($_SESSION['adminlanguage']);
+      $this->language = 'en';
+#      exit;
     }
   }
 
