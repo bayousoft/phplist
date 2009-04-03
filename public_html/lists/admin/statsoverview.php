@@ -12,6 +12,7 @@ if (isset($_GET['id'])) {
 $addcomparison = 0;
 $access = accessLevel('statsoverview');
 $and = '';
+$subselect = '';
 $and_params = array();
 #print "Access Level: $access";
 switch ($access) {
@@ -42,7 +43,9 @@ switch ($access) {
 
 if (!$id) {
   print $GLOBALS['I18N']->get('Select Message to view');
-  $timerange = ' and msg.entered + interval \'6 months\' > current_timestamp';
+
+  /* broken Adodb conversion by Brian_252 */
+/*  $timerange = ' and msg.entered + interval \'6 months\' > current_timestamp';
   #$timerange = '';
 
   // TODO Use join syntax.
@@ -62,7 +65,16 @@ if (!$id) {
   . ' limit 10';
   $query = sprintf($query, $GLOBALS['tables']['usermessage'], $GLOBALS['tables']['message'], $and, $timerange);
   $params = array_merge(array(), $and_params);
-  $req = Sql_Query_Params($query, $params);
+  $req = Sql_Query_Params($query, $params);*/
+
+  $timerange = ' and date_add(msg.entered,interval 6 month) > now()';
+  #$timerange = '';
+  $limit = 'limit 10';
+
+  $req = Sql_Query(sprintf('select msg.owner,msg.id as messageid,count(um.viewed) as views, count(um.status) as total,subject,date_format(sent,"%%e %%b %%Y") as sent,bouncecount as bounced from %s um,%s msg where um.messageid = msg.id %s %s
+    group by msg.id order by msg.entered desc %s',
+    $GLOBALS['tables']['usermessage'],$GLOBALS['tables']['message'],$subselect,$timerange,$limit));
+
   if (!Sql_Affected_Rows()) {
     print '<p>'.$GLOBALS['I18N']->get('There are currently no messages to view').'</p>';
   }
