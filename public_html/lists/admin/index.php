@@ -4,7 +4,6 @@
 if (!isset($_SERVER["SERVER_NAME"]) && !PHP_SAPI == "cli") {
   print "Warning: commandline only works well with the cli version of PHP";
 }
-if (isset($_REQUEST['_SERVER'])) { exit; }
 
 @ob_start();
 session_start();
@@ -43,12 +42,10 @@ if (php_sapi_name() == "cli") {
 
 $configfile = '';
 
-
 if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
   #print '<!-- using (server)'.$_SERVER["ConfigFile"].'-->'."\n";
    $configfile = $_SERVER["ConfigFile"];
-}
-elseif (isset($cline["c"]) && is_file($cline["c"])) {
+} elseif (isset($cline["c"]) && is_file($cline["c"])) {
   #print '<!-- using (cline)'.$cline["c"].' -->'."\n";
    $configfile = $cline["c"];
 
@@ -56,13 +53,11 @@ elseif (isset($cline["c"]) && is_file($cline["c"])) {
 /*} elseif (isset($_ENV["CONFIG"]) && is_file($_ENV["CONFIG"]) && filesize($_ENV["CONFIG"]) > 1) {
 #  print '<!-- using '.$_ENV["CONFIG"].'-->'."\n";
   include $_ENV["CONFIG"];*/
-}
-elseif (is_file(dirname(__FILE__).'/../config/config.php')) {
+} elseif (is_file(dirname(__FILE__).'/../config/config.php')) {
 #  print '<!-- using (common)../config/config.php -->'."\n";
    $configfile = "../config/config.php";
-}
-else{
-   $configfile = "../config/config.php";
+} else{
+  $configfile = "../config/config.php";
 }
 
 
@@ -74,6 +69,7 @@ if (is_file($configfile) && filesize($configfile) > 20) {
   include(dirname(__FILE__).'/install.php');
   exit;
 }
+
 if (!isset($database_host) || !isset($database_user) || !isset($database_password) || !isset($database_name)) {
  # print $GLOBALS['I18N']->get('Database details incomplete, please check your config file');
   print 'Database details incomplete, please check your config file';
@@ -87,7 +83,7 @@ $GLOBALS["pagestats"] = array();
 $GLOBALS["pagestats"]["time_start"] = $now["sec"] * 1000000 + $now["usec"];
 $GLOBALS["pagestats"]["number_of_queries"] = 0;
 
-if (!$GLOBALS["commandline"] && isset($GLOBALS["developer_email"]) && $_SERVER['HTTP_HOST'] != 'cvs.phplist.com' && !empty($GLOBALS['show_dev_errors'])) {
+if (!$GLOBALS["commandline"] && isset($GLOBALS["developer_email"]) && $_SERVER['HTTP_HOST'] != 'dev.phplist.com' && !empty($GLOBALS['show_dev_errors'])) {
 #  error_reporting(E_ALL & ~E_NOTICE);
   ## in developer mode, show all errors and force "registered globals off"
   error_reporting(E_ALL);
