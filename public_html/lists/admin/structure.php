@@ -10,6 +10,7 @@ require_once dirname(__FILE__).'/accesscheck.php';
 
 if (!defined('STRUCTUREVERSION')) {
   define ("STRUCTUREVERSION","dev");
+}
   
   $DBstructuser = array( # order of tables is essential for smooth upgrade
       "attribute" => array ( # attributes of a user or a message
@@ -448,7 +449,7 @@ if (!defined('STRUCTUREVERSION')) {
   //   ),
   
   );
-    
+
     if (!empty($GLOBALS["plugins"]) && sizeof($GLOBALS["plugins"])) {
       foreach ($GLOBALS["plugins"] as $pluginName => $plugin) {
         $DBstructphplist = array_merge($DBstructphplist, $plugin->DBstruct);
@@ -456,5 +457,5 @@ if (!defined('STRUCTUREVERSION')) {
     }
     
     $DBstruct = $DBstructuser  + $DBstructphplist; # order of tables is essential for smooth upgrade
-}
+
 ?>
