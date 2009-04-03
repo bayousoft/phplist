@@ -819,10 +819,17 @@ while ($cansend && $plugin = current($GLOBALS['plugins']) ) {
       output('P '.$processed .' N'. $num_users .' NB'.$num_per_batch .' BT'.$batch_total .' R'.$reload.' RN'.$rn);
     }
     $totaltime = $GLOBALS['processqueue_timer']->elapsed(1);
-    $msgperhour = (3600/$totaltime) * $sent;
-    $secpermsg = $sent ? $totaltime / $sent : 0;
-    $timeleft = ($num_users - $sent) * $secpermsg;
-    $eta = date('D j M H:i',time()+$timeleft);
+    if ($sent > 0) {
+      $msgperhour = (3600/$totaltime) * $sent;
+      $secpermsg = $totaltime / $sent;
+      $timeleft = ($num_users - $sent) * $secpermsg;
+      $eta = date('D j M H:i',time()+$timeleft);
+    } else {
+      $msgperhour = 0;
+      $secpermsg = 0;
+      $timeleft = 0;
+      $eta = $GLOBALS['I18N']->get('unknown');
+    }
     setMessageData($messageid,'ETA',$eta);
     setMessageData($messageid,'msg/hr',$msgperhour);
     setMessageData($messageid,'to process',$num_users - $sent);
