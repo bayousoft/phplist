@@ -15,7 +15,6 @@ if (is_file(dirname(__FILE__) .'/../../../VERSION')) {
 define("VERSION",$version.'dev');
 
 include_once dirname(__FILE__)."/commonlib/lib/userlib.php";
-include_once dirname(__FILE__)."/commonlib/lib/bdebuglib.php";
 
 # set some variables
 if (!isset ($_GET["pi"]))
@@ -51,11 +50,10 @@ if (!isset($usertable_prefix)) {
   $usertable_prefix = $table_prefix;
 }
 
-
 include_once dirname(__FILE__)."/pluginlib.php";
 include_once dirname(__FILE__)."/structure.php";
 
-$tables = '';
+$tables = array();
 foreach ($GLOBALS["DBstructuser"] as $tablename => $tablecolumns) {
   $tables[$tablename] =  $usertable_prefix . $tablename;
 };
@@ -487,7 +485,7 @@ function newMenu() {
     foreach ($GLOBALS["plugins"] as $pluginName => $plugin) {
       $html .= $spb.PageLink2("main&pi=$pluginName",$pluginName).$spe;
     }
-  }
+  } 
 
   return $html . $pixel;
 }
