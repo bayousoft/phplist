@@ -28,11 +28,13 @@ if (is_dir(PLUGIN_ROOTDIR)) {
         eval("\$pluginInstance = new ". $className ."();");
         if ($pluginInstance->enabled) {
           $GLOBALS["plugins"][$className] = $pluginInstance;
+        } else {
+          dbg( $className .' disabled');
         }
       } else {
-     #   logEvent('Error initiliasing plugin'. $className);
+        logEvent('Error initiliasing plugin'. $className);
       }
-#      print "$className = $pluginInstance<br/>";
+      #print "$className = ".$pluginInstance->name."<br/>";
     }
   }
   $GLOBALS['pluginsendformats'] = array();
@@ -45,7 +47,6 @@ if (is_dir(PLUGIN_ROOTDIR)) {
       }
     }
   }
-
-}
+} 
 
 ?>
