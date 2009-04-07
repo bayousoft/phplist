@@ -13,114 +13,96 @@ if ($_SESSION["session_ok"] != 1){
    header("Location:?");
 }
 
+if ($_SESSION["installType"] == "BASIC"){
+   header("Location:?page=3");
+}
 
-
-/***************************************************
-  This script use the completly PARAMETERS structure
-***************************************************/
+/*********************************************************
+  This script is used to autogenerate the ADVANCE pages
+*********************************************************/
 
 include("lib/parameters.inc");
 
-$inTheSame = 1;
-$msg       = "";
-$errno     = "";
+$group = (isset($_POST["group"]) && $_POST["group"] > 0 && $_POST["group"] < sizeof($parameters))?$_POST["group"]:0;
+$msg   = "";
 
-if ($submited){
-   /* The code above take the mission to write in config.php file
-      the configuration parameters that the user charge, and another data
-      witch are written by default (at least in the BASIC installation)
-      It's the final Step (2)
-   */
+getSessionData($parameters[$group]["parameters"]);
 
-   if (!is_writable(dirname($configfile))){
-      $errno = 1;
-      $msg   = $GLOBALS["I18N"]->get(sprintf($GLOBALS["strConfigDirNotWritable"],dirname($configfile)));
-   }
-   else{
-      if (is_file($configfile)){
-         if (!is_writable($configfile)){
-            $errno = 1;
-            $msg   = $GLOBALS["I18N"]->get($GLOBALS["strConfigNotWritable"]);
-         }
-         else{
-            copy($configfile, $configfile.".ori");
-            $stat  = writeConfigFile($configfile);
-     
-            if (!$stat){
-               $errno = 1;
-               $msg   = $GLOBALS["I18N"]->get($GLOBALS["strConfigRewriteError"]);
-            }
-            else{
-               $errno = 0;
-               $link_o = "<a href=?>";
-               $link_c = "</a>";
-               $msg    = $GLOBALS["I18N"]->get($GLOBALS["strConfigRewrited"]);
-            }
-         }
-      }
-      else{
-         $stat = writeConfigFile($configfile);
+if (isset($_POST['option']) && $_POST['option'] != ""){
+   if ($_POST['option'] != 'Back'){
+      getPostVariables($parameters[$group-1]["parameters"]);
+      setSessionData($parameters[$group-1]["parameters"]);
    
-         if (!$stat){
-            $errno = 1;
-            $msg   = $GLOBALS["I18N"]->get($GLOBALS["strConfigRewriteError"]);
-         }
-         else{
-            $errno = 0;
-            $link_o = "<a href=?>";
-            $link_c = "</a>";
-            $msg    = $GLOBALS["I18N"]->get($GLOBALS["strConfigWrited"]);
-            $msg    = $GLOBALS["I18N"]->get($GLOBALS["strConfigWrited"]);
-            //header("Location:?");
-         }
-      }
+      if ($_POST['option'] == "Finish") header("Location:?page=3");
    }
 }
 
-include("installer/lib/js_nextPage.inc");
+
+$withAdvanced = 0;
+
+while (!$withAdvanced){
+   $estruct = $parameters[$group]["parameters"];
+   $title   = $GLOBALS["I18N"]->get($parameters[$group]['name']);
+ 
+   $HTMLElements = getHTMLElements($estruct, "ADVANCED");
+   $JSElements   = getJSValidations($estruct, "ADVANCED");
+    
+   if (is_bool($HTMLElements) && !$HTMLElements)
+        $withAdvanced = 0;
+   else $withAdvanced = 1;
+
+   $group++;
+}
 ?>
 
-<script type="text/javascript">
-/* Is needed to declare this function (even in this "dummy" way)
-   because is referenced in the js_nextPage.inc file
-*/
-
-function validation(){
-   return true;
-}
-</script>
 <br>
 <br>
 <div class="wrong"><?echo $msg?></div>
 <style type="text/css">
-table tr td input { float:right; }
+//table tr td input { float:right; }
 </style>
 
-<?
-if ($errno || !$submited){
-?>
+<?echo $JSElements;?>
+<script type='text/javascript'>
+function submission(opt){
+   if (opt != "Back"){
+      if (validar()){
+         document.pageForm.option.value = opt;
+         document.pageForm.submit();
+      }
+   }
+   else document.backForm.submit();
+}
+</script>
+
 <table width=500>
   <tr>
     <td>
-    <div class="explain"><?echo $GLOBALS["I18N"]->get($GLOBALS['strReadyToInstall'])?></div>
+    <div class="explain">
+    <?php
+    echo $GLOBALS["I18N"]->get($GLOBALS['strAdvanceMode']).
+         "<BR>".
+         "<font size=3>".$title."</font>";
+    ?>
+    </div>
     </td>
   </tr>
 </table>
-
-<form method="post" name="pageForm">
-  <input type="hidden" name="page" value="<?echo $nextPage?>"/>
-  <input type="hidden" name="submited" value="<?echo $inTheSame?>"/>
-
+<form method="post" name="backForm">
+  <input type="hidden" name="page" value="<?echo $page?>"/>
+  <input type="hidden" name="group" value="<?echo $group-2  // because $group was incremented yet to say what is the next group?>"/>
+  <input type="hidden" name="option" id="option" value="Back"/>
 </form>
-<?php
-include("installer/lib/nextStep.inc");
-?>
-<?}else{?>
-<table width=500>
-  <tr>
-    <td>
-    <div class="explain"><?echo $GLOBALS["I18N"]->get(sprintf($GLOBALS['strReadyToUse'],$link_o,$link_c))?></div>
-    </td>
-  </tr>
-</table>
-<?}?>
+<form method="post" name="pageForm">
+  <input type="hidden" name="page" value="<?echo $page?>"/>
+  <input type="hidden" name="group" value="<?echo $group?>"/>
+  <input type="hidden" name="option" id="option"/>
+  <table border=0>
+  <?echo $HTMLElements?>
+  </table>
+  <br>
+  <br>
+  <input type=button value="&laquo;&nbsp;Back" onClick="javascript:submission('Back')" <?echo ($group-1 <= 0)?"disabled":""?>>
+  <input type=button value="Next&nbsp;&raquo;" onClick="javascript:submission('Next')" <?echo ($group == sizeof($parameters))?"disabled":""?>>
+  <input type=button value="Finish Advance installation" onClick="javascript:submission('Finish')">
+</form>

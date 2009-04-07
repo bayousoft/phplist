@@ -11,8 +11,12 @@
 
 $_SESSION["session_ok"] = 1;
 
+
 $page = (!is_int($page))?0:$page;
 include("installer/lib/js_nextPage.inc");
+include("installer/lib/parameters.inc");
+
+delSessionData();
 
 /*
 <div id="language_change">
@@ -51,18 +55,6 @@ else{
 }
 
 ?>
-
-<div id="phplist_logo_header">
-  <span class="phplist_logo_span"><img src="images/phplist-logo.png" title="phplist"></span>
-  <span class="title_installer"><?php print $GLOBALS["I18N"]->get(sprintf('%s',$GLOBALS["strInstallerTitle"]));?></span>
-</div>
-<div id="maincontent_install">
-  <div class="intro_install"><?php print $GLOBALS["I18N"]->get(sprintf('%s',$GLOBALS["strIntroInstaller"]));?></div>
-<?  if ($errno){ ?>
-  <div class="allwrong"><br><?php print $msg?></div>
-<?}?>
-</div>
-
 <script type="text/javascript">
 function validation(){
    var frm = document.pageForm;
@@ -71,10 +63,25 @@ function validation(){
 }
 </script>
 
-<form method="post" name="pageForm">
-  <input type="hidden" name="page" value="<?echo $nextPage?>"/>
-  <input type="hidden" name="submited" value="<?echo $inTheSame?>"/>
-</form>
+<div id="phplist_logo_header">
+  <span class="phplist_logo_span"><img src="images/phplist-logo.png" title="phplist"></span>
+  <span class="title_installer"><?php print $GLOBALS["I18N"]->get(sprintf('%s',$GLOBALS["strInstallerTitle"]));?></span>
+</div>
+<div id="maincontent_install">
+  <div class="intro_install"><?php print $GLOBALS["I18N"]->get(sprintf('%s',$GLOBALS["strIntroInstaller"]));?></div>
+  <?  if ($errno){ ?>
+  <div class="allwrong"><br><?php print $msg?></div>
+  <?}?>
+  <div class="intro_install">
+  <?php print $GLOBALS["I18N"]->get(sprintf('%s',$GLOBALS["strChooseInstallation"]));?>
+  <form method="post" name="pageForm">
+    <input type="hidden" name="page" value="<?echo $nextPage?>"/>
+    <input type="hidden" name="submited" value="<?echo $inTheSame?>"/>
+    <input type=radio name=insttype value=BASIC checked>Basic installation<br>
+    <input type=radio name=insttype value=ADVANCED>Advanced installation
+  </form>
+  </div>
+</div>
 
 <?php
 if (!$errno)

@@ -21,7 +21,7 @@ if ($_SESSION["session_ok"] != 1){
 
 include("lib/parameters.inc");
 
-genPHPVariables($database_def); 
+genPHPVariables($database_def, "BASIC"); 
 
 if ($submited){
    /* The code above take the mission to validate the database data
@@ -54,7 +54,7 @@ else{
 
    getSessionData($database_def);
 
-   $HTMLElements = getHTMLElements($database_def); 
+   $HTMLElements = getHTMLElements($database_def, "BASIC"); 
 }
 
 
@@ -71,7 +71,7 @@ $dbpass = $GLOBALS["I18N"]->get($GLOBALS['strJsDbPass']);
 <br>
 <div class="wrong"><?echo $msg?></div>
 <style type="text/css">
-table tr td input { float:right; }
+//table tr td input { float:right; }
 </style>
 
 <table width=500>

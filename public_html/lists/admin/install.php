@@ -31,7 +31,11 @@ else{
    $version = "dev";
 }
 
-$_SESSION["installType"] = (!$itype)?"BASIC":$itype;
+if (isset($_POST["insttype"]) && $_POST["insttype"] != ""){
+ //!isset($_SESSION["installType"]) && $_SESSION["installType"] == ""){
+   $_SESSION["installType"] = (isset($_POST["insttype"]) && $_POST["insttype"] != "")?$_POST["insttype"]:"BASIC";
+}
+
 define("VERSION",$version.'dev');
 if (!defined("NAME")) define("NAME",'phplist');
 
@@ -79,7 +83,9 @@ if (!isset($page) || $page == "" || ($control != $page)){
    include("installer/home.php");
 }
 else{
+   if ($page < 3 || ($page == 3 && !$submited))
    echo breadcrumb($page);
+
    include("installer/install$page.php");
 }
 

@@ -56,6 +56,7 @@ else{
 
    getSessionData($bounce_def);
    $HTMLElements = getHTMLElements($bounce_def); 
+   $JSElements   = getJSValidations($bounce_def, $_SESSION["installType"]); 
 }
 
 include("installer/lib/js_nextPage.inc");
@@ -71,7 +72,7 @@ $mailpass = $GLOBALS["I18N"]->get($GLOBALS['strJsMailPass']);
 <br>
 <div class="wrong"><?echo $msg?></div>
 <style type="text/css">
-table tr td input { float:right; }
+//table tr td input { float:right; }
 </style>
 
 <table width=500>

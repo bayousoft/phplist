@@ -2,9 +2,7 @@
 /* This file receive tha variable $textSubmit from the caller script.
    This variable have the step number description for page related.
 */
-if ($_SESSION["installType"] == "BASIC")
-     $maxPage = 3;
-else $maxPage = 5;
+$maxPage = 4;
 
 
 if (isset($inTheSame))
