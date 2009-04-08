@@ -8,14 +8,14 @@
    mysql.inc
    install-texts.inc
 */
-echo "<!-- ".__FILE__." -->";
+echo "<!-- ".__FILE__." -->\n";
 
 if ($_SESSION["session_ok"] != 1){
    header("Location:?");
 }
 
 
-echo "<!-- ".__FILE__." -->";
+echo "<!-- ".__FILE__." -->\n";
 
 /***************************************************
   This script use only the structure BOUNCE_DEF
@@ -25,22 +25,25 @@ include("lib/parameters.inc");
 
 genPHPVariables($bounce_def); 
 
-echo "<!-- ".__FILE__." -->";
+echo "<!-- ".__FILE__." -->\n";
 
 if ($submited){
    /* The code above take the mission to check some mail data
       enter by the user in the Step 1.
    */
 
-echo "<!-- ".__FILE__." -->";
+echo "<!-- ".__FILE__." -->\n";
    getPostVariables($bounce_def);
 
    $mail_test = processPopTest($message_envelope, $bounce_mailbox_host, $bounce_mailbox_user, $bounce_mailbox_password);
+echo "<!-- mail test: ".__FILE__." -->\n";
 
    if (!$mail_test){
+echo "<!-- getting HTML elements: ".__FILE__." -->\n";
       $HTMLElements = getHTMLElements($bounce_def); 
       $inTheSame = 1;
 
+echo "<!-- AFTER getting HTML elements: ".__FILE__." -->\n";
       $msg = $GLOBALS["I18N"]->get("Connection refused, check your host, user or password");
    }
    else{
