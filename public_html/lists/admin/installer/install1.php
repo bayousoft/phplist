@@ -8,7 +8,7 @@
    mysql.inc
    install-texts.inc
 */
-echo "<!-- ".$_SELF." -->";
+echo "<!-- ".$__FILE__." -->";
 
 if ($_SESSION["session_ok"] != 1){
    header("Location:?");
