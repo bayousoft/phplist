@@ -59,6 +59,7 @@ else{
    $HTMLElements = getHTMLElements($bounce_def); 
    $JSElements   = getJSValidations($bounce_def, $_SESSION["installType"]); 
 }
+echo "<!-- ".$__FILE__." -->";
 
 include("installer/lib/js_nextPage.inc");
 
