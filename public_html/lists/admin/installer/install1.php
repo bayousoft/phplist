@@ -8,13 +8,14 @@
    mysql.inc
    install-texts.inc
 */
-echo "<!-- ".$__FILE__." -->";
+echo "<!-- ".__FILE__." -->";
 
 if ($_SESSION["session_ok"] != 1){
    header("Location:?");
 }
 
 
+echo "<!-- ".__FILE__." -->";
 
 /***************************************************
   This script use only the structure BOUNCE_DEF
@@ -24,11 +25,14 @@ include("lib/parameters.inc");
 
 genPHPVariables($bounce_def); 
 
+echo "<!-- ".__FILE__." -->";
+
 if ($submited){
    /* The code above take the mission to check some mail data
       enter by the user in the Step 1.
    */
 
+echo "<!-- ".__FILE__." -->";
    getPostVariables($bounce_def);
 
    $mail_test = processPopTest($message_envelope, $bounce_mailbox_host, $bounce_mailbox_user, $bounce_mailbox_password);
@@ -59,7 +63,6 @@ else{
    $HTMLElements = getHTMLElements($bounce_def); 
    $JSElements   = getJSValidations($bounce_def, $_SESSION["installType"]); 
 }
-echo "<!-- ".$__FILE__." -->";
 
 include("installer/lib/js_nextPage.inc");
 
