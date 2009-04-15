@@ -1028,43 +1028,7 @@ function createPDF($text) {
   return $fname;
 }
 
-function replaceChars($text) {
-// $document should contain an HTML document.
-// This will remove HTML tags, javascript sections
-// and white space. It will also convert some
-// common HTML entities to their text equivalent.
-
-$search = array ("'&(quot|#34);'i",  // Replace html entities
-                 "'&(amp|#38);'i",
-                 "'&(lt|#60);'i",
-                 "'&(gt|#62);'i",
-                 "'&(nbsp|#160);'i",
-                 "'&(iexcl|#161);'i",
-                 "'&(cent|#162);'i",
-                 "'&(pound|#163);'i",
-                 "'&(copy|#169);'i",
-                 "'&#(\d+);'e");  // evaluate as php
-
-$replace = array ("\"",
-                  "&",
-                  "<",
-                  ">",
-                  " ",
-                  chr(161),
-                  chr(162),
-                  chr(163),
-                  chr(169),
-                  "chr(\\1)");
-
-  $text = preg_replace ($search, $replace, $text);
-
-
-  # eze
-  # $text = html_entity_decode ( $text , ENT_QUOTES , $GLOBALS['strCharSet'] );
-  $text = html_entity_decode ( $text , ENT_QUOTES , 'UTF-8' );
-
-  return $text;
-}
+//function replaceChars() Moved to commonlib
 
 function mailto2href($text) {
   # converts <mailto:blabla> link to <a href="blabla"> links
