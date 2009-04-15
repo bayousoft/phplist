@@ -518,46 +518,7 @@ function checkLock($processid) {
   return $row[0];
 }
 
-function addAbsoluteResources($text,$url) {
-  $parts = parse_url($url);
-  $tags = array('src\s*=\s*','href\s*=\s*','action\s*=\s*',
-    'background\s*=\s*','@import\s+','@import\s+url\(');
-  foreach ($tags as $tag) {
-#   preg_match_all('/'.preg_quote($tag).'"([^"|\#]*)"/Uim', $text, $foundtags);
-# we're only handling nicely formatted src="something" and not src=something, ie quotes are required
-# bit of a nightmare to not handle it with quotes.
-    preg_match_all('/('.$tag.')"([^"|\#]*)"/Uim', $text, $foundtags);
-    for ($i=0; $i< count($foundtags[0]); $i++) {
-      $match = $foundtags[2][$i];
-      $tagmatch = $foundtags[1][$i];
-#      print "$match<br/>";
-      if (preg_match("#[http|javascript|https|ftp|mailto]:#i",$match)) {
-        # scheme exists, leave it alone
-      } elseif (preg_match("#\[.*\]#U",$match)) {
-        # placeholders used, leave alone as well
-      } elseif (ereg("^/",$match)) {
-        # starts with /
-        $text = preg_replace('#'.preg_quote($foundtags[0][$i]).'#im',$tagmatch.'"'.$parts["scheme"].'://'.$parts["host"].$match.'"',$text,1);
-      } else {
-        $path = '';
-        if (isset($parts['path'])) {
-          $path = $parts["path"];
-        }
-        if (!preg_match('#/$#',$path)) {
-          $pathparts = explode('/',$path);
-          array_pop($pathparts);
-          $path = join('/',$pathparts);
-          $path .= '/';
-        }
-        $text = preg_replace('#'.preg_quote($foundtags[0][$i]).'#im',
-          $tagmatch.'"'.$parts["scheme"].'://'.$parts["host"].$path.$match.'"',$text,1);
-      }
-    }
-  }
-
- # $text = preg_replace('#PHPSESSID=[^\s]+
-  return $text;
-}
+// function addAbsoluteResources() moved to commonlib/maillib.php
 
 function getPageCache($url,$lastmodified = 0) {
   $req = Sql_Fetch_Row_Query(sprintf('select content from %s where url = "%s" and lastmodified >= %d',$GLOBALS["tables"]["urlcache"],$url,$lastmodified));
