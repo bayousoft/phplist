@@ -255,7 +255,7 @@ date('Y') + 1));
       while ($data= Sql_Fetch_Array($data_req))
         $row[$data['tag']]= $data['data'];
 
-      $rssentries['text'] .= stripHTML(rssmanager :: parseRSSTemplate($texttemplate, $row));
+      $rssentries['text'] .= HTML2Text(rssmanager :: parseRSSTemplate($texttemplate, $row));
     }
     $content= eregi_replace("\[RSS\]", $rssentries['text'], $content);
     return $content;

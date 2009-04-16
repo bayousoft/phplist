@@ -239,7 +239,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 ## Fill text and html versions depending on given versions.
   if ($cached[$messageid]["htmlformatted"]) {
     if (!$cached[$messageid]["textcontent"]) {
-      $textcontent = stripHTML($content);
+      $textcontent = HTML2Text($content);
     } else {
       $textcontent = $cached[$messageid]["textcontent"];
     }
@@ -468,7 +468,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 //      while ($data = Sql_Fetch_Array($data_req))
 //        $row[$data["tag"]] = $data["data"];
 //
-//      $rssentries["text"] .= stripHTML(parserssTemplate($texttemplate,$row));
+//      $rssentries["text"] .= HTML2Text(parserssTemplate($texttemplate,$row));
 //      $rssentries["html"] .= parserssTemplate($htmltemplate,$row);
 //    }
 //    $htmlmessage = eregi_replace("\[rss\]",$rssentries["html"],$htmlmessage);
