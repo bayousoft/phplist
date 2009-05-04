@@ -67,12 +67,16 @@ function requireAccessLevel($page,$level) {
 }
 
 function isSuperUser() {
+  ## for now mark webbler admins superuser
+  if (defined('WEBBLER')) return 1;
   global $tables;
+  $issuperuser = 0;
 #  if (!isset($_SESSION["adminloggedin"])) return 0;
  # if (!is_array($_SESSION["logindetails"])) return 0;
-  if (isset($_SESSION["logindetails"]["superuser"]))
+  if (isset($_SESSION["logindetails"]["superuser"])) {
     return $_SESSION["logindetails"]["superuser"];
-  if ($GLOBALS["require_login"] && isset($_SESSION["logindetails"]["id"])) {
+  }
+  if (isset($_SESSION["logindetails"]["id"])) {
     if (is_object($GLOBALS["admin_auth"]) ) {
       $issuperuser = $GLOBALS["admin_auth"]->isSuperUser($_SESSION["logindetails"]["id"]);
     } else {
@@ -86,8 +90,8 @@ function isSuperUser() {
       $issuperuser = $req[0];
     }
     $_SESSION["logindetails"]["superuser"] = $issuperuser;
-    return $issuperuser;
   }
+  return $issuperuser;
 }
 
 
