@@ -6,243 +6,244 @@
 # and I can include them in next versions. That will save others in collecting
 # the information
 Country:Countries in the world
-Andorra
-United Arab Emirates
 Afghanistan
-Antigua and Barbuda
-Anguilla
 Albania
-Armenia
-Netherlands Antilles
-Angola
-Antarctica
-Argentina
+Algeria
 American Samoa
-Austria
-Australia
+Andorra
+Angola
+Anguilla
+Antarctica
+Antigua and Barbuda
+Argentina
+Armenia
 Aruba
+Australia
+Austria
 Azerbaidjan
-Bosnia-Herzegovina
-Barbados
-Bangladesh
-Belgium
-Burkina Faso
-Bulgaria
+Bahamas
 Bahrain
-Burundi
+Bangladesh
+Barbados
+Belarus
+Belgium
+Belize
 Benin
 Bermuda
-Brunei Darussalam
-Bolivia
-Brazil
-Bahamas
 Bhutan
-Bouvet Island
+Bolivia
+Bosnia-Herzegovina
 Botswana
-Belarus
-Belize
-Canada
-Cocos (Keeling) Islands
-Central African Republic
-Congo
-Switzerland
-Ivory Coast (Cote D'Ivoire)
-Cook Islands
-Chile
+Bouvet Island
+Brazil
+British Indian Ocean Territory
+Brunei Darussalam
+Bulgaria
+Burkina Faso
+Burundi
+Cambodia
 Cameroon
-China
-Colombia
-Costa Rica
-Former Czechoslovakia
-Cuba
+Canada
 Cape Verde
+Cayman Islands
+Central African Republic
+Chad
+Chile
+China
 Christmas Island
+Cocos (Keeling) Islands
+Colombia
+Comoros
+Congo
+Cook Islands
+Costa Rica
+Croatia
+Cuba
 Cyprus
 Czech Republic
-Germany
-Djibouti
 Denmark
+Djibouti
 Dominica
 Dominican Republic
-Algeria
+East Timor
 Ecuador
-Estonia
 Egypt
-Western Sahara
-Spain
+El Salvador
+Equatorial Guinea
+Eritrea
+Estonia
 Ethiopia
-Finland
-Fiji
 Falkland Islands
-Micronesia
 Faroe Islands
+Fiji
+Finland
 France
 France (European Territory)
-Gabon
-Great Britain
-Grenada
-Georgia
 French Guyana
+French Southern Territories
+Gabon
+Gambia
+Georgia
+Germany
 Ghana
 Gibraltar
-Greenland
-Gambia
-Guinea
-Guadeloupe (French)
-Equatorial Guinea
+Great Britain
 Greece
-S. Georgia & S. Sandwich Isls.
-Guatemala
+Greenland
+Grenada
+Guadeloupe (French)
 Guam (USA)
+Guatemala
+Guinea
 Guinea Bissau
 Guyana
-Hong Kong
+Haiti
 Heard and McDonald Islands
 Honduras
-Croatia
-Haiti
+Hong Kong
 Hungary
+Iceland
+India
 Indonesia
+Iran
+Iraq
 Ireland
 Israel
-India
-British Indian Ocean Territory
-Iraq
-Iran
-Iceland
 Italy
+Ivory Coast (Cote D`Ivoire)
 Jamaica
-Jordan
 Japan
-Kenya
-Kyrgyzstan
-Cambodia
-Kiribati
-Comoros
-Saint Kitts & Nevis Anguilla
-North Korea
-South Korea
-Kuwait
-Cayman Islands
+Jordan
 Kazakhstan
+Kenya
+Kiribati
+Kuwait
+Kyrgyzstan
 Laos
+Latvia
 Lebanon
-Saint Lucia
-Liechtenstein
-Sri Lanka
-Liberia
 Lesotho
+Liberia
+Libya
+Liechtenstein
 Lithuania
 Luxembourg
-Latvia
-Libya
-Morocco
-Monaco
-Moldavia
-Madagascar
-Marshall Islands
-Macedonia
-Mali
-Myanmar
-Mongolia
 Macau
-Northern Mariana Islands
+Macedonia
+Madagascar
+Malawi
+Malaysia
+Maldives
+Mali
+Malta
+Marshall Islands
 Martinique (French)
 Mauritania
-Montserrat
-Malta
 Mauritius
-Maldives
-Malawi
+Mayotte
 Mexico
-Malaysia
+Micronesia
+Moldavia
+Monaco
+Mongolia
+Montserrat
+Morocco
 Mozambique
+Myanmar
 Namibia
-New Caledonia (French)
-Niger
-Norfolk Island
-Nigeria
-Nicaragua
-Netherlands
-Norway
-Nepal
 Nauru
+Nepal
+Netherlands
+Netherlands Antilles
 Neutral Zone
-Niue
+New Caledonia (French)
 New Zealand
+Nicaragua
+Niger
+Nigeria
+Niue
+Norfolk Island
+North Korea
+Northern Mariana Islands
+Norway
 Oman
-Panama
-Peru
-Polynesia (French)
-Papua New Guinea
-Philippines
 Pakistan
-Poland
-Saint Pierre and Miquelon
-Pitcairn Island
-Puerto Rico
-Portugal
 Palau
+Panama
+Papua New Guinea
 Paraguay
+Peru
+Philippines
+Pitcairn Island
+Poland
+Polynesia (French)
+Portugal
+Puerto Rico
 Qatar
 Reunion (French)
 Romania
 Russian Federation
 Rwanda
-Saudi Arabia
-Solomon Islands
-Seychelles
-Sudan
-Sweden
-Singapore
+S. Georgia & S. Sandwich Isls.
 Saint Helena
-Slovenia
-Svalbard and Jan Mayen Islands
-Slovak Republic
-Sierra Leone
-San Marino
-Senegal
-Somalia
-Suriname
+Saint Kitts & Nevis Anguilla
+Saint Lucia
+Saint Pierre and Miquelon
 Saint Tome and Principe
-Former USSR
-El Salvador
-Syria
+Saint Vincent & Grenadines
+Samoa
+San Marino
+Saudi Arabia
+Senegal
+Seychelles
+Sierra Leone
+Singapore
+Slovak Republic
+Slovenia
+Solomon Islands
+Somalia
+South Africa
+South Korea
+Spain
+Sri Lanka
+Sudan
+Suriname
+Svalbard and Jan Mayen Islands
 Swaziland
-Turks and Caicos Islands
-Chad
-French Southern Territories
-Togo
-Thailand
+Sweden
+Switzerland
+Syria
 Tadjikistan
-Tokelau
-Turkmenistan
-Tunisia
-Tonga
-East Timor
-Turkey
-Trinidad and Tobago
-Tuvalu
 Taiwan
 Tanzania
-Ukraine
+Thailand
+Togo
+Tokelau
+Tonga
+Trinidad and Tobago
+Tunisia
+Turkey
+Turkmenistan
+Turks and Caicos Islands
+Tuvalu
 Uganda
+Ukraine
+United Arab Emirates
 United Kingdom
 United States
+USA Minor Outlying Islands
 Uruguay
 Uzbekistan
+Vanuatu
 Vatican City State
-Saint Vincent & Grenadines
 Venezuela
+Vietnam
 Virgin Islands (British)
 Virgin Islands (USA)
-Vietnam
-Vanuatu
 Wallis and Futuna Islands
-Samoa
+Western Sahara
 Yemen
-Mayotte
-Yugoslavia
-South Africa
+Zaire
 Zambia
 Zimbabwe
+

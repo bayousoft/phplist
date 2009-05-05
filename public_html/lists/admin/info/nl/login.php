@@ -1,1 +1,1 @@
-<p>Dit document vereist dat je inlogd<br/>
+<p>U dient in te loggen om toegang te krijgen tot de beheersmodule van PhpList.<br/>

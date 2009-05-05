@@ -24,13 +24,11 @@ class PHPlistMailer extends PHPMailer {
 
     function PHPlistMailer($messageid,$email) {
     #  parent::PHPMailer();
-      parent::SetLanguage('en', dirname(__FILE__) . 'phpmailer/language/');
+      parent::SetLanguage('en', dirname(__FILE__) . '/phpmailer/language/');
       $this->addCustomHeader("X-Mailer: phplist v".VERSION);
       $this->addCustomHeader("X-MessageID: $messageid");
       $this->addCustomHeader("X-ListMember: $email");
       $this->addCustomHeader("Precedence: bulk");
-      $this->Host = PHPMAILERHOST;
-      $this->Helo = getConfig("website");
       $newwrap = getConfig("wordwrap");
       if ($newwrap) {
         $this->WordWrap = $newwrap;
@@ -38,26 +36,32 @@ class PHPlistMailer extends PHPMailer {
       $this->destinationemail = $email;
 
       $this->CharSet = getConfig("html_charset");
-      if (isset($GLOBALS['phpmailer_smtpuser']) && $GLOBALS['phpmailer_smtpuser'] != '') {
-        $this->SMTPAuth = true;
-        $this->Username = $GLOBALS['phpmailer_smtpuser'];
-        $this->Password = $GLOBALS['phpmailer_smtppassword'];
-#        logEvent('Sending authenticated email via '.PHPMAILERHOST);
+
+      if (defined('PHPMAILERHOST') && PHPMAILERHOST != '' && isset($GLOBALS['phpmailer_smtpuser']) && $GLOBALS['phpmailer_smtpuser'] != '') {
+         $this->SMTPAuth = true;
+         $this->Helo = getConfig("website");
+         $this->Host = PHPMAILERHOST;
+
+         $this->Username = $GLOBALS['phpmailer_smtpuser'];
+         $this->Password = $GLOBALS['phpmailer_smtppassword'];
+         #  logEvent('Sending authenticated email via '.PHPMAILERHOST);
+
+         #  logEvent('Sending via smtp');
+         $this->Mailer = "smtp";
       }
-      $ip = gethostbyname($this->Host);
+      else{
+         #  logEvent('Sending via mail');
+         $this->Mailer = "mail";
+      }
+
+      //$ip = gethostbyname($this->Host);
+
       if ($GLOBALS["message_envelope"]) {
         $this->Sender = $GLOBALS["message_envelope"];
         $this->addCustomHeader("Errors-To: ".$GLOBALS["message_envelope"]);
 
 ## one to work on at a later stage
 #        $this->addCustomHeader("Return-Receipt-To: ".$GLOBALS["message_envelope"]);
-      }
-      if (!$this->Host || $ip == $this->Host) {
-        $this->Mailer = "mail";
-#        logEvent('Sending via mail');
-      } else {
-        $this->Mailer = "smtp";
-#        logEvent('Sending via smtp');
       }
       $this->messageid = $messageid;
     }
@@ -159,7 +163,7 @@ class PHPlistMailer extends PHPMailer {
     function add_attachment($contents,$filename,$mimetype) {
       // Append to $attachment array
       $cur = count($this->attachment);
-      $this->attachment[$cur][0] = chunk_split(base64_encode($contents), 76, $this->LE);
+      $this->attachment[$cur][0] = base64_encode($contents);
       $this->attachment[$cur][1] = $filename;
       $this->attachment[$cur][2] = $filename;
       $this->attachment[$cur][3] = $this->encoding;

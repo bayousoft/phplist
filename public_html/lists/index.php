@@ -173,7 +173,7 @@ if ($login_required && empty($_SESSION["userloggedin"])) {
     } elseif (empty($_POST["password"])) {
       $msg = $strEnterPassword;
     } else {
-      if (ENCRYPTPASSWORDS) {
+      if (ENCRYPTPASSWORD) {
         $canlogin = md5($_POST["password"]) == $userpassword && $_POST["email"] == $emailcheck;
       } else {
         $canlogin = $_POST["password"] == $userpassword && $_POST["email"] == $emailcheck;
@@ -221,12 +221,12 @@ if ($login_required && empty($_SESSION["userloggedin"]) && !$canlogin) {
 } elseif (isset($_GET['p']) && preg_match("/(\w+)/",$_GET["p"],$regs)) {
   if ($id) {
     $data = PageData($id);
-    if (isset($data['language_file']) && is_file(dirname(__FILE__).'/texts/'.$data['language_file'])) {
-      @include dirname(__FILE__).'/texts/'.$data['language_file'];
-    }
-    # Allow customisation per installation
-    if (isset($data['language_file']) && is_file($_SERVER['DOCUMENT_ROOT'].'/'.$data['language_file'])) {
-      include_once $_SERVER['DOCUMENT_ROOT'].'/'.$data['language_file'];
+    if (isset($data['language_file']) && is_file(dirname(__FILE__).'/texts/'.basename($data['language_file']))) {
+      @include dirname(__FILE__).'/texts/'.basename($data['language_file']);
+      # Allow customisation per installation
+      if (is_file($_SERVER['DOCUMENT_ROOT'].'/'.basename($data['language_file']))) {
+        include_once $_SERVER['DOCUMENT_ROOT'].'/'.basename($data['language_file']);
+      }
     }
     
     switch ($_GET["p"]) {
@@ -267,8 +267,8 @@ if ($login_required && empty($_SESSION["userloggedin"]) && !$canlogin) {
   }
 } else {
   if ($id) $data = PageData($id);
-  if (isset($data['language_file']) && is_file(dirname(__FILE__).'/texts/'.$data['language_file'])) {
-    @include dirname(__FILE__).'/texts/'.$data['language_file'];
+  if (isset($data['language_file']) && is_file(dirname(__FILE__).'/texts/'.basename($data['language_file']))) {
+    @include dirname(__FILE__).'/texts/'.basename($data['language_file']);
   }
   print '<title>'.$GLOBALS["strSubscribeTitle"].'</title>';
   print $data["header"];
@@ -312,7 +312,7 @@ function LoginPage($id,$userid,$email = "",$msg = "") {
   $html .= '<tr><td>'.$GLOBALS["strPassword"].'</td><td><input type=password name="password" value="'.$_POST["password"].'" size="30"></td></tr>';
   $html .= '</table>';
    $html .= '<p><input type=submit name="login" value="'.$GLOBALS["strLogin"].'"></p>';
-  if (ENCRYPTPASSWORDS) {
+  if (ENCRYPTPASSWORD) {
     $html .= sprintf('<a href="mailto:%s?subject=%s">%s</a>',getConfig("admin_address"),$GLOBALS["strForgotPassword"],$GLOBALS["strForgotPassword"]);
   } else {
     $html .= '<input type=submit name="forgotpassword" value="'.$GLOBALS["strForgotPassword"].'">';
@@ -637,11 +637,19 @@ function unsubscribePage($id) {
       $_POST["email"] = $email;
       $_POST["unsubscribereason"] = '"Jump off" set, reason not requested';
     }
-  } else {
+  }
+  else {
     if (isset($_REQUEST['unsubscribeemail'])) {
       $email = $_REQUEST['unsubscribeemail'];
-    } else {
-      $email = $_REQUEST['email'];
+    } 
+    else {
+       if (isset($_REQUEST['email'])) {
+          if (UNSUBSCRIBE_JUMPOFF) {
+             $_POST["unsubscribe"] = 1;
+             $_POST["unsubscribereason"] = '"Jump off" set, reason not requested';
+          }
+          $email = $_REQUEST['email'];
+       }
     }
     if (!validateEmail($email)) {
       $email = '';
@@ -657,13 +665,10 @@ function unsubscribePage($id) {
       $_POST["unsubscribereason"] = 'Forwarded receiver requested blacklist';
     }
   }
+
+  $unsubscribeemail = (isset($_REQUEST['unsubscribeemail']))?$_REQUEST['unsubscribeemail']:'';
   
-
-  if (isset($_POST["unsubscribe"]) && !empty($email) && isset($_POST["unsubscribereason"])) {
-/*=======
-  if ( is_email($_REQUEST['unsubscribeemail']) && isset($_POST['unsubscribe']) && (isset($_REQUEST['email']) || isset($_REQUEST['unsubscribeemail'])) && isset($_POST['unsubscribereason'])) {
-
->>>>>>> .merge-right.r1462*/
+  if ( is_email($unsubscribeemail) && isset($_POST['unsubscribe']) && (isset($_REQUEST['email']) || isset($_REQUEST['unsubscribeemail'])) && isset($_POST['unsubscribereason'])) {
 
     #0013076: Blacklisting posibility for unknown users
       // It would be better to do this above, where the email is set for the other cases.
@@ -951,8 +956,8 @@ function forwardPage($id) {
     $ok = false;
   }
   $data = PageData($id);
-  if (isset($data['language_file']) && is_file(dirname(__FILE__).'/texts/'.$data['language_file'])) {
-    @include dirname(__FILE__).'/texts/'.$data['language_file'];
+  if (isset($data['language_file']) && is_file(dirname(__FILE__).'/texts/'.basename($data['language_file']))) {
+    @include dirname(__FILE__).'/texts/'.basename($data['language_file']);
   }
 
 ## BAS Multiple Forward

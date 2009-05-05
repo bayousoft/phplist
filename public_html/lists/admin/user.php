@@ -29,8 +29,10 @@ switch ($access) {
   case "owner":
     $subselect = sprintf(' and %s.owner = %d',$tables["list"],$_SESSION["logindetails"]["id"]);
     $subselect_where = sprintf(' where %s.owner = %d',$tables["list"],$_SESSION["logindetails"]["id"]);break;
+
   case "all":
     $subselect = "";break;
+
   case "view":
     $subselect = "";
     if (sizeof($_POST)) {
@@ -38,6 +40,7 @@ switch ($access) {
       return;
     }
     break;
+
   case "none":
   default:
     $subselect = " and ".$tables["list"].".id = 0";
@@ -56,6 +59,7 @@ function groupName($id) {
 }
 
 require dirname(__FILE__).'/structure.php';
+
 $struct = $DBstruct["user"];
 if (isset($_GET['find'])) {
   $find = preg_replace('/\W/','',$_GET['find']);
@@ -71,6 +75,7 @@ if ($find)
   echo "<br />".PageLink2("users","Back to the search results","start=$start&find=".urlencode($find)."&findby=".urlencode($findby)."&unconfirmed=".$_GET["unconfirmed"]."\n");
 
 $more = '';
+
 if (!empty($_REQUEST['returnpage'])) {
   $returnpage = preg_replace('/\W/','',$_REQUEST['returnpage']);
   if (isset($_REQUEST['returnoption'])) {

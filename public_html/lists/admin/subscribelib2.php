@@ -28,15 +28,15 @@ function validateRssFrequency($freq = '') {
 ## Check if input is complete
 $allthere = 1;
 $subscribepagedata = PageData($id);
-if (isset($subscribepagedata['language_file']) && is_file(dirname(__FILE__).'/../texts/'.$subscribepagedata['language_file'])) {
-  @include_once dirname(__FILE__).'/../texts/'.$subscribepagedata['language_file'];
+if (isset($subscribepagedata['language_file']) && is_file(dirname(__FILE__).'/../texts/'.basename($subscribepagedata['language_file']))) {
+  @include_once dirname(__FILE__).'/../texts/'.basename($subscribepagedata['language_file']);
 }
 # Allow customisation per installation
-if (is_file($_SERVER['DOCUMENT_ROOT'].'/'.$GLOBALS["language_module"])) {
-  include_once $_SERVER['DOCUMENT_ROOT'].'/'.$GLOBALS["language_module"];
+if (is_file($_SERVER['DOCUMENT_ROOT'].'/'.basename($GLOBALS["language_module"]))) {
+  include_once $_SERVER['DOCUMENT_ROOT'].'/'.basename($GLOBALS["language_module"]);
 }
-if (isset($data['language_file']) && is_file($_SERVER['DOCUMENT_ROOT'].'/'.$data['language_file'])) {
-  include_once $_SERVER['DOCUMENT_ROOT'].'/'.$data['language_file'];
+if (!empty($data['language_file']) && is_file($_SERVER['DOCUMENT_ROOT'].'/'.basename($data['language_file']))) {
+  include_once $_SERVER['DOCUMENT_ROOT'].'/'.basename($data['language_file']);
 }
 
 $required = array();   # id's of missing attribbutes
@@ -139,82 +139,96 @@ if (isset($_POST["email"]) && $check_for_host) {
 
 $listsok = ((!ALLOW_NON_LIST_SUBSCRIBE && isset($_POST["list"]) && is_array($_POST["list"])) || ALLOW_NON_LIST_SUBSCRIBE);
 
-if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
-   && $allthere && $validhost) {
-  $history_entry = '';
-  # make sure to save the correct data
-  if ($subscribepagedata["htmlchoice"] == "checkfortext" && !$textemail) {
-    $htmlemail = 1;
-  } else {
-    $htmlemail = isset($_POST["htmlemail"]) && $_POST["htmlemail"];
-  }
+if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok && $allthere && $validhost) {
+   $history_entry = '';
+   # make sure to save the correct data
+   if ($subscribepagedata["htmlchoice"] == "checkfortext" && !$textemail) {
+      $htmlemail = 1;
+   }
+   else {
+      $htmlemail = isset($_POST["htmlemail"]) && $_POST["htmlemail"];
+   }
 
-  # now check whether this user already exists.
-  $email = $_POST["email"];
-  if (preg_match("/(.*)\n/U",$email,$regs)) {
-    $email = $regs[1];
-  }
-  $result = Sql_query("select * from {$GLOBALS["tables"]["user"]} where email = \"$email\"");#"
-  if (isset($_POST['rssfrequency'])) {
-    $rssfrequency = validateRssFrequency($_POST['rssfrequency']);
-  } else {
-    $rssfrequency = '';
-  }
+   # now check whether this user already exists.
+   $email = $_POST["email"];
+   if (preg_match("/(.*)\n/U",$email,$regs)) {
+      $email = $regs[1];
+   }
 
-  if (!Sql_affected_rows()) {
-    # they do not exist, so add them
-    $query = sprintf('insert into %s (email,entered,uniqid,confirmed,
+   $result = Sql_query("select * from {$GLOBALS["tables"]["user"]} where email = \"$email\"");#"
+
+   if (isset($_POST['rssfrequency'])) {
+      $rssfrequency = validateRssFrequency($_POST['rssfrequency']);
+   }
+   else {
+      $rssfrequency = '';
+   }
+
+   if (!Sql_affected_rows()) {
+      # they do not exist, so add them
+      $query = sprintf('insert into %s (email,entered,uniqid,confirmed,
       htmlemail,subscribepage,rssfrequency) values("%s",current_timestamp,"%s",0,%d,%d,"%s")',
-    $GLOBALS["tables"]["user"],addslashes($email),getUniqid(),$htmlemail,$id,
-    $rssfrequency);
-    $result = Sql_query($query);
-    $userid = Sql_Insert_Id($GLOBALS['tables']['user'], 'id');
-    addSubscriberStatistics('total users',1);
-  } else {
-    # they do exist, so update the existing record
-    # read the current values to compare changes
-    $old_data = Sql_fetch_array($result);
-    if (ASKFORPASSWORD && $old_data["password"]) {
-      if (ENCRYPTPASSWORDS) {
-        $canlogin = md5($_POST["password"]) == $old_data["password"];
-      } else {
-        $canlogin = $_POST["password"] == $old_data["password"];
+      htmlemail,subscribepage,rssfrequency) values("%s",now(),"%s",0,%d,%d,"%s")',
+      $GLOBALS["tables"]["user"],addslashes($email),getUniqid(),$htmlemail,$id,
+      $rssfrequency);
+      $result = Sql_query($query);
+      $userid = Sql_Insert_Id();
+      addSubscriberStatistics('total users',1);
+   }
+   else {
+      # they do exist, so update the existing record
+      # read the current values to compare changes
+      $old_data = Sql_fetch_array($result);
+
+      if (ASKFORPASSWORD && $old_data["password"]) {
+         if (ENCRYPTPASSWORD) {
+            $canlogin = md5($_POST["password"]) == $old_data["password"];
+         }
+         else {
+            $canlogin = $_POST["password"] == $old_data["password"];
+         }
+
+         if (!$canlogin) {
+            $msg = $GLOBALS["strUserExists"];
+            $msg.= '<p>'.$GLOBALS["strUserExistsExplanationStart"].
+            sprintf('<a href="%s&email=%s">%s</a>',getConfig("preferencesurl"),$email,
+            $GLOBALS["strUserExistsExplanationLink"]).
+            $GLOBALS["strUserExistsExplanationEnd"];
+
+            return;
+         }
       }
-      if (!$canlogin) {
-        $msg = $GLOBALS["strUserExists"];
-        $msg .= '<p>'.$GLOBALS["strUserExistsExplanationStart"].
-          sprintf('<a href="%s&email=%s">%s</a>',getConfig("preferencesurl"),$email,
-          $GLOBALS["strUserExistsExplanationLink"]).
-          $GLOBALS["strUserExistsExplanationEnd"];
-        return;
+
+      $userid = $old_data["id"];
+      $old_data = array_merge($old_data,getUserAttributeValues('',$userid));
+      $history_entry = 'http://'.getConfig("website").$GLOBALS["adminpages"].'/?page=user&id='.$userid."\n\n";
+
+      $query = sprintf('update %s set email = "%s",htmlemail = %d,subscribepage = %d,rssfrequency = "%s" where id = %d',$GLOBALS["tables"]["user"],addslashes($email),$htmlemail,$id,$rssfrequency,$userid);
+      $result = Sql_query($query);
+   }
+
+   if (ASKFORPASSWORD && $_POST["password"]) {
+      if (ENCRYPTPASSWORD) {
+         $newpassword = sprintf('%s',md5($_POST["password"]));
       }
-    }
+      else {
+         $newpassword = sprintf('%s',$_POST["password"]);
+      }
+      # see whether is has changed
 
-    $userid = $old_data["id"];
-    $old_data = array_merge($old_data,getUserAttributeValues('',$userid));
-    $history_entry = 'http://'.getConfig("website").$GLOBALS["adminpages"].'/?page=user&id='.$userid."\n\n";
+      $curpwd = Sql_Fetch_Row_Query("select password from {$GLOBALS["tables"]["user"]} where id = $userid");
 
-    $query = sprintf('update %s set email = "%s",htmlemail = %d,subscribepage = %d,rssfrequency = "%s" where id = %d',$GLOBALS["tables"]["user"],addslashes($email),$htmlemail,$id,$rssfrequency,$userid);
-    $result = Sql_query($query);
-  }
-
-  if (ASKFORPASSWORD && $_POST["password"]) {
-    if (ENCRYPTPASSWORDS) {
-      $newpassword = sprintf('%s',md5($_POST["password"]));
-     } else {
-      $newpassword = sprintf('%s',$_POST["password"]);
-    }
-     # see whether is has changed
-    $curpwd = Sql_Fetch_Row_Query("select password from {$GLOBALS["tables"]["user"]} where id = $userid");
-    if ($_POST["password"] != $curpwd[0]) {
-      $storepassword = 'password = "'.$newpassword.'"';
-      Sql_query("update {$GLOBALS["tables"]["user"]} set passwordchanged = current_timestamp,$storepassword where id = $userid");
-    } else {
+      if ($_POST["password"] != $curpwd[0]) {
+         $storepassword = 'password = "'.$newpassword.'"';
+         Sql_query("update {$GLOBALS["tables"]["user"]} set passwordchanged = now(),$storepassword where id = $userid");
+      }
+      else {
+         $storepassword = "";
+      }
+   }
+   else {
       $storepassword = "";
-    }
-  } else {
-    $storepassword = "";
-  }
+   }
 
   # subscribe to the lists
   $lists = '';
@@ -227,8 +241,8 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
         $lists .= "\n  * ".listname($key);
         addSubscriberStatistics('subscribe',1,$key);
       }
-    }
-  }
+      }
+   }
 
   # remember the users attributes
   # make sure to only remember the ones from this subscribe page
@@ -281,42 +295,51 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
     $history_subject = 'Subscription';
   }
 
-  $history_entry .= "\n\nList Membership: \n$lists\n";
+   $history_entry .= "\n\nList Membership: \n$lists\n";
 
-  $subscribemessage = ereg_replace('\[LISTS\]', $lists, getUserConfig("subscribemessage:$id",$userid));
+   $subscribemessage = ereg_replace('\[LISTS\]', $lists, getUserConfig("subscribemessage:$id",$userid));
 
-  $blacklisted = isBlackListed($email);
+   $blacklisted = isBlackListed($email);
 
-  print '<title>'.$GLOBALS["strSubscribeTitle"].'</title>';
-  print $subscribepagedata["header"];
-  if (isset($_SESSION["adminloggedin"]) && $_SESSION["adminloggedin"]) {
-    print '<p><b>You are logged in as '.$_SESSION["logindetails"]["adminname"].'</b></p>';
-    print '<p><a href="'.$adminpages.'">Back to the main admin page</a></p>';
-    if ($_POST["makeconfirmed"] && !$blacklisted) {
-      $sendrequest = 0;
-      Sql_Query(sprintf('update %s set confirmed = 1 where email = "%s"',$GLOBALS["tables"]["user"],$email));
-      addUserHistory($email,$history_subject." by ".$_SESSION["logindetails"]["adminname"],$history_entry);
-    } elseif ($_POST["makeconfirmed"]) {
-      print '<p>'.$GLOBALS['I18N']->get('Email is blacklisted, so request for confirmation has been sent.').'<br/>';
-      print $GLOBALS['I18N']->get('If user confirms subscription, they will be removed from the blacklist.').'</p>';
+   print '<title>'.$GLOBALS["strSubscribeTitle"].'</title>';
+   print $subscribepagedata["header"];
+
+   if (isset($_SESSION["adminloggedin"]) && $_SESSION["adminloggedin"]) {
+      print '<p><b>You are logged in as '.$_SESSION["logindetails"]["adminname"].'</b></p>';
+      print '<p><a href="'.$adminpages.'">Back to the main admin page</a></p>';
+
+      if ($_POST["makeconfirmed"] && !$blacklisted) {
+         $sendrequest = 0;
+         Sql_Query(sprintf('update %s set confirmed = 1 where email = "%s"',$GLOBALS["tables"]["user"],$email));
+         addUserHistory($email,$history_subject." by ".$_SESSION["logindetails"]["adminname"],$history_entry);
+      }
+      elseif ($_POST["makeconfirmed"]) {
+         print '<p>'.$GLOBALS['I18N']->get('Email is blacklisted, so request for confirmation has been sent.').'<br/>';
+         print $GLOBALS['I18N']->get('If user confirms subscription, they will be removed from the blacklist.').'</p>';
+
+         $sendrequest = 1;
+      }
+      else {
+         $sendrequest = 1;
+      }
+   }
+   else {
       $sendrequest = 1;
-    } else {
-      $sendrequest = 1;
-    }
-  } else {
-    $sendrequest = 1;
-  }
+   }
 
   # personalise the thank you page
   if ($subscribepagedata["thankyoupage"]) {
     $thankyoupage = $subscribepagedata["thankyoupage"];
-  } else {
-    $thankyoupage = '<h3>'.$strThanks.'</h3>'. $strEmailConfirmation;
-  }
+   }
+   else {
+      $thankyoupage = '<h3>'.$strThanks.'</h3>'. $strEmailConfirmation;
+   }
 
-  if (eregi("\[email\]",$thankyoupage,$regs))
-    $thankyoupage = eregi_replace("\[email\]",$email,$thankyoupage);
-  $user_att = getUserAttributeValues($email);
+   if (eregi("\[email\]",$thankyoupage,$regs))
+   $thankyoupage = eregi_replace("\[email\]",$email,$thankyoupage);
+
+   $user_att = getUserAttributeValues($email);
+
   while (list($att_name,$att_value) = each ($user_att)) {
     if (eregi("\[".$att_name."\]",$thankyoupage,$regs))
       $thankyoupage = eregi_replace("\[".$att_name."\]",$att_value,$thankyoupage);
@@ -346,20 +369,22 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok
       }
     }
   } else {
-    print $thankyoupage;
-    if ($_SESSION["adminloggedin"]) {
-      print "<p>User has been added and confirmed</p>";
-    }
-  }
+      print $thankyoupage;
 
-  print "<P>".$PoweredBy.'</p>';
-  print $subscribepagedata["footer"];
-//  exit;
-  // Instead of exiting here, we return 2. So in lists/index.php
-  // We can decide, whether to show subcribe page or not.
-  ## issue 6508
-  return 2;
-} elseif (isset($_POST["update"]) && $_POST["update"] && is_email($_POST["email"]) && $allthere) {
+      if ($_SESSION["adminloggedin"]) {
+         print "<p>User has been added and confirmed</p>";
+      }
+   }
+
+   print "<P>".$PoweredBy.'</p>';
+   print $subscribepagedata["footer"];
+   //  exit;
+   // Instead of exiting here, we return 2. So in lists/index.php
+   // We can decide, whether to show subcribe page or not.
+   ## issue 6508
+   return 2;
+}
+elseif (isset($_POST["update"]) && $_POST["update"] && is_email($_POST["email"]) && $allthere) {
   $email = trim($_POST["email"]);
   if (preg_match("/(.*)\n/U",$email,$regs)) {
     $email = $regs[1];

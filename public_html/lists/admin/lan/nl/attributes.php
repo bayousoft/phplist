@@ -39,6 +39,7 @@ $lan = array(
   'delete' => 'Werwijder',
   'merge' => 'Voeg samen',
   'addnew' => 'Voeg nieuw attribuut toe',
+  'authoritative list' => 'authoritatieve lijst',
 );
 
 ?>

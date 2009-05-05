@@ -155,6 +155,10 @@ $lan = array (
   'Daily' => 'Daily', 
   'Weekly' => 'Weekly',
   'Monthly' => 'Monthly'
+
+  ## forgotten 
+  'All Active Lists' => 'All Active Lists',
+
 );
 
 ?>

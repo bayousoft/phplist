@@ -1002,9 +1002,10 @@ function addAttachments($msgid,&$mail,$type) {
             sendMail(getConfig("report_address"),"Mail list error",$msg,"");
           }
            break;
+
          case "text":
           $viewurl = $GLOBALS["scheme"]."://".$website.$GLOBALS["pageroot"].'/dl.php?id='.$att["id"];
-          $mail->append_text($att["description"]."\n".$GLOBALS["strLocation"].": ".$viewurl);
+          $mail->append_text($att["description"]."\n".$GLOBALS["strLocation"].": ".$viewurl."\n");
           break;
       }
     }

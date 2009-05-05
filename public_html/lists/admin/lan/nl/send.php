@@ -137,6 +137,7 @@ $lan = array (
 
   # new in 2.10.1
   'reload' => 'herlaad',
+  'use [FORWARD] to add a personalised URL to forward the message to someone else.' => 'Gebruik [FORWARD] om een gepersonaliseerde URL toe te voegen waarme het bericht kan worden doorgestuurd naar iemand anders.',
 
 );
 

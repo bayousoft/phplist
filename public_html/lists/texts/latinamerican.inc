@@ -9,6 +9,7 @@ $strEmail               = 'Email';
 $strTown                = 'Ciudad o pueblo';
 $strPostcode            = 'C&oacute;digo postal';
 $strSubscribeInfo       = 'Suscr&iacute;base a una o m&aacute;s de nuestras Listas de correo utilizando el formulario a continuaci&oacute;n.';
+$strConfirmEmail        = 'Confirme su correo'; 
 $strRequired            = 'campo requerido';
 $strSubscribeTitle      = 'Suscr&iacute;base a nuestras Listas de correo';
 $strPleaseSelect        = 'Por favor, seleccione las listas a las que desea sucribirse';
@@ -72,6 +73,4 @@ $strMonthly             = 'Mensualmente';
 $strChoosePassword      = 'Por favor, escriba una contrase&ntilde;a';
 $strConfirmPassword    = 'Confirme su contrase&ntilde;a';
 
-
 ?>
-

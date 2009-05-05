@@ -6,7 +6,7 @@
 require_once dirname(__FILE__).'/accesscheck.php';
 
 if (!is_object("date")) {
-  include dirname(__FILE__) . "/date.php";
+  include_once dirname(__FILE__). "/date.php";
 }
 
 ob_end_flush();
@@ -14,6 +14,7 @@ $from = new date("from");
 $to = new date("to");
 $fromval = $toval = $todo = "";
 
+$find = (!isset($find))?'':$find;
 
 $findtables = '';
 $findbyselect = sprintf(' email like "%%%s%%"',$find);;
@@ -126,7 +127,7 @@ if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
   $access = accessLevel("reconcileusers");
   switch ($access) {
     case "all":
-      if ($_GET["option"]) {
+      if (isset($_GET["option"]) && $_GET["option"]) {
         set_time_limit(600);
         switch ($_GET["option"]) {
           case "markallconfirmed":
@@ -253,7 +254,7 @@ if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
         if ($total)
           print "$total/$total<br/>";
       }
-      if ($_GET["option"] == "invalidemail") {
+      if (isset($_GET["option"]) && $_GET["option"] == "invalidemail") {
         Info($GLOBALS['I18N']->get("Listing users with an invalid email"));
         flush();
         $req = Sql_Query("select id,email from {$tables["user"]}");
@@ -276,7 +277,7 @@ if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
         print $c." ".$GLOBALS['I18N']->get('Users apply')."<br/>$list\n";
         if ($c)
         print '<input type=submit name="deletetagged" value="'.$GLOBALS['I18N']->get('Delete Tagged Users').'"></form>';
-      } elseif ($_GET["option"] == "fixinvalidemail") {
+      } elseif (isset($_GET["option"]) && $_GET["option"] == "fixinvalidemail") {
         Info($GLOBALS['I18N']->get("Trying to fix users with an invalid email"));
         flush();
         $req = Sql_Query("select id,email from {$tables["user"]}");
@@ -298,7 +299,7 @@ if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
           }
         }
         print $fixed." ".$GLOBALS['I18N']->get('Users fixed')."<br/>".$notfixed." ".$GLOBALS['I18N']->get("Users could not be fixed")."<br/>".$list."\n";
-      } elseif ($_GET["option"] == "deleteinvalidemail") {
+      } elseif (isset($_GET["option"]) && $_GET["option"] == "deleteinvalidemail") {
         Info($GLOBALS['I18N']->get("Deleting users with an invalid email"));
         flush();
         $req = Sql_Query("select id,email from {$tables["user"]}");
@@ -311,7 +312,7 @@ if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
           }
         }
         print $c." ".$GLOBALS['I18N']->get("Users deleted")."<br/>\n";
-      } elseif ($_GET["option"] == "markinvalidunconfirmed") {
+      } elseif (isset($_GET["option"]) && $_GET["option"] == "markinvalidunconfirmed") {
         Info($GLOBALS['I18N']->get("Marking users with an invalid email as unconfirmed"));
         flush();
         $req = Sql_Query("select id,email from {$tables["user"]}");
@@ -324,7 +325,7 @@ if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
           }
         }
         print $c." ".$GLOBALS['I18N']->get('Users updated')."<br/>\n";
-      } elseif ($_GET["option"] == "removestaleentries") {
+      } elseif (isset($_GET["option"]) && $_GET["option"] == "removestaleentries") {
         Info($GLOBALS['I18N']->get("Cleaning some user tables of invalid entries"));
         # some cleaning up of data:
         $req = Sql_Verbose_Query("select {$tables["usermessage"]}.userid

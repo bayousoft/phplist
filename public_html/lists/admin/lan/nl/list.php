@@ -18,5 +18,6 @@ $lan = array(
  '(view items)' => '(Bekijk Items)',
  'edit' => 'bewerk',
  'view members' => 'bekijk leden',
+ 'view bounces' => 'bekijk bounces',
 );
 ?>

@@ -688,15 +688,57 @@ function upgradeTable($table,$tablestructure) {
 
 # this version can only be used with the right permissions, which are generally not
 # available by default, so for now they are disabled
-function upgradeTable2($table,$tablestructure) {
-  global $tmpdir;
-  $filename = "phpupgrade.tmp";
-  if (is_file("$tmpdir/$filename"))
-    unlink("$tmpdir/$filename");
-  if (Sql_Verbose_Query("select * from $table into outfile '$tmpdir/$filename'")) {
-    Sql_Drop_Table($table);
-    Sql_Create_Table($table,$tablestructure);
-    Sql_Query("load data infile '$tmpdir/$filename' into $table IGNORE");
+function upgradeTable2($table, $tablestructure) {
+	global $tmpdir;
+	$filename = "phpupgrade.tmp";
+	if (is_file("$tmpdir/$filename"))
+		unlink("$tmpdir/$filename");
+	if (Sql_Verbose_Query("select * from $table into outfile '$tmpdir/$filename'")) {
+		Sql_Query("drop table $table");
+		Sql_Create_table($table, $tablestructure);
+		Sql_Query("load data infile '$tmpdir/$filename' into $table IGNORE");
+	} else {
+		print '<p>Error: Cannot dump old database tables. Please make sure you have the correct Database and File permissions.</p>
+		      <p>Required permissions are:
+		        <ul>
+		        <li>Mysql "alter" and "file" permission on your database</li>
+		        <li>Write permission in ' . $tmpdir . '</li>
+		        </ul>';
+	}
+	if (is_file("$tmpdir/$filename"))
+		unlink("$tmpdir/$filename");
+}
+
+function Help($topic, $text = '?') {
+	return sprintf('<a href="javascript:help(\'help/?topic=%s\')">%s</a>', $topic, $text);
+}
+
+# Debugging system, needs $debug = TRUE and $verbose = TRUE or $debug_log = {path} in config.php
+# Hint: When using log make sure the file gets write permissions 
+#
+function dbg($variable, $description = 'Value', $nestingLevel = 0) {
+//  smartDebug($variable, $description, $nestingLevel); //TODO Fix before release!
+//  return;
+  
+  global $config;
+ # if (!$config["debug"])
+#   $er = error_reporting(0);
+  if (ini_get("safe_mode"))
+    return;
+
+  if (isset($config["debug"]) && !$config["debug"]) 
+    return;
+
+  if (isset($config["verbose"]) && $config["verbose"]) 
+    print "\n".'<font class="debug">DBG: '.$msg.'</font><br>'."\n";
+  elseif (isset($config["debug_log"]) && $config["debug_log"]) {
+    $fp = @fopen($config["debug_log"],"a");
+    $line = "[".date("d M Y, H:i:s")."] ".getenv("REQUEST_URI").'('.$config["stats"]["number_of_queries"].") $msg \n";
+    @fwrite($fp,$line);
+    @fclose($fp);
+  #  $fp = fopen($config["sql_log"],"a");
+  #  fwrite($fp,"$line");
+  #  fclose($fp);
   } else {
     print '<p>Error: Cannot dump old database tables. Please make sure you have the correct Database and File permissions.</p>
       <p>Required permissions are:
@@ -1047,8 +1089,23 @@ function cleanArray($array) {
   return $result;
 }
 
+function cleanArray($array) {
+  $result = array();
+  if (!is_array($array)) return array();
+  foreach ($array as $key => $val) {
+    if (!empty($key) && !empty($val)) {
+      $result[$key] = $val;
+    }
+  }
+  return $result;
+}
+
 function cleanCommaList($list) {
   return join(',',cleanArray(split(',',$list)));
+}
+
+function formatTime($time, $short = 0) {
+	return $time;
 }
 
 function formatDateTime ($datetime,$short = 0) {
@@ -1157,4 +1214,3 @@ function printarray($array){
   }
 }
 
-?>

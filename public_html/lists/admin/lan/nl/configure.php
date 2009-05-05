@@ -1,3 +1,4 @@
+<<<<<<< .working
 <?php
 $lan = array(
  "checklist for installation" => "Checklist voor Installatie",
@@ -6,16 +7,28 @@ $lan = array(
  "editing" => "Bewerken",
  "save changes" => "Wijzigingen opslaan",
  "edit" => "bewerk",
+?>=======
+<?php
+$lan = array(
+ "checklist for installation" => "Checklist voor Installatie",
+ "invalid request" => "ongeldig verzoek",
+ "cannot be empty" => "kan niet leeg zijn",
+ "editing" => "Bewerken",
+ "save changes" => "Wijzigingen opslaan",
+ "edit" => "bewerk",
+ 
+ 
  "Website address (without http://)" => "Website adres (zonder http://)",
  "Domain Name of your server (for email)" => "Domeinnaam van uw server (voor email)",
- "Person in charge of this system (one email address)" => "Persoon verantwoordelijk voor dit systeem (één email adres)",
+ "Person in charge of this system (one email address)" => "Persoon verantwoordelijk voor dit systeem (ï¿½ï¿½n email adres)",
  "How often do you want to check for a new version of phplist (days)" => "Hoe vaak wilt u controleren of er een nieuwe versie van phplist beschikbaar is (dagen)",
  "List of people to CC in system emails (separate by commas)" => "Lijst met personen in CC bij mails van het systeem (gescheiden door komma's)",
  "Who gets the reports (email address, separate multiple emails with a comma)" => "Wie ontvangt de rapporten (email adres, scheidt verschillende adressen met een komma)",
  "From email address for system messages" => "From email adres bij systeemberichten",
  "What name do system messages appear to come from" => "Op wiens naam zullen de systeemberichten verzonden worden",
  "Reply-to email address for system messages" => "From adres voor systeemberichten",
- "if there is only one visible list, should it be hidden in the page and automatically subscribe users who sign up (0/1)" => "Als er maar één lijst is, moet het dan verborgen worden op de pagina en gebruikers automatisch toevoegen aan deze lijst (0/1)",
+ "if there is only one visible list, should it be hidden in the page and automatically
+   subscribe users who sign up (0/1)" => "Als er maar ï¿½ï¿½n lijst is, moet het dan verborgen worden op de pagina en gebruikers automatisch toevoegen aan deze lijst (0/1)",
  "width of a textline field (numerical)" => "Breedte van een 'tekstlijn' veld (numeriek)",
  "dimensions of a textarea field (rows,columns)" => "Afmetingen van een 'tekstgebied' veld (rijen, kolommen)",
  "Does the admin get copies of subscribe, update and unsubscribe messages (0/1)" => "Ontvangt de admin een kopie van de inschrijf-, wijzig- en uitschrijfberichten (0/1)",
@@ -45,7 +58,7 @@ $lan = array(
  "Charset for HTML messages" => "Karakterset voor HTML berichten",
  "Charset for Text messages" => "Karakterset voor tekst berichten",
  "CSS for HTML messages without a template" => "CSS voor HTML berichten zonder sjabloon",
- "Domains that only accept text emails, one per line" => "Domeinen die enkel tekst mails ontvangen, één per lijn",
+ "Domains that only accept text emails, one per line" => "Domeinen die enkel tekst mails ontvangen, ï¿½ï¿½n per lijn",
  "Minimum amount of items to send in an RSS feed" => "Minimum hoeveelheid items in een RSS feed",
  "Template for text item in RSS feeds" => "Sjabloon voor tekst items in RSS feeds",
  "Template for HTML item in RSS feeds" => "Sjabloon voor HTML items in RSS feeds",
@@ -53,7 +66,9 @@ $lan = array(
  "Template for separator between feeds in RSS feeds (text)" => "Sjabloon voor de scheiding tussen feeds in RSS feeds (tekst)",
  "Template for separator between feeds in RSS feeds (HTML)" => "Sjabloon voor de scheiding tussen feeds in RSS feeds (HTML)",
  "Width in px of FCKeditor Area" => "Breedte in px van de FCKeditor",
- "Height in px of FCKeditor Area" => "Hoogte in px van de FCKeditor"
+ "Height in px of FCKeditor Area" => "Hoogte in px van de FCKeditor",
+ "Width for Wordwrap of Text messages" => "Breedte voor uitvullen van tekst berichten",
+
 );
 
 /*

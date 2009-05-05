@@ -8,5 +8,6 @@ $lan = array(
   'check' => 'Controleer op Gebruikers',
   'import' => 'Importeer Gebruikers',
   'export' => 'Exporteer Gebruikers',
-  'mass unconfirm users' => 'Massa Onbevestigde Gebruikers'
+  'mass unconfirm users' => 'Grote Hoeveelheid Onbevestigde Gebruikers',
+  'mass remove users' => 'Grote Hoeveelheid Gebruikers Verwijderen',
 );

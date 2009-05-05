@@ -23,7 +23,7 @@ if (USETINYMCEMESG && file_exists(TINYMCEPATH)) {
   $useTinyMCE = 1;
 }
 
-include dirname(__FILE__)."/date.php";
+include_once dirname(__FILE__). "/date.php";
 
 $errormsg = '';
 //$rss_content = '';          //Obsolete by rssmanager plugin
@@ -51,7 +51,7 @@ if (isset($_POST['send'])) {
 if (isset($_POST['prepare'])) {
   $prepare = $_POST["prepare"];
 } else {
-  $prepage = '';
+  $prepare = '';
 }
 if (isset($_GET['id'])) {
   $id = sprintf('%d',$_GET["id"]);  // Only get this from the GET variable
@@ -131,10 +131,26 @@ if ($id) {
   // A bit of additional cleanup
   if (!isset($_POST["from"]))
     $_POST["from"] = $_POST["fromfield"];  // Database field name doesn't match form fieldname...
+
+  if (!isset($_POST["forwardsubject"])) {
+     $_POST["forwardsubject"] = "";
+  }
+  else $_POST["forwardsubject"] = sprintf("%s", $_POST["forwardsubject"]);
+
+  if (!isset($_POST["forwardmessage"])) {
+     $_POST["forwardmessage"] = "";
+  }
+  else $_POST["forwardmessage"] = sprintf("%s", $_POST["forwardmessage"]);
+
+  if (!isset($_POST["forwardfooter"])) {
+     $_POST["forwardfooter"] = "";
+  }
+  else $_POST["forwardfooter"] = sprintf("%s", $_POST["forwardfooter"]);
+
   if (!isset($_POST["msgsubject"])) {
-    $_POST["msgsubject"] = $_POST["subject"];
+    $_POST["msgsubject"] = sprintf("%s",$_POST["subject"]);
   } else {
-    $_POST['subject'] = $_POST['msgsubject'];
+    $_POST['subject'] = sprintf("%s",$_POST['msgsubject']);
   }
   if ((!isset($_POST["year"]) || !is_array($_POST["year"])) && $_POST["embargo"] && $_POST["embargo"] != "0000-00-00 00:00:00") {
      $embargo->setDateTime($_POST["embargo"]);
@@ -199,11 +215,31 @@ if (preg_match("/\n|\r/",$_POST["from"])) {
 } else {
   $from = $_POST["from"];
 }
+
 if (preg_match("/\n|\r/",$_POST["msgsubject"])) {
   $subject = "";
 } else {
   $subject = $_POST["msgsubject"];
 }
+
+if (preg_match("/\n|\r/",$_POST["forwardsubject"])) {
+  $forwardsubject = "";
+} else {
+  $forwardsubject = $_POST["forwardsubject"];
+}
+
+if (preg_match("/\n|\r/",$_POST["forwardmessage"])) {
+  $forwardmessage = "";
+} else {
+  $forwardmessage = $_POST["forwardmessage"];
+}
+
+if (preg_match("/\n|\r/",$_POST["forwardfooter"])) {
+  $forwardfooter = "";
+} else {
+  $forwardfooter = $_POST["forwardfooter"];
+}
+
 $message = $_POST["message"];
 
 // If the variable isn't filled in, then the input fields don't default to the
@@ -481,6 +517,7 @@ if ($send || $sendtest || $prepare || $save) {
     $operator = $_POST["criteria_operator"];
     if (is_array($_POST["criteria_values"])) {
       $values = join(", ",$_POST["criteria_values"]);
+      $values = cleanCommaList($values);
     } else {
       $values = $_POST["criteria_values"];
     }
@@ -522,7 +559,7 @@ if ($send || $sendtest || $prepare || $save) {
   }
 
 
-  if (ALLOW_ATTACHMENTS) {
+  if (ALLOW_ATTACHMENTS && isset($_FILES) && is_array($_FILES) && sizeof($_FILES) > 0) {
     for ($att_cnt = 1;$att_cnt <= NUMATTACHMENTS;$att_cnt++) {
       $fieldname = "attachment".$att_cnt;
       if (isset($_FILES[$fieldname])) {
@@ -855,7 +892,7 @@ for ($i = 1; $i<=$num;$i++) {
         } else {
           $where_clause .= ' in (';
         }
-        $where_clause .= $crit_data["values"] . ") )";
+        $where_clause .= cleanCommaList($crit_data["values"]) . ") )";
         $subqueries[$i]['query'] = sprintf('select userid from %s
         where attributeid = %d and
         value %s in (%s) ',$GLOBALS['tables']['user_attribute'],
@@ -1019,6 +1056,9 @@ if (!$done) {
   $formatting_content = '<table>';
 
   #0013076: different content when forwarding 'to a friend'
+  //  value="'.htmlentities($subject,ENT_QUOTES,'UTF-8').'" size=40></td></tr> --> previous code in line 1032
+  //  value="'.htmlentities($from,ENT_QUOTES,'UTF-8').'" size=40></td></tr> --> previous code in line 1038
+
   $tmp = '<table>';
   $maincontent = $tmp;
   $forwardcontent = $tmp;
@@ -1027,13 +1067,13 @@ if (!$done) {
   $maincontent .= '
   <tr><td>'.Help("subject").' '.$GLOBALS['I18N']->get("Subject").':</td>
     <td><input type=text name="msgsubject"
-    value="'.htmlentities($subject,ENT_QUOTES,'UTF-8').'" size=40></td></tr>
+    //value="'.htmlentities(iconv('ISO-8859-1','UTF-8',$subject),ENT_QUOTES,'UTF-8').'" size=40></td></tr>
   <tr>
     <td colspan=2>
     </td></tr>
   <tr><td>'.Help("from").' '.$GLOBALS['I18N']->get("fromline").':</td>
     <td><input type=text name=from
-    value="'.htmlentities($from,ENT_QUOTES,'UTF-8').'" size=40></td></tr>
+    value="'.htmlentities(iconv('ISO-8859-1','UTF-8',$from),ENT_QUOTES,'UTF-8').'" size=40></td></tr>
   <tr><td colspan=2>
 
   </td></tr>';

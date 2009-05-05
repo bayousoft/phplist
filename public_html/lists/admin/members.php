@@ -270,9 +270,9 @@ if (isset($id)) {
     if ($access != "view")
     $ls->addColumn($user["email"],$GLOBALS['I18N']->get("tag"),sprintf('<input type=checkbox name="user[%d]" value="1">',$user["id"]));
     if ($access != "view")
-     $ls->addColumn($user["email"],$GLOBALS['I18N']->get("del"),
-      sprintf('<a href="javascript:deleteRec(\'%s\');">'.$GLOBALS['I18N']->get('Del').'</a>',
-        PageURL2("members","","start=$start&id=$id&delete=".$user["id"])));
+       $ls->addColumn($user["email"],$GLOBALS['I18N']->get("del"),
+       sprintf('<a href="javascript:deleteRec(\'%s\');">'.$GLOBALS['I18N']->get('Del').'</a>',
+       PageURL2("members","","start=$start&id=$id&delete=".$user["id"])));
     $query
     = ' select count(*)'
     . ' from %s lm, %s um'

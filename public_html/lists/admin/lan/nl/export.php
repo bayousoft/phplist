@@ -1,3 +1,4 @@
+
 <?php
 
 
@@ -18,5 +19,6 @@ $lan = array(
 
   # new in 2.10.1
   'When they subscribed to' => 'Wanneer ze zich inschreven voor',
+  'Based on changelog' => 'Gebaseerd op wijzigings log',
 );
 ?>
