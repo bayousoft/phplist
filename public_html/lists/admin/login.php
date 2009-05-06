@@ -50,7 +50,7 @@ function deleteOldTokens(){
     $admin = $_POST['name'];
     if($p1==$p2) {
       #Database update.
-      if (ENCRYPT_PASSWORDS) {
+      if (ENCRYPT_ADMIN_PASSWORDS) {
         $SQLquery=sprintf("update %s set password='%s', passwordchanged=now() where loginname = '%s';", $GLOBALS['tables']['admin'], md5($p1), $admin);
       }
       else {
