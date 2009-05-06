@@ -54,7 +54,7 @@ if ($external) {
   $found = $total;
   $ls = new WebblerListing($GLOBALS['I18N']->get('Administrators'));
   foreach ($admins as $adminid => $adminname) {
-    $ls->addElement($adminname,PageUrl2("admin",$GLOBALS['I18N']->get('Show'),"id=".$adminid));
+    $ls->addElement($adminname);#,PageUrl2("admin",$GLOBALS['I18N']->get('Show'),"id=".$adminid));
   }
   print $ls->display();
   return;
