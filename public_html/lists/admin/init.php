@@ -144,7 +144,7 @@ if (!defined('IMPORT_FILESIZE')) define('IMPORT_FILESIZE',1);
 
 if (!isset($GLOBALS["export_mimetype"])) $GLOBALS["export_mimetype"] = 'application/csv';
 if (!isset($GLOBALS["admin_auth_module"])) $GLOBALS["admin_auth_module"] = 'phplist_auth.inc';
-if (!isset($GLOBALS["require_login"])) $GLOBALS["require_login"] = 0;
+if (!isset($GLOBALS["require_login"])) $GLOBALS["require_login"] = 1;
 
 if (!defined("WORKAROUND_OUTLOOK_BUG") && defined("USE_CARRIAGE_RETURNS")) {
   define("WORKAROUND_OUTLOOK_BUG",USE_CARRIAGE_RETURNS);
