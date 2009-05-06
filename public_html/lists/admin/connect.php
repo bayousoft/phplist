@@ -172,7 +172,7 @@ function formStart($additional="") {
 				$html .= sprintf('<input type=hidden name="%s" value="%s">', $key, $val);
     }
 	} else
-    $html = sprintf('<form method=post %s>',$additional);
+    $html = sprintf('<form method="post" action="" %s>',$additional);
 /*    $html = sprintf('<form method=post action="./" %s>
     %s',$additional,isset($page) ?
     '<input type=hidden name="page" value="'.$page.'">':(
@@ -751,9 +751,6 @@ function dbg($variable, $description = 'Value', $nestingLevel = 0) {
     unlink("$tmpdir/$filename");
 }
 
-function Help($topic,$text = '?') {
-  return sprintf('<a href="javascript:help(\'help/?topic=%s\')">%s</a>',$topic,$text);
-}
 #
 #
 function PageData($id) {
@@ -1081,16 +1078,6 @@ function formatTime($time,$short = 0) {
 
 function cleanArray($array) {
   $result = array();
-  foreach ($array as $key => $val) {
-    if (isset($key) && $val) {
-      $result[$key] = $val;
-    }
-  }
-  return $result;
-}
-
-function cleanArray($array) {
-  $result = array();
   if (!is_array($array)) return array();
   foreach ($array as $key => $val) {
     if (!empty($key) && !empty($val)) {
@@ -1102,10 +1089,6 @@ function cleanArray($array) {
 
 function cleanCommaList($list) {
   return join(',',cleanArray(split(',',$list)));
-}
-
-function formatTime($time, $short = 0) {
-	return $time;
 }
 
 function formatDateTime ($datetime,$short = 0) {
@@ -1179,9 +1162,6 @@ function secs2time($secs) {
     $res .= " ".sprintf('%02d',$secs) . " secs";
   }
   return $res;
-}
-
-function dbg() {
 }
 
 function printobject($object) {
