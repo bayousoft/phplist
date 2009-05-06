@@ -106,6 +106,7 @@ if (!defined('STRUCTUREVERSION')) {
           "primary key" => array("(userid,listid)","Primary Key"),
           "index_1" => array("userenteredidx (userid,entered)",""),
           "index_2" => array("userlistenteredidx (userid,listid,entered)",""),
+          "index_3" => array("listidx (listid)",""),
       ),
       "message" => array ( # a message
           "id" => array("integer not null primary key auto_increment","ID"),
@@ -275,7 +276,7 @@ if (!defined('STRUCTUREVERSION')) {
           "value" => array("varchar(255)","Value of this attribute for this admin"),
           "primary key" => array("(adminattributeid,adminid)","PKey")
       ),
-      "admin_password_request" => array( # password changes
+      "admin_password_request" => array( # password changes, 2.11.4 an up
           "id_key" => array ("integer not null primary key auto_increment", "Id"),
           "date" => array ("datetime", "When the password change request was made"),
           "admin" => array ("integer", "Admin's Id"),
