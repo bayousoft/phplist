@@ -49,10 +49,9 @@ if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
 } elseif (is_file(dirname(__FILE__).'/../config/config.php')) {
 #  print '<!-- using (common)../config/config.php -->'."\n";
    $configfile = "../config/config.php";
-} else{
+} else {
   $configfile = "../config/config.php";
 }
-
 
 if (is_file($configfile) && filesize($configfile) > 20) {
   print '<!-- using config '.$configfile.'-->';
@@ -68,7 +67,6 @@ if (!isset($database_host) || !isset($database_user) || !isset($database_passwor
   print 'Database details incomplete, please check your config file';
   exit;
 }
-
 #exit;
 # record the start time(usec) of script
 $now =  gettimeofday();
@@ -140,10 +138,11 @@ if (!isset($_POST) && isset($HTTP_POST_VARS)) {
   include_once dirname(__FILE__) ."/commonlib/lib/oldphp_vars.php";
 }
 
-if (!isset($_GET['page']))
+if (!isset($_GET['page'])) {
   $page = 'home';
-else
+} else {
   $page = $_GET['page'];
+}
 
 preg_match("/([\w_]+)/",$page,$regs);
 $page = $regs[1];
@@ -171,8 +170,9 @@ print '<script language="javascript" type="text/javascript" src="js/select_style
 print '<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">';           // HTTP/1.1
 print '<meta http-equiv="Pragma" content="no-cache">';           // HTTP/1.1
 print "<title>".NAME." :: ";
-if (isset($GLOBALS["installation_name"]))
+if (isset($GLOBALS["installation_name"])) {
   print $GLOBALS["installation_name"] .' :: ';
+}
 print "$page_title</title>";
 
 if (isset($GLOBALS["require_login"]) && $GLOBALS["require_login"]) {
@@ -217,8 +217,7 @@ if (isset($GLOBALS["require_login"]) && $GLOBALS["require_login"]) {
   } elseif (ENCRYPT_ADMIN_PASSWORDS && isset($_REQUEST["forgotpassword"])){
   	  $adminId = $GLOBALS["admin_auth"]->adminIdForEmail($_REQUEST['forgotpassword']);
       if($adminId){
-      	sendPasswordMailTo($adminId, $_REQUEST["forgotpassword"]);
-      	$msg = $GLOBALS['I18N']->get('An email was sent to your address.');
+      	$msg = sendAdminPasswordToken($adminId);
       } else {
       	$msg = $GLOBALS['I18N']->get('cannotsendpassword');
       }
@@ -378,6 +377,7 @@ if (preg_match("#(.*?)/admin?$#i",$this_doc,$regs)) {
   if ($check_pageroot != $regs[1] && WARN_ABOUT_PHP_SETTINGS)
     Warn($GLOBALS['I18N']->get('warnpageroot'));
 }
+
 clearstatcache();
 if (checkAccess($page,"") || $page == 'about') {
   if (!$_GET['pi'] && (is_file($include) || is_link($include))) {

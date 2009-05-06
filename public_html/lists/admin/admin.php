@@ -36,11 +36,10 @@ if ($noaccess) {
 }
 
 #Update password?
-if (isset($_POST['update']) && $_POST['update'] && isset($id)){
-  $adminId = $id;
+if (!empty($_POST['update']) && isset($id)){
   if (ENCRYPT_ADMIN_PASSWORDS){
   	//Send token email.
-  	sendPasswordMailTo($_POST['id'], $_POST['email']);
+  	print sendAdminPasswordToken($id);
   }
   /*else {
   	//Retrieve the actual password and send a reminder.
@@ -84,11 +83,12 @@ if (!empty($_POST["change"])) {
     if (isset($_POST['password'])) {
       Sql_Query("update {$tables["admin"]} set password = \"".addslashes($_POST['password'])."\" where id = $id");
     }
-    if (is_array($_POST["attribute"]))
+    if (isset($_POST["attribute"]) && is_array($_POST["attribute"])) {
       while (list($key,$val) = each ($_POST["attribute"])) {
         Sql_Query(sprintf('replace into %s (adminid,adminattributeid,value)
           values(%d,%d,"%s")',$tables["admin_attribute"],$id,$key,addslashes($val)));
       }
+    }
     Sql_Query(sprintf('update %s set modifiedby = "%s" where id = %d',$tables["admin"],adminName($_SESSION["logindetails"]["id"]),$id));
 
     if ($accesslevel == "all" && isset($_POST['access']) && is_array($_POST["access"])) {
