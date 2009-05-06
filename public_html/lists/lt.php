@@ -1,6 +1,7 @@
 <?php
 ob_start();
 $er = error_reporting(0); # some ppl have warnings on
+require_once dirname(__FILE__) .'/admin/commonlib/lib/unregister_globals.php';
 require_once dirname(__FILE__) .'/admin/commonlib/lib/magic_quotes.php';
 require_once dirname(__FILE__).'/admin/init.php';
 ## none of our parameters can contain html for now
@@ -15,7 +16,7 @@ if ($_SERVER["ConfigFile"] && is_file($_SERVER["ConfigFile"])) {
 } elseif (is_file("config/config.php")) {
   include "config/config.php";
 }
-error_reporting($er);
+#error_reporting($er);
 
 require_once dirname(__FILE__).'/admin/'.$GLOBALS["database_module"];
 require_once dirname(__FILE__)."/texts/english.inc";

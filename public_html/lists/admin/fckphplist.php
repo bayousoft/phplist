@@ -749,18 +749,21 @@ FCKConfig.SmileyWindowHeight  = 240 ;
   $smileypath = $_SERVER["DOCUMENT_ROOT"].$GLOBALS["pageroot"].'/images/smiley';
   $smileyextensions = array('gif');
   $smileys = '';
-  if ($dir = opendir($smileypath)) {
-    while (false !== ($file = readdir($dir)))
-    {
-      if (ereg('\.',$file)) {
-        list($fname,$ext) = explode(".",$file);
-        if (in_array($ext,$smileyextensions)) {
-          $smileys .= '"'.$file.'",';
+  if (is_dir($smileypath)) {
+
+    if ($dir = opendir($smileypath)) {
+      while (false !== ($file = readdir($dir)))
+      {
+        if (ereg('\.',$file)) {
+          list($fname,$ext) = explode(".",$file);
+          if (in_array($ext,$smileyextensions)) {
+            $smileys .= '"'.$file.'",';
+          }
         }
       }
     }
+    $smileys = substr($smileys,0,-1);
   }
-  $smileys = substr($smileys,0,-1);
 
 ?>
 /*
@@ -1047,8 +1050,12 @@ FCKConfig.LinkBrowserURL = FCKConfig.BasePath + 'filemanager/browser/default/bro
 FCKConfig.LinkBrowserWindowWidth  = FCKConfig.ScreenWidth * 0.7 ;   // 70%
 FCKConfig.LinkBrowserWindowHeight = FCKConfig.ScreenHeight * 0.7 ;  // 70%
 
-FCKConfig.ImageBrowser = false ;
-FCKConfig.ImageBrowserURL = FCKConfig.BasePath + 'filemanager/browser/default/browser.html?Type=Image&Connector=' + encodeURIComponent( FCKConfig.BasePath + 'filemanager/connectors/' + _FileBrowserLanguage + '/connector.' + _FileBrowserExtension ) ;
+FCKConfig.ImageBrowser = <?php echo $enable_image_upload?> ;
+
+//FCKConfig.ImageBrowserURL = FCKConfig.BasePath + 'filemanager/browser/default/browser.html?Type=Image&Connector=connectors/' + _FileBrowserLanguage + '/connector.' + _FileBrowserExtension ;
+
+FCKConfig.ImageBrowserURL = FCKConfig.BasePath + 'filemanager/browser/default/browser.html?Type=Image&Connector=' + encodeURIComponent( FCKConfig.BasePath + 'filemanager/connectors/phplist/connector.' + _FileBrowserExtension ) ;
+
 FCKConfig.ImageBrowserWindowWidth  = FCKConfig.ScreenWidth * 0.7 ;  // 70% ;
 FCKConfig.ImageBrowserWindowHeight = FCKConfig.ScreenHeight * 0.7 ; // 70% ;
 
@@ -1062,8 +1069,11 @@ FCKConfig.LinkUploadURL = FCKConfig.BasePath + 'filemanager/connectors/' + _Quic
 FCKConfig.LinkUploadAllowedExtensions = ".(7z|aiff|asf|avi|bmp|csv|doc|fla|flv|gif|gz|gzip|jpeg|jpg|mid|mov|mp3|mp4|mpc|mpeg|mpg|ods|odt|pdf|png|ppt|pxd|qt|ram|rar|rm|rmi|rmvb|rtf|sdc|sitd|swf|sxc|sxw|tar|tgz|tif|tiff|txt|vsd|wav|wma|wmv|xls|xml|zip)$" ;      // empty for all
 FCKConfig.LinkUploadDeniedExtensions  = "" ;  // empty for no one
 
-FCKConfig.ImageUpload = false ;
-FCKConfig.ImageUploadURL = FCKConfig.BasePath + 'filemanager/connectors/' + _QuickUploadLanguage + '/upload.' + _QuickUploadExtension + '?Type=Image' ;
+FCKConfig.ImageUpload = <?php echo $enable_image_upload?> ;
+//FCKConfig.ImageUploadURL = FCKConfig.BasePath + 'filemanager/connectors/' + _QuickUploadLanguage + '/upload.' + _QuickUploadExtension + '?Type=Image' ;
+FCKConfig.ImageUploadURL = FCKConfig.BasePath + 'filemanager/connectors/phplist/upload.php?Type=Image' ;
+FCKConfig.ImagePath = document.location.protocol + '//' + document.location.host +'<?php echo $GLOBALS["pageroot"].'/'.FCKIMAGES_DIR.'/'?>'
+
 FCKConfig.ImageUploadAllowedExtensions  = ".(jpg|gif|jpeg|png|bmp)$" ;    // empty for all
 FCKConfig.ImageUploadDeniedExtensions = "" ;              // empty for no one
 

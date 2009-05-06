@@ -2,6 +2,7 @@
 
 ob_start();
 //$er = error_reporting(0); 
+require_once dirname(__FILE__) .'/admin/commonlib/lib/unregister_globals.php';
 require_once dirname(__FILE__) .'/admin/commonlib/lib/magic_quotes.php';
 ## none of our parameters can contain html for now
 $_GET = removeXss($_GET);
@@ -28,11 +29,7 @@ require_once dirname(__FILE__).'/admin/init.php';
 if (0) {#isset($GLOBALS["developer_email"]) && $GLOBALS['show_dev_errors']) {
   error_reporting(E_ALL & ~E_NOTICE);
 } else {
-  if (isset($error_level)) {
-    error_reporting($error_level);
-  } else {
-    error_reporting($er);
-  }
+  error_reporting(0);
 }
 
 $GLOBALS["database_module"] = basename($GLOBALS["database_module"]);

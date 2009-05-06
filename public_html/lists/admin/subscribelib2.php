@@ -230,16 +230,22 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok && $allt
       $storepassword = "";
    }
 
-  # subscribe to the lists
-  $lists = '';
-  $subscriptions = array();
-  if (isset($_POST['list']) && is_array($_POST["list"])) {
-    while(list($key,$val)= each($_POST["list"])) {
-      if ($val == "signup") {
-        array_push($subscriptions,sprintf('%d',$key));
-        $result = Sql_query(sprintf('replace into %s (userid,listid,entered) values(%d,%d,current_timestamp)',$GLOBALS["tables"]["listuser"],$userid,$key));
-        $lists .= "\n  * ".listname($key);
-        addSubscriberStatistics('subscribe',1,$key);
+   # subscribe to the lists
+   $lists = '';
+
+   if (isset($_POST['list']) && is_array($_POST["list"])) {
+      while(list($key,$val)= each($_POST["list"])) {
+         if ($val == "signup") {
+            $key = sprintf('%d',$key);
+            if (!empty($key)) {
+              $result = Sql_query(sprintf('replace into %s (userid,listid,entered) values(%d,%d,now())',$GLOBALS["tables"]["listuser"],$userid,$key));
+              $lists .= "\n  * ".listname($key);
+
+              addSubscriberStatistics('subscribe',1,$key);
+            } else {
+              ## hack attempt...
+              exit;
+            }
       }
       }
    }

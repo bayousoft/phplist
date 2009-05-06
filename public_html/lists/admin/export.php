@@ -65,7 +65,7 @@ switch ($access) {
     break;
 }
 
-include dirname(__FILE__). '/structure.php';
+require dirname(__FILE__). '/structure.php';
 if (isset($_POST['processexport'])) {
   $fromval= $from->getDate("from");
   $toval =  $to->getDate("to");
@@ -85,9 +85,9 @@ if (isset($_POST['processexport'])) {
   }
   $row_delim = "\n";
 
-  if (is_array($cols)) {
+  if (is_array($_POST['cols'])) {
     while (list ($key,$val) = each ($DBstruct["user"])) {
-      if (in_array($key,$cols)) {
+      if (in_array($key,$_POST['cols'])) {
         if (!ereg("sys",$val[1])) {
           print $val[1].$col_delim;
         } elseif (ereg("sysexp:(.*)",$val[1],$regs)) {
@@ -97,10 +97,10 @@ if (isset($_POST['processexport'])) {
     }
    }
   $attributes = array();
-  if (is_array($attrs)) {
+  if (is_array($_POST['attrs'])) {
     $res = Sql_Query("select id,name,type from {$tables['attribute']}");
     while ($row = Sql_fetch_array($res)) {
-      if (in_array($row["id"],$attrs)) {
+      if (in_array($row["id"],$_POST['attrs'])) {
         print trim(stripslashes($row["name"])) .$col_delim;
         array_push($attributes,array("id"=>$row["id"],"type"=>$row["type"]));
       }
@@ -140,8 +140,8 @@ if (isset($_POST['processexport'])) {
 #return;
   while ($user = Sql_fetch_array($result)) {
     set_time_limit(500);
-    reset($cols);
-    while (list ($key,$val) = each ($cols))
+    reset($_POST['cols']);
+    while (list ($key,$val) = each ($_POST['cols']))
       print strtr($user[$val],$col_delim,",").$col_delim;
     reset($attributes);
     while (list($key,$val) = each ($attributes)) {

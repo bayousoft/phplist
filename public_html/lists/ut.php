@@ -1,6 +1,7 @@
 <?php
 ob_start();
 $er = error_reporting(0); 
+require_once dirname(__FILE__) .'/admin/commonlib/lib/unregister_globals.php';
 require_once dirname(__FILE__) .'/admin/commonlib/lib/magic_quotes.php';
 require_once dirname(__FILE__).'/admin/init.php';
 
@@ -16,7 +17,7 @@ if ($_SERVER["ConfigFile"] && is_file($_SERVER["ConfigFile"])) {
 } elseif (is_file("config/config.php")) {
   include "config/config.php";
 }
-error_reporting($er);
+#error_reporting($er);
 
 require_once dirname(__FILE__).'/admin/'.$GLOBALS["database_module"];
 require_once dirname(__FILE__)."/texts/english.inc";

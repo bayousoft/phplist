@@ -54,8 +54,8 @@ if ($checkinterval && !defined('IN_WEBBLER')) {
         print '<br/>'.$GLOBALS['I18N']->get('The new version may have fixed security issues,<br/>so it is recommended to upgrade as soon as possible');
         print '<br/>'.$GLOBALS['I18N']->get('Your version').': <b>'.$thisversion.'</b>';
         print '<br/>'.$GLOBALS['I18N']->get('Latest version').': <b>'.$latestversion.'</b><br/>  ';
-        print '<a href="http://www.phplist.com/files/changelog">'.$GLOBALS['I18N']->get('View what has changed').'</a>&nbsp;&nbsp;';
-        print '<a href="http://www.phplist.com/files/phplist-'.$latestversion.'.tgz">'.$GLOBALS['I18N']->get('Download').'</a></div>';
+        print '<a href="http://mantis.phplist.com/changelog_page.php">'.$GLOBALS['I18N']->get('View what has changed').'</a>&nbsp;&nbsp;';
+        print '<a href="http://www.phplist.com/download">'.$GLOBALS['I18N']->get('Download').'</a></div>';
       }
     }
     $values = array('item'=>"'updatelastcheck'", 'value'=>'current_timestamp', 'editable'=>'0');

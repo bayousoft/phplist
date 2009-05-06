@@ -1,6 +1,9 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 
+## update to phpmailer v2 is not finished yet
+# require( dirname(__FILE__) . '/phpmailer2/class.phpmailer.php');
+
 require( dirname(__FILE__) . '/phpmailer/class.phpmailer.php');
 
 class PHPlistMailer extends PHPMailer {
@@ -161,16 +164,22 @@ class PHPlistMailer extends PHPMailer {
     }
 
     function add_attachment($contents,$filename,$mimetype) {
-      // Append to $attachment array
-      $cur = count($this->attachment);
-      $this->attachment[$cur][0] = base64_encode($contents);
-      $this->attachment[$cur][1] = $filename;
-      $this->attachment[$cur][2] = $filename;
-      $this->attachment[$cur][3] = $this->encoding;
-      $this->attachment[$cur][4] = $mimetype;
-      $this->attachment[$cur][5] = false; // isStringAttachment
-      $this->attachment[$cur][6] = "attachment";
-      $this->attachment[$cur][7] = 0;
+      ## phpmailer 2.x
+      if (method_exists($this,'AddStringAttachment')) {
+        $this->AddStringAttachment($contents,$filename,'base64', $mimetype);
+      } else {
+        ## old phpmailer
+        // Append to $attachment array
+        $cur = count($this->attachment);
+        $this->attachment[$cur][0] = base64_encode($contents);
+        $this->attachment[$cur][1] = $filename;
+        $this->attachment[$cur][2] = $filename;
+        $this->attachment[$cur][3] = $this->encoding;
+        $this->attachment[$cur][4] = $mimetype;
+        $this->attachment[$cur][5] = false; // isStringAttachment
+        $this->attachment[$cur][6] = "attachment";
+        $this->attachment[$cur][7] = 0;
+      }
     }
 
      function find_html_images($templateid) {

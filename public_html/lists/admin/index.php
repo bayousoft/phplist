@@ -11,6 +11,7 @@ if (isset($_REQUEST['_SERVER'])) { exit; }
 $cline = array();
 $GLOBALS['commandline'] = 0;
 
+require_once dirname(__FILE__) .'/commonlib/lib/unregister_globals.php';
 require_once dirname(__FILE__) .'/commonlib/lib/magic_quotes.php';
 
 # setup commandline
@@ -84,9 +85,8 @@ if (!$GLOBALS["commandline"] && isset($GLOBALS["developer_email"]) && $_SERVER['
     unset($$key);
   }
 } else {
-  if (isset($error_level)) {
-    error_reporting($error_level);
-  }
+#  error_reporting($er);
+  error_reporting(0);
 }
 
 # load all required files
@@ -315,14 +315,22 @@ if ($page != "login") {
       Info("Running DEV version, but developer email is not set");
     }
   }
-  #if (!ini_get("register_globals") && WARN_ABOUT_PHP_SETTINGS)
-  #  Error("Register Globals in your php.ini needs to be <b>on</b> instead of ".ini_get("register_globals") );
+  if (ini_get("register_globals") == "on" && WARN_ABOUT_PHP_SETTINGS) {
+    Error($GLOBALS['I18N']->get('It is safer to set Register Globals in your php.ini to be <b>off</b> instead of ').ini_get("register_globals") );
+  }
   if (ini_get("safe_mode") && WARN_ABOUT_PHP_SETTINGS)
     Warn($GLOBALS['I18N']->get('safemodewarning'));
-/*  if (!ini_get("magic_quotes_gpc") && WARN_ABOUT_PHP_SETTINGS)
-    Warn($GLOBALS['I18N']->get('magicquoteswarning'));*/
+
+    /* this needs checking 
+  if (!ini_get("magic_quotes_gpc") && WARN_ABOUT_PHP_SETTINGS)
+    Warn($GLOBALS['I18N']->get('magicquoteswarning'));
+    
   if (ini_get("magic_quotes_runtime") && WARN_ABOUT_PHP_SETTINGS)
     Warn($GLOBALS['I18N']->get('magicruntimewarning'));
+    */
+  if (defined("ENABLE_RSS") && ENABLE_RSS && !function_exists("xml_parse") && WARN_ABOUT_PHP_SETTINGS)
+    Warn($GLOBALS['I18N']->get('noxml'));
+
   if (ALLOW_ATTACHMENTS && WARN_ABOUT_PHP_SETTINGS && (!is_dir($GLOBALS["attachment_repository"]) || !is_writable ($GLOBALS["attachment_repository"]))) {
     if (ini_get("open_basedir")) {
       Warn($GLOBALS['I18N']->get('warnopenbasedir'));
