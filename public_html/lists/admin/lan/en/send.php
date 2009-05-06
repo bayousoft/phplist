@@ -154,7 +154,10 @@ $lan = array (
   'No RSS' => 'No RSS', 
   'Daily' => 'Daily', 
   'Weekly' => 'Weekly',
-  'Monthly' => 'Monthly'
+  'Monthly' => 'Monthly',
+  'start a new message' => 'start a new message',
+  'Choose an existing draft message to work on' => 'Choose an existing draft message to work on',
+  
 
   ## forgotten 
   'All Active Lists' => 'All Active Lists',

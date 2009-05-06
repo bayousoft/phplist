@@ -175,6 +175,13 @@ add them manually.
 
 ',
 
+  ## added 2.11.4
+  'entered' => 'entered',
+  'edit' => 'edit',
+  'age' => 'age',
+  'delete' => 'delete',
+  'delete all' => 'delete all',
+
 
 );
 
