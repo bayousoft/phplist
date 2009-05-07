@@ -8,17 +8,14 @@ if (PHPMAILER && is_file(dirname(__FILE__).'/phpmailer/class.phpmailer.php')) {
   # this is still very experimental
   include_once dirname(__FILE__)."/class.phplistmailer.php";
 } else {
-  if (USE_OUTLOOK_OPTIMIZED_HTML) {
-    require_once dirname(__FILE__)."/class.html.mime.mail-outlookfix.inc";
-  } else {
-    require_once dirname(__FILE__)."/class.html.mime.mail.inc";
-  }
+  require_once dirname(__FILE__)."/class.html.mime.mail.inc";
 }
 
 if (!function_exists("output")) {
   function output($text) {
    }
 }
+
 function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$forwardedby = array()) {
   global $strThisLink,$PoweredByImage,$PoweredByText,$cached,$website;
   if ($email == "")
