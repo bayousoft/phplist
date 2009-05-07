@@ -746,6 +746,11 @@ FCKConfig.SmileyWindowHeight  = 240 ;
   $imgdir = $_SERVER['DOCUMENT_ROOT'].$GLOBALS["pageroot"].'/'.FCKIMAGES_DIR.'/';
   $enable_image_upload = is_dir($imgdir) && is_writeable ($imgdir) ? 'true':'false';
 
+  if (defined('UPLOADIMAGES_DIR')) {
+    $imgdir = $_SERVER['DOCUMENT_ROOT'].'/'.UPLOADIMAGES_DIR.'/';
+    $enable_image_upload = is_dir($imgdir) && is_writeable ($imgdir) ? 'true':'false';
+  }
+
   $smileypath = $_SERVER["DOCUMENT_ROOT"].$GLOBALS["pageroot"].'/images/smiley';
   $smileyextensions = array('gif');
   $smileys = '';

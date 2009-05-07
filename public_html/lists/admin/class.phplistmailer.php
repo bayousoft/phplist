@@ -2,7 +2,7 @@
 require_once dirname(__FILE__).'/accesscheck.php';
 
 ## update to phpmailer v2 is not finished yet
-# require( dirname(__FILE__) . '/phpmailer2/class.phpmailer.php');
+#require( dirname(__FILE__) . '/phpmailer2/class.phpmailer.php');
 
 require( dirname(__FILE__) . '/phpmailer/class.phpmailer.php');
 
@@ -92,7 +92,7 @@ class PHPlistMailer extends PHPMailer {
       $hostname = $_SERVER["HTTP_HOST"];
       $request_time = date('r',$_SERVER['REQUEST_TIME']);
       $sTimeStamp = "from $ip_domain [$ip_address] by $hostname with HTTP; $request_time";
-    	$this->addTimeStamp($sTimeStamp);      
+      $this->addTimeStamp($sTimeStamp);      
     }
     
     
@@ -197,7 +197,7 @@ class PHPlistMailer extends PHPMailer {
         }
           ## addition for filesystem images
         if (EMBEDUPLOADIMAGES) {
-          if($this->filesystem_image_exists($images[1][$i])){
+         if($this->filesystem_image_exists($images[1][$i])){
             $filesystem_images[] = $images[1][$i];
             $this->Body = str_replace($images[1][$i], basename($images[1][$i]), $this->Body);
           }
@@ -251,19 +251,30 @@ class PHPlistMailer extends PHPMailer {
         ## addition for filesystem images
     function filesystem_image_exists($filename) {
       ##  find the image referenced and see if it's on the server
-      $elements = parse_url($filename);
-      $localfile = basename($elements['path']);
-      return is_file($_SERVER['DOCUMENT_ROOT'].$GLOBALS['pageroot'].'/'.FCKIMAGES_DIR.'/'.$localfile);
+      $localfile = $filename;
+      if (defined('UPLOADIMAGES_DIR')) {
+        print $_SERVER['DOCUMENT_ROOT'].$localfile;
+        return is_file($_SERVER['DOCUMENT_ROOT'].$localfile);
+      } else {
+        $elements = parse_url($filename);
+        $localfile = basename($elements['path']);
+        return is_file($_SERVER['DOCUMENT_ROOT'].$GLOBALS['pageroot'].'/'.FCKIMAGES_DIR.'/'.$localfile);
+      }
     }
 
     function get_filesystem_image($filename) {
       ## get the image contents
-      $elements = parse_url($filename);
-      $localfile = basename($elements['path']);
-      if (is_file($_SERVER['DOCUMENT_ROOT'].$GLOBALS['pageroot'].'/'.FCKIMAGES_DIR.'/'.$localfile)) {
+      $localfile = $filename;
+      if (defined('UPLOADIMAGES_DIR')) {
+        if (is_file($_SERVER['DOCUMENT_ROOT'].$localfile)) {
+          return base64_encode( file_get_contents($_SERVER['DOCUMENT_ROOT'].$localfile));
+        }
+      } elseif (is_file($_SERVER['DOCUMENT_ROOT'].$GLOBALS['pageroot'].'/'.FCKIMAGES_DIR.'/'.$localfile)) {
+        $elements = parse_url($filename);
+        $localfile = basename($elements['path']);
         return base64_encode( file_get_contents($_SERVER['DOCUMENT_ROOT'].$GLOBALS['pageroot'].'/'.FCKIMAGES_DIR.'/'.$localfile));
       } 
-      return 0;
+      return '';
     }
     ## end addition
 
