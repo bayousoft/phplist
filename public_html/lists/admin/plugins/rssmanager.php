@@ -7,7 +7,7 @@ class rssmanager extends phplistPlugin {
   var $version= "2.0";
   var $authors= "tincan ltd";  
   var $coderoot= 'rssmanager/';
-  var $enabled= 0;
+  var $enabled= 1;
   var $commandlinePlugins= array (
     'getrss' => 'rssmanager/getrss.php'
   );
