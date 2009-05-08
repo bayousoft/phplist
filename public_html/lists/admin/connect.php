@@ -686,29 +686,6 @@ function upgradeTable($table,$tablestructure) {
   return 1;
 }
 
-# this version can only be used with the right permissions, which are generally not
-# available by default, so for now they are disabled
-function upgradeTable2($table, $tablestructure) {
-	global $tmpdir;
-	$filename = "phpupgrade.tmp";
-	if (is_file("$tmpdir/$filename"))
-		unlink("$tmpdir/$filename");
-	if (Sql_Verbose_Query("select * from $table into outfile '$tmpdir/$filename'")) {
-		Sql_Query("drop table $table");
-		Sql_Create_table($table, $tablestructure);
-		Sql_Query("load data infile '$tmpdir/$filename' into $table IGNORE");
-	} else {
-		print '<p>Error: Cannot dump old database tables. Please make sure you have the correct Database and File permissions.</p>
-		      <p>Required permissions are:
-		        <ul>
-		        <li>Mysql "alter" and "file" permission on your database</li>
-		        <li>Write permission in ' . $tmpdir . '</li>
-		        </ul>';
-	}
-	if (is_file("$tmpdir/$filename"))
-		unlink("$tmpdir/$filename");
-}
-
 function Help($topic, $text = '?') {
 	return sprintf('<a href="javascript:help(\'help/?topic=%s\')">%s</a>', $topic, $text);
 }
@@ -739,16 +716,7 @@ function dbg($variable, $description = 'Value', $nestingLevel = 0) {
   #  $fp = fopen($config["sql_log"],"a");
   #  fwrite($fp,"$line");
   #  fclose($fp);
-  } else {
-    print '<p>Error: Cannot dump old database tables. Please make sure you have the correct Database and File permissions.</p>
-      <p>Required permissions are:
-        <ul>
-        <li>Mysql "alter" and "file" permission on your database</li>
-        <li>Write permission in '.$tmpdir.'</li>
-        </ul>';
   }
-  if (is_file("$tmpdir/$filename"))
-    unlink("$tmpdir/$filename");
 }
 
 #
@@ -1080,7 +1048,8 @@ function cleanArray($array) {
   $result = array();
   if (!is_array($array)) return array();
   foreach ($array as $key => $val) {
-    if (!empty($key) && !empty($val)) {
+    ## 0 is a valid key
+    if (isset($key) && !empty($val)) {
       $result[$key] = $val;
     }
   }
