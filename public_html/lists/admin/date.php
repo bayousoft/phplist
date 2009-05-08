@@ -80,7 +80,7 @@ if (!defined("IN_WEBBLER")) {
         $value = $this->name;
       if (!$value)
         return date("Y-m-d");
-      if (isset($_REQUEST["year"]) && is_array($_REQUEST["year"]) && isset($_REQUEST["month"]) && isset($_REQUEST["day"])) {
+      if (isset($_REQUEST["year"]) && is_array($_REQUEST["year"]) && isset($_REQUEST["month"]) && isset($_REQUEST["day"]) && isset($_REQUEST["year"][$value])) {
         return sprintf("%04d-%02d-%02d",$_REQUEST["year"][$value],$_REQUEST["month"][$value],$_REQUEST["day"][$value]);
       } else {
         return date("Y-m-d");
