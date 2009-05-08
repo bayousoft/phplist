@@ -333,6 +333,9 @@ if ($_GET["doit"] == 'yes') {
       if ($minor < 11 || ($minor == 11 && $sub < 3)) {
         Sql_Query(sprintf('alter table %s add column optedin tinyint default 0',$tables['user']));
       }
+      if ($minor < 11 || ($minor == 11 && $sub < 4)) {
+        Sql_Query(sprintf('alter table %s add column category varchar(255) default ""',$tables['list']));
+      }
       break;
   }
 

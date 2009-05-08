@@ -49,12 +49,12 @@ if (isset($_POST["save"]) && $_POST["save"] == $GLOBALS['I18N']->get('Save') && 
     $query
     = ' update %s'
     . ' set name = ?, description = ?, active = ?,'
-    . '     listorder = ?, prefix = ?, owner = ?'
+    . '     listorder = ?, prefix = ?, owner = ?, category = ?'
     . ' where id = ?';
     $query = sprintf($query, $tables['list']);
     $result = Sql_Query_Params($query, array($_POST['listname'],
        $_POST['description'], $_POST['active'], $_POST['listorder'],
-       $_POST['prefix'], $_POST['owner'], $id));
+       $_POST['prefix'], $_POST['owner'], $_POST['category'], $id));
   } else {
     $query
     = ' insert into %s'
@@ -98,7 +98,7 @@ ob_end_flush();
 <input type=hidden name=id value="<?php echo $id ?>">
 <table border=0>
 <tr><td><?php echo $GLOBALS['I18N']->get('List name'); ?>:</td><td><input type=text name="listname" value="<?php echo  htmlspecialchars(StripSlashes($list["name"]))?>"></td></tr>
-<tr><td><?php echo $GLOBALS['I18N']->get('Check this box to make this list active (listed)'); ?></td><td><input type="checkbox" name="active" value="1" <?php echo $list["active"] ? 'checked' : ""; ?>></td></tr>
+<tr><td><?php echo $GLOBALS['I18N']->get('Public list (listed on the frontend)'); ?></td><td><input type="checkbox" name="active" value="1" <?php echo $list["active"] ? 'checked' : ""; ?>></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('Order for listing'); ?></td><td><input type=text name="listorder" value="<?php echo $list["listorder"] ?>" size="5"></td></tr>
 <!--tr><td><?php echo $GLOBALS['I18N']->get('Subject Prefix'); ?></td><td><input type=text name="prefix" value="<?php echo $list["prefix"]; ?>" size="5"></td></tr>-->
 <?php if ($GLOBALS["require_login"] && (isSuperUser() || accessLevel("editlist") == "all")) {
@@ -111,18 +111,19 @@ ob_end_flush();
 } else {
   print '<input type=hidden name="owner" value="'.$_SESSION["logindetails"]["id"].'">';
 }
-//obsolete, moved to rssmanager plugin
-//if (ENABLE_RSS) {
-// if (!empty($list["rssfeed"])) {
-//   $validate = sprintf('(<a href="http://feedvalidator.org/check?url=%s" target="_blank">%s</a>)',urlencode($list["rssfeed"]),$GLOBALS['I18N']->get('validate'));
-//   $viewitems = PageLink2("viewrss&id=".$id,$GLOBALS['I18N']->get('View Items'));
-// } else {
-//   $validate = '';
-//   $viewitems = '';
-// }
-// printf('<tr><td>%s %s %s</td><td><input type=text name="rssfeed" value="%s" size=50></td></tr>',
-//   $GLOBALS['I18N']->get('rss Source'), $validate,$viewitems,htmlspecialchars($list["rssfeed"]));
-//}
+
+$sListCategories = getConfig('list_categories');
+$aListCategories = cleanArray(explode(',',$sListCategories));
+if (sizeof($aListCategories)) {
+  print '<tr><td>'.$GLOBALS['I18N']->get('Category').'</td><td>';
+  print '<select name="category">';
+  print '<option value="">-- '.$GLOBALS['I18N']->get('choose category').'</option>';
+  foreach ($aListCategories as $category) {
+    $category = trim($category);
+    printf('<option value="%s" %s>%s</option>',$category,$category == $list['category'] ? 'selected="selected"':'',$category);
+  }
+  print '</select></td></tr>';
+}
 
   ### allow plugins to add rows
   foreach ($GLOBALS['plugins'] as $plugin) {

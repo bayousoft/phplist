@@ -95,6 +95,7 @@ if (!defined('STRUCTUREVERSION')) {
           "modified" => array("timestamp", "Modified"),
           "active" => array("tinyint","Active"),
           "owner" => array("integer","Admin who is owner of this list"),
+          "category" => array('varchar(255) default ""',"List category"),    
           "index_1" => array("nameidx (name)",""),
           "index_2" => array("listorderidx (listorder)",""),
       ),

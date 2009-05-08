@@ -195,6 +195,14 @@ $default_config = array (
   "boolean"
 ),
 
+  # categories for lists, to organise them a little bit
+  # comma separated list of words
+"list_categories" => array (
+  "",
+  "categories for lists. Separate with commas.",
+  "text"
+),
+
   # width of a textline field
 "textline_width" => array (
   "40",
