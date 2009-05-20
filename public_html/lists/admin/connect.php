@@ -1163,3 +1163,41 @@ function printarray($array){
   }
 }
 
+class timer {
+  var $start;
+  var $previous = 0;
+
+  function timer() {
+    $now =  gettimeofday();
+    $this->start = $now["sec"] * 1000000 + $now["usec"];
+  }
+
+  function elapsed($seconds = 0) {
+    $now = gettimeofday();
+    $end = $now["sec"] * 1000000 + $now["usec"];
+    $elapsed = $end - $this->start;
+    if ($seconds) {
+      return $elapsed / 1000000;
+    } else {
+      return $elapsed;
+    }
+  }
+
+  function interval($seconds = 0) {
+    $now = gettimeofday();
+    $end = $now["sec"] * 1000000 + $now["usec"];
+    if (!$this->previous) {
+      $elapsed = $end - $this->start;
+    } else {
+      $elapsed = $end - $this->previous;
+    }
+    $this->previous = $end;
+
+    if ($seconds) {
+      return $elapsed / 1000000;
+    } else {
+      return $elapsed;
+    }
+  }
+
+}

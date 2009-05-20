@@ -54,8 +54,13 @@ function setMessageData($msgid,$name,$value) {
   if (is_array($value) || is_object($value)) {
     $value = 'SER:'.serialize($value);
   }
+  if (NO_MAGIC_QUOTES) {
+ #   print "Escaping";
+    $value = sql_escape($value);
+  }
+    
   Sql_Replace($GLOBALS['tables']['messagedata'], array('id' => $msgid, 'name' => $name, 'data' => $value), array('name', 'id'));
-#  print "setting $name for $msgid to $value";
+ # print "<br/>setting $name for $msgid to $value";
 #  exit;
 }
 
@@ -65,7 +70,27 @@ function loadMessageData($msgid) {
   }
   if (isset($GLOBALS['MD'][$msgid])) return $GLOBALS['MD'][$msgid];
 
-  $messagedata = array();
+  $messagedata = array(
+    'template' => '',
+    'sendformat' => 'HTML',
+    'message' => '',
+    'forwardmessage' => '',
+    'textmessage' => '',
+    'rsstemplate' => '',
+    'embargo' => '',
+    'repeatinterval' => '',
+    'repeatuntil' => '',
+    'from' => '',
+    'subject' => '',
+    'forwardsubject' => '',
+    'footer' => '',
+    'forwardfooter' => '',
+    'status' => '',
+    'tofield' => '',
+    'replyto' => '',
+    'targetlist' => '',
+    'criteria_match' => '',
+  );
   $msgdata_req = Sql_Query(sprintf('select * from %s where id = %d',
     $GLOBALS['tables']['messagedata'],$msgid));
   while ($row = Sql_Fetch_Array($msgdata_req)) {
@@ -78,6 +103,7 @@ function loadMessageData($msgid) {
     $messagedata[stripslashes($row['name'])] = $data;
   }
   $GLOBALS['MD'][$msgid] = $messagedata;
+#  print_r($messagedata);
   return $messagedata;
 }
 
@@ -960,43 +986,5 @@ function strip_newlines( $str, $placeholder = '' ) {
 //  return '';
 //}
 
-class timer {
-  var $start;
-  var $previous = 0;
-
-  function timer() {
-    $now =  gettimeofday();
-    $this->start = $now["sec"] * 1000000 + $now["usec"];
-  }
-
-  function elapsed($seconds = 0) {
-    $now = gettimeofday();
-    $end = $now["sec"] * 1000000 + $now["usec"];
-    $elapsed = $end - $this->start;
-    if ($seconds) {
-      return $elapsed / 1000000;
-    } else {
-      return $elapsed;
-    }
-  }
-
-  function interval($seconds = 0) {
-    $now = gettimeofday();
-    $end = $now["sec"] * 1000000 + $now["usec"];
-    if (!$this->previous) {
-      $elapsed = $end - $this->start;
-    } else {
-      $elapsed = $end - $this->previous;
-    }
-    $this->previous = $end;
-
-    if ($seconds) {
-      return $elapsed / 1000000;
-    } else {
-      return $elapsed;
-    }
-  }
-
-}
 
 ?>
