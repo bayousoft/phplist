@@ -626,7 +626,7 @@ function unsubscribePage($id) {
   $res .= $data["header"];
   if (isset($_GET["uid"])){
     $query = sprintf('select * from %s where uniqid = ?', $tables['user']);
-    $req = Sql_Query_Params($query, $_GET['uid']);
+    $req = Sql_Query_Params($query, array($_GET['uid']) );
     $userdata = Sql_Fetch_Array($req);
     $email = $userdata["email"];
     if (UNSUBSCRIBE_JUMPOFF) {
@@ -634,8 +634,8 @@ function unsubscribePage($id) {
       $_POST["email"] = $email;
       $_POST["unsubscribereason"] = '"Jump off" set, reason not requested';
     }
-  }
-  else {
+    $blacklist = false; //invariant
+  } else {
     if (isset($_REQUEST['unsubscribeemail'])) {
       $email = $_REQUEST['unsubscribeemail'];
     } 
@@ -784,19 +784,19 @@ function unsubscribePage($id) {
 
   if (!$some) {
     #0013076: Blacklisting posibility for unknown users
-    if (!$blacklist) {
+    if ( $blacklist ) {
       $res .= "<b>".$GLOBALS["strNoListsFound"]."</b></ul>";
     }
     $res .= '<p><input type=submit value="'.$GLOBALS["strUnsubscribe"].'">';
   } else {
-    if ($blacklist) {
-      $res .= $GLOBALS["strExplainBlacklist"];
-    } else {      
+    if ( empty($blacklist) ) {
       list($r,$c) = explode(",",getConfig("textarea_dimensions"));
       if (!$r) $r = 5;
       if (!$c) $c = 65;
       $res .= $GLOBALS["strUnsubscribeRequestForReason"];
       $res .= sprintf('<br/><textarea name="unsubscribereason" cols="%d" rows="%d" wrap="virtual"></textarea>',$c,$r) . $finaltext;
+    } else {      
+      $res .= $GLOBALS["strExplainBlacklist"];
     }
     $res .= '<p><input type=submit name="unsubscribe" value="'.$GLOBALS["strUnsubscribe"].'"></p>';
   }
