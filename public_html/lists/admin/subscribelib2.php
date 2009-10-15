@@ -168,35 +168,29 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok && $allt
       # they do not exist, so add them
       $query = sprintf('insert into %s (email,entered,uniqid,confirmed,
       htmlemail,subscribepage,rssfrequency) values("%s",current_timestamp,"%s",0,%d,%d,"%s")',
-      htmlemail,subscribepage,rssfrequency) values("%s",now(),"%s",0,%d,%d,"%s")',
-      $GLOBALS["tables"]["user"],addslashes($email),getUniqid(),$htmlemail,$id,
-      $rssfrequency);
-      $result = Sql_query($query);
-      $userid = Sql_Insert_Id();
-      addSubscriberStatistics('total users',1);
-   }
-   else {
-      # they do exist, so update the existing record
-      # read the current values to compare changes
-      $old_data = Sql_fetch_array($result);
-
-      if (ASKFORPASSWORD && $old_data["password"]) {
-         if (ENCRYPTPASSWORD) {
-            $canlogin = md5($_POST["password"]) == $old_data["password"];
-         }
-         else {
-            $canlogin = $_POST["password"] == $old_data["password"];
-         }
-
-         if (!$canlogin) {
-            $msg = $GLOBALS["strUserExists"];
-            $msg.= '<p>'.$GLOBALS["strUserExistsExplanationStart"].
-            sprintf('<a href="%s&email=%s">%s</a>',getConfig("preferencesurl"),$email,
-            $GLOBALS["strUserExistsExplanationLink"]).
-            $GLOBALS["strUserExistsExplanationEnd"];
-
-            return;
-         }
+    $GLOBALS["tables"]["user"],addslashes($email),getUniqid(),$htmlemail,$id,
+    $rssfrequency);
+    $result = Sql_query($query);
+    $userid = Sql_Insert_Id($GLOBALS['tables']['user'], 'id');
+    addSubscriberStatistics('total users',1);
+  } else {
+    # they do exist, so update the existing record
+    # read the current values to compare changes
+    $old_data = Sql_fetch_array($result);
+    if (ASKFORPASSWORD && $old_data["password"]) {
+      if (ENCRYPTPASSWORD) {
+        $canlogin = md5($_POST["password"]) == $old_data["password"];
+      } else {
+        $canlogin = $_POST["password"] == $old_data["password"];
+      }
+      if (!$canlogin) {
+        $msg = $GLOBALS["strUserExists"];
+        $msg .= '<p>'.$GLOBALS["strUserExistsExplanationStart"].
+          sprintf('<a href="%s&email=%s">%s</a>',getConfig("preferencesurl"),$email,
+          $GLOBALS["strUserExistsExplanationLink"]).
+          $GLOBALS["strUserExistsExplanationEnd"];
+        return;
+      }
       }
 
       $userid = $old_data["id"];
@@ -207,28 +201,21 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok && $allt
       $result = Sql_query($query);
    }
 
-   if (ASKFORPASSWORD && $_POST["password"]) {
-      if (ENCRYPTPASSWORD) {
-         $newpassword = sprintf('%s',md5($_POST["password"]));
-      }
-      else {
-         $newpassword = sprintf('%s',$_POST["password"]);
-      }
-      # see whether is has changed
-
-      $curpwd = Sql_Fetch_Row_Query("select password from {$GLOBALS["tables"]["user"]} where id = $userid");
-
-      if ($_POST["password"] != $curpwd[0]) {
-         $storepassword = 'password = "'.$newpassword.'"';
-         Sql_query("update {$GLOBALS["tables"]["user"]} set passwordchanged = now(),$storepassword where id = $userid");
-      }
-      else {
-         $storepassword = "";
-      }
-   }
-   else {
+  if (ASKFORPASSWORD && $_POST["password"]) {
+    if (ENCRYPTPASSWORD) {
+      $newpassword = sprintf('%s',md5($_POST["password"]));
+     } else {
+      $newpassword = sprintf('%s',$_POST["password"]);
+    }
+     # see whether is has changed
+    $curpwd = Sql_Fetch_Row_Query("select password from {$GLOBALS["tables"]["user"]} where id = $userid");
+    if ($_POST["password"] != $curpwd[0]) {
+      $storepassword = 'password = "'.$newpassword.'"';
+      Sql_query("update {$GLOBALS["tables"]["user"]} set passwordchanged = current_timestamp,$storepassword where id = $userid");
+    } else {
       $storepassword = "";
-   }
+    }
+  }
 
    # subscribe to the lists
    $lists = '';
@@ -421,7 +408,7 @@ elseif (isset($_POST["update"]) && $_POST["update"] && is_email($_POST["email"])
     $checkpassword = '';
     $allow = 0;
     # either they have to give the current password, or given two new ones
-    if (ENCRYPTPASSWORDS) {
+    if (ENCRYPTPASSWORD) {
       $checkpassword = sprintf('%s',md5($_POST["password"]));
      } else {
       $checkpassword = sprintf('%s',$_POST["password"]);
@@ -457,7 +444,7 @@ elseif (isset($_POST["update"]) && $_POST["update"] && is_email($_POST["email"])
   $history_entry = 'http://'.getConfig("website").$GLOBALS["adminpages"].'/?page=user&id='.$userid."\n\n";
 
   if (ASKFORPASSWORD && $_POST["password"]) {
-    if (ENCRYPTPASSWORDS) {
+    if (ENCRYPTPASSWORD) {
       $newpassword = sprintf('%s',md5($_POST["password"]));
      } else {
       $newpassword = sprintf('%s',$_POST["password"]);
