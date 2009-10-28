@@ -92,7 +92,7 @@ if (isset($_POST["listorder"]) && is_array($_POST["listorder"])) {
 
 function giveAlternative($table,$delete,$attributeid) {
   print $GLOBALS['I18N']->get('ReplaceAllWith').formStart();
-  print '<select name=replace><option value="0">-- '.$GLOBALS['I18N']->get('ReplaceWith').'</option>';
+  print '<select name="replace"><option value="0">-- '.$GLOBALS['I18N']->get('ReplaceWith').'</option>';
   $req = Sql_Query("select * from $table order by listorder,name");
   while ($row = Sql_Fetch_array($req))
     if ($row["id"] != $delete)
@@ -104,7 +104,8 @@ function giveAlternative($table,$delete,$attributeid) {
 }
 
 function deleteItem($table,$attributeid,$delete) {
-  global $tables,$replace;
+  global $tables;
+  $replace = sprintf('%d',$_REQUEST['replace']);
   # delete the index in delete
   $valreq = Sql_Fetch_Row_query("select name from $table where id = $delete");
   $val = $valreq[0];
