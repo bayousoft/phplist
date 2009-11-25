@@ -1,2 +1,2 @@
-<h1>Questa pagina visualizza una lista veloce di controllo delle impostazioni da eseguire in modo che  <?php echo NAME?> lavori correttamente</h1>
+<h1>Questa pagina mostra la lista di controllo rapido delle impostazioni necessarie al funzionamento di PHPlist</h1>
 

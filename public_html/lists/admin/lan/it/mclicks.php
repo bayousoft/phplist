@@ -1,24 +1,24 @@
 <?php
 
 $lan = array(
-'Message Click Statistics' => 'Statistiche sui click nei messaggi',
+'Message Click Statistics' => 'Statistiche dei click sul messaggio',
 'firstclick' => 'firstclick',
 'latestclick' => 'latestclick',
 'clicks' => 'clicks',
-'Click Details for a Message' => 'Dettagli sui click di un messaggio',
-'Subject' => 'Soggetto',
+'Click Details for a Message' => 'Dettagli dei click per un Messaggio',
+'Subject' => 'Oggetto',
 'Entered' => 'Inserito',
 'sent' => 'Inviato',
 'clickrate' => 'Clickrate',
 'unique clicks' => 'click unici',
 'unique clickrate' => 'clickrate unico',
 'who' => 'chi',
-'view users' => 'vedi gli utenti',
-'Select Message to view' => 'Seleziona il messaggio da visualizzare',
-'Available Messages' => 'Messaggi disponibili',
-'You do not have access to this page' => 'Non hai accesso a questa pagina',
+'view users' => 'vedi utenti',
+'Select Message to view' => 'Selezione un messaggio da visualizzare',
+'Available Messages' => 'Messaggi Disponibili',
+'You do not have access to this page' => 'Non hai accesso a queta pagina',
 
 # for 2.10.2
-'there are currently no messages to view' => 'al momento non ci sono messaggi da vedere',
+'there are currently no messages to view' => 'Al momento non ci sono messaggi da visualizzare',
 );
 ?>

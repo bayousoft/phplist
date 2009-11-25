@@ -1,10 +1,11 @@
 <?php
+
 $lan = array(
- 'View Clicks by URL' => 'Mostra click per URL',
- 'View Clicks by Message' => 'Mostra click per Messaggio',
+  'View Clicks by URL' => 'Visualizza click per URL',
+  'View Clicks by Message' => 'Visualizza click per messaggio',
+
  # new in 2.9.5
- 'View Opens by Message' => 'Mostra aperture per Messaggio',
- 'Domain Statistics' => 'Statistiche del dominio',
-)
-;
+  'View Opens by Message' => 'Visualizza aperture per messaggio',
+  'Domain Statistics' => 'Statistiche dominio',
+);
 ?>

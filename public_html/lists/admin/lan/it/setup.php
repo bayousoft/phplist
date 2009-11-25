@@ -1,12 +1,13 @@
 <?php
-$lan = array (
-  'initialise_database' => 'Inizializza base dati',
+$lan = array(
+
+  'initialise_database' => 'Inizializza Database',
   'change_admin_passwd' => 'Cambia password amministratore',
-  'config_gral_values' => 'Configura valori generali',
-  'config_attribs' => 'Configura attributi',
-  'create_lists' => 'Crea liste',
-  'create_subscr_pages' => 'Crea pagine di iscrizione',
-  'go_there' => 'vai l&igrave;',
+  'config_gral_values' => 'Configura Valori Generali',
+  'config_attribs' => 'Configura Attributi',
+  'create_lists' => 'Crea Liste',
+  'create_subscr_pages' => 'Crea Pagine di Iscrizione',
+  'go_there' => 'Vai',
 
 );
 ?>

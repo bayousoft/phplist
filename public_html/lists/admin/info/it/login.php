@@ -1,1 +1,1 @@
-<p>Per accedere serve un account registrato<br/>
+<p>Per accedere &egrave; necessario un account registrato<br/>

@@ -1,9 +1,9 @@
 
 
 <p><b>Vota PHPlist</b><br/>
-Se pensi che PHPlist sia un buon programma, e vuoi consigliare pi&ugrave; persone di utilizzarlo, perch&egrave; non metti il tuo giudizio in alcuni di questi siti:
+Se pensi che PHPlist sia un buon programma e vuoi consigliare a pi&ugrave; persone di utilizzarlo, perch&eacute; non invii il tuo giudizio a questi siti:
 </p>
-<p>Se trovi PHPlist in altri siti, e pensi che il sito debba essere incluso qu&igrave;, <a href="mailto:phplist2@tincan.co.uk?subject=New Directory">invia una semplice email</a></p>
+<p>Se trovi PHPlist in altri siti e pensi che il sito debba essere incluso qui, <a href="mailto:phplist2@tincan.co.uk?subject=New Directory">invia una semplice email</a></p>
 <ul>
 <li><b>Su freshmeat</b>
 <form method="post" action="http://freshmeat.net/rate/store/" target="_vote">

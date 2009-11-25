@@ -1,1 +1,1 @@
-<h1>Scarica ritorni RSS</h1>
+<h1>Scarica feed RSS</h1>

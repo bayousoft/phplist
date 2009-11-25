@@ -2,13 +2,13 @@
 
 $lan = array(
   'existingusers' => "Utenti esistenti",
-  'nonexistingusers' => "utenti non esistenti",
-  'existcheckintro' => '<p>Pagina di controllo esistenza utente nel database</p>',
-  'whatistype' => 'Quale &egrave; il tipo di informazione che vuoi controllare',
-  "foreignkey" => "Chiave sconosciuta",
+  'nonexistingusers' => "Utenti non esistenti",
+  'existcheckintro' => '<p>Pagina per controllare l\'esistenza dell\'utente nel database</p>',
+  'whatistype' => 'Quale tipo di informazione vuoi controllare',
+  "foreignkey" => "Chiave esterna",
   "email" => "Email",
   "continue" => "Continua",
-  "pastevalues" => "Incolla i valori da controllare in questo box, uno per linea",
+  "pastevalues" => "Incolla i valori da controllare in questo box, uno per riga",
 
 
   # new in 2.10.1

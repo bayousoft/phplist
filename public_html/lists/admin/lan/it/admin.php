@@ -2,47 +2,47 @@
 
 $lan = array(
   'listofadministrators' => 'Lista degli Amministratori',
-  'Add a new Administrator' => 'Aggiungi un nuovo Amministratore',
+'Add a new Administrator' => 'Aggiungi un nuovo Amministratore',
   'No Access' => 'Nessun Accesso',
-  'Changes saved' => 'Modifiche salvate',
-  'Error adding new admin' => 'Errore aggiungendo nuovi admin',
+  'Changes saved' => 'Cambiamenti Salvati',
+  'Error adding new admin' => 'Errore nell\'aggiunta nuovo Amministratore',
   'strAccessExplain' => '<hr/>
-<p>Imposta i permessi per vedere questa pagina:</p>
+<p>Imposta i permessi per visualizzare le pagine:</p>
 <ul>
-<li>Tutti: gli amministratori hanno accesso alle pagine senza nessuna restrizione</li>
-<li>Vedi: gli amministratori possono vedere il contenuto delle  pagine, ma non possono modificare nulla. Questo è lo stato normale
-per "utente", "utenti" e "membri" delle pagine.</li>
-<li>Nulla: gli amministratori non possono vedere questa pagina</li>
-<li>propriet&agrave;: gli amministratori possono vedere questa pagina, ma il contenuto solo delle liste di propriet&agrave;</li>
+<li>All: l\'amministratore ha accesso alla pagina senza restrizioni.</li>
+<li>View: l\'amministratore pu&ograve; visualizzare i contenuti della pagina, ma non pu&ograve apportare modifiche. Al momento funziona solo con le pagine "utente", "utenti" e "membri".</li>
+<li>None: l\'amministratore non pu&ograve; visualizzare la pagina.</li>
+<li>Owner: l\'amministratore pu&ograve; visualizzare la pagina, ma pu&ograve; visualizzare solo il contenuto delle liste che amministra.</li>
 </ul>
+<p>Nota: la password dell\'Amministratore deve essere lunga almeno 4 caratteri</p>
 ',
-'Edit Amministratori' => 'Modifica Amministratori',
-'Admin Details' => 'Dettagli dell\'Amministratore',
+'Edit Administrator' => 'Configura un Amministratore',
+'Admin Details' => 'Dettagli Amministratore',
 'ID' => 'ID',
 'Login Name' => 'Nome Login',
-'Normalised loginname' => 'Nome Login normalizzato',
+'Normalised loginname' => 'Nome di login normalizzato',
 'Email' => 'Email',
-'Time Created' => 'Ora creazione',
-'Time modified' => 'Ora modifica',
-'Modified by' => 'Modifica da',
-'Last time password was changed' => 'Ultima ora modifica della password',
-'Is this user Super Admin?' => 'Questo utente &egrave; il Super Amministratore?',
-'Is this account disabled?' => 'Questo utente &egrave; disabilitato?',
+'Time Created' => 'Data di creazione',
+'Time modified' => 'Ora di modifica',
+'Modified by' => 'Modificato da',
+'Last time password was changed' => 'Ultima modifica della password',
+'Is this user Super Admin?' => 'Questo utente &egrave; un Super Amministratore?',
+'Is this account disabled?' => 'Questo account &egrave; disattivato?',
 'Save Changes' => 'Salva le modifiche',
-'Current set of permissions made default' => 'La corrente impostazione &egrave; stata impostata come default',
+'Current set of permissions made default' => 'Rendi predefinite queste impostazioni',
 'Done' => 'Fatto',
 'OK' => 'OK',
-'Deleting' => 'Cancellato',
-'Login Name (max 25 chars)' => 'Nome Login (massimo 25 caratteri)',
-'Access Details' => 'Dettagli dell\'accesso',
-'Access Privileges' => 'Privilegi di accesso',
+'Deleting' => 'Cancello',
+'Login Name (max 25 chars)' => 'Nome di Login (max 25 caratteri)',
+'Access Details' => 'Dettagli di Accesso',
+'Access Privileges' => 'Privilegi di Accesso',
 'Type' => 'Tipo',
 'Page' => 'Pagina',
-'Set these permissions as default' => 'Imposta questi permessi come default',
-'Reset to Default' => 'Resetta a  Default',
+'Set these permissions as default' => 'Imposta come predefiniti questi privilegi',
+'Reset to Default' => 'Reset',
 'none' => 'nessuno',
 'all' => 'tutti',
-'view' => 'vedi',
+'view' => 'visualizza',
 'owner' => 'proprietario',
 
 );

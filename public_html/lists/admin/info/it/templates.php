@@ -1,20 +1,17 @@
-<p>Qu&igrave; puoi definire templates (Modelli) che possono essere usati per inviare le emails alle liste. 
-Un template &egrave; una pagina HTML che contengono dei <i>SegnaPosto</i> <b>[CONTENT]</b>. Questo andr&agrave; 
-posizionato dove il testo per l'email andr&agrave; inserito. </P>
-<p>In pi&ugrave; a [CONTENT], puoi aggiungere [FOOTER] e [SIGNATURE] per inserire informazione a pi&egrave; di 
-pagina e la firma del messaggio, ma questo sono opzionali.</p>
-<p>Le immagini del vostro template saranno inserite nelle emails. Se aggiungi un'immagine al contenuto dei tuoi 
-messaggi (quando la invii), &egrave; necessario che che riporti l'URL completo del'immagine, e non che venga 
-aggiunta nell'email.</p>
+<p>Qu&igrave; puoi definire i template che possono essere usati nelle email da inviare alle liste. 
+Un template &egrave; una pagina HTML che contiene dei <i>segnaposto</i> (placeholders) <b>[CONTENT]</b>. Da posizionare dove andr&agrave; inserito il testo per l'email. </P>
+<p>In pi&ugrave; a [CONTENT] puoi aggiungere [FOOTER] e [SIGNATURE] per inserire informazioni a pi&egrave; di 
+pagina e la firma del messaggio, ma &egrave; opzionale.</p>
+<p>Le immagini del tuo template saranno inserite nelle email. Se aggiungi un'immagine al contenuto dei tuoi 
+messaggi, &egrave; necessario che che riporti l'URL completo del'immagine.</p>
 <p><b>User Tracking - Tracciamento Utenti</b></p>
-<p>per facilitare il tracciamento degli utenti, aggiungi [USERID] al tuo template che sar&agrave; sostituito 
-dall'identificatore dell'utente. Questo funziona solamente quando invii le email in HTML. Devi impostare alcuni 
-URL che ricevono l'ID. Alternativamente puoi usare l'incorporato tracciamento utenti di <?php echo NAME?>. 
-Per usare questo aggiungi [USERTRACK] al tuo template e un collegamento invisibile verr&agrave; aggiunto alla 
-tua email per tenere traccia della visione delle email.</p>
+<p>Per facilitare il tracciamento degli utenti, aggiungi [USERID] al tuo template, e sar&agrave; sostituito 
+dall'identificatore dell'utente. Funziona solamente quando invii le email in HTML. Dovrai impostare alcune 
+URL per la ricezione dell'ID. In alternativa puoi usare il tracciamento incorporato utenti di <?php echo NAME?>. 
+Per usarlo aggiungi [USERTRACK] al tuo template e alla 
+tua email verr&agrave; aggiunto un collegamento invisibile per tracciare la sua visualizzazione.</p>
 <p><b>Immagini</b></p>
-<p>Ogni riferimento alle immagini che non iniziano con "http://" sono (e devono) essere be caricate per essere 
-incluse nell'email. E' consigliato di usare solo poche immagini e di crearle veramente piccole. Se caricate il 
-vostro template, devi essere capace di aggiungere le vostre immagini. Riferimenti alle immagini che andranno 
+<p>Ogni riferimento alle immagini che non inizi con "http://" dovrebbe essere caricato e incluso nell'email. &Egrave; consigliato usare solo poche immagini e di piccole dimensioni. Se carichi il 
+tuo template dovresti riuscire ad aggiungere anche le tu immagini. I riferimenti alle immagini che andranno 
 incluse devono essere nella stessa cartella , esempio &lt;img&nbsp;src=&quot;image.jpg&quot;&nbsp;......&nbsp;&gt; 
 e non  &lt;img&nbsp;src=&quot;/some/directory/location/image.jpg&quot;&nbsp;..........&nbsp;&gt;</p>

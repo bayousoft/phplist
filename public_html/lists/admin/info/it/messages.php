@@ -1,5 +1,5 @@
-Poi usare "Riaccoda" per reinviare un messaggio. Questo far&agrave; si che il messaggio venga trasmesso agli utenti che si sono abbonati successivamente a quando avete trasmesso il messaggio. Non sar&agrave; ritrasmesso agli utenti che gi&grave; hanno ricevuto il messaggio.
-<p>Se vedi il messaggio, puoi ritrasmetterlo a una differente lista</p>
+Puoi usare "Rimetti in coda" per reinviare un messaggio. Questo far&agrave; s&igrave; che il messaggio venga trasmesso agli utenti che si sono iscritti successivamente a quando hai inviato il messaggio. Non sar&agrave; ritrasmesso agli utenti l'hanno gi&agrave; ricevuto.
+<p>Visualizzando il messaggio sar&agrave; possibile ritrasmetterlo a una differente lista</p>
 <?php if (TEST) { ?>
-<br /><b>Note:</b> Stai operando in modalit&agrave; test, cos&igrave; i messaggi saranno “reinviati„ agli utenti che lo hanno gi&agrave; ricevuto.
+<br /><b>Nota:</b> Stai operando in modalit&agrave; test, i messaggi saranno "reinviati" agli utenti che lo hanno gi&agrave; ricevuto.
 <?php } ?>

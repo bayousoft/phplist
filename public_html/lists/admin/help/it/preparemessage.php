@@ -1,27 +1,25 @@
-<p>In questa pagina puoi preparare un messaggio da spedire in una data successiva.
- Puoi specificare tutte le informazioni necessarie per il messaggio, eccetto per l'effettiva
-lista(e) che andrà specificata successivamente. Allora, al momento dell'invio (di un messaggio preparato) potete 
-identificare la(le) lista(e) ed il messaggio preparato sarà trasmesso.</p>
+<p>In questa pagina puoi predefinire un messaggio da spedire in una data successiva.
+ Puoi specificare tutte le informazioni necessarie al messaggio, ad eccezione dell'effettiva
+lista di destinazione. Quindi, al momento dell'invio (di un messaggio predefinito) sar&agrave; possibile 
+impostare la(e) lista(e) ed il messaggio predefinito sarà inviato.</p>
 <p>
- Il vostro messaggio preparato è stazionario, in modo da non sparirà dopo che è 
-stato trasmesso, ma può essere selezionato molte altre volte. Fate attenzione con questo, 
-perché questo può avere l'effetto di trasmettete lo stesso messaggio ai vostri utenti parecchie volte.
+ Il vostro messaggio predefinito non sar&agrave; cancellato dopo l'invio, e pu&ograve; essere riutilizzato pi&ugrave; volte. $Egrave; necessario fare attenzione, poich&eacute; in questo modo quello stesso messaggio potrebbe essere inviato agli stessi utenti pi&ugrave; di una volta.
 </p>
 <p>
-Questa funzionalità è progettata specialmente con la funzionalità di “amministratori multipli„ in mente. 
-Se un amministratore principale prepara i messaggi, gli amministratori secondari possono inviarli alle loro proprie liste. 
-In questo caso potete aggiungere i contenuti supplementari al vostro messaggio: gli attributi dei amministratori.
+Questa opzione è progettata specialmente per la funzionalit&agrave; "amministratori multipli". 
+Se un amministratore principale predefinisce i messaggi, gli amministratori secondari possono inviarli alle loro liste. 
+In questo caso &egrave; possibile aggiungere al messaggio segnaposto addizionali: gli attributi dei amministratori.
 </p>
-<p>Per esempio se avete un attributo <b>Nome</b> per gli amministratori potete aggiungere [LISTOWNER.NAME] come segnaposto, 
-che sarà sostituito dal <b>Nome</b> del proprietario della lista, il messaggio sar&agrave; trasmesso a. Ciò è 
-incurante di chi trasmette il messaggio. Così se l'amministratore principale trasmette il messaggio ad una lista 
-che è di proprietà di qualcun'altro, i segnaposti [LISTOWNER] saranno sostituiti con i valori del proprietario 
-della lista,  non i valori dell'amministratore principale .
+<p>Per esempio se &egrave; presente un attributo <b>Nome</b> per gli amministratori &egrave; possibile aggiungere [LISTOWNER.NAME] come segnaposto, 
+che sar&agrave; sostituito dal <b>Nome</b> del proprietario della lista a cui il messaggio &egrave; trasmesso. Questo 
+indipendentemente da chi trasmette il messaggio. Cos&igrave; se l'amministratore principale trasmette il messaggio ad una lista 
+che &egrave; di propriet&agrave; di qualcun'altro, i segnaposti [LISTOWNER] saranno sostituiti con i valori del proprietario 
+della lista,  non con quellii dell'amministratore principale .
 </P>
 <p>Riferimenti:
 <br/>
-Il formato dei segnaposti  [LISTOWNER] &egrave; <b>[LISTOWNER.ATTRIBUTE]</b><br/>
-<p>Attualmente i seguenti attributi di amministratore sono definire:
+Il formato dei segnaposto [LISTOWNER] &egrave; <b>[LISTOWNER.ATTRIBUTE]</b><br/>
+<p>Attualmente sono stati definiti i seguenti attributi di amministratore :
 <table border=1><tr><td><b>Attributi</b></td><td><b>Segnaposto</b></td></tr>
 <?php
 $req = Sql_query("select name from {$tables["adminattribute"]} order by listorder");

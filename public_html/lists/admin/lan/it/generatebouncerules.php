@@ -1,13 +1,13 @@
 <?php
 
 $lan = array(
-  'Process Next Batch' => 'Prossimo processo Batch',
-  'Process Killed by other process' => 'Processo cancellato da un antro processo',
-  'Hmm, duplicate entry, ' => 'Hmm, inserimento duplicato, ',
-  'new rules found' => 'trovato una nuova regola',
-  'bounces not matched' => 'Respinto non corrispondente',
-  'bounces matched to existing rules' => 'Respinto corrisponde alla regola esistente',
-
+  'Process Next Batch' => 'Processa il prossimo gruppo',
+  'Process Killed by other process' => 'Processo interrotto da un altro processo',
+  'Hmm, duplicate entry, ' => 'Hmm, voce doppia, ',
+  'new rules found' => 'trovate nuove regole',
+  'bounces not matched' => 'rimbalzi non corrispondenti',
+  'bounces matched to existing rules' => 'rimbalzi associati alle regole esistenti',
+‾
 );
 
 ?>

@@ -1,25 +1,25 @@
 <?php
 
 $lan = array(
-  'You do not have access to this page' => 'Non sei autorizzato ad accedere a questa pagina',
-  'Select Message to view' => 'Seleziona Messaggi da vedere',
+  'You do not have access to this page' => 'Non hai accesso a questa pagina',
+  'Select Message to view' => 'Seleziona un messaggio da visualizzare',
   'Available Messages' => 'Messaggi disponibili',
-  'views' => 'vista',
-  'rate' => 'tasso',
-  'View Details for a Message' => 'Visualizza Dettagli per un Messaggio',
+  'views' => 'visualizzazioni',
+  'rate' => 'percentuale',
+  'View Details for a Message' => 'Visualizzaziona dettagli per un messaggio',
   'Subject' => 'Oggetto',
-  'Entered' => 'Entrato',
-  'Message Open Statistics' => 'Apre statistica Messaggi',
+  'Entered' => 'Inserito',
+  'Message Open Statistics' => 'Statistiche aperte del messaggio',
   'Listing user %d to %d' => 'Elenca utenti da %d a %d',
-  'Entries' => 'Entrate',
-  'firstview' => 'primavista',
-  'lastview' => 'ultimavista',
-  'views' => 'vista',
-  'responsetime' => 'tempodirisposta',
+  'Entries' => 'Voci',
+  'firstview' => 'prima visualizzazione',
+  'lastview' => 'ultima visualizzazione',
+  'views' => 'visualizzazioni',
+  'responsetime' => 'tempo di risposta',
   'sec' => 'sec',
 
   # for 2.10.2
-'there are currently no messages to view' => 'Non ci sono messaggi da visualizzare',
+'there are currently no messages to view' => 'Al momento non ci sono messaggi da visualizzare',
 );
 
 ?>
