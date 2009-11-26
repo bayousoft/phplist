@@ -26,8 +26,17 @@ $GLOBALS['compression_used'] = $zlib_compression || $gzhandler;
 # http://www.hardened-php.net/globals-problem
 $GLOBALS['language_module'] = $language_module;
 $GLOBALS['database_module'] = $database_module;
+if (!isset($GLOBALS['design'])) {
+  $GLOBALS['design'] = '';
+}
 $GLOBALS['adodb_inc_file'] = $adodb_inc_file;
 $GLOBALS['show_dev_errors'] = $show_dev_errors;
+$magic_quotes = ini_get('magic_quotes_gpc');
+if ($magic_quotes == 'off' || empty($magic_quotes)) {
+  define('NO_MAGIC_QUOTES',true);
+} else {
+  define('NO_MAGIC_QUOTES',false);
+}
 
 if (empty($GLOBALS['language_module'])) {
   $GLOBALS['language_module'] = 'english.inc';
@@ -109,7 +118,7 @@ if (!defined('USE_SPAM_BLOCK')) define('USE_SPAM_BLOCK',1);
 if (!defined('NOTIFY_SPAM')) define('NOTIFY_SPAM',1);
 if (!defined('CLICKTRACK_LINKMAP')) define('CLICKTRACK_LINKMAP',0);
 if (!defined('ALWAYS_ADD_USERTRACK')) define('ALWAYS_ADD_USERTRACK',0);
-if (!defined('MERGE_DUPLICATES_DELETE_DUPLICATE')) define('MERGE_DUPLICATES_DELETE_DUPLICATE',0);
+if (!defined('MERGE_DUPLICATES_DELETE_DUPLICATE')) define('MERGE_DUPLICATES_DELETE_DUPLICATE',1);
 if (!defined('USE_PERSONALISED_REMOTEURLS')) define('USE_PERSONALISED_REMOTEURLS',1);
 if (!defined('USE_LOCAL_SPOOL')) define('USE_LOCAL_SPOOL',0);
 if (!defined('SEND_LISTADMIN_COPY')) define('SEND_LISTADMIN_COPY',0);

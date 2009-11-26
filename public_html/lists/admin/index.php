@@ -105,7 +105,7 @@ if (Sql_Table_exists($tables["config"],1)) {
   }
 }
 
-include_once dirname(__FILE__)."/pagetop.php";
+include_once dirname(__FILE__).$GLOBALS['design']."pagetop.php";
 
 if ($GLOBALS["commandline"]) {
   if (!isset($_SERVER["USER"]) && sizeof($GLOBALS["commandline_users"])) {
