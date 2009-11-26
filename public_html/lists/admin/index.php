@@ -255,7 +255,7 @@ if (isset($GLOBALS["require_login"]) && $GLOBALS["require_login"]) {
 }
 
 $include = '';
-include "header.inc";
+include $GLOBALS['design']."header.inc";
 if ($page != '' && $page != 'install') {
   if ($IsCommandlinePlugin) {
     $include =  'plugins/' . $GLOBALS["commandlinePlugins"][$page];
@@ -269,7 +269,7 @@ if ($page != '' && $page != 'install') {
   $include = "home.php";
 }
 
-print '<p class="leaftitle">'.NAME.' - '.strtolower($page_title).'</p>';
+print '<h2>'.NAME.' - '.strtolower($page_title).'</h2>';
 
 if ($GLOBALS["require_login"] && $page != "login") {
   if ($page == 'logout') {
@@ -460,7 +460,7 @@ if (isset($GLOBALS["commandline"]) && $GLOBALS["commandline"]) {
   if (!$GLOBALS['compression_used']) {
     @ob_end_flush();
   }
-  include_once "footer.inc";
+  include_once $GLOBALS['design']."footer.inc";
 }
 
 function parseCline() {
