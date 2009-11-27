@@ -166,7 +166,9 @@ if (!$GLOBALS["admin_auth_module"]) {
 $page_title = NAME;
 @include_once dirname(__FILE__)."/lan/".$_SESSION['adminlanguage']['iso']."/pagetitles.php";
 
-print '<script language="javascript" type="text/javascript" src="js/select_style.js"></script>';
+if (is_file($GLOBALS['design'].'js/select_style.js')) {
+  print '<script language="javascript" type="text/javascript" src="js/select_style.js"></script>';
+}
 print '<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">';           // HTTP/1.1
 print '<meta http-equiv="Pragma" content="no-cache">';           // HTTP/1.1
 print "<title>".NAME." :: ";
