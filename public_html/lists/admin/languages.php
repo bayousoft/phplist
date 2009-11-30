@@ -30,7 +30,7 @@ $LANGUAGES = array(
 #"gl"=>array("Galician "," iso-8859-1, windows-1252 "),
 #"el"=> array("Greek "," iso-8859-7 "),
 #"he"=> array("Hebrew "," iso-8859-8 "),
-#"hu"=>array("Hungarian "," iso-8859-2 "),
+"hu"=>array("Hungarian ","iso-8859-2, windows-1250"),
 #"is"=>array("Icelandic "," iso-8859-1, windows-1252 "),
 #"ga"=>array("Irish "," iso-8859-1, windows-1252 "),
 "it"=>array("Italian ","iso-8859-1"," iso-8859-1, windows-1252 "),
@@ -202,6 +202,10 @@ class phplist_I18N {
       $page = basename($_GET["page"]);
     else
       $page = "home";
+      
+    if ($page == 'campaign') { ## for now use the language from the send page
+      $page = 'send';
+    }  
 
     if (!empty($_GET['pi'])) {
       $plugin_languagedir = $this->getPluginBasedir();
