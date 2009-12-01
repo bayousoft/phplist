@@ -379,6 +379,7 @@ $main_menu = array(
   "div1" => "<hr />",
   "list" => "Lists",
   "send"=>"Send a message",
+  "campaign"=>"Start a campaign",
   "users" => "Users",
   "usermgt" => "Manage Users",
   "spage" => "Subscribe Pages",
@@ -703,14 +704,25 @@ function dbg($variable, $description = 'Value', $nestingLevel = 0) {
   if (ini_get("safe_mode"))
     return;
 
-  if (isset($config["debug"]) && !$config["debug"]) 
+  if (isset($config["debug"]) && !$config["debug"]) {
     return;
+  } 
+    
+  if (is_array($variable)) {
+    $tmp = $variable;
+    $variable = '';
+    foreach ($tmp as $key => $val) {
+      $variable .= $key.'='.$val.';';
+    }
+  }
+
+  $msg = $description.': '.$variable;
 
   if (isset($config["verbose"]) && $config["verbose"]) 
     print "\n".'<font class="debug">DBG: '.$msg.'</font><br>'."\n";
   elseif (isset($config["debug_log"]) && $config["debug_log"]) {
     $fp = @fopen($config["debug_log"],"a");
-    $line = "[".date("d M Y, H:i:s")."] ".getenv("REQUEST_URI").'('.$config["stats"]["number_of_queries"].") $msg \n";
+    $line = "[".date("d M Y, H:i:s")."] ".$_SERVER["REQUEST_METHOD"].'-'.$_SERVER["REQUEST_URI"].'('.$GLOBALS["pagestats"]["number_of_queries"].") $msg \n";
     @fwrite($fp,$line);
     @fclose($fp);
   #  $fp = fopen($config["sql_log"],"a");
@@ -802,35 +814,6 @@ function PageAttributes($data) {
 	);
 }
 
-function parseDate($strdate,$format = 'Y-m-d') {
-  # parse a string date into a date
-  $strdate = trim($strdate);
-  if (strlen($strdate) < 6) {
-    $newvalue = 0;
-	}
-	elseif (preg_match("#(\d{2,2}).(\d{2,2}).(\d{4,4})#", $strdate, $regs)) {
-    $newvalue = mktime(0,0,0,$regs[2],$regs[1],$regs[3]);
-	}
-	elseif (preg_match("#(\d{4,4}).(\d{2,2}).(\d{2,2})#", $value, $regs)) {
-    $newvalue = mktime(0,0,0,$regs[3],$regs[1],$regs[1]);
-	}
-	elseif (preg_match("#(\d{2,2}).(\w{3,3}).(\d{2,4})#", $value, $regs)) {
-    $newvalue = strtotime($value);
-	}
-	elseif (preg_match("#(\d{2,4}).(\w{3,3}).(\d{2,2})#", $value, $regs)) {
-    $newvalue = strtotime($value);
-  } else {
-    $newvalue = strtotime($value);
-    if ($newvalue < 0) {
-      $newvalue = 0;
-    }
-  }
-  if ($newvalue) {
-    return date($format,$newvalue);
-  } else {
-    return "";
-  }
-}
 
 function formatDate ($date,$short = 0) {
 	$months = array (
@@ -1046,7 +1029,7 @@ function formatTime($time,$short = 0) {
 
 function cleanArray($array) {
   $result = array();
-  if (!is_array($array)) return array();
+  if (!is_array($array)) return $array;
   foreach ($array as $key => $val) {
     ## 0 is a valid key
     if (isset($key) && !empty($val)) {
