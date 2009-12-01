@@ -17,7 +17,7 @@ $lan = array(
   'Website address (without http://)' => 'Website address (without http://)',
   'Domain Name of your server (for email)' => 'Domain Name of your server (for email)',
   'Person in charge of this system (one email address)' => 'Person in charge of this system (one email address)',
-  'How often do you want to check for a new version of PHPlist (days)' => 'How often do you want to check for a new version of PHPlist (days)',
+  'How often do you want to check for a new version of phplist (days)' => 'How often do you want to check for a new version of phpList (days)',
   'List of people to CC in system emails (separate by commas)' => 'List of people to CC in system emails (separate by commas)',
   'Who gets the reports (email address, separate multiple emails with a comma)' => 'Who gets the reports (email address, separate multiple emails with a comma)',
   'From email address for system messages' => 'From email address for system messages',
@@ -64,5 +64,12 @@ $lan = array(
   'Template for separator between feeds in RSS feeds (HTML)' => 'Template for separator between feeds in RSS feeds (HTML)',
   'Width in px of FCKeditor Area' => 'Width in px of FCKeditor Area',
   'Height in px of FCKeditor Area' => 'Height in px of FCKeditor Area',
+
+  ## new in 2.11.
+
+  'URL where known users can unsubscribe' => 'URL where known users can unsubscribe',
+  'URL where unknown users can unsubscribe (blacklist)' => 'URL where unknown users can unsubscribe (blacklist)',
+  'Width for Wordwrap of Text messages' => 'Width for Wordwrap of Text messages',
+  'categories for lists. Separate with commas.' => 'categories for lists. Separate with commas.',
 );
 ?>
