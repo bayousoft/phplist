@@ -2,7 +2,7 @@
 //require_once dirname(__FILE__).'/accesscheck.php';
 
 
-if (!defined("IN_WEBBLER")) {
+if (!defined("IN_WEBBLER") && !defined("WEBBLER")) {
   class date {
     var $type = "date";
     var $name = "";
