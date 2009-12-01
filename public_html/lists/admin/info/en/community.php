@@ -126,7 +126,7 @@ foreach($le as $module) {
 <p>Please note, emails not using this system, or the forums will be ignored.</p>
 
 <p><b><a name="docscontrib"></a>Contributing to the documentation</b><br/>
-If you want to help out writing documentation, please sign up to the <a href="http://tincan.co.uk/?lid=878">Developers Mailinglist</a>. At the moment the documentors and the developers share a mailinglist, because their interests overlap and it is useful to share information. <br/>
+If you want to help out writing documentation, please sign up to the <a href="http://www.phplist.com/mailing_lists">Developers Mailinglist</a>. At the moment the documentors and the developers share a mailinglist, because their interests overlap and it is useful to share information. <br/>
 Before doing anything, discuss the issues on the mailinglist and once the ideas have been established you can go off and do your stuff.
 
 <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
