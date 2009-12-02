@@ -73,7 +73,7 @@ if (!$id) {
 }
 
 
-print '<h1>'.$GLOBALS['I18N']->get('View Details for a Message').'</h1>';
+print '<h3>'.$GLOBALS['I18N']->get('View Details for a Message').'</h3>';
 $messagedata = Sql_Fetch_Array_query("SELECT * FROM {$tables['message']} where id = $id $subselect");
 print '<table>
 <tr><td>'.$GLOBALS['I18N']->get('Subject').'<td><td>'.$messagedata['subject'].'</td></tr>

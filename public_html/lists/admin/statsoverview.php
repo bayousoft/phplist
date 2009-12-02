@@ -106,7 +106,7 @@ if (!$id) {
 }
 
 
-print '<h1>'.$GLOBALS['I18N']->get('View Details for a Message').'</h1>';
+print '<h3>'.$GLOBALS['I18N']->get('View Details for a Message').'</h3>';
 $query = "select * from ${tables['message']} where id = ? $and";
 $params = array_merge(array($id), $and_params);
 $rs = Sql_Query_Params($query, $params);

@@ -22,7 +22,7 @@ print '<script language="Javascript" src="js/progressbar.js" type="text/javascri
 ignore_user_abort(1);
 ?>
 
-<h1>Stresstest</h1>
+<h3>Stresstest</h3>
 Filling database with stress test information, please wait
 <br><b>Warning</b> this is quite demanding for your browser!
 <?php

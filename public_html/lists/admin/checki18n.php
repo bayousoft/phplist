@@ -28,7 +28,7 @@ function checkI18NDir($rootdir) {
     $fileoutput = '';
     $some = 0;
     if (is_file($rootdir.'/'.$file)) {
-      $fileoutput .= '<hr/><h1>'.$file."</h1><br/>";
+      $fileoutput .= '<hr/><h3>'.$file."</h3><br/>";
       $arr = getFileI18Ntags($rootdir.'/'.$file);
       $lan = array();
   #    include 'lan/en/'.$file;

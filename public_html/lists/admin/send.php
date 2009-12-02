@@ -88,7 +88,7 @@ $req = Sql_Query(sprintf('select id,entered,subject,unix_timestamp(now()) - unix
 $numdraft = Sql_Num_Rows($req);
 if ($numdraft > 0 && !isset($_GET['id']) && !isset($_GET['new'])) {
   print '<p>'.PageLink2('send&new=1',$I18N->get('start a new message')).'</p>';
-  print '<h1>'.$I18N->get('Choose an existing draft message to work on').'</h1>';
+  print '<h3>'.$I18N->get('Choose an existing draft message to work on').'</h3>';
   $ls = new WebblerListing($I18N->get('Draft messages'));
   while ($row = Sql_Fetch_Array($req)) {
     $element = '<!--'.$row['id'].'-->'.$row['subject'];
@@ -164,7 +164,7 @@ $list_content .= '</ul>';
 
 if (USE_LIST_EXCLUDE) {
   $list_content .= '
-    <hr/><h1>'.$GLOBALS['I18N']->get('selectexcludelist').'</h1><p>'.$GLOBALS['I18N']->get('excludelistexplain').'</p>
+    <hr/><h3>'.$GLOBALS['I18N']->get('selectexcludelist').'</h3><p>'.$GLOBALS['I18N']->get('excludelistexplain').'</p>
     <ul>';
 
   $dbdata = Sql_Fetch_Row_Query(sprintf('select data from %s where name = "excludelist" and id = %d',

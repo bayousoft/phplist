@@ -46,7 +46,7 @@ $ls = new WebblerListing($GLOBALS['I18N']->get('URL Click Statistics'));
 
 $urldata = Sql_Fetch_Array_Query(sprintf('select url from %s where id = %d',
   $GLOBALS['tables']['linktrack_forward'],$id));
-print '<h1>'.$GLOBALS['I18N']->get('Click Details for a URL').' <b>'.$urldata['url'].'</b></h1>';
+print '<h3>'.$GLOBALS['I18N']->get('Click Details for a URL').' <b>'.$urldata['url'].'</b></h3>';
 
 $req = Sql_Query(sprintf('select messageid,firstclick,date_format(latestclick,
   "%%e %%b %%Y %%H:%%i") as latestclick,total,clicked from %s where forwardid = %d 

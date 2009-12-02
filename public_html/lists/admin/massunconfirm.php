@@ -27,7 +27,7 @@ if ($_POST['unsubscribe']) {
 ?>
 
 <form method=post action="">
-<h1><?php echo $GLOBALS['I18N']->get('Mass unconfirm email addresses')?></h1>
+<h3><?php echo $GLOBALS['I18N']->get('Mass unconfirm email addresses')?></h3>
 <?php echo $GLOBALS['I18N']->get('Check to also add the emails to the blacklist')?>  <input type="checkbox" name="blacklist" value="1"></br/>
 <p><?php echo $GLOBALS['I18N']->get('Paste the emails to mark unconfirmed in this box, and click continue')?></p>
 <input type=submit name="go" value="<?php echo $GLOBALS['I18N']->get('Continue')?>"><br/>

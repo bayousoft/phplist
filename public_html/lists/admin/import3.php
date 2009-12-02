@@ -346,7 +346,7 @@ if (!$_POST["server"] || !$_POST["user"] || !$_POST["password"] || !is_array($_P
   if (is_array($all_emails)) {
     $num = sizeof($all_emails);
     print "<p>".$GLOBALS['I18N']->get('Processed').":".$GLOBALS["foldercount"]. " ".$GLOBALS['I18N']->get('folders and')." ".$GLOBALS["messagecount"]." ".$GLOBALS['I18N']->get('messages')."</p>";
-    print "<h1>".sizeof($all_emails)." ".$GLOBALS['I18N']->get('unique emails found')."</h1>";
+    print "<h3>".sizeof($all_emails)." ".$GLOBALS['I18N']->get('unique emails found')."</h3>";
     flush();
 
     $usetwo = 0;

@@ -115,7 +115,7 @@ if (!$_POST["remote_host"] ||
   print $GLOBALS['I18N']->get('remote_has')." $listcnt[0] ".$GLOBALS['I18N']->get('lists')."<br/>";
 
   flush();
-  print '<h1>'.$GLOBALS['I18N']->get('copying_lists').'</h1>';
+  print '<h3>'.$GLOBALS['I18N']->get('copying_lists').'</h3>';
   # first copy the lists across
   $listmap = array();
   $remote_lists = array();
@@ -151,7 +151,7 @@ if (!$_POST["remote_host"] ||
   }
 
   connectRemote();
-  print '<h1>'.$GLOBALS['I18N']->get('copying_attribs').'</h1>';
+  print '<h3>'.$GLOBALS['I18N']->get('copying_attribs').'</h3>';
   # now copy the attributes
   $attributemap = array();
   $remote_atts = array();
@@ -201,7 +201,7 @@ if (!$_POST["remote_host"] ||
     }
   }
 
-  print '<h1>'.$GLOBALS['I18N']->get('copying_users').'</h1>';
+  print '<h3>'.$GLOBALS['I18N']->get('copying_users').'</h3>';
   # copy the users
   $usercnt = 0;
   $existcnt = 0;

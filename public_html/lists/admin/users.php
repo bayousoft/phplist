@@ -177,7 +177,7 @@ return;
 //print "$total Users";
 //print $find ? " found": "";
 //if ($find && !$findby && !$total) { # a search for an email has been done and not found
-//  print "<hr><h2>Add this user</h2>";
+//  print "<hr><h4>Add this user</h4>";
 //  $req = Sql_Query(sprintf('select * from %s where active',$tables["subscribepage"]));
 //  if (Sql_Affected_Rows()) {
 //    print "Click on a link to use the corresponding public subscribe page to add this user:";

@@ -271,7 +271,7 @@ if ($page != '' && $page != 'install') {
   $include = "home.php";
 }
 
-print '<h2>'.NAME.' - '.strtolower($page_title).'</h2>';
+print '<h4>'.NAME.' - '.strtolower($page_title).'</h4>';
 
 if ($GLOBALS["require_login"] && $page != "login") {
   if ($page == 'logout') {
@@ -416,7 +416,7 @@ if (checkAccess($page,"") || $page == 'about') {
     if (is_file($plugin->coderoot . $include)) {
       include ($plugin->coderoot . $include);
     } elseif ($include == 'main.php') {
-      print '<h1>'.$plugin->name.'</h1><ul>';
+      print '<h3>'.$plugin->name.'</h3><ul>';
       foreach ($menu as $page => $desc) {
         print '<li>'.PageLink2($page,$desc).'</li>';
       }

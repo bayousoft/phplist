@@ -910,7 +910,7 @@ if (sizeof($subqueries)) {
 #    $count_query = addslashes($count_query);
   if (!empty($_GET["calculate"])) {
     ob_end_flush();
-   # print "<h1>$count_query</h1>";
+   # print "<h3>$count_query</h3>";
     print "<p>".$GLOBALS['I18N']->get("calculating")." ...";
     flush();
   }

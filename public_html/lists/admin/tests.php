@@ -1,7 +1,7 @@
 <?php
 
 ## test suite for certain elements of phplist
-print '<h1>'.$GLOBALS['I18N']->get('phplist test suite').'</h1>';
+print '<h3>'.$GLOBALS['I18N']->get('phplist test suite').'</h3>';
 
 if (empty($GLOBALS['developer_email'])) {
   print "Only available in developer mode";
@@ -28,7 +28,7 @@ if (is_dir($testdir)) {
 }
 
 if ($_GET['runtest'] && in_array($_GET['runtest'],array_keys($tests))) {
-  print "<h1>Running test:  ".$tests[$_GET['runtest']]->name.'</h1>';
+  print "<h3>Running test:  ".$tests[$_GET['runtest']]->name.'</h3>';
   $testresult = $tests[$_GET['runtest']]->runtest();
   if ($testresult) {
     print $GLOBALS['I18N']->get('Test passed');

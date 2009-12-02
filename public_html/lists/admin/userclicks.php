@@ -52,9 +52,9 @@ if ($userid) {
 }
 
 if ($fwdid && $msgid) {
-  print '<h1>'.$GLOBALS['I18N']->get('User Click Details for a URL in a message');
+  print '<h3>'.$GLOBALS['I18N']->get('User Click Details for a URL in a message');
   print ' ' .PageLink2('uclicks&amp;id='.$fwdid,$urldata['url']);
-  print '</h1>';
+  print '</h3>';
   print '<table>
   <tr><td>'.$GLOBALS['I18N']->get('Subject').'<td><td>'.PageLink2('mclicks&amp;id='.$msgid,$messagedata['subject']).'</td></tr>
   <tr><td>'.$GLOBALS['I18N']->get('Entered').'<td><td>'.$messagedata['entered'].'</td></tr>
@@ -65,9 +65,9 @@ if ($fwdid && $msgid) {
     and uml_click.forwardid = %d and uml_click.messageid = %d
     and uml_click.clicked',$GLOBALS['tables']['linktrack_uml_click'],$GLOBALS['tables']['user'],$fwdid,$msgid));
 } elseif ($userid && $msgid) {
-  print '<h1>'.$GLOBALS['I18N']->get('User Click Details for a message').'</h1>';
+  print '<h3>'.$GLOBALS['I18N']->get('User Click Details for a message').'</h3>';
   print $GLOBALS['I18N']->get('User').' '.PageLink2('user&id='.$userid,$userdata['email']);
-  print '</h1>';
+  print '</h3>';
   print '<table>
   <tr><td>'.$GLOBALS['I18N']->get('Subject').'<td><td>'.PageLink2('mclicks&amp;id='.$msgid,$messagedata['subject']).'</td></tr>
   <tr><td>'.$GLOBALS['I18N']->get('Entered').'<td><td>'.$messagedata['entered'].'</td></tr>
@@ -77,13 +77,13 @@ if ($fwdid && $msgid) {
     "%%e %%b %%Y %%H:%%i") as latestclick,clicked,messageid,forwardid,url from %s as uml_click, %s as user, %s as forward where uml_click.userid = user.id 
     and uml_click.userid = %d and uml_click.messageid = %d and forward.id = uml_click.forwardid',$GLOBALS['tables']['linktrack_uml_click'],$GLOBALS['tables']['user'],$GLOBALS['tables']['linktrack_forward'], $userid,$msgid));
 } elseif ($fwdid) {
-  print '<h1>'.$GLOBALS['I18N']->get('User Click Details for a URL').' <b>'.$urldata['url'].'</b></h1>';
+  print '<h3>'.$GLOBALS['I18N']->get('User Click Details for a URL').' <b>'.$urldata['url'].'</b></h3>';
   $req = Sql_query(sprintf('select user.email, user.id as userid,firstclick,date_format(latestclick,
     "%%e %%b %%Y %%H:%%i") as latestclick,clicked from %s as uml_click, %s as user where uml_click.userid = user.id 
     and uml_click.forwardid = %d group by uml_click.userid',$GLOBALS['tables']['linktrack_uml_click'],$GLOBALS['tables']['user'],
     $fwdid));
 } elseif ($msgid) {
-  print '<h1>'.$GLOBALS['I18N']->get('User Click Details for a Message').'</h1>';
+  print '<h3>'.$GLOBALS['I18N']->get('User Click Details for a Message').'</h3>';
   print '<table>
   <tr><td>'.$GLOBALS['I18N']->get('Subject').'<td><td>'.$messagedata['subject'].'</td></tr>
   <tr><td>'.$GLOBALS['I18N']->get('Entered').'<td><td>'.$messagedata['entered'].'</td></tr>
@@ -94,7 +94,7 @@ if ($fwdid && $msgid) {
     and uml_click.messageid = %d',$GLOBALS['tables']['linktrack_uml_click'],$GLOBALS['tables']['user'],
     $msgid));
 } elseif ($userid) {
-  print '<h1>'.$GLOBALS['I18N']->get('User Click Details').'</h1>';
+  print '<h3>'.$GLOBALS['I18N']->get('User Click Details').'</h3>';
   $req = Sql_query(sprintf('select user.email,user.id as userid,firstclick,date_format(latestclick,
     "%%e %%b %%Y %%H:%%i") as latestclick,clicked,messageid,forwardid,url from %s as uml_click, %s as user, %s as forward where uml_click.userid = user.id 
     and uml_click.userid = %d and forward.id = uml_click.forwardid',$GLOBALS['tables']['linktrack_uml_click'],$GLOBALS['tables']['user'],$GLOBALS['tables']['linktrack_forward'],
