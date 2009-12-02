@@ -15,7 +15,7 @@ if (isset($_GET['page']) && $_GET["page"]) {
 }
 if (!isset($GLOBALS['msg'])) $GLOBALS['msg'] = '';
 ?>
-<font class="error"><?php echo $GLOBALS['msg']?></font>
+<?php echo $GLOBALS['msg']?>
 
 
 <script language="Javascript" type="text/javascript">

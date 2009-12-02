@@ -127,9 +127,9 @@ while ($row = Sql_fetch_array($result)) {
       print 'checked';
     print ">".$row['name'];
     if ($row["active"])
-      print ' (<font color="red">' . $GLOBALS['I18N']->get('List is Active') . '</font>)';
+      print ' (' . $GLOBALS['I18N']->get('List is Active') . ')';
     else
-      print ' (<font color="red">' . $GLOBALS['I18N']->get('List is not Active') . '</font>)';
+      print ' (' . $GLOBALS['I18N']->get('List is not Active') . ')';
     $some = 1;
   }
 }

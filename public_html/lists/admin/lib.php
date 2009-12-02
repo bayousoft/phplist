@@ -39,8 +39,8 @@ $GLOBALS['bounceruleactions'] = array(
 @include_once "HTTP/Request.php";
 $GLOBALS['has_pear_http_request'] = class_exists('HTTP_Request');
 if( !isset($GLOBALS["developer_email"]) ) {
-  ini_set('error_append_string','<font style=\"{font-variant: small-caps;font-size: 12px}\">phplist</font> version '.VERSION);
-  ini_set('error_prepend_string','<P><font color=red style=\"{font-size: 12px}\">Sorry a software error occurred:</font><br/>
+  ini_set('error_append_string','phplist version '.VERSION);
+  ini_set('error_prepend_string','<P>Sorry a software error occurred:<br/>
     Please <a href="http://mantis.phplist.com">report a bug</a> when reporting the bug, please include URL and the entire content of this page.<br/>');
 }
 
@@ -790,7 +790,7 @@ function adminName($id = 0) {
   . ' where id = ?';
   $rs = Sql_Query_Params($query, array($id));
   $req = Sql_Fetch_Row($rs);
-  return $req[0] ? $req[0] : "<font color=red>Nobody</font>";
+  return $req[0] ? $req[0] : "Nobody";
 }
 
 if (!function_exists("dbg")) {

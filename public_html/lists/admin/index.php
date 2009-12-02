@@ -286,7 +286,7 @@ if ($GLOBALS["require_login"] && $page != "login") {
       $greeting = $GLOBALS['I18N']->get('goodevening');
     }
   }
-  print '<div><font style="font-size : 12px;font-family : Arial, Helvetica, sans-serif;  font-weight : bold;"> '.$greeting." ".adminName($_SESSION["logindetails"]["id"]). "</font></div>";
+
   if ($page != "logout") {
     print '<div align="right">'.PageLink2("logout",$GLOBALS['I18N']->get('logout'));
   }
@@ -444,9 +444,8 @@ if (ereg("dev",VERSION)) {
   $elapsed = $finished - $GLOBALS["pagestats"]["time_start"];
   $elapsed = ($elapsed / 1000000);
 #  print "\n\n".'<!--';
-  print '<br clear="all" /><font style="{font-size:8;font-color:#cccccc}">';
+  print '<br clear="all" />';
   print $GLOBALS["pagestats"]["number_of_queries"]." db queries in $elapsed seconds";
-  print '</font>';
   if (isset($GLOBALS["statslog"])) {
     if ($fp = @fopen($GLOBALS["statslog"],"a")) {
       @fwrite($fp,getenv("REQUEST_URI")."\t".$GLOBALS["pagestats"]["number_of_queries"]."\t$elapsed\n");

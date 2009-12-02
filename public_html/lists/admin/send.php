@@ -151,9 +151,9 @@ while ($row = Sql_fetch_array($result)) {
     $list_content .= "checked";
   $list_content .= ">".stripslashes($row["name"]);
   if ($row["active"])
-    $list_content .= ' (<font color=red>'.$GLOBALS['I18N']->get('listactive').'</font>)';
+    $list_content .= ' ('.$GLOBALS['I18N']->get('listactive').')';
   else
-    $list_content .= ' (<font color=red>'.$GLOBALS['I18N']->get('listnotactive').'</font>)';
+    $list_content .= ' ('.$GLOBALS['I18N']->get('listnotactive').')';
 
   $desc = nl2br(stripslashes($row["description"]));
 
@@ -179,9 +179,9 @@ if (USE_LIST_EXCLUDE) {
       $list_content .= "checked";
     $list_content .= ">".stripslashes($row["name"]);
     if ($row["active"])
-      $list_content .= ' (<font color=red>'.$GLOBALS['I18N']->get('listactive').'</font>)';
+      $list_content .= ' ('.$GLOBALS['I18N']->get('listactive').')';
     else
-      $list_content .= ' (<font color=red>'.$GLOBALS['I18N']->get('listnotactive').'</font>)';
+      $list_content .= ' ('.$GLOBALS['I18N']->get('listnotactive').')';
 
     $desc = nl2br(stripslashes($row["description"]));
 

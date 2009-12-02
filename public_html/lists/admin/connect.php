@@ -89,8 +89,8 @@ define('XORmask',$xormask);
 //  "monthly" => $strMonthly
 //);
 
-$redfont = "<font color=\"red\">";
-$efont = "</font>";
+$redfont = "";
+$efont = "";
 $GLOBALS["coderoot"] = dirname(__FILE__).'/';
 $GLOBALS["mail_error"] = "";
 $GLOBALS["mail_error_count"] = 0;
@@ -719,7 +719,7 @@ function dbg($variable, $description = 'Value', $nestingLevel = 0) {
   $msg = $description.': '.$variable;
 
   if (isset($config["verbose"]) && $config["verbose"]) 
-    print "\n".'<font class="debug">DBG: '.$msg.'</font><br>'."\n";
+    print "\n".'DBG: '.$msg.'<br>'."\n";
   elseif (isset($config["debug_log"]) && $config["debug_log"]) {
     $fp = @fopen($config["debug_log"],"a");
     $line = "[".date("d M Y, H:i:s")."] ".$_SERVER["REQUEST_METHOD"].'-'.$_SERVER["REQUEST_URI"].'('.$GLOBALS["pagestats"]["number_of_queries"].") $msg \n";

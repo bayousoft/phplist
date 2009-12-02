@@ -273,7 +273,7 @@ exit;
       <TR>
         <TD align=center valign=middle><B>
           Upload in progress...
-<font color='red'><BR><BR>
+<BR><BR>
 <?php
 
 if (file_exists($UPLOAD_BASE_DIR.$_FILES['FCKeditor_File']['name'])) {
@@ -314,7 +314,7 @@ if (file_exists($UPLOAD_BASE_DIR.$_FILES['FCKeditor_File']['name'])) {
   }
   echo '<BR><BR><INPUT type="button" value=" Cancel " onclick="window.close()">';
 } ?>
-        </font></B></TD>
+        </B></TD>
       </TR>
     </TABLE>
   </form></BODY>

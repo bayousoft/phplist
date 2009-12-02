@@ -660,7 +660,7 @@ if ($send || $sendtest || $prepare || $save) {
     } elseif ($send && !is_array($_POST["targetlist"])) {
       $errormessage = $GLOBALS['I18N']->get("selectlist");
     }
-    echo "<font color=red size=+2>$errormessage</font><br>\n";
+    echo "$errormessage<br>\n";
   }
 
   // OK, the message has been saved, now check to see if we need to send a test message
@@ -669,7 +669,7 @@ if ($send || $sendtest || $prepare || $save) {
     echo "<HR>";
     // Let's send test messages to everyone that was specified in the
     if ($_POST["testtarget"] == "") {
-      print "<font color=red size=+2>".$GLOBALS['I18N']->get("notargetemail")."</font><br>";
+      print $GLOBALS['I18N']->get("notargetemail")."<br>";
     }
 
     if (isset($cached[$id])) {
@@ -712,7 +712,7 @@ if ($send || $sendtest || $prepare || $save) {
         }
         print '<br/>';
       } else {
-        print "<font color=red>".$GLOBALS['I18N']->get("emailnotfound").": $address</font><br>";
+        print $GLOBALS['I18N']->get("emailnotfound").": $address<br>";
       }
     }
     echo "<HR>";

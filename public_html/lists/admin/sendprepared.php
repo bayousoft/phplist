@@ -68,11 +68,11 @@ if ($message && $list) {
 <?php
 } elseif ($send && !$message) {
   ?>
-  <font color=red size=+2>Please select a message</font><br>
+  Please select a message<br>
   <?php
 } elseif ($send && !$list) {
   ?>
-  <font color=red size=+2>Please select a list to send to</font><br>
+ Please select a list to send to<br>
   <?php
 }
 
@@ -107,9 +107,9 @@ while ($row = Sql_fetch_array($result)) {
     $html .= "checked";
   $html .= ">".$row["name"];
   if ($row["active"])
-    $html .= " (<font color=red>List is Active</font>)";
+    $html .= " (List is Active)";
   else
-    $html .= " (<font color=red>List is not Active</font>)";
+    $html .= " (List is not Active)";
 
   $desc = nl2br(StripSlashes($row["description"]));
 

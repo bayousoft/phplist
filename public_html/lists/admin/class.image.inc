@@ -42,7 +42,7 @@ class imageUpload {
       $html .= sprintf('%s</td></tr>',$this->viewImageLink($imdata["id"],$imdata["width"],$imdata["height"],$GLOBALS['I18N']->get('View Image')));
     }
     else
-    $html .= '<tr><td colspan=3><font color=red><input type="hidden" name="'.$name.'_keep" value="no">'.$GLOBALS['I18N']->get('No Image was found').'</font></td></tr>';
+    $html .= '<tr><td colspan=3><input type="hidden" name="'.$name.'_keep" value="no">'.$GLOBALS['I18N']->get('No Image was found').'</td></tr>';
     $html .= '<tr><td colspan=2>'.$GLOBALS['I18N']->get('Upload new image').':</td><td><input type="hidden" name="'.$name.'_originalname" value="'.$originalname.'"><input type=file name="'.$name.'" onChange="unCheck'.$name.'();"></td></tr>';
 #    $html .= '<tr><td colspan=2>Caption: </td><td><input type=text name="'.$name.'_caption" size="40" value="'.$imdata["caption"].'"></td></tr>';
 #    $html .= '<tr><td colspan=2>Alt Tag: </td><td><input type=text name="'.$name.'_alttag" size="40" value="'.$imdata["alttag"].'"></td></tr>';

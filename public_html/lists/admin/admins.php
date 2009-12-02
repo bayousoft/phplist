@@ -44,7 +44,7 @@ if (!$external) {
       $query = "insert into ".$tables["listuser"]." (userid,listid,entered) values($userid,$id,current_timestamp)";
       $result = Sql_query($query);
     }
-    echo '<br><font color=red size=+2>'.$GLOBALS['I18N']->get('Admin added').'</font><br>';
+    echo '<br>'.$GLOBALS['I18N']->get('Admin added').'<br>';
   }
 }
   

@@ -117,7 +117,7 @@ if (isset($_REQUEST["processtags"]) && $access != "view") {
       default: # do nothing
     }
   }
-  print '<font class="info">'.$msg.'</font><br/>';
+  print $msg.'<br/>';
 }
 if (isset($_POST["add"])) {
   if ($_POST["new"]) {
@@ -193,7 +193,7 @@ if (isset($_REQUEST["doadd"])) {
   if ($database_module == 'adodb.inc')
   Sql_Commit_Transaction();
 
-  echo "<br /><font color=red size=+2>".$GLOBALS['I18N']->get("User added")."</font><br />";
+  echo "<br />".$GLOBALS['I18N']->get("User added")."<br />";
 }
 if (isset($_REQUEST["delete"])) {
   $delete = sprintf('%d',$_REQUEST["delete"]);

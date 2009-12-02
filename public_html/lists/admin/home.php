@@ -48,9 +48,9 @@ if ($checkinterval && !defined('IN_WEBBLER')) {
       $thisversion = VERSION;
       $thisversion = preg_replace("/[^\.\d]/","",$thisversion);
       if (!versionCompare($thisversion,$latestversion)) {
-        print '<div align=center><font color=green size=2>';
+        print '<div align=center>';
         print $GLOBALS['I18N']->get('A new version of PHPlist is available!');
-        print '</font><br/>';
+        print '<br/>';
         print '<br/>'.$GLOBALS['I18N']->get('The new version may have fixed security issues,<br/>so it is recommended to upgrade as soon as possible');
         print '<br/>'.$GLOBALS['I18N']->get('Your version').': <b>'.$thisversion.'</b>';
         print '<br/>'.$GLOBALS['I18N']->get('Latest version').': <b>'.$latestversion.'</b><br/>  ';

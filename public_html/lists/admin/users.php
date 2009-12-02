@@ -171,7 +171,7 @@ return;
 //    $query = "insert into ".$tables["listuser"]." (userid,listid,entered) values($userid,$id,current_timestamp)";
 //    $result = Sql_query($query);
 //  }
-//  echo "<br><font color=red size=+2>User added</font><br>";
+//  echo "<br>User added<br>";
 //}
 //
 //print "$total Users";
@@ -191,7 +191,7 @@ return;
 //  print '<hr>';
 //}
 //
-//print "<br/>Users marked <font color=red>red</font> are unconfirmed ($totalunconfirmed)<br/>";
+//print "<br/>Users marked red are unconfirmed ($totalunconfirmed)<br/>";
 //
 //$url = getenv("REQUEST_URI");
 //if ($_GET["unconfirmed"]) {

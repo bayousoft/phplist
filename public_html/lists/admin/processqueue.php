@@ -37,7 +37,7 @@ if (!$GLOBALS["commandline"]) {
 
 # once and for all get rid of those questions why they do not receive any emails :-)
 if (TEST)
-  print '<font color=red size=5>'.$GLOBALS['I18N']->get('Running in testmode, no emails will be sent. Check your config file.').'</font>';
+  print $GLOBALS['I18N']->get('Running in testmode, no emails will be sent. Check your config file.');
 
 $num_per_batch = 0;
 $batch_period = 0;
