@@ -4,7 +4,7 @@ require_once dirname(__FILE__).'/accesscheck.php';
 $subselect = '';
 
 if (!ALLOW_IMPORT) {
-  print '<p>'.$GLOBALS['I18N']->get('import is not available').'</p>';
+  print '<p class="">'.$GLOBALS['I18N']->get('import is not available').'</p>';
   return;
 }
 
@@ -14,7 +14,7 @@ ignore_user_abort();
 set_time_limit(500);
 ob_end_flush();
 ?>
-<p>
+<p class="">
 
 <?php
 
@@ -301,7 +301,7 @@ if(isset($_REQUEST['import'])) {
       print "$count_email_add $dispemail ".$GLOBALS['I18N']->get('import_successful')." $num_lists $displists.<br>$additional_emails $dispemail2 ".$GLOBALS['I18N']->get('subscribed')." $displists";
     }
   }; // end else
-  print '<p>'.PageLink2("import",$GLOBALS['I18N']->get('import_more_emails')).'</p>';
+  print '<p class="">'.PageLink2("import",$GLOBALS['I18N']->get('import_more_emails')).'</p>';
 
 
 } else {
@@ -330,7 +330,7 @@ if (Sql_Affected_Rows() == 1) {
   $row = Sql_fetch_array($result);
   printf('<input type=hidden name="listname[%d]" value="%s"><input type=hidden name="lists[%d]" value="%d">'.$GLOBALS['I18N']->get('adding_users').' <b>%s</b>',$c,stripslashes($row["name"]),$c,$row["id"],stripslashes($row["name"]));
 } else {
-  print '<p>'.$GLOBALS['I18N']->get('select_lists').'</p>';
+  print '<p class="">'.$GLOBALS['I18N']->get('select_lists').'</p>';
   while ($row = Sql_fetch_array($result)) {
     printf('<li><input type=hidden name="listname[%d]" value="%s"><input type=checkbox name="lists[%d]" value="%d">%s',$c,stripslashes($row["name"]),$c,$row["id"],stripslashes($row["name"]));
     $some = 1;$c++;
@@ -354,17 +354,17 @@ function addFieldToCheck(value,name) {
 }
 
 </script>
-<table border="1">
-<tr><td colspan=2><?php echo $GLOBALS['I18N']->get('info_emails_file'); ?></td></tr>
+<table class="import1" border="1">
+<tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('info_emails_file'); ?></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('emails_file'); ?></td><td><input type="file" name="import_file"></td></tr>
-<tr><td><?php echo $GLOBALS['I18N']->get('field_delimiter'); ?></td><td><input type="text" name="import_field_delimiter" size=5> <?php echo $GLOBALS['I18N']->get('tab_default'); ?></td></tr>
-<tr><td><?php echo $GLOBALS['I18N']->get('record_delimiter'); ?></td><td><input type="text" name="import_record_delimiter" size=5> <?php echo $GLOBALS['I18N']->get('line_break_default'); ?></td></tr>
-<tr><td colspan=2><?php echo $GLOBALS['I18N']->get('info_test_output'); ?></td></tr>
+<tr><td><?php echo $GLOBALS['I18N']->get('field_delimiter'); ?></td><td><input type="text" name="import_field_delimiter" size="5"> <?php echo $GLOBALS['I18N']->get('tab_default'); ?></td></tr>
+<tr><td><?php echo $GLOBALS['I18N']->get('record_delimiter'); ?></td><td><input type="text" name="import_record_delimiter" size="5"> <?php echo $GLOBALS['I18N']->get('line_break_default'); ?></td></tr>
+<tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('info_test_output'); ?></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('test_output'); ?></td><td><input type="checkbox" name="import_test" value="yes"></td></tr>
-<tr><td colspan=2><?php echo $GLOBALS['I18N']->get('info_notification_email'); ?></td></tr>
+<tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('info_notification_email'); ?></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('notification_email'); ?><input type="radio" name="notify" value="yes"></td><td><?php echo $GLOBALS['I18N']->get('confirmed_immediately'); ?><input type="radio" name="notify" value="no"></td></tr>
-<tr><td colspan=2><?php echo $GLOBALS['I18N']->get('If you are going to send notification to users, you may want to add a little delay between messages')?></td></tr>
-<tr><td><?php echo $GLOBALS['I18N']->get('Notification throttle')?>:</td><td><input type="text" name="throttle_import" size=5> <?php echo $GLOBALS['I18N']->get('(default is nothing, will send as fast as it can)')?></td></tr>
+<tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('If you are going to send notification to users, you may want to add a little delay between messages')?></td></tr>
+<tr><td><?php echo $GLOBALS['I18N']->get('Notification throttle')?>:</td><td><input type="text" name="throttle_import" size="5"> <?php echo $GLOBALS['I18N']->get('(default is nothing, will send as fast as it can)')?></td></tr>
 <?php
 include_once dirname(__FILE__)."/subscribelib2.php";
 print ListAllAttributes();

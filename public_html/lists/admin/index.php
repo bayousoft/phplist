@@ -395,7 +395,7 @@ if (checkAccess($page,"") || $page == 'about') {
 
     if (!$parses_ok) {
       print Error("cannot parse $include");
-      print '<p>Sorry, an error occurred. This is a bug. Please <a href="http://mantis.tincan.co.uk">report the bug to the Bug Tracker</a><br/>Sorry for the inconvenience</a></p>';
+      print '<p class="">Sorry, an error occurred. This is a bug. Please <a href="http://mantis.tincan.co.uk">report the bug to the Bug Tracker</a><br/>Sorry for the inconvenience</a></p>';
     } else {
       if (!empty($_SESSION['action_result'])) {
         print '<div class="actionresult">'.$_SESSION['action_result'].'</div>';

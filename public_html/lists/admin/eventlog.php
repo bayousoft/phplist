@@ -65,8 +65,8 @@ if ($total > MAX_USER_PP) {
     $limit = "limit 0,50";
     $start = 0;
   }
-  printf ('<table border="1"><tr><td colspan="4" align="center">%s</td></tr><tr><td>%s</td><td>%s</td><td>
-          %s</td><td>%s</td></tr></table><p><hr>',
+  printf ('<table class="eventlogListing" border="1"><tr><td colspan="4" align="center">%s</td></tr><tr><td>%s</td><td>%s</td><td>
+          %s</td><td>%s</td></tr></table><hr>',
           $listing,
           PageLink2("eventlog","&lt;&lt;","start=0".$find_url),
           PageLink2("eventlog","&lt;",sprintf('start=%d',max(0,$start-MAX_USER_PP)).$find_url),
@@ -92,7 +92,7 @@ printf("[ <a href=\"javascript:deleteRec2('%s','%s');\">%s</a> |
    $GLOBALS['I18N']->get('Delete all'));
 
    if (!Sql_Num_Rows($result)) {
-     print '<p>' . $GLOBALS['I18N']->get('No events available') . '</p>';
+     print '<p class="">' . $GLOBALS['I18N']->get('No events available') . '</p>';
    }
 print '<br/><br/>';
 printf('<form method="get">

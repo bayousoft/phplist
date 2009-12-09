@@ -48,7 +48,7 @@ if ($_POST['resend'] && is_array($_POST['list'])) {
 
 require $coderoot . 'structure.php';
 
-# This adds a return link. Should be replace by uniformbreadcrumtrail
+# This adds a return link. Should be replaced by uniformbreadcrumtrail
 if ($returnpage) {
   if ($returnoption) {
     $more = "&option=".$returnoption;
@@ -57,14 +57,14 @@ if ($returnpage) {
   $returnurl = "returnpage=$returnpage&returnoption=$returnoption";
 }
 
-print '<p>'.PageLink2('send&amp;id='.$id,$GLOBALS['I18N']->get('Edit this message')).'</p>';
+print '<p class="button">'.PageLink2('send&amp;id='.$id,$GLOBALS['I18N']->get('Edit this message')).'</p>';
 
 $result = Sql_query("SELECT * FROM {$tables['message']} where id = $id $owner_select_and");
 if (!Sql_Num_Rows($result)) {
   print $GLOBALS['I18N']->get('No such message');
   return;
 }
-echo "<table border=\"1>\"";
+echo '<table class="messageView" border="1">';
 
 while ($msg = Sql_fetch_array($result)) {
   foreach($DBstruct["message"] as $field => $val) {
@@ -113,7 +113,7 @@ while ($lst = Sql_fetch_array($result)) {
 ?>
 </table>
 
-<a name="resend"></a><p><?php echo $GLOBALS['I18N']->get('Send this (same) message to (a) new list(s)'); ?>:</p>
+<a name="resend"></a><p class=""><?php echo $GLOBALS['I18N']->get('Send this (same) message to (a) new list(s)'); ?>:</p>
 <?php echo formStart()?>
 <input type=hidden name="id" value="<?php echo $id?>">
 <ul>

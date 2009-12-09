@@ -45,5 +45,5 @@ print $ls->display();
 
 print '</form>';
 
-print "<p>".PageLink2("template",$GLOBALS['I18N']->get('Add new Template'))."</p>";
+print '<p class="">'.PageLink2("template",$GLOBALS['I18N']->get('Add new Template'))."</p>";
 ?>

@@ -32,7 +32,7 @@ if (isset($_GET['action']) && $_GET['action']) {
    }
 }
 
-print '<p>'.PageLink2('listbounces',$GLOBALS['I18N']->get('view bounces by list')).'</p>';
+print '<p class="">'.PageLink2('listbounces',$GLOBALS['I18N']->get('view bounces by list')).'</p>';
 
 # view bounces
 $count = Sql_Query(sprintf('select count(*) from %s',$tables["bounce"]));
@@ -56,8 +56,8 @@ if ($total > MAX_USER_PP) {
     $listing = $GLOBALS['I18N']->get('listing') . " 1 " . $GLOBALS['I18N']->get('to') ." 50";
     $s = 0;
   }
-  printf ('<table border=1><tr><td colspan=4 align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
-          %s</td><td>%s</td></tr></table><p><hr>',
+  printf ('<table class="bouncesListing" border="1"><tr><td colspan="4" align="center">%s</td></tr><tr><td>%s</td><td>%s</td><td>
+          %s</td><td>%s</td></tr></table><hr>',
           $listing,
           PageLink2("bounces","&lt;&lt;","s=0".$find_url),
           PageLink2("bounces","&lt;",sprintf('s=%d',max(0,$s-MAX_USER_PP)).$find_url),
@@ -83,7 +83,7 @@ printf("[
    PageURL2("bounces",$GLOBALS['I18N']->get('delete'),"s=$s&action=reset"));
 
 if (!Sql_Num_Rows($result))
-  print "<p>" . $GLOBALS['I18N']->get('no unprocessed bounces available') . "</p>";
+  print '<p class="">' . $GLOBALS['I18N']->get('no unprocessed bounces available') . "</p>";
 
 print "<table><tr><td></td><td>" . $GLOBALS['I18N']->get('message') . "</td><td>" . $GLOBALS['I18N']->get('user') . "</td><td>" . $GLOBALS['I18N']->get('date') . "</td></tr>";
 while ($bounce = Sql_fetch_array($result)) {

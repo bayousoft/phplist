@@ -13,14 +13,14 @@ if (isset($_POST['save']) && $_POST['save']) {
   $num = Sql_Affected_Rows();
   if ($num < 0) {
     print $GLOBALS['I18N']->get('Updating the regular expression of this rule caused an Sql conflict<br/>This is probably because there is already a rule like that. Do you want to delete this rule instead?');
-    print '<p>'.PageLink2('bouncerules&del='.$_GET['id'],$GLOBALS['I18N']->get('Yes')).'&nbsp;';
+    print '<p class="">'.PageLink2('bouncerules&del='.$_GET['id'],$GLOBALS['I18N']->get('Yes')).'&nbsp;';
     print PageLink2('bouncerules',$GLOBALS['I18N']->get('No')).'</p>';
     return;
   }
   Redirect('bouncerules'.$hash);
 }
 
-print '<p>'.PageLink2('bouncerules'.$hash,$GLOBALS['I18N']->get('back to list of bounce rules')).'</p>';
+print '<p class="">'.PageLink2('bouncerules'.$hash,$GLOBALS['I18N']->get('back to list of bounce rules')).'</p>';
 $id = sprintf('%d',$_GET['id']);
 $data = Sql_Fetch_Array_Query(sprintf('select * from %s where id = %d',
   $GLOBALS['tables']['bounceregex'],$id));
@@ -51,9 +51,9 @@ print '</table></form>';
 $req = Sql_Query(sprintf('select * from %s where regex = %d',$GLOBALS['tables']['bounceregex_bounce'],$_GET['id']));
 $num = Sql_affected_Rows();
 if ($num) {
-  print '<p>'.$GLOBALS['I18N']->get('related bounces').'</p><p>';
+  print '<p class="">'.$GLOBALS['I18N']->get('related bounces').'</p><p class="">';
 } else {
-  print '<p>'.$GLOBALS['I18N']->get('no related bounces found').'</p>';
+  print '<p class="">'.$GLOBALS['I18N']->get('no related bounces found').'</p>';
 }  
 $c = 0;
 while ($row = Sql_Fetch_Array($req)) {

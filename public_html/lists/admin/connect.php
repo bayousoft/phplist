@@ -367,7 +367,7 @@ function Info($msg) {
     print "\n".strip_tags($GLOBALS["I18N"]->get("information").": ".$msg)."\n";
     @ob_start();
   } else {
-    print '<center><table border=1><tr><td class="error">'.$GLOBALS["I18N"]->get("information").": $msg </td></tr></table></center>";
+    print '<center><table class="connectInfo" border="1"><tr><td class="error">'.$GLOBALS["I18N"]->get("information").": $msg </td></tr></table></center>";
   }
 }
 
@@ -844,7 +844,7 @@ $newpoweredimage = 'iVBORw0KGgoAAAANSUhEUgAAAEYAAAAeCAMAAACmLZgsAAADAFBMVEXYx6fm
 function FileNotFound() {
   ob_end_clean();
   header("404, File Not Found");
-  printf('<html><head><title>404 Not Found</title></head><body><h3>Not Found</h3>The requested document was not found on this server<br/>Please contact the <a href="mailto:%s?subject=File not Found: %s">Administrator</a><p><hr><address><a href="http://tincan.co.uk/phplist" target="_tincan">phplist</a> version %s</address></body></html>',getConfig("admin_address"),$_SERVER["REQUEST_URI"],VERSION);
+  printf('<html><head><title>404 Not Found</title></head><body><h3>Not Found</h3>The requested document was not found on this server<br/>Please contact the <a href="mailto:%s?subject=File not Found: %s">Administrator</a><p class=""><hr><address><a href="http://tincan.co.uk/phplist" target="_tincan">phplist</a> version %s</address></body></html>',getConfig("admin_address"),$_SERVER["REQUEST_URI"],VERSION);
   exit;
 }
 

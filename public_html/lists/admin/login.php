@@ -87,7 +87,7 @@ function deleteOldTokens(){
       echo "<form method=\"post\" action=\"\">\n";
       echo "  <input type=hidden name=\"page\" value=\"$page\">\n";
       echo "  <input type=hidden name=\"name\" value=\"".$row[0]."\">\n";
-      echo "  <table width=100% border=0 cellpadding=2 cellspacing=0>\n";
+      echo "  <table class=\"loginPassUpdate\" width=100% border=0 cellpadding=2 cellspacing=0>\n";
       echo "    <tr><td><span class=\"general\">".$GLOBALS['I18N']->get('name').":</span></td></tr>\n";
       echo "    <tr><td>".$row[0]."</td></tr>";
       echo "    <tr><td><span class=\"general\">".$GLOBALS['I18N']->get('new password').":</span></td></tr>\n";
@@ -105,7 +105,7 @@ function deleteOldTokens(){
   } else {
   echo "<form method=\"post\" action=\"\">\n";
   echo "  <input type=hidden name=\"page\" value=\"$page\">\n";
-  echo "  <table width=100% border=0 cellpadding=2 cellspacing=0>\n";
+  echo "  <table class=\"loginPassUpdate\" width=100% border=0 cellpadding=2 cellspacing=0>\n";
   echo "    <tr><td><span class=\"general\">".$GLOBALS['I18N']->get('name').":</span></td></tr>\n";
   echo "    <tr><td><input type=text name=\"login\" value=\"\" size=30></td></tr>";
   echo "    <tr><td><span class=\"general\">".$GLOBALS['I18N']->get('password').":</span></td></tr>";

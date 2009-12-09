@@ -2,7 +2,7 @@
 ## 
 if (!$GLOBALS["commandline"]) {
   @ob_end_flush();
-  print '<p>'.$GLOBALS['I18N']->get('Hint: this page also works from commandline').'</p>';
+  print '<p class="">'.$GLOBALS['I18N']->get('Hint: this page also works from commandline').'</p>';
 } else {
   @ob_end_clean();
   print ClineSignature();

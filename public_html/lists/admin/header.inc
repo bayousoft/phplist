@@ -5,7 +5,7 @@
 <body bgcolor="#ffffff" background="images/bg.png">
 <a name="top"></a>
 <div align=center>
-<table cellspacing=0 cellpadding=0 width=710 border=0>
+<table class="header" cellspacing=0 cellpadding=0 width=710 border=0>
 <tr>
 <td bgcolor="#000000" rowspan=3><img height=1 alt="" src="images/transparent.png" width=1 border=0></td>
 <td bgcolor="#000000"><img height=1 alt="" src="images/transparent.png" width=708 border=0></td>

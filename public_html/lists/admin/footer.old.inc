@@ -10,7 +10,7 @@
 </table>
 <!--MAIN TABLE ends-->
 <!--BOTTOM TABLE starts here-->
-<table width=626 border=0 cellpadding=0 cellspacing=0>
+<table class="footer" width=626 border=0 cellpadding=0 cellspacing=0>
 <tr>
 <td><img src="images/bot_01.png" width=136 height=20 hspace=0 vspace=0 border=0 alt=""></td>
 <td><img src="images/orangebit.png" width=16 height=20 hspace=0 vspace=0 border=0 align="left" alt=""></td>

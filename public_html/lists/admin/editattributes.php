@@ -55,7 +55,7 @@ switch ($data['type']) {
 
 <br><?php echo PageLink2("editattributes",$GLOBALS['I18N']->get('AddNew'),"id=$id&action=new")?> <?php echo $data["name"]?>
 <br><a href="javascript:deleteRec2('<?php echo $GLOBALS['I18N']->get('SureToDeleteAll');?>','<?php echo PageURL2("editattributes",$GLOBALS['I18N']->get('DelAll'),"id=$id&deleteall=yes")?>');"><?php echo $GLOBALS['I18N']->get('DelAll');?></a>
-<hr><p>
+<hr><p class="">
 <?php echo formStart()?>
 <input type=hidden name="action" value="add">
 <input type=hidden name="id" value="<?php echo $id?>">
@@ -69,7 +69,7 @@ if (isset($_POST["addnew"])) {
   $query = sprintf('SELECT MAX(listorder) AS listorder FROM %s',$table);
   $maxitem = Sql_Fetch_Row_Query($query);
   if (!Sql_Affected_Rows() || !is_numeric($maxitem[0])) {
-  $listorder = 1; # insert the listorder as it's in the textarea / start with 1
+  $listorder = 1; # insert the listorder as it's in the textarea / start with 1 '
   }
   else {
   $listorder = $maxitem[0]+1; # One more than the maximun
@@ -126,7 +126,7 @@ function deleteItem($table,$attributeid,$delete) {
   } else {
     print $GLOBALS["I18N"]->get("cannotdelete");
     print " <b>$val</b><br />";
-    print $GLOBALS["I18N"]->get("dependentrecords").'<p></p>';
+    print $GLOBALS["I18N"]->get("dependentrecords").'<p class=""></p>';
 
     for ($i=0;$i<sizeof($dependencies);$i++) {
       print PageLink2("user",$GLOBALS["I18N"]->get("user")." ".$dependencies[$i],"id=$dependencies[$i]")."<br />\n";
@@ -168,7 +168,7 @@ if (isset($_GET["action"]) && $_GET["action"] == "new") {
   // ??
   ?>
 
-  <p><?php echo $GLOBALS["I18N"]->get("addnew")." ".$data["name"].', '.$GLOBALS["I18N"]->get("oneperline") ?><br />
+  <p class="button"><?php echo $GLOBALS["I18N"]->get("addnew")." ".$data["name"].', '.$GLOBALS["I18N"]->get("oneperline") ?><br />
   <textarea name="itemlist" rows=20 cols=50></textarea><br />
   <input type="Submit" name="addnew" value="<?php echo $GLOBALS["I18N"]->get("addnew")." ".$data["name"] ?>"><br />
 <?php

@@ -59,8 +59,8 @@ if (isset($start) && $start > 0) {
 }
   print $total. " RSS Items</p>";
 if ($total)
-  printf ('<table border=1><tr><td colspan=4 align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
-          %s</td><td>%s</td></tr></table><p><hr>',
+  printf ('<table class="viewrssListing" border="1"><tr><td colspan="4" align="center">%s</td></tr><tr><td>%s</td><td>%s</td><td>
+          %s</td><td>%s</td></tr></table><hr>',
           $listing,
           PageLink2("viewrss$pagingurl","&lt;&lt;","start=0"),
           PageLink2("viewrss$pagingurl","&lt;",sprintf('start=%d',max(0,$start-MAX_MSG_PP))),
@@ -68,7 +68,7 @@ if ($total)
           PageLink2("viewrss$pagingurl","&gt;&gt;",sprintf('start=%d',$total-MAX_MSG_PP)));
 
 ?>
-<table border=1>
+<table class="" border=1>
 
 <?php
 
@@ -86,7 +86,7 @@ if ($total) {
       </td>',
       $rss["title"],$rss["link"],$rss["link"],ereg_replace("&","& ",$rss["source"]),$rss["added"]);
 
-    $status = sprintf('<table border=1>
+    $status = sprintf('<table class="" border=1>
       <tr><td>Processed</td><td>%d</td></tr>
       <tr><td>Text</td><td>%d</td></tr>
       <tr><td>HTML</td><td>%d</td></tr>

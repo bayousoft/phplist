@@ -67,7 +67,7 @@ if ($external) {
   $total = $totalres[0];
 }
 
-print "<p>$total ".$GLOBALS['I18N']->get('Administrators');
+print '<p class="">$total '.$GLOBALS['I18N']->get('Administrators');
 print $find ? ' '.$GLOBALS['I18N']->get('found').'</p>': '</p>';
 if ($total > MAX_USER_PP) {
   if (isset($start) && $start) {
@@ -78,8 +78,8 @@ if ($total > MAX_USER_PP) {
     $limit = "limit 0,50";
     $start = 0;
   }
-  printf ('<table border=1><tr><td colspan=4 align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
-          %s</td><td>%s</td></tr></table><p><hr>',
+  printf ('<table class="adminsListing" border=1><tr><td colspan=4 align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
+          %s</td><td>%s</td></tr></table><hr>',
           $listing,
           PageLink2("admins","&lt;&lt;","start=0"),
           PageLink2("admins","&lt;",sprintf('start=%d',max(0,$start-MAX_USER_PP))),
@@ -114,6 +114,6 @@ while ($admin = Sql_fetch_array($result)) {
 print $ls->display();
 print '<br/><hr/>';
 print PageLink2("admin",$GLOBALS['I18N']->get('Add new admin'),"start=$start".$remember_find);
-print '<p>'.PageLink2("importadmin",$GLOBALS['I18N']->get('Import list of admins')).'</p>';
+print '<p class="">'.PageLink2("importadmin",$GLOBALS['I18N']->get('Import list of admins')).'</p>';
 
 ?>

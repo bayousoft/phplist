@@ -60,6 +60,6 @@ while ($p = Sql_Fetch_Array($req)) {
   }
 }
 print $ls->display();
-print '<p>'.PageLink2("spageedit",$GLOBALS['I18N']->get('add_new')).'</p>';
+print '<p class="button">'.PageLink2("spageedit",$GLOBALS['I18N']->get('add_new')).'</p>';
 ?>
 </form>

@@ -13,10 +13,10 @@ print $spb.PageLink2("processbounces",$GLOBALS['I18N']->get('Process Bounces')).
 
 $numrules = Sql_Fetch_Row_Query(sprintf('select count(*) from %s',$GLOBALS['tables']['bounceregex']));
 if (!$numrules[0]) {
-  print '<p>'.$GLOBALS['I18N']->get('norulesyet').'</p>';
+  print '<p class="">'.$GLOBALS['I18N']->get('norulesyet').'</p>';
 } else {
-  print '<p>'.$GLOBALS['I18N']->get('rulesexistwarning').'</p>';
+  print '<p class="">'.$GLOBALS['I18N']->get('rulesexistwarning').'</p>';
 }
-print '<p>'.PageLink2("generatebouncerules",$GLOBALS['I18N']->get('Generate Bounce Rules')).'</p>';
+print '<p class="">'.PageLink2("generatebouncerules",$GLOBALS['I18N']->get('Generate Bounce Rules')).'</p>';
 
 ?>

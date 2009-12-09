@@ -29,8 +29,8 @@ if ($total > 500 && $_GET['type'] != 'dl') {
   $listing = sprintf($GLOBALS['I18N']->get("Listing %s to %s"),$s,$s+$numpp);
   $limit = "limit $s,".$numpp;
   print $total. " ".$GLOBALS['I18N']->get(" Total")."</p>";
-  printf ('<table border=1><tr><td colspan=4 align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
-          %s</td><td>%s</td></tr></table><p><hr>',
+  printf ('<table class="bouncesListing" border="1"><tr><td colspan=4 align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
+          %s</td><td>%s</td></tr></table><hr>',
           $listing,
           PageLink2('msgbounces&id='.$msgid,"&lt;&lt;","s=0"),
           PageLink2('msgbounces&id='.$msgid,"&lt;",sprintf('s=%d',max(0,$s-$numpp))),
@@ -39,7 +39,7 @@ if ($total > 500 && $_GET['type'] != 'dl') {
   $req = Sql_Query(sprintf('select message.id as messageid,message.subject,umb.user as userid,count(bounce) as numbounces from %s message, %s umb where message.id = umb.message and message.id = %d and date_add(message.entered,interval 3 month) > current_timestamp group by umb.user order by message.entered desc %s',$GLOBALS['tables']['message'],$GLOBALS['tables']['user_message_bounce'],$msgid,$limit));
 }
 
-print '<p>'.PageLink2('msgbounces','Select another message');
+print '<p class="">'.PageLink2('msgbounces','Select another message');
 print '&nbsp;'.PageLink2('msgbounces&type=dl&&amp;id='.$msgid,'Download emails');
 print '</p>';
 if ($_GET['type'] == 'dl') {

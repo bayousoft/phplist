@@ -96,7 +96,7 @@ ob_end_flush();
 
 <?php echo formStart()?>
 <input type=hidden name=id value="<?php echo $id ?>">
-<table border=0>
+<table class="editlist" border=0>
 <tr><td><?php echo $GLOBALS['I18N']->get('List name'); ?>:</td><td><input type=text name="listname" value="<?php echo  htmlspecialchars(StripSlashes($list["name"]))?>"></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('Public list (listed on the frontend)'); ?></td><td><input type="checkbox" name="active" value="1" <?php echo $list["active"] ? 'checked' : ""; ?>></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('Order for listing'); ?></td><td><input type=text name="listorder" value="<?php echo $list["listorder"] ?>" size="5"></td></tr>

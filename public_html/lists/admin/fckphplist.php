@@ -186,13 +186,13 @@ function ok()
     </SCRIPT>
   </HEAD>
   <BODY bottommargin="5" leftmargin="5" topmargin="5" rightmargin="5">
-<TABLE cellspacing="1" cellpadding="1" border="0" width="100%" class="dlg" height="100%">
+<TABLE class="fck1" cellspacing="1" cellpadding="1" border="0" width="100%" class="dlg" height="100%">
   <TR height="100%">
     <TD>
-      <TABLE cellspacing="0" cellpadding="0" width="100%" border="0" height="100%">
+      <TABLE class="fck2" cellspacing="0" cellpadding="0" width="100%" border="0" height="100%">
         <TR>
           <TD width="45%" valign="top">
-            <table cellpadding="0" cellspacing="0" height="100%" width="100%">
+            <table class="fck3" cellpadding="0" cellspacing="0" height="100%" width="100%">
               <tr>
                 <td width="100%">File : </td>
               </tr>
@@ -205,7 +205,7 @@ function ok()
           </TD>
           <TD width="10%" >&nbsp;&nbsp;&nbsp;</TD>
           <TD>
-            <table cellpadding="0" cellspacing="0" height="100%" width="100%">
+            <table class="fck3" cellpadding="0" cellspacing="0" height="100%" width="100%">
               <tr>
                 <td width="100%">Preview : </td>
               </tr>

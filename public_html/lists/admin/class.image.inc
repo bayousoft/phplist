@@ -17,7 +17,7 @@ class imageUpload {
   function showInput($name,$value,$template_id = 0) {
     # find image in database
     global $config,$tables;
-    $html = '<table border=0>';
+    $html = '<table class="classimage" border="0">';
     if ($name && $template_id) {
       $req = Sql_Query(sprintf('select * from %s where template = %d
       and filename = "%s"',$tables["templateimage"],$template_id,$name));

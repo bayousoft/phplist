@@ -55,7 +55,7 @@ if (!isset($_GET["type"]) && !empty($_SESSION["lastmessagetype"])) {
   $_SESSION["lastmessagetype"] = $_GET["type"];
 }
 
-#print '<p>'.PageLink2("messages&type=sent","Sent Messages").'&nbsp;&nbsp;&nbsp;';
+#print '<p class="">'.PageLink2("messages&type=sent","Sent Messages").'&nbsp;&nbsp;&nbsp;';
 #print PageLink2("messages&type=draft","Draft Messages").'&nbsp;&nbsp;&nbsp;';
 #print PageLink2("messages&type=queue","Queued Messages").'&nbsp;&nbsp;&nbsp;';
 #print PageLink2("messages&type=stat","Static Messages").'&nbsp;&nbsp;&nbsp;';
@@ -123,7 +123,7 @@ if (isset($_GET['resend'])) {
     print "... ".$GLOBALS['I18N']->get("Done");
   else
     print "... ".$GLOBALS['I18N']->get("failed");
-  print"<br /><hr /><br /><p>\n";
+  print '<br /><hr /><br /><p class="">\n';
 }
 
 if (isset($_GET['suspend'])) {
@@ -135,7 +135,7 @@ if (isset($_GET['suspend'])) {
     print "... ".$GLOBALS['I18N']->get("Done");
   else
     print "... ".$GLOBALS['I18N']->get("failed");
-  print"<br /><hr /><br /><p>\n";
+  print'<br /><hr /><br /><p class="">\n';
 }
 #0012081: Add new 'Mark as sent' button
 if (isset($_GET['markSent'])) {
@@ -147,7 +147,7 @@ if (isset($_GET['markSent'])) {
     print "... ".$GLOBALS['I18N']->get("Done");
   else
     print "... ".$GLOBALS['I18N']->get("Failed");
-  print"<br /><hr /><br /><p>\n";
+  print '<br /><hr /><br /><p class="">\n';
 }
 
 $cond = array();
@@ -205,20 +205,20 @@ if (isset($start) && $start > 0) {
 }
   print $total. " ".$GLOBALS['I18N']->get("Messages")."</p>";
 if ($total)
-  printf ('<table border=1><tr><td colspan=4 align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
-          %s</td><td>%s</td></tr></table><p><hr>',
+  printf ('<table class="messagesListing" border="1"><tr><td colspan="4" align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
+          %s</td><td>%s</td></tr></table><hr>',
           $listing,
           PageLink2("messages$url_keep","&lt;&lt;","start=0"),
           PageLink2("messages$url_keep","&lt;",sprintf('start=%d',max(0,$start-MAX_MSG_PP))),
           PageLink2("messages$url_keep","&gt;",sprintf('start=%d',min($total,$start+MAX_MSG_PP))),
           PageLink2("messages$url_keep","&gt;&gt;",sprintf('start=%d',$total-MAX_MSG_PP)));
 if ($_GET["type"] == "draft") {
-  print '<p>'.PageLink2("messages&delete=draft",$GLOBALS['I18N']->get("Delete all draft messages without subject")).'</p>';
+  print '<p class="button">'.PageLink2("messages&delete=draft",$GLOBALS['I18N']->get("Delete all draft messages without subject")).'</p>';
 }
 
 ?>
 
-<table border=1>
+<table class="messagesListing" border="1">
 <tr>
 <?php
 
@@ -234,7 +234,7 @@ if ($total) {
 
     $uniqueviews = Sql_Fetch_Row_Query("select count(userid) from {$tables["usermessage"]} where viewed is not null and messageid = ".$msg["id"]);
 
-    ## need a better way to do this, it's way to slow
+    ## need a better way to do this, it's way too slow '
     #$clicks = Sql_Fetch_Row_Query("select sum(clicked) from {$tables["linktrack"]} where messageid = ".$msg["id"]);
     $clicks = array(0);
 
@@ -281,7 +281,7 @@ if ($total) {
       }
 
       $sendstats =
-        sprintf('<br /><table border=1>
+        sprintf('<br /><table class="messageStats" border="1">
         <tr>
           <td>'.$GLOBALS['I18N']->get("total").'</td>
           <td>'.$GLOBALS['I18N']->get("text").'</td>

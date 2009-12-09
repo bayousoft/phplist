@@ -76,7 +76,7 @@ if (!$id) {
     $GLOBALS['tables']['usermessage'],$GLOBALS['tables']['message'],$subselect,$timerange,$limit));
 
   if (!Sql_Affected_Rows()) {
-    print '<p>'.$GLOBALS['I18N']->get('There are currently no messages to view').'</p>';
+    print '<p class="">'.$GLOBALS['I18N']->get('There are currently no messages to view').'</p>';
   }
 
   $ls = new WebblerListing($GLOBALS['I18N']->get('Last few Messages'));
@@ -150,8 +150,8 @@ if ($id) {
 }
 print $total. " ".$GLOBALS['I18N']->get("Entries")."</p>";
 if ($total) {
-  printf ('<table border=1><tr><td colspan=4 align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
-          %s</td><td>%s</td></tr></table><p><hr>',
+  printf ('<table class="statsListing" border="1"><tr><td colspan="4" align="center">%s</td></tr><tr><td>%s</td><td>%s</td><td>
+          %s</td><td>%s</td></tr></table><hr>',
           $listing,
           PageLink2("mviews$url_keep","&lt;&lt;","start=0"),
           PageLink2("mviews$url_keep","&lt;",sprintf('start=%d',max(0,$start-MAX_USER_PP))),

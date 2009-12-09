@@ -4,7 +4,7 @@ require_once dirname(__FILE__).'/accesscheck.php';
 /*
 if ($_GET["firstinstall"] || $_SESSION["firstinstall"]) {
   $_SESSION["firstinstall"] = 1;
-  print "<p>" . $GLOBALS['I18N']->get('checklist for installation') . "</p>";
+  print "<p class="">" . $GLOBALS['I18N']->get('checklist for installation') . "</p>";
   require "setup.php";
 }
 */
@@ -45,14 +45,14 @@ if (!$id) {
         $value = $dbval;
       else
         $value = $val[0];
-      printf('<p><a href="%s">%s</a> <b>%s</b><br/>',PageURL2("configure","","id=$key"),$GLOBALS['I18N']->get('edit'),$GLOBALS['I18N']->get($val[1]));
+      printf('<p class="configEdit"><a href="%s">%s</a> <b>%s</b><br/>',PageURL2("configure","","id=$key"),$GLOBALS['I18N']->get('edit'),$GLOBALS['I18N']->get($val[1]));
       print nl2br(htmlspecialchars(stripslashes($value))) . "<br/><hr/>";
     }
   }
 } else {
   $val = $default_config[$id];
-  printf('%s<p>' . $GLOBALS['I18N']->get('editing') . ' <b>%s</b><br/>',formStart(),$GLOBALS['I18N']->get($val[1]));
-  printf ('<input type=hidden name="id" value="%s">',$id);
+  printf('%s<p class="configEditing">' . $GLOBALS['I18N']->get('editing') . ' <b>%s</b></p>',formStart(),$GLOBALS['I18N']->get($val[1]));
+  printf('<input type=hidden name="id" value="%s">',$id);
   $dbval = getConfig($id);
 #  print $dbval.'<br/>';
   if (isset($dbval))

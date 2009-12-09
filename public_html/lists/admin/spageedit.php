@@ -266,13 +266,13 @@ print '<tr><td colspan=2><h3>'.$GLOBALS['I18N']->get('Select the attributes to u
       $bgcol = '#ffffff';
     }
   ?>
-  <table border=1 width=100% bgcolor="<?php echo $bgcol?>">
-  <tr><td colspan=2 width=150><?php echo $GLOBALS['I18N']->get('Attribute')?>:<?php echo $row["id"] ?></td>
-  <td colspan=2><?php echo $GLOBALS['I18N']->get('Check this box to use this attribute in the page')?> <input type="checkbox" name="attr_use[<?php echo $row["id"] ?>]" value="1" <?php echo $checked[$row["id"]]?>></td></tr>
-  <tr><td colspan=2><?php echo $GLOBALS['I18N']->get('Name')?>: </td><td colspan=2><h4><?php echo htmlspecialchars(stripslashes($row["name"])) ?></h4></td></tr>
-  <tr><td colspan=2><?php echo $GLOBALS['I18N']->get('Type')?>: </td><td colspan=2><h4><?php echo $GLOBALS['I18N']->get($row["type"])?></h4></td></tr>
-  <tr><td colspan=2><?php echo $GLOBALS['I18N']->get('Default Value')?>: </td><td colspan=2><input type=text name="attr_default[<?php echo $row["id"]?>]" value="<?php echo htmlspecialchars(stripslashes($value["default_value"])) ?>" size=40></td></tr>
-  <tr><td><?php echo $GLOBALS['I18N']->get('Order of Listing')?>: </td><td><input type=text name="attr_listorder[<?php echo $row["id"]?>]" value="<?php echo $value["listorder"] ?>" size=5></td>
+  <table class="spageeditListing" border="1" width="100%" bgcolor="<?php echo $bgcol?>">
+  <tr><td colspan="2" width="150"><?php echo $GLOBALS['I18N']->get('Attribute')?>:<?php echo $row["id"] ?></td>
+  <td colspan="2"><?php echo $GLOBALS['I18N']->get('Check this box to use this attribute in the page')?> <input type="checkbox" name="attr_use[<?php echo $row["id"] ?>]" value="1" <?php echo $checked[$row["id"]]?>></td></tr>
+  <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('Name')?>: </td><td colspan=2><h4><?php echo htmlspecialchars(stripslashes($row["name"])) ?></h4></td></tr>
+  <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('Type')?>: </td><td colspan=2><h4><?php echo $GLOBALS['I18N']->get($row["type"])?></h4></td></tr>
+  <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('Default Value')?>: </td><td colspan=2><input type=text name="attr_default[<?php echo $row["id"]?>]" value="<?php echo htmlspecialchars(stripslashes($value["default_value"])) ?>" size=40></td></tr>
+  <tr><td><?php echo $GLOBALS['I18N']->get('Order of Listing')?>: </td><td><input type=text name="attr_listorder[<?php echo $row["id"]?>]" value="<?php echo $value["listorder"] ?>" size="5"></td>
   <td><?php echo $GLOBALS['I18N']->get('Is this attribute required?')?>: </td><td><input type=checkbox name="attr_required[<?php echo $row["id"]?>]" value="1" <?php echo $value["required"] ? "checked": "" ?>></td></tr>
   </table><hr>
 <?php

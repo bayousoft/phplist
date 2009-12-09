@@ -400,7 +400,7 @@ $totalunconfirmed = $totalres[0];
 $totalres = Sql_fetch_Row($count);
 $total = $totalres[0];
 
-print "<p><b>".$total." ".$GLOBALS['I18N']->get('Users')."</b>";
+print '<p class=""><b>'.$total." ".$GLOBALS['I18N']->get('Users')."</b>";
 print $find ? " ".$GLOBALS['I18N']->get("found"): " ".$GLOBALS['I18N']->get("in the database");
 print "</p>";
 
@@ -428,22 +428,22 @@ function snippetListsSelector ($optionAll = false) {
 
 ?>
 
-<p><?php echo PageLink2("reconcileusers&option=nolists",$GLOBALS['I18N']->get("Delete all users who are not subscribed to any list"))?>
-<p><?php echo PageLink2("reconcileusers&option=invalidemail",$GLOBALS['I18N']->get("Find users who have an invalid email"))?>
-<p><?php echo PageLink2("reconcileusers&option=adduniqid",$GLOBALS['I18N']->get("Make sure that all users have a UniqID"))?>
-<p><?php echo PageLink2("reconcileusers&option=markinvalidunconfirmed",$GLOBALS['I18N']->get("Mark all users with an invalid email as unconfirmed"))?>
-<p><?php echo PageLink2("reconcileusers&option=deleteinvalidemail",$GLOBALS['I18N']->get("Delete users who have an invalid email"))?>
-<p><?php echo PageLink2("reconcileusers&option=markallhtml",$GLOBALS['I18N']->get("Mark all users to receive HTML"))?>
-<p><?php echo PageLink2("reconcileusers&option=markalltext",$GLOBALS['I18N']->get("Mark all users to receive text"))?>
-<p><?php echo $GLOBALS['I18N']->get('To try to (automatically)')?> <?php echo PageLink2("reconcileusers&option=fixinvalidemail",$GLOBALS['I18N']->get("Fix emails for users who have an invalid email"))?>
-<p><?php echo PageLink2("reconcileusers&option=removestaleentries",$GLOBALS['I18N']->get("Remove Stale entries from the database"))?>
-<p><?php echo PageLink2("reconcileusers&option=mergeduplicates",$GLOBALS['I18N']->get("Merge Duplicate Users"))?>
+<p class=""><?php echo PageLink2("reconcileusers&option=nolists",$GLOBALS['I18N']->get("Delete all users who are not subscribed to any list"))?>
+<p class=""><?php echo PageLink2("reconcileusers&option=invalidemail",$GLOBALS['I18N']->get("Find users who have an invalid email"))?>
+<p class=""><?php echo PageLink2("reconcileusers&option=adduniqid",$GLOBALS['I18N']->get("Make sure that all users have a UniqID"))?>
+<p class=""><?php echo PageLink2("reconcileusers&option=markinvalidunconfirmed",$GLOBALS['I18N']->get("Mark all users with an invalid email as unconfirmed"))?>
+<p class=""><?php echo PageLink2("reconcileusers&option=deleteinvalidemail",$GLOBALS['I18N']->get("Delete users who have an invalid email"))?>
+<p class=""><?php echo PageLink2("reconcileusers&option=markallhtml",$GLOBALS['I18N']->get("Mark all users to receive HTML"))?>
+<p class=""><?php echo PageLink2("reconcileusers&option=markalltext",$GLOBALS['I18N']->get("Mark all users to receive text"))?>
+<p class=""><?php echo $GLOBALS['I18N']->get('To try to (automatically)')?> <?php echo PageLink2("reconcileusers&option=fixinvalidemail",$GLOBALS['I18N']->get("Fix emails for users who have an invalid email"))?>
+<p class=""><?php echo PageLink2("reconcileusers&option=removestaleentries",$GLOBALS['I18N']->get("Remove Stale entries from the database"))?>
+<p class=""><?php echo PageLink2("reconcileusers&option=mergeduplicates",$GLOBALS['I18N']->get("Merge Duplicate Users"))?>
 
 <hr>
 <form method=get>
 <input type=hidden name="page" value="reconcileusers">
 <input type=hidden name="option" value="markallconfirmed">
-<p>
+<p class="">
 <?php 
   echo sprintf( $GLOBALS['I18N']->get("Mark all users on list %s confirmed"), snippetListsSelector(true) );
 ?>
@@ -454,7 +454,7 @@ function snippetListsSelector ($optionAll = false) {
 <form method=get>
 <input type=hidden name="page" value="reconcileusers">
 <input type=hidden name="option" value="nolistsnewlist">
-<p>
+<p class="">
 <?php 
   echo sprintf( $GLOBALS['I18N']->get('To move all users who are not subscribed to any list to %s'), snippetListsSelector() );
 ?>
@@ -465,7 +465,7 @@ function snippetListsSelector ($optionAll = false) {
 <form method=get>
 <input type=hidden name="page" value="reconcileusers">
 <input type=hidden name="option" value="bounces">
-<p><?php echo $GLOBALS['I18N']->get('To delete all users with more than')?>
+<p class=""><?php echo $GLOBALS['I18N']->get('To delete all users with more than')?>
 <select name="num">
 <option>5</option>
 <option>10</option>
@@ -473,7 +473,7 @@ function snippetListsSelector ($optionAll = false) {
 <option>20</option>
 <option>50</option>
 </select> <?php echo $GLOBALS['I18N']->get('bounces')?> <input type=submit value="<?php echo $GLOBALS['I18N']->get('Click here')?>"></form>
-<p><?php echo $GLOBALS['I18N']->get('Note: this will use the total count of bounces on a user, not consecutive bounces')?></p>
+<p class=""><?php echo $GLOBALS['I18N']->get('Note: this will use the total count of bounces on a user, not consecutive bounces')?></p>
 
 <form method=get>
 <table><tr><td colspan=2>

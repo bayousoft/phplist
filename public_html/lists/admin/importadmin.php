@@ -6,7 +6,7 @@ print '<script language="Javascript" src="js/progressbar.js" type="text/javascri
 ignore_user_abort();
 set_time_limit(500);
 ?>
-<p>
+<p class="">
 
 <?php
 ob_end_flush();
@@ -73,7 +73,7 @@ if(isset($import)) {
     } else {
       $req = Sql_Query("select id from ".$tables["adminattribute"]." where name = \"$attribute\"");
       if (!Sql_Affected_Rows()) {
-        # it's a new one # oops, bad coding cut-n-paste
+        # it's a new one # oops, bad coding cut-n-paste '
         $lc_name = substr(str_replace(" ","", strtolower($attribute)),0,10);
         if ($lc_name == "") Fatal_Error($GLOBALS['I18N']->get("Name cannot be empty").": ".$lc_name);
         Sql_Query("select * from ".$tables["adminattribute"]." where tablename = \"$lc_name\"");
@@ -198,7 +198,7 @@ if(isset($import)) {
               case "radio":
                 $query = "select id from ${table_prefix}adminattr_$att[1] where name = ?";
                 $val = Sql_Query_Params($query, array($value));
-                # if we don't have this value add it
+                # if we don't have this value add it '
                 if (!Sql_Num_Rows($val)) {
                   $tn = $table_prefix . 'adminattr_' . $att[1];
                   Sql_Query_Params("insert into $tn (name) values (?)", array($value));
@@ -244,7 +244,7 @@ if(isset($import)) {
     }; // end while
 
     print '<script language="Javascript" type="text/javascript"> finish(); </script>';
-    # let's be grammatically correct :-)
+    # let's be grammatically correct :-) '
     $dispemail = ($count_email_add == 1) ? $GLOBALS['I18N']->get('new email was')." ": $GLOBALS['I18N']->get('new emails were')." ";
     $dispemail2 = ($additional_emails == 1) ? $GLOBALS['I18N']->get('email was')." ":$GLOBALS['I18N']->get('emails were')." ";
 
@@ -254,7 +254,7 @@ if(isset($import)) {
       print "$count_email_add $dispemail ".$GLOBALS['I18N']->get("succesfully imported to the database and added to the system.")."<br>";
     }
   }; // end else
-  print '<p>'.PageLink2("adminimport",$GLOBALS['I18N']->get("Import some more emails"));
+  print '<p class="">'.PageLink2("adminimport",$GLOBALS['I18N']->get("Import some more emails"));
 
 
 } else {
@@ -277,14 +277,14 @@ if (!Sql_Affected_Rows())
 ?>
 </ul>
 
-<table border="1">
-<tr><td colspan=2><?php echo $GLOBALS['I18N']->get('importadmininfo')?></td></tr>
+<table class="importadmin" border="1">
+<tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('importadmininfo')?></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('File containing emails')?>:</td><td><input type="file" name="import_file"></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('Field Delimiter')?>:</td><td><input type="text" name="import_field_delimiter" size=5> (<?php echo $GLOBALS['I18N']->get('default is TAB')?>)</td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('Record Delimiter')?>:</td><td><input type="text" name="import_record_delimiter" size=5> (<?php echo $GLOBALS['I18N']->get('default is line break')?>)</td></tr>
-<tr><td colspan=2><?php echo $GLOBALS['I18N']->get('importadmintestinfo')?></td></tr>
+<tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('importadmintestinfo')?></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('Test output')?>:</td><td><input type="checkbox" name="import_test" value="yes"></td></tr>
-<tr><td colspan=2><?php echo $GLOBALS['I18N']->get('Check this box to create a list for each administrator, named after their loginname')?> <input type=checkbox name="createlist" value="yes" checked></td></tr>
+<tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('Check this box to create a list for each administrator, named after their loginname')?> <input type=checkbox name="createlist" value="yes" checked></td></tr>
 <tr><td><input type="submit" name="import" value="<?php echo $GLOBALS['I18N']->get('Do Import')?>"></td><td>&nbsp;</td></tr>
 </table>
 <?php } ?>

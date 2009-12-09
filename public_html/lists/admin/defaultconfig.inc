@@ -13,7 +13,7 @@ $defaultheader = '
 <body bgcolor="#ffffff">
 <a name="top"></a>
 <div align=center>
-<table cellspacing=0 cellpadding=0 width=710 border=0>
+<table class="defaultheader" cellspacing=0 cellpadding=0 width=710 border=0>
 
 <tr>
 <td bgcolor="#000000" rowspan=3><img height=1 alt="" src="images/transparent.png" width=1 border=0></td>
@@ -24,7 +24,7 @@ $defaultheader = '
 <tr valign="top">
 <td>
 <!--TOP TABLE starts-->
-<table cellspacing=0 cellpadding=0 width=708 border="0" bgcolor="#ffffff">
+<table class="defaultconfigTopTable" cellspacing=0 cellpadding=0 width=708 border="0" bgcolor="#ffffff">
 
 <tr valign="top">
 <td height="41" background="images/top01.png" colspan="2">
@@ -574,7 +574,7 @@ div.emailfooter a { font-size: 11px; color: #ff6600; font-style: normal; font-fa
   $default_config["rsshtmltemplate"] = array (
     '<br/>
       <a href="[link]"><b>[title]</b></a><br/>
-      <p>[description]</p>
+      <p class="">[description]</p>
       <hr/>
       ',
     "Template for HTML item in RSS feeds",

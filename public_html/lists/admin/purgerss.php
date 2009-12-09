@@ -8,7 +8,7 @@ if (isset($_POST['daysago'])) {
 }
 
 if (!$_SESSION['logindetails']['superuser']) {
-  print '<p>'.$GLOBALS['I18N']->get('Sorry, only super users can purge RSS items from the database').'</p>';
+  print '<p class="">'.$GLOBALS['I18N']->get('Sorry, only super users can purge RSS items from the database').'</p>';
   return;
 }
 
@@ -21,12 +21,12 @@ if ($daysago) {
     Sql_Query(sprintf('delete from %s where id = %d',$GLOBALS['tables']['rssitem'],$row[0]));
     $count++;
   }
-  printf ('<p>'.$GLOBALS['I18N']->get('%d RSS items purged').'</p>',$count);
+  printf ('<p class="">'.$GLOBALS['I18N']->get('%d RSS items purged').'</p>',$count);
 }
 
-print '<p>'.$GLOBALS['I18N']->get('Purge RSS items from database').'</p>';
-print '<p>'.$GLOBALS['I18N']->get('Enter the number of days to go back purging entries').'</p>';
-print '<p>'.$GLOBALS['I18N']->get('All entries that are older than the number of days you enter will be purged.').'</p>';
+print '<p class="">'.$GLOBALS['I18N']->get('Purge RSS items from database').'</p>';
+print '<p class="">'.$GLOBALS['I18N']->get('Enter the number of days to go back purging entries').'</p>';
+print '<p class="">'.$GLOBALS['I18N']->get('All entries that are older than the number of days you enter will be purged.').'</p>';
 print '<form method="post" action=""><input type=text name="daysago" value="30" size=7>
 </form>';
 ?>

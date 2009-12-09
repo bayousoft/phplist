@@ -18,7 +18,7 @@ if (isset($_GET['s'])) {
 $limit = ' limit '.$s.', '.$numperrun;
 
 if ($total > $numperrun && $e < $total) {
-  $next = '<p>'.PageLink2('checkbouncerules&s='.$e,sprintf($GLOBALS['I18N']->get('Process Next %d'),$numperrun)).'</p>';
+  $next = '<p class="">'.PageLink2('checkbouncerules&s='.$e,sprintf($GLOBALS['I18N']->get('Process Next %d'),$numperrun)).'</p>';
 } else {
   $next = '';
 }

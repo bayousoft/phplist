@@ -1,5 +1,5 @@
 <div align=center>
-  <table width="75%" border=1 cellspacing=5 cellpadding=5>
+  <table class="about" width="75%" border=1 cellspacing=5 cellpadding=5>
   <tr>
     <td colspan="2" class="abouthead"><?php echo NAME?></td>
   </tr>
@@ -33,7 +33,7 @@
       <li><a href="http://www.babels.org" target="_blank">Babels</a></li>
       <?php echo $GLOBALS['I18N']->get('credits for this translation') ?>
     </ul>
-    <p>
+    <p class="">
         <?php echo $GLOBALS['I18N']->get('thankseveryone')?>
     </p>
     <b><?php echo $GLOBALS['I18N']->get('Portions of the system include')?></b>

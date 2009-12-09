@@ -40,7 +40,7 @@ if (empty($_GET['id'])) {
 }
 $baseurl = PageURL2($_GET["page"].'&id='.$_GET["id"]);
 
-echo '<script language="Javascript" src="js/jslib.js" type="text/javascript"></script><hr><p>';
+echo '<script language="Javascript" src="js/jslib.js" type="text/javascript"></script><hr><p class="">';
 
 // load some variables in a register globals-safe fashion
 if (isset($_POST['send'])) {
@@ -537,7 +537,7 @@ if ($send || $sendtest || $prepare || $save) {
     # store this one
 #    print $att_names[$_POST["criteria_attribute"]];
 #    print $_POST["attribute_names[".$_POST["criteria_attribute"]."]"];
-    print "<p>".$GLOBALS['I18N']->get("adding")." ".$newcriterion["attribute_name"]." ".$newcriterion["operator"]." ".$newcriterion["values"]."</p>";
+    print '<p class="">'.$GLOBALS['I18N']->get("adding")." ".$newcriterion["attribute_name"]." ".$newcriterion["operator"]." ".$newcriterion["values"]."</p>";
     Sql_Query(sprintf('insert into %s (name,id,data) values("criterion%d",%d,"%s")',
       $tables["messagedata"],$num,$messageid,delimited($newcriterion)));
     # increase number
@@ -639,7 +639,7 @@ if ($send || $sendtest || $prepare || $save) {
   if ($send && $subject && $from && $message && !$duplicate_atribute && sizeof($_POST["targetlist"])) {
     if ($status == "submitted") {
       print "<h3>".$GLOBALS['I18N']->get("queued")."</h3>";
-      print '<p>'.PageLink2("processqueue",$GLOBALS['I18N']->get("processqueue")).'</p>';
+      print '<p class="">'.PageLink2("processqueue",$GLOBALS['I18N']->get("processqueue")).'</p>';
     }
     $done = 1;
     return;
@@ -911,7 +911,7 @@ if (sizeof($subqueries)) {
   if (!empty($_GET["calculate"])) {
     ob_end_flush();
    # print "<h3>$count_query</h3>";
-    print "<p>".$GLOBALS['I18N']->get("calculating")." ...";
+    print '<p class="">'.$GLOBALS['I18N']->get("calculating")." ...";
     flush();
   }
   foreach ($subqueries as $qid => $querydetails) {
@@ -1015,7 +1015,7 @@ if (!$done) {
   }
 
   ?>
-  <p></p>
+  <p class=""></p>
   <script language="Javascript">
   // some debugging stuff to see what happens
   function checkForm() {
@@ -1337,7 +1337,7 @@ if (!$done) {
       $att_content .= '<tr><td colspan=2>'.$ls->display().'</td></tr>';
 
   #    if ($tabletext) {
-  #      print "<tr><td colspan=2><table border=1><tr><td>Filename</td><td>Description</td><td>Size</td><td>&nbsp;</td></tr>\n";
+  #      print "<tr><td colspan=2><table class="" border=1><tr><td>Filename</td><td>Description</td><td>Size</td><td>&nbsp;</td></tr>\n";
   #      print "$tabletext";
   #      print "<tr><td colspan=4 align=\"center\"><input type=submit name=deleteatt value=\"Delete Checked\"></td></tr>";
   #      print "</table></td></tr>\n";
@@ -1428,7 +1428,7 @@ if (!$done) {
   }
 
   if (!$any) {
-    $criteria_content = "<p>".$GLOBALS['I18N']->get('nocriteria')."</p>";
+    $criteria_content = '<p class="">'.$GLOBALS['I18N']->get('nocriteria')."</p>";
   } else {
   #  $shader = new WebblerShader("Message Criteria");
   #  $shader->addContent($criteria_content.'</table>');

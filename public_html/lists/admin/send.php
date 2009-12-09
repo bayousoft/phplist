@@ -87,7 +87,7 @@ if (!empty($_GET['delete'])) {
 $req = Sql_Query(sprintf('select id,entered,subject,unix_timestamp(now()) - unix_timestamp(entered) as age from %s where status = "draft" %s',$GLOBALS['tables']['message'],$ownership));
 $numdraft = Sql_Num_Rows($req);
 if ($numdraft > 0 && !isset($_GET['id']) && !isset($_GET['new'])) {
-  print '<p>'.PageLink2('send&new=1',$I18N->get('start a new message')).'</p>';
+  print '<p class="button">'.PageLink2('send&new=1',$I18N->get('start a new message')).'</p>';
   print '<h3>'.$I18N->get('Choose an existing draft message to work on').'</h3>';
   $ls = new WebblerListing($I18N->get('Draft messages'));
   while ($row = Sql_Fetch_Array($req)) {
@@ -123,7 +123,7 @@ if ($done) {
 }
 */
 $list_content = '
-<p>'.$GLOBALS['I18N']->get('selectlists').':</p>
+<p class="button">'.$GLOBALS['I18N']->get('selectlists').':</p>
 <ul>
 <li><input type=checkbox name="targetlist[all]"
 ';
@@ -164,7 +164,7 @@ $list_content .= '</ul>';
 
 if (USE_LIST_EXCLUDE) {
   $list_content .= '
-    <hr/><h3>'.$GLOBALS['I18N']->get('selectexcludelist').'</h3><p>'.$GLOBALS['I18N']->get('excludelistexplain').'</p>
+    <hr/><h3>'.$GLOBALS['I18N']->get('selectexcludelist').'</h3><p class="button">'.$GLOBALS['I18N']->get('excludelistexplain').'</p>
     <ul>';
 
   $dbdata = Sql_Fetch_Row_Query(sprintf('select data from %s where name = "excludelist" and id = %d',
@@ -196,7 +196,7 @@ if (!$some)
 $list_content .= '
 
 
-<p><input type=submit name=send value="'.$GLOBALS['I18N']->get('sendmessage').'">
+<p class="button"><input type=submit name=send value="'.$GLOBALS['I18N']->get('sendmessage').'">
 </form>
 
 ';
