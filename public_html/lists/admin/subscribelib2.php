@@ -1018,7 +1018,7 @@ function ListAllAttributes() {
 //    $default = $data["rssdefault"];
 //  }
 //
-//  $html = "\n<table>";
+//  $html = '\n<table class="x">';
 //  $html .= '<tr><td>'.$data["rssintro"].'</td></tr>';
 //  $html .= '<tr><td>';
 //  $options = explode(",",$data["rss"]);

@@ -189,7 +189,7 @@ if (!empty($_POST['action']) && $_POST['action'] == "addimages") {
 
 <?php echo formStart(' enctype="multipart/form-data"')?>
 <input type=hidden name="id" value="<?php echo $id?>">
-<table>
+<table class="templateForm">
 <tr>
 
   <td><?php echo $GLOBALS['I18N']->get('Title of this template')?></td>

@@ -112,7 +112,7 @@ if ($some) {
 print '<hr/>';
 print '<p class="button">'.$GLOBALS['I18N']->get('add a new rule').'</p>';
 print '<form method=post>';
-print '<table>';
+print '<table class="bouncerulesAction">';
 printf('<tr><td>%s</td><td><input type=text name="newrule" size=30></td></tr>',$GLOBALS['I18N']->get('Regular Expression'));
 printf('<tr><td>%s</td><td><select name="action">',$GLOBALS['I18N']->get('Action'));
 foreach ($GLOBALS['bounceruleactions'] as $action => $desc) {

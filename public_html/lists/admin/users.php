@@ -205,7 +205,7 @@ return;
 //  $bll = "unchecked";
 //}
 //
-//print '<table><tr><td valign=top>';
+//print '<table class="x"><tr><td valign=top>';
 //printf ('<form method="get" name="listcontrol">
 //  <input type=hidden name="page" value="users">
 //  <input type=hidden name="start" value="%s">

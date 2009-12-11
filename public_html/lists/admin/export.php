@@ -175,7 +175,7 @@ if ($list)
 <form method="post" action="">
 
 <br/><br/>
-<table>
+<table class="exportForm">
 
 <tr><td><?php echo $GLOBALS['I18N']->get('DateFrom');?></td><td><?php echo $from->showInput("","",$fromval);?></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('DateTo');?> </td><td><?php echo $to->showInput("","",$toval);?></td></tr>

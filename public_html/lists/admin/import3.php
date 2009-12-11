@@ -206,7 +206,7 @@ if (!$_POST["server"] || !$_POST["user"] || !$_POST["password"] || !is_array($_P
   print '
   <p class="information">'.$GLOBALS['I18N']->get('Please enter details of the IMAP account').'</p>
   <form method=post>
-  <table>
+  <table class="importForm">
   <tr><td>'.$GLOBALS['I18N']->get('Server').':</td><td><input type=text name="server" value="" size=30></td></tr>
   <tr><td>'.$GLOBALS['I18N']->get('User').':</td><td><input type=text name="user" value="" size=30></td></tr>
   <tr><td>'.$GLOBALS['I18N']->get('Password').':</td><td><input type=password name="password" value="" size=30></td></tr>

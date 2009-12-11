@@ -130,7 +130,7 @@ class phplist_I18N {
   }
 
   function formatText($text) {
-    # we've decided to spell phplist all lowercase
+    # we've decided to spell phplist all lowercase '
     $text = str_replace('PHPlist','phplist',$text);
 
     if (isset($GLOBALS["developer_email"])) {

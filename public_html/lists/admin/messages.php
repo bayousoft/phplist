@@ -239,7 +239,7 @@ if ($total) {
     $clicks = array(0);
 
     $messagedata = loadMessageData($msg['id']);
-    printf ('<tr><td valign="top"><table>
+    printf ('<tr><td valign="top"><table class="messagesListing">
       <tr><td valign="top">'.$GLOBALS['I18N']->get("From:").'</td><td valign="top">%s</td></tr>
       <tr><td valign="top">'.$GLOBALS['I18N']->get("Subject:").'</td><td valign="top">%s</td></tr>
       <tr><td valign="top">'.$GLOBALS['I18N']->get("Entered:").'</td><td valign="top">%s</td></tr>

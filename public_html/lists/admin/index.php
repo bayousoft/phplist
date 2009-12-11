@@ -288,9 +288,9 @@ if ($GLOBALS["require_login"] && $page != "login") {
   }
 
   if ($page != "logout") {
-    print '<div align="right">'.PageLink2("logout",$GLOBALS['I18N']->get('logout'));
+    # print '<div align="right">'.PageLink2("logout",$GLOBALS['I18N']->get('logout'));
   }
-  print '</div>';
+#  print '</div>';
 }
 if (LANGUAGE_SWITCH) {
   $ls = '<div align="right" id="languageswitch"><br/><form name="languageswitch" method="post" style="margin: 0; padding: 0">';

@@ -28,7 +28,7 @@ if (isset($_POST["usercheck"])) {
 $GLOBALS["I18N"]->get("existcheckintro");
 
 print '<form method=post>';
-print '<table>';
+print '<table class="usercheckForm">';
 print '<tr><td>'.$GLOBALS["I18N"]->get("whatistype").'</td></tr>';
 print '<tr><td>'.$GLOBALS["I18N"]->get("foreignkey").' <input type=radio name="check" value="foreignkey"></td></tr>';
 print '<tr><td>'.$GLOBALS["I18N"]->get("email").' <input type=radio name="check" value="email"></td></tr>';

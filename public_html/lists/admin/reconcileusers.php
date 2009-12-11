@@ -476,7 +476,7 @@ function snippetListsSelector ($optionAll = false) {
 <p class="information"><?php echo $GLOBALS['I18N']->get('Note: this will use the total count of bounces on a user, not consecutive bounces')?></p>
 
 <form method=get>
-<table><tr><td colspan=2>
+<table class="reconcileForm"><tr><td colspan=2>
 <?php echo $GLOBALS['I18N']->get('To resend the request for confirmation to users who signed up and have not confirmed their subscription')?></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('Date they signed up after')?>:</td><td><?php echo $from->showInput("","",$fromval);?></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('Date they signed up before')?>:</td><td><?php echo $to->showInput("","",$toval);?></td></tr>
@@ -492,7 +492,7 @@ function snippetListsSelector ($optionAll = false) {
 
 <hr>
 <form method=get>
-<table><tr><td colspan=2>
+<table class="reconcileForm"><tr><td colspan=2>
 <?php echo $GLOBALS['I18N']->get('To delete users who signed up and have not confirmed their subscription')?></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('Date they signed up after')?>:</td><td><?php echo $from->showInput("","",$fromval);?></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('Date they signed up before')?>:</td><td><?php echo $to->showInput("","",$toval);?></td></tr>

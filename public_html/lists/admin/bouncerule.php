@@ -26,7 +26,7 @@ $data = Sql_Fetch_Array_Query(sprintf('select * from %s where id = %d',
   $GLOBALS['tables']['bounceregex'],$id));
 
 print '<form method=post>';
-print '<table>';
+print '<table class="bounceruleForm">';
 printf('<tr><td>%s</td><td><input type=text name="regex" size=30 value="%s"></td></tr>',
   $GLOBALS['I18N']->get('Regular Expression'),htmlspecialchars($data['regex']));
 printf('<tr><td>%s</td><td>%s</td></tr>',

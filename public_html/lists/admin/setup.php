@@ -9,7 +9,7 @@ require_once dirname(__FILE__).'/accesscheck.php';
 # create lists
 # create subscribe pages
 
-print "<table>";
+print '<table class="setupMain">';
 print
 '<tr><td>'.$GLOBALS['I18N']->get('initialise_database').'</td>
 <td>'.PageLink2("initialise",$GLOBALS['I18N']->get('go_there')).'</td><td>';

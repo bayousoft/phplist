@@ -1053,17 +1053,17 @@ if (!$done) {
     }
   }
 
-  $formatting_content = '<table>';
+  $formatting_content = '<table class="sendListing">';
 
   #0013076: different content when forwarding 'to a friend'
   //  value="'.htmlentities($subject,ENT_QUOTES,'UTF-8').'" size=40></td></tr> --> previous code in line 1032
   //  value="'.htmlentities($from,ENT_QUOTES,'UTF-8').'" size=40></td></tr> --> previous code in line 1038
 
-  $tmp = '<table>';
+  $tmp = '<table class="sendContent">';
   $maincontent = $tmp;
   $forwardcontent = $tmp;
 
-  $scheduling_content = '<table>';
+  $scheduling_content = '<table class="sendScheduling">';
   $maincontent .= '
   <tr><td>'.Help("subject").' '.$GLOBALS['I18N']->get("Subject").':</td>
     <td><input type=text name="msgsubject"
@@ -1298,7 +1298,7 @@ if (!$done) {
     // If we have a message id saved, we want to query the attachments that are associated with this
     // message and display that (and allow deletion of!)
 
-    $att_content = '<table><tr><td colspan=2>'.Help("attachments").' '.$GLOBALS['I18N']->get("addattachments").' </td></tr>';
+    $att_content = '<table class="sendAttachment"><tr><td colspan=2>'.Help("attachments").' '.$GLOBALS['I18N']->get("addattachments").' </td></tr>';
     $att_content .= '<tr><td colspan=2>
       '.$GLOBALS['I18N']->get("uploadlimits").':<br/>
       '.$GLOBALS['I18N']->get("maxtotaldata").': '.ini_get("post_max_size").'<br/>
@@ -1372,7 +1372,7 @@ if (!$done) {
   }
 
   // Display the HTML for the "Send Test" button, and the input field for the email addresses
-  $sendtest_content = sprintf('<hr /><table><tr><td valign="top">
+  $sendtest_content = sprintf('<hr /><table class="sendTest"><tr><td valign="top">
     <input type=submit name=sendtest value="%s"> %s: </td>
     <td><input type=text name="testtarget" size=40 value="'.$_POST["testtarget"].'"><br />%s
     </td></tr></table><hr />',
@@ -1380,7 +1380,7 @@ if (!$done) {
     $GLOBALS['I18N']->get('sendtestexplain'));
 
   $criteria_content = $GLOBALS['I18N']->get('criteriaexplanation').'
-  <table>
+  <table class="sendCriteria">
   ';
 
   $any = 0;
@@ -1659,7 +1659,7 @@ if (!$done) {
   $notify_end = isset($messagedata['notify_end'])?$messagedata['notify_end']:'';#$admin_details['email'];
 
   $misc_content = sprintf('
-    <table>
+    <table class="sendNotify">
     <tr valign="top"><td>%s<br/>%s</td><td><input type=text name="notify_start" value="%s" size="35"></td></tr>
     <tr valign="top"><td>%s<br/>%s</td><td><input type=text name="notify_end" value="%s" size="35"></td></tr>
     </table>',
@@ -1794,7 +1794,7 @@ if (!$_POST["status"]) {
   $savecaption = $GLOBALS['I18N']->get('savechanges');#"Save &quot;".$_POST["status"]."&quot; message edits";
 
 }
-print "<hr><table><tr><td><input type=submit name=\"save\" value=\"$savecaption\"></td></tr></table>\n<hr>\n";
+print '<hr><table class="sendSubmit"><tr><td><input type=submit name="save" value="$savecaption"></td></tr></table>\n<hr>\n';
 print "<input type=hidden name=id value=$id>\n";
 print "<input type=hidden name=status value=\"".$_POST["status"]."\">\n";
 print '<input type=hidden name=expand value="0">';

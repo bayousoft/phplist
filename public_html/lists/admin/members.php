@@ -132,7 +132,7 @@ if (isset($_POST["add"])) {
       }
       print "</ul>\n";
     } else {
-      print '<p class="information">'.$GLOBALS['I18N']->get("No user found with that email").'</p><table>'.formStart();
+      print '<p class="information">'.$GLOBALS['I18N']->get("No user found with that email").'</p><table class="membersForm">'.formStart();
       require $GLOBALS["coderoot"] . "subscribelib2.php";
       ?>
       <?php
@@ -322,7 +322,7 @@ if (isset($id)) {
 if ($access == "view") return;
 ?>
 <hr>
-<table>
+<table class="membersProcess">
 <tr><td colspan=2><h3><?php echo $GLOBALS['I18N']->get('What to do with "Tagged" users')?>:</h3>
 <?php echo $GLOBALS['I18N']->get('This will only process the users in this page that have the "Tag" checkbox checked')?></td></tr>
 <tr><td colspan=2><?php echo $GLOBALS['I18N']->get('delete')?> (<?php echo $GLOBALS['I18N']->get('from this list')?>) <input type=radio name="tagaction"

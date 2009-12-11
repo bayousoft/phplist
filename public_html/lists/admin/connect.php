@@ -439,8 +439,8 @@ function newMenu() {
     $pixel = "";
   global $tables;
   $html = "";
-  if ($GLOBALS["require_login"])
-    $html .= $spb.PageLink2("logout",$GLOBALS["I18N"]->get("logout")).'<br />'.$spe;
+/*   if ($GLOBALS["require_login"]) */
+/*     $html .= $spb.PageLink2("logout",$GLOBALS["I18N"]->get("logout")).'<br />'.$spe; */
 
   $_GET["pi"] = '';
   $html .= $spb.PageLink2("home",$GLOBALS["I18N"]->get("Main Page")).$spe;

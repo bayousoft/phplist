@@ -1,6 +1,6 @@
 
 <div align="center">
-<table><tr><td>
+<table class="upgradeMain"><tr><td>
 
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';

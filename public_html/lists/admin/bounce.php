@@ -100,7 +100,7 @@ if ($id) {
   }
   
   $newruleform = '<form method=post action="./?page=bouncerules">';
-  $newruleform .= '<table>';
+  $newruleform .= '<table class="bounceListing">';
   $newruleform .= sprintf('<tr><td>%s</td><td><input type=text name="newrule" size=30></td></tr>',$GLOBALS['I18N']->get('Regular Expression'));
   $newruleform .= sprintf('<tr><td>%s</td><td><select name="action">',$GLOBALS['I18N']->get('Action'));
   foreach ($GLOBALS['bounceruleactions'] as $action => $desc) {
@@ -115,7 +115,7 @@ if ($id) {
    print '<form method=get>';
   print '<input type=hidden name=page value="'.$page.'">';
   print '<input type=hidden name=id value="'.$id.'">';
-  print '<table><tr><td>'.$GLOBALS['I18N']->get('PossibleActions').'</td></tr>';
+  print '<table class="bounceActions"><tr><td>'.$GLOBALS['I18N']->get('PossibleActions').'</td></tr>';
   print '<tr><td>'.$GLOBALS['I18N']->get('ForUser').'</td><td><input type=text name="useremail" value="'.$guessedemail.'" size=35></td></tr>';
   print '<tr><td>'.$GLOBALS['I18N']->get('IncreaseB').'</td><td><input type=text name=amount value="1" size=5>'.$GLOBALS['I18N']->get('IncreaseBNote').'</td></tr>';
   print '<tr><td>'.$GLOBALS['I18N']->get('MarkAsUnconfirmed').' </td><td><input type=checkbox name=unconfirm value="1"> '.$GLOBALS['I18N']->get('MarkAsUnconfirmedNote').'</td></tr>';

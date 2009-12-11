@@ -50,7 +50,7 @@ if (!$_POST["remote_host"] ||
   printf( '
   <p class="information">'.$GLOBALS['I18N']->get('remote_server').'</p>
   <form method=post>
-  <table>
+  <table class="importForm">
   <tr><td>'.$GLOBALS['I18N']->get('server').'</td><td><input type=text name="remote_host" value="%s" size=30></td></tr>
   <tr><td>'.$GLOBALS['I18N']->get('user').'</td><td><input type=text name="remote_user" value="%s" size=30></td></tr>
   <tr><td>'.$GLOBALS['I18N']->get('passwd').'</td><td><input type=text name="remote_password" value="%s" size=30></td></tr>

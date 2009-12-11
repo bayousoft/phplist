@@ -55,7 +55,7 @@ if ($fwdid && $msgid) {
   print '<h3>'.$GLOBALS['I18N']->get('User Click Details for a URL in a message');
   print ' ' .PageLink2('uclicks&amp;id='.$fwdid,$urldata['url']);
   print '</h3>';
-  print '<table>
+  print '<table class="userclicksDetails">
   <tr><td>'.$GLOBALS['I18N']->get('Subject').'<td><td>'.PageLink2('mclicks&amp;id='.$msgid,$messagedata['subject']).'</td></tr>
   <tr><td>'.$GLOBALS['I18N']->get('Entered').'<td><td>'.$messagedata['entered'].'</td></tr>
   <tr><td>'.$GLOBALS['I18N']->get('Sent').'<td><td>'.$messagedata['sent'].'</td></tr>
@@ -68,7 +68,7 @@ if ($fwdid && $msgid) {
   print '<h3>'.$GLOBALS['I18N']->get('User Click Details for a message').'</h3>';
   print $GLOBALS['I18N']->get('User').' '.PageLink2('user&id='.$userid,$userdata['email']);
   print '</h3>';
-  print '<table>
+  print '<table class="userclickDetails">
   <tr><td>'.$GLOBALS['I18N']->get('Subject').'<td><td>'.PageLink2('mclicks&amp;id='.$msgid,$messagedata['subject']).'</td></tr>
   <tr><td>'.$GLOBALS['I18N']->get('Entered').'<td><td>'.$messagedata['entered'].'</td></tr>
   <tr><td>'.$GLOBALS['I18N']->get('Sent').'<td><td>'.$messagedata['sent'].'</td></tr>
@@ -84,7 +84,7 @@ if ($fwdid && $msgid) {
     $fwdid));
 } elseif ($msgid) {
   print '<h3>'.$GLOBALS['I18N']->get('User Click Details for a Message').'</h3>';
-  print '<table>
+  print '<table class="userclickDetails">
   <tr><td>'.$GLOBALS['I18N']->get('Subject').'<td><td>'.$messagedata['subject'].'</td></tr>
   <tr><td>'.$GLOBALS['I18N']->get('Entered').'<td><td>'.$messagedata['entered'].'</td></tr>
   <tr><td>'.$GLOBALS['I18N']->get('Sent').'<td><td>'.$messagedata['sent'].'</td></tr>

@@ -111,7 +111,7 @@ $query = "select * from ${tables['message']} where id = ? $and";
 $params = array_merge(array($id), $and_params);
 $rs = Sql_Query_Params($query, $params);
 $messagedata = Sql_Fetch_Array($rs);
-print '<table>
+print '<table class="statsDetail">
 <tr><td>'.$GLOBALS['I18N']->get('Subject').'<td><td>'.$messagedata['subject'].'</td></tr>
 <tr><td>'.$GLOBALS['I18N']->get('Entered').'<td><td>'.$messagedata['entered'].'</td></tr>
 <tr><td>'.$GLOBALS['I18N']->get('Sent').'<td><td>'.$messagedata['sent'].'</td></tr>
