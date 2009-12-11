@@ -22,7 +22,7 @@ if (isset($_POST['defaulttemplate'])) {
 
 $req = Sql_Query("select * from {$tables["template"]} order by listorder");
 if (!Sql_Affected_Rows())
-  print '<p class="error">'.$GLOBALS['I18N']->get("No template have been defined").'</p>';
+  print '<p class="information">'.$GLOBALS['I18N']->get("No template have been defined").'</p>';
 
 $defaulttemplate = getConfig('defaultmessagetemplate');
 print formStart('name="templates"');
@@ -45,5 +45,5 @@ print $ls->display();
 
 print '</form>';
 
-print '<p class="">'.PageLink2("template",$GLOBALS['I18N']->get('Add new Template'))."</p>";
+print '<p class="button">'.PageLink2("template",$GLOBALS['I18N']->get('Add new Template'))."</p>";
 ?>

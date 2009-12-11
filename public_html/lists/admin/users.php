@@ -182,11 +182,11 @@ return;
 //  if (Sql_Affected_Rows()) {
 //    print "Click on a link to use the corresponding public subscribe page to add this user:";
 //    while ($row = Sql_Fetch_Array($req)) {
-//      printf('<p class=""><a href="%s&id=%d&email=%s">%s</a></p>',getConfig("subscribeurl"),$row["id"],$find,$row["title"]);
+//      printf('<p class="x"><a href="%s&id=%d&email=%s">%s</a></p>',getConfig("subscribeurl"),$row["id"],$find,$row["title"]);
 //     }
 //  } else {
 //    print "Click this link to use the public subscribe page to add this user:";
-//    printf('<p class=""><a href="%s&email=%s">%s</a></p>',getConfig("subscribeurl"),$find,$GLOBALS["strSubscribeTitle"]);
+//    printf('<p class="x"><a href="%s&email=%s">%s</a></p>',getConfig("subscribeurl"),$find,$GLOBALS["strSubscribeTitle"]);
 //  }
 //  print '<hr>';
 //}
@@ -254,8 +254,8 @@ return;
 //  }
 //  if ($_GET["unconfirmed"])
 //     $find_url .= "&unconfirmed=".$_GET["unconfirmed"];
-//  printf ('<table class="" border=1><tr><td colspan=4 align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
-//          %s</td><td>%s</td></tr></table><p class=""><hr>',
+//  printf ('<table class="x" border=1><tr><td colspan=4 align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
+//          %s</td><td>%s</td></tr></table><p class="x"><hr>',
 //          $listing,
 //          PageLink2("users","&lt;&lt;","start=0".$find_url),
 //          PageLink2("users","&lt;",sprintf('start=%d',max(0,$start-MAX_USER_PP)).$find_url),
@@ -266,7 +266,7 @@ return;
 //  $result = Sql_Query("$listquery $order");
 //}
 //?>
-//<table class="" border=0>
+//<table class="x" border=0>
 //<tr><td colspan=4><input type=hidden name=id value="<?php echo $listid?>">
 //Find a user: <input type=text name=find value="<?php echo $find != '%' ? $find : ""?>" size=30>
 //<select name="findby"><option value="email" <?php echo $findby == "email"? "selected":""?>>Email</option>
@@ -322,7 +322,7 @@ return;
 //}
 //print $ls->display();
 //if (!$some) {
-//  print "<p class="">No users apply</p>";
+//  print "<p class="x">No users apply</p>";
 //}
 ?>
 

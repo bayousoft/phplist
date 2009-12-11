@@ -152,7 +152,7 @@ class PHPlistMailer extends PHPMailer {
       $this->Subject = $subject;
       if ($this->Body) {
         if(!parent::Send()) {
-          #echo "Message was not sent <p class="">";
+          #echo "Message was not sent <p class="x">";
           logEvent("Error sending email to ".$to_addr);
           return 0;
         }#

@@ -30,7 +30,7 @@ function output ($message) {
 $dbversion = getConfig("version");
 if (!$dbversion)
   $dbversion = "Older than 1.4.1";
-output( '<p class="">'.$GLOBALS['I18N']->get('Your database version').': '.$dbversion.'</p>');
+output( '<p class="information">'.$GLOBALS['I18N']->get('Your database version').': '.$dbversion.'</p>');
 if ($dbversion == VERSION)
   output($GLOBALS['I18N']->get('Your database is already the correct version, there is no need to upgrade'));
 else
@@ -60,7 +60,7 @@ if ($_GET["doit"] == 'yes') {
   for ($i=0;$i<10000; $i++) {
     print '  '."\n";
   }
-  output( '<p class="">'.$GLOBALS['I18N']->get('Please wait, upgrading your database, do not interrupt').'</p>');
+  output( '<p class="information">'.$GLOBALS['I18N']->get('Please wait, upgrading your database, do not interrupt').'</p>');
   for ($i=0;$i<10000; $i++) {
     print '  '."\n";
   }
@@ -399,9 +399,9 @@ if ($_GET["doit"] == 'yes') {
 } else {
 
 ?>
-<p class="">Your database requires upgrading, please make sure to create a backup of your database first.</p>
+<p class="information">Your database requires upgrading, please make sure to create a backup of your database first.</p>
 
-<p class="">When you're ready click <?php echo PageLink2("upgrade","Here","doit=yes")?>. Depending on the size of your database, this may take quite a while. Please make sure not to interrupt the process, once you've started it.</p>
+<p class="information">When you're ready click <?php echo PageLink2("upgrade","Here","doit=yes")?>. Depending on the size of your database, this may take quite a while. Please make sure not to interrupt the process, once you've started it.</p>
 <?php } ?>
 </td></tr></table>
 </div>

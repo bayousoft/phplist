@@ -1,6 +1,6 @@
 
 <script language="Javascript" src="js/jslib.js" type="text/javascript"></script>
-<hr><p class="">
+<hr>
 
 
 <?php
@@ -201,7 +201,7 @@ if (!$some) {
   print $ls->display();
 }
 /*
-  echo '<table class="" border="0">
+  echo '<table class="x" border="0">
       <tr>
         <td>'.$GLOBALS['I18N']->get('No').'</td>
         <td>'.$GLOBALS['I18N']->get('Name').'</td>
@@ -221,7 +221,7 @@ if (!$some) {
 
 </ul>
 </form>
-<p class="">
+<p class="button">
 <?php
 if ($GLOBALS['require_login'] && !isSuperUser()) {
   $numlists = Sql_Fetch_Row_query("select count(*) from {$tables['list']} where owner = " . $_SESSION['logindetails']['id']);
@@ -231,5 +231,5 @@ if ($GLOBALS['require_login'] && !isSuperUser()) {
 } else {
   print PageLink2('editlist',$GLOBALS['I18N']->get('Add a list'));
 }
-
 ?>
+</p>

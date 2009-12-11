@@ -4,7 +4,7 @@ require_once dirname(__FILE__).'/accesscheck.php';
 $subselect = '';
 
 if (!ALLOW_IMPORT) {
-  print '<p class="">'.$GLOBALS['I18N']->get('import is not available').'</p>';
+  print '<p class="information">'.$GLOBALS['I18N']->get('import is not available').'</p>';
   return;
 }
 
@@ -14,7 +14,7 @@ ignore_user_abort();
 set_time_limit(500);
 ob_end_flush();
 ?>
-<p class="">
+<p class="information">
 
 <?php
 
@@ -301,7 +301,7 @@ if(isset($_REQUEST['import'])) {
       print "$count_email_add $dispemail ".$GLOBALS['I18N']->get('import_successful')." $num_lists $displists.<br>$additional_emails $dispemail2 ".$GLOBALS['I18N']->get('subscribed')." $displists";
     }
   }; // end else
-  print '<p class="">'.PageLink2("import",$GLOBALS['I18N']->get('import_more_emails')).'</p>';
+  print '<p class="button">'.PageLink2("import",$GLOBALS['I18N']->get('import_more_emails')).'</p>';
 
 
 } else {
@@ -330,7 +330,7 @@ if (Sql_Affected_Rows() == 1) {
   $row = Sql_fetch_array($result);
   printf('<input type=hidden name="listname[%d]" value="%s"><input type=hidden name="lists[%d]" value="%d">'.$GLOBALS['I18N']->get('adding_users').' <b>%s</b>',$c,stripslashes($row["name"]),$c,$row["id"],stripslashes($row["name"]));
 } else {
-  print '<p class="">'.$GLOBALS['I18N']->get('select_lists').'</p>';
+  print '<p class="button">'.$GLOBALS['I18N']->get('select_lists').'</p>';
   while ($row = Sql_fetch_array($result)) {
     printf('<li><input type=hidden name="listname[%d]" value="%s"><input type=checkbox name="lists[%d]" value="%d">%s',$c,stripslashes($row["name"]),$c,$row["id"],stripslashes($row["name"]));
     $some = 1;$c++;

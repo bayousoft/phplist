@@ -185,7 +185,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok && $allt
       }
       if (!$canlogin) {
         $msg = $GLOBALS["strUserExists"];
-        $msg .= '<p class="">'.$GLOBALS["strUserExistsExplanationStart"].
+        $msg .= '<p class="information">'.$GLOBALS["strUserExistsExplanationStart"].
           sprintf('<a href="%s&email=%s">%s</a>',getConfig("preferencesurl"),$email,
           $GLOBALS["strUserExistsExplanationLink"]).
           $GLOBALS["strUserExistsExplanationEnd"];
@@ -298,8 +298,8 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok && $allt
    print $subscribepagedata["header"];
 
    if (isset($_SESSION["adminloggedin"]) && $_SESSION["adminloggedin"]) {
-      print '<p class=""><b>You are logged in as '.$_SESSION["logindetails"]["adminname"].'</b></p>';
-      print '<p class=""><a href="'.$adminpages.'">Back to the main admin page</a></p>';
+      print '<p class="information"><b>You are logged in as '.$_SESSION["logindetails"]["adminname"].'</b></p>';
+      print '<p class="button"><a href="'.$adminpages.'">Back to the main admin page</a></p>';
 
       if ($_POST["makeconfirmed"] && !$blacklisted) {
          $sendrequest = 0;
@@ -307,7 +307,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok && $allt
          addUserHistory($email,$history_subject." by ".$_SESSION["logindetails"]["adminname"],$history_entry);
       }
       elseif ($_POST["makeconfirmed"]) {
-         print '<p class="">'.$GLOBALS['I18N']->get('Email is blacklisted, so request for confirmation has been sent.').'<br/>';
+         print '<p class="information">'.$GLOBALS['I18N']->get('Email is blacklisted, so request for confirmation has been sent.').'<br/>';
          print $GLOBALS['I18N']->get('If user confirms subscription, they will be removed from the blacklist.').'</p>';
 
          $sendrequest = 1;
@@ -347,7 +347,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok && $allt
 
   $blacklisted = isBlackListed($email);
   if ($blacklisted) {
-    $thankyoupage .= '<p class="">'.$GLOBALS["strYouAreBlacklisted"].'</p>';
+    $thankyoupage .= '<p class="information">'.$GLOBALS["strYouAreBlacklisted"].'</p>';
     return 1;
   }
   if ($sendrequest && $listsok) { #is_array($_POST["list"])) {
@@ -358,18 +358,18 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok && $allt
      } else {
       print '<h3>'.$strEmailFailed.'</h3>';
       if ($blacklisted) {
-        print '<p class="">'.$GLOBALS["strYouAreBlacklisted"].'</p>';
+        print '<p class="information">'.$GLOBALS["strYouAreBlacklisted"].'</p>';
       }
     }
   } else {
       print $thankyoupage;
 
       if ($_SESSION["adminloggedin"]) {
-         print '<p class="">User has been added and confirmed</p>';
+         print '<p class="information">User has been added and confirmed</p>';
       }
    }
 
-   print '<p class="">'.$PoweredBy.'</p>';
+   print '<p class="information">'.$PoweredBy.'</p>';
    print $subscribepagedata["footer"];
    //  exit;
    // Instead of exiting here, we return 2. So in lists/index.php
@@ -633,7 +633,7 @@ elseif (isset($_POST["update"]) && $_POST["update"] && is_email($_POST["email"])
   } else {
     print '<h3>'.$strEmailFailed.'</h3>';
   }
-  print '<p class="">'.$PoweredBy.'</p>';
+  print '<p class="information">'.$PoweredBy.'</p>';
   print $subscribepagedata["footer"];
   // exit;
   // Instead of exiting here, we return 3. So in lists/index.php
@@ -698,12 +698,12 @@ function ListAvailableLists($userid = 0,$lists_to_show = "") {
   $hidesinglelist = getConfig("hide_single_list");
   if (!$some) {
     global $strNotAvailable;
-    return '<p class="">'.$strNotAvailable.'</p>';
+    return '<p class="information">'.$strNotAvailable.'</p>';
   } elseif ($some == 1 && $hidesinglelist == "true") {
     return $singlelisthtml;
   } else {
     global $strPleaseSelect;
-    return '<p class="">'.$strPleaseSelect .':</p>'.$html;
+    return '<p class="information">'.$strPleaseSelect .':</p>'.$html;
   }
 }
 

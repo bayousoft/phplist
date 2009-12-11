@@ -12,10 +12,10 @@ print $spb.PageLink2("domainstats",$GLOBALS['I18N']->get('Domain Statistics')).$
 
 $num = Sql_Fetch_Row_Query(sprintf('select count(*) from %s',$GLOBALS['tables']['linktrack']));
 if ($num[0] > 0) {
-  print '<p class="">'.$GLOBALS['I18N']->get('The clicktracking system has changed').'</p>';
+  print '<p class="information">'.$GLOBALS['I18N']->get('The clicktracking system has changed').'</p>';
   printf($GLOBALS['I18N']->get('You have %s entries in the old statistics table'),$num[0]);
   print $spb.PageLink2("convertstats",$GLOBALS['I18N']->get('Convert Old data to new')).$spe;
-  print '<p class="">'.$GLOBALS['I18N']->get('To avoid overloading the system, this will convert 10000 records at a time').'</p>';
+  print '<p class="information">'.$GLOBALS['I18N']->get('To avoid overloading the system, this will convert 10000 records at a time').'</p>';
 }
 
 ?>

@@ -33,7 +33,7 @@
       <li><a href="http://www.babels.org" target="_blank">Babels</a></li>
       <?php echo $GLOBALS['I18N']->get('credits for this translation') ?>
     </ul>
-    <p class="">
+    <p class="greetings">
         <?php echo $GLOBALS['I18N']->get('thankseveryone')?>
     </p>
     <b><?php echo $GLOBALS['I18N']->get('Portions of the system include')?></b>

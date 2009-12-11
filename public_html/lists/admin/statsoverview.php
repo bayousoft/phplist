@@ -76,7 +76,7 @@ if (!$id) {
     $GLOBALS['tables']['usermessage'],$GLOBALS['tables']['message'],$subselect,$timerange,$limit));
 
   if (!Sql_Affected_Rows()) {
-    print '<p class="">'.$GLOBALS['I18N']->get('There are currently no messages to view').'</p>';
+    print '<p class="information">'.$GLOBALS['I18N']->get('There are currently no messages to view').'</p>';
   }
 
   $ls = new WebblerListing($GLOBALS['I18N']->get('Last few Messages'));

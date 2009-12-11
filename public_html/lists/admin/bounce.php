@@ -125,10 +125,10 @@ if ($id) {
   print '<tr><td><input type=submit name="doit" value="'.$GLOBALS['I18N']->get('DoAbove').'"></td></tr>';
   print "</table></form>";
   if (USE_ADVANCED_BOUNCEHANDLING) {
-    print '<p class=""><a href="#newrule">'.$GLOBALS['I18N']->get('Create New Rule based on this bounce').'</a></p>';
+    print '<p class="button"><a href="#newrule">'.$GLOBALS['I18N']->get('Create New Rule based on this bounce').'</a></p>';
   }
   
-  print '<p class="">'.$GLOBALS['I18N']->get('BounceDetails').'<table class="bounceDetails" border=1>';
+  print '<p class="information">'.$GLOBALS['I18N']->get('BounceDetails').'<table class="bounceDetails" border=1>';
   printf ('
   <tr><td valign="top">'.$GLOBALS['I18N']->get('ID').'</td><td valign="top">%d</td></tr>
   <tr><td valign="top">'.$GLOBALS['I18N']->get('Date').'</td><td valign="top">%s</td></tr>

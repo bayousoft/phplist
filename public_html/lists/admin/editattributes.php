@@ -55,7 +55,7 @@ switch ($data['type']) {
 
 <br><?php echo PageLink2("editattributes",$GLOBALS['I18N']->get('AddNew'),"id=$id&action=new")?> <?php echo $data["name"]?>
 <br><a href="javascript:deleteRec2('<?php echo $GLOBALS['I18N']->get('SureToDeleteAll');?>','<?php echo PageURL2("editattributes",$GLOBALS['I18N']->get('DelAll'),"id=$id&deleteall=yes")?>');"><?php echo $GLOBALS['I18N']->get('DelAll');?></a>
-<hr><p class="">
+<hr><p class="form">
 <?php echo formStart()?>
 <input type=hidden name="action" value="add">
 <input type=hidden name="id" value="<?php echo $id?>">
@@ -126,7 +126,7 @@ function deleteItem($table,$attributeid,$delete) {
   } else {
     print $GLOBALS["I18N"]->get("cannotdelete");
     print " <b>$val</b><br />";
-    print $GLOBALS["I18N"]->get("dependentrecords").'<p class=""></p>';
+    print $GLOBALS["I18N"]->get("dependentrecords");
 
     for ($i=0;$i<sizeof($dependencies);$i++) {
       print PageLink2("user",$GLOBALS["I18N"]->get("user")." ".$dependencies[$i],"id=$dependencies[$i]")."<br />\n";

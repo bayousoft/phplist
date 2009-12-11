@@ -1,7 +1,7 @@
 <?php
 
 require_once dirname(__FILE__).'/accesscheck.php';
-print '<p class="">'.PageLink2('checki18n&amp;changedonly=yes','Show changes only').'</p>';
+print '<p class="button">'.PageLink2('checki18n&amp;changedonly=yes','Show changes only').'</p>';
 # translation check. See that every token has a text in a file and vv
 
 function getFileI18Ntags($file) {

@@ -13,12 +13,12 @@ function checkSubFolders(folder) {
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 if (!ALLOW_IMPORT) {
-  print '<p class="">'.$GLOBALS['I18N']->get('import is not available').'</p>';
+  print '<p class="information">'.$GLOBALS['I18N']->get('import is not available').'</p>';
   return;
 }
 
 ob_end_flush();
-print '<p class="">'.$GLOBALS['I18N']->get('Import emails from IMAP folders').'</p>';
+print '<p class="button">'.$GLOBALS['I18N']->get('Import emails from IMAP folders').'</p>';
 $email_header_fields = array("to","from","cc","bcc","reply_to","sender","return_path");
 
 if ($require_login && !isSuperUser()) {
@@ -204,7 +204,7 @@ function getBestVersion($emails) {
 
 if (!$_POST["server"] || !$_POST["user"] || !$_POST["password"] || !is_array($_POST["lists"])) {
   print '
-  <p class="">'.$GLOBALS['I18N']->get('Please enter details of the IMAP account').'</p>
+  <p class="information">'.$GLOBALS['I18N']->get('Please enter details of the IMAP account').'</p>
   <form method=post>
   <table>
   <tr><td>'.$GLOBALS['I18N']->get('Server').':</td><td><input type=text name="server" value="" size=30></td></tr>
@@ -345,7 +345,7 @@ if (!$_POST["server"] || !$_POST["user"] || !$_POST["password"] || !is_array($_P
    }
   if (is_array($all_emails)) {
     $num = sizeof($all_emails);
-    print '<p class="">'.$GLOBALS['I18N']->get('Processed').":".$GLOBALS["foldercount"]. " ".$GLOBALS['I18N']->get('folders and')." ".$GLOBALS["messagecount"]." ".$GLOBALS['I18N']->get('messages')."</p>";
+    print '<p class="information">'.$GLOBALS['I18N']->get('Processed').":".$GLOBALS["foldercount"]. " ".$GLOBALS['I18N']->get('folders and')." ".$GLOBALS["messagecount"]." ".$GLOBALS['I18N']->get('messages')."</p>";
     print "<h3>".sizeof($all_emails)." ".$GLOBALS['I18N']->get('unique emails found')."</h3>";
     flush();
 
@@ -488,7 +488,7 @@ if (!$_POST["server"] || !$_POST["user"] || !$_POST["password"] || !is_array($_P
   } else {
     print $GLOBALS['I18N']->get("No emails found");
   }
-  print '<p class="">'.PageLink2("import",$GLOBALS['I18N']->get('Import some more emails'));
+  print '<p class="button">'.PageLink2("import",$GLOBALS['I18N']->get('Import some more emails'));
 }
 
 ?>

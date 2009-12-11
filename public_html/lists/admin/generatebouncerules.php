@@ -34,7 +34,7 @@ if (isset($_GET['s'])) {
 $limit = ' limit '.$s.', '.$numperrun;
 
 if ($total > $numperrun && $e < $total) {
-  $next = '<p class="">'.PageLink2('generatebouncerules&s='.$e,$GLOBALS['I18N']->get('Process Next Batch')).'</p>';
+  $next = '<p class="button">'.PageLink2('generatebouncerules&s='.$e,$GLOBALS['I18N']->get('Process Next Batch')).'</p>';
 } else {
   $next = '';
 }

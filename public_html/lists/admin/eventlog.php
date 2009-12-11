@@ -92,7 +92,7 @@ printf("[ <a href=\"javascript:deleteRec2('%s','%s');\">%s</a> |
    $GLOBALS['I18N']->get('Delete all'));
 
    if (!Sql_Num_Rows($result)) {
-     print '<p class="">' . $GLOBALS['I18N']->get('No events available') . '</p>';
+     print '<p class="information">' . $GLOBALS['I18N']->get('No events available') . '</p>';
    }
 print '<br/><br/>';
 printf('<form method="get">

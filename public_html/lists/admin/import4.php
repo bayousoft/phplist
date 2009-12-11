@@ -1,7 +1,7 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 if (!ALLOW_IMPORT) {
-  print '<p class="">'.$GLOBALS['I18N']->get('import is not available').'</p>';
+  print '<p class="information">'.$GLOBALS['I18N']->get('import is not available').'</p>';
   return;
 }
 
@@ -48,7 +48,7 @@ if (!$_POST["remote_host"] ||
   !$_POST["remote_user"] ||
   !$_POST["remote_password"] || !$_POST["remote_database"]) {
   printf( '
-  <p class="">'.$GLOBALS['I18N']->get('remote_server').'</p>
+  <p class="information">'.$GLOBALS['I18N']->get('remote_server').'</p>
   <form method=post>
   <table>
   <tr><td>'.$GLOBALS['I18N']->get('server').'</td><td><input type=text name="remote_host" value="%s" size=30></td></tr>

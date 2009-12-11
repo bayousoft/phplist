@@ -63,7 +63,7 @@ function Sql_Error ($dbconnection,$errno = 0) {
     if (function_exists("logevent")) {
       logevent("Database error: $msg");
     }
-#  return "<table class="" border=1><tr><td class=\"error\">Database Error</td></tr><tr><td><!--$errno: -->$msg</td></tr></table>";
+#  return "<table class="x" border=1><tr><td class=\"error\">Database Error</td></tr><tr><td><!--$errno: -->$msg</td></tr></table>";
 }
 
 function Sql_Check_error($dbconnection,$errno = 0) {

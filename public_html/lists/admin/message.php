@@ -113,7 +113,7 @@ while ($lst = Sql_fetch_array($result)) {
 ?>
 </table>
 
-<a name="resend"></a><p class=""><?php echo $GLOBALS['I18N']->get('Send this (same) message to (a) new list(s)'); ?>:</p>
+<a name="resend"></a><p class="information"><?php echo $GLOBALS['I18N']->get('Send this (same) message to (a) new list(s)'); ?>:</p>
 <?php echo formStart()?>
 <input type=hidden name="id" value="<?php echo $id?>">
 <ul>

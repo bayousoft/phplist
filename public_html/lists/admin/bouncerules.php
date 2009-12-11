@@ -46,7 +46,7 @@ if (isset($_POST['newrule']) && $_POST['newrule']) {
     $GLOBALS['tables']['bounceregex'],$_POST['newrule'],$_POST['action'],$_POST['comment'],$_SESSION['logindetails']['id']),1);
   $num = Sql_Affected_Rows();
   if ($num < 0) {
-    print '<p class="">'.$GLOBALS['I18N']->get('That rule exists already').'</p>';
+    print '<p class="information">'.$GLOBALS['I18N']->get('That rule exists already').'</p>';
   } else {
     Redirect('bouncerules'.$url);
   }
@@ -99,7 +99,7 @@ while ($row = Sql_Fetch_Array($req)) {
 }
 print $ls->display();
 if ($some) {
-  print '<p class="">'.$GLOBALS['I18N']->get('with tagged rules: ').' ';
+  print '<p class="information">'.$GLOBALS['I18N']->get('with tagged rules: ').' ';
   printf('<b>%s</b> <input type=checkbox name="tagaction" value="delete"><br/>',$GLOBALS['I18N']->get('delete'));
   if ($type == 'candidate') {
     printf('<b>%s</b> <input type=checkbox name="tagaction" value="activate"><br/>',$GLOBALS['I18N']->get('make active'));
@@ -110,7 +110,7 @@ if ($some) {
   print '</form>';
 }
 print '<hr/>';
-print '<p class="">'.$GLOBALS['I18N']->get('add a new rule').'</p>';
+print '<p class="button">'.$GLOBALS['I18N']->get('add a new rule').'</p>';
 print '<form method=post>';
 print '<table>';
 printf('<tr><td>%s</td><td><input type=text name="newrule" size=30></td></tr>',$GLOBALS['I18N']->get('Regular Expression'));

@@ -257,13 +257,13 @@ $totalunconfirmed = $totalres[0];
 $totalres = Sql_fetch_Row($count);
 $total = $totalres[0];
 
-print '<p class=""><b>' . $total . " " . $GLOBALS['I18N']->get('Users') . "</b>";
+print '<p class="information"><b>' . $total . " " . $GLOBALS['I18N']->get('Users') . "</b>";
 print $find ? " " . $GLOBALS['I18N']->get("found") : " " . $GLOBALS['I18N']->get("in the database");
 print "</p>";
 ?>
 
-<p class=""><?php echo PageLink2("dbadmin&option=delusers",$GLOBALS['I18N']->get("Delete users..."))?>
-<p class=""><?php echo PageLink2("dbadmin&option=delmsghistory",$GLOBALS['I18N']->get("Delete message history..."))?>
-<p class=""><?php echo PageLink2("dbadmin&option=delrsshistory",$GLOBALS['I18N']->get("Delete RSS history..."))?>
-<p class=""><?php echo PageLink2("dbadmin",$GLOBALS['I18N']->get("Return to database manager"))?>
+<p class="button"><?php echo PageLink2("dbadmin&option=delusers",$GLOBALS['I18N']->get("Delete users..."))?>
+<p class="button"><?php echo PageLink2("dbadmin&option=delmsghistory",$GLOBALS['I18N']->get("Delete message history..."))?>
+<p class="button"><?php echo PageLink2("dbadmin&option=delrsshistory",$GLOBALS['I18N']->get("Delete RSS history..."))?>
+<p class="button"><?php echo PageLink2("dbadmin",$GLOBALS['I18N']->get("Return to database manager"))?>
 <hr>

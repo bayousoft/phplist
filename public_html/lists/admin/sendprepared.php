@@ -1,7 +1,7 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 
-echo '<script language="Javascript" src="js/jslib.js" type="text/javascript"></script><hr><p class="">';
+echo '<script language="Javascript" src="js/jslib.js" type="text/javascript"></script><hr><p class="information">';
 
 $access = accessLevel("sendprepared");
 
@@ -64,7 +64,7 @@ if ($message && $list) {
   $done = 1;
   ?>
   <h3>Message Queued for sending</h3>
-  <?php #echo $num ?> <!--users apply (at the moment, independent of list membership)<p class="">-->
+  <?php #echo $num ?> <!--users apply (at the moment, independent of list membership)<p class="x">-->
 <?php
 } elseif ($send && !$message) {
   ?>
@@ -87,14 +87,14 @@ while ($message = Sql_Fetch_Array($req)) {
   print "<hr/>Subject: <b>".$message["subject"]."</b>, ";
   print "From: <b>".$message["fromfield"]."</b> <br/>";
   print 'Send this message <input type=radio name="message" value="'.$message["id"].'"><br/><br/>';
-  print '<p class="">[start of message]</p>';
+  print '<p class="information">[start of message]</p>';
    print '<iframe src="?page=viewmessage&embed=yes&omitall=yes&id='.$message["id"].'"
     scrolling="auto" width=100% height=450 margin=0 frameborder=0>
   </iframe>';
-  print '<p class="">[end of message]</p>';
+  print '<p class="information">[end of message]</p>';
 }
 
-$html = '<hr/><p class="">Please select the lists you want to send it to:
+$html = '<hr/><p class="information">Please select the lists you want to send it to:
 <ul>
 <li><input type=checkbox name=list[all] value=signup>All Lists</li>
 ';
@@ -130,6 +130,6 @@ if ($num == 1) {
 
 ?>
 </ul>
-<p class=""><input type=submit name=send value="Send Message <?php echo $buttonmsg?>" onClick="document.sendpreparedform.submit()">
+<p class="button"><input type=submit name=send value="Send Message <?php echo $buttonmsg?>" onClick="document.sendpreparedform.submit()">
 </form>
 <?php } ?>

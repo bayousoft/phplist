@@ -6,7 +6,7 @@ print '<script language="Javascript" src="js/progressbar.js" type="text/javascri
 ignore_user_abort();
 set_time_limit(500);
 ?>
-<p class="">
+<p class="information">
 
 <?php
 ob_end_flush();
@@ -254,7 +254,7 @@ if(isset($import)) {
       print "$count_email_add $dispemail ".$GLOBALS['I18N']->get("succesfully imported to the database and added to the system.")."<br>";
     }
   }; // end else
-  print '<p class="">'.PageLink2("adminimport",$GLOBALS['I18N']->get("Import some more emails"));
+  print '<p class="button">'.PageLink2("adminimport",$GLOBALS['I18N']->get("Import some more emails"));
 
 
 } else {

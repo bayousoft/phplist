@@ -68,7 +68,7 @@ if ($total)
           PageLink2("viewrss$pagingurl","&gt;&gt;",sprintf('start=%d',$total-MAX_MSG_PP)));
 
 ?>
-<table class="" border=1>
+<table class="viewrssListing" border=1>
 
 <?php
 

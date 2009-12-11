@@ -574,7 +574,7 @@ div.emailfooter a { font-size: 11px; color: #ff6600; font-style: normal; font-fa
   $default_config["rsshtmltemplate"] = array (
     '<br/>
       <a href="[link]"><b>[title]</b></a><br/>
-      <p class="">[description]</p>
+      <p class="information">[description]</p>
       <hr/>
       ',
     "Template for HTML item in RSS feeds",

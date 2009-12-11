@@ -65,7 +65,7 @@ if (!empty($_POST['selected']) && is_array($_POST['selected'])) {
     fclose ($fp);
   }
   print $GLOBALS['I18N']->get('done')."<br/><br/>";
-#@@@@ not sure about this one:  print '<p class="">'.PageLink2("attributes",$GLOBALS['I18N']->get('continue')).'</p>';
+#@@@@ not sure about this one:  print '<p class="button">'.PageLink2("attributes",$GLOBALS['I18N']->get('continue')).'</p>';
 
 } else {
 
@@ -79,11 +79,11 @@ while (list($key,$attribute) = each ($attributes)) {
   if (strstr($key,':')) {
     list($name,$desc) = explode(":",$key);
     if ($name && $desc) {
-      printf('<input type=checkbox name="selected[]" value="%s">%s<br>', $attribute,$desc);
+      printf('<input type="checkbox" name="selected[]" value="%s">%s<br>', $attribute,$desc);
     }
   }
 }
-print '<input type=submit value="'.$GLOBALS['I18N']->get('add').'"></form>';
+print '<input type="submit" value="'.$GLOBALS['I18N']->get('add').'"></form>';
 
 }
 ?>

@@ -143,7 +143,7 @@ if ($id) {
   print $GLOBALS['I18N']->get('Add a new Administrator');
 }
 print "<br/>";
-print '<p class="">'.$GLOBALS['I18N']->get('Admin Details').':'.formStart().'<table class="adminDetails" border=1>';
+print '<p class="details">'.$GLOBALS['I18N']->get('Admin Details').':'.formStart().'<table class="adminDetails" border=1>';
 printf('<input type=hidden name="id" value="%d">',$id);
 
 reset($struct);
@@ -213,7 +213,7 @@ print '<tr><td colspan=2><input type=submit name=change value="'.$GLOBALS['I18N'
 # what pages can this administrator see:
 if (!$data["superuser"] && $accesslevel == "all") {
   print $I18N->get('strAccessExplain');
-  print '<p class="">'.$GLOBALS['I18N']->get('Access Details').':</p><table class="adminAccess" border=1>';
+  print '<p class="details">'.$GLOBALS['I18N']->get('Access Details').':</p><table class="adminAccess" border=1>';
   reset($access_levels);
   printf ('<tr><td colspan="%d" align=center>'.$GLOBALS['I18N']->get('Access Privileges').'</td></tr>',sizeof($access_levels)+2);
   print '<tr><td>'.$GLOBALS['I18N']->get('Type').'</td><td>'.$GLOBALS['I18N']->get('Page')."</td>\n";

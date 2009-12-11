@@ -39,7 +39,7 @@ if ($total > 500 && $_GET['type'] != 'dl') {
   $req = Sql_Query(sprintf('select message.id as messageid,message.subject,umb.user as userid,count(bounce) as numbounces from %s message, %s umb where message.id = umb.message and message.id = %d and date_add(message.entered,interval 3 month) > current_timestamp group by umb.user order by message.entered desc %s',$GLOBALS['tables']['message'],$GLOBALS['tables']['user_message_bounce'],$msgid,$limit));
 }
 
-print '<p class="">'.PageLink2('msgbounces','Select another message');
+print '<p class="button">'.PageLink2('msgbounces','Select another message');
 print '&nbsp;'.PageLink2('msgbounces&type=dl&&amp;id='.$msgid,'Download emails');
 print '</p>';
 if ($_GET['type'] == 'dl') {

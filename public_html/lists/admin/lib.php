@@ -40,7 +40,7 @@ $GLOBALS['bounceruleactions'] = array(
 $GLOBALS['has_pear_http_request'] = class_exists('HTTP_Request');
 if( !isset($GLOBALS["developer_email"]) ) {
   ini_set('error_append_string','phplist version '.VERSION);
-  ini_set('error_prepend_string','<p class="">Sorry a software error occurred:<br/>
+  ini_set('error_prepend_string','<p class="error">Sorry a software error occurred:<br/>
     Please <a href="http://mantis.phplist.com">report a bug</a> when reporting the bug, please include URL and the entire content of this page.<br/>');
 }
 

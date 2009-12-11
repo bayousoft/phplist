@@ -55,7 +55,7 @@ if (!isset($_GET["type"]) && !empty($_SESSION["lastmessagetype"])) {
   $_SESSION["lastmessagetype"] = $_GET["type"];
 }
 
-#print '<p class="">'.PageLink2("messages&type=sent","Sent Messages").'&nbsp;&nbsp;&nbsp;';
+#print '<p class="x">'.PageLink2("messages&type=sent","Sent Messages").'&nbsp;&nbsp;&nbsp;';
 #print PageLink2("messages&type=draft","Draft Messages").'&nbsp;&nbsp;&nbsp;';
 #print PageLink2("messages&type=queue","Queued Messages").'&nbsp;&nbsp;&nbsp;';
 #print PageLink2("messages&type=stat","Static Messages").'&nbsp;&nbsp;&nbsp;';
@@ -123,7 +123,7 @@ if (isset($_GET['resend'])) {
     print "... ".$GLOBALS['I18N']->get("Done");
   else
     print "... ".$GLOBALS['I18N']->get("failed");
-  print '<br /><hr /><br /><p class="">\n';
+  print '<br /><hr /><br />\n';
 }
 
 if (isset($_GET['suspend'])) {
@@ -135,7 +135,7 @@ if (isset($_GET['suspend'])) {
     print "... ".$GLOBALS['I18N']->get("Done");
   else
     print "... ".$GLOBALS['I18N']->get("failed");
-  print'<br /><hr /><br /><p class="">\n';
+  print'<br /><hr /><br />\n';
 }
 #0012081: Add new 'Mark as sent' button
 if (isset($_GET['markSent'])) {
@@ -147,7 +147,7 @@ if (isset($_GET['markSent'])) {
     print "... ".$GLOBALS['I18N']->get("Done");
   else
     print "... ".$GLOBALS['I18N']->get("Failed");
-  print '<br /><hr /><br /><p class="">\n';
+  print '<br /><hr /><br />\n';
 }
 
 $cond = array();

@@ -32,7 +32,7 @@ if (isset($_GET['action']) && $_GET['action']) {
    }
 }
 
-print '<p class="">'.PageLink2('listbounces',$GLOBALS['I18N']->get('view bounces by list')).'</p>';
+print '<p class="button">'.PageLink2('listbounces',$GLOBALS['I18N']->get('view bounces by list')).'</p>';
 
 # view bounces
 $count = Sql_Query(sprintf('select count(*) from %s',$tables["bounce"]));
@@ -83,7 +83,7 @@ printf("[
    PageURL2("bounces",$GLOBALS['I18N']->get('delete'),"s=$s&action=reset"));
 
 if (!Sql_Num_Rows($result))
-  print '<p class="">' . $GLOBALS['I18N']->get('no unprocessed bounces available') . "</p>";
+  print '<p class="information">' . $GLOBALS['I18N']->get('no unprocessed bounces available') . "</p>";
 
 print "<table><tr><td></td><td>" . $GLOBALS['I18N']->get('message') . "</td><td>" . $GLOBALS['I18N']->get('user') . "</td><td>" . $GLOBALS['I18N']->get('date') . "</td></tr>";
 while ($bounce = Sql_fetch_array($result)) {

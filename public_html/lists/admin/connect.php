@@ -844,7 +844,7 @@ $newpoweredimage = 'iVBORw0KGgoAAAANSUhEUgAAAEYAAAAeCAMAAACmLZgsAAADAFBMVEXYx6fm
 function FileNotFound() {
   ob_end_clean();
   header("404, File Not Found");
-  printf('<html><head><title>404 Not Found</title></head><body><h3>Not Found</h3>The requested document was not found on this server<br/>Please contact the <a href="mailto:%s?subject=File not Found: %s">Administrator</a><p class=""><hr><address><a href="http://tincan.co.uk/phplist" target="_tincan">phplist</a> version %s</address></body></html>',getConfig("admin_address"),$_SERVER["REQUEST_URI"],VERSION);
+  printf('<html><head><title>404 Not Found</title></head><body><h3>Not Found</h3>The requested document was not found on this server<br/>Please contact the <a href="mailto:%s?subject=File not Found: %s">Administrator</a><p class="button"><hr><address><a href="http://tincan.co.uk/phplist" target="_tincan">phplist</a> version %s</address></body></html>',getConfig("admin_address"),$_SERVER["REQUEST_URI"],VERSION);
   exit;
 }
 

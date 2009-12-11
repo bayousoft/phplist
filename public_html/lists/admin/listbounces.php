@@ -50,7 +50,7 @@ if ($total > 500 && $_GET['type'] != 'dl') {
   $req = Sql_Query(sprintf('select listid,userid,count(bounce) as numbounces from %s listuser, %s umb where listuser.userid = umb.user and listuser.listid = %d  and date_add(time,interval 6 month) > current_timestamp group by umb.user order by listuser.listid %s',$GLOBALS['tables']['listuser'],$GLOBALS['tables']['user_message_bounce'],$listid,$limit));
 }
 
-print '<p class="">'.PageLink2('listbounces','Select another list');
+print '<p class="button">'.PageLink2('listbounces','Select another list');
 print '&nbsp;'.PageLink2('listbounces&type=dl&&amp;id='.$listid,'Download emails');
 print '</p>';
 if (isset($_GET['type']) && $_GET['type'] == 'dl') {

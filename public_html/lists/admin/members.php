@@ -125,14 +125,14 @@ if (isset($_POST["add"])) {
     $query = sprintf('select * from %s where email = ?', $tables['user']);
     $result = Sql_Query_Params($query, array($_POST['new']));
     if (Sql_Num_rows($result)) {
-      print '<p class="">'.$GLOBALS['I18N']->get("Users found, click add to add this user").":<br /><ul>\n";
+      print '<p class="information">'.$GLOBALS['I18N']->get("Users found, click add to add this user").":<br /><ul>\n";
       while ($user = Sql_fetch_array($result)) {
         printf ("<li>[ ".PageLink2("members",$GLOBALS['I18N']->get("Add"),"add=1&id=$id&doadd=".$user["id"])." ] %s <br />\n",
  $user["email"]);
       }
       print "</ul>\n";
     } else {
-      print '<p class="">'.$GLOBALS['I18N']->get("No user found with that email").'</p><table>'.formStart();
+      print '<p class="information">'.$GLOBALS['I18N']->get("No user found with that email").'</p><table>'.formStart();
       require $GLOBALS["coderoot"] . "subscribelib2.php";
       ?>
       <?php
@@ -218,7 +218,7 @@ if (isset($id)) {
   $result = Sql_Query_Params($query, array($id));
   $row = Sql_Fetch_row($result);
   $total = $row[0];
-  print "$total ".$GLOBALS['I18N']->get("Users on this list").'<p class="">';
+  print "$total ".$GLOBALS['I18N']->get("Users on this list").'<p class="information">';
   $offset = 0;
   if ($total > MAX_USER_PP) {
     if (isset($start) && $start) {
@@ -369,4 +369,4 @@ if ($html) {
 <tr><td colspan=2><input type=submit name=processtags value="<?php echo $GLOBALS['I18N']->get('do it')?>"></td></tr>
 </table>
 </form>
-
+</p>

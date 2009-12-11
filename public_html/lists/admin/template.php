@@ -88,7 +88,7 @@ if (!empty($_POST['action']) && $_POST['action'] == "addimages") {
     } else
       $msg = $GLOBALS['I18N']->get("No images found");
   }
-  print '<p class="error">'.$msg.'</p>';
+  print '<p class="information">'.$msg.'</p>';
   return;
 } elseif (!empty($_POST['save'])) {
   $templateok = 1;
@@ -149,13 +149,13 @@ if (!empty($_POST['action']) && $_POST['action'] == "addimages") {
       $tables["templateimage"],$id,"image/png","powerphplist.png",
       $newpoweredimage,
       70,30));
-    print '<p class="error">'.$GLOBALS['I18N']->get("Template saved").'</p>';
+    print '<p class="information">'.$GLOBALS['I18N']->get("Template saved").'</p>';
 
     if (sizeof($images)) {
       include dirname(__FILE__) . "/class.image.inc";
       $image = new imageUpload();
-      print "<h3>".$GLOBALS['I18N']->get("Images").'</h3><p class="">'.$GLOBALS['I18N']->get("Below is the list of images used in your template. If an image is currently unavailable, please upload it to the database.")."</p>";
-      print '<p class="">'.$GLOBALS['I18N']->get("This includes all images, also fully referenced ones, so you may choose not to upload some. If you upload images, they will be included in the emails that use this template.")."</p>";
+      print "<h3>".$GLOBALS['I18N']->get("Images").'</h3><p class="information">'.$GLOBALS['I18N']->get("Below is the list of images used in your template. If an image is currently unavailable, please upload it to the database.")."</p>";
+      print '<p class="information">'.$GLOBALS['I18N']->get("This includes all images, also fully referenced ones, so you may choose not to upload some. If you upload images, they will be included in the emails that use this template.")."</p>";
       print formStart('enctype="multipart/form-data"');
       print '<input type=hidden name="id" value="'.$id.'">';
       ksort($images);
@@ -168,11 +168,11 @@ if (!empty($_POST['action']) && $_POST['action'] == "addimages") {
       print '<input type=hidden name="id" value="'.$id.'"><input type=hidden name="action" value="addimages"><input type=submit name="addimages" value="'.$GLOBALS['I18N']->get("Save Images").'"></form>';
       return;
     } else {
-      print '<p class="">'.$GLOBALS['I18N']->get("Template does not contain local images")."</p>";
+      print '<p class="information">'.$GLOBALS['I18N']->get("Template does not contain local images")."</p>";
       return;
     }
   } else {
-    print '<p class="error">'.$GLOBALS['I18N']->get("Some errors were found, template NOT saved!").'</p>';
+    print '<p class="information">'.$GLOBALS['I18N']->get("Some errors were found, template NOT saved!").'</p>';
     $data["title"] = $title;
     $data["template"] = $content;
   }
@@ -184,9 +184,9 @@ if (!empty($_POST['action']) && $_POST['action'] == "addimages") {
 }
 ?>
 
-<p class="error"><?php echo $msg?></p>
+<p class="information"><?php echo $msg?></p>
 <?php echo PageLink2("templates",$GLOBALS['I18N']->get("List of Templates"));?>
-<p class="">
+
 <?php echo formStart(' enctype="multipart/form-data"')?>
 <input type=hidden name="id" value="<?php echo $id?>">
 <table>

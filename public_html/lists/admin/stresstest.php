@@ -93,7 +93,7 @@ function fill($prefix,$listid) {
 }
 
 print formStart().'<input type="text" name="output" size=45></form>';
-print '<p class="">'.PageLink2("stresstest","Erase Test information","eraseall=yes").' (may take a while)';
+print '<p class="button">'.PageLink2("stresstest","Erase Test information","eraseall=yes").' (may take a while)';
 print '<script language="Javascript" type="text/javascript"> document.write(progressmeter); start();</script>';
 
 ob_end_flush();
