@@ -163,7 +163,7 @@ if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
               print $deleted . " " . $GLOBALS['I18N']->get('users deleted') . "<br/>";
             print $c . " " . $GLOBALS['I18N']->get('users apply') . "<br/>$list\n";
             if ($c)
-              print '<input type=submit name="deletetagged" value="' . $GLOBALS['I18N']->get('Delete Tagged Users') . '"></form>';
+              print '<p class="submit"><input type="submit" name="deletetagged" value="' . $GLOBALS['I18N']->get('Delete Tagged Users') . '"></p></form>';
             break;
 
           case "delmsghistory" :
@@ -184,7 +184,7 @@ if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
               print $GLOBALS['I18N']->get('History of ') . $deleted . " " . $GLOBALS['I18N']->get('messages deleted') . "<br/>";
             print $c . " " . $GLOBALS['I18N']->get('messages apply') . "<br/>$list\n";
             if ($c)
-              print '<input type=submit name="deletetagged" value="' . $GLOBALS['I18N']->get('Delete History of Tagged Messages') . '"></form>';
+              print '<p class="submit"><input type="submit" name="deletetagged" value="' . $GLOBALS['I18N']->get('Delete History of Tagged Messages') . '"></p></form>';
             break;
 
           case "delrsshistory" :
@@ -205,7 +205,7 @@ if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
               print $GLOBALS['I18N']->get('RSS history of ') . $deleted . " " . $GLOBALS['I18N']->get('users deleted') . "<br/>";
             print $c . " " . $GLOBALS['I18N']->get('users apply') . "<br/>$list\n";
             if ($c)
-              print '<input type=submit name="deletetagged" value="' . $GLOBALS['I18N']->get('Delete RSS History of Tagged Users') . '"></form>';
+              print '<p class="submit"><input type="submit" name="deletetagged" value="' . $GLOBALS['I18N']->get('Delete RSS History of Tagged Users') . '"></p></form>';
             break;
 
           case "markinvalidunconfirmed" :

@@ -35,7 +35,7 @@ if ($delete) {
     $tables["subscribepage_data"],$delete));
    Info($GLOBALS['I18N']->get('deleted')." $delete");
 }
-print formStart('name="pagelist"');
+print formStart('name="pagelist" class="spageEdit" ');
 $ls = new WebblerListing($GLOBALS['I18N']->get('subscribe pages'));
 
 $req = Sql_Query(sprintf('select * from %s %s order by title',$tables["subscribepage"],$subselect));

@@ -123,7 +123,7 @@ flush();
 print '<script language="Javascript" src="js/progressbar.js" type="text/javascript"></script>';
 print '<script language="Javascript" type="text/javascript"> yposition = 10;document.write(progressmeter); start();</script>';
 flush();
-print formStart('name="outputform"').'<textarea name="output" rows=22 cols=75></textarea></form>';
+print formStart('name="outputform" class="processqueueOutput" ').'<textarea name="output" rows=22 cols=75></textarea></form>';
 
 # report keeps track of what is going on
 $report = "";

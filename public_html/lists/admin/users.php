@@ -228,7 +228,7 @@ return;
 //  </select>
 //  D: <input type=radio name="sortorder" value="desc" %s>
 //  A: <input type=radio name="sortorder" value="asc" %s>
-//  <input type=submit name="change" value="Go">
+//  <p class="submit"><input type="submit" name="change" value="Go"></p>
 //  ',
 //  $select,$sortorder == "desc"? "checked":"",$sortorder == "asc"? "checked":"");
 //print '</td></tr></table>';
@@ -276,7 +276,7 @@ return;
 //  while ($row = Sql_Fetch_Array($att_req)) {
 //    printf('<option value="%d" %s>%s</option>',$row["id"],$row["id"] == $findby ? "selected":"",substr($row["name"],0,20));
 //  }
-//?></select><input type=submit value="Go">&nbsp;&nbsp;<a href="./?page=users&find=NULL">reset</a>
+//?></select><p class="submit"><input type="submit" value="Go"></p>&nbsp;&nbsp;<a href="./?page=users&find=NULL">reset</a>
 //</form></td></tr>
 //<tr><td colspan=4>
 //<?php

@@ -25,7 +25,7 @@ if (!Sql_Affected_Rows())
   print '<p class="information">'.$GLOBALS['I18N']->get("No template have been defined").'</p>';
 
 $defaulttemplate = getConfig('defaultmessagetemplate');
-print formStart('name="templates"');
+print formStart('name="templates" class="templatesEdit" ');
 $ls = new WebblerListing($GLOBALS['I18N']->get("Existing templates"));
 while ($row = Sql_fetch_Array($req)) {
   $element = $row['title'];

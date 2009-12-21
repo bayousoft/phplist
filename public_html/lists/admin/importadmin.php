@@ -258,7 +258,7 @@ if(isset($import)) {
 
 
 } else {
- echo formStart('enctype="multipart/form-data" name="import"')?>
+ echo formStart('enctype="multipart/form-data" name="import" class="importadminDo" ')?>
 <?php
 if ($GLOBALS["require_login"] && !isSuperUser()) {
   $access = accessLevel("importadmin");
@@ -285,7 +285,7 @@ if (!Sql_Affected_Rows())
 <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('importadmintestinfo')?></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('Test output')?>:</td><td><input type="checkbox" name="import_test" value="yes"></td></tr>
 <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('Check this box to create a list for each administrator, named after their loginname')?> <input type=checkbox name="createlist" value="yes" checked></td></tr>
-<tr><td><input type="submit" name="import" value="<?php echo $GLOBALS['I18N']->get('Do Import')?>"></td><td>&nbsp;</td></tr>
+<tr><td><p class="submit"><input type="submit" name="import" value="<?php echo $GLOBALS['I18N']->get('Do Import')?>"></p></td><td>&nbsp;</td></tr>
 </table>
 <?php } ?>
 

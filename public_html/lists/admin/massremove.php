@@ -43,8 +43,8 @@ if (isset($_POST['unsubscribe'])) {
 <form method=post action="">
 <h3><?php echo $GLOBALS['I18N']->get('Mass remove email addresses')?></h3>
 
-<?php echo $GLOBALS['I18N']->get('Check to also add the emails to the blacklist')?>  <input type="checkbox" name="blacklist" value="1"></br/>
+<?php echo $GLOBALS['I18N']->get('Check to also add the emails to the blacklist')?>  <input type="checkbox" name="blacklist" value="1"><br/>
 <p class="information"><?php echo $GLOBALS['I18N']->get('Paste the emails to remove in this box, and click continue')?></p>
-<input type=submit name="go" value="<?php echo $GLOBALS['I18N']->get('Continue')?>"><br/>
+<p class="submit"><input type="submit" name="go" value="<?php echo $GLOBALS['I18N']->get('Continue')?>"></p><br/>
 <textarea name="unsubscribe" rows=30 cols=40></textarea>
 </form>

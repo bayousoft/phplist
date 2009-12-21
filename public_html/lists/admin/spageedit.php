@@ -327,9 +327,9 @@ if ($GLOBALS["require_login"] && (isSuperUser() || accessLevel("spageedit") == "
 }
 
 print '
-<br/><input type="submit" name="save" value="'.$GLOBALS['I18N']->get('Save Changes').'">&nbsp;
-<input type="submit" name="activate" value="'.$GLOBALS['I18N']->get('Save and Activate').'">
-<input type="submit" name="deactivate" value="'.$GLOBALS['I18N']->get('Save and Deactivate').'">
+<br/><p class="submit"><input type="submit" name="save" value="'.$GLOBALS['I18N']->get('Save Changes').'"></p>&nbsp;
+<p class="submit"><input type="submit" name="activate" value="'.$GLOBALS['I18N']->get('Save and Activate').'"></p>
+<p class="submit"><input type="submit" name="deactivate" value="'.$GLOBALS['I18N']->get('Save and Deactivate').'"></p>
 </form>';
 
 ?>

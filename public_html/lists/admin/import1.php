@@ -370,7 +370,7 @@ include_once dirname(__FILE__)."/subscribelib2.php";
 print ListAllAttributes();
 ?>
 
-<tr><td><input type="submit" name="import" value="<?php echo $GLOBALS['I18N']->get('import'); ?>"></td><td>&nbsp;</td></tr>
+<tr><td><p class="input"><input type="submit" name="import" value="<?php echo $GLOBALS['I18N']->get('import'); ?>"></p></td><td>&nbsp;</td></tr>
 </table>
 <?php } ?>
 

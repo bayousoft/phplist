@@ -6,7 +6,7 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 
-print formStart();
+print formStart('class="listListing"');
 $some = 0;
 
 if (isset($_GET['delete'])) {

@@ -38,7 +38,7 @@ function prepareOutput() {
   global $outputdone;
   if (!$outputdone) {
     $outputdone= 1;
-    return formStart('name="outputform"') . '<textarea name="output" rows=10 cols=70></textarea></form>';
+    return formStart('name="outputform" class="readtestmailOutput" ') . '<textarea name="output" rows=10 cols=70></textarea></form>';
   }
 }
 
@@ -328,7 +328,7 @@ if (!empty ($_REQUEST['email'])) {
 {
   print ('<form method=get>');
   print ('  <input name="page" value="readtestmail" type="hidden">');
-  print ('  <input type=submit name=action value="Get email for user: ">');
+  print ('  <p class="submit"><input type="submit" name=action value="Get email for user: "></p>');
   printf('  <input type=text name="email" value="%s">', $_REQUEST['email']);
   print ('</form>');
 }

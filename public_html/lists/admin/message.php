@@ -114,7 +114,7 @@ while ($lst = Sql_fetch_array($result)) {
 </table>
 
 <a name="resend"></a><p class="information"><?php echo $GLOBALS['I18N']->get('Send this (same) message to (a) new list(s)'); ?>:</p>
-<?php echo formStart()?>
+<?php echo formStart(' class="messageResend" ')?>
 <input type=hidden name="id" value="<?php echo $id?>">
 <ul>
 <?php
@@ -137,6 +137,6 @@ while ($row = Sql_fetch_array($result)) {
 if (!$some)
   print $GLOBALS['I18N']->get('<b>Note:</b> this message has already been sent to all lists. To resend it to new users use the "Requeue" function.');
 else
-  print '<br /><input type="submit" name="resend" value="'.$GLOBALS['I18N']->get('Resend').'"></form>';
+  print '<br /><p class="submit"><input type="submit" name="resend" value="'.$GLOBALS['I18N']->get('Resend').'"></p></form>';
 
 ?>

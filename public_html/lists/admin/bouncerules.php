@@ -73,7 +73,7 @@ if (!Sql_Affected_Rows()) {
   print $GLOBALS['I18N']->get('No Rules found');
   $some = 0;
 } else {
-  print formStart();
+  print formStart('class="bouncerulesListing"');
 }
 
 while ($row = Sql_Fetch_Array($req)) {
@@ -106,7 +106,7 @@ if ($some) {
   } else {
     printf('<b>%s</b> <input type=checkbox name="tagaction" value="deactivate"><br/>',$GLOBALS['I18N']->get('make inactive'));
   }
-  print ' <input type=submit name="doit" value="'.$GLOBALS['I18N']->get('Save Changes').'"></p>';
+  print ' <p class="submit"><input type="submit" name="doit" value="'.$GLOBALS['I18N']->get('Save Changes').'"></p>';
   print '</form>';
 }
 print '<hr/>';
@@ -121,7 +121,7 @@ foreach ($GLOBALS['bounceruleactions'] as $action => $desc) {
 print '</select></td></tr>';
 printf('<tr><td colspan=2>%s</td></tr><tr><td colspan=2><textarea name="comment" rows=10 cols=65></textarea></td></tr>',
   $GLOBALS['I18N']->get('Memo for this rule'));
-print '<tr><td colspan=2><input type=submit name="add" value="'.$GLOBALS['I18N']->get('Add new Rule').'"></td></tr>';
+print '<tr><td colspan=2><p class="submit"><input type="submit" name="add" value="'.$GLOBALS['I18N']->get('Add new Rule').'"></td></tr>';
 print '</table></form>';
   
 ?>

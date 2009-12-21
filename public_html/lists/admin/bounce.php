@@ -109,7 +109,7 @@ if ($id) {
   $newruleform .= '</select></td></tr>';
   $newruleform .= sprintf('<tr><td colspan=2>%s</td></tr><tr><td colspan=2><textarea name="comment" rows=10 cols=65></textarea></td></tr>',
     $GLOBALS['I18N']->get('Memo for this rule'));
-  $newruleform .= '<tr><td colspan=2><input type=submit name="add" value="'.$GLOBALS['I18N']->get('Add new Rule').'"></td></tr>';
+  $newruleform .= '<tr><td colspan=2><p class="submit"><input type="submit" name="add" value="'.$GLOBALS['I18N']->get('Add new Rule').'"></p></td></tr>';
   $newruleform .= '</table></form>';
 
    print '<form method=get>';
@@ -122,7 +122,7 @@ if ($id) {
   print '<tr><td>'.$GLOBALS['I18N']->get('SetReceiveText').' </td><td><input type=checkbox name=maketext value="1"></td></tr>';
   print '<tr><td>'.$GLOBALS['I18N']->get('DelUser1').' </td><td><input type=checkbox name=deleteuser value="1"></td></tr>';
   print '<tr><td>'.$GLOBALS['I18N']->get('DelAndGo').' </td><td><input type=checkbox name=deletebounce value="1" checked></td></tr>';
-  print '<tr><td><input type=submit name="doit" value="'.$GLOBALS['I18N']->get('DoAbove').'"></td></tr>';
+  print '<tr><td><p class="submit"><input type="submit" name="doit" value="'.$GLOBALS['I18N']->get('DoAbove').'"></p></td></tr>';
   print "</table></form>";
   if (USE_ADVANCED_BOUNCEHANDLING) {
     print '<p class="button"><a href="#newrule">'.$GLOBALS['I18N']->get('Create New Rule based on this bounce').'</a></p>';
@@ -138,7 +138,7 @@ if ($id) {
   <tr><td valign="top">'.$GLOBALS['I18N']->get('Body').'</td><td valign="top">%s</td></tr>',$id,
   $bounce["date"],$bounce["status"],$bounce["comment"],
   nl2br(htmlspecialchars($bounce["header"])),nl2br(htmlspecialchars($bounce["data"])));
-#   print '<tr><td colspan=2><input type=submit name=change value="Save Changes">';
+#   print '<tr><td colspan=2><p class="submit"><input type="submit" name=change value="Save Changes"></p>';
   print '</table>';
   if (USE_ADVANCED_BOUNCEHANDLING) {
     print '<a name="newrule"></a>';

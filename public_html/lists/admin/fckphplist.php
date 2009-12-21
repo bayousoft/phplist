@@ -211,7 +211,7 @@ function ok()
               </tr>
               <tr>
                 <td height="100%" align="center" valign="middle">
-                  <DIV class="ImagePreviewArea"><IMG id="imgPreview" border=1"></DIV>
+                  <DIV class="ImagePreviewArea"><IMG id="imgPreview" border=1"/></DIV>
                 </td>
               </tr>
             </table>
@@ -222,8 +222,8 @@ function ok()
   </TR>
   <TR>
     <TD align="center">
-      <INPUT style="WIDTH: 80px" type="button" value="OK"     onclick="ok();"> &nbsp;&nbsp;&nbsp;&nbsp;
-      <INPUT style="WIDTH: 80px" type="button" value="Cancel" onclick="window.close();"><BR>
+      <p class="button"><INPUT type="button" value="OK"     onclick="ok();"></p> &nbsp;&nbsp;&nbsp;&nbsp;
+      <p class="button"><INPUT type="button" value="Cancel" onclick="window.close();"></p><BR/>
     </TD>
   </TR>
 </TABLE>

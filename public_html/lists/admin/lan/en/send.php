@@ -63,8 +63,8 @@ $lan = array (
   'expand' => 'expand',
   'plaintextversion' => 'Plain text version of message',
   'messagefooter' => 'Message Footer',
-  'messagefooterexplanation' => 'Use <b>[UNSUBSCRIBE]</b> to insert the personal unsubscribe URL for each user.
-    <br/>Use <b>[PREFERENCES]</b> to insert the personal URL for a user to update their details',
+  'messagefooterexplanation' => '<p class="information">Use <b>[UNSUBSCRIBE]</b> to insert the personal unsubscribe URL for each user.</p>
+    <p class="information">Use <b>[PREFERENCES]</b> to insert the personal URL for a user to update their details.</p>',
   'addattachments' => 'Add attachments to your message',
   'uploadlimits' => 'The upload has the following limits set by the server',
   'maxtotaldata' => 'Maximum size of total data being sent to the server',
@@ -82,7 +82,7 @@ $lan = array (
   'delchecked' => 'Delete Checked',
   'sendtestmessage' => 'Send Test Message',
   'toemailaddresses' => ' to email address(es)',
-  'sendtestexplain' => '(comma separate addresses - all must be users)',
+  'sendtestexplain' => '(comma separated addresses - all must be users)',
   'criteriaexplanation' => '
         <p><b>Select the criteria for this message:</b>
         <ol>

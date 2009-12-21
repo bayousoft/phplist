@@ -20,7 +20,7 @@ function prepareOutput() {
   global $outputdone;
   if (!$outputdone) {
     $outputdone = 1;
-    return formStart('name="outputform"').'<textarea name="output" rows=10 cols=50></textarea></form>';
+    return formStart('name="outputform" class="processbounces" ').'<textarea name="output" rows=10 cols=50></textarea></form>';
   }
 }
 

@@ -72,7 +72,7 @@ if (!empty($_POST['selected']) && is_array($_POST['selected'])) {
 ?>
 
 
-<?php echo formStart()?>
+<?php echo formStart(' class="defaultsAdd"')?>
 <?php
 reset($attributes);
 while (list($key,$attribute) = each ($attributes)) {
@@ -83,7 +83,7 @@ while (list($key,$attribute) = each ($attributes)) {
     }
   }
 }
-print '<input type="submit" value="'.$GLOBALS['I18N']->get('add').'"></form>';
+print '<p class="submit"><input type="submit" value="'.$GLOBALS['I18N']->get('add').'"></p></form>';
 
 }
 ?>

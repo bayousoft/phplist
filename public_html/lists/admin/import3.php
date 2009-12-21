@@ -69,10 +69,10 @@ function printTree($tree,$root,$delim) {
   foreach ($tree as $node => $rec) {
     if (!in_array($node,$GLOBALS["nodesdone"])) {
       if (preg_match("#".preg_quote($root)."#i",$node)) {
-        print '<li style="{list-style-type : none;}">';
-        printf ('<input type=checkbox name="checkfolder[]" value="%s">&nbsp;',$node);
+        print '<li>';
+        printf ('<input type="checkbox" name="checkfolder[]" value="%s">&nbsp;',$node);
         print "<b>$node</b>\n";
-        printf ('<input type=checkbox name="%s" id="%s" value="1"
+        printf ('<input type="checkbox" name="%s" id="%s" value="1"
           onChange="checkSubFolders(\'%s\');"> (add subfolders)',$node,$node,$node);
         print "</li>";
         print "<ul>\n";
@@ -83,8 +83,8 @@ function printTree($tree,$root,$delim) {
   #          print "</ul>";
           } else {
           #  print "NO $node$delim$leaf <br/>";
-            print '<li style="{list-style-type : none;}">';
-            printf ('<input type=checkbox name="checkfolder[]" value="%s">&nbsp;',$node.$delim.$leaf);
+            print '<li>';
+            printf ('<input type="checkbox" name="checkfolder[]" value="%s">&nbsp;',$node.$delim.$leaf);
 #            print "$node.$delim";
             print "$leaf</li>\n";
           }
@@ -205,12 +205,12 @@ function getBestVersion($emails) {
 if (!$_POST["server"] || !$_POST["user"] || !$_POST["password"] || !is_array($_POST["lists"])) {
   print '
   <p class="information">'.$GLOBALS['I18N']->get('Please enter details of the IMAP account').'</p>
-  <form method=post>
+  <form method="post">
   <table class="importForm">
-  <tr><td>'.$GLOBALS['I18N']->get('Server').':</td><td><input type=text name="server" value="" size=30></td></tr>
-  <tr><td>'.$GLOBALS['I18N']->get('User').':</td><td><input type=text name="user" value="" size=30></td></tr>
-  <tr><td>'.$GLOBALS['I18N']->get('Password').':</td><td><input type=password name="password" value="" size=30></td></tr>
-  <tr><td colspan=2>'.$GLOBALS['I18N']->get('Select the headers fields to search').':</td></tr>
+  <tr><td>'.$GLOBALS['I18N']->get('Server').':</td><td><input type="text" name="server" value="" size="30"></td></tr>
+  <tr><td>'.$GLOBALS['I18N']->get('User').':</td><td><input type="text" name="user" value="" size="30"></td></tr>
+  <tr><td>'.$GLOBALS['I18N']->get('Password').':</td><td><input type="password" name="password" value="" size="30"></td></tr>
+  <tr><td colspan="2">'.$GLOBALS['I18N']->get('Select the headers fields to search').':</td></tr>
   ';
   foreach ($email_header_fields as $header_field) {
     printf('
@@ -223,10 +223,10 @@ if (!$_POST["server"] || !$_POST["user"] || !$_POST["password"] || !is_array($_P
   print '<ul>';
   foreach ($available_lists as $index => $name) {
     if (sizeof($available_lists) == 1) {
-      printf('<input type=hidden name="lists[0]" value="%d">
+      printf('<input type="hidden" name="lists[0]" value="%d">
         <li>'.$GLOBALS['I18N']->get("Adding users to list").'. <b>%s</b>',$index,$name);
     } else {
-      printf('<li><input type=checkbox name="lists[%d]" value="%d">%s',
+      printf('<li><input type="checkbox" name="lists[%d]" value="%d">%s',
         $c,$index,$name);
       $c++;
     }
@@ -235,13 +235,13 @@ if (!$_POST["server"] || !$_POST["user"] || !$_POST["password"] || !is_array($_P
   print '
   </ul></td></tr>
 <tr><td>'.$GLOBALS['I18N']->get('Mark new users as HTML').':</td><td><input type="checkbox" name="markhtml" value="yes"></td></tr>
-<tr><td colspan=2>'.$GLOBALS['I18N']->get('If you check')." '".$GLOBALS['I18N']->get('Overwrite Existing')."', ".$GLOBALS['I18N']->get("information about a user in the database will be replaced by the imported information. Users are matched by email.").'</td></tr>
+<tr><td colspan="2">'.$GLOBALS['I18N']->get('If you check')." '".$GLOBALS['I18N']->get('Overwrite Existing')."', ".$GLOBALS['I18N']->get("information about a user in the database will be replaced by the imported information. Users are matched by email.").'</td></tr>
 <tr><td>'.$GLOBALS['I18N']->get('Overwrite Existing').':</td><td><input type="checkbox" name="overwrite" value="yes"></td></tr>
-<tr><td colspan=2>'.$GLOBALS['I18N']->get('If you check')." '".$GLOBALS['I18N']->get('Only use complete addresses')."' ".$GLOBALS['I18N']->get("addresses that do not have a real name will be ignored. Otherwise all emails will be imported.").'</td></tr>
+<tr><td colspan="2">'.$GLOBALS['I18N']->get('If you check')." '".$GLOBALS['I18N']->get('Only use complete addresses')."' ".$GLOBALS['I18N']->get("addresses that do not have a real name will be ignored. Otherwise all emails will be imported.").'</td></tr>
 <tr><td>'.$GLOBALS['I18N']->get("Only use complete addresses").':</td><td><input type="checkbox" name="onlyfull" value="yes"></td></tr>
-<tr><td colspan=2>'.$GLOBALS['I18N']->get('If you choose')." '".$GLOBALS['I18N']->get('send notification email')."' ".$GLOBALS['I18N']->get("the users you are adding will be sent the request for confirmation of subscription to which they will have to reply. This is recommended, because it will identify invalid emails.").'</td></tr>
+<tr><td colspan="2">'.$GLOBALS['I18N']->get('If you choose')." '".$GLOBALS['I18N']->get('send notification email')."' ".$GLOBALS['I18N']->get("the users you are adding will be sent the request for confirmation of subscription to which they will have to reply. This is recommended, because it will identify invalid emails.").'</td></tr>
 <tr><td>'.$GLOBALS['I18N']->get("Send&nbsp;Notification&nbsp;email&nbsp;").'<input type="radio" name="notify" value="yes"></td><td>'.$GLOBALS['I18N']->get("Make confirmed immediately").'&nbsp;<input type="radio" name="notify" value="no"></td></tr>
-<tr><td colspan=2>'.$GLOBALS['I18N']->get('import3info').'
+<tr><td colspan="2">'.$GLOBALS['I18N']->get('import3info').'
 </td></tr>
 <tr><td>'.$GLOBALS['I18N']->get("Use one attribute for name").'<input type="radio" name="nameattributes" value="one"></td><td>'.$GLOBALS['I18N']->get('Use two attributes for the name').'&nbsp;<input type="radio" name="nameattributes" value="two"></td></tr>
 <tr><td>'.$GLOBALS['I18N']->get('Attribute one').': </td><td><select name="attributeone">
@@ -259,7 +259,7 @@ if (!$_POST["server"] || !$_POST["user"] || !$_POST["password"] || !is_array($_P
     printf('<option value="%d">%s</option>',$att["id"],$att["name"]);
   }
   print '</select></td></tr>
-  <tr><td colspan=2><input type=submit value="'.$GLOBALS['I18N']->get('Continue').'"></td></tr>
+  <tr><td colspan="2"><p class="submit"><input type="submit" value="'.$GLOBALS['I18N']->get('Continue').'"></p></td></tr>
   </table></form>
   ';
 } elseif (!is_array($_POST["checkfolder"])) {
@@ -270,17 +270,17 @@ if (!$_POST["server"] || !$_POST["user"] || !$_POST["password"] || !is_array($_P
   }
 
   printf( '
-  <form method=post name="folderlist">
-  <input type=hidden name="parsefolders" value="1">
+  <form method="post" name="folderlist">
+  <input type="hidden" name="parsefolders" value="1">
   ',$_POST["server"],$_POST["user"],$_POST["password"]);
   if (is_array($_POST["selected_header_fields"])) {
     foreach ($_POST["selected_header_fields"] as $field) {
-      printf('<input type=hidden name="selected_header_fields[]" value="%s">',$field);
+      printf('<input type="hidden" name="selected_header_fields[]" value="%s">',$field);
      }
   }
   if (is_array($_POST["lists"])) {
     foreach ($_POST["lists"] as $key => $val) {
-      printf('<input type=hidden name="lists[%d]" value="%s">',$key,$val);
+      printf('<input type="hidden" name="lists[%d]" value="%s">',$key,$val);
      }
   }
   foreach (array("server","user","password","markhtml",
@@ -320,7 +320,7 @@ if (!$_POST["server"] || !$_POST["user"] || !$_POST["password"] || !is_array($_P
   }
   ksort($tree);
   print '<ul>'.printTree($tree,"INBOX",".").'</ul>';
-  print '<input type=submit value="'.$GLOBALS['I18N']->get('Process Selected Folders').'"></form>';
+  print '<p class="submit"><input type="submit" value="'.$GLOBALS['I18N']->get('Process Selected Folders').'"></p></form>';
 } else {
   $all_emails = array();
   while (list($key,$folder) = each($_POST["checkfolder"])) {
@@ -386,7 +386,7 @@ if (!$_POST["server"] || !$_POST["user"] || !$_POST["password"] || !is_array($_P
       set_time_limit(60);
        $importuser = getBestVersion($versions);
  #     print $importuser["personal"]." &lt;".$importuser["email"]."&gt;<br/>";
-      printf('<input type=hidden name="importemail[%s] value="%s">',
+      printf('<input type="hidden" name="importemail[%s] value="%s">',
       $importuser["email"],$importuser["personal"]);
 
       # split personal in first and last name

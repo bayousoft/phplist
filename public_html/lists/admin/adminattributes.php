@@ -68,7 +68,7 @@ if (isset($_POST["action"]) && $_POST["action"] == $GLOBALS['I18N']->get('SaveCh
 
 
 <?php
-print formStart();
+print formStart(' class="adminattributesListing" ');
 $res = Sql_Query("select * from {$tables['adminattribute']} order by listorder");
 if (Sql_Num_Rows($res))
   print $GLOBALS['I18N']->get('ExistingAttr');
@@ -104,5 +104,5 @@ while (list($key,$val) = each($types)) {
 <td><?php echo $GLOBALS['I18N']->get('IsAttrRequired'); ?> </td><td><input type=checkbox name="required[0]" value="1" checked></td></tr>
 </table><hr>
 
-<input type=submit name="action" value="<?php echo $GLOBALS['I18N']->get('SaveChanges'); ?>">
+<p class="submit"><input type="submit" name="action" value="<?php echo $GLOBALS['I18N']->get('SaveChanges'); ?>"></p>
 </form>

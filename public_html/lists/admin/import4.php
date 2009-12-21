@@ -49,33 +49,33 @@ if (!$_POST["remote_host"] ||
   !$_POST["remote_password"] || !$_POST["remote_database"]) {
   printf( '
   <p class="information">'.$GLOBALS['I18N']->get('remote_server').'</p>
-  <form method=post>
+  <form method="post">
   <table class="importForm">
-  <tr><td>'.$GLOBALS['I18N']->get('server').'</td><td><input type=text name="remote_host" value="%s" size=30></td></tr>
-  <tr><td>'.$GLOBALS['I18N']->get('user').'</td><td><input type=text name="remote_user" value="%s" size=30></td></tr>
-  <tr><td>'.$GLOBALS['I18N']->get('passwd').'</td><td><input type=text name="remote_password" value="%s" size=30></td></tr>
-  <tr><td>'.$GLOBALS['I18N']->get('database').'</td><td><input type=text name="remote_database" value="%s" size=30></td></tr>
-  <tr><td>'.$GLOBALS['I18N']->get('table_prefix').'</td><td><input type=text name="remote_prefix" value="%s" size=30></td></tr>
-  <tr><td>'.$GLOBALS['I18N']->get('usertable_prefix').'</td><td><input type=text name="remote_userprefix" value="%s" size=30></td></tr>
+  <tr><td>'.$GLOBALS['I18N']->get('server').'</td><td><input type="text" name="remote_host" value="%s" size="30"></td></tr>
+  <tr><td>'.$GLOBALS['I18N']->get('user').'</td><td><input type="text" name="remote_user" value="%s" size="30"></td></tr>
+  <tr><td>'.$GLOBALS['I18N']->get('passwd').'</td><td><input type="text" name="remote_password" value="%s" size="30"></td></tr>
+  <tr><td>'.$GLOBALS['I18N']->get('database').'</td><td><input type="text" name="remote_database" value="%s" size="30"></td></tr>
+  <tr><td>'.$GLOBALS['I18N']->get('table_prefix').'</td><td><input type="text" name="remote_prefix" value="%s" size="30"></td></tr>
+  <tr><td>'.$GLOBALS['I18N']->get('usertable_prefix').'</td><td><input type="text" name="remote_userprefix" value="%s" size="30"></td></tr>
   ',$_POST["remote_server"],$_POST["remote_user"],$_POST["remote_password"],
   $_POST["remote_database"],$_POST["remote_prefix"],$_POST["remote_userprefix"]);
   $c = 0;
-  print '<tr><td colspan=2>';
+  print '<tr><td colspan="2">';
   if (sizeof($available_lists) > 1)
     print $GLOBALS['I18N']->get('select_lists').'<br/>';
   print '<ul>';
   foreach ($available_lists as $index => $name) {
-    printf('<li><input type=checkbox name="lists[%d]" value="%d" %s>%s</li>',
+    printf('<li><input type="checkbox" name="lists[%d]" value="%d" %s>%s</li>',
       $c,$index,is_array($_POST["lists"]) && in_array($index,array_values($_POST["lists"]))?"checked":"",$name);
     $c++;
   }
   printf('
-  <li><input type=checkbox name="copyremotelists" value="yes" %s>'.$GLOBALS['I18N']->get('copy_lists').'</li>
+  <li><input type="checkbox" name="copyremotelists" value="yes" %s>'.$GLOBALS['I18N']->get('copy_lists').'</li>
   </ul></td></tr>
 <tr><td>'.$GLOBALS['I18N']->get('users_as_html').'</td><td><input type="checkbox" name="markhtml" value="yes" %s></td></tr>
-<tr><td colspan=2>'.$GLOBALS['I18N']->get('info_overwrite_existing').'</td></tr>
+<tr><td colspan="2">'.$GLOBALS['I18N']->get('info_overwrite_existing').'</td></tr>
 <tr><td>'.$GLOBALS['I18N']->get('overwrite_existing').'</td><td><input type="checkbox" name="overwrite" value="yes" %s></td></tr>
-  <tr><td colspan=2><input type=submit value="'.$GLOBALS['I18N']->get('continue').'"></td></tr>
+  <tr><td colspan="2"><p class="submit"><input type="submit" value="'.$GLOBALS['I18N']->get('continue').'"></p></td></tr>
   </table></form>
   ',$_POST["copyremotelists"] == "yes"?"checked":"",$_POST["markhtml"] == "yes"?"checked":"",$_POST["overwrite"] == "yes"?"checked":""
   );

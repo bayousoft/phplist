@@ -143,7 +143,7 @@ if ($id) {
   print $GLOBALS['I18N']->get('Add a new Administrator');
 }
 print "<br/>";
-print '<p class="details">'.$GLOBALS['I18N']->get('Admin Details').':'.formStart().'<table class="adminDetails" border=1>';
+print '<p class="details">'.$GLOBALS['I18N']->get('Admin Details').':'.formStart(' class="adminAdd"').'<table class="adminDetails" border=1>';
 printf('<input type=hidden name="id" value="%d">',$id);
 
 reset($struct);
@@ -200,15 +200,15 @@ while ($row = Sql_fetch_array($res)) {
     $checked_index_req = Sql_Fetch_Row_Query("select id from $table_prefix"."adminattr_".$row["tablename"]." where name = \"Checked\"");
     $checked_index = $checked_index_req[0];
     $checked = $checked_index == $row["value"]?"checked":"";
-    printf('<tr><td>%s</td><td><input style="attributeinput" type=hidden name="cbattribute[]" value="%d"><input style="attributeinput" type=checkbox name="attribute[%d]" value="Checked" %s></td></tr>'."\n",$row["name"],$row["id"],$row["id"],$checked);
+    printf('<tr><td>%s</td><td><input class="attributeinput" type=hidden name="cbattribute[]" value="%d"><input class="attributeinput" type=checkbox name="attribute[%d]" value="Checked" %s></td></tr>'."\n",$row["name"],$row["id"],$row["id"],$checked);
   }
   else
   if ($row["type"] != "textline" && $row["type"] != "hidden")
     printf ("<tr><td>%s</td><td>%s</td></tr>\n",$row["name"],AttributeValueSelect($row["id"],$row["tablename"],$row["value"],"adminattr"));
   else
-    printf('<tr><td>%s</td><td><input style="attributeinput" type=text name="attribute[%d]" value="%s" size=30></td></tr>'."\n",$row["name"],$row["id"],htmlspecialchars(stripslashes($row["value"])));
+    printf('<tr><td>%s</td><td><input class="attributeinput" type=text name="attribute[%d]" value="%s" size=30></td></tr>'."\n",$row["name"],$row["id"],htmlspecialchars(stripslashes($row["value"])));
 }
-print '<tr><td colspan=2><input type=submit name=change value="'.$GLOBALS['I18N']->get('Save Changes').'"></table>';
+print '<tr><td colspan=2><p class="submit"><input type="submit" name=change value="'.$GLOBALS['I18N']->get('Save Changes').'"></p></table>';
 
 # what pages can this administrator see:
 if (!$data["superuser"] && $accesslevel == "all") {
@@ -247,8 +247,8 @@ if (!$data["superuser"] && $accesslevel == "all") {
     print "</tr>\n";
   }
 
-  printf('<tr><td colspan="%d"><input type=submit name=setdefault value="'.$GLOBALS['I18N']->get('Set these permissions as default').'"><input type=submit name=change value="'.$GLOBALS['I18N']->get('Save Changes').'"></table>',sizeof($access_levels)+2);
-  print '<input type=submit name="resetaccess" value="'.$GLOBALS['I18N']->get('Reset to Default').'">';
+  printf('<tr><td colspan="%d"><p class="submit"><input type="submit" name=setdefault value="'.$GLOBALS['I18N']->get('Set these permissions as default').'"></p><p class="submit"><input type="submit" name=change value="'.$GLOBALS['I18N']->get('Save Changes').'"></p></table>',sizeof($access_levels)+2);
+  print '<p class="submit"><input type="submit" name="resetaccess" value="'.$GLOBALS['I18N']->get('Reset to Default').'"></p>';
 }
 print "</form>";
 ?>

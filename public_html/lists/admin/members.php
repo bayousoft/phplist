@@ -32,9 +32,9 @@ switch ($access) {
 }
 function addUserForm ($listid) {
 //nizar 'value'
-  $html = formStart().'<input type=hidden name=listid value="'.$listid.'">
-  '.$GLOBALS['I18N']->get("Add a user").': <input type=text name=new value="" size=40><input type=submit
- name=add value="'.$GLOBALS['I18N']->get('Add').'">
+  $html = formStart(' class="membersAdd" ').'<input type="hidden" name="listid" value="'.$listid.'">
+  '.$GLOBALS['I18N']->get("Add a user").': <input type="text" name="new" value="" size="40"><p class="submit"><input type="submit"
+ name="add" value="'.$GLOBALS['I18N']->get('Add').'"></p>
   </form>';
   return $html;
 }
@@ -127,12 +127,12 @@ if (isset($_POST["add"])) {
     if (Sql_Num_rows($result)) {
       print '<p class="information">'.$GLOBALS['I18N']->get("Users found, click add to add this user").":<br /><ul>\n";
       while ($user = Sql_fetch_array($result)) {
-        printf ("<li>[ ".PageLink2("members",$GLOBALS['I18N']->get("Add"),"add=1&id=$id&doadd=".$user["id"])." ] %s <br />\n",
+        printf ("<li>[ ".PageLink2("members",$GLOBALS['I18N']->get("Add"),'add="1"&id="$id"&doadd="'.$user["id"]).' ] %s <br />\n',
  $user["email"]);
       }
       print "</ul>\n";
     } else {
-      print '<p class="information">'.$GLOBALS['I18N']->get("No user found with that email").'</p><table class="membersForm">'.formStart();
+      print '<p class="information">'.$GLOBALS['I18N']->get("No user found with that email").'</p><table class="membersForm">'.formStart(' class="membersSubscribe" ');
       require $GLOBALS["coderoot"] . "subscribelib2.php";
       ?>
       <?php
@@ -140,16 +140,16 @@ if (isset($_POST["add"])) {
       $_REQUEST["email"] = $_POST["new"];
   /*      printf('
         <tr><td><div class="required">%s</div></td>
-        <td class="attributeinput"><input type=text name=email value="%s" size="%d">
+        <td class="attributeinput"><input type="text" name="email" value="%s" size="%d">
         <script language="Javascript" type="text/javascript">addFieldToCheck("email","%s");</script></td></tr>',
         $strEmail,$email,$textlinewidth,$strEmail);
   */
         print ListAllAttributes();
       ?>
       <!--nizar 5 lignes -->
-      <tr><td colspan=2><input type=hidden name=action value="insert"><input
- type=hidden name=doadd value="yes"><input type=hidden name=id value="<?php echo
- $id ?>"><input type=submit name=subscribe value="<?php echo $GLOBALS['I18N']->get('add user')?>"></form></td></tr></table>
+      <tr><td colspan="2"><input type="hidden" name="action" value="insert"><input
+ type="hidden" name="doadd" value="yes"><input type="hidden" name="id" value="<?php echo
+ $id ?>"><p class="submit"><input type="submit" name="subscribe" value="<?php echo $GLOBALS['I18N']->get('add user')?>"></p></form></td></tr></table>
       <?php
       return;
     }
@@ -231,10 +231,10 @@ if (isset($id)) {
   printf ('<table class="membersListing" border="1"><tr><td colspan="4" align="center">%s</td></tr><tr><td>%s</td><td>%s</td><td>
           %s</td><td>%s</td></tr></table><hr>',
           $listing,
-          PageLink2("members","&lt;&lt;","start=0&id=$id"),
-          PageLink2("members","&lt;",sprintf('start=%d&id=%d',max(0,$start-MAX_USER_PP),$id)),
-          PageLink2("members","&gt;",sprintf('start=%d&id=%d',min($total,$start+MAX_USER_PP),$id)),
-          PageLink2("members","&gt;&gt;",sprintf('start=%d&id=%d',$total-MAX_USER_PP,$id)));
+          PageLink2("members","&lt;&lt;",'start="0"&id="$id"'),
+          PageLink2("members","&lt;",sprintf('start="%d"&id="%d"',max(0,$start-MAX_USER_PP),$id)),
+          PageLink2("members","&gt;",sprintf('start="%d"&id="%d"',min($total,$start+MAX_USER_PP),$id)),
+          PageLink2("members","&gt;&gt;",sprintf('start="%d"&id="%d"',$total-MAX_USER_PP,$id)));
   }
 //  $result = Sql_query("SELECT $tables[user].id,email,confirmed,rssfrequency FROM // so plugins can use all fields
   $query
@@ -248,8 +248,8 @@ if (isset($id)) {
 // TODO Consider using a subselect.  select user where uid in select uid from list
   $query=sprintf($query, $tables['listuser'], $tables['user'] );
   $result = Sql_Query_Params($query, array($id));
-  print formStart('name=users');
-  printf('<input type=hidden name="id" value="%d">',$id);
+  print formStart(' name="users" class="membersProcess" ');
+  printf('<input type="hidden" name="id" value="%d">',$id);
   ?>
   <script language="Javascript" type="text/javascript">
   function checkAll() {
@@ -258,7 +258,7 @@ if (isset($id)) {
     }
   }
   </script>
-  <input type=checkbox name="checkall" onClick="checkAll()"><?php echo $GLOBALS['I18N']->get("Tag all users in this page");?>
+  <input type="checkbox" name="checkall" onClick="checkAll()"><?php echo $GLOBALS['I18N']->get("Tag all users in this page");?>
   <?php
   $columns = array();
   $columns = explode(',',getConfig('membership_columns'));
@@ -323,9 +323,9 @@ if ($access == "view") return;
 ?>
 <hr>
 <table class="membersProcess">
-<tr><td colspan=2><h3><?php echo $GLOBALS['I18N']->get('What to do with "Tagged" users')?>:</h3>
+<tr><td colspan="2"><h3><?php echo $GLOBALS['I18N']->get('What to do with "Tagged" users')?>:</h3>
 <?php echo $GLOBALS['I18N']->get('This will only process the users in this page that have the "Tag" checkbox checked')?></td></tr>
-<tr><td colspan=2><?php echo $GLOBALS['I18N']->get('delete')?> (<?php echo $GLOBALS['I18N']->get('from this list')?>) <input type=radio name="tagaction"
+<tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('delete')?> (<?php echo $GLOBALS['I18N']->get('from this list')?>) <input type="radio" name="tagaction"
  value="delete"></td></tr>
 <?php
 $html = '';
@@ -336,37 +336,37 @@ while ($row = Sql_Fetch_array($res)) {
 }
 if ($html) {
 ?>
-  <tr><td><?php echo $GLOBALS['I18N']->get('move')?> <input type=radio name="tagaction" value="move"> </td><td><?php echo $GLOBALS['I18N']->get('to')?>
- <select name=movedestination>
+  <tr><td><?php echo $GLOBALS['I18N']->get('move')?> <input type="radio" name="tagaction" value="move"> </td><td><?php echo $GLOBALS['I18N']->get('to')?>
+ <select name="movedestination">
   <?php echo $html ?>
 </select></td></tr>
-  <tr><td><?php echo $GLOBALS['I18N']->get('copy')?> <input type=radio name="tagaction" value="copy"> </td><td><?php echo $GLOBALS['I18N']->get('to')?>
- <select name=copydestination>
+  <tr><td><?php echo $GLOBALS['I18N']->get('copy')?> <input type="radio" name="tagaction" value="copy"> </td><td><?php echo $GLOBALS['I18N']->get('to')?>
+ <select name="copydestination">
   <?php echo $html ?>
 </select></td></tr>
-<tr><td colspan=2><?php echo $GLOBALS['I18N']->get('nothing')?> <input type=radio name="tagaction"
+<tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('nothing')?> <input type="radio" name="tagaction"
  value="nothing" checked></td></tr>
 <?php } ?>
-<tr><td colspan=2><hr></td></tr>
-<tr><td colspan=2><h3><?php echo $GLOBALS['I18N']->get('What to do with all users')?></h3><?php echo $GLOBALS['I18N']->get('This will process all users on this list')?></td></tr>
-<tr><td colspan=2><?php echo $GLOBALS['I18N']->get('delete')?> (<?php echo $GLOBALS['I18N']->get('from this list')?>) <input type=radio name="tagaction_all"
+<tr><td colspan="2"><hr></td></tr>
+<tr><td colspan="2"><h3><?php echo $GLOBALS['I18N']->get('What to do with all users')?></h3><?php echo $GLOBALS['I18N']->get('This will process all users on this list')?></td></tr>
+<tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('delete')?> (<?php echo $GLOBALS['I18N']->get('from this list')?>) <input type="radio" name="tagaction_all"
  value="delete"></td></tr>
 <?php
 
 if ($html) {
 ?>
-  <tr><td><?php echo $GLOBALS['I18N']->get('move')?> <input type=radio name="tagaction_all" value="move"> </td><td><?php echo $GLOBALS['I18N']->get('to')?>
+  <tr><td><?php echo $GLOBALS['I18N']->get('move')?> <input type="radio" name="tagaction_all" value="move"> </td><td><?php echo $GLOBALS['I18N']->get('to')?>
  <select name="movedestination_all">
   <?php echo $html ?>
 </select></td></tr>
-  <tr><td><?php echo $GLOBALS['I18N']->get('copy')?> <input type=radio name="tagaction_all" value="copy"> </td><td><?php echo $GLOBALS['I18N']->get('to')?>
+  <tr><td><?php echo $GLOBALS['I18N']->get('copy')?> <input type="radio" name="tagaction_all" value="copy"> </td><td><?php echo $GLOBALS['I18N']->get('to')?>
  <select name="copydestination_all">
   <?php echo $html ?>
 </select></td></tr>
-<tr><td colspan=2><?php echo $GLOBALS['I18N']->get('nothing')?> <input type=radio name="tagaction_all"
+<tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('nothing')?> <input type="radio" name="tagaction_all"
  value="nothing" checked></td></tr>
 <?php } ?>
-<tr><td colspan=2><input type=submit name=processtags value="<?php echo $GLOBALS['I18N']->get('do it')?>"></td></tr>
+<tr><td colspan="2"><p class="submit"><input type="submit" name="processtags" value="<?php echo $GLOBALS['I18N']->get('do it')?>"></p></td></tr>
 </table>
 </form>
 </p>

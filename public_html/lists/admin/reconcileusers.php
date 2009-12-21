@@ -276,7 +276,7 @@ if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
         print $deleted." ".$GLOBALS['I18N']->get('Users deleted')."<br/>";
         print $c." ".$GLOBALS['I18N']->get('Users apply')."<br/>$list\n";
         if ($c)
-        print '<input type=submit name="deletetagged" value="'.$GLOBALS['I18N']->get('Delete Tagged Users').'"></form>';
+        print '<p class="submit"><input type="submit" name="deletetagged" value="'.$GLOBALS['I18N']->get('Delete Tagged Users').'"></p></form>';
       } elseif (isset($_GET["option"]) && $_GET["option"] == "fixinvalidemail") {
         Info($GLOBALS['I18N']->get("Trying to fix users with an invalid email"));
         flush();
@@ -447,7 +447,8 @@ function snippetListsSelector ($optionAll = false) {
 <?php 
   echo sprintf( $GLOBALS['I18N']->get("Mark all users on list %s confirmed"), snippetListsSelector(true) );
 ?>
-<input type=submit value="<?php echo $GLOBALS['I18N']->get('Click here')?>">
+</p>
+<p class="submit"><input type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>">
 </p></form>
 
 <hr>
@@ -458,7 +459,8 @@ function snippetListsSelector ($optionAll = false) {
 <?php 
   echo sprintf( $GLOBALS['I18N']->get('To move all users who are not subscribed to any list to %s'), snippetListsSelector() );
 ?>
-<input type=submit value="<?php echo $GLOBALS['I18N']->get('Click here')?>">
+</p>
+<p class="submit"><input type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>">
 </p></form>
 
 <hr>
@@ -472,7 +474,7 @@ function snippetListsSelector ($optionAll = false) {
 <option selected>15</option>
 <option>20</option>
 <option>50</option>
-</select> <?php echo $GLOBALS['I18N']->get('bounces')?> <input type=submit value="<?php echo $GLOBALS['I18N']->get('Click here')?>"></form>
+</select> <?php echo $GLOBALS['I18N']->get('bounces')?> <p class="submit"><input type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>"></p></form>
 <p class="information"><?php echo $GLOBALS['I18N']->get('Note: this will use the total count of bounces on a user, not consecutive bounces')?></p>
 
 <form method=get>
@@ -488,7 +490,7 @@ function snippetListsSelector ($optionAll = false) {
 </table>
 <input type=hidden name="page" value="reconcileusers">
 <input type=hidden name="option" value="resendconfirm">
-<input type=submit value="<?php echo $GLOBALS['I18N']->get('Click here')?>"></form>
+<p class="submit"><input type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>"></p></form>
 
 <hr>
 <form method=get>
@@ -499,5 +501,5 @@ function snippetListsSelector ($optionAll = false) {
 </table>
 <input type=hidden name="page" value="reconcileusers">
 <input type=hidden name="option" value="deleteunconfirmed">
-<input type=submit value="<?php echo $GLOBALS['I18N']->get('Click here')?>"></form>
+<p class="submit"><input type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>"></p></form>
 

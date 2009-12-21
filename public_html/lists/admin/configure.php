@@ -51,7 +51,7 @@ if (!$id) {
   }
 } else {
   $val = $default_config[$id];
-  printf('%s<p class="configEditing">' . $GLOBALS['I18N']->get('editing') . ' <b>%s</b></p>',formStart(),$GLOBALS['I18N']->get($val[1]));
+  printf('%s<p class="configEditing">' . $GLOBALS['I18N']->get('editing') . ' <b>%s</b></p>',formStart(' class="configForm" '),$GLOBALS['I18N']->get($val[1]));
   printf('<input type=hidden name="id" value="%s">',$id);
   $dbval = getConfig($id);
 #  print $dbval.'<br/>';
@@ -74,6 +74,6 @@ if (!$id) {
   else if ($val[2] == "boolean")
     printf('<input type="text" name="values[%s]" size="10" value="%s"><br/>',
     $id,htmlspecialchars(stripslashes($value)));
-  print '<br/><input type="hidden" name="save" value="1"><input type="submit" name="savebutton" value="' . $GLOBALS['I18N']->get('save changes') . '"></form>';
+  print '<br/><input type="hidden" name="save" value="1"><p class="submit"><input type="submit" name="savebutton" value="' . $GLOBALS['I18N']->get('save changes') . '"></p></form>';
 }
 ?>

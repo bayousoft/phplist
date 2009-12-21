@@ -196,13 +196,12 @@ if (!$some)
 $list_content .= '
 
 
-<p class="button"><input type=submit name=send value="'.$GLOBALS['I18N']->get('sendmessage').'">
-</form>
+<p class="submit"><input type="submit" name="send" value="'.$GLOBALS['I18N']->get('sendmessage').'"></p>
 
 ';
 
 if (isset($show_lists) && $show_lists) {
   print $list_content;
-} else {
-  print '</form>';
-}
+} 
+
+print '</form>';

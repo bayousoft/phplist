@@ -45,7 +45,7 @@ print '</select></td></tr>';
 printf('<tr><td colspan=2>%s</td></tr><tr><td colspan=2>
   <textarea name="comment" rows=10 cols=65>%s</textarea></td></tr>',
   $GLOBALS['I18N']->get('Memo for this rule'),htmlspecialchars($data['comment']));
-print '<tr><td colspan=2><input type=submit name="save" value="'.$GLOBALS['I18N']->get('Save Changes').'"></td></tr>';
+print '<tr><td colspan=2><p class="submit"><input type="submit" name="save" value="'.$GLOBALS['I18N']->get('Save Changes').'"></p></td></tr>';
 print '</table></form>';
 
 $req = Sql_Query(sprintf('select * from %s where regex = %d',$GLOBALS['tables']['bounceregex_bounce'],$_GET['id']));

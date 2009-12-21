@@ -92,7 +92,7 @@ function fill($prefix,$listid) {
   return 1;
 }
 
-print formStart().'<input type="text" name="output" size=45></form>';
+print formStart(' class="testOutput" ').'<input type="text" name="output" size=45></form>';
 print '<p class="button">'.PageLink2("stresstest","Erase Test information","eraseall=yes").' (may take a while)';
 print '<script language="Javascript" type="text/javascript"> document.write(progressmeter); start();</script>';
 

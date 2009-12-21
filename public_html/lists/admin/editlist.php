@@ -94,7 +94,7 @@ ob_end_flush();
 
 ?>
 
-<?php echo formStart()?>
+<?php echo formStart(' class="editlistSave" ')?>
 <input type=hidden name=id value="<?php echo $id ?>">
 <table class="editlist" border=0>
 <tr><td><?php echo $GLOBALS['I18N']->get('List name'); ?>:</td><td><input type=text name="listname" value="<?php echo  htmlspecialchars(StripSlashes($list["name"]))?>"></td></tr>
@@ -133,6 +133,6 @@ if (sizeof($aListCategories)) {
 ?>
 <tr><td colspan=2><?php echo $GLOBALS['I18N']->get('List Description'); ?></td></tr>
 <tr><td colspan=2><textarea name="description" cols="55" rows="15"><?php echo htmlspecialchars(StripSlashes($list["description"])) ?></textarea></td></tr>
-<tr><td align="center"><input type="submit" name="save" value="<?php echo $GLOBALS['I18N']->get('Save'); ?>"></td><td align="right"><input type="reset"></td></tr>
+<tr><td align="center"><p class="submit"><input type="submit" name="save" value="<?php echo $GLOBALS['I18N']->get('Save'); ?>"></p></td><td align="right"><input type="reset"></td></tr>
 </table>
 </form>

@@ -688,7 +688,7 @@ function upgradeTable($table,$tablestructure) {
 }
 
 function Help($topic, $text = '?') {
-	return sprintf('<a href="javascript:help(\'help/?topic=%s\')">%s</a>', $topic, $text);
+	return sprintf('<span class="query"><a href="javascript:help(\'help/?topic=%s\')">%s</a></span>', $topic, $text);
 }
 
 # Debugging system, needs $debug = TRUE and $verbose = TRUE or $debug_log = {path} in config.php

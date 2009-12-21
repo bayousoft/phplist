@@ -31,7 +31,7 @@ function footer(){
   echo "  <p align=\"center\"><hr width=50% size=3>";
   echo $GLOBALS['I18N']->get('forgot password').":";
   echo $GLOBALS['I18N']->get('enter your email').": <input type=text name=\"forgotpassword\" value=\"\" size=30>";
-  echo "  <input type=submit name=\"process\" value=\"".$GLOBALS['I18N']->get('send password')."\">";
+  echo '  <p class="submit"><input type="submit" name="process" value="'.$GLOBALS['I18N']->get('send password')."\"></p>";
   echo "</form>";
 }
 
@@ -94,7 +94,7 @@ function deleteOldTokens(){
       echo "    <tr><td><input type=password name=\"password1\" value=\"\" size=30></td></tr>";
       echo "    <tr><td><span class=\"general\">".$GLOBALS['I18N']->get('confirm password').":</span></td></tr>";
       echo "    <tr><td><input type=password name=\"password2\" value=\"\" size=30></td></tr>";
-      echo "    <tr><td><input type=submit name=\"process\" value=\"".$GLOBALS['I18N']->get('enter')."\"></td></tr>";
+      echo "    <tr><td><p class=\"submit\"><input type=\"submit\" name=\"process\" value=\"".$GLOBALS['I18N']->get('enter')."\"></p></td></tr>";
       echo "  </table>";
       echo "</form>";
     } else {
@@ -110,7 +110,7 @@ function deleteOldTokens(){
   echo "    <tr><td><input type=text name=\"login\" value=\"\" size=30></td></tr>";
   echo "    <tr><td><span class=\"general\">".$GLOBALS['I18N']->get('password').":</span></td></tr>";
   echo "    <tr><td><input type=password name=\"password\" value=\"\" size=30></td></tr>";
-  echo "    <tr><td><input type=submit name=\"process\" value=\"".$GLOBALS['I18N']->get('enter')."\"></td></tr>";
+  echo "    <tr><td><p class=\"submit\"><input type=\"submit\" name=\"process\" value=\"".$GLOBALS['I18N']->get('enter')."\"></p></td></tr>";
   echo "  </table>";
   echo "</form>";
   footer();

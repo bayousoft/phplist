@@ -52,11 +52,7 @@ function Sql_has_error ($dbconnection) {
 function Sql_Error ($dbconnection,$errno = 0) {
   $msg = mysql_error($dbconnection);
   if (empty($GLOBALS['commandline'])) {
-    return '<div id="dberror" style="position: relative;
-        background-color: #aa0000;
-        border: 2px solid #000000;
-        color: #ffffff;
-        ">Database error '. $errno.' while doing query '.$GLOBALS['lastquery']. ' ' .$msg.'</div>';
+    return '<div id="dberror">Database error '. $errno.' while doing query '.$GLOBALS['lastquery']. ' ' .$msg.'</div>';
   } else {
     return 'Database error '.$errno.' while doing query '.$GLOBALS['lastquery']. ' ' .$msg."\n";
   }

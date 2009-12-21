@@ -213,5 +213,5 @@ while ($row = Sql_Fetch_Array($req)) {
 
 ?>
 </table>
-<input type=submit name="processexport" value="<?php echo $GLOBALS['I18N']->get('Export'); ?>"></form>
+<p class="submit"><input type="submit" name="processexport" value="<?php echo $GLOBALS['I18N']->get('Export'); ?>"></p></form>
 

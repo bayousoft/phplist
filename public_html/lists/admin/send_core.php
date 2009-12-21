@@ -38,9 +38,9 @@ $repeatuntil->useTime = true;
 if (empty($_GET['id'])) {
   $_GET['id'] = '';
 }
-$baseurl = PageURL2($_GET["page"].'&id='.$_GET["id"]);
+$baseurl = PageURL2($_GET["page"].'&id="'.$_GET["id"].'"');
 
-echo '<script language="Javascript" src="js/jslib.js" type="text/javascript"></script><hr><p class="information">';
+echo '<script language="Javascript" src="js/jslib.js" type="text/javascript"></script><hr>';
 
 // load some variables in a register globals-safe fashion
 if (isset($_POST['send'])) {
@@ -82,16 +82,16 @@ if (!$id) {
   $query = sprintf($query, $GLOBALS['tables']['message']);
   Sql_Query_Params($query, array($_SESSION['logindetails']['id'], $defaulttemplate));
   $id = Sql_Insert_Id($GLOBALS['tables']['message'], 'id');
-  # 0008720: Using -p send from the commandline doesn't seem to work
+  # 0008720: Using -p send from the commandline doesn't seem to work '
   if(!$GLOBALS["commandline"]){
-    Redirect($_GET["page"]."&id=$id");
+    Redirect($_GET["page"].'&id="$id"');
     exit;
   }
 }
 
 if (isset($_GET['deleterule']) && $_GET["deleterule"]) {
   Sql_Query(sprintf('delete from %s where name = "criterion%d" and id = %d',$GLOBALS["tables"]["messagedata"],$_GET["deleterule"],$_GET["id"]));
-  Redirect($_GET["page"]."&id=$id&tab=".$_GET["tab"]);
+  Redirect($_GET["page"].'&id="$id"&tab="'.$_GET["tab"].'"');
 }
 ob_end_flush();
 
@@ -765,7 +765,7 @@ $num = sprintf('%d',isset($messagedata['numcriteria']) ? $messagedata['numcriter
   #  print '<br/>'.$num . " criteria already defined";
 $ls = new WebblerListing($GLOBALS['I18N']->get("existingcriteria"));
 $used_attributes = array();
-$delete_base = sprintf('%s&amp;id=%d&amp;tab=%s',$_GET["page"],$_GET["id"],$_GET["tab"]);
+$delete_base = sprintf('%s&amp;id="%d"&amp;tab="%s"',$_GET["page"],$_GET["id"],$_GET["tab"]);
 $tc = 0; # table counter
 if (!isset($messagedata['criteria_overall_operator'])) {
   $messagedata['criteria_overall_operator'] = '';
@@ -781,7 +781,7 @@ for ($i = 1; $i<=$num;$i++) {
     $ls->addElement('<!--'.$crit_data["attribute"].'-->'.$crit_data["attribute_name"]);
     $ls->addColumn('<!--'.$crit_data["attribute"].'-->'.$crit_data["attribute_name"],$GLOBALS['I18N']->get('operator'),$GLOBALS['I18N']->get($crit_data["operator"]));
     $ls->addColumn('<!--'.$crit_data["attribute"].'-->'.$crit_data["attribute_name"],$GLOBALS['I18N']->get('values'),$crit_data["values"]);
-    $ls->addColumn('<!--'.$crit_data["attribute"].'-->'.$crit_data["attribute_name"],$GLOBALS['I18N']->get('remove'),PageLink2($delete_base."&amp;deleterule=".$i,$GLOBALS['I18N']->get("remove")));
+    $ls->addColumn('<!--'.$crit_data["attribute"].'-->'.$crit_data["attribute_name"],$GLOBALS['I18N']->get('remove'),PageLink2($delete_base.'&amp;deleterule="'.$i,$GLOBALS['I18N']->get("remove").'"'));
     if (isset($_POST["criteria"][$i])) {
       $attribute = $_POST["criteria"][$i];
     } else {
@@ -911,7 +911,7 @@ if (sizeof($subqueries)) {
   if (!empty($_GET["calculate"])) {
     ob_end_flush();
    # print "<h3>$count_query</h3>";
-    print '<p class="information">'.$GLOBALS['I18N']->get("calculating")." ...";
+    print '<p class="information">'.$GLOBALS['I18N']->get("calculating")." ... </p>";
     flush();
   }
   foreach ($subqueries as $qid => $querydetails) {
@@ -945,9 +945,9 @@ if (sizeof($subqueries)) {
   }
 
   if (!isset($_GET['calculate'])) {
-    $ls->addButton($GLOBALS['I18N']->get("calculate"),$baseurl.'&amp;tab='.$_GET["tab"].'&amp;calculate=1');
+    $ls->addButton($GLOBALS['I18N']->get("calculate"),$baseurl.'&amp;tab="'.$_GET["tab"].'"&amp;calculate="1"');
   } else {
-    $ls->addButton($GLOBALS['I18N']->get("reload"),$baseurl.'&amp;tab='.$_GET["tab"]);
+    $ls->addButton($GLOBALS['I18N']->get("reload"),$baseurl.'&amp;tab="'.$_GET["tab"].'"');
   }
   $existing_criteria = $ls->display();
 } else {
@@ -983,25 +983,25 @@ if (!$done) {
     $enctype = '';
   }
 
-  #$baseurl = sprintf('./?page=%s&amp;id=%d',$_GET["page"],$_GET["id"]);
+  #$baseurl = sprintf('./?page="%s"&amp;id="%d"',$_GET["page"],$_GET["id"]);
   if ($_GET["id"]) {
     $tabs = new WebblerTabs();
-    $tabs->addTab($GLOBALS['I18N']->get("Content"),"$baseurl&amp;tab=Content");
+    $tabs->addTab($GLOBALS['I18N']->get("Content"),'$baseurl&amp;tab="Content"');
     if (FORWARD_ALTERNATIVE_CONTENT) {
-      $tabs->addTab($GLOBALS['I18N']->get("Forward"),"$baseurl&amp;tab=Forward");
+      $tabs->addTab($GLOBALS['I18N']->get("Forward"),'$baseurl&amp;tab="Forward"');
     }
-    $tabs->addTab($GLOBALS['I18N']->get("Format"),"$baseurl&amp;tab=Format");
+    $tabs->addTab($GLOBALS['I18N']->get("Format"),'$baseurl&amp;tab="Format"');
     if (ALLOW_ATTACHMENTS) {
-      $tabs->addTab($GLOBALS['I18N']->get("Attach"),"$baseurl&amp;tab=Attach");
+      $tabs->addTab($GLOBALS['I18N']->get("Attach"),'$baseurl&amp;tab="Attach"');
     }
-    $tabs->addTab($GLOBALS['I18N']->get("Scheduling"),"$baseurl&amp;tab=Scheduling");
+    $tabs->addTab($GLOBALS['I18N']->get("Scheduling"),'$baseurl&amp;tab="Scheduling"');
 #    if (USE_RSS) {
-#      $tabs->addTab("RSS","$baseurl&amp;tab=RSS");
+#      $tabs->addTab("RSS",'$baseurl&amp;tab="RSS"');
 #    }
-    $tabs->addTab($GLOBALS['I18N']->get("Criteria"),"$baseurl&amp;tab=Criteria");
-    $tabs->addTab($GLOBALS['I18N']->get("Lists"),"$baseurl&amp;tab=Lists");
-#    $tabs->addTab("Review and Send","$baseurl&amp;tab=Review");
-    $tabs->addTab($GLOBALS['I18N']->get("Misc"),"$baseurl&amp;tab=Misc");
+    $tabs->addTab($GLOBALS['I18N']->get("Criteria"),'$baseurl&amp;tab="Criteria"');
+    $tabs->addTab($GLOBALS['I18N']->get("Lists"),'$baseurl&amp;tab="Lists"');
+#    $tabs->addTab("Review and Send",'$baseurl&amp;tab="Review"');
+    $tabs->addTab($GLOBALS['I18N']->get("Misc"),'$baseurl&amp;tab="Misc"');
 
     if ($_GET["tab"]) {
       $tabs->setCurrent($GLOBALS['I18N']->get($_GET["tab"]));
@@ -1035,9 +1035,9 @@ if (!$done) {
   function submitform() { document.sendmessageform.submit() }
   </script>
   <?php
-  print formStart($enctype . ' name="sendmessageform"');
+  print formStart($enctype . ' name="sendmessageform" class="sendSend" ');
   #print '<form method="post" enctype="multipart/form-data" name="sendmessageform" onSubmit="return checkForm()">';
-  print '<input type=hidden name="workaround_fck_bug" value="1">';
+  print '<input type="hidden" name="workaround_fck_bug" value="1">';
 
   if ($_GET["page"] == "preparemessage")
     print Help("preparemessage",$GLOBALS['I18N']->get("whatisprepare"));
@@ -1056,8 +1056,8 @@ if (!$done) {
   $formatting_content = '<table class="sendListing">';
 
   #0013076: different content when forwarding 'to a friend'
-  //  value="'.htmlentities($subject,ENT_QUOTES,'UTF-8').'" size=40></td></tr> --> previous code in line 1032
-  //  value="'.htmlentities($from,ENT_QUOTES,'UTF-8').'" size=40></td></tr> --> previous code in line 1038
+  //  value="'.htmlentities($subject,ENT_QUOTES,'UTF-8').'" size="40"></td></tr> --> previous code in line 1032
+  //  value="'.htmlentities($from,ENT_QUOTES,'UTF-8').'" size="40"></td></tr> --> previous code in line 1038
 
   $tmp = '<table class="sendContent">';
   $maincontent = $tmp;
@@ -1066,15 +1066,15 @@ if (!$done) {
   $scheduling_content = '<table class="sendScheduling">';
   $maincontent .= '
   <tr><td>'.Help("subject").' '.$GLOBALS['I18N']->get("Subject").':</td>
-    <td><input type=text name="msgsubject"
-    //value="'.htmlentities(iconv('ISO-8859-1','UTF-8',$subject),ENT_QUOTES,'UTF-8').'" size=40></td></tr>
+    <td><input type="text" name="msgsubject"
+    //value="'.htmlentities(iconv('ISO-8859-1','UTF-8',$subject),ENT_QUOTES,'UTF-8').'" size="40"></td></tr>
   <tr>
-    <td colspan=2>
+    <td colspan="2">
     </td></tr>
   <tr><td>'.Help("from").' '.$GLOBALS['I18N']->get("fromline").':</td>
-    <td><input type=text name=from
-    value="'.htmlentities(iconv('ISO-8859-1','UTF-8',$from),ENT_QUOTES,'UTF-8').'" size=40></td></tr>
-  <tr><td colspan=2>
+    <td><input type="text" name="from"
+    value="'.htmlentities(iconv('ISO-8859-1','UTF-8',$from),ENT_QUOTES,'UTF-8').'" size="40"></td></tr>
+  <tr><td colspan="2">
 
   </td></tr>';
 
@@ -1082,12 +1082,12 @@ if (!$done) {
   $forwardcontent .= $GLOBALS['I18N']->get("When a user forwards to a friend," .
   " the friend will receive this message instead of the one on the content tab.").
   '<tr><td>'.Help("subject").' '.$GLOBALS['I18N']->get("Subject").':</td>
-    <td><input type=text name="forwardsubject"
-    value="'.htmlentities($forwardsubject,ENT_QUOTES,'UTF-8').'" size=40></td></tr>
+    <td><input type="text" name="forwardsubject"
+    value="'.htmlentities($forwardsubject,ENT_QUOTES,'UTF-8').'" size="40"></td></tr>
   <tr>
-    <td colspan=2>
+    <td colspan="2">
     </td></tr>
-  <td colspan=2>
+  <td colspan="2">
 
   </td></tr>';
 
@@ -1124,42 +1124,42 @@ if (!$done) {
 
 /*
   $formatting_content .= '
-    <tr><td colspan=2>'.Help("format").' '.$GLOBALS['I18N']->get("format").': <b>'.$GLOBALS['I18N']->get("autodetect").'</b>
-    <input type=radio name="htmlformatted" value="auto" ';
+    <tr><td colspan="2">'.Help("format").' '.$GLOBALS['I18N']->get("format").': <b>'.$GLOBALS['I18N']->get("autodetect").'</b>
+    <input type="radio" name="htmlformatted" value="auto" ';
     $formatting_content .= !isset($htmlformatted) || $htmlformatted == "auto"?"checked":"";
     $formatting_content .= '>
-  <b>'.$GLOBALS['I18N']->get("html").'</b> <input type=radio name="htmlformatted" value="1" ';
+  <b>'.$GLOBALS['I18N']->get("html").'</b> <input type="radio" name="htmlformatted" value="1" ';
     $formatting_content .= $htmlformatted == "1" ?"checked":"";
     $formatting_content .= '>
-  <b>'.$GLOBALS['I18N']->get("text").'</b> <input type=radio name="htmlformatted" value="0" ';
+  <b>'.$GLOBALS['I18N']->get("text").'</b> <input type="radio" name="htmlformatted" value="0" ';
     $formatting_content .= $htmlformatted == "0" ?"checked":"";
     $formatting_content .= '></td></tr>';
 */
-  $formatting_content .= '<input type=hidden name="htmlformatted" value="auto">';
+  $formatting_content .= '<input type="hidden" name="htmlformatted" value="auto">';
 
   $formatting_content .= '
-    <tr><td colspan=2>'.Help("sendformat").' '.$GLOBALS['I18N']->get("sendas").':
-  '.$GLOBALS['I18N']->get("html").' <input type=radio name="sendformat" value="HTML" ';
+    <tr><td colspan="2">'.Help("sendformat").' '.$GLOBALS['I18N']->get("sendas").':
+  '.$GLOBALS['I18N']->get("html").' <input type="radio" name="sendformat" value="HTML" ';
     $formatting_content .= $_POST["sendformat"]=="HTML"?"checked":"";
     $formatting_content .= '>
-  '.$GLOBALS['I18N']->get("text").' <input type=radio name="sendformat" value="text" ';
+  '.$GLOBALS['I18N']->get("text").' <input type="radio" name="sendformat" value="text" ';
     $formatting_content .= $_POST["sendformat"]=="text"?"checked":"";
     $formatting_content .= '>
   ';
 
   if (USE_PDF) {
-    $formatting_content .= $GLOBALS['I18N']->get("pdf").' <input type=radio name="sendformat" value="PDF" ';
+    $formatting_content .= $GLOBALS['I18N']->get("pdf").' <input type="radio" name="sendformat" value="PDF" ';
     $formatting_content .= $_POST["sendformat"]=="PDF"?"checked":"";
     $formatting_content .= '>';
   }
 
 //  0009687: Confusing use of the word "Both", indicating one email with both text and html and not two emails
-//  $formatting_content .= $GLOBALS['I18N']->get("textandhtml").' <input type=radio name="sendformat" value="text and HTML" ';
+//  $formatting_content .= $GLOBALS['I18N']->get("textandhtml").' <input type="radio" name="sendformat" value="text and HTML" ';
 //  $formatting_content .= $_POST["sendformat"]=="text and HTML" || !isset($_POST["sendformat"]) ?"checked":"";
 //  $formatting_content .= '>';
 
   if (USE_PDF) {
-    $formatting_content .= $GLOBALS['I18N']->get("textandpdf").' <input type=radio name="sendformat" value="text and PDF" ';
+    $formatting_content .= $GLOBALS['I18N']->get("textandpdf").' <input type="radio" name="sendformat" value="text and PDF" ';
     $formatting_content .= $_POST["sendformat"]=="text and PDF" ?"checked":"";
     $formatting_content .= ' >';
   }
@@ -1169,7 +1169,7 @@ if (!$done) {
     if (is_array($plugins_sendformats) && sizeof($plugins_sendformats)) {
       foreach ($plugins_sendformats as $val => $desc) {
         $val = preg_replace("/\W/",'',strtolower(trim($val)));
-        $formatting_content .= sprintf('%s <input type=radio name="sendformat" value="%s" %s>',
+        $formatting_content .= sprintf('%s <input type="radio" name="sendformat" value="%s" %s>',
           $desc,$val, $_POST["sendformat"]==$val?'checked="checked"':'');
       }
     }
@@ -1179,7 +1179,7 @@ if (!$done) {
   $req = Sql_Query("select id,title from {$tables["template"]} order by listorder");
   if (Sql_Num_Rows($req)) {
     $formatting_content .= '<tr><td>'.Help("usetemplate").' '.$GLOBALS['I18N']->get("usetemplate").': </td>
-      <td><select name="template"><option value=0>-- '.$GLOBALS['I18N']->get("selectone").'</option>';
+      <td><select name="template"><option value="0">-- '.$GLOBALS['I18N']->get("selectone").'</option>';
     $req = Sql_Query("select id,title from {$tables["template"]} order by listorder");
     while ($row = Sql_Fetch_Array($req)) {
       $formatting_content .= sprintf('<option value="%d" %s>%s</option>',$row["id"], $row["id"]==$_POST["template"]?'SELECTED':'',$row["title"]);
@@ -1189,19 +1189,19 @@ if (!$done) {
 
 //obsolete, moved to rssmanager plugin
 //  if (ENABLE_RSS) {
-//    $rss_content .= '<tr><td colspan=2>'.$GLOBALS['I18N']->get("rssintro").'
+//    $rss_content .= '<tr><td colspan="2">'.$GLOBALS['I18N']->get("rssintro").'
 //    </td></tr>';
-//    $rss_content .= '<tr><td colspan=2><input type=radio name="rsstemplate" value="none">'.$GLOBALS['I18N']->get("none").' ';
+//    $rss_content .= '<tr><td colspan="2"><input type="radio" name="rsstemplate" value="none">'.$GLOBALS['I18N']->get("none").' ';
 //    foreach ($rssfrequencies as $key => $val) {
-//      $rss_content .= sprintf('<input type=radio name="rsstemplate" value="%s" %s>%s ',$key,$_POST["rsstemplate"] == $key ? "checked":"",$val);
+//      $rss_content .= sprintf('<input type="radio" name="rsstemplate" value="%s" %s>%s ',$key,$_POST["rsstemplate"] == $key ? "checked":"",$val);
 //    }
 //    $rss_content .= '</td></tr>';
 //  }
 
   #0013076: different content when forwarding 'to a friend'
-  $tmp = '<tr><td colspan=2>'.Help("message").' '.$GLOBALS['I18N']->get("message").'. </td></tr>
+  $tmp = '<tr><td colspan="2">'.Help("message").' '.$GLOBALS['I18N']->get("message").'. </td></tr>
 
-  <tr><td colspan=2>';
+  <tr><td colspan="2">';
   $maincontent .= $tmp;
   $forwardcontent .= $tmp;
 
@@ -1237,7 +1237,7 @@ if (!$done) {
     }
     </script>';
 
-    $maincontent .= '<tr><td colspan=2 align=right><a href="javascript:expand();" class="button">'.$GLOBALS['I18N']->get("expand").'</a></td></tr>';
+    $maincontent .= '<tr><td colspan="2" align="right"><a href="javascript:expand();" class="button">'.$GLOBALS['I18N']->get("expand").'</a></td></tr>';
 
   } elseif ($useTinyMCE) {
 
@@ -1259,11 +1259,11 @@ if (!$done) {
         ."<textarea name='message' id='message' cols='65' rows='20'>{$_POST['message']}</textarea>";
 
   } else {
-    $maincontent    .= '<textarea name=message cols=65 rows=20>'.htmlspecialchars($_POST["message"]).'</textarea>';
+    $maincontent    .= '<textarea name="message" cols="65" rows="20">'.htmlspecialchars($_POST["message"]).'</textarea>';
   }
 
   #0013076: different content when forwarding 'to a friend'
-  $forwardcontent .= '<textarea name=forwardmessage cols=65 rows=20>'.htmlspecialchars($forwardmessage).'</textarea>';
+  $forwardcontent .= '<textarea name="forwardmessage" cols="65" rows="20">'.htmlspecialchars($forwardmessage).'</textarea>';
 
   #0013076: different content when forwarding 'to a friend'
   $tmp = '
@@ -1273,33 +1273,33 @@ if (!$done) {
   $forwardcontent .= $tmp;
 
   if (USE_MANUAL_TEXT_PART) {
-  $maincontent .= '<tr><td colspan=2>
+  $maincontent .= '<tr><td colspan="2">
     '.$GLOBALS['I18N']->get("plaintextversion").'
   </td></tr>
-  <tr><td colspan=2>
-    <textarea name=textmessage cols=65 rows=20>'.$_POST["textmessage"].'</textarea>
+  <tr><td colspan="2">
+    <textarea name="textmessage" cols="65" rows="20">'.$_POST["textmessage"].'</textarea>
   </td></tr>';
   }
 
   #0013076: different content when forwarding 'to a friend'
-  $maincontent .= '<tr><td colspan=2>'.$GLOBALS['I18N']->get("messagefooter").'. <br/>
-    '.$GLOBALS['I18N']->get("messagefooterexplanation").'<br/>'.
-    $GLOBALS['I18N']->get("use [FORWARD] to add a personalised URL to forward the message to someone else.").
-  '.</td></tr>
-  <tr><td colspan=2><textarea name=footer cols=65 rows=5>'.$footer.'</textarea></td></tr>
+  $maincontent .= '<tr><td colspan="2">'.$GLOBALS['I18N']->get("messagefooter").'. <br/>
+    '.$GLOBALS['I18N']->get("messagefooterexplanation").'<p class="information">'.
+    $GLOBALS['I18N']->get("Use <b>[FORWARD]</b> to add a personalised URL to forward the message to someone else.").
+  '</p></td></tr>
+  <tr><td colspan="2"><textarea name="footer" cols="65" rows="5">'.$footer.'</textarea></td></tr>
   </table>';
-  $forwardcontent .= '<tr><td colspan=2>'.$GLOBALS['I18N']->get("forwardfooter").'. <br/>
+  $forwardcontent .= '<tr><td colspan="2">'.$GLOBALS['I18N']->get("forwardfooter").'. <br/>
     '.$GLOBALS['I18N']->get("messageforwardfooterexplanation").'<br/>'.
   '.</td></tr>
-  <tr><td colspan=2><textarea name=forwardfooter cols=65 rows=5>'.$forwardfooter.'</textarea></td></tr>
+  <tr><td colspan="2"><textarea name="forwardfooter" cols="65" rows="5">'.$forwardfooter.'</textarea></td></tr>
   </table>';
 
   if (ALLOW_ATTACHMENTS) {
     // If we have a message id saved, we want to query the attachments that are associated with this
     // message and display that (and allow deletion of!)
 
-    $att_content = '<table class="sendAttachment"><tr><td colspan=2>'.Help("attachments").' '.$GLOBALS['I18N']->get("addattachments").' </td></tr>';
-    $att_content .= '<tr><td colspan=2>
+    $att_content = '<table class="sendAttachment"><tr><td colspan="2">'.Help("attachments").' '.$GLOBALS['I18N']->get("addattachments").' </td></tr>';
+    $att_content .= '<tr><td colspan="2">
       '.$GLOBALS['I18N']->get("uploadlimits").':<br/>
       '.$GLOBALS['I18N']->get("maxtotaldata").': '.ini_get("post_max_size").'<br/>
       '.$GLOBALS['I18N']->get("maxfileupload").': '.ini_get("upload_max_filesize").'</td></tr>';
@@ -1327,29 +1327,29 @@ if (!$done) {
         } else {
           $ls->addColumn($row["id"],$GLOBALS['I18N']->get('file'),$GLOBALS["img_cross"]);
         }
-        $ls->addColumn($row["id"],$GLOBALS['I18N']->get('del'),sprintf('<input type=checkbox name="deleteattachments[]" value="%s">',$row["linkid"]));
+        $ls->addColumn($row["id"],$GLOBALS['I18N']->get('del'),sprintf('<input type="checkbox" name="deleteattachments[]" value="%s">',$row["linkid"]));
 
         // Probably need to check security rights here...
-  #      $tabletext .= "<td><input type=checkbox name=\"deleteattachments[]\" value=\"".$row["linkid"]."\"></td>";
+  #      $tabletext .= "<td><input type="checkbox" name="\""deleteattachments[]\" value="\""".$row["linkid"]."\"></td>";
   #      $tabletext .= "</tr>\n";
       }
       $ls->addButton($GLOBALS['I18N']->get('delchecked'),"javascript:document.sendmessageform.submit()");
-      $att_content .= '<tr><td colspan=2>'.$ls->display().'</td></tr>';
+      $att_content .= '<tr><td colspan="2">'.$ls->display().'</td></tr>';
 
   #    if ($tabletext) {
-  #      print "<tr><td colspan=2><table class="x" border=1><tr><td>Filename</td><td>Description</td><td>Size</td><td>&nbsp;</td></tr>\n";
+  #      print "<tr><td colspan="2"><table class="x" border="1"><tr><td>Filename</td><td>Description</td><td>Size</td><td>&nbsp;</td></tr>\n";
   #      print "$tabletext";
-  #      print "<tr><td colspan=4 align=\"center\"><input type=submit name=deleteatt value=\"Delete Checked\"></td></tr>";
+  #      print "<tr><td colspan="4" align="\""center\"><p class="\""submit\"><input type="\""submit\" name="deleteatt" value="\""Delete Checked\"></p></td></tr>";
   #      print "</table></td></tr>\n";
   #    }
     }
     for ($att_cnt = 1;$att_cnt <= NUMATTACHMENTS;$att_cnt++) {
-      $att_content .=sprintf ('<tr><td>%s</td><td><input type=file name="attachment%d">&nbsp;&nbsp;<input type=submit name="save" value="%s"></td></tr>',$GLOBALS['I18N']->get('newattachment'),$att_cnt,$GLOBALS['I18N']->get('addandsave'));
+      $att_content .= sprintf  ('<tr><td>%s</td><td><input type="file" name="attachment%d">&nbsp;&nbsp;<p class="submit"><input type="submit" name="save" value="%s"></p></td></tr>',$GLOBALS['I18N']->get('newattachment'),$att_cnt,$GLOBALS['I18N']->get('addandsave'));
       if (FILESYSTEM_ATTACHMENTS) {
-        $att_content .= sprintf('<tr><td><b>%s</b> %s:</td><td><input type=text name="localattachment%d" size="50"></td></tr>',$GLOBALS['I18N']->get('or'),$GLOBALS['I18N']->get('pathtofile'),$att_cnt,$att_cnt);
+        $att_content .= sprintf('<tr><td><b>%s</b> %s:</td><td><input type="text" name="localattachment%d" size="50"></td></tr>',$GLOBALS['I18N']->get('or'),$GLOBALS['I18N']->get('pathtofile'),$att_cnt,$att_cnt);
       }
-      $att_content .= sprintf ('<tr><td colspan=2>%s:</td></tr>
-        <tr><td colspan=2><textarea name="attachment%d_description" cols=65 rows=3 wrap="virtual"></textarea></td></tr>',$GLOBALS['I18N']->get('attachmentdescription'),$att_cnt);
+      $att_content .= sprintf ('<tr><td colspan="2">%s:</td></tr>
+        <tr><td colspan="2"><textarea name="attachment%d_description" cols="65" rows="3" wrap="virtual"></textarea></td></tr>',$GLOBALS['I18N']->get('attachmentdescription'),$att_cnt);
     }
     $att_content .= '</table>';
     # $shader = new WebblerShader("Attachments");
@@ -1373,8 +1373,8 @@ if (!$done) {
 
   // Display the HTML for the "Send Test" button, and the input field for the email addresses
   $sendtest_content = sprintf('<hr /><table class="sendTest"><tr><td valign="top">
-    <input type=submit name=sendtest value="%s"> %s: </td>
-    <td><input type=text name="testtarget" size=40 value="'.$_POST["testtarget"].'"><br />%s
+    <p class="submit"><input type="submit" name="sendtest" value="%s"></p> %s: </td>
+    <td><input type="text" name="testtarget" size="40" value="'.$_POST["testtarget"].'"><br />%s
     </td></tr></table><hr />',
     $GLOBALS['I18N']->get('sendtestmessage'),$GLOBALS['I18N']->get('toemailaddresses'),
     $GLOBALS['I18N']->get('sendtestexplain'));
@@ -1385,13 +1385,13 @@ if (!$done) {
 
   $any = 0;
   for ($i=1;$i<=NUMCRITERIAS;$i++) {
-    $criteria_content .= sprintf('<tr><td colspan=2><hr><h3>%s %d</h3></td>
-    <td>%s <input type=checkbox name="use[%d]"></tr>',$GLOBALS['I18N']->get('criterion'),$i,
+    $criteria_content .= sprintf('<tr><td colspan="2"><hr><h3>%s %d</h3></td>
+    <td>%s <input type="checkbox" name="use[%d]"></tr>',$GLOBALS['I18N']->get('criterion'),$i,
     $GLOBALS['I18N']->get('usethisone'),$i);
     $attributes_request = Sql_Query("select * from $tables[attribute]");
     while ($attribute = Sql_Fetch_array($attributes_request)) {
       $criteria_content .= "\n\n";
-      $criteria_content .= sprintf('<input type=hidden name="attrtype[%d]" value="%s">',
+      $criteria_content .= sprintf('<input type="hidden" name="attrtype[%d]" value="%s">',
         $attribute["id"],$attribute["type"]);
       switch ($attribute["type"]) {
         case "checkbox":
@@ -1409,11 +1409,11 @@ if (!$done) {
           $some = 0;
           $thisone = "";
           $values_request = Sql_Query("select * from $table_prefix"."listattr_".$attribute["tablename"]);
-          $thisone .= sprintf ('<tr><td valign=top><input type="radio" name="criteria[%d]" value="%d"> %s</td>
-                  <td valign=top><b>%s</b></td><td><select name="attr%d%d[]" size=4 multiple>',
+          $thisone .= sprintf ('<tr><td valign="top"><input type="radio" name="criteria[%d]" value="%d"> %s</td>
+                  <td valign="top"><b>%s</b></td><td><select name="attr%d%d[]" size="4" multiple>',
                   $i,$attribute["id"],strip_tags($attribute["name"]),$GLOBALS['I18N']->get('is'),$attribute["id"],$i);
           while ($value = Sql_Fetch_array($values_request)) {
-            $some =1;
+            $some = 1;
             $thisone .= sprintf ('<option value="%d">%s',$value["id"],$value["name"]);
           }
           $thisone .= "</select></td></tr>";
@@ -1569,7 +1569,7 @@ if (!$done) {
   while ($att = Sql_Fetch_array($attreq)) {
     $att_drop .= sprintf('<option value="%d" %s>%s</option>',
       $att["id"],"",substr(stripslashes($att["name"]),0,30).' ('.$GLOBALS['I18N']->get($att["type"]).')');
-    $att_names .= sprintf('<input type=hidden name="attribute_names[%d]" value="%s">',$att["id"],stripslashes($att["name"]));
+    $att_names .= sprintf('<input type="hidden" name="attribute_names[%d]" value="%s">',$att["id"],stripslashes($att["name"]));
   }
   $att_drop .= '</select>'.$att_names;
 
@@ -1607,10 +1607,10 @@ if (!$done) {
 
   </style>';
   $values_drop .= '<span id="values_span" class="values_span">';
-  $values_drop .= '<input class="criteria_element" name="criteria_values[]" id="criteria_values_text" size=15 type=text>';
+  $values_drop .= '<input class="criteria_element" name="criteria_values[]" id="criteria_values_text" size="15" type="text">';
 #  $values_drop .= '</span>';
 #  $values_drop .= '<span id="values_select">';
-  $values_drop .= '<select class="criteria_element" name="criteria_values[]" id="criteria_values_select" multiple size=10></select>';
+  $values_drop .= '<select class="criteria_element" name="criteria_values[]" id="criteria_values_select" multiple size="10"></select>';
   $values_drop .= '</span>';
 
   $existing_overall_operator = $messagedata['criteria_overall_operator'] == "any" ? "any":"all";
@@ -1644,7 +1644,7 @@ if (!$done) {
   '<span class="criteria_element">'.$att_drop.'</span>'.
   '<span class="criteria_element">'.$operator_drop.'</span>'.
   '<span class="criteria_element">'.$values_drop.'</span>'.
-  '<span class="criteria_element"><input type=submit name="save" value="'.$GLOBALS['I18N']->get('addcriterion').'"></span>';
+  '<span class="criteria_element"><p class="submit"><input type="submit" name="save" value="'.$GLOBALS['I18N']->get('addcriterion').'"></p></span>';
   '</div>';
   } // end of if (STACKED_ATTRIBUTE_SELECTION)
 
@@ -1660,8 +1660,8 @@ if (!$done) {
 
   $misc_content = sprintf('
     <table class="sendNotify">
-    <tr valign="top"><td>%s<br/>%s</td><td><input type=text name="notify_start" value="%s" size="35"></td></tr>
-    <tr valign="top"><td>%s<br/>%s</td><td><input type=text name="notify_end" value="%s" size="35"></td></tr>
+    <tr valign="top"><td>%s<br/>%s</td><td><input type="text" name="notify_start" value="%s" size="35"></td></tr>
+    <tr valign="top"><td>%s<br/>%s</td><td><input type="text" name="notify_end" value="%s" size="35"></td></tr>
     </table>',
     $GLOBALS['I18N']->get('email to alert when sending of this message starts'),
     $GLOBALS['I18N']->get('separate multiple with a comma'),$notify_start,
@@ -1670,22 +1670,22 @@ if (!$done) {
   $show_lists = 0;
 
 
-  #$baseurl = sprintf('./?page=%s&amp;id=%d',$_GET["page"],$_GET["id"]);
+  #$baseurl = sprintf('./?page="%s"&amp;id="%d',$_GET[""page"],$_GET["id"]);
   if ($_GET["id"]) {
     $tabs = new WebblerTabs();
-    $tabs->addTab($GLOBALS['I18N']->get("Content"),"$baseurl&amp;tab=Content");
-    $tabs->addTab($GLOBALS['I18N']->get("Format"),"$baseurl&amp;tab=Format");
+    $tabs->addTab($GLOBALS['I18N']->get("Content"),'$baseurl&amp;tab="Content"');
+    $tabs->addTab($GLOBALS['I18N']->get("Format"),'$baseurl&amp;tab="Format"');
     if (ALLOW_ATTACHMENTS) {
-      $tabs->addTab($GLOBALS['I18N']->get("Attach"),"$baseurl&amp;tab=Attach");
+      $tabs->addTab($GLOBALS['I18N']->get("Attach"),'$baseurl&amp;tab="Attach"');
     }
-    $tabs->addTab($GLOBALS['I18N']->get("Scheduling"),"$baseurl&amp;tab=Scheduling");
+    $tabs->addTab($GLOBALS['I18N']->get("Scheduling"),'$baseurl&amp;tab="Scheduling"');
 #    if (USE_rss) {
-#      $tabs->addTab("rss","$baseurl&amp;tab=rss");
+#      $tabs->addTab("rss",'$baseurl&amp;tab="rss"');
 #    }
-    $tabs->addTab($GLOBALS['I18N']->get("Criteria"),"$baseurl&amp;tab=Criteria");
-    $tabs->addTab($GLOBALS['I18N']->get("Lists"),"$baseurl&amp;tab=Lists");
-#    $tabs->addTab("Review and Send","$baseurl&amp;tab=Review");
-    $tabs->addTab($GLOBALS['I18N']->get("Misc"),"$baseurl&amp;tab=Misc");
+    $tabs->addTab($GLOBALS['I18N']->get("Criteria"),'$baseurl&amp;tab="Criteria"');
+    $tabs->addTab($GLOBALS['I18N']->get("Lists"),'$baseurl&amp;tab="Lists"');
+#    $tabs->addTab("Review and Send",'$baseurl&amp;tab="Review"');
+    $tabs->addTab($GLOBALS['I18N']->get("Misc"),'$baseurl&amp;tab="Misc"');
 
     if ($_GET["tab"]) {
       $tabs->setCurrent($GLOBALS['I18N']->get($_GET["tab"]));
@@ -1794,9 +1794,9 @@ if (!$_POST["status"]) {
   $savecaption = $GLOBALS['I18N']->get('savechanges');#"Save &quot;".$_POST["status"]."&quot; message edits";
 
 }
-print '<hr><table class="sendSubmit"><tr><td><input type=submit name="save" value="$savecaption"></td></tr></table>\n<hr>\n';
-print "<input type=hidden name=id value=$id>\n";
-print "<input type=hidden name=status value=\"".$_POST["status"]."\">\n";
-print '<input type=hidden name=expand value="0">';
+print '<hr><table class="sendSubmit"><tr><td><p class="submit"><input type="submit" name="save" value="'.$savecaption.'"></p></td></tr></table><br/><hr><br/>';
+print '<input type="hidden" name="id" value="$id">\n';
+print '<input type="hidden" name="status" value="'.$_POST["status"].'">\n';
+print '<input type="hidden" name="expand" value="0">';
 
 ?>

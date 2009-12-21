@@ -78,7 +78,7 @@ if ($message && $list) {
 
 if (!$done) {
 print "To send a prepared message, check the radio button next to the message you want to send and click \"Send\"";
-print formStart('name="sendpreparedform"');
+print formStart('name="sendpreparedform" class="sendpreparedSend" ');
 
 $req = Sql_Query("select * from {$tables["message"]} where status = 'prepared'");
 if (!Sql_Affected_Rows())
@@ -130,6 +130,6 @@ if ($num == 1) {
 
 ?>
 </ul>
-<p class="button"><input type=submit name=send value="Send Message <?php echo $buttonmsg?>" onClick="document.sendpreparedform.submit()">
+<p class="submit"><input type="submit" name=send value="Send Message <?php echo $buttonmsg?>" onClick="document.sendpreparedform.submit()"></p>
 </form>
 <?php } ?>

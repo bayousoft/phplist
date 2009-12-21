@@ -40,11 +40,7 @@ function Sql_has_error ($dbconnection) {
 function Sql_Error ($errno = 0) {
   $msg = $GLOBALS["adodb_connection"]->ErrorMsg();
   $msg .= "<br>backtrace . " . print_r(debug_backtrace(), true);
-  return '<div id="dberror" style="position: relative;
-      background-color: #aa0000;
-      border: 2px solid #000000;
-      color: #ffffff;
-      ">Database error '. $errno.' '.$msg.'</div>';
+  return '<div id="dberror">Database error '. $errno.' '.$msg.'</div>';
    if (function_exists("logevent")) {
      logevent("Database error: $msg");
    }
