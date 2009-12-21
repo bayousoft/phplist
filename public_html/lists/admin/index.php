@@ -105,7 +105,7 @@ if (Sql_Table_exists($tables["config"],1)) {
   }
 }
 
-include_once dirname(__FILE__).$GLOBALS['design']."pagetop.php";
+include_once dirname(__FILE__).'/'.$GLOBALS['design'].'pagetop.php';
 
 if ($GLOBALS["commandline"]) {
   if (!isset($_SERVER["USER"]) && sizeof($GLOBALS["commandline_users"])) {
@@ -293,8 +293,8 @@ if ($GLOBALS["require_login"] && $page != "login") {
 #  print '</div>';
 }
 if (LANGUAGE_SWITCH) {
-  $ls = '<div align="right" id="languageswitch"><br/><form name="languageswitch" method="post" style="margin: 0; padding: 0">';
-  $ls .= '<select name="setlanguage" onChange="document.languageswitch.submit()" style="width: 100px; font-size: 10px; color: #666666">';
+  $ls = '<div align="right" id="languageswitch"><br/><form name="languageswitch" method="post">';
+  $ls .= '<select name="setlanguage" onChange="document.languageswitch.submit()">';
   $lancount = 0;
   foreach ($GLOBALS['LANGUAGES'] as $iso => $rec) {
     if (is_dir(dirname(__FILE__).'/lan/'.$iso)) {
