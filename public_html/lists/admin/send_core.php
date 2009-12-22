@@ -84,14 +84,14 @@ if (!$id) {
   $id = Sql_Insert_Id($GLOBALS['tables']['message'], 'id');
   # 0008720: Using -p send from the commandline doesn't seem to work '
   if(!$GLOBALS["commandline"]){
-    Redirect($_GET["page"].'&id="$id"');
+    Redirect($_GET["page"].'&id="'.$id.'"');
     exit;
   }
 }
 
 if (isset($_GET['deleterule']) && $_GET["deleterule"]) {
   Sql_Query(sprintf('delete from %s where name = "criterion%d" and id = %d',$GLOBALS["tables"]["messagedata"],$_GET["deleterule"],$_GET["id"]));
-  Redirect($_GET["page"].'&id="$id"&tab="'.$_GET["tab"].'"');
+  Redirect($_GET["page"].'&id="'.$id.'"&tab="'.$_GET["tab"].'"');
 }
 ob_end_flush();
 
@@ -986,22 +986,22 @@ if (!$done) {
   #$baseurl = sprintf('./?page="%s"&amp;id="%d"',$_GET["page"],$_GET["id"]);
   if ($_GET["id"]) {
     $tabs = new WebblerTabs();
-    $tabs->addTab($GLOBALS['I18N']->get("Content"),'$baseurl&amp;tab="Content"');
+    $tabs->addTab($GLOBALS['I18N']->get("Content"),$baseurl.'&amp;tab="Content"');
     if (FORWARD_ALTERNATIVE_CONTENT) {
-      $tabs->addTab($GLOBALS['I18N']->get("Forward"),'$baseurl&amp;tab="Forward"');
+      $tabs->addTab($GLOBALS['I18N']->get("Forward"),$baseurl.'&amp;tab="Forward"');
     }
-    $tabs->addTab($GLOBALS['I18N']->get("Format"),'$baseurl&amp;tab="Format"');
+    $tabs->addTab($GLOBALS['I18N']->get("Format"),$baseurl.'&amp;tab="Format"');
     if (ALLOW_ATTACHMENTS) {
-      $tabs->addTab($GLOBALS['I18N']->get("Attach"),'$baseurl&amp;tab="Attach"');
+      $tabs->addTab($GLOBALS['I18N']->get("Attach"),$baseurl.'&amp;tab="Attach"');
     }
-    $tabs->addTab($GLOBALS['I18N']->get("Scheduling"),'$baseurl&amp;tab="Scheduling"');
+    $tabs->addTab($GLOBALS['I18N']->get("Scheduling"),$baseurl.'&amp;tab="Scheduling"');
 #    if (USE_RSS) {
-#      $tabs->addTab("RSS",'$baseurl&amp;tab="RSS"');
+  #      $tabs->addTab("RSS",$baseurl.'&amp;tab="RSS"');
 #    }
-    $tabs->addTab($GLOBALS['I18N']->get("Criteria"),'$baseurl&amp;tab="Criteria"');
-    $tabs->addTab($GLOBALS['I18N']->get("Lists"),'$baseurl&amp;tab="Lists"');
-#    $tabs->addTab("Review and Send",'$baseurl&amp;tab="Review"');
-    $tabs->addTab($GLOBALS['I18N']->get("Misc"),'$baseurl&amp;tab="Misc"');
+    $tabs->addTab($GLOBALS['I18N']->get("Criteria"),$baseurl.'&amp;tab="Criteria"');
+    $tabs->addTab($GLOBALS['I18N']->get("Lists"),$baseurl.'&amp;tab="Lists"');
+#    $tabs->addTab("Review and Send",$baseurl.'&amp;tab="Review"');
+    $tabs->addTab($GLOBALS['I18N']->get("Misc"),$baseurl.'&amp;tab="Misc"');
 
     if ($_GET["tab"]) {
       $tabs->setCurrent($GLOBALS['I18N']->get($_GET["tab"]));
@@ -1673,19 +1673,19 @@ if (!$done) {
   #$baseurl = sprintf('./?page="%s"&amp;id="%d',$_GET[""page"],$_GET["id"]);
   if ($_GET["id"]) {
     $tabs = new WebblerTabs();
-    $tabs->addTab($GLOBALS['I18N']->get("Content"),'$baseurl&amp;tab="Content"');
-    $tabs->addTab($GLOBALS['I18N']->get("Format"),'$baseurl&amp;tab="Format"');
+    $tabs->addTab($GLOBALS['I18N']->get("Content"),$baseurl.'&amp;tab="Content"');
+    $tabs->addTab($GLOBALS['I18N']->get("Format"),$baseurl.'&amp;tab="Format"');
     if (ALLOW_ATTACHMENTS) {
-      $tabs->addTab($GLOBALS['I18N']->get("Attach"),'$baseurl&amp;tab="Attach"');
+      $tabs->addTab($GLOBALS['I18N']->get("Attach"),$baseurl.'&amp;tab="Attach"');
     }
-    $tabs->addTab($GLOBALS['I18N']->get("Scheduling"),'$baseurl&amp;tab="Scheduling"');
+    $tabs->addTab($GLOBALS['I18N']->get("Scheduling"),$baseurl.'&amp;tab="Scheduling"');
 #    if (USE_rss) {
-#      $tabs->addTab("rss",'$baseurl&amp;tab="rss"');
+#      $tabs->addTab("rss",$baseurl.'&amp;tab="rss"');
 #    }
-    $tabs->addTab($GLOBALS['I18N']->get("Criteria"),'$baseurl&amp;tab="Criteria"');
-    $tabs->addTab($GLOBALS['I18N']->get("Lists"),'$baseurl&amp;tab="Lists"');
-#    $tabs->addTab("Review and Send",'$baseurl&amp;tab="Review"');
-    $tabs->addTab($GLOBALS['I18N']->get("Misc"),'$baseurl&amp;tab="Misc"');
+    $tabs->addTab($GLOBALS['I18N']->get("Criteria"),$baseurl.'&amp;tab="Criteria"');
+    $tabs->addTab($GLOBALS['I18N']->get("Lists"),$baseurl.'&amp;tab="Lists"');
+#    $tabs->addTab("Review and Send",$baseurl.'&amp;tab="Review"');
+    $tabs->addTab($GLOBALS['I18N']->get("Misc"),$baseurl.'&amp;tab="Misc"');
 
     if ($_GET["tab"]) {
       $tabs->setCurrent($GLOBALS['I18N']->get($_GET["tab"]));
@@ -1795,7 +1795,7 @@ if (!$_POST["status"]) {
 
 }
 print '<hr><table class="sendSubmit"><tr><td><p class="submit"><input type="submit" name="save" value="'.$savecaption.'"></p></td></tr></table><br/><hr><br/>';
-print '<input type="hidden" name="id" value="$id">\n';
+print '<input type="hidden" name="id" value="'.$id.'">\n';
 print '<input type="hidden" name="status" value="'.$_POST["status"].'">\n';
 print '<input type="hidden" name="expand" value="0">';
 
