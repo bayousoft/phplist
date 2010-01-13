@@ -38,7 +38,7 @@ $repeatuntil->useTime = true;
 if (empty($_GET['id'])) {
   $_GET['id'] = '';
 }
-$baseurl = PageURL2($_GET["page"].'&id="'.$_GET["id"].'"');
+$baseurl = PageURL2($_GET["page"].'&id='.$_GET["id"]);
 
 echo '<script language="Javascript" src="js/jslib.js" type="text/javascript"></script><hr>';
 
@@ -765,7 +765,7 @@ $num = sprintf('%d',isset($messagedata['numcriteria']) ? $messagedata['numcriter
   #  print '<br/>'.$num . " criteria already defined";
 $ls = new WebblerListing($GLOBALS['I18N']->get("existingcriteria"));
 $used_attributes = array();
-$delete_base = sprintf('%s&amp;id="%d"&amp;tab="%s"',$_GET["page"],$_GET["id"],$_GET["tab"]);
+$delete_base = sprintf('%s&amp;id=%d&amp;tab=%s',$_GET["page"],$_GET["id"],$_GET["tab"]);
 $tc = 0; # table counter
 if (!isset($messagedata['criteria_overall_operator'])) {
   $messagedata['criteria_overall_operator'] = '';
@@ -781,7 +781,7 @@ for ($i = 1; $i<=$num;$i++) {
     $ls->addElement('<!--'.$crit_data["attribute"].'-->'.$crit_data["attribute_name"]);
     $ls->addColumn('<!--'.$crit_data["attribute"].'-->'.$crit_data["attribute_name"],$GLOBALS['I18N']->get('operator'),$GLOBALS['I18N']->get($crit_data["operator"]));
     $ls->addColumn('<!--'.$crit_data["attribute"].'-->'.$crit_data["attribute_name"],$GLOBALS['I18N']->get('values'),$crit_data["values"]);
-    $ls->addColumn('<!--'.$crit_data["attribute"].'-->'.$crit_data["attribute_name"],$GLOBALS['I18N']->get('remove'),PageLink2($delete_base.'&amp;deleterule="'.$i,$GLOBALS['I18N']->get("remove").'"'));
+    $ls->addColumn('<!--'.$crit_data["attribute"].'-->'.$crit_data["attribute_name"],$GLOBALS['I18N']->get('remove'),PageLink2($delete_base.'&amp;deleterule='.$i,$GLOBALS['I18N']->get("remove")));
     if (isset($_POST["criteria"][$i])) {
       $attribute = $_POST["criteria"][$i];
     } else {
@@ -945,9 +945,9 @@ if (sizeof($subqueries)) {
   }
 
   if (!isset($_GET['calculate'])) {
-    $ls->addButton($GLOBALS['I18N']->get("calculate"),$baseurl.'&amp;tab="'.$_GET["tab"].'"&amp;calculate="1"');
+    $ls->addButton($GLOBALS['I18N']->get("calculate"),$baseurl.'&amp;tab='.$_GET["tab"].'&amp;calculate=1');
   } else {
-    $ls->addButton($GLOBALS['I18N']->get("reload"),$baseurl.'&amp;tab="'.$_GET["tab"].'"');
+    $ls->addButton($GLOBALS['I18N']->get("reload"),$baseurl.'&amp;tab='.$_GET["tab"]);
   }
   $existing_criteria = $ls->display();
 } else {
@@ -983,25 +983,25 @@ if (!$done) {
     $enctype = '';
   }
 
-  #$baseurl = sprintf('./?page="%s"&amp;id="%d"',$_GET["page"],$_GET["id"]);
+  #$baseurl = sprintf('./?page=%s&amp;id=%d',$_GET["page"],$_GET["id"]);
   if ($_GET["id"]) {
     $tabs = new WebblerTabs();
-    $tabs->addTab($GLOBALS['I18N']->get("Content"),$baseurl.'&amp;tab="Content"');
+    $tabs->addTab($GLOBALS['I18N']->get("Content"),$baseurl.'&amp;tab=Content');
     if (FORWARD_ALTERNATIVE_CONTENT) {
-      $tabs->addTab($GLOBALS['I18N']->get("Forward"),$baseurl.'&amp;tab="Forward"');
+      $tabs->addTab($GLOBALS['I18N']->get("Forward"),$baseurl.'&amp;tab=Forward');
     }
-    $tabs->addTab($GLOBALS['I18N']->get("Format"),$baseurl.'&amp;tab="Format"');
+    $tabs->addTab($GLOBALS['I18N']->get("Format"),$baseurl.'&amp;tab=Format');
     if (ALLOW_ATTACHMENTS) {
-      $tabs->addTab($GLOBALS['I18N']->get("Attach"),$baseurl.'&amp;tab="Attach"');
+      $tabs->addTab($GLOBALS['I18N']->get("Attach"),$baseurl.'&amp;tab=Attach');
     }
-    $tabs->addTab($GLOBALS['I18N']->get("Scheduling"),$baseurl.'&amp;tab="Scheduling"');
+    $tabs->addTab($GLOBALS['I18N']->get("Scheduling"),$baseurl.'&amp;tab=Scheduling');
 #    if (USE_RSS) {
-  #      $tabs->addTab("RSS",$baseurl.'&amp;tab="RSS"');
+  #      $tabs->addTab("RSS",$baseurl.'&amp;tab=RSS');
 #    }
-    $tabs->addTab($GLOBALS['I18N']->get("Criteria"),$baseurl.'&amp;tab="Criteria"');
-    $tabs->addTab($GLOBALS['I18N']->get("Lists"),$baseurl.'&amp;tab="Lists"');
-#    $tabs->addTab("Review and Send",$baseurl.'&amp;tab="Review"');
-    $tabs->addTab($GLOBALS['I18N']->get("Misc"),$baseurl.'&amp;tab="Misc"');
+    $tabs->addTab($GLOBALS['I18N']->get("Criteria"),$baseurl.'&amp;tab=Criteria');
+    $tabs->addTab($GLOBALS['I18N']->get("Lists"),$baseurl.'&amp;tab=Lists');
+#    $tabs->addTab("Review and Send",$baseurl.'&amp;tab=Review');
+    $tabs->addTab($GLOBALS['I18N']->get("Misc"),$baseurl.'&amp;tab=Misc');
 
     if ($_GET["tab"]) {
       $tabs->setCurrent($GLOBALS['I18N']->get($_GET["tab"]));
@@ -1654,7 +1654,7 @@ if (!$done) {
 
   # notification of progress of message sending
   # defaulting to admin_details['email'] gives the wrong impression that this is the
-  # value in the database, so it's better to leave that empty instead
+  # value in the database, so it is better to leave that empty instead
   $notify_start = isset($messagedata['notify_start'])?$messagedata['notify_start']:'';#$admin_details['email'];
   $notify_end = isset($messagedata['notify_end'])?$messagedata['notify_end']:'';#$admin_details['email'];
 
@@ -1670,22 +1670,22 @@ if (!$done) {
   $show_lists = 0;
 
 
-  #$baseurl = sprintf('./?page="%s"&amp;id="%d',$_GET[""page"],$_GET["id"]);
+  #$baseurl = sprintf('./?page=%s&amp;id=%d',$_GET["page"],$_GET["id"]);
   if ($_GET["id"]) {
     $tabs = new WebblerTabs();
-    $tabs->addTab($GLOBALS['I18N']->get("Content"),$baseurl.'&amp;tab="Content"');
-    $tabs->addTab($GLOBALS['I18N']->get("Format"),$baseurl.'&amp;tab="Format"');
+    $tabs->addTab($GLOBALS['I18N']->get("Content"),$baseurl.'&amp;tab=Content');
+    $tabs->addTab($GLOBALS['I18N']->get("Format"),$baseurl.'&amp;tab=Format');
     if (ALLOW_ATTACHMENTS) {
-      $tabs->addTab($GLOBALS['I18N']->get("Attach"),$baseurl.'&amp;tab="Attach"');
+      $tabs->addTab($GLOBALS['I18N']->get("Attach"),$baseurl.'&amp;tab=Attach');
     }
-    $tabs->addTab($GLOBALS['I18N']->get("Scheduling"),$baseurl.'&amp;tab="Scheduling"');
+    $tabs->addTab($GLOBALS['I18N']->get("Scheduling"),$baseurl.'&amp;tab=Scheduling');
 #    if (USE_rss) {
 #      $tabs->addTab("rss",$baseurl.'&amp;tab="rss"');
 #    }
-    $tabs->addTab($GLOBALS['I18N']->get("Criteria"),$baseurl.'&amp;tab="Criteria"');
-    $tabs->addTab($GLOBALS['I18N']->get("Lists"),$baseurl.'&amp;tab="Lists"');
-#    $tabs->addTab("Review and Send",$baseurl.'&amp;tab="Review"');
-    $tabs->addTab($GLOBALS['I18N']->get("Misc"),$baseurl.'&amp;tab="Misc"');
+    $tabs->addTab($GLOBALS['I18N']->get("Criteria"),$baseurl.'&amp;tab=Criteria');
+    $tabs->addTab($GLOBALS['I18N']->get("Lists"),$baseurl.'&amp;tab=Lists');
+#    $tabs->addTab("Review and Send",$baseurl.'&amp;tab=Review');
+    $tabs->addTab($GLOBALS['I18N']->get("Misc"),$baseurl.'&amp;tab=Misc');
 
     if ($_GET["tab"]) {
       $tabs->setCurrent($GLOBALS['I18N']->get($_GET["tab"]));
