@@ -124,9 +124,9 @@ if (ereg("dev", VERSION))
 else
 	$v = VERSION;
 if (REGISTER) {
-  $PoweredByImage = '<p align=left><a href="http://www.phplist.com"><img src="http://phplist.tincan.co.uk/images/'.$v.'/power-phplist.png" width=70 height=30 title="Powered by PHPlist version '.$v.', &copy; tincan ltd" alt="Powered by PHPlist'.$v.', &copy tincan ltd" border="0"></a></p>';
+  $PoweredByImage = '<p align=left><a href="http://www.phplist.com"><img src="http://phplist.tincan.co.uk/images/'.$v.'/power-phplist.png" width=70 height=30 title="Powered by PHPlist version '.$v.', &copy; tincan ltd" alt="Powered by PHPlist'.$v.', &copy tincan ltd" border="0"/></a></p>';
 } else {
-  $PoweredByImage = '<p align=left><a href="http://www.phplist.com"><img src="images/power-phplist.png" width=70 height=30 title="Powered by PHPlist version '.$v.', &copy; tincan ltd" alt="Powered by PHPlist'.$v.', &copy tincan ltd" border="0"></a></p>';
+  $PoweredByImage = '<p align=left><a href="http://www.phplist.com"><img src="images/power-phplist.png" width=70 height=30 title="Powered by PHPlist version '.$v.', &copy; tincan ltd" alt="Powered by PHPlist'.$v.', &copy tincan ltd" border="0"/></a></p>';
 }
 $PoweredByText = '
     <style type="text/css"><!--
@@ -434,7 +434,7 @@ function newMenu() {
 			break;
   }
   if (TEST && REGISTER)
-    $pixel = '<img src="http://phplist.tincan.co.uk/images/pixel.gif" width=1 height=1>';
+    $pixel = '<img src="http://phplist.tincan.co.uk/images/pixel.gif" width="1" height="1" alt="" />';
   else
     $pixel = "";
   global $tables;
@@ -477,7 +477,12 @@ function newMenu() {
         if (USE_PREPARE) {
           $html .= $spb.$link.$spe;
         }
-      } else {
+      } 
+      // don't use the link for a rule
+      elseif ($desc == "<hr />") {
+        $html .= '<div class="menulinkleft">'.$desc.'</div>';
+      }
+      else {
         $html .= $spb.$link.$spe;
       }
     }
@@ -596,7 +601,7 @@ function upgradeTableOld($table,$tablestructure) {
 
   foreach ($records as $record) {
 #    while (list($key,$val) = each ($record))
-#      print "$key => $val<br>\n";
+#      print "$key => $val<br/>\n";
     $collist = "";
     $vallist = "";
 
@@ -629,7 +634,7 @@ function upgradeTable($table,$tablestructure) {
       array_push($columns,$row[0]);
 
     #$fp = tmpfile();
-#    print "Writing tempfile $fname<br>";
+#    print "Writing tempfile $fname<br/>";
     $recs = Sql_Query("select * from $table");
     while ($data = Sql_Fetch_Array($recs)) {
       reset($columns);
@@ -649,7 +654,7 @@ function upgradeTable($table,$tablestructure) {
     unlink($fname);
     return 0;
   }
-#  print "Reading tempfile<br>";
+#  print "Reading tempfile<br/>";
   while (!feof($fp)) {
     # read one record
     $buffer = "";
@@ -675,7 +680,7 @@ function upgradeTable($table,$tablestructure) {
       $collist = substr($collist,0,-1);
       $vallist = substr($vallist,0,-1);
       $query = "replace into $table ($collist) values($vallist)";
-#      print $query . "<br>";
+#      print $query . "<br/>";
       if (!Sql_Query($query)) {
         unlink($fname);
         return 0;
@@ -719,7 +724,7 @@ function dbg($variable, $description = 'Value', $nestingLevel = 0) {
   $msg = $description.': '.$variable;
 
   if (isset($config["verbose"]) && $config["verbose"]) 
-    print "\n".'DBG: '.$msg.'<br>'."\n";
+    print "\n".'DBG: '.$msg.'<br/>'."\n";
   elseif (isset($config["debug_log"]) && $config["debug_log"]) {
     $fp = @fopen($config["debug_log"],"a");
     $line = "[".date("d M Y, H:i:s")."] ".$_SERVER["REQUEST_METHOD"].'-'.$_SERVER["REQUEST_URI"].'('.$GLOBALS["pagestats"]["number_of_queries"].") $msg \n";
@@ -844,7 +849,7 @@ $newpoweredimage = 'iVBORw0KGgoAAAANSUhEUgAAAEYAAAAeCAMAAACmLZgsAAADAFBMVEXYx6fm
 function FileNotFound() {
   ob_end_clean();
   header("404, File Not Found");
-  printf('<html><head><title>404 Not Found</title></head><body><h3>Not Found</h3>The requested document was not found on this server<br/>Please contact the <a href="mailto:%s?subject=File not Found: %s">Administrator</a><p class="button"><hr><address><a href="http://tincan.co.uk/phplist" target="_tincan">phplist</a> version %s</address></body></html>',getConfig("admin_address"),$_SERVER["REQUEST_URI"],VERSION);
+  printf('<html><head><title>404 Not Found</title></head><body><h3>Not Found</h3>The requested document was not found on this server<br/>Please contact the <a href="mailto:%s?subject=File not Found: %s">Administrator</a><p class="button"><hr/><address><a href="http://tincan.co.uk/phplist" target="_tincan">phplist</a> version %s</address></body></html>',getConfig("admin_address"),$_SERVER["REQUEST_URI"],VERSION);
   exit;
 }
 
