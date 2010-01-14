@@ -38,9 +38,9 @@ $repeatuntil->useTime = true;
 if (empty($_GET['id'])) {
   $_GET['id'] = '';
 }
-$baseurl = PageURL2($_GET["page"].'&id='.$_GET["id"]);
+$baseurl = PageURL2($_GET["page"].'&amp;id='.$_GET["id"]);
 
-echo '<script language="Javascript" src="js/jslib.js" type="text/javascript"></script><hr>';
+echo '<script language="Javascript" src="js/jslib.js" type="text/javascript"></script><hr/>';
 
 // load some variables in a register globals-safe fashion
 if (isset($_POST['send'])) {
@@ -660,7 +660,7 @@ if ($send || $sendtest || $prepare || $save) {
     } elseif ($send && !is_array($_POST["targetlist"])) {
       $errormessage = $GLOBALS['I18N']->get("selectlist");
     }
-    echo "$errormessage<br>\n";
+    echo "$errormessage<br/>\n";
   }
 
   // OK, the message has been saved, now check to see if we need to send a test message
@@ -669,7 +669,7 @@ if ($send || $sendtest || $prepare || $save) {
     echo "<HR>";
     // Let's send test messages to everyone that was specified in the
     if ($_POST["testtarget"] == "") {
-      print $GLOBALS['I18N']->get("notargetemail")."<br>";
+      print $GLOBALS['I18N']->get("notargetemail")."<br/>";
     }
 
     if (isset($cached[$id])) {
@@ -712,7 +712,7 @@ if ($send || $sendtest || $prepare || $save) {
         }
         print '<br/>';
       } else {
-        print $GLOBALS['I18N']->get("emailnotfound").": $address<br>";
+        print $GLOBALS['I18N']->get("emailnotfound").": $address<br/>";
       }
     }
     echo "<HR>";
@@ -1009,18 +1009,18 @@ if (!$done) {
       $tabs->setCurrent($GLOBALS['I18N']->get("Content"));
     }
     if (defined("WARN_SAVECHANGES")) {
-      $tabs->addLinkCode(' onClick="return savechanges();" ');
+      $tabs->addLinkCode(' onclick="return savechanges();" ');
     }
     print $tabs->display();
   }
 
   ?>
 
-  <script language="Javascript">
+  <script language="Javascript" type="text/javascript">
   // some debugging stuff to see what happens
   function checkForm() {
     return true;
-    for (var i=0;i<document.sendmessageform.elements.length;i++) {
+    for (var i=0;i < document.sendmessageform.elements.length;i++) {
       alert(document.sendmessageform.elements[i].name+" "+document.sendmessageform.elements[i].value);
     }
     return true;
@@ -1037,7 +1037,7 @@ if (!$done) {
   <?php
   print formStart($enctype . ' name="sendmessageform" class="sendSend" ');
   #print '<form method="post" enctype="multipart/form-data" name="sendmessageform" onSubmit="return checkForm()">';
-  print '<input type="hidden" name="workaround_fck_bug" value="1">';
+  print '<input type="hidden" name="workaround_fck_bug" value="1" />';
 
   if ($_GET["page"] == "preparemessage")
     print Help("preparemessage",$GLOBALS['I18N']->get("whatisprepare"));
@@ -1067,13 +1067,13 @@ if (!$done) {
   $maincontent .= '
   <tr><td>'.Help("subject").' '.$GLOBALS['I18N']->get("Subject").':</td>
     <td><input type="text" name="msgsubject"
-    //value="'.htmlentities(iconv('ISO-8859-1','UTF-8',$subject),ENT_QUOTES,'UTF-8').'" size="40"></td></tr>
+    value="'.htmlentities(iconv('ISO-8859-1','UTF-8',$subject),ENT_QUOTES,'UTF-8').'" size="40"/></td></tr>
   <tr>
     <td colspan="2">
     </td></tr>
   <tr><td>'.Help("from").' '.$GLOBALS['I18N']->get("fromline").':</td>
     <td><input type="text" name="from"
-    value="'.htmlentities(iconv('ISO-8859-1','UTF-8',$from),ENT_QUOTES,'UTF-8').'" size="40"></td></tr>
+    value="'.htmlentities(iconv('ISO-8859-1','UTF-8',$from),ENT_QUOTES,'UTF-8').'" size="40"/></td></tr>
   <tr><td colspan="2">
 
   </td></tr>';
@@ -1083,7 +1083,7 @@ if (!$done) {
   " the friend will receive this message instead of the one on the content tab.").
   '<tr><td>'.Help("subject").' '.$GLOBALS['I18N']->get("Subject").':</td>
     <td><input type="text" name="forwardsubject"
-    value="'.htmlentities($forwardsubject,ENT_QUOTES,'UTF-8').'" size="40"></td></tr>
+    value="'.htmlentities($forwardsubject,ENT_QUOTES,'UTF-8').'" size="40"/></td></tr>
   <tr>
     <td colspan="2">
     </td></tr>
@@ -1127,41 +1127,41 @@ if (!$done) {
     <tr><td colspan="2">'.Help("format").' '.$GLOBALS['I18N']->get("format").': <b>'.$GLOBALS['I18N']->get("autodetect").'</b>
     <input type="radio" name="htmlformatted" value="auto" ';
     $formatting_content .= !isset($htmlformatted) || $htmlformatted == "auto"?"checked":"";
-    $formatting_content .= '>
+    $formatting_content .= '/>
   <b>'.$GLOBALS['I18N']->get("html").'</b> <input type="radio" name="htmlformatted" value="1" ';
     $formatting_content .= $htmlformatted == "1" ?"checked":"";
-    $formatting_content .= '>
+    $formatting_content .= '/>
   <b>'.$GLOBALS['I18N']->get("text").'</b> <input type="radio" name="htmlformatted" value="0" ';
     $formatting_content .= $htmlformatted == "0" ?"checked":"";
-    $formatting_content .= '></td></tr>';
+    $formatting_content .= '/></td></tr>';
 */
-  $formatting_content .= '<input type="hidden" name="htmlformatted" value="auto">';
+  $formatting_content .= '<input type="hidden" name="htmlformatted" value="auto"/>';
 
   $formatting_content .= '
     <tr><td colspan="2">'.Help("sendformat").' '.$GLOBALS['I18N']->get("sendas").':
   '.$GLOBALS['I18N']->get("html").' <input type="radio" name="sendformat" value="HTML" ';
     $formatting_content .= $_POST["sendformat"]=="HTML"?"checked":"";
-    $formatting_content .= '>
+    $formatting_content .= '/>
   '.$GLOBALS['I18N']->get("text").' <input type="radio" name="sendformat" value="text" ';
     $formatting_content .= $_POST["sendformat"]=="text"?"checked":"";
-    $formatting_content .= '>
+    $formatting_content .= '/>
   ';
 
   if (USE_PDF) {
     $formatting_content .= $GLOBALS['I18N']->get("pdf").' <input type="radio" name="sendformat" value="PDF" ';
     $formatting_content .= $_POST["sendformat"]=="PDF"?"checked":"";
-    $formatting_content .= '>';
+    $formatting_content .= '/>';
   }
 
 //  0009687: Confusing use of the word "Both", indicating one email with both text and html and not two emails
 //  $formatting_content .= $GLOBALS['I18N']->get("textandhtml").' <input type="radio" name="sendformat" value="text and HTML" ';
 //  $formatting_content .= $_POST["sendformat"]=="text and HTML" || !isset($_POST["sendformat"]) ?"checked":"";
-//  $formatting_content .= '>';
+//  $formatting_content .= '/>';
 
   if (USE_PDF) {
     $formatting_content .= $GLOBALS['I18N']->get("textandpdf").' <input type="radio" name="sendformat" value="text and PDF" ';
     $formatting_content .= $_POST["sendformat"]=="text and PDF" ?"checked":"";
-    $formatting_content .= ' >';
+    $formatting_content .= '/>';
   }
 
   foreach ($GLOBALS['plugins'] as $plugin) {
@@ -1169,7 +1169,7 @@ if (!$done) {
     if (is_array($plugins_sendformats) && sizeof($plugins_sendformats)) {
       foreach ($plugins_sendformats as $val => $desc) {
         $val = preg_replace("/\W/",'',strtolower(trim($val)));
-        $formatting_content .= sprintf('%s <input type="radio" name="sendformat" value="%s" %s>',
+        $formatting_content .= sprintf('%s <input type="radio" name="sendformat" value="%s" %s/>',
           $desc,$val, $_POST["sendformat"]==$val?'checked="checked"':'');
       }
     }
@@ -1182,7 +1182,9 @@ if (!$done) {
       <td><select name="template"><option value="0">-- '.$GLOBALS['I18N']->get("selectone").'</option>';
     $req = Sql_Query("select id,title from {$tables["template"]} order by listorder");
     while ($row = Sql_Fetch_Array($req)) {
-      $formatting_content .= sprintf('<option value="%d" %s>%s</option>',$row["id"], $row["id"]==$_POST["template"]?'SELECTED':'',$row["title"]);
+      if ($row["title"]) {
+	$formatting_content .= sprintf('<option value="%d" %s>%s</option>',$row["id"], $row["id"]==$_POST["template"]?'selected="selected"':'',$row["title"]);
+      }
     }
     $formatting_content .= '</select></td></tr>';
   }
@@ -1191,9 +1193,9 @@ if (!$done) {
 //  if (ENABLE_RSS) {
 //    $rss_content .= '<tr><td colspan="2">'.$GLOBALS['I18N']->get("rssintro").'
 //    </td></tr>';
-//    $rss_content .= '<tr><td colspan="2"><input type="radio" name="rsstemplate" value="none">'.$GLOBALS['I18N']->get("none").' ';
+//    $rss_content .= '<tr><td colspan="2"><input type="radio" name="rsstemplate" value="none"/>'.$GLOBALS['I18N']->get("none").' ';
 //    foreach ($rssfrequencies as $key => $val) {
-//      $rss_content .= sprintf('<input type="radio" name="rsstemplate" value="%s" %s>%s ',$key,$_POST["rsstemplate"] == $key ? "checked":"",$val);
+//      $rss_content .= sprintf('<input type="radio" name="rsstemplate" value="%s" %s/>%s ',$key,$_POST["rsstemplate"] == $key ? "checked":"",$val);
 //    }
 //    $rss_content .= '</td></tr>';
 //  }
@@ -1327,10 +1329,10 @@ if (!$done) {
         } else {
           $ls->addColumn($row["id"],$GLOBALS['I18N']->get('file'),$GLOBALS["img_cross"]);
         }
-        $ls->addColumn($row["id"],$GLOBALS['I18N']->get('del'),sprintf('<input type="checkbox" name="deleteattachments[]" value="%s">',$row["linkid"]));
+        $ls->addColumn($row["id"],$GLOBALS['I18N']->get('del'),sprintf('<input type="checkbox" name="deleteattachments[]" value="%s"/>',$row["linkid"]));
 
         // Probably need to check security rights here...
-  #      $tabletext .= "<td><input type="checkbox" name="\""deleteattachments[]\" value="\""".$row["linkid"]."\"></td>";
+  #      $tabletext .= "<td><input type="checkbox" name="\""deleteattachments[]\" value="\""".$row["linkid"]."\"/></td>";
   #      $tabletext .= "</tr>\n";
       }
       $ls->addButton($GLOBALS['I18N']->get('delchecked'),"javascript:document.sendmessageform.submit()");
@@ -1339,14 +1341,14 @@ if (!$done) {
   #    if ($tabletext) {
   #      print "<tr><td colspan="2"><table class="x" border="1"><tr><td>Filename</td><td>Description</td><td>Size</td><td>&nbsp;</td></tr>\n";
   #      print "$tabletext";
-  #      print "<tr><td colspan="4" align="\""center\"><p class="\""submit\"><input type="\""submit\" name="deleteatt" value="\""Delete Checked\"></p></td></tr>";
+  #      print "<tr><td colspan="4" align="\""center\"><p class="\""submit\"><input type="\""submit\" name="deleteatt" value="\""Delete Checked\"/></p></td></tr>";
   #      print "</table></td></tr>\n";
   #    }
     }
     for ($att_cnt = 1;$att_cnt <= NUMATTACHMENTS;$att_cnt++) {
-      $att_content .= sprintf  ('<tr><td>%s</td><td><input type="file" name="attachment%d">&nbsp;&nbsp;<p class="submit"><input type="submit" name="save" value="%s"></p></td></tr>',$GLOBALS['I18N']->get('newattachment'),$att_cnt,$GLOBALS['I18N']->get('addandsave'));
+      $att_content .= sprintf  ('<tr><td>%s</td><td><input type="file" name="attachment%d"/>&nbsp;&nbsp;<p class="submit"><input type="submit" name="save" value="%s"/></p></td></tr>',$GLOBALS['I18N']->get('newattachment'),$att_cnt,$GLOBALS['I18N']->get('addandsave'));
       if (FILESYSTEM_ATTACHMENTS) {
-        $att_content .= sprintf('<tr><td><b>%s</b> %s:</td><td><input type="text" name="localattachment%d" size="50"></td></tr>',$GLOBALS['I18N']->get('or'),$GLOBALS['I18N']->get('pathtofile'),$att_cnt,$att_cnt);
+        $att_content .= sprintf('<tr><td><b>%s</b> %s:</td><td><input type="text" name="localattachment%d" size="50"/></td></tr>',$GLOBALS['I18N']->get('or'),$GLOBALS['I18N']->get('pathtofile'),$att_cnt,$att_cnt);
       }
       $att_content .= sprintf ('<tr><td colspan="2">%s:</td></tr>
         <tr><td colspan="2"><textarea name="attachment%d_description" cols="65" rows="3" wrap="virtual"></textarea></td></tr>',$GLOBALS['I18N']->get('attachmentdescription'),$att_cnt);
@@ -1373,8 +1375,8 @@ if (!$done) {
 
   // Display the HTML for the "Send Test" button, and the input field for the email addresses
   $sendtest_content = sprintf('<hr /><table class="sendTest"><tr><td valign="top">
-    <p class="submit"><input type="submit" name="sendtest" value="%s"></p> %s: </td>
-    <td><input type="text" name="testtarget" size="40" value="'.$_POST["testtarget"].'"><br />%s
+    <p class="submit"><input type="submit" name="sendtest" value="%s"/></p> %s: </td>
+    <td><input type="text" name="testtarget" size="40" value="'.$_POST["testtarget"].'"/><br />%s
     </td></tr></table><hr />',
     $GLOBALS['I18N']->get('sendtestmessage'),$GLOBALS['I18N']->get('toemailaddresses'),
     $GLOBALS['I18N']->get('sendtestexplain'));
@@ -1385,21 +1387,23 @@ if (!$done) {
 
   $any = 0;
   for ($i=1;$i<=NUMCRITERIAS;$i++) {
-    $criteria_content .= sprintf('<tr><td colspan="2"><hr><h3>%s %d</h3></td>
-    <td>%s <input type="checkbox" name="use[%d]"></tr>',$GLOBALS['I18N']->get('criterion'),$i,
+    $criteria_content .= sprintf('<tr><td colspan="2"><hr/><h3>%s %d</h3></td>
+    <td>%s <input type="checkbox" name="use[%d]"/></td></tr>',$GLOBALS['I18N']->get('criterion'),$i,
     $GLOBALS['I18N']->get('usethisone'),$i);
     $attributes_request = Sql_Query("select * from $tables[attribute]");
     while ($attribute = Sql_Fetch_array($attributes_request)) {
       $criteria_content .= "\n\n";
-      $criteria_content .= sprintf('<input type="hidden" name="attrtype[%d]" value="%s">',
+      $criteria_cnt = sprintf('<input type="hidden" name="attrtype[%d]" value="%s"/>',
         $attribute["id"],$attribute["type"]);
+/*       $criteria_content .= sprintf('<input type="hidden" name="attrtype[%d]" value="%s"/>', */
+/*         $attribute["id"],$attribute["type"]); */
       switch ($attribute["type"]) {
         case "checkbox":
           $any = 1;
-          $criteria_content .= sprintf ('<tr><td><input type="radio" name="criteria[%d]" value="%d">
+          $criteria_content .= sprintf ('<tr><td>'.$criteria_cnt.'<input type="radio" name="criteria[%d]" value="%d"/>
              %s</td><td><b>%s</b></td><td><select name="attr%d%d[]">
-                  <option value="0">Not checked
-                  <option value="1">Checked</select></td></tr>',
+                  <option value="0">Not checked</option>
+                  <option value="1">Checked</option></select></td></tr>',
                   $i,$attribute["id"],
                   $attribute["name"],$GLOBALS['I18N']->get('is'),$attribute["id"],$i);
           break;
@@ -1409,12 +1413,14 @@ if (!$done) {
           $some = 0;
           $thisone = "";
           $values_request = Sql_Query("select * from $table_prefix"."listattr_".$attribute["tablename"]);
-          $thisone .= sprintf ('<tr><td valign="top"><input type="radio" name="criteria[%d]" value="%d"> %s</td>
-                  <td valign="top"><b>%s</b></td><td><select name="attr%d%d[]" size="4" multiple>',
+          $thisone .= sprintf ('<tr><td valign="top">'.$criteria_cnt.'<input type="radio" name="criteria[%d]" value="%d"/> %s</td>
+                  <td valign="top"><b>%s</b></td><td><select name="attr%d%d[]" size="4" multiple="multiple">',
                   $i,$attribute["id"],strip_tags($attribute["name"]),$GLOBALS['I18N']->get('is'),$attribute["id"],$i);
           while ($value = Sql_Fetch_array($values_request)) {
-            $some = 1;
-            $thisone .= sprintf ('<option value="%d">%s',$value["id"],$value["name"]);
+	    if($value["name"]) {
+	      $some = 1;
+	      $thisone .= sprintf ('<option value="%d">%s</option>',$value["id"],$value["name"]);
+	    }
           }
           $thisone .= "</select></td></tr>";
           if ($some)
@@ -1422,6 +1428,7 @@ if (!$done) {
           $any = $any || $some;
           break;
         default:
+	  $criteria_acc .= $criteria_cnt."\n";
           $criteria_content .= "\n<!-- error: huh, unknown type ".$attribute["type"]." -->\n";
       }
     }
@@ -1430,6 +1437,7 @@ if (!$done) {
   if (!$any) {
     $criteria_content = '<p class="information">'.$GLOBALS['I18N']->get('nocriteria')."</p>";
   } else {
+    $criteria_content .= '</table>\n'.$criteria_acc;
   #  $shader = new WebblerShader("Message Criteria");
   #  $shader->addContent($criteria_content.'</table>');
   #  $shader->hide();
@@ -1450,7 +1458,7 @@ if (!$done) {
   }
 
   $att_js = '
-  <script language="Javascript" type="text/javascript">
+  <script language="javascript" type="text/javascript">
     var values = Array();
     var operators = Array();
     var value_divs = Array();
@@ -1464,8 +1472,10 @@ if (!$done) {
   $att_drop = '';
   $attreq = Sql_Query(sprintf('select * from %s where type in ("select","radio","date","checkboxgroup","checkbox") %s',$tables["attribute"],$already_used));
   while ($att = Sql_Fetch_array($attreq)) {
-    $att_drop .= sprintf('<option value="%d" %s>%s</option>',
-      $att["id"],"",$att["name"]);
+    if($att["name"]){
+      $att_drop .= sprintf('<option value="%d" %s>%s</option>',
+			   $att["id"],"",$att["name"]);
+    }
     $num = Sql_Affected_Rows();
     switch ($att["type"]) {
       case "select":case "radio":case "checkboxgroup":
@@ -1562,14 +1572,14 @@ if (!$done) {
 
   ';
 
-  $att_drop = '<select name="criteria_attribute" onChange="changeDropDowns()" class="criteria_element" >';
+  $att_drop = '<select name="criteria_attribute" onchange="changeDropDowns()" class="criteria_element" >';
   $att_drop .= '<option value="">['.$GLOBALS['I18N']->get('selectattribute').']</option>';
   $att_names = '';# to remember them later
   $attreq = Sql_Query(sprintf('select * from %s where type in ("select","radio","date","checkboxgroup","checkbox") %s',$tables["attribute"],$already_used));
   while ($att = Sql_Fetch_array($attreq)) {
     $att_drop .= sprintf('<option value="%d" %s>%s</option>',
       $att["id"],"",substr(stripslashes($att["name"]),0,30).' ('.$GLOBALS['I18N']->get($att["type"]).')');
-    $att_names .= sprintf('<input type="hidden" name="attribute_names[%d]" value="%s">',$att["id"],stripslashes($att["name"]));
+    $att_names .= sprintf('<input type="hidden" name="attribute_names[%d]" value="%s"/>',$att["id"],stripslashes($att["name"]));
   }
   $att_drop .= '</select>'.$att_names;
 
@@ -1607,16 +1617,16 @@ if (!$done) {
 
   </style>';
   $values_drop .= '<span id="values_span" class="values_span">';
-  $values_drop .= '<input class="criteria_element" name="criteria_values[]" id="criteria_values_text" size="15" type="text">';
+  $values_drop .= '<input class="criteria_element" name="criteria_values[]" id="criteria_values_text" size="15" type="text"/>';
 #  $values_drop .= '</span>';
 #  $values_drop .= '<span id="values_select">';
-  $values_drop .= '<select class="criteria_element" name="criteria_values[]" id="criteria_values_select" multiple size="10"></select>';
+  $values_drop .= '<select class="criteria_element" name="criteria_values[]" id="criteria_values_select" multiple="multiple" size="10"></select>';
   $values_drop .= '</span>';
 
   $existing_overall_operator = $messagedata['criteria_overall_operator'] == "any" ? "any":"all";
   $criteria_overall_operator =
-    sprintf('%s <input type="radio" name="criteria_match" value="all" %s>
-      %s <input type="radio" name="criteria_match" value="any" %s>',
+    sprintf('%s <input type="radio" name="criteria_match" value="all" %s/>
+      %s <input type="radio" name="criteria_match" value="any" %s/>',
       $GLOBALS['I18N']->get('matchallrules'),
       $existing_overall_operator == "all"? "checked":"",
       $GLOBALS['I18N']->get('matchanyrules'),
@@ -1644,7 +1654,7 @@ if (!$done) {
   '<span class="criteria_element">'.$att_drop.'</span>'.
   '<span class="criteria_element">'.$operator_drop.'</span>'.
   '<span class="criteria_element">'.$values_drop.'</span>'.
-  '<span class="criteria_element"><p class="submit"><input type="submit" name="save" value="'.$GLOBALS['I18N']->get('addcriterion').'"></p></span>';
+  '<span class="criteria_element"><p class="submit"><input type="submit" name="save" value="'.$GLOBALS['I18N']->get('addcriterion').'"/></p></span>';
   '</div>';
   } // end of if (STACKED_ATTRIBUTE_SELECTION)
 
@@ -1660,8 +1670,8 @@ if (!$done) {
 
   $misc_content = sprintf('
     <table class="sendNotify">
-    <tr valign="top"><td>%s<br/>%s</td><td><input type="text" name="notify_start" value="%s" size="35"></td></tr>
-    <tr valign="top"><td>%s<br/>%s</td><td><input type="text" name="notify_end" value="%s" size="35"></td></tr>
+    <tr valign="top"><td>%s<br/>%s</td><td><input type="text" name="notify_start" value="%s" size="35"/></td></tr>
+    <tr valign="top"><td>%s<br/>%s</td><td><input type="text" name="notify_end" value="%s" size="35"/></td></tr>
     </table>',
     $GLOBALS['I18N']->get('email to alert when sending of this message starts'),
     $GLOBALS['I18N']->get('separate multiple with a comma'),$notify_start,
@@ -1680,7 +1690,7 @@ if (!$done) {
     }
     $tabs->addTab($GLOBALS['I18N']->get("Scheduling"),$baseurl.'&amp;tab=Scheduling');
 #    if (USE_rss) {
-#      $tabs->addTab("rss",$baseurl.'&amp;tab="rss"');
+#      $tabs->addTab("rss",$baseurl.'&amp;tab=rss');
 #    }
     $tabs->addTab($GLOBALS['I18N']->get("Criteria"),$baseurl.'&amp;tab=Criteria');
     $tabs->addTab($GLOBALS['I18N']->get("Lists"),$baseurl.'&amp;tab=Lists');
@@ -1693,7 +1703,7 @@ if (!$done) {
       $tabs->setCurrent($GLOBALS['I18N']->get("Content"));
     }
     if (defined("WARN_SAVECHANGES")) {
-      $tabs->addLinkCode(' onClick="return savechanges();" ');
+      $tabs->addLinkCode(' onclick="return savechanges();" ');
     }
   }
 
@@ -1794,9 +1804,9 @@ if (!$_POST["status"]) {
   $savecaption = $GLOBALS['I18N']->get('savechanges');#"Save &quot;".$_POST["status"]."&quot; message edits";
 
 }
-print '<hr><table class="sendSubmit"><tr><td><p class="submit"><input type="submit" name="save" value="'.$savecaption.'"></p></td></tr></table><br/><hr><br/>';
-print '<input type="hidden" name="id" value="'.$id.'">\n';
-print '<input type="hidden" name="status" value="'.$_POST["status"].'">\n';
-print '<input type="hidden" name="expand" value="0">';
+print '<hr/><table class="sendSubmit"><tr><td><p class="submit"><input type="submit" name="save" value="'.$savecaption.'"/></p></td></tr></table><br/><hr/><br/>';
+print '<input type="hidden" name="id" value="'.$id.'"/>\n';
+print '<input type="hidden" name="status" value="'.$_POST["status"].'"/>\n';
+print '<input type="hidden" name="expand" value="0"/>';
 
 ?>
