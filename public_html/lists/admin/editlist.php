@@ -105,7 +105,7 @@ ob_end_flush();
   print '<tr><td>' . $GLOBALS['I18N']->get('Owner') . '</td><td><select name="owner">';
   $admins = $GLOBALS["admin_auth"]->listAdmins();
   foreach ($admins as $adminid => $adminname) {
-    printf ('<option value="%d" %s>%s</option>',$adminid,$adminid == $list["owner"]? "selected":"",$adminname);
+    printf ('<option value="%d" %s>%s</option>',$adminid,$adminid == $list["owner"]? 'selected="selected"':"",$adminname);
   }
   print '</select></td></tr>';
 } else {

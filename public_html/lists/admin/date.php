@@ -119,7 +119,7 @@ if (!defined("IN_WEBBLER") && !defined("WEBBLER")) {
       for ($i=1;$i<32;$i++) {
         $sel = "";
         if ($i == $day)
-          $sel = "selected";
+          $sel = 'selected="selected"';
         $html .= sprintf('<option value="%d" %s>%s',$i,$sel,$i);
       }
       $html .= '</select><select name="month['.$name.']">';
@@ -127,7 +127,7 @@ if (!defined("IN_WEBBLER") && !defined("WEBBLER")) {
       while (list($key,$val) = each ($this->months)) {
         $sel = "";
         if ($key == $month)
-          $sel = "selected";
+          $sel = 'selected="selected"';
         $html .= sprintf('<option value="%s" %s>%s',$key,$sel,$val);
       }
       if (DATE_START_YEAR) {
@@ -145,7 +145,7 @@ if (!defined("IN_WEBBLER") && !defined("WEBBLER")) {
       for ($i=$start;$i<=$end;$i++) {
         $html .= "<option ";
         if ($i == $year)
-          $html .= "selected";
+          $html .= 'selected="selected"';
         $html .= ">$i";
       }
       $html .= "</select>";
@@ -154,7 +154,7 @@ if (!defined("IN_WEBBLER") && !defined("WEBBLER")) {
         for ($i=0;$i<=23;$i++) {
           $sel = "";
           if ($i == $hour)
-            $sel = "selected";
+            $sel = 'selected="selected"';
           $html .= sprintf('<option value="%d" %s>%02d',$i,$sel,$i);
         }
         $html .= '</select>';
@@ -162,7 +162,7 @@ if (!defined("IN_WEBBLER") && !defined("WEBBLER")) {
         for ($i=0;$i<=59;$i+=15) {
           $sel = "";
           if ($i == $minute)
-            $sel = "selected";
+            $sel = 'selected="selected"';
           $html .= sprintf('<option value="%d" %s>%02d',$i,$sel,$i);
         }
         $html .= '</select>';

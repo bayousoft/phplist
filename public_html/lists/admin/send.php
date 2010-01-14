@@ -157,7 +157,7 @@ while ($row = Sql_fetch_array($result)) {
 
   $desc = nl2br(stripslashes($row["description"]));
 
-  $list_content .= "<br>$desc</li>";
+  $list_content .= "<br/>$desc</li>";
   $some = 1;
 }
 $list_content .= '</ul>';
@@ -185,7 +185,7 @@ if (USE_LIST_EXCLUDE) {
 
     $desc = nl2br(stripslashes($row["description"]));
 
-    $list_content .= "<br>$desc</li>";
+    $list_content .= "<br/>$desc</li>";
   }
   $list_content .= '</ul>';
 }

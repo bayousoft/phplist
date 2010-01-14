@@ -53,7 +53,7 @@ while ($p = Sql_Fetch_Array($req)) {
     } else {
       $checked = "";
     }
-    $ls->addColumn($p["id"],$GLOBALS['I18N']->get('default'),sprintf('<input type="radio" name="default" value="%d" %s onChange="document.pagelist.submit()">',$p["id"],$checked));
+    $ls->addColumn($p["id"],$GLOBALS['I18N']->get('default'),sprintf('<input type="radio" name="default" value="%d" %s onchange="document.pagelist.submit()">',$p["id"],$checked));
   } else {
     $adminname = "";
     $isdefault = "";

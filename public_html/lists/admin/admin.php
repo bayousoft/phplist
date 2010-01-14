@@ -128,7 +128,7 @@ if (!empty($_GET["delete"])) {
   Sql_query(sprintf('delete from %s where id = %d',$GLOBALS["tables"]["admin"],$delete));
   Sql_query(sprintf('delete from %s where adminid = %d',$GLOBALS["tables"]["admin_attribute"],$delete));
   Sql_query(sprintf('delete from %s where adminid = %d',$GLOBALS["tables"]["admin_task"],$delete));
-  print '..'.$GLOBALS['I18N']->get('Done')."<br /><hr><br />\n";
+  print '..'.$GLOBALS['I18N']->get('Done')."<br /><hr/><br />\n";
 }
 
 if ($id) {
@@ -172,8 +172,8 @@ while (list ($key,$val) = each ($struct)) {
       	#If key is 'superuser' or 'disable' locate a boolean combo box.
         printf('<tr><td>%s</td><td>', $GLOBALS['I18N']->get($val[1]));
 	    printf('<select name="%s" size="1">', $key);
-	    print('<option value="1" '.(!empty($data[$key])?' selected':'').'>'.$GLOBALS['I18N']->get('Yes').'</option>');
-	    print('<option value="0" '.(empty($data[$key])?' selected':'').'>'.$GLOBALS['I18N']->get('No').'</option></select>');
+	    print('<option value="1" '.(!empty($data[$key])?' selected="selected"':'').'>'.$GLOBALS['I18N']->get('Yes').'</option>');
+	    print('<option value="0" '.(empty($data[$key])?' selected="selected"':'').'>'.$GLOBALS['I18N']->get('No').'</option></select>');
 		print('</td></tr>'."\n");
       }
   } elseif (!empty($val[1]) && !strpos($key,'_')) {

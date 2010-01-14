@@ -1,6 +1,6 @@
 
 <script language="Javascript" src="js/jslib.js" type="text/javascript"></script>
-<hr>
+<hr/>
 
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
@@ -391,7 +391,7 @@ if (isset($_GET["delete"])) {
   # delete the index in delete
   print "deleting $delete ..\n";
   deleteUser($delete);
-  print "... ".$GLOBALS['I18N']->get('Done')."<br><hr><br>\n";
+  print "... ".$GLOBALS['I18N']->get('Done')."<br/><hr/><br/>\n";
   Redirect("users&start=$start");
 }
 
@@ -439,7 +439,7 @@ function snippetListsSelector ($optionAll = false) {
 <p class="button"><?php echo PageLink2("reconcileusers&option=removestaleentries",$GLOBALS['I18N']->get("Remove Stale entries from the database"))?>
 <p class="button"><?php echo PageLink2("reconcileusers&option=mergeduplicates",$GLOBALS['I18N']->get("Merge Duplicate Users"))?>
 
-<hr>
+<hr/>
 <form method=get>
 <input type=hidden name="page" value="reconcileusers">
 <input type=hidden name="option" value="markallconfirmed">
@@ -451,7 +451,7 @@ function snippetListsSelector ($optionAll = false) {
 <p class="submit"><input type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>">
 </p></form>
 
-<hr>
+<hr/>
 <form method=get>
 <input type=hidden name="page" value="reconcileusers">
 <input type=hidden name="option" value="nolistsnewlist">
@@ -463,7 +463,7 @@ function snippetListsSelector ($optionAll = false) {
 <p class="submit"><input type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>">
 </p></form>
 
-<hr>
+<hr/>
 <form method=get>
 <input type=hidden name="page" value="reconcileusers">
 <input type=hidden name="option" value="bounces">
@@ -471,7 +471,7 @@ function snippetListsSelector ($optionAll = false) {
 <select name="num">
 <option>5</option>
 <option>10</option>
-<option selected>15</option>
+<option selected="selected">15</option>
 <option>20</option>
 <option>50</option>
 </select> <?php echo $GLOBALS['I18N']->get('bounces')?> <p class="submit"><input type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>"></p></form>
@@ -492,7 +492,7 @@ function snippetListsSelector ($optionAll = false) {
 <input type=hidden name="option" value="resendconfirm">
 <p class="submit"><input type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>"></p></form>
 
-<hr>
+<hr/>
 <form method=get>
 <table class="reconcileForm"><tr><td colspan=2>
 <?php echo $GLOBALS['I18N']->get('To delete users who signed up and have not confirmed their subscription')?></td></tr>

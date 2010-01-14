@@ -113,9 +113,9 @@ function HTMLselect ($name, $table, $column, $value) {
   while($row = Sql_Fetch_Array($result)) {
     $res .= "<option value=".$row["id"] ;
     if ($row["$column"] == $value)
-      $res .= " selected";
+      $res .= 'selected="selected"';
     if ($row["id"] == $value)
-      $res .= " selected";
+      $res .= 'selected="selected"';
     $res .= ">" . $row[$column] . "\n";
   }
   $res .= "</select>\n";

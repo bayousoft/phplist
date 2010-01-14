@@ -33,13 +33,13 @@ printf('<tr><td>%s</td><td>%s</td></tr>',
   $GLOBALS['I18N']->get('Created By'),adminName($data['admin']));
 printf('<tr><td>%s</td><td><select name="action">',$GLOBALS['I18N']->get('Action'));
 foreach ($GLOBALS['bounceruleactions'] as $action => $desc) {
-  printf('<option value="%s" %s>%s</option>',$action,$data['action'] == $action ? 'selected':'',$desc);
+  printf('<option value="%s" %s>%s</option>',$action,$data['action'] == $action ? 'selected="selected"':'',$desc);
 }
 print '</select></td></tr>';
 printf('<tr><td>%s</td><td><select name="status">',$GLOBALS['I18N']->get('Status'));
 printf('<option value="none">[%s]</option>',$GLOBALS['I18N']->get('Select Status'));
 foreach (array('active','candidate') as $type) {
-  printf('<option value="%s" %s>%s</option>',$type,$data['status'] == $type ? 'selected':'',$GLOBALS['I18N']->get($type));
+  printf('<option value="%s" %s>%s</option>',$type,$data['status'] == $type ? 'selected="selected"':'',$GLOBALS['I18N']->get($type));
 }
 print '</select></td></tr>';
 printf('<tr><td colspan=2>%s</td></tr><tr><td colspan=2>

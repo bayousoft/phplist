@@ -158,7 +158,7 @@ sort($files);  //sorting array
 
 // generating $html_img_lst
 foreach ($files as $file) {
-  $html_img_lst .= "<a href=\"javascript:getImage('$file');\">$file</a><br>\n";
+  $html_img_lst .= "<a href=\"javascript:getImage('$file');\">$file</a><br/>\n";
 }
 ob_end_clean();
 ?>
@@ -168,7 +168,7 @@ ob_end_clean();
   <HEAD>
     <TITLE>Image Browser</TITLE>
     <LINK rel="stylesheet" type="text/css" href="./FCKeditor/css/fck_dialog.css">
-    <SCRIPT language="javascript">
+    <SCRIPT language="javascript" type="text/javascript">
 var sImagesPath  = "<?php echo $IMAGES_BASE_URL; ?>";
 var sActiveImage = "" ;
 

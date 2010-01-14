@@ -109,7 +109,7 @@ if ($id) {
 print $total. " ".$GLOBALS['I18N']->get("Entries")."</p>";
 if ($total) {
   printf ('<table class="mviewsListing" border="1"><tr><td colspan="4" align="center">%s</td></tr><tr><td>%s</td><td>%s</td><td>
-          %s</td><td>%s</td></tr></table><hr>',
+          %s</td><td>%s</td></tr></table><hr/>',
           $listing,
           PageLink2("mviews$url_keep","&lt;&lt;","start=0"),
           PageLink2("mviews$url_keep","&lt;",sprintf('start=%d',max(0,$start-MAX_USER_PP))),

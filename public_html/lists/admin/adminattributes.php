@@ -84,7 +84,7 @@ while ($row = Sql_Fetch_array($res)) {
   <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('DValue'); ?> </td><td colspan=2><input type=text name="default[<?php echo $row["id"]?>]" value="<?php echo htmlspecialchars(stripslashes($row["default_value"])) ?>" size="40"></td></tr>
   <tr><td><?php echo $GLOBALS['I18N']->get('OrderListing'); ?> </td><td><input type=text name="listorder[<?php echo $row["id"]?>]" value="<?php echo $row["listorder"] ?>" size=5></td>
   <td><?php echo $GLOBALS['I18N']->get('IsAttrRequired'); ?> </td><td><input type=checkbox name="required[<?php echo $row["id"]?>]" value="1" <?php echo $row["required"] ? "checked": "" ?>></td></tr>
-  </table><hr>
+  </table><hr/>
 <?php } ?>
 
 <a name="new"></a>
@@ -102,7 +102,7 @@ while (list($key,$val) = each($types)) {
 <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('DValue'); ?> </td><td colspan=2><input type=text name="default[0]" value="" size="40"></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('OrderListing'); ?> </td><td><input type=text name="listorder[0]" value="" size="5"></td>
 <td><?php echo $GLOBALS['I18N']->get('IsAttrRequired'); ?> </td><td><input type=checkbox name="required[0]" value="1" checked></td></tr>
-</table><hr>
+</table><hr/>
 
 <p class="submit"><input type="submit" name="action" value="<?php echo $GLOBALS['I18N']->get('SaveChanges'); ?>"></p>
 </form>

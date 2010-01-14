@@ -98,8 +98,8 @@ function deleteOldTokens(){
       echo "  </table>";
       echo "</form>";
     } else {
-      echo "Unknown token or time expired (More than 24 hrs. passed since the notification email was sent).<br><br>";
-      echo "To return and log in again, click: <a href='?page=home'>login</a>.<br><br>";
+      echo "Unknown token or time expired (More than 24 hrs. passed since the notification email was sent).<br/><br/>";
+      echo "To return and log in again, click: <a href='?page=home'>login</a>.<br/><br/>";
 	  deleteOldTokens();
   	}
   } else {

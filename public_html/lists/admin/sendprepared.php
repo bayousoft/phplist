@@ -1,7 +1,7 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 
-echo '<script language="Javascript" src="js/jslib.js" type="text/javascript"></script><hr><p class="information">';
+echo '<script language="Javascript" src="js/jslib.js" type="text/javascript"></script><hr/><p class="information">';
 
 $access = accessLevel("sendprepared");
 
@@ -68,11 +68,11 @@ if ($message && $list) {
 <?php
 } elseif ($send && !$message) {
   ?>
-  Please select a message<br>
+  Please select a message<br/>
   <?php
 } elseif ($send && !$list) {
   ?>
- Please select a list to send to<br>
+ Please select a list to send to<br/>
   <?php
 }
 
@@ -113,7 +113,7 @@ while ($row = Sql_fetch_array($result)) {
 
   $desc = nl2br(StripSlashes($row["description"]));
 
-  $html .= "<br>$desc</li>";
+  $html .= "<br/>$desc</li>";
   $some = 1;
   $list = $row["id"];
   $num++;
@@ -130,6 +130,6 @@ if ($num == 1) {
 
 ?>
 </ul>
-<p class="submit"><input type="submit" name=send value="Send Message <?php echo $buttonmsg?>" onClick="document.sendpreparedform.submit()"></p>
+<p class="submit"><input type="submit" name=send value="Send Message <?php echo $buttonmsg?>" onclick="document.sendpreparedform.submit()"></p>
 </form>
 <?php } ?>

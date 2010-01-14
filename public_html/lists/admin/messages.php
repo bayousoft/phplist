@@ -27,7 +27,7 @@
 </script>
 
 
-<hr>
+<hr/>
 
 <?php
 
@@ -206,7 +206,7 @@ if (isset($start) && $start > 0) {
   print $total. " ".$GLOBALS['I18N']->get("Messages")."</p>";
 if ($total)
   printf ('<table class="messagesListing" border="1"><tr><td colspan="4" align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
-          %s</td><td>%s</td></tr></table><hr>',
+          %s</td><td>%s</td></tr></table><hr/>',
           $listing,
           PageLink2("messages$url_keep","&lt;&lt;","start=0"),
           PageLink2("messages$url_keep","&lt;",sprintf('start=%d',max(0,$start-MAX_MSG_PP))),
@@ -314,7 +314,7 @@ if ($total) {
 //      $status = $msg['status'].'<br/>'.$msg['rsstemplate']; //Obsolete by rssmanager plugin
       if ($msg['status'] == 'inprocess') {
 /*        $status .= '<br/>'.
-        '<meta http-equiv="Refresh" content="300">'.
+        '<meta http-equiv="Refresh" content="300" />'.
         $messagedata['to process'].' '.$GLOBALS['I18N']->get('still to process').'<br/>'.
         $GLOBALS['I18N']->get('ETA').': '.$messagedata['ETA'].'<br/>'.
         $GLOBALS['I18N']->get('Processing').' '.sprintf('%d',$messagedata['msg/hr']).' '.$GLOBALS['I18N']->get('msgs/hr')

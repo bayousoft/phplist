@@ -169,8 +169,8 @@ $page_title = NAME;
 if (is_file($GLOBALS['design'].'js/select_style.js')) {
   print '<script language="javascript" type="text/javascript" src="js/select_style.js"></script>';
 }
-print '<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">';           // HTTP/1.1
-print '<meta http-equiv="Pragma" content="no-cache">';           // HTTP/1.1
+print '<meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />';           // HTTP/1.1
+print '<meta http-equiv="Pragma" content="no-cache" />';           // HTTP/1.1
 print "<title>".NAME." :: ";
 if (isset($GLOBALS["installation_name"])) {
   print $GLOBALS["installation_name"] .' :: ';
@@ -293,12 +293,12 @@ if ($GLOBALS["require_login"] && $page != "login") {
 #  print '</div>';
 }
 if (LANGUAGE_SWITCH) {
-  $ls = '<div align="right" id="languageswitch"><br/><form name="languageswitch" method="post">';
-  $ls .= '<select name="setlanguage" onChange="document.languageswitch.submit()">';
+  $ls = '<div align="right" id="languageswitch"><br/><form name="languageswitch" method="post" action="">';
+  $ls .= '<select name="setlanguage" onchange="document.languageswitch.submit()">';
   $lancount = 0;
   foreach ($GLOBALS['LANGUAGES'] as $iso => $rec) {
     if (is_dir(dirname(__FILE__).'/lan/'.$iso)) {
-      $ls .= sprintf('<option value="%s" %s>%s</option>',$iso,$_SESSION['adminlanguage']['iso'] == $iso ? 'selected':'',$rec[0]);
+      $ls .= sprintf('<option value="%s" %s>%s</option>',$iso,$_SESSION['adminlanguage']['iso'] == $iso ? 'selected="selected"':'',$rec[0]);
       $lancount++;
     }
   }

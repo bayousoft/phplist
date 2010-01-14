@@ -66,7 +66,7 @@ $process_id = getPageLock();
 $req = Sql_Query("select rssfeed,id from {$tables['list']} where rssfeed != \"\" order by listorder");
 while ($feed = Sql_Fetch_Row($req)) {
   $nothingtodo = 0;
-  output( '<hr>' . $GLOBALS['I18N']->get('Parsing') . ' ' . $feed[0] . '..');
+  output( '<hr/>' . $GLOBALS['I18N']->get('Parsing') . ' ' . $feed[0] . '..');
   flush();
   $report = $GLOBALS['I18N']->get('Parsing') . ' ' . $feed[0];
   $mailreport .= "\n$feed[0] ";

@@ -36,7 +36,7 @@ if (!empty($_POST['selected']) && is_array($_POST['selected'])) {
   while(list($key,$val) = each($selected)) {
     $entry = readentry("data/$val");
     list($name,$desc) = explode(":",$entry);
-    print "<br/><br/>".$GLOBALS['I18N']->get('loading')." $desc<br>\n";
+    print "<br/><br/>".$GLOBALS['I18N']->get('loading')." $desc<br/>\n";
     $lc_name = str_replace(" ","", strtolower(str_replace(".txt","",$val)));
     $lc_name = ereg_replace("[^[:alnum:]]","",$lc_name);
 
@@ -79,7 +79,7 @@ while (list($key,$attribute) = each ($attributes)) {
   if (strstr($key,':')) {
     list($name,$desc) = explode(":",$key);
     if ($name && $desc) {
-      printf('<input type="checkbox" name="selected[]" value="%s">%s<br>', $attribute,$desc);
+      printf('<input type="checkbox" name="selected[]" value="%s">%s<br/>', $attribute,$desc);
     }
   }
 }

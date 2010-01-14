@@ -907,11 +907,11 @@ $html .= sprintf('
           $output[$attr["id"]] .= sprintf('</td><td class="attributeinput"><!--%d--><select name="%s" class="attributeinput">',$data[$attr["id"]],$fieldname);
           while ($value = Sql_Fetch_array($values_request)) {
             if (!empty($_POST[$fieldname]))
-              $selected = $_POST[$fieldname] == $value["id"] ? "selected" : "";
+              $selected = $_POST[$fieldname] == $value["id"] ? 'selected="selected"' : '';
             elseif ($data[$attr["id"]])
-              $selected = $data[$attr["id"]] == $value["id"] ? "selected":"";
+              $selected = $data[$attr["id"]] == $value["id"] ? 'selected="selected"':'';
             else
-              $selected = $attr["default_value"] == $value["name"] ? "selected":"";
+              $selected = $attr["default_value"] == $value["name"] ? 'selected="selected"':'';
             if (preg_match('/^'.preg_quote(EMPTY_VALUE_PREFIX).'/i',$value['name'])) {
               $value['id'] = '';
             }

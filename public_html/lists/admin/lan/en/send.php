@@ -84,12 +84,12 @@ $lan = array (
   'toemailaddresses' => ' to email address(es)',
   'sendtestexplain' => '(comma separated addresses - all must be users)',
   'criteriaexplanation' => '
-        <p><b>Select the criteria for this message:</b>
+        <p class="information"><b>Select the criteria for this message:</b></p>
         <ol>
-        <li>to use a criteria, check the box next to it
-        <li>then check the radio button next to the attribute you want to use
+        <li>to use a criteria, check the box next to it</li>
+        <li>then check the radio button next to the attribute you want to use</li>
         <li>then choose the values of the attributes you want to send the message to
-        <i>Note:</i> Messages will be sent to people who fit to <i>Criteria 1</i> <b>AND</b> <i>Criteria 2</i> etc
+        <i>Note:</i> Messages will be sent to people who fit to <i>Criteria 1</i> <b>AND</b> <i>Criteria 2</i> etc </li>
         </ol>
         ',
   'criterion' => 'Criterion',

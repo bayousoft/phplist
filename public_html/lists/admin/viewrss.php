@@ -60,7 +60,7 @@ if (isset($start) && $start > 0) {
   print $total. " RSS Items</p>";
 if ($total)
   printf ('<table class="viewrssListing" border="1"><tr><td colspan="4" align="center">%s</td></tr><tr><td>%s</td><td>%s</td><td>
-          %s</td><td>%s</td></tr></table><hr>',
+          %s</td><td>%s</td></tr></table><hr/>',
           $listing,
           PageLink2("viewrss$pagingurl","&lt;&lt;","start=0"),
           PageLink2("viewrss$pagingurl","&lt;",sprintf('start=%d',max(0,$start-MAX_MSG_PP))),

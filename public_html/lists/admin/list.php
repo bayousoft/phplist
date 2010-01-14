@@ -1,6 +1,6 @@
 
 <script language="Javascript" src="js/jslib.js" type="text/javascript"></script>
-<hr>
+<hr/>
 
 
 <?php

@@ -74,7 +74,7 @@ if (isset($_GET["doit"]) && (($GLOBALS["require_login"] && isSuperUser()) || !$G
   if ($deletebounce) {
     print sprintf($GLOBALS['I18N']->get('DeletingB').'\n', $id);
     Sql_query("delete from {$tables["bounce"]} where id = $id");
-    print $GLOBALS['I18N']->get('DoneAndLoading')."<br /><hr><br />\n";
+    print $GLOBALS['I18N']->get('DoneAndLoading')."<br /><hr/><br />\n";
     print PageLink2("bounces",$GLOBALS['I18N']->get('BackToBList'));
     $next = Sql_Fetch_Row_query(sprintf('select id from %s where id > %d',$tables["bounce"],$id));
     $id = $next[0];

@@ -1,5 +1,5 @@
 <script language="Javascript" src="js/jslib.js" type="text/javascript"></script>
-<hr>
+<hr/>
 
 <?php
 ####################################################################
@@ -158,7 +158,7 @@ return;
 //  print "deleting $delete ..\n";
 //  deleteUser($delete);
 //
-//  print "..Done<br><hr><br>\n";
+//  print "..Done<br/><hr/><br/>\n";
 //  Redirect("users&start=$start");
 //}
 //ob_end_flush();
@@ -171,13 +171,13 @@ return;
 //    $query = "insert into ".$tables["listuser"]." (userid,listid,entered) values($userid,$id,current_timestamp)";
 //    $result = Sql_query($query);
 //  }
-//  echo "<br>User added<br>";
+//  echo "<br/>User added<br/>";
 //}
 //
 //print "$total Users";
 //print $find ? " found": "";
 //if ($find && !$findby && !$total) { # a search for an email has been done and not found
-//  print "<hr><h4>Add this user</h4>";
+//  print "<hr/><h4>Add this user</h4>";
 //  $req = Sql_Query(sprintf('select * from %s where active',$tables["subscribepage"]));
 //  if (Sql_Affected_Rows()) {
 //    print "Click on a link to use the corresponding public subscribe page to add this user:";
@@ -188,7 +188,7 @@ return;
 //    print "Click this link to use the public subscribe page to add this user:";
 //    printf('<p class="x"><a href="%s&email=%s">%s</a></p>',getConfig("subscribeurl"),$find,$GLOBALS["strSubscribeTitle"]);
 //  }
-//  print '<hr>';
+//  print '<hr/>';
 //}
 //
 //print "<br/>Users marked red are unconfirmed ($totalunconfirmed)<br/>";
@@ -217,12 +217,12 @@ return;
 //print '</td><td valign=top>';
 //foreach (array("email","bouncecount","entered","modified","foreignkey") as $item) {
 //  $select .= sprintf('<option value="%s" %s>%s</option>',
-//    $item,$item == $sortby ? "selected":"",$item);
+//    $item,$item == $sortby ? 'selected="selected"':'',$item);
 //}
 //
 //printf ('
 //  <br/>Sort by:
-//  <select name="sortby" onChange="document.listcontrol.submit();">
+//  <select name="sortby" onchange="document.listcontrol.submit();">
 //  <option value="0">-- default</option>
 //  %s
 //  </select>
@@ -255,7 +255,7 @@ return;
 //  if ($_GET["unconfirmed"])
 //     $find_url .= "&unconfirmed=".$_GET["unconfirmed"];
 //  printf ('<table class="x" border=1><tr><td colspan=4 align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
-//          %s</td><td>%s</td></tr></table><p class="x"><hr>',
+//          %s</td><td>%s</td></tr></table><p class="x"><hr/>',
 //          $listing,
 //          PageLink2("users","&lt;&lt;","start=0".$find_url),
 //          PageLink2("users","&lt;",sprintf('start=%d',max(0,$start-MAX_USER_PP)).$find_url),
@@ -269,12 +269,12 @@ return;
 //<table class="x" border=0>
 //<tr><td colspan=4><input type=hidden name=id value="<?php echo $listid?>">
 //Find a user: <input type=text name=find value="<?php echo $find != '%' ? $find : ""?>" size=30>
-//<select name="findby"><option value="email" <?php echo $findby == "email"? "selected":""?>>Email</option>
-//<option value="foreignkey" <?php echo $findby == "foreignkey"? "selected":""?>>Foreign Key</option>
+//<select name="findby"><option value="email" <?php echo $findby == "email"? 'selected="selected"':''?>>Email</option>
+//<option value="foreignkey" <?php echo $findby == "foreignkey"? 'selected="selected"':''?>>Foreign Key</option>
 //<?php
 //  $att_req = Sql_Query("select id,name from ".$tables["attribute"]." where type = \"hidden\" or type = \"textline\" or type = \"select\"");
 //  while ($row = Sql_Fetch_Array($att_req)) {
-//    printf('<option value="%d" %s>%s</option>',$row["id"],$row["id"] == $findby ? "selected":"",substr($row["name"],0,20));
+//    printf('<option value="%d" %s>%s</option>',$row["id"],$row["id"] == $findby ? 'selected="selected"':'',substr($row["name"],0,20));
 //  }
 //?></select><p class="submit"><input type="submit" value="Go"></p>&nbsp;&nbsp;<a href="./?page=users&find=NULL">reset</a>
 //</form></td></tr>

@@ -30,7 +30,7 @@ if ($total > 500 && $_GET['type'] != 'dl') {
   $limit = "limit $s,".$numpp;
   print $total. " ".$GLOBALS['I18N']->get(" Total")."</p>";
   printf ('<table class="bouncesListing" border="1"><tr><td colspan=4 align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
-          %s</td><td>%s</td></tr></table><hr>',
+          %s</td><td>%s</td></tr></table><hr/>',
           $listing,
           PageLink2('msgbounces&id='.$msgid,"&lt;&lt;","s=0"),
           PageLink2('msgbounces&id='.$msgid,"&lt;",sprintf('s=%d',max(0,$s-$numpp))),

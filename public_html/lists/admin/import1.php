@@ -128,16 +128,16 @@ if(isset($_REQUEST['import'])) {
 
   // View test output of emails
   if($test_import) {
-    print $GLOBALS['I18N']->get('test_output').':<br>'.$GLOBALS['I18N']->get('one_email_per_line').'<br>'.$GLOBALS['I18N']->get('output_ok').' <a href="javascript:history.go(-1)">'.$GLOBALS['I18N']->get('back').'</a>'.$GLOBALS['I18N']->get('resubmit').'<br><br>';
+    print $GLOBALS['I18N']->get('test_output').':<br/>'.$GLOBALS['I18N']->get('one_email_per_line').'<br/>'.$GLOBALS['I18N']->get('output_ok').' <a href="javascript:history.go(-1)">'.$GLOBALS['I18N']->get('back').'</a>'.$GLOBALS['I18N']->get('resubmit').'<br/><br/>';
     $i = 1;
     while (list($email,$data) = each ($user_list)) {
       $email = trim($email);
       if(strlen($email) > 4) {
-        print "<b>$email</b><br>";
+        print "<b>$email</b><br/>";
         $html = "";
         foreach (array("info") as $item)
           if ($user_list[$email][$item])
-            $html .= "$item -> ".$user_list[$email][$item]."<br>";
+            $html .= "$item -> ".$user_list[$email][$item]."<br/>";
         if ($html) print "<blockquote>$html</blockquote>";
       };
       if($i == 50) {break;};
@@ -296,9 +296,9 @@ if(isset($_REQUEST['import'])) {
       print "<br/>$count_email_exist ".$GLOBALS['I18N']->get('some_emails_exist');
     }
     if(!$some && !$additional_emails) {
-      print "<br>".$GLOBALS['I18N']->get('all_emails_exist');
+      print "<br/>".$GLOBALS['I18N']->get('all_emails_exist');
     } else {
-      print "$count_email_add $dispemail ".$GLOBALS['I18N']->get('import_successful')." $num_lists $displists.<br>$additional_emails $dispemail2 ".$GLOBALS['I18N']->get('subscribed')." $displists";
+      print "$count_email_add $dispemail ".$GLOBALS['I18N']->get('import_successful')." $num_lists $displists.<br/>$additional_emails $dispemail2 ".$GLOBALS['I18N']->get('subscribed')." $displists";
     }
   }; // end else
   print '<p class="button">'.PageLink2("import",$GLOBALS['I18N']->get('import_more_emails')).'</p>';

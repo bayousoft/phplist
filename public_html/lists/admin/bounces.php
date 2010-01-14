@@ -10,7 +10,7 @@ if (isset($_REQUEST['delete']) && $_REQUEST['delete']) {
   } else {
     deleteBounce($_REQUEST['delete']);
   }
-  print $GLOBALS['I18N']->get('done') . "<br /><hr><br />\n";
+  print $GLOBALS['I18N']->get('done') . "<br /><hr/><br />\n";
 }
 
 if (isset($_GET['action']) && $_GET['action']) {
@@ -57,7 +57,7 @@ if ($total > MAX_USER_PP) {
     $s = 0;
   }
   printf ('<table class"bouncesListing" border="1"><tr><td colspan="4" align="center">%s</td></tr><tr><td>%s</td><td>%s</td><td>
-          %s</td><td>%s</td></tr></table><hr>',
+          %s</td><td>%s</td></tr></table><hr/>',
           $listing,
           PageLink2("bounces","&lt;&lt;","s=0".$find_url),
           PageLink2("bounces","&lt;",sprintf('s=%d',max(0,$s-MAX_USER_PP)).$find_url),

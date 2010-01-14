@@ -23,7 +23,7 @@ require_once dirname(__FILE__).'/accesscheck.php';
   $html .= $spb.SidebarLink("send","Send a message").$spe;;
 #  $html .= $spb.SidebarLink("import","Import Emails").$spe;
 #  $html .= $spb.SidebarLink("export","Export Emails").$spe;
-#  $html .= $spb.'<hr>'.$spe;
+#  $html .= $spb.'<hr/>'.$spe;
 #  $req = Sql_Query(sprintf('select * from %s where active',$tables["subscribepage"]));
 #  if (Sql_Affected_Rows()) {
 #    while ($row = Sql_Fetch_Array($req)) {
@@ -38,7 +38,7 @@ require_once dirname(__FILE__).'/accesscheck.php';
 #  else
 #    $html .= $spb.'<a href="../?p=unsubscribe" target="phplistwindow">Sign Off</a>'.$spe;
 
-#  $html .= $spb.'<hr>'.$spe;
+#  $html .= $spb.'<hr/>'.$spe;
 #  $html .= $spb.SidebarLink("attributes","Attributes").$spe;
 #  if ($tables["attribute"] && Sql_Table_Exists($tables["attribute"])) {
 #    $res = Sql_Query("select * from {$tables['attribute']}",1);
@@ -47,10 +47,10 @@ require_once dirname(__FILE__).'/accesscheck.php';
 #        $html .= $spb.SidebarLink("editattributes",strip_tags($row["name"]),"id=".$row["id"]) .$spe;
 #    }
 #  }
-#  $html .= $spb.'<hr>'.$spe;
+#  $html .= $spb.'<hr/>'.$spe;
   $html .= $spb.SidebarLink("templates","Templates").$spe;
   $html .= $spb.SidebarLink("bounces","View Bounces").$spe;
-#  $html .= $spb.'<hr>'.$spe;
+#  $html .= $spb.'<hr/>'.$spe;
   $html .= $spb.SidebarLink("eventlog","Eventlog").$spe;
   $some = 0;
   if (checkAccess("getrss") && MANUALLY_PROCESS_RSS) {

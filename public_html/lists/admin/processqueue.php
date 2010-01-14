@@ -249,7 +249,7 @@ function output ($message,$logit = 1) {
     ob_start();
   } else {
     $infostring = "[". date("D j M Y H:i",time()) . "] [" . $_SERVER["REMOTE_ADDR"] ."]";
-    #print "$infostring $message<br>\n";
+    #print "$infostring $message<br/>\n";
     $lines = explode("\n",$message);
     foreach ($lines as $line) {
       $line = preg_replace('/"/','\"',$line);

@@ -65,7 +65,7 @@ $nodesdone = array();
 
 function printTree($tree,$root,$delim) {
   reset($tree);
-#  print "<hr>ROOT: $root<br/>";
+#  print "<hr/>ROOT: $root<br/>";
   foreach ($tree as $node => $rec) {
     if (!in_array($node,$GLOBALS["nodesdone"])) {
       if (preg_match("#".preg_quote($root)."#i",$node)) {
@@ -73,7 +73,7 @@ function printTree($tree,$root,$delim) {
         printf ('<input type="checkbox" name="checkfolder[]" value="%s">&nbsp;',$node);
         print "<b>$node</b>\n";
         printf ('<input type="checkbox" name="%s" id="%s" value="1"
-          onChange="checkSubFolders(\'%s\');"> (add subfolders)',$node,$node,$node);
+          onchange="checkSubFolders(\'%s\');"> (add subfolders)',$node,$node,$node);
         print "</li>";
         print "<ul>\n";
         foreach ($tree[$node]["children"] as $leaf) {
@@ -472,13 +472,13 @@ if (!$_POST["server"] || !$_POST["user"] || !$_POST["password"] || !is_array($_P
     $dispemail2 = ($additional_emails == 1) ? $GLOBALS['I18N']->get('email was')." ":$GLOBALS['I18N']->get('emails were')." ";
 
     if(!$some && !$additional_emails) {
-      print "<br>".$GLOBALS['I18N']->get("All the emails already exist in the database and are members of the")." $displists.";
+      print "<br/>".$GLOBALS['I18N']->get("All the emails already exist in the database and are members of the")." $displists.";
     } else {
-      print "$count_email_add $dispemail ".$GLOBALS['I18N']->get("succesfully imported to the database and added to")." $num_lists $displists.<br>$additional_emails $dispemail2 ".$GLOBALS['I18N']->get("subscribed to the")." $displists";
+      print "$count_email_add $dispemail ".$GLOBALS['I18N']->get("succesfully imported to the database and added to")." $num_lists $displists.<br/>$additional_emails $dispemail2 ".$GLOBALS['I18N']->get("subscribed to the")." $displists";
       if ($count_exist)
         print "<br/>$count_exist ".$GLOBALS['I18N']->get("emails already existed in the database");
       if ($invalid_email_count) {
-        print "<br>$invalid_email_count ".$GLOBALS['I18N']->get("Invalid Emails found.");
+        print "<br/>$invalid_email_count ".$GLOBALS['I18N']->get("Invalid Emails found.");
         if (!$omit_invalid)
         print " ".$GLOBALS['I18N']->get("These records were added, but the email has been made up. You can find them by doing a search on")." \"Invalid Email\"";
         else

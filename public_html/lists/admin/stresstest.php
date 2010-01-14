@@ -24,7 +24,7 @@ ignore_user_abort(1);
 
 <h3>Stresstest</h3>
 Filling database with stress test information, please wait
-<br><b>Warning</b> this is quite demanding for your browser!
+<br/><b>Warning</b> this is quite demanding for your browser!
 <?php
 
 function fill($prefix,$listid) {
@@ -34,7 +34,7 @@ function fill($prefix,$listid) {
   $res = Sql_query("select count(*) from $tables[user]");
   $row = Sql_fetch_row($res);
   if ($row[0] > 50000) {
-    error("Hmm, I think 50 thousand users is quite enough for a test<br>This machine does need to do other things you know.");
+    error("Hmm, I think 50 thousand users is quite enough for a test<br/>This machine does need to do other things you know.");
     print '<script language="Javascript" type="text/javascript">finish();</script>';
     print '<script language="Javascript" type="text/javascript"> document.forms[0].output.value="Done. Now there are '.$row[0].' users in the database";</script>'."\n";
     return 0;

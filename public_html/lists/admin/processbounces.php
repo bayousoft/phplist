@@ -54,7 +54,7 @@ function processbounces_shutdown() {
 
 function output ($message,$reset = 0) {
   $infostring = "[". date("D j M Y H:i",time()) . "] [" . getenv("REMOTE_HOST") ."] [" . getenv("REMOTE_ADDR") ."]";
-  #print "$infostring $message<br>\n";
+  #print "$infostring $message<br/>\n";
   $message = preg_replace("/\n/",'',$message);
   ## contribution from http://forums.phplist.com/viewtopic.php?p=14648
   ## in languages with accented characters replace the HTML back

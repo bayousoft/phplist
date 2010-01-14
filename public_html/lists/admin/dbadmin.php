@@ -1,5 +1,5 @@
 <script language="Javascript" src="js/jslib.js" type="text/javascript"></script>
-<hr>
+<hr/>
 <H4>Database administration</H4>
 <H3>WARNING: this page is intended to aid development. Return to the <a href="?page=home">home page</a> now if you're not sure what this is.</H3>
 <?php #'
@@ -248,7 +248,7 @@ if (isset ($_GET["delete"])) {
   # delete the index in delete
   print "deleting $delete ..\n";
   deleteUser($delete);
-  print "... " . $GLOBALS['I18N']->get('Done') . "<br><hr><br>\n";
+  print "... " . $GLOBALS['I18N']->get('Done') . "<br/><hr/><br/>\n";
   Redirect("users&start=$start");
 }
 
@@ -266,4 +266,4 @@ print "</p>";
 <p class="button"><?php echo PageLink2("dbadmin&option=delmsghistory",$GLOBALS['I18N']->get("Delete message history..."))?>
 <p class="button"><?php echo PageLink2("dbadmin&option=delrsshistory",$GLOBALS['I18N']->get("Delete RSS history..."))?>
 <p class="button"><?php echo PageLink2("dbadmin",$GLOBALS['I18N']->get("Return to database manager"))?>
-<hr>
+<hr/>

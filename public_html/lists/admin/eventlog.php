@@ -36,7 +36,7 @@ if (isset($_GET['delete']) && $_GET['delete']) {
   } else {
     Sql_query(sprintf('delete from %s where id = %d',$tables['eventlog'],$delete));
   }
-  print '..' . $GLOBALS['I18N']->get('Done') . "<br /><hr><br />\n";
+  print '..' . $GLOBALS['I18N']->get('Done') . "<br /><hr/><br />\n";
 }
 
 if (isset($_GET['action']) && $_GET['action']) {
@@ -66,7 +66,7 @@ if ($total > MAX_USER_PP) {
     $start = 0;
   }
   printf ('<table class="eventlogListing" border="1"><tr><td colspan="4" align="center">%s</td></tr><tr><td>%s</td><td>%s</td><td>
-          %s</td><td>%s</td></tr></table><hr>',
+          %s</td><td>%s</td></tr></table><hr/>',
           $listing,
           PageLink2("eventlog","&lt;&lt;","start=0".$find_url),
           PageLink2("eventlog","&lt;",sprintf('start=%d',max(0,$start-MAX_USER_PP)).$find_url),

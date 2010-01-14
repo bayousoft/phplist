@@ -274,7 +274,7 @@ print '<tr><td colspan=2><h3>'.$GLOBALS['I18N']->get('Select the attributes to u
   <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('Default Value')?>: </td><td colspan=2><input type=text name="attr_default[<?php echo $row["id"]?>]" value="<?php echo htmlspecialchars(stripslashes($value["default_value"])) ?>" size=40></td></tr>
   <tr><td><?php echo $GLOBALS['I18N']->get('Order of Listing')?>: </td><td><input type=text name="attr_listorder[<?php echo $row["id"]?>]" value="<?php echo $value["listorder"] ?>" size="5"></td>
   <td><?php echo $GLOBALS['I18N']->get('Is this attribute required?')?>: </td><td><input type=checkbox name="attr_required[<?php echo $row["id"]?>]" value="1" <?php echo $value["required"] ? "checked": "" ?>></td></tr>
-  </table><hr>
+  </table><hr/>
 <?php
   }
 
@@ -298,7 +298,7 @@ print '</td></tr>';
 //    $key,$data["rssdefault"] == $key ? "checked":""
 //    );
 //  }
-//  print "<tr><td colspan=2><hr></td></tr>";
+//  print "<tr><td colspan=2><hr/></td></tr>";
 //}
 
   ### allow plugins to add rows
@@ -321,7 +321,7 @@ if ($GLOBALS["require_login"] && (isSuperUser() || accessLevel("spageedit") == "
   print '<br/>'.$GLOBALS['I18N']->get('Owner').': <select name="owner">';
   $admins = $GLOBALS["admin_auth"]->listAdmins();
   foreach ($admins as $adminid => $adminname) {
-    printf ('<option value="%d" %s>%s</option>',$adminid,$adminid == $data['owner']? 'selected':'',$adminname);
+    printf ('<option value="%d" %s>%s</option>',$adminid,$adminid == $data['owner']? 'selected="selected"':'',$adminname);
   }
   print '</select>';
 }

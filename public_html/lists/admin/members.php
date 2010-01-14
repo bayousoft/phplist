@@ -1,6 +1,6 @@
 
 <script language="Javascript" src="js/jslib.js" type="text/javascript"></script>
-<hr>
+<hr/>
 
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
@@ -229,7 +229,7 @@ if (isset($id)) {
       $start = 0;
     }
   printf ('<table class="membersListing" border="1"><tr><td colspan="4" align="center">%s</td></tr><tr><td>%s</td><td>%s</td><td>
-          %s</td><td>%s</td></tr></table><hr>',
+          %s</td><td>%s</td></tr></table><hr/>',
           $listing,
           PageLink2("members","&lt;&lt;",'start="0"&id="$id"'),
           PageLink2("members","&lt;",sprintf('start="%d"&id="%d"',max(0,$start-MAX_USER_PP),$id)),
@@ -258,7 +258,7 @@ if (isset($id)) {
     }
   }
   </script>
-  <input type="checkbox" name="checkall" onClick="checkAll()"><?php echo $GLOBALS['I18N']->get("Tag all users in this page");?>
+  <input type="checkbox" name="checkall" onclick="checkAll()"><?php echo $GLOBALS['I18N']->get("Tag all users in this page");?>
   <?php
   $columns = array();
   $columns = explode(',',getConfig('membership_columns'));
@@ -321,7 +321,7 @@ if (isset($id)) {
 }
 if ($access == "view") return;
 ?>
-<hr>
+<hr/>
 <table class="membersProcess">
 <tr><td colspan="2"><h3><?php echo $GLOBALS['I18N']->get('What to do with "Tagged" users')?>:</h3>
 <?php echo $GLOBALS['I18N']->get('This will only process the users in this page that have the "Tag" checkbox checked')?></td></tr>
@@ -347,7 +347,7 @@ if ($html) {
 <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('nothing')?> <input type="radio" name="tagaction"
  value="nothing" checked></td></tr>
 <?php } ?>
-<tr><td colspan="2"><hr></td></tr>
+<tr><td colspan="2"><hr/></td></tr>
 <tr><td colspan="2"><h3><?php echo $GLOBALS['I18N']->get('What to do with all users')?></h3><?php echo $GLOBALS['I18N']->get('This will process all users on this list')?></td></tr>
 <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('delete')?> (<?php echo $GLOBALS['I18N']->get('from this list')?>) <input type="radio" name="tagaction_all"
  value="delete"></td></tr>

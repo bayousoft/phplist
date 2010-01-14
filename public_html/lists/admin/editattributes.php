@@ -53,9 +53,9 @@ switch ($data['type']) {
 ?>
 <script language="Javascript" src="js/jslib.js" type="text/javascript"></script>
 
-<br><?php echo PageLink2("editattributes",$GLOBALS['I18N']->get('AddNew'),"id=$id&action=new")?> <?php echo $data["name"]?>
-<br><a href="javascript:deleteRec2('<?php echo $GLOBALS['I18N']->get('SureToDeleteAll');?>','<?php echo PageURL2("editattributes",$GLOBALS['I18N']->get('DelAll'),"id=$id&deleteall=yes")?>');"><?php echo $GLOBALS['I18N']->get('DelAll');?></a>
-<hr><p class="form">
+<br/><?php echo PageLink2("editattributes",$GLOBALS['I18N']->get('AddNew'),"id=$id&action=new")?> <?php echo $data["name"]?>
+<br/><a href="javascript:deleteRec2('<?php echo $GLOBALS['I18N']->get('SureToDeleteAll');?>','<?php echo PageURL2("editattributes",$GLOBALS['I18N']->get('DelAll'),"id=$id&deleteall=yes")?>');"><?php echo $GLOBALS['I18N']->get('DelAll');?></a>
+<hr/><p class="form">
 <?php echo formStart(' class="editattributesAdd" ')?>
 <input type=hidden name="action" value="add">
 <input type=hidden name="id" value="<?php echo $id?>">

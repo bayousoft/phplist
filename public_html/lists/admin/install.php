@@ -60,7 +60,7 @@ if (!isset($myConfigFile) || $myConfigFile == FALSE) {
 }
 */
 //echo $nameConfigFile;
-//echo "FILE: $configfile<br>";
+//echo "FILE: $configfile<br/>";
 
 
 /////// Other definitions ////////

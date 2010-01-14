@@ -1,6 +1,6 @@
 
 <script language="Javascript" src="js/jslib.js" type="text/javascript"></script>
-<hr>
+<hr/>
 
 <?php
 #Variable initialisation to avoid PHP notices.
@@ -30,7 +30,7 @@ if (!$external) {
     Sql_query(sprintf('delete from %s where id = %d',$GLOBALS["tables"]["admin"],$_GET["delete"]));
     Sql_query(sprintf('delete from %s where adminid = %d',$GLOBALS["tables"]["admin_attribute"],$_GET["delete"]));
     Sql_query(sprintf('delete from %s where adminid = %d',$GLOBALS["tables"]["admin_task"],$_GET["delete"]));
-    print '..'.$GLOBALS['I18N']->get('Done')."<br /><hr><br />\n";
+    print '..'.$GLOBALS['I18N']->get('Done')."<br /><hr/><br />\n";
     Redirect("admins&start=$start");
   }
   
@@ -44,7 +44,7 @@ if (!$external) {
       $query = "insert into ".$tables["listuser"]." (userid,listid,entered) values($userid,$id,current_timestamp)";
       $result = Sql_query($query);
     }
-    echo '<br>'.$GLOBALS['I18N']->get('Admin added').'<br>';
+    echo '<br/>'.$GLOBALS['I18N']->get('Admin added').'<br/>';
   }
 }
   
@@ -79,7 +79,7 @@ if ($total > MAX_USER_PP) {
     $start = 0;
   }
   printf ('<table class="adminsListing" border=1><tr><td colspan=4 align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
-          %s</td><td>%s</td></tr></table><hr>',
+          %s</td><td>%s</td></tr></table><hr/>',
           $listing,
           PageLink2("admins","&lt;&lt;","start=0"),
           PageLink2("admins","&lt;",sprintf('start=%d',max(0,$start-MAX_USER_PP))),

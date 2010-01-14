@@ -139,14 +139,14 @@ if(isset($import)) {
     while (list($email,$data) = each ($user_list)) {
       $email = trim($email);
       if(strlen($email) > 4) {
-        print "<b>$email</b><br>";
+        print "<b>$email</b><br/>";
         $html = "";
         $html .= $GLOBALS['I18N']->get('password').': '.$data["password"]."</br>";
         $html .= $GLOBALS['I18N']->get('login').': '.$data["loginname"]."</br>";
         reset($import_attribute);
         foreach ($import_attribute as $item)
           if ($data[$item["index"]])
-            $html .= $attributes[$item["index"]]." -> ".$data[$item["index"]]."<br>";
+            $html .= $attributes[$item["index"]]." -> ".$data[$item["index"]]."<br/>";
         if ($html) print "<blockquote>$html</blockquote>";
       };
       if($i == 50) {break;};
@@ -249,9 +249,9 @@ if(isset($import)) {
     $dispemail2 = ($additional_emails == 1) ? $GLOBALS['I18N']->get('email was')." ":$GLOBALS['I18N']->get('emails were')." ";
 
     if(!$some && !$additional_emails) {
-      print "<br>".$GLOBALS['I18N']->get("All the emails already exist in the database");
+      print "<br/>".$GLOBALS['I18N']->get("All the emails already exist in the database");
     } else {
-      print "$count_email_add $dispemail ".$GLOBALS['I18N']->get("succesfully imported to the database and added to the system.")."<br>";
+      print "$count_email_add $dispemail ".$GLOBALS['I18N']->get("succesfully imported to the database and added to the system.")."<br/>";
     }
   }; // end else
   print '<p class="button">'.PageLink2("adminimport",$GLOBALS['I18N']->get("Import some more emails"));

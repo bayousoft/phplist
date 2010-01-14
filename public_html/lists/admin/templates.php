@@ -37,7 +37,7 @@ while ($row = Sql_fetch_Array($req)) {
 #    $GLOBALS['tables']['templateimage'],$row['id']));
 #  $ls->addColumn($element,$GLOBALS['I18N']->get('# imgs'),$imgcount[0]);
   $ls->addColumn($element,$GLOBALS['I18N']->get('View'),PageLink2("viewtemplate",$GLOBALS['I18N']->get('View'),"id=".$row["id"]));
-  $ls->addColumn($element,$GLOBALS['I18N']->get('Default'),sprintf('<input type=radio name="defaulttemplate" value="%d" %s onChange="document.templates.submit();">',
+  $ls->addColumn($element,$GLOBALS['I18N']->get('Default'),sprintf('<input type=radio name="defaulttemplate" value="%d" %s onchange="document.templates.submit();">',
     $row['id'],$row['id'] == $defaulttemplate ? 'checked':''));
 
 }
