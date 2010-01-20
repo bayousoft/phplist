@@ -1099,7 +1099,7 @@ FCKConfig.BackgroundBlockerOpacity = 0.50 ;
 FCKConfig.MsWebBrowserControlCompat = false ;
 
 FCKConfig.PreventSubmitHandler = false ;
-<?
+<?php
   exit;
 
 } elseif ($_GET["action"]) {
