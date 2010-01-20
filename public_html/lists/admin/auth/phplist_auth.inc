@@ -76,7 +76,7 @@ class admin_auth {
   }    
 
   function adminIdForEmail($email) { #Obtain admin Id from a given email address.
-    $req = Sql_Fetch_Row_Query(sprintf('select id from %s where email = \'%s\'',$GLOBALS["tables"]["admin"],$email));
+    $req = Sql_Fetch_Row_Query(sprintf('select id from %s where email = "%s"',$GLOBALS["tables"]["admin"],sql_escape($email)));
     return $req[0] ? $req[0] : "";
   } 
   
