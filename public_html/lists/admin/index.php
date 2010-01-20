@@ -347,9 +347,13 @@ if (isset($_GET['page']) && $_GET['page'] == 'about') {
 }
 
 # include some information
-if (empty($_GET['pi']) && is_file("info/".$_SESSION['adminlanguage']['info']."/$include")) {
-  @include "info/".$_SESSION['adminlanguage']['info']."/$include";
-# include some information
+if (empty($_GET['pi'])) {
+  if (is_file("info/".$_SESSION['adminlanguage']['info']."/$include")) {
+    @include "info/".$_SESSION['adminlanguage']['info']."/$include";
+  } else {
+    @include "info/en/$include";
+  }
+
 } elseif (isset($_GET['pi']) && !empty($GLOBALS['plugins'][$_GET['pi']]) && is_object($GLOBALS['plugins'][$_GET['pi']])) {
   if (is_file($GLOBALS['plugins'][$_GET['pi']]->coderoot.'/info/'.$_SESSION['adminlanguage']['info']."/$include")) {
     @include $GLOBALS['plugins'][$_GET['pi']] .'/info/'.$_SESSION['adminlanguage']['info']."/$include";
