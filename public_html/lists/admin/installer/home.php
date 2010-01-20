@@ -44,8 +44,7 @@ $msg   = "";
 if (!is_writable(dirname($configfile))){
    $errno = 1;
    $msg   = $GLOBALS["I18N"]->get(sprintf($GLOBALS["strConfigDirNotWritable"],dirname($configfile)));
-}
-else{
+} else {
    if (is_file($configfile)){
       if (!is_writable($configfile)){
          $errno = 1;
@@ -70,7 +69,7 @@ function validation(){
 <div id="maincontent_install">
   <div class="intro_install"><?php print $GLOBALS["I18N"]->get(sprintf('%s',$GLOBALS["strIntroInstaller"]));?></div>
   <?  if ($errno){ ?>
-  <div class="allwrong"><br><?php print $msg?></div>
+  <div class="allwrong"><?php print $msg?></div>
   <?}?>
   <div class="intro_install">
   <?php print $GLOBALS["I18N"]->get(sprintf('%s',$GLOBALS["strChooseInstallation"]));?>
