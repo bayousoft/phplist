@@ -5,7 +5,7 @@ $upgrade_required = 0;
 
 if (Sql_Table_exists($tables["config"],1)) {
   $dbversion = getConfig("version");
-  if ($dbversion != VERSION && !defined("IN_WEBBLER")) {
+  if ($dbversion != VERSION && !defined("IN_WEBBLER")&& !defined("WEBBLER")) {
     Error($GLOBALS['I18N']->get('Your database is out of date, please make sure to upgrade').'<br/>'.
      $GLOBALS['I18N']->get('Your version').' : '.$dbversion.'<br/>'.
      $GLOBALS['I18N']->get('phplist version').' : '.VERSION
@@ -30,7 +30,7 @@ $checkinterval = sprintf('%d',getConfig("check_new_version"));
 if (!isset($checkinterval)) {
   $checkinterval = 7;
 }
-if ($checkinterval && !defined('IN_WEBBLER')) {
+if ($checkinterval && !defined('IN_WEBBLER') && !defined('WEBBLER')) {
   $query
   = ' select cast(value as date) + \'%d days\' < current_timestamp as needscheck'
   . ' from %s'
