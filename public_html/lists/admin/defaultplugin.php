@@ -93,7 +93,7 @@ class phplistPlugin {
         $html= sprintf('<select name="%s"><option value=""> --%s</option>', $name, $GLOBALS['I18N']->get('choose'));
         $req= Sql_Query(sprintf('select * from %s', $GLOBALS['tables']['attribute']));
         while ($row= Sql_Fetch_Array($req)) {
-          $html .= sprintf('<option value="%d" %s>%s</option>', $row['id'], $row['id'] == $currentvalue ? 'selected="selected"' : '', htmlspecialchars($row['name']));
+          $html .= sprintf('<option value="%d" %s>%s</option>', $row['id'], $row['id'] == $currentvalue ? 'selected="selected"' : '', substr(htmlspecialchars($row['name']),0,25));
         }
         $html .= '</select>';
         return $html;
