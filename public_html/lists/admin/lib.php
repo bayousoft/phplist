@@ -2,7 +2,6 @@
 require_once dirname(__FILE__)."/accesscheck.php";
 # library used for plugging into the webbler, instead of "connect"
 # depricated and should be removed
-
 #error_reporting(63);
 
 $domain = getConfig("domain");
@@ -714,7 +713,7 @@ function fetchUrl($url,$userdata = array()) {
         logEvent('Fetching '.$url.' success');
         setPageCache($url,$lastmodified,$content);
       } else {
-        logEvent('Fetching '.$url.' failed');
+        logEvent('Fetching '.$url.' failed on GET '.$req->getMessage());
         return 0;
       }
     } else {
@@ -722,7 +721,7 @@ function fetchUrl($url,$userdata = array()) {
       $content = $cache;
     }
   } else {
-    logEvent('Fetching '.$url.' failed');
+    logEvent('Fetching '.$url.' failed on HEAD, '.$headreq->getMessage());
     return 0;
   }
   $GLOBALS['urlcache'][$url] = array(
@@ -985,6 +984,44 @@ function strip_newlines( $str, $placeholder = '' ) {
 //  }
 //  return '';
 //}
+function parseDate($strdate,$format = 'Y-m-d') {
+  # parse a string date into a date
+  $strdate = trim($strdate);
+  if (strlen($strdate) < 6) {
+    $newvalue = 0;
+	}
+	elseif (preg_match("#(\d{2,2}).(\d{2,2}).(\d{4,4})#", $strdate, $regs)) {
+    $newvalue = mktime(0,0,0,$regs[2],$regs[1],$regs[3]);
+	}
+	elseif (preg_match("#(\d{4,4}).(\d{2,2}).(\d{2,2})#", $value, $regs)) {
+    $newvalue = mktime(0,0,0,$regs[3],$regs[1],$regs[1]);
+	}
+	elseif (preg_match("#(\d{2,2}).(\w{3,3}).(\d{2,4})#", $value, $regs)) {
+    $newvalue = strtotime($value);
+	}
+	elseif (preg_match("#(\d{2,4}).(\w{3,3}).(\d{2,2})#", $value, $regs)) {
+    $newvalue = strtotime($value);
+  } else {
+    $newvalue = strtotime($value);
+    if ($newvalue < 0) {
+      $newvalue = 0;
+    }
+  }
+  if ($newvalue) {
+    return date($format,$newvalue);
+  } else {
+    return "";
+  }
+}
 
+function listCategories() {
+
+  $sListCategories = getConfig('list_categories');
+  $aConfiguredListCategories = cleanArray(explode(',',$sListCategories));
+  foreach ($aConfiguredListCategories as $key => $val) {
+    $aConfiguredListCategories[$key] = trim($val);
+  }
+  return $aConfiguredListCategories;
+}
 
 ?>
