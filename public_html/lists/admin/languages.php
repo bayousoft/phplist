@@ -54,6 +54,7 @@ $LANGUAGES = array(
 #"tr"=> array("Turkish "," iso-8859-9, windows-1254"),
 #"uk"=>array("Ukrainian "," iso-8859-5"),
 "zh-tw" => array("Traditional Chinese","utf-8","utf-8"),
+'cn' => array('Simplified Chinese',"utf-8","utf-8"),
 "vi" => array("Vietnamese","utf-8","utf-8"),
 );
 
