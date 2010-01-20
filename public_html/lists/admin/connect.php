@@ -918,17 +918,10 @@ function repeatMessage($msgid) {
   # get the future embargo, either "repeat" minutes after the old embargo
   # or "repeat" after this very moment to make sure that we're not sending the
   # message every time running the queue when there's no embargo set.
-  $query
-  = 'select *'
-  . '  , embargo + cast(repeatinterval || \' minute\' as interval) as newembargo'
-  . '  , current_timestamp + cast(repeatinterval || \' minute\' as interval) as newembargo2'
-  . '  , current_timestamp < embargo + cast(repeatinterval || \'minute\' as interval) as isfuture'
-  . ' from %s'
-  . ' where id = ?'
-  . '   and current_timestamp < repeatuntil';
-  $query = sprintf($query, $GLOBALS['tables']['message']);
-  $rs = Sql_Query_Params($query, array($msgid));
-  $msgdata = Sql_Fetch_Array($rs);
+$msgdata = Sql_Fetch_Array_Query(
+    sprintf('select *,date_add(embargo,interval repeatinterval minute) as newembargo,
+      date_add(now(),interval repeatinterval minute) as newembargo2, date_add(embargo,interval repeatinterval minute) > now() as isfuture
+      from %s where id = %d and repeatuntil > now()',$GLOBALS["tables"]["message"],$msgid));
   if (!$msgdata["id"] || !$msgdata["repeatinterval"]) return;
 
   # copy the new message
