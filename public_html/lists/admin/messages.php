@@ -39,7 +39,7 @@ if( !$GLOBALS["require_login"] || $_SESSION["logindetails"]['superuser'] ){
   $ownerselect_and = '';
   $ownerselect_where = '';
 } else {
-  $ownerselect_where = ' WHERE owner = ' . $_SESSION["logindetails"]['id'];
+  $ownerselect_where = ' where owner = ' . $_SESSION["logindetails"]['id'];
   $ownerselect_and = ' and owner = ' . $_SESSION["logindetails"]['id'];
 }
 if (isset($_GET['start'])) {
@@ -231,7 +231,6 @@ if ($total) {
   while ($msg = Sql_fetch_array($result)) {
     $listingelement = $msg['id'];
 
-
     $uniqueviews = Sql_Fetch_Row_Query("select count(userid) from {$tables["usermessage"]} where viewed is not null and messageid = ".$msg["id"]);
 
     ## need a better way to do this, it's way too slow '
@@ -348,7 +347,9 @@ if ($total) {
 
     ## allow plugins to add information
     foreach ($GLOBALS['plugins'] as $plugin) {
-      $plugin->displayMessages($msg, $status);
+      if (method_exists($plugin,'displayMessages')) {
+        $plugin->displayMessages($msg, $status);
+      }
     }
 
     $deletelink = '';
