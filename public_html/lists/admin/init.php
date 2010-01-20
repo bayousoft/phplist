@@ -26,7 +26,10 @@ $GLOBALS['compression_used'] = $zlib_compression || $gzhandler;
 # http://www.hardened-php.net/globals-problem
 $GLOBALS['language_module'] = $language_module;
 $GLOBALS['database_module'] = $database_module;
-if (!isset($GLOBALS['design'])) {
+if (isset($GLOBALS['design'])) {
+  $GLOBALS['design'] = basename($GLOBALS['design']);
+}
+if (!isset($GLOBALS['design']) || !is_dir(dirname(__FILE__).'/'.$GLOBALS['design'])) {
   $GLOBALS['design'] = '';
 }
 $GLOBALS['adodb_inc_file'] = $adodb_inc_file;
