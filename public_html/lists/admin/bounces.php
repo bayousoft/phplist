@@ -56,7 +56,7 @@ if ($total > MAX_USER_PP) {
     $listing = $GLOBALS['I18N']->get('listing') . " 1 " . $GLOBALS['I18N']->get('to') ." 50";
     $s = 0;
   }
-  printf ('<table class"bouncesListing" border="1"><tr><td colspan="4" align="center">%s</td></tr><tr><td>%s</td><td>%s</td><td>
+  printf ('<table class="bouncesListing" border="1"><tr><td colspan="4" align="center">%s</td></tr><tr><td>%s</td><td>%s</td><td>
           %s</td><td>%s</td></tr></table><hr/>',
           $listing,
           PageLink2("bounces","&lt;&lt;","s=0".$find_url),

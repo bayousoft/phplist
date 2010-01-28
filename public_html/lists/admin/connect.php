@@ -124,19 +124,11 @@ if (ereg("dev", VERSION))
 else
 	$v = VERSION;
 if (REGISTER) {
-  $PoweredByImage = '<p align=left><a href="http://www.phplist.com"><img src="http://phplist.tincan.co.uk/images/'.$v.'/power-phplist.png" width=70 height=30 title="Powered by PHPlist version '.$v.', &copy; tincan ltd" alt="Powered by PHPlist'.$v.', &copy tincan ltd" border="0"/></a></p>';
+  $PoweredByImage = '<p class="poweredby"><a href="http://www.phplist.com"><img src="http://phplist.tincan.co.uk/images/'.$v.'/power-phplist.png" width=70 height=30 title="Powered by PHPlist version '.$v.', &copy; tincan ltd" alt="Powered by PHPlist'.$v.', &copy tincan ltd" border="0"/></a></p>';
 } else {
-  $PoweredByImage = '<p align=left><a href="http://www.phplist.com"><img src="images/power-phplist.png" width=70 height=30 title="Powered by PHPlist version '.$v.', &copy; tincan ltd" alt="Powered by PHPlist'.$v.', &copy tincan ltd" border="0"/></a></p>';
+  $PoweredByImage = '<p class="poweredby"><a href="http://www.phplist.com"><img src="images/power-phplist.png" width=70 height=30 title="Powered by PHPlist version '.$v.', &copy; tincan ltd" alt="Powered by PHPlist'.$v.', &copy tincan ltd" border="0"/></a></p>';
 }
-$PoweredByText = '
-    <style type="text/css"><!--
-.poweredphplist {font-family: arial, verdana, sans-serif;font-size : 10px; font-variant: small-caps; font-weight : normal; padding: 2px; padding-left:20px;}
-a:link.poweredphplist,
-a:active.poweredphplist,
-a:visited.poweredphplist  {font-family: Arial, verdana, sans-serif; font-size : 10px; font-variant: small-caps; font-weight : normal; color : #666666; text-align : center; text-decoration : none; padding: 2px;}
-a:hover.poweredphplist {color : #7D7B7B;}
-//--></style>
-    <span class="poweredphplist">powered by <a href="http://www.phplist.com" class="poweredphplist" target="_blank">phplist</a> v '.$v.', &copy; <a href="http://tincan.co.uk/powered" target="_blank" class="poweredphplist">tincan ltd</a></span>';
+$PoweredByText = '<span class="poweredphplist">powered by <a href="http://www.phplist.com" class="poweredphplist" target="_blank">phplist</a> v '.$v.', &copy; <a href="http://tincan.co.uk/powered" target="_blank" class="poweredphplist">tincan ltd</a></span>';
 if (!TEST && REGISTER) {
 	if (!PAGETEXTCREDITS) {
 		;

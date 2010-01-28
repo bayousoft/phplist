@@ -185,7 +185,7 @@ if (!empty($_POST['action']) && $_POST['action'] == "addimages") {
 ?>
 
 <p class="information"><?php echo $msg?></p>
-<?php echo '<p class="button"'.PageLink2("templates",$GLOBALS['I18N']->get("List of Templates")).'</p>';?>
+<?php echo '<p class="button">'.PageLink2("templates",$GLOBALS['I18N']->get("List of Templates")).'</p>';?>
 
 <?php echo formStart(' enctype="multipart/form-data" class="template2" ')?>
 <input type="hidden" name="id" value="<?php echo $id?>">

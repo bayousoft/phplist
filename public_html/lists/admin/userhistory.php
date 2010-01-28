@@ -42,7 +42,7 @@ if (!Sql_Affected_Rows()) {
   return;
 }
 $user = sql_fetch_array($result);
-print '<h2>'.$GLOBALS['I18N']->get('user').' '.PageLink2("user&id=".$user["id"],$user["email"]).'</h2>';
+print '<h4>'.$GLOBALS['I18N']->get('user').' '.PageLink2("user&id=".$user["id"],$user["email"]).'</h4>';
 
 $bouncels = new WebblerListing($GLOBALS['I18N']->get('Bounces'));
 $bouncelist = "";
