@@ -1592,31 +1592,7 @@ if (!$done) {
   </select>
   ';
 
-  $values_drop = '
-  <style type="text/css">
-  #criteria_values_select {
-    visibility : hidden;
-    background-color: #ffffff;
-  }
-  #criteria_values_select > option {
-    background-color: #ffffff;
-  }
-  #criteria_values_text {
-    visibility : hidden;
-  }
-  span.values_span {
-    vertical-align: top;
-    display: block;
-  }
-  input.criteria_element {
-    vertical-align: top;
-  }
-  select.criteria_element {
-    vertical-align: top;
-  }
-
-  </style>';
-  $values_drop .= '<span id="values_span" class="values_span">';
+  $values_drop = '<span id="values_span" class="values_span">';
   $values_drop .= '<input class="criteria_element" name="criteria_values[]" id="criteria_values_text" size="15" type="text"/>';
 #  $values_drop .= '</span>';
 #  $values_drop .= '<span id="values_select">';
@@ -1632,24 +1608,7 @@ if (!$done) {
       $GLOBALS['I18N']->get('matchanyrules'),
       $existing_overall_operator == "any"? "checked":"");
 
-  $criteria_styles = '
-  <style type="text/css">
-
-  div.criteria_container {
-    /*border: 1px solid black;
-    background-color: #ffeeee;*/
-    width: 100%;
-    z-index: 8;
-  }
-  span.criteria_element {
-    vertical-align: top;
-    display: inline;
-  }
-  </style>';
-
-
-
-  $criteria_content = $criteria_overall_operator.$existing_criteria.$criteria_styles.$att_js.
+  $criteria_content = $criteria_overall_operator.$existing_criteria.$att_js.
   '<div class="criteria_container">'.
   '<span class="criteria_element">'.$att_drop.'</span>'.
   '<span class="criteria_element">'.$operator_drop.'</span>'.
