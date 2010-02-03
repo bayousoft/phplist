@@ -4,8 +4,8 @@ $lan = array(
 'Delete will delete user and all listmemberships'
 	=> 'Wenn Sie einen Abonnenten l&ouml;schen, werden sowohl der Abonnent selbst als auch alle seine Listen-Abonnemente gel&ouml;scht.',
 '%s users apply' => '%s Abonnent(en) gefunden',
-'Users marked <font color=red>red</font> are unconfirmed'
-	=> 'Abonnenten in <font color=red>rot</font> sind nicht best&auml;tigt',
+'Users marked <span class="highlight">red</span> are unconfirmed'
+	=> 'Abonnenten in <span class="highlight">rot</span> sind nicht best&auml;tigt',
 'Show only unconfirmed users' => 'Nur unbest&auml;tigte Abonnenten',
 'Show only blacklisted users' => 'Nur Abonnenten auf Blacklist',
 'email' => 'E-Mail-Adresse',

@@ -3,7 +3,7 @@
 $lan = array(
 'Delete will delete user and all listmemberships' => 'Delete will delete user and all listmemberships',
 '%s users apply' => '%s users apply',
-'Users marked <font color=red>red</font> are unconfirmed' => 'Users marked <font color=red>red</font> are unconfirmed',
+'Users marked <span class="highlight">red</span> are unconfirmed' => 'Users marked <span class="highlight">red</span> are unconfirmed',
 'Show only unconfirmed users' => 'Show only unconfirmed users',
 'Show only blacklisted users' => 'Show only blacklisted users',
 'email' => 'email',

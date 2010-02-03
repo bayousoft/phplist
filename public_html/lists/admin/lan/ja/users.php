@@ -3,7 +3,7 @@
 $lan = array(
 'Delete will delete user and all listmemberships' => '削除はユーザとすべてのリストメンバーシップを削除するでしょう。',
 '%s users apply' => '%s のユーザが適用',
-'Users marked <font color=red>red</font> are unconfirmed' => '<font color=red>赤</font>でマークされたユーザは unconfirmed です。',
+'Users marked <span class="highlight">red</span> are unconfirmed' => '<span class="highlight">赤</span>でマークされたユーザは unconfirmed です。',
 'Show only unconfirmed users' => 'unconfirmed ユーザのみを表示',
 'Show only blacklisted users' => '購読解除済リストのユーザのみを表示',
 'email' => '電子メール',

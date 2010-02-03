@@ -3,7 +3,7 @@
 $lan = array(
 'Delete will delete user and all listmemberships' => 'Slet vil slette bruger og alle tilmeldinger',
 '%s users apply' => '%s brugere passer til',
-'Users marked <font color=red>red</font> are unconfirmed' => 'Brugere markeret med <font color=red>r&oslash;d</font> er ikke-bekr&aelig;ftede',
+'Users marked <span class="highlight">red</span> are unconfirmed' => 'Brugere markeret med <span class="highlight">r&oslash;d</span> er ikke-bekr&aelig;ftede',
 'Show only unconfirmed users' => 'Vis kun ikke-bekr&aelig;ftede brugere',
 'Show only blacklisted users' => 'Vis kun udelukkede brugere',
 'email' => 'email',

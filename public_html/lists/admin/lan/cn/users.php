@@ -2,7 +2,7 @@
 $lan = array (
   'Delete will delete user and all listmemberships' => '这将会删除使用者与相关的会员关係',
   '%s users apply' => '%s 个符合的使用者',
-  'Users marked <font color=red>red</font> are unconfirmed' => '标示为 <font color=red>红色</font> 字的使用者表示未确认',
+  'Users marked <span class="highlight">red</span> are unconfirmed' => '标示为 <span class="highlight">红色</span> 字的使用者表示未确认',
   'Show only unconfirmed users' => '只显示未确认的使用者',
   'Show only blacklisted users' => '只显示黑名单的使用者',
   'email' => '信箱',

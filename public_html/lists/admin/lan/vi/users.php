@@ -3,7 +3,7 @@
 $lan = array(
 'Delete will delete user and all listmemberships' => 'L&#7879;nh x&oacute;a s&#7869; x&oacute;a h&#7897;i vi&ecirc;n v&agrave; c&aacute;c &#273;&#259;ng k&yacute; c&#7911;a h&#7897;i vi&ecirc;n &#273;&oacute;',
 '%s users apply' => '%s h&#7897;i vi&ecirc;n b&#7883; &aacute;p d&#7909;ng',
-'Users marked <font color=red>red</font> are unconfirmed' => 'h&#7897;i vi&ecirc;n ch&#432;a x&aacute;c nh&#7853;n c&oacute; &#273;&aacute;nh d&#7845;u <font color=red>X</font> m&#7847;u <font color=red>&#273;&#7887;</font>',
+'Users marked <span class="highlight">red</span> are unconfirmed' => 'h&#7897;i vi&ecirc;n ch&#432;a x&aacute;c nh&#7853;n c&oacute; &#273;&aacute;nh d&#7845;u <span class="highlight">X</span> m&#7847;u <span class="highlight">&#273;&#7887;</span>',
 'Show only unconfirmed users' => 'Xem h&#7897;i vi&ecirc;n ch&#432;a x&aacute;c nh&#7853;n',
 'Show only blacklisted users' => 'Xem h&#7897;i vi&ecirc;n  danh s&aacute;ch &#273;en',
 'email' => 'email',

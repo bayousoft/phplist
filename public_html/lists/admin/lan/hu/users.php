@@ -3,7 +3,7 @@
 $lan = array(
 'Delete will delete user and all listmemberships' => 'A Törlés törölni fogja a felhasználót és az összes listatagságát',
 '%s users apply' => '%s felhasználó alkalmazása',
-'Users marked <font color=red>red</font> are unconfirmed' => 'A <font color=red>piros</font> színnel jelölt felhasználók nem igazolták vissza az e-mail címüket',
+'Users marked <span class="highlight">red</span> are unconfirmed' => 'A <span class="highlight">piros</span> színnel jelölt felhasználók nem igazolták vissza az e-mail címüket',
 'Show only unconfirmed users' => 'Csak a vissza nem igazolt felhasználók láthatók',
 'Show only blacklisted users' => 'Csak a feketelistára felvett felhasználók láthatók',
 'email' => 'e-mail',

@@ -3,7 +3,7 @@
 $lan = array(
 'Delete will delete user and all listmemberships' => 'Si vous cliquez sur Supprimer, vous supprimez l&rsquo;utilisateur et vous le supprimez de toutes les listes',
 '%s users apply' => '%s utilisateurs correspondent',
-'Users marked <font color=red>red</font> are unconfirmed' => 'Les utilisateurs marqu&eacute;s en <font color=red>rouge</font> n&rsquo;ont pas confirm&eacute; leur inscription',
+'Users marked <span class="highlight">red</span> are unconfirmed' => 'Les utilisateurs marqu&eacute;s en <span class="highlight">rouge</span> n&rsquo;ont pas confirm&eacute; leur inscription',
 'Show only unconfirmed users' => 'Utilisateurs non confirm&eacute;s',
 'Show only blacklisted users' => 'Utilisateurs sur liste noire',
 'email' => 'email',
