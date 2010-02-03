@@ -161,14 +161,14 @@ function formStart($additional="") {
 			) as $key) {
       $val = $_REQUEST[$key];
       if ($val)
-				$html .= sprintf('<input type=hidden name="%s" value="%s">', $key, $val);
+				$html .= sprintf('<input type="hidden" name="%s" value="%s">', $key, $val);
     }
 	} else
     $html = sprintf('<form method="post" action="" %s>',$additional);
 /*    $html = sprintf('<form method=post action="./" %s>
     %s',$additional,isset($page) ?
-    '<input type=hidden name="page" value="'.$page.'">':(
-    isset($p)?'<input type=hidden name="p" value="'.$p.'">':"")
+    '<input type="hidden" name="page" value="'.$page.'">':(
+    isset($p)?'<input type="hidden" name="p" value="'.$p.'">':"")
     );
 */
   return $html;
@@ -463,6 +463,7 @@ function newMenu() {
   */
 
   foreach ($GLOBALS["main_menu"] as $page => $desc) {
+    if (!$desc) continue;
     $link = PageLink2($page,$GLOBALS["I18N"]->get($desc));
     if ($link) {
       if ($page == "preparesend" || $page == "sendprepared") {
