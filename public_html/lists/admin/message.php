@@ -84,12 +84,12 @@ while ($msg = Sql_fetch_array($result)) {
 }
 
 if (ALLOW_ATTACHMENTS) {
-  print '<tr><td colspan=2><h3>' . $GLOBALS['I18N']->get('Attachments for this message') . '</h3></td></tr>';
+  print '<tr><td colspan="2"><h3>' . $GLOBALS['I18N']->get('Attachments for this message') . '</h3></td></tr>';
   $req = Sql_Query("select * from {$tables["message_attachment"]},{$tables["attachment"]}
     where {$tables["message_attachment"]}.attachmentid = {$tables["attachment"]}.id and
     {$tables["message_attachment"]}.messageid = $id");
   if (!Sql_Num_Rows($req))
-    print '<tr><td colspan=2>' . $GLOBALS['I18N']->get('No attachments') . '</td></tr>';
+    print '<tr><td colspan="2">' . $GLOBALS['I18N']->get('No attachments') . '</td></tr>';
   while ($att = Sql_Fetch_array($req)) {
     printf ('<tr><td>%s:</td><td>%s</td></tr>', $GLOBALS['I18N']->get('Filename') ,$att["remotefile"]);
     printf ('<tr><td>%s:</td><td>%s</td></tr>', $GLOBALS['I18N']->get('Size'), formatBytes($att["size"]));
@@ -115,7 +115,7 @@ while ($lst = Sql_fetch_array($result)) {
 
 <a name="resend"></a><p class="information"><?php echo $GLOBALS['I18N']->get('Send this (same) message to (a) new list(s)'); ?>:</p>
 <?php echo formStart(' class="messageResend" ')?>
-<input type=hidden name="id" value="<?php echo $id?>">
+<input type="hidden" name="id" value="<?php echo $id?>">
 <ul>
 <?php
 

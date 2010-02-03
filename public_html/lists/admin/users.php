@@ -207,10 +207,10 @@ return;
 //
 //print '<table class="x"><tr><td valign=top>';
 //printf ('<form method="get" name="listcontrol">
-//  <input type=hidden name="page" value="users">
-//  <input type=hidden name="start" value="%s">
-//  <input type=hidden name="find" value="%s">
-//  <input type=hidden name="findby" value="%s"><br/>Show only unconfirmed users:
+//  <input type="hidden" name="page" value="users">
+//  <input type="hidden" name="start" value="%s">
+//  <input type="hidden" name="find" value="%s">
+//  <input type="hidden" name="findby" value="%s"><br/>Show only unconfirmed users:
 //  <input type="checkbox" name="unconfirmed" value="on" %s><br/>Show only blacklisted users:
 //  <input type="checkbox" name="blacklisted" value="on" %s>',
 //  $start,$find,$findby,$unc,$bll);
@@ -267,7 +267,7 @@ return;
 //}
 //?>
 //<table class="x" border=0>
-//<tr><td colspan=4><input type=hidden name=id value="<?php echo $listid?>">
+//<tr><td colspan=4><input type="hidden" name=id value="<?php echo $listid?>">
 //Find a user: <input type=text name=find value="<?php echo $find != '%' ? $find : ""?>" size=30>
 //<select name="findby"><option value="email" <?php echo $findby == "email"? 'selected="selected"':''?>>Email</option>
 //<option value="foreignkey" <?php echo $findby == "foreignkey"? 'selected="selected"':''?>>Foreign Key</option>

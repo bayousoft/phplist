@@ -151,14 +151,14 @@ if ($id) {
   } else {
     $selected_lists = array();
   }
-  printf('<input type=hidden name="id" value="%d">',$id);
+  printf('<input type="hidden" name="id" value="%d">',$id);
   $data["subscribemessage"] = getConfig("subscribemessage:$id");
   $data["subscribesubject"] = getConfig("subscribesubject:$id");
   $data["confirmationmessage"] = getConfig("confirmationmessage:$id");
   $data["confirmationsubject"] = getConfig("confirmationsubject:$id");
 }
 
-print '<tr><td colspan=2><h3>'.$GLOBALS['I18N']->get('General Information').'</h3></td></tr>';
+print '<tr><td colspan="2"><h3>'.$GLOBALS['I18N']->get('General Information').'</h3></td></tr>';
 
 printf('<tr><td valign=top>%s</td><td><input type=text name=title value="%s" size=60></td></tr>',
   $GLOBALS['I18N']->get('Title'),
@@ -237,21 +237,21 @@ printf ('<input type=radio name="emaildoubleentry" value="no" %s>%s<br/>',
   $GLOBALS['I18N']->get('Don\'t display email confirmation'));
 
 
-print '<tr><td colspan=2><h3>'.$GLOBALS['I18N']->get('Message they receive when they subscribe').'</h3></td></tr>';
+print '<tr><td colspan="2"><h3>'.$GLOBALS['I18N']->get('Message they receive when they subscribe').'</h3></td></tr>';
 printf('<tr><td valign=top>%s</td><td><input type=text name=subscribesubject value="%s" size=60></td></tr>',
   $GLOBALS['I18N']->get('Subject'),
   htmlspecialchars(stripslashes($data["subscribesubject"])));
 printf('<tr><td valign=top>%s</td><td><textarea name=subscribemessage cols=60 rows=10 wrap=virtual>%s</textarea></td></tr>',
   $GLOBALS['I18N']->get('Message'),
   htmlspecialchars(stripslashes($data["subscribemessage"])));
-print '<tr><td colspan=2><h3>'.$GLOBALS['I18N']->get('Message they receive when they confirm their subscription').'</h3></td></tr>';
+print '<tr><td colspan="2"><h3>'.$GLOBALS['I18N']->get('Message they receive when they confirm their subscription').'</h3></td></tr>';
 printf('<tr><td valign=top>%s</td><td><input type=text name=confirmationsubject value="%s" size=60></td></tr>',
   $GLOBALS['I18N']->get('Subject'),
   htmlspecialchars(stripslashes($data["confirmationsubject"])));
 printf('<tr><td valign=top>%s</td><td><textarea name=confirmationmessage cols=60 rows=10 wrap=virtual>%s</textarea></td></tr>',
   $GLOBALS['I18N']->get('Message'),
   htmlspecialchars(stripslashes($data["confirmationmessage"])));
-print '<tr><td colspan=2><h3>'.$GLOBALS['I18N']->get('Select the attributes to use').'</h3></td></tr><tr><td colspan=2>';
+print '<tr><td colspan="2"><h3>'.$GLOBALS['I18N']->get('Select the attributes to use').'</h3></td></tr><tr><td colspan="2">';
   $req = Sql_Query(sprintf('select * from %s order by listorder',
     $tables["attribute"]));
   $checked = array();
@@ -269,9 +269,9 @@ print '<tr><td colspan=2><h3>'.$GLOBALS['I18N']->get('Select the attributes to u
   <table class="spageeditListing" border="1" width="100%" bgcolor="<?php echo $bgcol?>">
   <tr><td colspan="2" width="150"><?php echo $GLOBALS['I18N']->get('Attribute')?>:<?php echo $row["id"] ?></td>
   <td colspan="2"><?php echo $GLOBALS['I18N']->get('Check this box to use this attribute in the page')?> <input type="checkbox" name="attr_use[<?php echo $row["id"] ?>]" value="1" <?php echo $checked[$row["id"]]?>></td></tr>
-  <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('Name')?>: </td><td colspan=2><h4><?php echo htmlspecialchars(stripslashes($row["name"])) ?></h4></td></tr>
-  <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('Type')?>: </td><td colspan=2><h4><?php echo $GLOBALS['I18N']->get($row["type"])?></h4></td></tr>
-  <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('Default Value')?>: </td><td colspan=2><input type=text name="attr_default[<?php echo $row["id"]?>]" value="<?php echo htmlspecialchars(stripslashes($value["default_value"])) ?>" size=40></td></tr>
+  <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('Name')?>: </td><td colspan="2"><h4><?php echo htmlspecialchars(stripslashes($row["name"])) ?></h4></td></tr>
+  <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('Type')?>: </td><td colspan="2"><h4><?php echo $GLOBALS['I18N']->get($row["type"])?></h4></td></tr>
+  <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('Default Value')?>: </td><td colspan="2"><input type=text name="attr_default[<?php echo $row["id"]?>]" value="<?php echo htmlspecialchars(stripslashes($value["default_value"])) ?>" size=40></td></tr>
   <tr><td><?php echo $GLOBALS['I18N']->get('Order of Listing')?>: </td><td><input type=text name="attr_listorder[<?php echo $row["id"]?>]" value="<?php echo $value["listorder"] ?>" size="5"></td>
   <td><?php echo $GLOBALS['I18N']->get('Is this attribute required?')?>: </td><td><input type=checkbox name="attr_required[<?php echo $row["id"]?>]" value="1" <?php echo $value["required"] ? "checked": "" ?>></td></tr>
   </table><hr/>
@@ -282,12 +282,12 @@ print '</td></tr>';
 
 //obsolete, moved to rssmanager plugin 
 //if (ENABLE_RSS) {
-//  print '<tr><td colspan=2><h3>'.$GLOBALS['I18N']->get('rss settings').'</h3></td></tr>';
+//  print '<tr><td colspan="2"><h3>'.$GLOBALS['I18N']->get('rss settings').'</h3></td></tr>';
 //  printf('<tr><td valign=top>'.$GLOBALS['I18N']->get('Intro Text').'</td><td>
 //  <textarea name=rssintro rows=3 cols=60>%s</textarea></td></tr>',
 //    htmlspecialchars(stripslashes($data["rssintro"])));
 //  foreach ($rssfrequencies as $key => $val) {
-//    printf('<tr><td colspan=2><input type=checkbox name="rss[]" value="%s" %s> %s %s
+//    printf('<tr><td colspan="2"><input type=checkbox name="rss[]" value="%s" %s> %s %s
 //    (%s <input type=radio name="rssdefault" value="%s" %s>)
 //    </td></tr>',
 //
@@ -298,7 +298,7 @@ print '</td></tr>';
 //    $key,$data["rssdefault"] == $key ? "checked":""
 //    );
 //  }
-//  print "<tr><td colspan=2><hr/></td></tr>";
+//  print "<tr><td colspan="2"><hr/></td></tr>";
 //}
 
   ### allow plugins to add rows
@@ -306,11 +306,11 @@ print '</td></tr>';
     print $plugin->displaySubscribepageEdit($data);
   } 
   
-print '<tr><td colspan=2><h3>'.$GLOBALS['I18N']->get('Select the lists to offer').'</h3></td></tr>';
+print '<tr><td colspan="2"><h3>'.$GLOBALS['I18N']->get('Select the lists to offer').'</h3></td></tr>';
 
 $req = Sql_query("SELECT * FROM {$tables["list"]} $subselect order by listorder");
 if (!Sql_Affected_Rows())
-  print '<tr><td colspan=2>'.$GLOBALS['I18N']->get('No lists available, please create one first').'</td></tr>';
+  print '<tr><td colspan="2">'.$GLOBALS['I18N']->get('No lists available, please create one first').'</td></tr>';
 while ($row = Sql_Fetch_Array($req)) {
   printf ('<tr><td valign=top width=150><input type=checkbox name="list[%d]" value="%d" %s> %s</td><td>%s</td></tr>',
     $row["id"],$row["id"],in_array($row["id"],$selected_lists)?"checked":"",stripslashes($row["name"]),stripslashes($row["description"]));

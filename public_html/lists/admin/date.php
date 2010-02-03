@@ -113,7 +113,7 @@ if (!defined("IN_WEBBLER") && !defined("WEBBLER")) {
         $month = $now["mon"];
         $year = $now["year"];
       }
-      $html = sprintf('<input type=hidden name="%s" value="1">',$name);
+      $html = sprintf('<input type="hidden" name="%s" value="1">',$name);
 
       $html .= "<!-- $day / $month / $year -->".'<select name="day['.$name.']">';
       for ($i=1;$i<32;$i++) {

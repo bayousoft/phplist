@@ -37,7 +37,7 @@ if (!$GLOBALS["commandline"]) {
 
 # once and for all get rid of those questions why they do not receive any emails :-)
 if (TEST)
-  print $GLOBALS['I18N']->get('Running in testmode, no emails will be sent. Check your config file.');
+  print '<p class="information">'.$GLOBALS['I18N']->get('Running in testmode, no emails will be sent. Check your config file.').'</p>';
 
 $num_per_batch = 0;
 $batch_period = 0;
@@ -116,14 +116,15 @@ if ($num_per_batch && $batch_period) {
 }
 # output some stuff to make sure it's not buffered in the browser
 for ($i=0;$i<10000; $i++) {
-  print '  '."\n";
+  print '  ';
+  if ($i%100 == 0) print "\n";
 }
 flush();
 
 print '<script language="Javascript" src="js/progressbar.js" type="text/javascript"></script>';
 print '<script language="Javascript" type="text/javascript"> yposition = 10;document.write(progressmeter); start();</script>';
 flush();
-print formStart('name="outputform" class="processqueueOutput" ').'<textarea name="output" rows=22 cols=75></textarea></form>';
+print formStart('name="outputform" class="processqueueOutput" ').'<textarea name="output" rows="22" cols="75"></textarea></form>';
 
 # report keeps track of what is going on
 $report = "";
@@ -361,7 +362,7 @@ if ($num_messages) {
 }
 
 $script_stage = 2; # we know the messages to process
-include_once "footer.inc";
+#include_once "footer.inc";
 if (!$num_per_batch) {
   $num_per_batch = 1000000;
 }

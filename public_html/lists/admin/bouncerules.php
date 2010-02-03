@@ -119,9 +119,9 @@ foreach ($GLOBALS['bounceruleactions'] as $action => $desc) {
   printf('<option value="%s" %s>%s</option>',$action,$data['action'] == $action ? 'selected="selected"':'',$desc);
 }
 print '</select></td></tr>';
-printf('<tr><td colspan=2>%s</td></tr><tr><td colspan=2><textarea name="comment" rows=10 cols=65></textarea></td></tr>',
+printf('<tr><td colspan="2">%s</td></tr><tr><td colspan="2"><textarea name="comment" rows=10 cols=65></textarea></td></tr>',
   $GLOBALS['I18N']->get('Memo for this rule'));
-print '<tr><td colspan=2><p class="submit"><input type="submit" name="add" value="'.$GLOBALS['I18N']->get('Add new Rule').'"></td></tr>';
+print '<tr><td colspan="2"><p class="submit"><input type="submit" name="add" value="'.$GLOBALS['I18N']->get('Add new Rule').'"></td></tr>';
 print '</table></form>';
   
 ?>

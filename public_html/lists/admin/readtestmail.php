@@ -326,7 +326,7 @@ if (!empty ($_REQUEST['email'])) {
 }
 
 {
-  print ('<form method=get>');
+  print ('<form method="get">');
   print ('  <input name="page" value="readtestmail" type="hidden">');
   print ('  <p class="submit"><input type="submit" name=action value="Get email for user: "></p>');
   printf('  <input type=text name="email" value="%s">', $_REQUEST['email']);

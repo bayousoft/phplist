@@ -328,11 +328,11 @@ $result = Sql_query("SELECT id,name FROM ".$tables["list"]."$subselect ORDER BY 
 $c=0;
 if (Sql_Affected_Rows() == 1) {
   $row = Sql_fetch_array($result);
-  printf('<input type=hidden name="listname[%d]" value="%s"><input type=hidden name="lists[%d]" value="%d">'.$GLOBALS['I18N']->get('adding_users').' <b>%s</b>',$c,stripslashes($row["name"]),$c,$row["id"],stripslashes($row["name"]));
+  printf('<input type="hidden" name="listname[%d]" value="%s"><input type="hidden" name="lists[%d]" value="%d">'.$GLOBALS['I18N']->get('adding_users').' <b>%s</b>',$c,stripslashes($row["name"]),$c,$row["id"],stripslashes($row["name"]));
 } else {
   print '<p class="button">'.$GLOBALS['I18N']->get('select_lists').'</p>';
   while ($row = Sql_fetch_array($result)) {
-    printf('<li><input type=hidden name="listname[%d]" value="%s"><input type=checkbox name="lists[%d]" value="%d">%s',$c,stripslashes($row["name"]),$c,$row["id"],stripslashes($row["name"]));
+    printf('<li><input type="hidden" name="listname[%d]" value="%s"><input type=checkbox name="lists[%d]" value="%d">%s',$c,stripslashes($row["name"]),$c,$row["id"],stripslashes($row["name"]));
     $some = 1;$c++;
   }
 

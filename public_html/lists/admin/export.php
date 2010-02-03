@@ -179,7 +179,7 @@ if ($list)
 
 <tr><td><?php echo $GLOBALS['I18N']->get('DateFrom');?></td><td><?php echo $from->showInput("","",$fromval);?></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('DateTo');?> </td><td><?php echo $to->showInput("","",$toval);?></td></tr>
-<tr><td colspan=2><?php echo $GLOBALS['I18N']->get('DateToUsed');?></td></tr>
+<tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('DateToUsed');?></td></tr>
 <tr><td><input type=radio name="column" value="entered" checked></td><td><?php echo $GLOBALS['I18N']->get('WhenSignedUp');?></td></tr>
 <tr><td><input type=radio name="column" value="modified"></td><td><?php echo $GLOBALS['I18N']->get('WhenRecordChanged');?></td></tr>
 <tr><td><input type=radio name="column" value="historyentry"></td><td><?php echo $GLOBALS['I18N']->get('Based on changelog');?></td></tr>
@@ -194,7 +194,7 @@ while ($row = Sql_Fetch_Array($req)) {
 </select>
 </td></tr>
 </td></tr>
-<tr><td colspan=2><?php echo $GLOBALS['I18N']->get('SelectColToIn');?></td></tr>
+<tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('SelectColToIn');?></td></tr>
 
 <?php
   $cols = array();

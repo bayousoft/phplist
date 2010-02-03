@@ -98,7 +98,7 @@ if ($total > MAX_USER_PP) {
 
 ?>
 <table class="adminsForm">
-<tr><td colspan=4><?php echo formStart('class="adminsFind"')?><input type=hidden name=id value="<?php echo $listid?>">
+<tr><td colspan=4><?php echo formStart('class="adminsFind"')?><input type="hidden" name=id value="<?php echo $listid?>">
 <?php echo $GLOBALS['I18N']->get('Find an admin')?>: <input type=text name=find value="<?php echo $find?>" size=40><p class="submit"><input type="submit" value="Go"></p>
 </form></td></tr></table>
 <?php

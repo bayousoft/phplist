@@ -440,9 +440,9 @@ function snippetListsSelector ($optionAll = false) {
 <p class="button"><?php echo PageLink2("reconcileusers&option=mergeduplicates",$GLOBALS['I18N']->get("Merge Duplicate Users"))?>
 
 <hr/>
-<form method=get>
-<input type=hidden name="page" value="reconcileusers">
-<input type=hidden name="option" value="markallconfirmed">
+<form method="get">
+<input type="hidden" name="page" value="reconcileusers">
+<input type="hidden" name="option" value="markallconfirmed">
 <p class="information">
 <?php 
   echo sprintf( $GLOBALS['I18N']->get("Mark all users on list %s confirmed"), snippetListsSelector(true) );
@@ -452,9 +452,9 @@ function snippetListsSelector ($optionAll = false) {
 </p></form>
 
 <hr/>
-<form method=get>
-<input type=hidden name="page" value="reconcileusers">
-<input type=hidden name="option" value="nolistsnewlist">
+<form method="get">
+<input type="hidden" name="page" value="reconcileusers">
+<input type="hidden" name="option" value="nolistsnewlist">
 <p class="information">
 <?php 
   echo sprintf( $GLOBALS['I18N']->get('To move all users who are not subscribed to any list to %s'), snippetListsSelector() );
@@ -464,9 +464,9 @@ function snippetListsSelector ($optionAll = false) {
 </p></form>
 
 <hr/>
-<form method=get>
-<input type=hidden name="page" value="reconcileusers">
-<input type=hidden name="option" value="bounces">
+<form method="get">
+<input type="hidden" name="page" value="reconcileusers">
+<input type="hidden" name="option" value="bounces">
 <p class="information"><?php echo $GLOBALS['I18N']->get('To delete all users with more than')?>
 <select name="num">
 <option>5</option>
@@ -477,29 +477,29 @@ function snippetListsSelector ($optionAll = false) {
 </select> <?php echo $GLOBALS['I18N']->get('bounces')?> <p class="submit"><input type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>"></p></form>
 <p class="information"><?php echo $GLOBALS['I18N']->get('Note: this will use the total count of bounces on a user, not consecutive bounces')?></p>
 
-<form method=get>
-<table class="reconcileForm"><tr><td colspan=2>
+<form method="get">
+<table class="reconcileForm"><tr><td colspan="2">
 <?php echo $GLOBALS['I18N']->get('To resend the request for confirmation to users who signed up and have not confirmed their subscription')?></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('Date they signed up after')?>:</td><td><?php echo $from->showInput("","",$fromval);?></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('Date they signed up before')?>:</td><td><?php echo $to->showInput("","",$toval);?></td></tr>
-<tr><td colspan=2><?php echo $GLOBALS['I18N']->get('Text to prepend to email')?>:</td></tr>
-<tr><td colspan=2><textarea name="prepend" rows="10" cols="60">
+<tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('Text to prepend to email')?>:</td></tr>
+<tr><td colspan="2"><textarea name="prepend" rows="10" cols="60">
 <?php echo $GLOBALS['I18N']->get('prependemailtext')?>
 </textarea>
 </td></tr>
 </table>
-<input type=hidden name="page" value="reconcileusers">
-<input type=hidden name="option" value="resendconfirm">
+<input type="hidden" name="page" value="reconcileusers">
+<input type="hidden" name="option" value="resendconfirm">
 <p class="submit"><input type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>"></p></form>
 
 <hr/>
-<form method=get>
-<table class="reconcileForm"><tr><td colspan=2>
+<form method="get">
+<table class="reconcileForm"><tr><td colspan="2">
 <?php echo $GLOBALS['I18N']->get('To delete users who signed up and have not confirmed their subscription')?></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('Date they signed up after')?>:</td><td><?php echo $from->showInput("","",$fromval);?></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('Date they signed up before')?>:</td><td><?php echo $to->showInput("","",$toval);?></td></tr>
 </table>
-<input type=hidden name="page" value="reconcileusers">
-<input type=hidden name="option" value="deleteunconfirmed">
+<input type="hidden" name="page" value="reconcileusers">
+<input type="hidden" name="option" value="deleteunconfirmed">
 <p class="submit"><input type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>"></p></form>
 

@@ -107,14 +107,14 @@ if ($id) {
     $newruleform .= sprintf('<option value="%s" %s>%s</option>',$action,'',$desc);
   }
   $newruleform .= '</select></td></tr>';
-  $newruleform .= sprintf('<tr><td colspan=2>%s</td></tr><tr><td colspan=2><textarea name="comment" rows=10 cols=65></textarea></td></tr>',
+  $newruleform .= sprintf('<tr><td colspan="2">%s</td></tr><tr><td colspan="2"><textarea name="comment" rows=10 cols=65></textarea></td></tr>',
     $GLOBALS['I18N']->get('Memo for this rule'));
-  $newruleform .= '<tr><td colspan=2><p class="submit"><input type="submit" name="add" value="'.$GLOBALS['I18N']->get('Add new Rule').'"></p></td></tr>';
+  $newruleform .= '<tr><td colspan="2"><p class="submit"><input type="submit" name="add" value="'.$GLOBALS['I18N']->get('Add new Rule').'"></p></td></tr>';
   $newruleform .= '</table></form>';
 
-   print '<form method=get>';
-  print '<input type=hidden name=page value="'.$page.'">';
-  print '<input type=hidden name=id value="'.$id.'">';
+   print '<form method="get">';
+  print '<input type="hidden" name=page value="'.$page.'">';
+  print '<input type="hidden" name=id value="'.$id.'">';
   print '<table class="bounceActions"><tr><td>'.$GLOBALS['I18N']->get('PossibleActions').'</td></tr>';
   print '<tr><td>'.$GLOBALS['I18N']->get('ForUser').'</td><td><input type=text name="useremail" value="'.$guessedemail.'" size=35></td></tr>';
   print '<tr><td>'.$GLOBALS['I18N']->get('IncreaseB').'</td><td><input type=text name=amount value="1" size=5>'.$GLOBALS['I18N']->get('IncreaseBNote').'</td></tr>';
@@ -138,7 +138,7 @@ if ($id) {
   <tr><td valign="top">'.$GLOBALS['I18N']->get('Body').'</td><td valign="top">%s</td></tr>',$id,
   $bounce["date"],$bounce["status"],$bounce["comment"],
   nl2br(htmlspecialchars($bounce["header"])),nl2br(htmlspecialchars($bounce["data"])));
-#   print '<tr><td colspan=2><p class="submit"><input type="submit" name=change value="Save Changes"></p>';
+#   print '<tr><td colspan="2"><p class="submit"><input type="submit" name=change value="Save Changes"></p>';
   print '</table>';
   if (USE_ADVANCED_BOUNCEHANDLING) {
     print '<a name="newrule"></a>';

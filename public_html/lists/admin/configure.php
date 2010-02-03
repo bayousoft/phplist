@@ -52,7 +52,7 @@ if (!$id) {
 } else {
   $val = $default_config[$id];
   printf('%s<p class="configEditing">' . $GLOBALS['I18N']->get('editing') . ' <b>%s</b></p>',formStart(' class="configForm" '),$GLOBALS['I18N']->get($val[1]));
-  printf('<input type=hidden name="id" value="%s">',$id);
+  printf('<input type="hidden" name="id" value="%s">',$id);
   $dbval = getConfig($id);
 #  print $dbval.'<br/>';
   if (isset($dbval))

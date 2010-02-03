@@ -122,7 +122,7 @@ while ($row = Sql_fetch_array($result)) {
 if (!$some)
   echo $html ."Sorry there are currently no lists available";
 if ($num == 1) {
-  print '<input type=hidden name="list['.$list.']" value="signup">';
+  print '<input type="hidden" name="list['.$list.']" value="signup">';
 } else {
   print $html;
   $buttonmsg = ' to the Selected Mailinglists';
