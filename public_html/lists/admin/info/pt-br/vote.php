@@ -77,7 +77,7 @@ Se voc&ecirc; acha que o PHPlist &eacute; &oacutetimo; e voc&ecirc; gostaria de 
 <form action="http://www.hotscripts.com/cgi-bin/rate.cgi" method="POST">
 <input type=hidden name="ID" value="5015">
 <table BORDER="0" CELLSPACING="0" CELLPADDING="2" bgcolor="#CCCC99">
-<tr><td><font face="arial,verdana,helvetica" size="2"><b>Cabine de Vota&ccedil;&atilde;o do Visitante: </b></td>
+<tr><td><span class="highlight"><b>Cabine de Vota&ccedil;&atilde;o do Visitante: </b></span></td>
 <td><select name="rate" size="1"><option selected>Fa&ccedil;a a sua Avalia&ccedil;&atilde;o</option>
 <option value="5" selected>&Oacute;timo!</option><option value="4">Muito Bom</option>
 <option value="3">Bom</option><option value="2">M&eacute;dio</option>

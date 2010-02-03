@@ -100,7 +100,7 @@ Als je denkt dat PHPlist geweldig is, en je wilt anderen adviseren om het te geb
 <form action="http://www.hotscripts.com/cgi-bin/rate.cgi" method="POST">
 <input type=hidden name="ID" value="5015">
 <table BORDER="0" CELLSPACING="0" CELLPADDING="2" bgcolor="#CCCC99">
-<tr><td><font face="arial,verdana,helvetica" size="2"><b>Stemhokje voor Bezoekers: </b></td>
+<tr><td><span class="highlight"><b>Stemhokje voor Bezoekers: </b></span></td>
 <td><select name="rate" size="1"><option selected>Selecteer jou beoordeling</option>
 <option value="5" selected>Geweldig!</option><option value="4">Zeer Goed</option>
 <option value="3">Goed</option><option value="2">Matig</option>

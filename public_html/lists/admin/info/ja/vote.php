@@ -100,7 +100,7 @@ If you think PHPlist is great, and you would advice more people to use it, why n
 <form action="http://www.hotscripts.com/cgi-bin/rate.cgi" method="POST">
 <input type=hidden name="ID" value="5015">
 <table BORDER="0" CELLSPACING="0" CELLPADDING="2" bgcolor="#CCCC99">
-<tr><td><font face="arial,verdana,helvetica" size="2"><b>Visitor Voting Booth: </b></td>
+<tr><td><span class="highlight"><b>Visitor Voting Booth: </b></span></td>
 <td><select name="rate" size="1"><option selected>Select Your Rating</option>
 <option value="5" selected>Excellent!</option><option value="4">Very Good</option>
 <option value="3">Good</option><option value="2">Fair</option>

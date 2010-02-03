@@ -100,7 +100,7 @@ Se pensi che PHPlist sia un buon programma e vuoi consigliare a pi&ugrave; perso
 <form action="http://www.hotscripts.com/cgi-bin/rate.cgi" method="POST">
 <input type=hidden name="ID" value="5015">
 <table BORDER="0" CELLSPACING="0" CELLPADDING="2" bgcolor="#CCCC99">
-<tr><td><font face="arial,verdana,helvetica" size="2"><b>Cabina elettorale visitatori: </b></td>
+<tr><td><span class="highlight"><b>Cabina elettorale visitatori: </b></span></td>
 <td><select name="rate" size="1"><option selected>Seleziona il tuo giudizio</option>
 <option value="5" selected>Eccellente!</option><option value="4">Veramente Buono</option>
 <option value="3">Buono</option><option value="2">Imparziale</option>

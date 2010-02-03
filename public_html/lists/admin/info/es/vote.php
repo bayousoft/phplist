@@ -81,8 +81,8 @@ Directory">env&iacute;enos una nota</a></p>
 <form action="http://www.hotscripts.com/cgi-bin/rate.cgi" method="POST">
 <input type=hidden name="ID" value="5015">
 <table BORDER="0" CELLSPACING="0" CELLPADDING="2" bgcolor="#CCCC99">
-<tr><td><font face="arial,verdana,helvetica" size="2"><b>Cabina de
-      voto para visitantes: </b></td>
+<tr><td><span class="highlight"><b>Cabina de
+      voto para visitantes: </b></span></td>
 <td><select name="rate" size="1"><option selected>Escoja su evaluaci&oacute;n</option>
 <option value="5" selected>&#161;Excelente!</option><option
       value="4">Muy bueno</option>
