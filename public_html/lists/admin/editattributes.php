@@ -57,8 +57,8 @@ switch ($data['type']) {
 <br/><a href="javascript:deleteRec2('<?php echo $GLOBALS['I18N']->get('SureToDeleteAll');?>','<?php echo PageURL2("editattributes",$GLOBALS['I18N']->get('DelAll'),"id=$id&deleteall=yes")?>');"><?php echo $GLOBALS['I18N']->get('DelAll');?></a>
 <hr/><p class="form">
 <?php echo formStart(' class="editattributesAdd" ')?>
-<input type=hidden name="action" value="add">
-<input type=hidden name="id" value="<?php echo $id?>">
+<input type="hidden" name="action" value="add">
+<input type="hidden" name="id" value="<?php echo $id?>">
 
 
 
@@ -98,8 +98,8 @@ function giveAlternative($table,$delete,$attributeid) {
     if ($row["id"] != $delete)
       printf('<option value="%d">%s</option>',$row["id"],$row["name"]);
   print "</select>";
-  printf('<input type=hidden name="delete" value="%d">',$delete);
-  printf('<input type=hidden name="id" value="%d">',$attributeid);
+  printf('<input type="hidden" name="delete" value="%d">',$delete);
+  printf('<input type="hidden" name="id" value="%d">',$attributeid);
   printf('<p class="submit"><input type="submit" name="deleteandreplace" value="%s"></p></form>',$GLOBALS['I18N']->get('deleteandreplace'));
 }
 
@@ -168,9 +168,9 @@ if (isset($_GET["action"]) && $_GET["action"] == "new") {
   // ??
   ?>
 
-  <p class="button"><?php echo $GLOBALS["I18N"]->get("addnew")." ".$data["name"].', '.$GLOBALS["I18N"]->get("oneperline") ?><br />
-  <textarea name="itemlist" rows=20 cols=50></textarea><br />
-  <input type="Submit" name="addnew" value="<?php echo $GLOBALS["I18N"]->get("addnew")." ".$data["name"] ?>"></p><br />
+  <p class="button"><?php echo $GLOBALS["I18N"]->get("addnew")." ".$data["name"].', '.$GLOBALS["I18N"]->get("oneperline") ?></p><br />
+  <textarea name="itemlist" rows="20" cols="50"></textarea><br />
+  <input class="submit" type="Submit" name="addnew" value="<?php echo $GLOBALS["I18N"]->get("addnew")." ".$data["name"] ?>"><br />
 <?php
 }
 
@@ -180,7 +180,7 @@ if ($num < 100 && $num > 25)
   printf('<p class="submit"><input type="submit" name=action value="%s"></p><br />',$GLOBALS["I18N"]->get("changeorder"));
 
 while ($row = Sql_Fetch_array($rs)) {
-  printf( '<a href="javascript:deleteRec(\'%s\');">'.$GLOBALS['I18N']->get('Delete').'</a> |',PageURL2("editattributes","","id=$id&delete=".$row["id"]));
+  printf( '<span class="delete"><a href="javascript:deleteRec(\'%s\');">'.$GLOBALS['I18N']->get('Delete').'</a></span>',PageURL2("editattributes","","id=$id&delete=".$row["id"]));
   if ($num < 100)
     printf(' <input type=text name="listorder[%d]" value="%s" size=5>',$row["id"],$row["listorder"]);
   printf(' %s %s <br />', $row["name"],($row["name"] == $data["default_value"]) ? $GLOBALS['I18N']->get('Default'):"");
