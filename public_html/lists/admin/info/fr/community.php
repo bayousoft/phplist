@@ -1,5 +1,5 @@
 
-<h1>La communaut&eacute; PHPlist</h1>
+<h3>La communaut&eacute; PHPlist</h3>
 <p><b>Derni&egrave;re Version</b><br/>
 V&eacute;rifiez que vous utilisez la derni&egrave;re version de PHPlist avant de soumettre un rapport de bug.<br/>
 <?php
@@ -10,9 +10,9 @@ if ($fp = @fopen ("http://www.phplist.com/files/LATESTVERSION","r")) {
   $thisversion = VERSION;
   $thisversion = str_replace("-dev","",$thisversion);
   if (versionCompare($thisversion,$latestversion)) {
-    print "<font color=green size=2>F&eacute;licitations, vous utilisez la derni&egrave;re version de PHPlist</font>";
+    print '<span class="highlight">F&eacute;licitations, vous utilisez la derni&egrave;re version de PHPlist</span>';
   } else {
-    print "<font color=green size=2>Vous n&rsquo;utilisez pas la derni&egrave;re version de PHPlist</font>";
+    print '<span class="highlight">Vous n&rsquo;utilisez pas la derni&egrave;re version de PHPlist</span>';
     print "<br/>Votre version: <b>".$thisversion."</b>";
     print "<br/>La derni&egrave;re version disponible: <b>".$latestversion."</b>  ";
     print '<a href="http://www.phplist.com/files/changelog">Pour voir ce qui a chang&eacute;</a>&nbsp;&nbsp;';
@@ -30,11 +30,11 @@ if ($fp = @fopen ("http://www.phplist.com/files/LATESTVERSION","r")) {
 <li>Les <a href="http://www.phplist.com/forums/" target="_blank">Forums de discussion</a></li>
 <li>Le <a href="#bugtrack">Bug Tracker</a> (pour les rapports de bugs)</li>
 </ul>
-</p><hr>
-<h1>Ce que vous pouvez faire pour aider</h1>
+</p><hr/>
+<h3>Ce que vous pouvez faire pour aider</h3>
 <p>Si vous &ecirc;tes un <b>utilisateur habitu&eacute; &agrave; travailler avec PHPlist</b> et que vous pensez avoir compris la plupart des probl&egrave;mes que l&rsquo;on peut rencontrer, vous pouvez aider en r&eacute;pondant aux questions d&rsquo;autres utilisateurs moins exp&eacute;riment&eacute;s.</p>
 <p>Si vous &ecirc;tes un <b>nouvel utilisateur de PHPlist</b> et vous avez des probl&egrave;mes pour le mettre en route sur votre site, essayez d&rsquo;abord de trouver la solution &agrave; votre probl&egrave;me en allant sur les sites mentionn&eacute;s ci-dessus, avant d&rsquo;envoyer un message disant "bon sang, &ccedil;a marche pas!".  Tr&egrave;s souvent, les probl&egrave;mes sur lesquels vous butez sont d&ucirc;s &agrave; l&rsquo;environnement dans lequel vous travaillez.  Avoir un seul d&eacute;veloppeur pour PHPlist a un d&eacute;savantage majeur: c&rsquo;est de ne pas pouvoir tester le syst&egrave;me &agrave; fond sur d&rsquo;autres plateformes ou avec toutes les versions de PHP.</p>
-<h1>D'autres choses que vous pouvez faire pour aider</h1>
+<h3>D'autres choses que vous pouvez faire pour aider</h3>
 <ul>
 <li><p>Si vous pensez que PHPlist vous est d&rsquo;une grande utilit&eacute;, pourquoi ne pas en faire la pub autour de vous?  Vous avez probablement fait un effort pour trouver ce logiciel et vous avez bien r&eacute;fl&eacute;chi avant de d&eacute;cider de l&rsquo;utiliser apr&egrave;s l&rsquo;avoir compar&eacute; &agrave; d&rsquo;autres logiciels similares.  Vous pouvez faire profiter d&rsquo;autres personnes de votre exp&eacute;rience.</p>
 <p>Pour ce faire, vous pouvez <?php echo PageLink2("vote","Voter")?> pour PHPlist, ou &eacute;crire des revues de presse sur les sites qui parlent de logiciels.  Vous pouvez &eacute;galement dire aux gens autour de vous que vous connaissez ce logiciel.
@@ -51,7 +51,7 @@ La plupart des nouvelles fonctionnalit&eacute;s de PHPlist ont &eacute;t&eacute;
 L&rsquo;adresse est juste une bo&icirc;te aux lettres, personne ne lira le courrier, mais tout est analys&eacute; pour juger de la performance de PHPlist.</p></li>
 </ul>
 
-<hr>
+<hr/>
 <p><b><a name="lists"></a>Liste de diffusion</b><br/>
 PHPlist a eu, en son temps, une liste de diffusion, mais elle a &eacute;t&eacute; &eacute;limin&eacute;e.  Mais vous pouvez consulter les archives de cette liste.  Pour de l&rsquo;aide pour utiliser PHPlist, vous pouvez plut&ocirc;t regarder ce qui se passe dans les <a href="#forums">forums</a>.
 <li>Pour lire les archives de la liste de diffusion, cliquez <a href="http://lists.cupboard.org/archive/tincan.co.uk" target="_blank">ici</a>

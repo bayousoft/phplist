@@ -1,5 +1,5 @@
 
-<h1>A phplist közösség</h1>
+<h3>A phplist közösség</h3>
 <p><b>Legújabb verzió</b><br/>
 Kérjük, hogy hiba bejelentésekor győződjön meg róla, hogy a legújabb verziót használja-e.<br/>
 <?php
@@ -10,9 +10,9 @@ if ($fp = @fopen ("http://www.phplist.com/files/LATESTVERSION","r")) {
   $thisversion = VERSION;
   $thisversion = str_replace("-dev","",$thisversion);
   if (versionCompare($thisversion,$latestversion)) {
-    print "<font color=green size=2>Gratulálunk! Ön a legújabb verziót használja</font>";
+    print '<span class="highlight">Gratulálunk! Ön a legújabb verziót használja</span>';
   } else {
-    print "<font color=green size=2>Ön nem a legújabb verziót használja</font>";
+    print '<span class="highlight">Ön nem a legújabb verziót használja</span>';
     print "<br/>Az Ön verziója: <b>".$thisversion."</b>";
     print "<br/>A legújabb verzió: <b>".$latestversion."</b>  ";
     print '<a href="http://www.phplist.com/files/changelog">Tekintse meg, mi változott</a>&nbsp;&nbsp;';
@@ -39,8 +39,8 @@ az új felhasználók megismerkedhetnek ezzel a rendszerrel</a>.</p>
 <li><a href="http://forums.phplist.com/" target="_blank">Fórum</a>. A fórum az a hely, ahol felteheti a kérdéseit, s a többiek megválaszolják őket.<br/><br/></li>
 <li><a href="#bugtrack">Mantis</a>. A Mantis egy hibakövető. Ez használható a funkciókérések beküldéséhez és a hibák bejelentéséhez. Ügyfélszolgálati kérdésekhez nem használható.<br/><br/></li>
 </ul>
-</p><hr>
-<h1>Miben segíthet?</h1>
+</p><hr/>
+<h3>Miben segíthet?</h3>
 <p>
 <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 <input type="hidden" name="cmd" value="_xclick">
@@ -59,7 +59,7 @@ a fenti helyeken próbálkozhat a megoldás felkutatásával, mielőtt bekülden
 hozzászólást. A felmerülő problémák gyakran a phplist telepítést futtató környezettel kapcsolatosak. 
 Mivel a phplistnek csak egy fejlesztője van, ez azzal a hátránnyal jár, hogy a rendszert 
 nem lehet minden környezetben és minden PHP-verzióval alaposan letesztelni.</p>
-<h1>Egyéb dolgok, melyekben segíthet</h1>
+<h3>Egyéb dolgok, melyekben segíthet</h3>
 <ul>
 <li><p>Ha úgy gondolja, hogy bevált Önnek a phplist, miért nem értesíti róla
 az ismerőseit? Bizonyára sokat fáradozott, amíg megtalálta, s a használata mellett döntött,

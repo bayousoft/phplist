@@ -1,5 +1,5 @@
 
-<h1>The PHPlist community</h1>
+<h3>The PHPlist community</h3>
 <p><b>Latest Version</b><br/>
 Please make sure you are using the latest version when submitting a bugreport.<br/>
 <?php
@@ -10,9 +10,9 @@ if ($fp = @fopen ("http://www.phplist.com/files/LATESTVERSION","r")) {
   $thisversion = VERSION;
   $thisversion = str_replace("-dev","",$thisversion);
   if (versionCompare($thisversion,$latestversion)) {
-    print "<font color=green size=2>Congratulations, you are using the latest version</font>";
+    print '<span class="highlight">Congratulations, you are using the latest version</span>';
   } else {
-    print "<font color=green size=2>You are not using the latest version</font>";
+    print '<span class="highlight">You are not using the latest version</span>';
     print "<br/>Your version: <b>".$thisversion."</b>";
     print "<br/>Latest version: <b>".$latestversion."</b>  ";
     print '<a href="http://www.phplist.com/files/changelog">View what has changed</a>&nbsp;&nbsp;';
@@ -39,8 +39,8 @@ used by new users to get acquainted with the system</a>.</p>
 <li>The <a href="http://www.phplist.com/forums/" target="_blank">Forums</a>. The forums are the place to post your questions and for others to answer them.<br/><br/></li>
 <li><a href="#bugtrack">Mantis</a>. Mantis is an issue tracker. This can be used to post feature requests and to report bugs. It can not be used for helpdesk questions.<br/><br/></li>
 </ul>
-</p><hr>
-<h1>What you can do to help</h1>
+</p><hr/>
+<h3>What you can do to help</h3>
 <p>
 <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 <input type="hidden" name="cmd" value="_xclick">
@@ -60,7 +60,7 @@ immediately posting a "it does not work" message. Often the problems you may hav
 to the environment your PHPlist installation is running in. Only having one developer for
 PHPlist has the disadvantage that the system cannot be tested thoroughly on every platform
 and every version of PHP.</p>
-<h1>Other things you can do to help</h1>
+<h3>Other things you can do to help</h3>
 <ul>
 <li><p>If you think PHPlist is a great help for you, why not help to let other people know about
 it's existence. You probably made quite an effort to find it and to decide to use if after

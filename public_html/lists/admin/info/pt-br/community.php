@@ -1,5 +1,5 @@
 
-<h1>Comunidade PHPlist</h1>
+<h3>Comunidade PHPlist</h3>
 <p><b>&Uacute;ltima vers&atilde;o</b><br/>
 Por favor, certifique-se que voc&ecirc; est&aacute; utilizando a &uacute;ltima vers&atilde;o antes de enviar um relat&oacute;rio de erro.<br/>
 <?php
@@ -10,9 +10,9 @@ if ($fp = @fopen ("http://www.phplist.com/files/LATESTVERSION","r")) {
   $thisversion = VERSION;
   $thisversion = str_replace("-dev","",$thisversion);
   if (versionCompare($thisversion,$latestversion)) {
-    print "<font color=green size=2>Parab&eacute;ns, voc&ecirc; est&aacute; utilizando a &uacute;ltima vers&atilde;o</font>";
+    print '<span class="highlight">Parab&eacute;ns, voc&ecirc; est&aacute; utilizando a &uacute;ltima vers&atilde;o</span>';
   } else {
-    print "<font color=green size=2>voc&ecirc; n&atilde;o est&aacute; utilizando a &uacute;ltima vers&atilde;o</font>";
+    print '<span class="highlight">voc&ecirc; n&atilde;o est&aacute; utilizando a &uacute;ltima vers&atilde;o</span>';
     print "<br/>Sua vers&atilde;o: <b>".$thisversion."</b>";
     print "<br/>&Uacute;ltima vers&atilde;o: <b>".$latestversion."</b>  ";
     print '<a href="http://www.phplist.com/files/changelog">Veja o que mudou</a>&nbsp;&nbsp;';
@@ -32,12 +32,12 @@ if ($fp = @fopen ("http://www.phplist.com/files/LATESTVERSION","r")) {
 <li><a href="http://www.phplist.com/forums/" target="_blank">F&oacute;runs</a></li>
 <li><a href="#bugtrack">Rastreador de Erros</a></li>
 </ul>
-</p><hr>
-<h1>O que voc&ecirc; pode fazer para ajudar</h1>
+</p><hr/>
+<h3>O que voc&ecirc; pode fazer para ajudar</h3>
 <p>Se voc&ecirc; &eacute; um <b>usu&aacute;rio comum do PHPlist</b> e acha que j&aacute; o conhece bem, voc&ecirc; pode ajudar respondendo &agrave;s quest&otilde;es de outros usu&aacute;rios.</p>
 <p>Se voc&ecirc; &eacute; <b>novo no PHPlist</b> e tem tido dificuldades em configur&aacute;-lo para funcionar em seu site, voc&ecirc; pode ajudar tentando procurar a solu&ccedil;&atilde;o atrav&eacute;s das op&ccedil;&otilde;es acima, depois postando imediatamente a mensagem "n&atilde;o funciona". Geralmente os problemas que voc&ecirc; possa ter est&atilde;o relacionados ao ambiente em que a sua  insta&ccedil;&atilde;o do PHPlist est&aacute; rodando.
 Ter somente um desenvolvedor para o PHPlist tem a desvantagem de n&atilde;o poder ser testado em todas as plataformas e em todas as vers&otilde;es do PHP.</p>
-<h1>Outras coisas que voc&ecirc; pode fazer para ajudar</h1>
+<h3>Outras coisas que voc&ecirc; pode fazer para ajudar</h3>
 <ul>
 <li><p>Se voc&ecirc; acha que a PHPlist &eacute; de grande ajuda, por qu&ecirc; n&atilde;o fazer com que os outros saibam de sua exist&ecirc;ncia? Provavelmente voc&ecirc; teve que correr atr&aacute;s para encontr&aacute;-lo e decidir us&aacute;-lo, depois de ter comparado com outras aplica&ccedil;&otilde;es similares, ent&atilde;o voc&ecirc; poderia ajudar outras pessoas com a sua experi&ecirc;ncia.</p>
 
@@ -55,7 +55,7 @@ A maioria das novas caracter&iacute;sticas do PHPlist s&atilde;o adicionadas a p
 As suas informa&ccedil;&otilde;es n&atilde;o estar&atilde;o dispon&iacute;veis para as pessoas, mas n&oacute;s as analisaremos para ter uma id&eacute;ia se o PHPlist tem funcionado bem.</p></li>
 </ul>
 
-<hr>
+<hr/>
 <p><b><a name="lists"></a>Lista de Discuss&atilde;o</b><br/>
 O PHPlist costumava ter uma lista de discus&atilde;o, mas foi encerrada. Voc&ecirc; ainda pode ler os arquivos da lista. Para suporte ao PHPlist tente os <a href="#forums">f&oacute;runs</a>.
 <li>Para acessar os arquivos da lista de discuss&atilde;o <a href="http://lists.cupboard.org/archive/tincan.co.uk" target="_blank">clique aqui</a>

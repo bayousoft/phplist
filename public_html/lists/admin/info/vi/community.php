@@ -1,5 +1,5 @@
 
-<h1>C&#7897;ng &#273;&#7891;ng  PHPlist</h1>
+<h3>C&#7897;ng &#273;&#7891;ng  PHPlist</h3>
 <p><b>Phi&ecirc;n b&#7843;n m&#7899;i nh&#7845;t</b><br/>
 Xin h&atilde;y &#273;&#7843;m b&#7843;o l&agrave; b&#7841;n d&ugrave;ng phi&ecirc;n b&#7843;n m&#7899;i nh&#7845;t khi th&ocirc;ng b&aacute;o l&#7895;i v&agrave; y&ecirc;u c&#7847;u tr&#7907; gi&uacute;p.
 <p>  <?php
@@ -10,9 +10,9 @@ if ($fp = @fopen ("http://www.phplist.com/files/LATESTVERSION","r")) {
   $thisversion = VERSION;
   $thisversion = str_replace("-dev","",$thisversion);
   if (versionCompare($thisversion,$latestversion)) {
-    print "<font color=green size=2>Xin ch&uacute;c m&#7915;ng, b&#7841;n &#273;ang d&ugrave;ng phi&ecirc;n b&#7843;n m&#7899;i nh&#7845;t!</font>";
+    print '<span class="highlight">Xin ch&uacute;c m&#7915;ng, b&#7841;n &#273;ang d&ugrave;ng phi&ecirc;n b&#7843;n m&#7899;i nh&#7845;t!</span>';
   } else {
-    print "<font color=green size=2>B&#7841;n ch&#432;a d&ugrave;ng phi&ecirc;n b&#7843;n m&#7899;i nh&#7845;t</font>";
+    print '<span class="highlight">B&#7841;n ch&#432;a d&ugrave;ng phi&ecirc;n b&#7843;n m&#7899;i nh&#7845;t</span>';
     print "<br/>Phi&ecirc;n b&#7843;n &#273;ang d&ugrave;ng: <b>".$thisversion."</b>";
     print "<br/>Phi&ecirc;n b&#7843;n m&#7899;i nh&#7845;t: <b>".$latestversion."</b>  ";
     print '<a href="http://www.phplist.com/files/changelog">Xem nh&#7919;ng thay &#273;&#7893;i trong phi&ecirc;n b&#7843;n m&#7899;i</a>&nbsp;&nbsp;';
@@ -32,8 +32,8 @@ if ($fp = @fopen ("http://www.phplist.com/files/LATESTVERSION","r")) {
 <li><a href="http://www.phplist.com/forums/" target="_blank">Forums</a>. Di&#7877;n &#273;&agrave;n, n&#417;i c&oacute; th&#7875; g&#7917;i v&agrave; tr&#7843; l&#7901;i c&aacute;c c&acirc;u h&#7887;i v&#7873; PHPList <br/><br/></li>
 <li><a href="#bugtrack">Mantis</a>. Mantis l&agrave; c&ocirc;ng c&#7909; theo d&otilde;i c&aacute;c v&#7845;n &#273;&#7873; li&ecirc;n quan . C&oacute; th&#7875; &#273;&#432;&#7907;c d&ugrave;ng &#273;&#7875; g&#7917;i y&ecirc;u c&#7847;u ch&#7913;c n&#259;ng m&#7899;i ho&#7863;c th&ocirc;ng b&aacute;o l&#7895;i. N&oacute; kh&ocirc;ng &#273;&#432;&#7907;c d&ugrave;ng nh&#432; l&agrave; n&#417;i cung c&#7845;p c&aacute;c tr&#7907; gi&uacute;p (helpdesk).<br/><br/></li>
 </ul>
-</p><hr>
-<h1>&#272;i&#7873;u b&#7841;n c&oacute; th&#7875; gi&uacute;p</h1>
+</p><hr/>
+<h3>&#272;i&#7873;u b&#7841;n c&oacute; th&#7875; gi&uacute;p</h3>
 <p>
 <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 <input type="hidden" name="cmd" value="_xclick">
@@ -48,12 +48,12 @@ if ($fp = @fopen ("http://www.phplist.com/files/LATESTVERSION","r")) {
 <p>N&#7871;u b&#7841;n l&agrave; m&#7897;t <b>ng&#432;&#7901;i th&#7841;o PHPlist</b> v&agrave; b&#7841;n th&#7845;y c&oacute; th&#7875; hi&#7875;u v&agrave; gi&uacute;p <a href="http://www.phplist.com/forums/" target="_blank">tr&#7843; l&#7901;i c&aacute;c c&acirc;u h&#7887;i cho ng&#432;&#7901;i kh&aacute;c</a>. ho&#7863;c tham gia vi&#7871;t t&agrave;i li&#7879;u  tr&ecirc;n <a href="#docscontrib">trang web cung c&#7845;p t&agrave;i li&#7879;u</a>.</p>
 <p>N&#7871;u b&#7841;n m&#7899;i d&ugrave;ng PHPList v&agrave; b&#7841;n g&#7863;p v&#7845;n &#273;&#7873; c&agrave;i &#273;&#7863;t tr&ecirc;n h&#7879; th&#7889;ng, tr&#432;&#7899;c ti&ecirc;n b&#7841;n th&#7917;  t&igrave;m  c&aacute;c gi&#7843;i ph&aacute;p &#7903; c&aacute;c m&#7909;c tr&#7907; gi&uacute;p n&ecirc;u tr&ecirc;n tr&#432;&#7899;c khi g&#7917;i th&ocirc;ng b&aacute;o l&agrave; &quot;n&oacute; kh&ocirc;ng l&agrave;m vi&#7879;c&quot;. Th&#432;&#7901;ng th&igrave; v&#7845;n &#273;&#7873; b&#7841;n g&#7863;p ph&#7843;i hay li&ecirc;n quan t&#7899;i h&#7879; th&#7889;ng m&agrave; b&#7841;n &#273;ang c&agrave;i PHPList.</p>
 <p>S&#7921; tham gia c&#7911;a b&#7841;n s&#7869; gi&uacute;p cho vi&#7879;c th&#7917; nghi&#7879;m PHPList m&ocirc;t c&aacute;ch k&#7929; l&#432;&#7905;ng tr&ecirc;n c&aacute;c h&#7879; th&#7889;ng kh&aacute;c nhau v&#7899;i nh&#7919;ng phi&ecirc;n b&#7843;n PHP kh&ocirc;ng gi&#7889;ng nhau .</p>
-<h1>Ngo&agrave;i ra</h1>
+<h3>Ngo&agrave;i ra</h3>
 <ul>
 <li>
   <p>N&#7871;u b&#7841;n th&#7845;y r&#7857;ng PHPList &#273;&atilde; &#273;em l&#7841;i hi&#7879;u qu&#7843; cho b&#7841;n, t&#7841;o sao kh&ocirc;ng gi&uacute;p qu&#7843;ng b&aacute; s&#7843;n ph&#7849;m n&agrave;y cho nh&#7919;ng ng&#432;&#7901;i d&ugrave;ng kh&aacute;c. C&oacute; th&#7875; b&#7841;n &#273;&atilde; m&#7845;t c&ocirc;ng t&igrave;m ki&#7871;m, quy&#7871;t &#273;&#7883;nh s&#7917; d&#7909;ng PHPList sau nh&#7919;ng &#273;&aacute;nh gi&aacute; v&agrave; so s&aacute;ch PHPList v&#7899;i nh&#7919;ng s&#7843;n ph&#7849;m t&#432;&#417;ng t&#7921;, do v&#7853;y b&#7841;n c&oacute; th&#7875; chia s&#7869; nh&#7919;ng kinh nghi&#7879;m qu&yacute; b&aacute;u c&#7911;a b&#7841;n.</p>
 
-  <p>&#272;&#7875; gi&uacute;p cho &#273;i&#7873;u &#273;&oacute;, b&#7841;n c&oacute; th&#7875; <?php echo PageLink2("vote","b&igrave;nh ch&#7885;n")?> cho PHPlist, ho&#7863;c vi&#7871;t nh&#7853;n x&eacute;t cho c&aacute;c trang web gi&#7899;i thi&#7879;u c&aacute;c &#7913;ng d&#7909;ng. B&#7841;n c&#361;ng c&oacute; th&#7875; n&oacute;i v&#7899;i ng&#432;&#7901;i kh&aacute;c v&#7873; &#273;i&#7873;u n&agrave;y.<br>
+  <p>&#272;&#7875; gi&uacute;p cho &#273;i&#7873;u &#273;&oacute;, b&#7841;n c&oacute; th&#7875; <?php echo PageLink2("vote","b&igrave;nh ch&#7885;n")?> cho PHPlist, ho&#7863;c vi&#7871;t nh&#7853;n x&eacute;t cho c&aacute;c trang web gi&#7899;i thi&#7879;u c&aacute;c &#7913;ng d&#7909;ng. B&#7841;n c&#361;ng c&oacute; th&#7875; n&oacute;i v&#7899;i ng&#432;&#7901;i kh&aacute;c v&#7873; &#273;i&#7873;u n&agrave;y.<br/>
   </li>
 <li>
   <p>B&#7841;n c&oacute; th&#7875; <b>d&#7883;ch</b>  PHPlist sang ng&ocirc;n ng&#7919; c&#7911;a b&#7841;n v&agrave; g&#7917;i n&oacute; cho ch&uacute;ng t&ocirc;i.

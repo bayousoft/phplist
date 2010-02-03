@@ -1,5 +1,5 @@
 
-<h1>Comunidad PHPlist</h1>
+<h3>Comunidad PHPlist</h3>
 <p><b>&Uacute;ltima versi&oacute;n</b><br/>
 Cuando vaya a presentar una notificaci&oacute;n de errores
 aseg&uacute;rese de que tiene la &uacute;ltima versi&oacute;n.<br/>
@@ -11,10 +11,9 @@ if ($fp = @fopen ("http://www.phplist.com/files/LATESTVERSION","r")) {
   $thisversion = VERSION;
   $thisversion = str_replace("-dev","",$thisversion);
   if (versionCompare($thisversion,$latestversion)) {
-    print "<font color=green size=2>Enhorabuena, est&aacute;
-    utilizando la &uacute;ltima versi&oacute;n</font>";
+    print '<span class="highlight">Enhorabuena, est&aacute; utilizando la &uacute;ltima versi&oacute;n</span>';
   } else {
-    print "<font color=green size=2>No est&aacute; utilizando la &uacute;ltima versi&oacut;n</font>";
+    print '<span class="highlight">No est&aacute; utilizando la &uacute;ltima versi&oacut;n</span>';
     print "<br/>Su versi&oacut;n: <b>".$thisversion."</b>";
     print "<br/>&Uacute;ltima versi&oacute;n: <b>".$latestversion."</b>  ";
     print '<a href="http://www.phplist.com/files/changelog">Ver los cambios</a>&nbsp;&nbsp;';
@@ -47,8 +46,8 @@ familiaricen con &eacute;l.</p>
 <li>Los <a href="http://www.phplist.com/forums/" target="_blank">Foros</a></li>
 <li>El <a href="#bugtrack">Bug Tracker</a> (seguimiento de errores)</li>
 </ul>
-</p><hr>
-<h1>C&oacute;mo puede ayudar</h1>
+</p><hr/>
+<h3>C&oacute;mo puede ayudar</h3>
 <p>Si usted <b>utiliza PHPlist habitualmente</b> y cree haber
 descubierto la mayor parte de sus recovecos puede ayudar respondiendo
 a las preguntas de otros usuarios.</p>
@@ -61,7 +60,7 @@ relacionados con el entorno en el que est&aacute; funcionando su
 instalaci&oacute;n de PHPlist. El tener un &uacute;nico programador en
 PHPlist tiene la desventaja de que no se puede probar el sistema en
 todas las plataformas ni con todas las versiones de PHP.</p>
-<h1>Otras cosas que puede hacer para ayudar</h1>
+<h3>Otras cosas que puede hacer para ayudar</h3>
 <ul>
 <li><p>Si PHPlist le resulta &uacute;til, podr&iacute;a ayudar a
 difundirlo. Probablemente realiz&oacute; un cierto esfuerzo para
@@ -108,7 +107,7 @@ buz&oacute;n dep&oacute;sito, no lo lee ninguna persona, pero lo
 analizaremos para ver qu&eacute; tal est&aacute; funcionando PHPlist.</p></li>
 </ul>
 
-<hr>
+<hr/>
 <p><b><a name="lists"></a>Lista de correo</b><br/>
 PHPlist sol&iacute;a tener una lista de correo, pero ahora
 est&aacute; cerrada. Aun se pueden leer los archivos. Si necesita

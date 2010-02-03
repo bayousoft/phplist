@@ -1,4 +1,4 @@
-<h1>Aktuelle Version</h1>
+<h3>Aktuelle Version</h3>
 
 <p>Bitte stellen Sie sicher, dass Sie die neuste Version von phplist verwenden, bevor Sie einen Fehler an die Entwickler melden.</p>
 
@@ -10,9 +10,9 @@ if ($fp = @fopen ("http://www.phplist.com/files/LATESTVERSION","r")) {
   $thisversion = VERSION;
   $thisversion = str_replace("-dev","",$thisversion);
   if (versionCompare($thisversion,$latestversion)) {
-    print "<p><font color=green>Sie haben die aktuelle Version von phplist installiert.</font></p>";
+    print '<p><span class="highlight">Sie haben die aktuelle Version von phplist installiert.</span></p>';
   } else {
-    print "<p><font color=red>Sie haben nicht die aktuelle Version von phplist installiert.</font>";
+    print '<p><span class="highlight">Sie haben nicht die aktuelle Version von phplist installiert.</span>';
     print "<br/>Ihre Version: <b>".$thisversion."</b>";
     print "<br/>Aktuelle Version: <b>".$latestversion."</b>  ";
     print '<a href="http://www.phplist.com/files/changelog">Neuerungen anzeigen</a>&nbsp;&nbsp;';
@@ -23,9 +23,9 @@ if ($fp = @fopen ("http://www.phplist.com/files/LATESTVERSION","r")) {
 }
 ?>
 
-<hr>
+<hr/>
 
-<h1>Die phplist Community</h1>
+<h3>Die phplist Community</h3>
 
 <p>phplist wurde anfangs 2000 als kleine Applikation f&uuml;r das
 <a href="http://www.nationaltheatre.org.uk" target="_blank">National Theatre</a> in London entwickelt.
@@ -47,9 +47,9 @@ sondern es entsteht auch eine Fragensammlung, welche wiederum anderen Benutzern 
 </ul>
 </p>
 
-<hr>
+<hr/>
 
-<h1>Wie Sie phplist unterst&uuml;tzen k&ouml;nnen</h1>
+<h3>Wie Sie phplist unterst&uuml;tzen k&ouml;nnen</h3>
 
 <p>Wenn Sie ein <b>regelm&auml;ssiger Benutzer von phplist</b> sind und der Meinung sind,
 dass Sie die meisten Schwierigkeiten gemeistert haben, dann k&ouml;nnen Sie uns helfen, indem Sie die Fragen anderer Benutzer beantworten.</p>
@@ -61,9 +61,9 @@ H&auml;ufig h&auml;ngen Probleme mit der jeweiligen Umgebung zusammen, in der ph
 Dass phplist nur einen einzelnen Entwickler hat bringt den Nachteil mit sich,
 dass dieser das System nicht auf jeder denkbaren Plattform und mit jeder PHP-Version gr&uuml;ndlich testen kann.</p>
 
-<hr>
+<hr/>
 
-<h1>Weitere M&ouml;glichkeiten, um phplist zu unterst&uuml;tzen</h1>
+<h3>Weitere M&ouml;glichkeiten, um phplist zu unterst&uuml;tzen</h3>
 <ul>
 <li><p>Wenn phplist f&uuml;r Sie von Nutzen ist, dann teilen Sie dies auch anderen mit.
 Sie haben wahrscheinlich einen ziemlichen Aufwand betrieben, um diese Software zu finden und mit anderen Programmen zu vergleichen.
@@ -101,15 +101,15 @@ k&ouml;nnen und die standardm&auml;ssige &Uuml;bermittlung von Statistiken an ob
 (Diese Mails werden nicht von Menschen gelesen, sondern automatisch ausgewertet, um die Performance von phplist beurteilen zu k&ouml;nnen.)</p></li>
 </ul>
 
-<hr>
+<hr/>
 
-<h1><a name="lists"></a>Die phplist Mailinglist</h1>
+<h3><a name="lists"></a>Die phplist Mailinglist</h3>
 <p>Die fr&uuml;here phplist Mailinglist wurde eingestellt. An ihre Stelle ist neu das <a href="http://forums.phplist.com/">phplist Forum</a> getreten.
 (Auch das bis vor kurzem noch zug&auml;ngliche <a href="http://lists.cupboard.org/archive/tincan.co.uk" target="_blank">Mailinglist-Archiv</a> ist nun geschlossen.)</p>
 
-<hr>
+<hr/>
 
-<h1><a name="bugtrack"></a>Der phplist Bug Tracker</h1>
+<h3><a name="bugtrack"></a>Der phplist Bug Tracker</h3>
 <p>Um den Entwicklern einen Fehler zu melden besuchen Sie den <a href="http://mantis.phplist.com/" target="_blank">phplist Bug Tracker</a> und legen ein pers&ouml;nliches Konto an.
 Das Passwort wird Ihnen per E-Mail zugeschickt.</p>
 
@@ -118,9 +118,9 @@ Sie k&ouml;nnen dieses System auch benutzen, um <b>neue Features</b> vorzuschlag
 
 <p>Bitte beachten Sie, dass alle Anfragen, welche nicht &uuml;ber den Bug Tracker oder das Forum eingehen, ignoriert werden.</p>
 
-<hr>
+<hr/>
 
-<h1>Ihre Systemdetails</h1>
+<h3>Ihre Systemdetails</h3>
 
 <ul>
   <li>phplist-Version: <?php echo VERSION?></li>

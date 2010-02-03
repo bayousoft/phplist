@@ -1,5 +1,5 @@
 
-<h1>La comunit&agrave; PHPlist</h1>
+<h3>La comunit&agrave; PHPlist</h3>
 <p><b>Ultima Versione</b><br/>
 Accertati di usare l'ultima versione prima di inviare il rapporto su un bug.<br/>
 <?php
@@ -10,9 +10,9 @@ if ($fp = @fopen ("http://www.phplist.com/files/LATESTVERSION","r")) {
   $thisversion = VERSION;
   $thisversion = str_replace("-dev","",$thisversion);
   if (versionCompare($thisversion,$latestversion)) {
-    print "<font color=green size=2>Congratulazioni, stai usando l'ultima versione disponibile!</font>";
+    print '<span class="highlight">Congratulazioni, stai usando l\'ultima versione disponibile!</span>';
   } else {
-    print "<font color=green size=2>Non stai usando l'ultima versione</font>";
+    print '<span class="highlight">Non stai usando l\'ultima versione</span>';
     print "<br/>La tua versione: <b>".$thisversion."</b>";
     print "<br/>Ultima versione disponibile: <b>".$latestversion."</b>  ";
     print '<a href="http://www.phplist.com/files/changelog">Visualizza cosa c\'&egrave; di nuovo</a>&nbsp;&nbsp;';
@@ -39,8 +39,8 @@ usate da un nuovo utente per essere informato sul sistema</a>.</p>
 <li>I <a href="http://www.phplist.com/forums/" target="_blank">Forum</a>. I forum sono i luoghi deputati all'invio di domande e alle risposte degli utenti.<br/><br/></li>
 <li><a href="#bugtrack">Mantis</a>. Mantis &egrave; un indicatore di traccia. &Egrave; una risorsa utile ad inviare le richieste riguardanti nuove funzioni e per segnalare i bugs. Non deve essere usato per le domande dell'helpdesk.<br/><br/></li>
 </ul>
-</p><hr>
-<h1>Cosa puoi fare per aiutarci</h1>
+</p><hr/>
+<h3>Cosa puoi fare per aiutarci</h3>
 <p>
 <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 <input type="hidden" name="cmd" value="_xclick">
@@ -59,7 +59,7 @@ tuo sito, pu&ograve; esserti di aiuto provare a ricercare una
 soluzione nel primo sito riportato in alto. Spesso i problemi che puoi avere sono relativi all'ambiente 
 in cui la tua installazione di PHPlist sta funzionando. Avere un unico sviluppatore presenta 
 lo svantaggio di non poter testare il sistema su ogni piattaforma e con ogni versione di PHP.</p>
-<h1>Altre cose che puoi fare per aiutarci</h1>
+<h3>Altre cose che puoi fare per aiutarci</h3>
 <ul>
 <li><p>Se pensi che PHPlist sia di grande aiuto per te, aiutaci mettendo a conoscenza altre persone
 della sua esistenza. Probabilmente hai fatto un grosso sforzo per trovarlo e
