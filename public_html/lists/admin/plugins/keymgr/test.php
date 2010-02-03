@@ -33,7 +33,7 @@ if (isset($_POST['content']) && isset($_POST['passphrase']) && isset($_POST['sig
             foreach (array(0,1) as $encrypted) {
  #             foreach (array(0,1) as $sendanyway) {
               $sendanyway = 1;
-                $message = '<h1>HTML message</h1>';
+                $message = '<h3>HTML message</h3>';
                 $textmessage = '***message***';
                 print '<br/>Sending: ';
                 $subj = '';

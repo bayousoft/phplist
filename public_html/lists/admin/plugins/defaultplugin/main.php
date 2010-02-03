@@ -1,5 +1,5 @@
 
-<h1>Default plugin Main page </h1>
+<h3>Default plugin Main page </h3>
 
 <p>The <i>Hello World page</i> is more interesting</p>
 

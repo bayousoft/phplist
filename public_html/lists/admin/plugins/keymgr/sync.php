@@ -11,7 +11,7 @@ if (!Sql_Table_exists('keymanager_keys')) {
 $pl = $GLOBALS['plugins']['keymanager'];
 print $pl->menu();
 
-print '<h1>'.$GLOBALS['I18N']->get('Synchronising keys').'</h1>';
+print '<h3>'.$GLOBALS['I18N']->get('Synchronising keys').'</h3>';
 $keyattribute = $pl->getConfig('keyattribute');
 if ($keyattribute) {
   if ($pl->sync_keys()) {

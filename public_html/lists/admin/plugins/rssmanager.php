@@ -397,7 +397,7 @@ $validate, $viewitems, htmlspecialchars($list['rssfeed']));
       $rssOptions = array();
     }
 
-    $nippet= '<tr><td colspan=2><h1>' . $GLOBALS['I18N']->get('RSS settings') . '</h1></td></tr>';
+    $nippet= '<tr><td colspan=2><h3>' . $GLOBALS['I18N']->get('RSS settings') . '</h3></td></tr>';
     $nippet .= sprintf('<tr><td valign=top>' . $GLOBALS['I18N']->get('Intro Text') .
     '</td><td><textarea name=rss_intro rows=3 cols=60>%s</textarea></td></tr>', htmlspecialchars(stripslashes($subscribePageData['rssintro'])));
     foreach ($rssfrequencies as $key => $val) {
@@ -406,7 +406,7 @@ $GLOBALS['I18N']->get($val),
 $GLOBALS['I18N']->get('default'),
 $key, $subscribePageData['rssdefault'] == $key ? 'checked' : '');
     }
-    $nippet .= '<tr><td colspan=2><hr></td></tr>';
+    $nippet .= '<tr><td colspan=2><hr/></td></tr>';
     return $nippet;
   }
 

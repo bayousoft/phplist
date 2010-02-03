@@ -22,7 +22,7 @@ foreach ($pl->configvars as $var => $desc) {
   print '</tr>';
 }
 
-print '<tr><td colspan=2><input type="submit" name="save" value="'.htmlspecialchars($GLOBALS['I18N']->get('Save Changes')).'"></td></tr>';
+print '<tr><td colspan="2"><input type="submit" class="submit" name="save" value="'.htmlspecialchars($GLOBALS['I18N']->get('Save Changes')).'"></td></tr>';
 
 print '</table>';
 print '</form>';

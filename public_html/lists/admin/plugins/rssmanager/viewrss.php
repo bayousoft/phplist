@@ -61,7 +61,7 @@ print $total . " RSS Items</p>";
 if (!isset($pagingurl)) { $pagingurl= ""; }
 if ($total)
   printf('<table border=1><tr><td colspan=4 align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
-            %s</td><td>%s</td></tr></table><p><hr>', $listing, PageLink2("viewrss$pagingurl", "&lt;&lt;", "start=0"), PageLink2("viewrss$pagingurl", "&lt;", sprintf('start=%d', max(0, $start -MAX_MSG_PP))), PageLink2("viewrss$pagingurl", "&gt;", sprintf('start=%d', min($total, $start +MAX_MSG_PP))), PageLink2("viewrss$pagingurl", "&gt;&gt;", sprintf('start=%d', $total -MAX_MSG_PP)));
+            %s</td><td>%s</td></tr></table><p><hr/>', $listing, PageLink2("viewrss$pagingurl", "&lt;&lt;", "start=0"), PageLink2("viewrss$pagingurl", "&lt;", sprintf('start=%d', max(0, $start -MAX_MSG_PP))), PageLink2("viewrss$pagingurl", "&gt;", sprintf('start=%d', min($total, $start +MAX_MSG_PP))), PageLink2("viewrss$pagingurl", "&gt;&gt;", sprintf('start=%d', $total -MAX_MSG_PP)));
 ?>
 <table border=1>
 

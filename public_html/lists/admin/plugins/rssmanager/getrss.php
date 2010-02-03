@@ -68,7 +68,7 @@ $req = Sql_Query("select rssfeed,id from {$tables['list']} where rssfeed != \"\"
 while ($feed = Sql_Fetch_Row($req)) {
   # this part runs per list that has a feed URL
   $nothingtodo = 0;
-  output('<hr>' . $GLOBALS['I18N']->get('Parsing') . ' ' . $feed[0] . '..');
+  output('<hr/>' . $GLOBALS['I18N']->get('Parsing') . ' ' . $feed[0] . '..');
   //flush();
   flushBrowser();
   $report = $GLOBALS['I18N']->get('Parsing') . ' ' . $feed[0];

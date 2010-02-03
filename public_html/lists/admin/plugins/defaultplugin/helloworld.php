@@ -11,10 +11,10 @@ if ($_POST["info"]) {
 
 Default plugin Hello World page
 
-<form method=post>
-Enter some info: <input type=text name="info" value="Hello World" size=30>
+<form method="post">
+Enter some info: <input type="text" name="info" value="Hello World" size="30">
 <br/>
-<input type=submit>
+<input type="submit" class="submit">
 </form>
 
 

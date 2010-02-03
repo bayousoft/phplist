@@ -25,7 +25,7 @@ if (isset($_POST['newkey'])) {
   }
 }
 
-print '<h1>'.$GLOBALS['I18N']->get('Add a key').'</h1>';
+print '<h3>'.$GLOBALS['I18N']->get('Add a key').'</h3>';
 print '<p>'.$GLOBALS['I18N']->get('If you want to add a key for signing, you can paste both Public and Private keys in the box in one go').'</p>';
 
 print '<form method="post" action="">
