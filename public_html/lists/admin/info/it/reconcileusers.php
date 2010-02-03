@@ -1,1 +1,1 @@
-<p><h1>Questa pagina serva per pulire il database degli utenti</h1></p>
+<p><h3>Questa pagina serva per pulire il database degli utenti</h3></p>

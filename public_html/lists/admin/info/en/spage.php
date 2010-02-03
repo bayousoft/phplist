@@ -1,4 +1,4 @@
-<h1>Create multiple subscribe pages.</h1>
+<h3>Create multiple subscribe pages.</h3>
 <p>This page allows you to create pages that are used for users to subscribe to your lists.</p>
 <p>You can select any set of attributes and lists that are defined in your system. Values for attributes default to your
 global attribute values, but you can re-order them, and add different default values. You can also

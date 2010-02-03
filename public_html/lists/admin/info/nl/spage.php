@@ -1,4 +1,4 @@
-<h1>Maak verschillende inschrijf pagina's.</h1>
+<h3>Maak verschillende inschrijf pagina's.</h3>
 <p>Deze pagina laat je toe om pagina's aan te maken waarop gebruikers zich kunnen inschrijven voor jou lijsten.</p>
 <p>Je kan alle attributen en lijsten die zijn vastgelegd in jou systeem selecteren. Als een lijst of
 attribuut hier niet staat, dan zul je deze eerst moeten toevoegen. Waarden voor attributen standaard aan jou globale attribuut waarden, <br />

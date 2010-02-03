@@ -1,4 +1,4 @@
-<h1>Crear m&uacute;ltiples p&aacute;ginas de inscripci&oacute;n.</h1>
+<h3>Crear m&uacute;ltiples p&aacute;ginas de inscripci&oacute;n.</h3>
 <p>Aqu&iacute; puede crear p&aacute;ginas a trav&eacute;s de las
 cuales sus usuarios podr&aacute;n inscribirse en sus listas.</p>
 <p>Puede escojer cualquier conjunto de atributos y listas de los que
