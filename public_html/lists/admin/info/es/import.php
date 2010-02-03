@@ -1,7 +1,7 @@
 
 <p>
 
-<h1>Importar emails a listas existentes</h1>
+<h3>Importar emails a listas existentes</h3>
 
 Hay cuatro modos de importar informaci&oacute;n externa:
 

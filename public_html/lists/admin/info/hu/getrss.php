@@ -1,1 +1,1 @@
-<h1>RSS-csatornák letöltése</h1>
+<h3>RSS-csatornák letöltése</h3>

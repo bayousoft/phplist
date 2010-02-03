@@ -1,7 +1,7 @@
 
 <p>
 
-<h1>Importa le email nelle liste esistenti</h1>
+<h3>Importa le email nelle liste esistenti</h3>
 
 Ci sono quattro modi per importare i dati:
 

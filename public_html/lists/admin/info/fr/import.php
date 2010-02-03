@@ -1,7 +1,7 @@
 
 <p>
 
-<h1>Importer des adresses email dans des listes pr&eacute;-existantes</h1>
+<h3>Importer des adresses email dans des listes pr&eacute;-existantes</h3>
 
 Il y a quatre m&eacute;thodes pour importer des donn&eacute;es pr&eacute;-existantes:
 

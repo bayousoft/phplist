@@ -1,7 +1,7 @@
 
 <p>
 
-<h1>E-mail címek importálása már létező listákba</h1>
+<h3>E-mail címek importálása már létező listákba</h3>
 
 A meglévő információk importálásának négyféle módja van:
 

@@ -1,7 +1,7 @@
 
 <p>
 
-<h1>Importeer emails in bestaande lijsten</h1>
+<h3>Importeer emails in bestaande lijsten</h3>
 
 Er zijn vier manieren  om bestaande informatie te importeren:
 

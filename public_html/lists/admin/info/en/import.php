@@ -1,7 +1,7 @@
 
 <p>
 
-<h1>Import emails into existing lists</h1>
+<h3>Import emails into existing lists</h3>
 
 There are four ways to import existing information:
 
