@@ -41,7 +41,7 @@ die je aan het systeem wilt toevoegen. De kolommen moeten de volgende headers he
   'Do Import' => 'Importeer nu',
   'default is TAB' => 'standaard is TAB',
   'default is line break' => 'standaard is "line break"',
-  'testoutputinfo' => 'Test uitvoer:<br>Er zou 1 email per lijn moeten zijn.<br>Als de uitvoer er goed uit ziet, ga dan verder <a href="javascript:history.go(-1)">Terug</a> om voor echt voor te leggen<br><br>',
+  'testoutputinfo' => 'Test uitvoer:<br/>Er zou 1 email per lijn moeten zijn.<br/>Als de uitvoer er goed uit ziet, ga dan verder <a href="javascript:history.go(-1)">Terug</a> om voor echt voor te leggen<br/><br/>',
   'List for' => 'Lijst voor',
 'login' => 'meld aan',
 

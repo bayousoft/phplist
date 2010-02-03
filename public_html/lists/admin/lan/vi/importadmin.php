@@ -40,10 +40,10 @@ $lan = array(
   'Do Import' => 'Nh&#7853;p v&agrave;o',
   'default is TAB' => 'm&#7863;c &#273;&#7883;nh l&agrave;  TAB',
   'default is line break' => 'm&#7863;c &#273;&#7883;nh l&agrave; ng&#7855;t d&ograve;ng',
-  'testoutputinfo' => 'K&#7871;t qu&#7843; ki&#7875;m tra:<br>
-  Y&ecirc;u c&#7847;u m&#7895;i email tr&ecirc;n m&#7897;t d&ograve;ng.<br>
-  N&#7871;u k&#7871;t qu&#7843; t&#7889;t, b&#7845;m v&agrave;o <a href="javascript:history.go(-1)">&#273;&acirc;y</a> &#273;&#7875; nh&#7853;p ch&iacute;nh th&#7913;c<br>
-  <br>',  
+  'testoutputinfo' => 'K&#7871;t qu&#7843; ki&#7875;m tra:<br/>
+  Y&ecirc;u c&#7847;u m&#7895;i email tr&ecirc;n m&#7897;t d&ograve;ng.<br/>
+  N&#7871;u k&#7871;t qu&#7843; t&#7889;t, b&#7845;m v&agrave;o <a href="javascript:history.go(-1)">&#273;&acirc;y</a> &#273;&#7875; nh&#7853;p ch&iacute;nh th&#7913;c<br/>
+  <br/>',  
   'List for' => 'List for',
 'login' => 'login',
   

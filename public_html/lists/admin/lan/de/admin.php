@@ -7,7 +7,7 @@ $lan = array(
   'Changes saved' => '&Auml;nderungen gespeichert',
   'Error adding new admin' => 'Fehler beim Hinzuf&uuml;gen eines neuen Administrators',
   'strAccessExplain' => '<hr/>
-<h2>Zugriffsrechte</h2>
+<h4>Zugriffsrechte</h4>
 <p>Rechte eines Administrators beim Zugriff auf die einzelnen Seiten im System</p>
 <ul>
   <li><strong>Alle:</strong> Der Administrator hat uneingeschr&auml;nkten Zugriff auf die Seite (lesen und schreiben).</li>

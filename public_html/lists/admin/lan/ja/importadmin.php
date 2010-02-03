@@ -40,7 +40,7 @@ $lan = array(
   'Do Import' => 'インポート実行',
   'default is TAB' => 'デフォルトはTABです。',
   'default is line break' => 'デフォルトは line break です。',
-  'testoutputinfo' => 'テスト出力:<br>1行につき1つの電子メールのみであるべきです。<br>もし出力がOKでしたら、本当に再送信するためには<a href="javascript:history.go(-1)">戻る</a>に行ってください。<br><br>',  
+  'testoutputinfo' => 'テスト出力:<br/>1行につき1つの電子メールのみであるべきです。<br/>もし出力がOKでしたら、本当に再送信するためには<a href="javascript:history.go(-1)">戻る</a>に行ってください。<br/><br/>',  
   'List for' => 'List for',
 'login' => 'ログイン',
   

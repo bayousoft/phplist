@@ -63,9 +63,9 @@ $lan = array(
   'Do Import' => 'Importar',
   'default is TAB' => 'por defecto es TAB',
   'default is line break' => 'por defecto es el salto de l&iacute;nea',
-  'testoutputinfo' => 'Probar salida:<br>Solo debe haber UN email por
-  l&iacute;nea.<br>Si la salida parece estar bien, ir <a
-  href="javascript:history.go(-1)">atr&aacute;s</a> para procesar de verdad<br><br>',  
+  'testoutputinfo' => 'Probar salida:<br/>Solo debe haber UN email por
+  l&iacute;nea.<br/>Si la salida parece estar bien, ir <a
+  href="javascript:history.go(-1)">atr&aacute;s</a> para procesar de verdad<br/><br/>',  
   'List for' => 'Lista para',
   'login' => 'conectarse',
   

@@ -41,7 +41,7 @@ az Ön által a rendszerhez hozzáadni kívánt adminisztrátorokat. Az oszlopok
   'Do Import' => 'Importáld',
   'default is TAB' => 'alapértelmezés: TAB',
   'default is line break' => 'alapértelmezés: sortörés',
-  'testoutputinfo' => 'Kimenet tesztelése:<br>Soronként csak EGY e-mail cím legyen.<br>Ha jónak tűnik a kimenet, menjen <a href="javascript:history.go(-1)">vissza</a> az igaziból történő beküldéshez.<br><br>',  
+  'testoutputinfo' => 'Kimenet tesztelése:<br/>Soronként csak EGY e-mail cím legyen.<br/>Ha jónak tűnik a kimenet, menjen <a href="javascript:history.go(-1)">vissza</a> az igaziból történő beküldéshez.<br/><br/>',  
   'List for' => 'Lista a következőhöz',
 'login' => 'bejelentkezés',
   

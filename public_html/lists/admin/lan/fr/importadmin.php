@@ -40,7 +40,7 @@ $lan = array(
   'Do Import' => 'Importer',
   'default is TAB' => 'TABULATION par d&eacute;faut',
   'default is line break' => 'retour &agrave; la ligne par d&eacute;faut',
-  'testoutputinfo' => 'R&eacute;sultat test:<br>Il ne devrait y avoir qu&rsquo;UN seul email par ligne.<br>Si le r&eacute;sultat vous semble probant, retournez <a href="javascript:history.go(-1)">en arri&egrave;re</a> et ex&eacute;cutez votre requ&ecirc;te pour de bon<br><br>',  
+  'testoutputinfo' => 'R&eacute;sultat test:<br/>Il ne devrait y avoir qu&rsquo;UN seul email par ligne.<br/>Si le r&eacute;sultat vous semble probant, retournez <a href="javascript:history.go(-1)">en arri&egrave;re</a> et ex&eacute;cutez votre requ&ecirc;te pour de bon<br/><br/>',  
   'List for' => 'Liste pour',
 'login' => 'connexion',
   

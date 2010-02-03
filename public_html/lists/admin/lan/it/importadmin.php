@@ -40,7 +40,7 @@ $lan = array(
   'Do Import' => 'Importa',
   'default is TAB' => 'il predefinito &egrave; TAB',
   'default is line break' => 'il predefinito &egrave; l\' a capo (line break)',
-  'testoutputinfo' => 'Test output:<br>Deve esserci soltanto UNA email per riga.<br>Se l\'output &egrave; corretto, procedi <a href="javascript:history.go(-1)">Back</a> da reimportare<br><br>',  
+  'testoutputinfo' => 'Test output:<br/>Deve esserci soltanto UNA email per riga.<br/>Se l\'output &egrave; corretto, procedi <a href="javascript:history.go(-1)">Back</a> da reimportare<br/><br/>',  
   'List for' => 'Lista per',
 'login' => 'login',
   

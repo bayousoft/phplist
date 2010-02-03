@@ -41,7 +41,7 @@ du vil tilf&oslash;je systemet. Kollonnerne skal have f&oslash;lgende headers: <
   'Do Import' => 'Udf&oslash;r import',
   'default is TAB' => 'standard er TAB',
   'default is line break' => 'standard er ny linje',
-  'testoutputinfo' => 'Test visning:<br>Der b&oslash;r kun v&aelig;re EN email per linje.<br>Hvis det ser fint ud, s&aring; g&aring; <a href="javascript:history.go(-1)">Tilbage</a> for at sende for alvor<br><br>',  
+  'testoutputinfo' => 'Test visning:<br/>Der b&oslash;r kun v&aelig;re EN email per linje.<br/>Hvis det ser fint ud, s&aring; g&aring; <a href="javascript:history.go(-1)">Tilbage</a> for at sende for alvor<br/><br/>',  
   'List for' => 'Liste for',
 'login' => 'log ind',
   

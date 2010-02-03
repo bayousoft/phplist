@@ -36,7 +36,7 @@ $lan = array (
   'Do Import' => '匯入',
   'default is TAB' => '遇設是 TAB',
   'default is line break' => '預設是段落',
-  'testoutputinfo' => '測試輸出：<br>一行應該只有一個 email。<br>如果輸出正常，可以 <a href="javascript:history.go(-1)">回上頁</a> 來正式送出<br><br>',
+  'testoutputinfo' => '測試輸出：<br/>一行應該只有一個 email。<br/>如果輸出正常，可以 <a href="javascript:history.go(-1)">回上頁</a> 來正式送出<br/><br/>',
   'List for' => '電子報',
   'login' => '帳號',
 

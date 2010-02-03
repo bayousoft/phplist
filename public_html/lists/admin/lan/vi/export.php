@@ -6,7 +6,7 @@ $lan = array(
   "ExportFromval" => "PHPList xu&#7845;t t&#7915; %s t&#7899;i %s (%s).csv",
   "ListMembership" => "H&#7897;i vi&ecirc;n c&#7911;a",
   "ExportOn" => "
-  <h2>Xu&#7845;t h&#7897;i vi&ecirc;n %s</h2>
+  <h4>Xu&#7845;t h&#7897;i vi&ecirc;n %s</h4>
   ",
   "DateFrom" => "T&#7915; ng&agrave;y:",
   "DateTo" => "T&#7899;i ng&agrave;y:",

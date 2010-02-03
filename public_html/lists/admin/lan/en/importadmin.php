@@ -41,7 +41,7 @@ you want to add to the system. The columns need to have the following headers: <
   'Do Import' => 'Do Import',
   'default is TAB' => 'default is TAB',
   'default is line break' => 'default is line break',
-  'testoutputinfo' => 'Test output:<br>There should only be ONE email per line.<br>If the output looks ok, go <a href="javascript:history.go(-1)">Back</a> to resubmit for real<br><br>',  
+  'testoutputinfo' => 'Test output:<br/>There should only be ONE email per line.<br/>If the output looks ok, go <a href="javascript:history.go(-1)">Back</a> to resubmit for real<br/><br/>',  
   'List for' => 'List for',
 'login' => 'login',
   
