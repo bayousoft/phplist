@@ -213,7 +213,7 @@ if ($total)
           PageLink2("messages$url_keep","&gt;",sprintf('start=%d',min($total,$start+MAX_MSG_PP))),
           PageLink2("messages$url_keep","&gt;&gt;",sprintf('start=%d',$total-MAX_MSG_PP)));
 if ($_GET["type"] == "draft") {
-  print '<p class="button">'.PageLink2("messages&delete=draft",$GLOBALS['I18N']->get("Delete all draft messages without subject")).'</p>';
+  print '<p class="delete">'.PageLink2("messages&delete=draft",$GLOBALS['I18N']->get("Delete all draft messages without subject")).'</p>';
 }
 
 ?>
@@ -253,7 +253,7 @@ if ($total) {
 
     if ($clicks[0]) {
       $clicked = sprintf('<tr><td></td>
-        <td align="right" colspan=2>
+        <td align="right" colspan="2">
         <b>'.$GLOBALS['I18N']->get('Clicks').'</b></td>
         <td align="center"><b>%d</b></td></tr>
         ',$clicks[0]);
@@ -268,10 +268,10 @@ if ($total) {
 
       if ($msg['viewed']) {
         $viewed = sprintf('<tr><td></td>
-          <td align="right" colspan=2>
+          <td align="right" colspan="2">
           <b>'.$GLOBALS['I18N']->get("Viewed").'</b></td>
           <td align="center"><b>%d</b></td></tr>
-          <tr><td></td><td align="right" colspan=2>
+          <tr><td></td><td align="right" colspan="2">
           <b>'.$GLOBALS['I18N']->get("Unique Views").'</b></td>
           <td align="center"><b>%d</b></td></tr>
           ',$msg["viewed"],$uniqueviews[0]);
@@ -306,7 +306,7 @@ if ($total) {
         $msg["astextandpdf"],
         $viewed,
         $clicked,
-        $msg["bouncecount"] ? sprintf('<tr><td></td><td align="right" colspan=2><b>'.$GLOBALS['I18N']->get("Bounced").'</b></td><td align="center"><b>%d</b></td></tr>
+        $msg["bouncecount"] ? sprintf('<tr><td></td><td align="right" colspan="2"><b>'.$GLOBALS['I18N']->get("Bounced").'</b></td><td align="center"><b>%d</b></td></tr>
         ',$msg["bouncecount"]):""
         );
     } else { ##Status <> sent
