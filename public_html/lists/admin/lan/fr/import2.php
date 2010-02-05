@@ -63,7 +63,7 @@ $lan = array(
 'Add a list' => 'Ajouter une liste',
 'Select the groups to add the users to' => 'S&eacute;lectionnez les groupes auxquels vous ajoutez les utilisateurs',
 'automatically added' => 'ajout&eacute;s automatiquement',
- 'importintro' => '<p>Le fichier que vous t&eacute;l&eacute;chargez devra comporter les attributs des donn&eacute;es sur la premi&egrave;re ligne.
+ 'importintro' => '<p class="information">Le fichier que vous t&eacute;l&eacute;chargez devra comporter les attributs des donn&eacute;es sur la premi&egrave;re ligne.
     Assurez-vous que la colonne email s&rsquo;intitule "email" et pas quelque chose comme "e-mail" ou
     "Email Address".
     La casse ne compte pas (email/Email sont &eacute;quivalents).

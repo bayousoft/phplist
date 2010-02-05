@@ -7,7 +7,7 @@ $lan = array(
   'Changes saved' => 'Modifications enregistr&eacute;es',
   'Error adding new admin' => 'Une erreur s&rsquo;est produite en ajoutant un nouvel admin',
   'strAccessExplain' => '<hr/>
-<p>D&eacute;terminez les droits d&rsquo;acc&egrave;s pour chaque type de page du syst&egrave;me:</p>
+<p class="information">D&eacute;terminez les droits d&rsquo;acc&egrave;s pour chaque type de page du syst&egrave;me:</p>
 <ul>
 <li>Tout: l&rsquo;admin a acc&egrave;s &agrave; cette page sans restrictions</li>
 <li>Lecture: l&rsquo;admin peut voir le contenu des pages, mais ne peut rien changer.  Cette option ne fonctionne que pour les pages "utilisateur", "utilisateurs" et "membres".</li>
