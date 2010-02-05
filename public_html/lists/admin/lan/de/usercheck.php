@@ -3,7 +3,7 @@
 $lan = array(
   'existingusers' => "Existierende Abonnenten",
   'nonexistingusers' => "Nicht existierende Abonnenten",
-  'existcheckintro' => '<p>Seite um die Existenz von Abonnenten in der Datenbank zu pr&uuml;fen.</p>',
+  'existcheckintro' => 'Seite um die Existenz von Abonnenten in der Datenbank zu pr&uuml;fen.',
   'whatistype' => '<b>Datenbankfeld</b>',
   "foreignkey" => "Fremdschl&uuml;ssel",
   "email" => "E-Mail-Adresse",
