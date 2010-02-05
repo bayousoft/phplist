@@ -53,7 +53,7 @@ $lan = array (
   'Add a list' => '新增電子報',
   'Select the groups to add the users to' => '選擇要新增使用者的群組',
   'automatically added' => '自動新增',
-  'importintro' => '<p>您上傳的檔案必須在第一行包含匯入資料的欄位名稱，請確認電子郵件欄位名稱為 "email" 而不是 "e-mail" 或 "Email Address"；大小寫則不會影響。
+  'importintro' => '<p class="information">您上傳的檔案必須在第一行包含匯入資料的欄位名稱，請確認電子郵件欄位名稱為 "email" 而不是 "e-mail" 或 "Email Address"；大小寫則不會影響。
     </p>
     如果資料欄位包含了一個名為 "Foreign Key" 的項目，這將會用來與電子報系統資料庫的使用者資訊進行同步更新，外部鍵值會在符合既有使用者時產生作用；這將會減慢匯入的程序。如果啟用了這個項目，沒有電子郵件的項目也可以進行資料交換，不過會產生一個 "Invalid Email" 替代。您可以接著搜尋 "invalid email" 來找到這些資料。外部鍵值的大小上限為 100 個字元。
     <br/><br/>

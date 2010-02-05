@@ -6,7 +6,7 @@ $lan = array (
   'Changes saved' => '異動儲存了',
   'Error adding new admin' => '新增管理員時發生錯誤',
   'strAccessExplain' => '<hr/>
-<p>設定在系統中存取頁面的權限：</p>
+<p class="information">設定在系統中存取頁面的權限：</p>
 <ul>
 <li>所有： 管理員可以存取這個頁面所有功能</li>
 <li>瀏覽：管理員可以瀏覽內容，但是無法修改任何項目；目前只能夠瀏覽使用者與會員頁面</li>
