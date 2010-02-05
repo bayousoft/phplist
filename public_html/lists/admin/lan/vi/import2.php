@@ -67,7 +67,7 @@ n&#7871;u kh&ocirc;ng c&oacute; l&#7895;i n&agrave;o, b&#7845;m v&agrave;o  %s &
 'Select the groups to add the users to' => 'Ch&#7885;n nh&oacute;m &#273;&#7875; th&ecirc;m h&#7897;i vi&ecirc;n',
 'automatically added' => 'th&ecirc;m v&agrave;o t&#7921; &#273;&#7897;ng',
  'importintro' => '
- <p>T&#7879;p tin b&#7841;n d&ugrave;ng ph&#7843;i c&oacute; t&ecirc;n thu&#7897;c t&iacute;nh c&#7911;a h&#7897;i vi&ecirc;n &#7903; d&ograve;ng &#273;&#7847;u ti&ecirc;n.
+ <p class="information">T&#7879;p tin b&#7841;n d&ugrave;ng ph&#7843;i c&oacute; t&ecirc;n thu&#7897;c t&iacute;nh c&#7911;a h&#7897;i vi&ecirc;n &#7903; d&ograve;ng &#273;&#7847;u ti&ecirc;n.
     &#272;&#7843;m b&#7843;o l&agrave; c&#7897;t email c&oacute; t&ecirc;n l&agrave; &quot;email&quot; ch&#7913; kh&ocirc;ng &#273;&#432;&#7907;c d&ugrave;ng kh&aacute;c &#273;i nh&#432; l&agrave; &quot;e-mail" ho&#7863;c "Email Address".
     C&oacute; th&#7875; d&ugrave;ng ch&#7919; th&#432;&#7901;ng ho&#7863;c ch&#7919; in hoa.
 </p>

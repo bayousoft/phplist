@@ -4,7 +4,7 @@ $lan = array(
   'existingusers' => "h&#7897;i vi&ecirc;n hi&#7879;n t&#7841;i",
   'nonexistingusers' => "kh&ocirc;ng ph&#7843;i h&#7897;i vi&ecirc;n",
   'existcheckintro' => '
-  <p>Trang ki&#7875;m tra s&#7921; t&#7891;n t&#7841;i c&#7911;a h&#7897;i vi&ecirc;n</p>
+  <p class="information">Trang ki&#7875;m tra s&#7921; t&#7891;n t&#7841;i c&#7911;a h&#7897;i vi&ecirc;n</p>
   ',
   'whatistype' => 'Lo&#7841;i th&ocirc;ng tin n&agrave;o b&#7841;n mu&#7889;n ki&#7875;m tra ',
   "foreignkey" => "Foreign Key",
