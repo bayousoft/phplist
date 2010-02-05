@@ -64,7 +64,7 @@ $lan = array(
 'Add a list' => 'Adicionar lista',
 'Select the groups to add the users to' => 'Selecione os grupos nos quais se quer adicionar usu&aacute;rios',
 'automatically added' => 'automaticamente adicionado',
- 'importintro' => '<p>O arquivo que foi enviado necessitam os atributos do registro em sua primeira linha.
+ 'importintro' => '<p class="information">O arquivo que foi enviado necessitam os atributos do registro em sua primeira linha.
     Assegure-se que a coluna do email est&aacute; nomeada "email" e n&atilde;o outro nome como "e-mail" ou           "Endere&ccedil;o de Email"
 N&atilde;o importa se est&aacute; em mai&uacute;sculas ou min&uacute;sculas.
     </p>
