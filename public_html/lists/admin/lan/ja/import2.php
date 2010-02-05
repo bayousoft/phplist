@@ -64,7 +64,7 @@ $lan = array(
 'Add a list' => 'リストの追加',
 'Select the groups to add the users to' => 'ユーザを追加するグループを選択',
 'automatically added' => '自動的に追加されました。',
- 'importintro' => '<p>アップロードするファイルの最初の行にレコードの属性が記載されている必要があります。
+ 'importintro' => '<p class="information">アップロードするファイルの最初の行にレコードの属性が記載されている必要があります。
     電子メールカラムは"email"とつけ、"e-mail"や"Email Address"などではないことを確認してください。
     Case is not important.
     </p>

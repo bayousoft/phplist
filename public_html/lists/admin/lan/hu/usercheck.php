@@ -3,7 +3,7 @@
 $lan = array(
   'existingusers' => "Létező felhasználók",
   'nonexistingusers' => "Nem létező felhasználók",
-  'existcheckintro' => '<p>Oldal a felhasználók adatbázisban történő meglétének ellenőrzéséhez</p>',
+  'existcheckintro' => 'Oldal a felhasználók adatbázisban történő meglétének ellenőrzéséhez',
   'whatistype' => 'Milyen típusú az Ön által ellenőrizni kívánt információ',
   "foreignkey" => "Idegen kulcs",
   "email" => "E-mail cím",

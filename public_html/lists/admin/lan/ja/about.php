@@ -10,7 +10,7 @@ $lan = array(
 
   # use this tag to give your own name(s), so you are listed in the "About" page
   # for credits for this particular translation
-  'credits for this translation' => '<li>日本語翻訳バージョン： ver 1.0 <br />翻訳：<a href="http://www.phplist.jp/" target="_blank">日本PHPLISTユーザグループ</a><br />翻訳著作権：インターネットテクノロジー教育研究会</li>',
+  'credits for this translation' => '<li>日本語翻訳バージョン： ver 1.0 <br />翻訳：<a href="http://www.phplist.jp/" target="_blank">日本PHPLISTユーザグループ</a><br />翻訳著作権：インターネットテクノロジー教育研究会</li>'
 
   # new in 2.10.1
   'Documentation' => 'Documentation',

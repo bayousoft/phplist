@@ -53,7 +53,7 @@ $lan = array (
   'Add a list' => '新增电子报',
   'Select the groups to add the users to' => '选择要新增使用者的群组',
   'automatically added' => '自动新增',
-  'importintro' => '<p>您上传的档桉必须在第一行包含汇入资料的栏位名称，请确认电子邮件栏位名称为 "email" 而不是 "e-mail" 或 "Email Address"；大小写则不会影响。
+  'importintro' => '<p class="information">您上传的档桉必须在第一行包含汇入资料的栏位名称，请确认电子邮件栏位名称为 "email" 而不是 "e-mail" 或 "Email Address"；大小写则不会影响。
     </p>
     如果资料栏位包含了一个名为 "Foreign Key" 的项目，这将会用来与电子报系统资料库的使用者资讯进行同步更新，外部键值会在符合既有使用者时产生作用；这将会减慢汇入的程序。如果启用了这个项目，没有电子邮件的项目也可以进行资料交换，不过会产生一个 "Invalid Email" 替代。您可以接着搜寻 "invalid email" 来找到这些资料。外部键值的大小上限为 100 个字元。
     <br/><br/>

@@ -3,7 +3,7 @@
 $lan = array(
   'existingusers' => "Usuarios existentes",
   'nonexistingusers' => "No hay ning&uacute;n usuario",
-  'existcheckintro' => '<p>P&aacute;gina para comprobar la presencia de usuarios en la base de datos</p>',
+  'existcheckintro' => 'P&aacute;gina para comprobar la presencia de usuarios en la base de datos',
   'whatistype' => '&#191;Cu&aacute;l es el tipo de informaci&oacute;n que quiere comprobar?',
   "foreignkey" => "Clave externa",
   "email" => "Email",

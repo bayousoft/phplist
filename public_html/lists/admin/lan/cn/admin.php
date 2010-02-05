@@ -6,7 +6,7 @@ $lan = array (
   'Changes saved' => '异动储存了',
   'Error adding new admin' => '新增管理员时发生错误',
   'strAccessExplain' => '<hr/>
-<p>设定在系统中存取页面的权限：</p>
+<p class="information">设定在系统中存取页面的权限：</p>
 <ul>
 <li>所有： 管理员可以存取这个页面所有功能</li>
 <li>浏览：管理员可以浏览内容，但是无法修改任何项目；目前只能够浏览使用者与会员页面</li>

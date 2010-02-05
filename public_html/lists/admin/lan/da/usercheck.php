@@ -3,7 +3,7 @@
 $lan = array(
   'existingusers' => "Nuv&aelig;rende brugere",
   'nonexistingusers' => "Ikke-eksisterende brugere",
-  'existcheckintro' => '<p>Side til tjek af om bruger findes i databasen</p>',
+  'existcheckintro' => 'Side til tjek af om bruger findes i databasen',
   'whatistype' => 'Hvilken slags information vil du tjekke',
   "foreignkey" => "Fremmedn&oslash;gle",
   "email" => "Email",

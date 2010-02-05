@@ -3,7 +3,7 @@
 $lan = array(
   'existingusers' => "Existing Users",
   'nonexistingusers' => "Non Existing Users",
-  'existcheckintro' => '<p>Page to check the existance of users in the database</p>',
+  'existcheckintro' => 'Page to check the existance of users in the database',
   'whatistype' => 'What is the type of information you want to check',
   "foreignkey" => "Foreign Key",
   "email" => "Email",

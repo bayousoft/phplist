@@ -3,7 +3,7 @@
 $lan = array(
   'existingusers' => "存在するユーザ",
   'nonexistingusers' => "存在しないユーザ",
-  'existcheckintro' => '<p>データベースのユーザの存在をチェックするページ</p>',
+  'existcheckintro' => 'データベースのユーザの存在をチェックするページ',
   'whatistype' => 'チェックしたい情報のタイプを選択してください。',
   "foreignkey" => "外部キー",
   "email" => "電子メール",

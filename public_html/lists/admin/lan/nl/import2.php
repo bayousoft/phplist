@@ -64,7 +64,7 @@ $lan = array(
 'Add a list' => 'Voeg een nieuwe lijst toe',
 'Select the groups to add the users to' => 'Selecteer de groepen waarin de gebruikers moeten komen',
 'automatically added' => 'automatisch toegevoegd',
- 'importintro' => '<p>Het bestand dat he het geupload zal het attribuut van de verslagen op de eerste lijn nodig hebben.
+ 'importintro' => '<p class="information">Het bestand dat he het geupload zal het attribuut van de verslagen op de eerste lijn nodig hebben.
     Zorg ervoor dat de email kolom de naam "email" heeft en niet iet als "e-mail" of
     "Email Address".
     Zaak is niet belangrijk.

@@ -7,7 +7,7 @@ $lan = array(
   'Changes saved' => '変更が保存されました。',
   'Error adding new admin' => '新規管理者追加エラー',
   'strAccessExplain' => '<hr/>
-<p>システムのページを閲覧できるパーミッションの設定:</p>
+<p class="information">システムのページを閲覧できるパーミッションの設定:</p>
 <ul>
 <li>All: 管理者は制限なしでページにアクセスします。</li>
 <li>View: 管理者はページのコンテンツを閲覧できるが何も変更できない。これは、"user"、

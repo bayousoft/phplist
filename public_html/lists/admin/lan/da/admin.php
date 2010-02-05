@@ -7,15 +7,15 @@ $lan = array(
   'Changes saved' => '&AElig;ndringer gemt',
   'Error adding new admin' => 'Fejl under tilf&oslash;jelse af ny admin',
   'strAccessExplain' => '<hr/>
-<p>Ops&aelig;t tilladelser til at se sider i systemet:</p>
+<p class="information">Ops&aelig;t tilladelser til at se sider i systemet:</p>
 <ul>
 <li>Alle: admin har adgang til side uden restriktioner</li>
-<li>Se: admin kan se sidernes indhold, men ikke &aelig;ndre noget. Dette virker forel&oslash;bigt kun
+<li>Se: admin kan se sidernes indhold, men ikke &aelig;ndre noget. Dette virker forel&oslash;bigt ku
 for "bruger", "brugere" og "medlem" sider.</li>
 <li>Ingen: admin kan ikke se denne side</li>
 <li>Ejer: admin kan se denne side, men kun se indholdet af de lister de ejer</li>
 </ul>
-<p>Note: Admin kodeord skal v&aelig;re mindst 4 tegn langt</p>
+<p class="information">Note: Admin kodeord skal v&aelig;re mindst 4 tegn langt</p>
 ',
 'Edit Administrator' => 'Rediger administrator',
 'Admin Details' => 'Admin detaljer',

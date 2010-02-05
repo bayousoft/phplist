@@ -7,7 +7,7 @@ $lan = array(
   'Changes saved' => 'Cambios salvados',
   'Error adding new admin' => 'Error al a&ntilde;adir nuevo administrador',
   'strAccessExplain' => '<hr/>
-<p>Establecer permisos de acceso a p&aacute;ginas en el sistema:</p>
+<p class="information">Establecer permisos de acceso a p&aacute;ginas en el sistema:</p>
 <ul>
 <li>Todos: el administrador tiene acceso a la p&aacute;gina sin restricciones.</li>
 <li>Ver: el administrador puede ver la p&aacute;gina, pero no puede cambiar nada. De momento esto solo funciona en las p&aacute;ginas «usuario», «usuarios» y «miembros».</li>

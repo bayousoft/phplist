@@ -64,7 +64,7 @@ $lan = array(
 'Add a list' => 'Add a list',
 'Select the groups to add the users to' => 'Select the groups to add the users to',
 'automatically added' => 'automatically added',
- 'importintro' => '<p>The file you upload will need to have the attributes of the records on    the first line.
+ 'importintro' => '<p class="information">The file you upload will need to have the attributes of the records on    the first line.
     Make sure that the email column is called "email" and not something like "e-mail" or
     "Email Address".
     Case is not important.

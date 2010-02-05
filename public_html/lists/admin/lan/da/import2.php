@@ -64,7 +64,7 @@ $lan = array(
 'Add a list' => 'Tilf&oslash;j liste',
 'Select the groups to add the users to' => 'V&aelig;lg grupper som brugerne skal tilf&oslash;jes',
 'automatically added' => 'automatisk tilf&oslash;jet',
- 'importintro' => '<p>Filen du uploader skal have records attributterne p&aring; den f&oslash;rste linje.
+ 'importintro' => '<p class="information">Filen du uploader skal have records attributterne p&aring; den f&oslash;rste linje.
     Tjek at email kollonnen hedder "email" og ikke noget som "e-mail" eller
     "Email Address".
     Store eller sm&aring; bogstaver er underordnet.

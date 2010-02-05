@@ -7,14 +7,14 @@ $lan = array(
   'Changes saved' => 'Cambiamenti Salvati',
   'Error adding new admin' => 'Errore nell\'aggiunta nuovo Amministratore',
   'strAccessExplain' => '<hr/>
-<p>Imposta i permessi per visualizzare le pagine:</p>
+<p class="information">Imposta i permessi per visualizzare le pagine:</p>
 <ul>
 <li>All: l\'amministratore ha accesso alla pagina senza restrizioni.</li>
 <li>View: l\'amministratore pu&ograve; visualizzare i contenuti della pagina, ma non pu&ograve apportare modifiche. Al momento funziona solo con le pagine "utente", "utenti" e "membri".</li>
 <li>None: l\'amministratore non pu&ograve; visualizzare la pagina.</li>
 <li>Owner: l\'amministratore pu&ograve; visualizzare la pagina, ma pu&ograve; visualizzare solo il contenuto delle liste che amministra.</li>
 </ul>
-<p>Nota: la password dell\'Amministratore deve essere lunga almeno 4 caratteri</p>
+<p class="information">Nota: la password dell\'Amministratore deve essere lunga almeno 4 caratteri</p>
 ',
 'Edit Administrator' => 'Configura un Amministratore',
 'Admin Details' => 'Dettagli Amministratore',

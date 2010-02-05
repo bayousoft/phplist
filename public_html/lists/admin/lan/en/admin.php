@@ -7,15 +7,15 @@ $lan = array(
   'Changes saved' => 'Changes saved',
   'Error adding new admin' => 'Error adding new admin',
   'strAccessExplain' => '<hr/>
-<p>Set permissions to view pages in the system:</p>
+<p class="information">Set permissions to view pages in the system:</p>
 <ul>
 <li>All: admin has access to page without restrictions</li>
-<li>View: admin can view content of pages, but not change anything. This currently only works
+<li>View: admin can view content of pages, but not change anything. This currently only work
 for the "user", "users" and "members" pages.</li>
 <li>None: admin cannot see this page</li>
 <li>Owner: admin can see this page, but only see the content of the lists they own</li>
 </ul>
-<p>Note: Admin Password must be at least 4 characters long</p>
+<p class="information">Note: Admin Password must be at least 4 characters long</p>
 ',
 'Edit Administrator' => 'Edit Administrator',
 'Admin Details' => 'Admin Details',

@@ -7,10 +7,10 @@ $lan = array(
   'Changes saved' => 'Wijzigingen opgeslaan',
   'Error adding new admin' => 'Fout bij toevoegen van nieuwe admin',
   'strAccessExplain' => '<hr/>
-<p>Toegangkelijkheid van de admin instellen:</p>
+<p class="information">Toegangkelijkheid van de admin instellen:</p>
 <ul>
 <li>Volledig: admin kan alle pagina&acute;s betreden zonder beperkingen</li>
-<li>Bekijken: admin kan pagina&acute;s bekijken maar niks wijzigen. Momenteel werkt dit enkel
+<li>Bekijken: admin kan pagina&acute;s bekijken maar niks wijzigen. Momenteel werkt dit enke
 voor de "gebruiker", "gebruikers" en "leden" pagina&acute;s.</li>
 <li>Geen: admin kan deze pagina niet zien.</li>
 <li>Eigenaar: admin kan deze pagina zien, maar ziet enkel de inhoud van de lijsten die hij bezit.</li>

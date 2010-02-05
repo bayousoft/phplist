@@ -7,15 +7,15 @@ $lan = array(
   'Changes saved' => 'A változtatások mentése megtörtént',
   'Error adding new admin' => 'Hiba történt az új adminisztrátor hozzáadásakor',
   'strAccessExplain' => '<hr/>
-<p>Az oldalmegtekintés jogainak beállítása a rendszerben:</p>
+<p class="information">Az oldalmegtekintés jogainak beállítása a rendszerben:</p>
 <ul>
 <li>Mind: az adminisztrátor korlátozások nélkül hozzáférhet az oldalhoz</li>
-<li>Nézet: az adminisztrátor megtekintheti az oldalak tartalmát, viszont semmit sem módosíthat. Ez jelenleg a
+<li>Nézet: az adminisztrátor megtekintheti az oldalak tartalmát, viszont semmit sem módosíthat. Ez jelenleg
 "felhasználó", "felhasználók" és a "tagok" oldalakon működik.</li>
 <li>Nincs: az adminisztrátor nem tekintheti meg ezt az oldalt</li>
 <li>Tulajdonos: az adminisztrátor láthatja ezt az oldalt, de csak az ő tulajdonukban lévő listák tartalmát láthatja</li>
 </ul>
-<p>Megjegyzés: Az adminisztrátor jelszava legalább 4 karakterből álljon</p>
+<p class="information">Megjegyzés: Az adminisztrátor jelszava legalább 4 karakterből álljon</p>
 ',
 'Edit Administrator' => 'Adminisztrátor módosítása',
 'Admin Details' => 'Admin adatai',

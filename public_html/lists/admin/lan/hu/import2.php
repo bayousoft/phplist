@@ -64,7 +64,7 @@ $lan = array(
 'Add a list' => 'Lista hozzáadása',
 'Select the groups to add the users to' => 'Válassza ki a csoportokat, melyekhez hozzá akarja adni a felhasználókat',
 'automatically added' => 'automatikusan hozzáadva',
- 'importintro' => '<p>Az Ön által feltöltendő fájl első sorában kell lennie a rekordok tulajdonságainak.
+ 'importintro' => '<p class="information">Az Ön által feltöltendő fájl első sorában kell lennie a rekordok tulajdonságainak.
     Győződjön meg róla, hogy az e-mail cím oszlopnak "email"-e a neve, s nem olyasmi-e, hogy "e-mail" vagy
     "Email cím".
     Az írásmód nem fontos.

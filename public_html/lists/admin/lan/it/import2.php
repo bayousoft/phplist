@@ -64,7 +64,7 @@ $lan = array(
 'Add a list' => 'Aggiungi una lista',
 'Select the groups to add the users to' => 'Seleziona i gruppi a cui aggiungere gli utenti',
 'automatically added' => 'aggiunto automaticamente',
- 'importintro' => '<p>Il file caricato dovr&agrave; avere gli attributo dei records nella  prima riga.
+ 'importintro' => '<p class="information">Il file caricato dovr&agrave; avere gli attributo dei records nella  prima riga.
     Assicurati che la colonna email sia chiamata "email" e non in altri modi come "e-mail" 
     "Indirizzi Email".
     La presenza di maiuscole non &egrave; importante.

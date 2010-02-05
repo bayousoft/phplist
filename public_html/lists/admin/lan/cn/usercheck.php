@@ -2,7 +2,7 @@
 $lan = array (
   'existingusers' => '已经存在的使用者',
   'nonexistingusers' => '不存在的使用者',
-  'existcheckintro' => '<p>检查使用者是否存在的页面</p>',
+  'existcheckintro' => '检查使用者是否存在的页面',
   'whatistype' => '您希望检查什麽类型的资讯',
   'foreignkey' => '外部键',
   'email' => 'Email',
