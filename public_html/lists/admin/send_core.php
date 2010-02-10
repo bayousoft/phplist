@@ -84,7 +84,7 @@ if (!$id) {
   $id = Sql_Insert_Id($GLOBALS['tables']['message'], 'id');
   # 0008720: Using -p send from the commandline doesn't seem to work '
   if(!$GLOBALS["commandline"]){
-    Redirect($_GET["page"].'&id="'.$id.'"');
+    Redirect($_GET["page"].'&id='.$id);
     exit;
   }
 }
@@ -105,7 +105,7 @@ if ($id) {
 
   require dirname(__FILE__)."/structure.php";  // This gets the database structures into DBStruct
 
-  $result = Sql_query("SELECT * FROM {$tables["message"]} where id = $id $ownership");
+  $result = Sql_query("SELECT * FROM {$tables['message']} where id = $id $ownership");
   if (!Sql_Num_Rows($result)) {
     print $GLOBALS['I18N']->get("noaccess");
     $done = 1;
@@ -1285,9 +1285,13 @@ if (!$done) {
 
   #0013076: different content when forwarding 'to a friend'
   $maincontent .= '<tr><td colspan="2">'.$GLOBALS['I18N']->get("messagefooter").'. <br/>
-    '.$GLOBALS['I18N']->get("messagefooterexplanation").'<p class="information">'.
-    $GLOBALS['I18N']->get("Use <b>[FORWARD]</b> to add a personalised URL to forward the message to someone else.").
-  '</p></td></tr>
+    <p class="information">'.
+    $GLOBALS['I18N']->get("messagefooterexplanation1").'</p>
+    <p class="information">'.
+    $GLOBALS['I18N']->get("messagefooterexplanation2").'</p>
+    <p class="information">'.
+    $GLOBALS['I18N']->get("messagefooterexplanation3").'</p>
+   </td></tr>
   <tr><td colspan="2"><textarea name="footer" cols="65" rows="5">'.$footer.'</textarea></td></tr>
   </table>';
   $forwardcontent .= '<tr><td colspan="2">'.$GLOBALS['I18N']->get("forwardfooter").'. <br/>
@@ -1339,10 +1343,10 @@ if (!$done) {
       $att_content .= '<tr><td colspan="2">'.$ls->display().'</td></tr>';
 
   #    if ($tabletext) {
-  #      print "<tr><td colspan="2"><table class="x" border="1"><tr><td>Filename</td><td>Description</td><td>Size</td><td>&nbsp;</td></tr>\n";
+  #      print '<tr><td colspan="2"><table class="x" border="1"><tr><td>Filename</td><td>Description</td><td>Size</td><td>&nbsp;</td></tr>\n';
   #      print "$tabletext";
-  #      print "<tr><td colspan="4" align="\""center\"><p class="\""submit\"><input type="\""submit\" name="deleteatt" value="\""Delete Checked\"/></p></td></tr>";
-  #      print "</table></td></tr>\n";
+  #      print '<tr><td colspan="4" align="center"><p class="submit"><input type="submit" name="deleteatt" value="Delete Checked"/></p></td></tr>';
+  #      print '</table></td></tr>\n';
   #    }
     }
     for ($att_cnt = 1;$att_cnt <= NUMATTACHMENTS;$att_cnt++) {
@@ -1375,7 +1379,7 @@ if (!$done) {
 
   // Display the HTML for the "Send Test" button, and the input field for the email addresses
   $sendtest_content = sprintf('<hr /><table class="sendTest"><tr><td valign="top">
-    <p class="submit"><input type="submit" name="sendtest" value="%s"/></p> %s: </td>
+    <input class="submit" type="submit" name="sendtest" value="%s"/>%s: </td>
     <td><input type="text" name="testtarget" size="40" value="'.$_POST["testtarget"].'"/><br />%s
     </td></tr></table><hr />',
     $GLOBALS['I18N']->get('sendtestmessage'),$GLOBALS['I18N']->get('toemailaddresses'),
@@ -1435,7 +1439,7 @@ if (!$done) {
   }
 
   if (!$any) {
-    $criteria_content = '<p class="information">'.$GLOBALS['I18N']->get('nocriteria')."</p>";
+    $criteria_content = '<p class="information">'.$GLOBALS['I18N']->get('nocriteria').'</p>';
   } else {
     $criteria_content .= '</table>\n'.$criteria_acc;
   #  $shader = new WebblerShader("Message Criteria");
@@ -1763,9 +1767,12 @@ if (!$_POST["status"]) {
   $savecaption = $GLOBALS['I18N']->get('savechanges');#"Save &quot;".$_POST["status"]."&quot; message edits";
 
 }
-print '<hr/><table class="sendSubmit"><tr><td><p class="submit"><input type="submit" name="save" value="'.$savecaption.'"/></p></td></tr></table><br/><hr/><br/>';
-print '<input type="hidden" name="id" value="'.$id.'"/>\n';
-print '<input type="hidden" name="status" value="'.$_POST["status"].'"/>\n';
-print '<input type="hidden" name="expand" value="0"/>';
+print '<hr/><table class="sendSubmit"><tr><td><p class="submit">
+    <input type="submit" name="save" value="'.$savecaption.'"/>
+    </p></td></tr></table><br/><hr/><br/>
+    <input type="hidden" name="id" value="'.$id.'"/>
+    <input type="hidden" name="status" value="'.$_POST["status"].'"/>
+    <input type="hidden" name="expand" value="0"/>
+';
 
 ?>
