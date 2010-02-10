@@ -153,17 +153,17 @@ function formStart($additional="") {
   global $form_action,$page,$p;
   # depending on server software we can post to the directory, or need to pass on the page
   if ($form_action) {
-    $html = sprintf('<form method=post action="%s" %s>',$form_action,$additional);
+    $html = sprintf('<form method="post" action="%s" %s>',$form_action,$additional);
     # retain all get variables as hidden ones
-		foreach (array (
-				"p",
-				"page"
-			) as $key) {
+    foreach (array (
+		    "p",
+		    "page"
+		    ) as $key) {
       $val = $_REQUEST[$key];
       if ($val)
-				$html .= sprintf('<input type="hidden" name="%s" value="%s">', $key, $val);
+	$html .= sprintf('<input type="hidden" name="%s" value="%s" />', $key, $val);
     }
-	} else
+  } else
     $html = sprintf('<form method="post" action="" %s>',$additional);
 /*    $html = sprintf('<form method=post action="./" %s>
     %s',$additional,isset($page) ?
@@ -395,8 +395,8 @@ function newMenu() {
   if (!CLICKTRACK) {
     unset($GLOBALS["main_menu"]['statsmgt']);
   }
-  $spb ='<span class="menulinkleft">';
-  $spe = '</span>';
+  $spb ='<div class="menulinkleft">';
+  $spe = '</div>';
   $nm = strtolower(NAME);
   if ($nm != "phplist") {
     $GLOBALS["main_menu"]["community"] = "";
