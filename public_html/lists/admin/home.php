@@ -69,7 +69,6 @@ if (!stristr($_SERVER['HTTP_USER_AGENT'],'firefox')) {
 
 ?>
 
-<br/><br/>
 <?php
 #$ls = new WebblerListing("System Functions");
 
