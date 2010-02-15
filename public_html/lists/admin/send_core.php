@@ -84,14 +84,14 @@ if (!$id) {
   $id = Sql_Insert_Id($GLOBALS['tables']['message'], 'id');
   # 0008720: Using -p send from the commandline doesn't seem to work '
   if(!$GLOBALS["commandline"]){
-    Redirect($_GET["page"].'&id='.$id);
+    Redirect($_GET["page"].'&amp;id='.$id);
     exit;
   }
 }
 
 if (isset($_GET['deleterule']) && $_GET["deleterule"]) {
   Sql_Query(sprintf('delete from %s where name = "criterion%d" and id = %d',$GLOBALS["tables"]["messagedata"],$_GET["deleterule"],$_GET["id"]));
-  Redirect($_GET["page"].'&id="'.$id.'"&tab="'.$_GET["tab"].'"');
+  Redirect($_GET["page"].'&amp;id="'.$id.'"&tab="'.$_GET["tab"].'"');
 }
 ob_end_flush();
 
@@ -1066,62 +1066,54 @@ if (!$done) {
   $scheduling_content = '<table class="sendScheduling">';
   $maincontent .= '
   <tr><td>'.Help("subject").' '.$GLOBALS['I18N']->get("Subject").':</td>
-    <td><input type="text" name="msgsubject"
-    value="'.htmlentities(iconv('ISO-8859-1','UTF-8',$subject),ENT_QUOTES,'UTF-8').'" size="40"/></td></tr>
-  <tr>
-    <td colspan="2">
-    </td></tr>
+    <td><input type="text" name="msgsubject" value="'.htmlentities(iconv('ISO-8859-1','UTF-8',$subject),ENT_QUOTES,'UTF-8').'" size="40"/></td>
+  </tr>
+  <tr><td colspan="2"></td></tr>
   <tr><td>'.Help("from").' '.$GLOBALS['I18N']->get("fromline").':</td>
-    <td><input type="text" name="from"
-    value="'.htmlentities(iconv('ISO-8859-1','UTF-8',$from),ENT_QUOTES,'UTF-8').'" size="40"/></td></tr>
-  <tr><td colspan="2">
-
-  </td></tr>';
+    <td><input type="text" name="from" value="'.htmlentities(iconv('ISO-8859-1','UTF-8',$from),ENT_QUOTES,'UTF-8').'" size="40"/></td>
+  </tr>
+  <tr><td colspan="2"></td></tr>
+';
 
   #0013076: different content when forwarding 'to a friend'
   $forwardcontent .= $GLOBALS['I18N']->get("When a user forwards to a friend," .
   " the friend will receive this message instead of the one on the content tab.").
   '<tr><td>'.Help("subject").' '.$GLOBALS['I18N']->get("Subject").':</td>
-    <td><input type="text" name="forwardsubject"
-    value="'.htmlentities($forwardsubject,ENT_QUOTES,'UTF-8').'" size="40"/></td></tr>
-  <tr>
-    <td colspan="2">
-    </td></tr>
-  <td colspan="2">
-
-  </td></tr>';
+    <td><input type="text" name="forwardsubject" value="'.htmlentities($forwardsubject,ENT_QUOTES,'UTF-8').'" size="40"/></td>
+  </tr>
+  <tr><td colspan="2"></td></tr>
+  <tr><td colspan="2"></td></tr>';
 
   $scheduling_content .= '
   <tr><td>'.Help("embargo").' '.$GLOBALS['I18N']->get("embargoeduntil").':</td>
-    <td>'.$embargo->showInput("embargo","",$_POST["embargo"]).'</td></tr>
-  </td></tr>';
+    <td>'.$embargo->showInput("embargo","",$_POST["embargo"]).'</td>
+  </tr>';
 
   if (USE_REPETITION) {
     $repeatinterval = $_POST["repeatinterval"];
 
     $scheduling_content .= '
-    <tr><td>'.Help("repetition").' '.$GLOBALS['I18N']->get("repeatevery").':</td><td>
-    <select name="repeatinterval">
-    <option value="0"';
-      if ($repeatinterval == 0) { $scheduling_content .= " SELECTED"; }
+    <tr><td>'.Help("repetition").' '.$GLOBALS['I18N']->get("repeatevery").':</td>
+        <td><select name="repeatinterval">
+      <option value="0"';
+      if ($repeatinterval == 0) { $scheduling_content .= ' selected="selected"'; }
       $scheduling_content .= '>-- '.$GLOBALS['I18N']->get("norepetition").'</option>
       <option value="60"';
-      if ($repeatinterval == 60) { $scheduling_content .= " SELECTED"; }
+      if ($repeatinterval == 60) { $scheduling_content .= ' selected="selected"'; }
       $scheduling_content .= '>'.$GLOBALS['I18N']->get("hour").'</option>
       <option value="1440"';
-      if ($repeatinterval == 1440) { $scheduling_content .= " SELECTED"; }
+      if ($repeatinterval == 1440) { $scheduling_content .= ' selected="selected"'; }
       $scheduling_content .= '>'.$GLOBALS['I18N']->get("day").'</option>
       <option value="10080"';
-      if ($repeatinterval == 10080) { $scheduling_content .= " SELECTED"; }
+      if ($repeatinterval == 10080) { $scheduling_content .= ' selected="selected"'; }
       $scheduling_content .= '>'.$GLOBALS['I18N']->get("week").'</option>
       </select>
-
-    </td></tr>
-    </td></tr>
-    <tr><td>  '.$GLOBALS['I18N']->get("repeatuntil").':</td><td>'.$repeatuntil->showInput("repeatuntil","",$_POST["repeatuntil"]).'</td></tr>
-    </td></tr>';
+        </td>
+        <td>  '.$GLOBALS['I18N']->get("repeatuntil").':</td>
+        <td>'.$repeatuntil->showInput("repeatuntil","",$_POST["repeatuntil"]);
+      $scheduling_content .= '</td></tr>';
   }
-
+  $scheduling_content.="</table>";
 /*
   $formatting_content .= '
     <tr><td colspan="2">'.Help("format").' '.$GLOBALS['I18N']->get("format").': <b>'.$GLOBALS['I18N']->get("autodetect").'</b>
@@ -1135,21 +1127,21 @@ if (!$done) {
     $formatting_content .= $htmlformatted == "0" ?"checked":"";
     $formatting_content .= '/></td></tr>';
 */
-  $formatting_content .= '<input type="hidden" name="htmlformatted" value="auto"/>';
+  $formatting_content .= '<tr><td><input type="hidden" name="htmlformatted" value="auto"/></td></tr>';
 
   $formatting_content .= '
     <tr><td colspan="2">'.Help("sendformat").' '.$GLOBALS['I18N']->get("sendas").':
   '.$GLOBALS['I18N']->get("html").' <input type="radio" name="sendformat" value="HTML" ';
-    $formatting_content .= $_POST["sendformat"]=="HTML"?"checked":"";
+    $formatting_content .= $_POST["sendformat"]=="HTML"?'checked="checked"':'';
     $formatting_content .= '/>
   '.$GLOBALS['I18N']->get("text").' <input type="radio" name="sendformat" value="text" ';
-    $formatting_content .= $_POST["sendformat"]=="text"?"checked":"";
+    $formatting_content .= $_POST["sendformat"]=="text"?'checked="checked"':'';
     $formatting_content .= '/>
   ';
 
   if (USE_PDF) {
     $formatting_content .= $GLOBALS['I18N']->get("pdf").' <input type="radio" name="sendformat" value="PDF" ';
-    $formatting_content .= $_POST["sendformat"]=="PDF"?"checked":"";
+    $formatting_content .= $_POST["sendformat"]=="PDF"?'checked="checked"':'';
     $formatting_content .= '/>';
   }
 
@@ -1160,7 +1152,7 @@ if (!$done) {
 
   if (USE_PDF) {
     $formatting_content .= $GLOBALS['I18N']->get("textandpdf").' <input type="radio" name="sendformat" value="text and PDF" ';
-    $formatting_content .= $_POST["sendformat"]=="text and PDF" ?"checked":"";
+    $formatting_content .= $_POST["sendformat"]=="text and PDF" ?'checked="checked"':'';
     $formatting_content .= '/>';
   }
 
@@ -1188,6 +1180,8 @@ if (!$done) {
     }
     $formatting_content .= '</select></td></tr>';
   }
+  $formatting_content .= '</table>
+';
 
 //obsolete, moved to rssmanager plugin
 //  if (ENABLE_RSS) {
@@ -1350,7 +1344,7 @@ if (!$done) {
   #    }
     }
     for ($att_cnt = 1;$att_cnt <= NUMATTACHMENTS;$att_cnt++) {
-      $att_content .= sprintf  ('<tr><td>%s</td><td><input type="file" name="attachment%d"/>&nbsp;&nbsp;<p class="submit"><input type="submit" name="save" value="%s"/></p></td></tr>',$GLOBALS['I18N']->get('newattachment'),$att_cnt,$GLOBALS['I18N']->get('addandsave'));
+      $att_content .= sprintf  ('<tr><td>%s</td><td><input type="file" name="attachment%d"/>&nbsp;&nbsp;<input class="submit" type="submit" name="save" value="%s"/></td></tr>',$GLOBALS['I18N']->get('newattachment'),$att_cnt,$GLOBALS['I18N']->get('addandsave'));
       if (FILESYSTEM_ATTACHMENTS) {
         $att_content .= sprintf('<tr><td><b>%s</b> %s:</td><td><input type="text" name="localattachment%d" size="50"/></td></tr>',$GLOBALS['I18N']->get('or'),$GLOBALS['I18N']->get('pathtofile'),$att_cnt,$att_cnt);
       }
@@ -1378,10 +1372,10 @@ if (!$done) {
   }
 
   // Display the HTML for the "Send Test" button, and the input field for the email addresses
-  $sendtest_content = sprintf('<hr /><table class="sendTest"><tr><td valign="top">
+  $sendtest_content = sprintf('<table class="sendTest"><tr><td valign="top">
     <input class="submit" type="submit" name="sendtest" value="%s"/>%s: </td>
     <td><input type="text" name="testtarget" size="40" value="'.$_POST["testtarget"].'"/><br />%s
-    </td></tr></table><hr />',
+    </td></tr></table>',
     $GLOBALS['I18N']->get('sendtestmessage'),$GLOBALS['I18N']->get('toemailaddresses'),
     $GLOBALS['I18N']->get('sendtestexplain'));
 
@@ -1447,7 +1441,7 @@ if (!$done) {
   #  $shader->hide();
   #  print $shader->display();
   }
-
+						      
   ##############################
   # Stacked attributes, display
   ##############################
@@ -1608,9 +1602,9 @@ if (!$done) {
     sprintf('%s <input type="radio" name="criteria_match" value="all" %s/>
       %s <input type="radio" name="criteria_match" value="any" %s/>',
       $GLOBALS['I18N']->get('matchallrules'),
-      $existing_overall_operator == "all"? "checked":"",
+      $existing_overall_operator == "all"? 'checked="checked"':'',
       $GLOBALS['I18N']->get('matchanyrules'),
-      $existing_overall_operator == "any"? "checked":"");
+      $existing_overall_operator == "any"? 'checked="checked"':'');
 
   $criteria_content = $criteria_overall_operator.$existing_criteria.$att_js.
   '<div class="criteria_container">'.
@@ -1767,9 +1761,9 @@ if (!$_POST["status"]) {
   $savecaption = $GLOBALS['I18N']->get('savechanges');#"Save &quot;".$_POST["status"]."&quot; message edits";
 
 }
-print '<hr/><table class="sendSubmit"><tr><td><p class="submit">
-    <input type="submit" name="save" value="'.$savecaption.'"/>
-    </p></td></tr></table><br/><hr/><br/>
+print '<table class="sendSubmit"><tr><td>
+    <input class="submit" type="submit" name="save" value="'.$savecaption.'"/>
+    </td></tr></table>
     <input type="hidden" name="id" value="'.$id.'"/>
     <input type="hidden" name="status" value="'.$_POST["status"].'"/>
     <input type="hidden" name="expand" value="0"/>
