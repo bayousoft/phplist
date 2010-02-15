@@ -63,8 +63,9 @@ $lan = array (
   'expand' => 'kinyitás',
   'plaintextversion' => 'Az üzenet egyszerű szöveges változata',
   'messagefooter' => 'Az üzenet lábléce',
-  'messagefooterexplanation' => 'Az <b>[UNSUBSCRIBE]</b> beszúrásával adhatja meg minden felhasználó személyes lemondási URL-címét.
-    <br/>A <b>[PREFERENCES]</b> beszúrásával adhatja meg a felhasználók adatmódosításának személyes URL-címét.',
+  'messagefooterexplanation1' => 'Az <b>[UNSUBSCRIBE]</b> beszúrásával adhatja meg minden felhasználó személyes lemondási URL-címét.',
+  'messagefooterexplanation2' => 'A <b>[PREFERENCES]</b> beszúrásával adhatja meg a felhasználók adatmódosításának személyes URL-címét.',
+  'messagefooterexplanation3' => 'Use <b>[FORWARD]</b> to add a personalised URL to forward the message to someone else.',
   'addattachments' => 'Csatoljon mellékleteket az üzenetéhez',
   'uploadlimits' => 'A feltöltésnek a kiszolgáló által beállított következő korlátozásai vannak',
   'maxtotaldata' => 'A kiszolgálónak küldés alatt lévő összes adat legnagyobb mérete',

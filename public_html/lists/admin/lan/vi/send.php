@@ -63,9 +63,9 @@ $lan = array (
   'expand' => 'expand',
   'plaintextversion' => 'Plain text version of message',
   'messagefooter' => 'Ph&#7847;n cu&#7889;i th&#432;',
-  'messagefooterexplanation' => 'D&ugrave;ng <b>[UNSUBSCRIBE]</b> &#273;&#7875; ch&egrave;n &#273;&#432;&#7901;ng d&#7851;n URL cho ph&eacute;p h&#7897;i vi&ecirc;n r&uacute;t t&ecirc;n kh&#7887;i danh s&aacute;ch.
-    <br/>
-    D&ugrave;ng<b>[PREFERENCES]</b> &#273;&#7875; ch&egrave;n &#273;&#432;&#7901;ng d&#7851;n URL cho ph&eacute;p h&#7897;i vi&ecirc;n c&#7853;p nh&#7853;t chi ti&#7871;t &#273;&#259;ng k&yacute;',
+  'messagefooterexplanation' => 'D&ugrave;ng <b>[UNSUBSCRIBE]</b> &#273;&#7875; ch&egrave;n &#273;&#432;&#7901;ng d&#7851;n URL cho ph&eacute;p h&#7897;i vi&ecirc;n r&uacute;t t&ecirc;n kh&#7887;i danh s&aacute;ch.',
+  'messagefooterexplanation3' => 'D&ugrave;ng<b>[PREFERENCES]</b> &#273;&#7875; ch&egrave;n &#273;&#432;&#7901;ng d&#7851;n URL cho ph&eacute;p h&#7897;i vi&ecirc;n c&#7853;p nh&#7853;t chi ti&#7871;t &#273;&#259;ng k&yacute;',
+  'messagefooterexplanation3' => 'Use <b>[FORWARD]</b> to add a personalised URL to forward the message to someone else.',
   'addattachments' => 'Th&ecirc;m v&agrave;o file &#273;&iacute;nh k&egrave;m',
   'uploadlimits' => 'Server c&oacute; m&#7897;t s&#7889; h&#7841;n ch&#7871; t&#7843;i l&ecirc;n file &#273;&iacute;nh k&egrave;m sau ',
   'maxtotaldata' => 'T&#7893;ng k&iacute;ch th&#432;&#7899;c d&#7919; li&#7879;u g&#7917;i l&ecirc;n server ',

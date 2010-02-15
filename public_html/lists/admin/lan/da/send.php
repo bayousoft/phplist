@@ -63,8 +63,9 @@ $lan = array (
   'expand' => 'udvid',
   'plaintextversion' => 'Ren tekst version af besked',
   'messagefooter' => 'Besked footer',
-  'messagefooterexplanation' => 'Brug <b>[UNSUBSCRIBE]</b> til at inds&aelig;tte den personlige afmeldings URL til hver bruger.
-    <br/>Brug <b>[PREFERENCES]</b> til at inds&aelig;tte den personlige URL til en bruger til at opdatere deres detaljer',
+  'messagefooterexplanation1' => 'Brug <b>[UNSUBSCRIBE]</b> til at inds&aelig;tte den personlige afmeldings URL til hver bruger.',
+  'messagefooterexplanation2' => 'Brug <b>[PREFERENCES]</b> til at inds&aelig;tte den personlige URL til en bruger til at opdatere deres detaljer',
+  'messagefooterexplanation3' => 'Use <b>[FORWARD]</b> to add a personalised URL to forward the message to someone else.',
   'addattachments' => 'Tilf&oslash;j vedh&aelig;ftelser i din besked',
   'uploadlimits' => 'Upload har f&oslash;lgende gr&aelig;nse sat af serveren',
   'maxtotaldata' => 'Maksimum st&oslash;rrelse af data i alt, der bliver sendt til serveren',

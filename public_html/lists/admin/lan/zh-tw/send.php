@@ -57,8 +57,9 @@ $lan = array (
   'expand' => '展開',
   'plaintextversion' => '純文字格式電子報',
   'messagefooter' => '電子報頁底',
-  'messagefooterexplanation' => '使用 <b>[UNSUBSCRIBE]</b> 來加入訂閱者個人的取消訂閱網址
-    <br/>使用 <b>[PREFERENCES]</b> 來加入訂閱者修改個人資料的網址',
+  'messagefooterexplanation1' => '使用 <b>[UNSUBSCRIBE]</b> 來加入訂閱者個人的取消訂閱網址',
+  'messagefooterexplanation2' => '使用 <b>[PREFERENCES]</b> 來加入訂閱者修改個人資料的網址',
+  'messagefooterexplanation3' => 'Use <b>[FORWARD]</b> to add a personalised URL to forward the message to someone else.',
   'addattachments' => '新增附加檔案',
   'uploadlimits' => '上傳檔案有下面限制',
   'maxtotaldata' => '總資料量上限',

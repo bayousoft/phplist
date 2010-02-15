@@ -67,9 +67,9 @@ $lan = array (
   'expand' => 'expandir',
   'plaintextversion' => 'Vers&atilde;o texto puro',
   'messagefooter' => 'Rodap&eacute; da Mensagem',
-  'messagefooterexplanation' => 'Use <b>[UNSUBSCRIBE]</b> para  inserir a URL da p&aacute;gina de cancelamento de assinatura. 
-    <br/>Use <b>[PREFERENCES]</b> para inserir a URL da p&aacute;gina de atualiza&ccedil;&atilde;o do usu&aacute;rio',
-  'use [FORWARD] to add a personalised URL to forward the message to someone else.' => 'Use <b>[FORWARD]</b> para adicionar a URL da p&aacute;gina para reenvio da mesnsagem para outra email',
+  'messagefooterexplanation1' => 'Use <b>[UNSUBSCRIBE]</b> para  inserir a URL da p&aacute;gina de cancelamento de assinatura. ',
+  'messagefooterexplanation2' => 'Use <b>[PREFERENCES]</b> para inserir a URL da p&aacute;gina de atualiza&ccedil;&atilde;o do usu&aacute;rio',
+  'messagefooterexplanation3' => 'Use <b>[FORWARD]</b> para adicionar a URL da p&aacute;gina para reenvio da mesnsagem para outra email',
   'addattachments' => 'Anexar arquivos a mensagem',
   'uploadlimits' => 'Limite de upload configurado no servidor',
   'maxtotaldata' => 'Tamanho m&aacute;ximo de dados enviado ao servidor',

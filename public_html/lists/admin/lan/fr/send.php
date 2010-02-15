@@ -63,8 +63,9 @@ s&eacute;lectionnez la fr&eacute;quence d&rsquo;envoi et utilisez [RSS] dans vot
   'expand' => 'd&eacute;compresser',
   'plaintextversion' => 'Version texte du message',
   'messagefooter' => 'Pied de page du message',
-  'messagefooterexplanation' => 'Utilisez <b>[UNSUBSCRIBE]</b> pour inclure l&rsquo;URL de d&eacute;sinscription propre &agrave; chaque utilisateur.
-    <br/>Utilisez <b>[PREFERENCES]</b> pour inclure l&rsquo;URL personnalis&eacute;e pour qu&rsquo;un utilisateur puisse mettre &agrave; jour ses donn&eacute;es personnelles',
+  'messagefooterexplanation1' => 'Utilisez <b>[UNSUBSCRIBE]</b> pour inclure l&rsquo;URL de d&eacute;sinscription propre &agrave; chaque utilisateur.',
+  'messagefooterexplanation2' => 'Utilisez <b>[PREFERENCES]</b> pour inclure l&rsquo;URL personnalis&eacute;e pour qu&rsquo;un utilisateur puisse mettre &agrave; jour ses donn&eacute;es personnelles',
+  'messagefooterexplanation3' => 'Use <b>[FORWARD]</b> to add a personalised URL to forward the message to someone else.',
   'addattachments' => 'Ajouter des pi&egrave;ce-jointes &agrave; votre message',
   'uploadlimits' => 'Le t&eacute;l&eacute;chargement est limit&eacute; par votre serveur comme suit',
   'maxtotaldata' => 'Taille maximale totale des donn&eacute;es envoy&eacute;es vers le serveur',

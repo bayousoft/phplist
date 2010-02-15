@@ -64,8 +64,9 @@ $lan = array (
   'expand' => 'Erweitern',
   'plaintextversion' => 'Text-Version der Nachricht',
   'messagefooter' => 'Fusszeile',
-  'messagefooterexplanation' => 'Mit <b>[UNSUBSCRIBE]</b> f&uuml;gen Sie einen personalisierten Abmelde-Link f&uuml;r jeden Abonnenten ein.
-    <br/>Mit <b>[PREFERENCES]</b> f&uuml;gen Sie einen Link auf das pers&ouml;nliche Profil f&uuml;r jeden Abonnenten ein',
+  'messagefooterexplanation1' => 'Mit <b>[UNSUBSCRIBE]</b> f&uuml;gen Sie einen personalisierten Abmelde-Link f&uuml;r jeden Abonnenten ein.',
+  'messagefooterexplanation2' => 'Mit <b>[PREFERENCES]</b> f&uuml;gen Sie einen Link auf das pers&ouml;nliche Profil f&uuml;r jeden Abonnenten ein',
+  'messagefooterexplanation3' => 'Use <b>[FORWARD]</b> to add a personalised URL to forward the message to someone else.',
   'addattachments' => 'Anh&auml;nge zur Nachricht hinzuf&uuml;gen',
   'uploadlimits' => 'F&uuml;r Ihren Server gelten folgende Limiten',
   'maxtotaldata' => 'Maximale Datenmenge (total)',

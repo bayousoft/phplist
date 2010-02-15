@@ -57,8 +57,9 @@ $lan = array (
   'expand' => '展开',
   'plaintextversion' => '纯文字格式电子报',
   'messagefooter' => '电子报页底',
-  'messagefooterexplanation' => '使用 <b>[UNSUBSCRIBE]</b> 来加入订阅者个人的取消订阅网址
-    <br/>使用 <b>[PREFERENCES]</b> 来加入订阅者修改个人资料的网址',
+  'messagefooterexplanation1' => '使用 <b>[UNSUBSCRIBE]</b> 来加入订阅者个人的取消订阅网址',
+  'messagefooterexplanation2' => '使用 <b>[PREFERENCES]</b> 来加入订阅者修改个人资料的网址',
+  'messagefooterexplanation3' => 'Use <b>[FORWARD]</b> to add a personalised URL to forward the message to someone else.',
   'addattachments' => '新增附加档桉',
   'uploadlimits' => '上传档桉有下面限制',
   'maxtotaldata' => '总资料量上限',

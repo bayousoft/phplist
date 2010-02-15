@@ -63,8 +63,9 @@ $lan = array (
   'expand' => 'Vouw uit',
   'plaintextversion' => 'Tekst-enkel versie van het bericht',
   'messagefooter' => 'Bericht Footer',
-  'messagefooterexplanation' => 'Gebruik <b>[UNSUBSCRIBE]</b> om de persoonlijke schrijf-je-uit URL voor elke gebruiker in te voegen.
-    <br/>Gebruik <b>[PREFERENCES]</b> om een persoonlijke URL voor de gebruiker in te voegen waarmee die zijn instellingen kan wijzigen',
+  'messagefooterexplanation1' => 'Gebruik <b>[UNSUBSCRIBE]</b> om de persoonlijke schrijf-je-uit URL voor elke gebruiker in te voegen.',
+  'messagefooterexplanation2' => 'Gebruik <b>[PREFERENCES]</b> om een persoonlijke URL voor de gebruiker in te voegen waarmee die zijn instellingen kan wijzigen',
+  'messagefooterexplanation3' => 'Use <b>[FORWARD]</b> to add a personalised URL to forward the message to someone else.',
   'addattachments' => 'Voeg attachments toe aan je bericht',
   'uploadlimits' => 'De upload heeft de volgende limieten, geplaatst door de server',
   'maxtotaldata' => 'Maximum grootte van totale data verzonden aan de server',

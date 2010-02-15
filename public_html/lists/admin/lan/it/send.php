@@ -63,8 +63,9 @@ $lan = array (
   'expand' => 'espandi',
   'plaintextversion' => 'Versione del messaggio in formato testo semplice',
   'messagefooter' => 'footer messaggio',
-  'messagefooterexplanation' => 'Usa <b>[UNSUBSCRIBE]</b> per inserire l\'indirizzo URL impostato per cancellare l\'iscrizione.
-    <br/>Usa <b>[PREFERENCES]</b> per inserire l\'indirizzo URL in cui ogni utente pu&ograve; modificare le proprie preferenze <br /> Usa <b>[FORWARD]</b> per aggiungere una URL personalizzata per inoltrare il messaggio ad altri',
+  'messagefooterexplanation1' => 'Usa <b>[UNSUBSCRIBE]</b> per inserire l\'indirizzo URL impostato per cancellare l\'iscrizione.',
+  'messagefooterexplanation2' => 'Usa <b>[PREFERENCES]</b> per inserire l\'indirizzo URL in cui ogni utente pu&ograve; modificare le proprie preferenze.',
+  'messagefooterexplanation3' => 'Usa <b>[FORWARD]</b> per aggiungere una URL personalizzata per inoltrare il messaggio ad altri',
   'addattachments' => 'Aggiungi allegati al tuo messaggio',
   'uploadlimits' => 'Il caricamento ha i seguenti limiti impostati dal server',
   'maxtotaldata' => 'Quantit&agrave; massima di dati totali inviati al server',

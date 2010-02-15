@@ -62,8 +62,9 @@ $lan = array (
   'expand' => '拡張',
   'plaintextversion' => 'メッセージのテキスト形式バージョン',
   'messagefooter' => 'メッセージフッター',
-  'messagefooterexplanation' => '各ユーザにとってパーソナルな購読解除URLを挿入するためには<b>[UNSUBSCRIBE]</b>を利用してください。
-    <br/>詳細な情報をユーザが更新できるパーソナルなURLを挿入するためには<b>[PREFERENCES]</b>を利用してください。',
+  'messagefooterexplanation1' => '各ユーザにとってパーソナルな購読解除URLを挿入するためには<b>[UNSUBSCRIBE]</b>を利用してください。',
+  'messagefooterexplanation2' => '詳細な情報をユーザが更新できるパーソナルなURLを挿入するためには<b>[PREFERENCES]</b>を利用してください。',
+  'messagefooterexplanation3' => 'Use <b>[FORWARD]</b> to add a personalised URL to forward the message to someone else.',
   'addattachments' => 'メッセージに添付ファイルを追加',
   'uploadlimits' => 'アップロードにはサーバによる次の制限があります。',
   'maxtotaldata' => 'サーバに送信されるトータルデータの最大サイズ',

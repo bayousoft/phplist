@@ -63,8 +63,9 @@ $lan = array (
   'expand' => 'expand',
   'plaintextversion' => 'Plain text version of message',
   'messagefooter' => 'Message Footer',
-  'messagefooterexplanation' => '<p class="information">Use <b>[UNSUBSCRIBE]</b> to insert the personal unsubscribe URL for each user.</p>
-    <p class="information">Use <b>[PREFERENCES]</b> to insert the personal URL for a user to update their details.</p>',
+  'messagefooterexplanation1' => 'Use <b>[UNSUBSCRIBE]</b> to insert the personal unsubscribe URL for each user.',
+  'messagefooterexplanation2' => 'Use <b>[PREFERENCES]</b> to insert the personal URL for a user to update their details.',
+  'messagefooterexplanation3' => 'Use <b>[FORWARD]</b> to add a personalised URL to forward the message to someone else.',
   'addattachments' => 'Add attachments to your message',
   'uploadlimits' => 'The upload has the following limits set by the server',
   'maxtotaldata' => 'Maximum size of total data being sent to the server',

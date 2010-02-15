@@ -76,10 +76,9 @@ $lan = array (
   'expand' => 'expandir',
   'plaintextversion' => 'Versi&oacute; en texto plano del mensaje',
   'messagefooter' => 'Pie de mensaje',
-  'messagefooterexplanation' => 'Utilice <b>[UNSUBSCRIBE]</b> para incluir
-  una URL &uacute;nica para cada usuario, en la que se pueda desinscribir.
-    <br/>Utilice <b>[PREFERENCES]</b> para incluir una URL &uacute;nica
-  para cada usuario, en la que se pueda actualizar sus datos',
+  'messagefooterexplanation1' => 'Utilice <b>[UNSUBSCRIBE]</b> para incluir una URL &uacute;nica para cada usuario, en la que se pueda desinscribir.',
+  'messagefooterexplanation2' => 'Utilice <b>[PREFERENCES]</b> para incluir una URL &uacute;nica para cada usuario, en la que pueda actualizar sus datos',
+  'messagefooterexplanation3' => 'Utilice <b>[FORWARD]</b> para agregar una URL personalizada para reenviar el mensaje a otra persona.',
   'addattachments' => 'Adjuntar ficheros a su mensaje.',
   'uploadlimits' => 'El servidor ha establecido los siguientes
   l&iacute;mites en la carga de ficheros',
