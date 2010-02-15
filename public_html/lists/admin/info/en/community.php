@@ -35,7 +35,7 @@ time to continue development, but it also creates a history of questions, that c
 used by new users to get acquainted with the system</a>.</p>
 <p>To facilitate the phplist community several options are available:
 <ul>
-<li>The <a href="http://docs.phplist.com" target="_blank">The Documentation Wiki</a>. The documentation site is mostly for reference, and no questions should be posted to it.<br/><br/></li>
+<li>The <a href="http://docs.phplist.com" target="_blank">Documentation Wiki</a>. The documentation site is mostly for reference, and no questions should be posted to it.<br/><br/></li>
 <li>The <a href="http://forums.phplist.com/" target="_blank">Forums</a>. The forums are the place to post your questions and for others to answer them.<br/><br/></li>
 <li><a href="#bugtrack">Mantis</a>. Mantis is an issue tracker. This can be used to post feature requests and to report bugs. It can not be used for helpdesk questions.<br/><br/></li>
 </ul>
@@ -53,7 +53,8 @@ used by new users to get acquainted with the system</a>.</p>
 <input type="image" src="images/paypal.gif" border="0" name="submit" alt="Make payments with PayPal - it's fast, free and secure!">
 </form></p>
 <p>If you are a <b>regular user of phplist</b> and you think you have cracked most of it's issues
-you can help out by <a href="http://forums.phplist.com/" target="_blank">answering the questions of other users</a>. or writing pages in the <a href="#docscontrib">documentation site</a>.</p>
+you can help out by <a href="http://forums.phplist.com/" target="_blank">answering the questions of 
+other users</a>. or writing pages in the <a href="#docscontrib">documentation site</a>.</p>
 <p>If you are <b>new to phplist</b> and you are having problems with setting it up to work for
 your site, you can help by trying to find the solution in the above locations first, before
 immediately posting a "it does not work" message. Often the problems you may have are related
@@ -96,7 +97,10 @@ how well phplist is performing.</p></li>
 
 </p>
 <p><b><a name="bugtrack"></a>Mantis</b><br/>
-<a href="http://mantis.phplist.com/" target="_blank">Mantis</a> is the place to report issues you find with phplist. Your issue can be be anything related to phplist, comments and suggestions how to improve it or reports of a bug. If you report a bug, make sure to include as much information as possible to facilitate the developers in solving the problem.</p>
+<a href="http://mantis.phplist.com/" target="_blank">Mantis</a> is the place to report issues you find 
+with phplist. Your issue can be be anything related to phplist, comments and suggestions how to improve 
+it or reports of a bug. If you report a bug, make sure to include as much information as possible to 
+facilitate the developers in solving the problem.</p>
 <p>The minimum requirements for reporting a bug are your system details:</p>
 
 <?php if (!stristr($_SERVER['HTTP_USER_AGENT'],'firefox')) { ?>
