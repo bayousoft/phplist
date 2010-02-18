@@ -13,7 +13,7 @@ if (isset($_POST["usercheck"])) {
     }
     if (Sql_Num_Rows($exists)) {
       $id = Sql_Fetch_Array($exists);
-      $lsexist->addElement($user,PageUrl2("user&id=".$id["id"]));
+      $lsexist->addElement($user,PageUrl2("user&amp;id=".$id["id"]));
       $lsexist->addColumn($user,$GLOBALS["I18N"]->get('email'),$id['email']);
       $lsexist->addColumn($user,$GLOBALS["I18N"]->get('key'),$id['foreignkey']);
       $lsexist->addColumn($user,$GLOBALS["I18N"]->get('passwd'),$id['password']);

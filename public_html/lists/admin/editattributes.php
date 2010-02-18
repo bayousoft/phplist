@@ -15,7 +15,7 @@ function adminMenu() {
     $html .= menuLink("userattributes","user attributes");
     $req = Sql_Query('select * from attribute where type = "select" or type = "radio" or type = "checkboxgroup"');
     while ($row = Sql_Fetch_Array($req)) {
-      $html .= menuLink("editattributes&id=".$row["id"],"&gt;&nbsp;".$row["name"]);
+      $html .= menuLink("editattributes&amp;id=".$row["id"],"&gt;&nbsp;".$row["name"]);
     }
 
     $html .= menuLink("branches","branch fields","option=branchfields");
@@ -53,7 +53,7 @@ switch ($data['type']) {
 ?>
 <script language="Javascript" src="js/jslib.js" type="text/javascript"></script>
 
-<br/><?php echo PageLink2("editattributes",$GLOBALS['I18N']->get('AddNew'),"id=$id&action=new")?> <?php echo $data["name"]?>
+<br/><?php echo PageLink2("editattributes",$GLOBALS['I18N']->get('AddNew'),"id=$id&amp;action=new")?> <?php echo $data["name"]?>
 <br/><a href="javascript:deleteRec2('<?php echo $GLOBALS['I18N']->get('SureToDeleteAll');?>','<?php echo PageURL2("editattributes",$GLOBALS['I18N']->get('DelAll'),"id=$id&deleteall=yes")?>');"><?php echo $GLOBALS['I18N']->get('DelAll');?></a>
 <hr/><p class="form">
 <?php echo formStart(' class="editattributesAdd" ')?>
@@ -180,7 +180,7 @@ if ($num < 100 && $num > 25)
   printf('<p class="submit"><input type="submit" name=action value="%s"></p><br />',$GLOBALS["I18N"]->get("changeorder"));
 
 while ($row = Sql_Fetch_array($rs)) {
-  printf( '<span class="delete"><a href="javascript:deleteRec(\'%s\');">'.$GLOBALS['I18N']->get('Delete').'</a></span>',PageURL2("editattributes","","id=$id&delete=".$row["id"]));
+  printf( '<span class="delete"><a href="javascript:deleteRec(\'%s\');">'.$GLOBALS['I18N']->get('Delete').'</a></span>',PageURL2("editattributes","","id=$id&amp;delete=".$row["id"]));
   if ($num < 100)
     printf(' <input type=text name="listorder[%d]" value="%s" size=5>',$row["id"],$row["listorder"]);
   printf(' %s %s <br />', $row["name"],($row["name"] == $data["default_value"]) ? $GLOBALS['I18N']->get('Default'):"");

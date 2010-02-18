@@ -84,11 +84,11 @@ if ($total > MAX_USER_PP) {
 printf("[ <a href=\"javascript:deleteRec2('%s','%s');\">%s</a> |
    <a href=\"javascript:deleteRec2('%s','%s');\">%s</a> ] ",
    $GLOBALS['I18N']->get('Are you sure you want to delete all events older than 2 months?'),
-   PageURL2("eventlog","Delete","start=$start&action=deleteprocessed"),
+   PageURL2("eventlog","Delete","start=$start&amp;action=deleteprocessed"),
    $GLOBALS['I18N']->get('Delete all (&gt; 2 months old)'),
 
    $GLOBALS['I18N']->get('Are you sure you want to delete all events matching this filter?'),
-   PageURL2("eventlog","Delete","start=$start&action=deleteall$find_url"),
+   PageURL2("eventlog","Delete","start=$start&amp;action=deleteall$find_url"),
    $GLOBALS['I18N']->get('Delete all'));
 
    if (!Sql_Num_Rows($result)) {
@@ -113,7 +113,7 @@ while ($event = Sql_fetch_array($result)) {
   $ls->addElement($event["id"]);
   $ls->addColumn($event["id"],$GLOBALS['I18N']->get('del'),
     sprintf('<a href="javascript:deleteRec(\'%s\');">%s</a>',
-      PageURL2("eventlog","delete","start=$start&delete=".$event["id"]),$GLOBALS['I18N']->get('del')));
+      PageURL2("eventlog","delete","start=$start&amp;delete=".$event["id"]),$GLOBALS['I18N']->get('del')));
   $ls->addColumn($event["id"],$GLOBALS['I18N']->get('page'),$event["page"]);
   $ls->addColumn($event["id"],$GLOBALS['I18N']->get('date'),$event["entered"]);
   $ls->addColumn($event["id"],$GLOBALS['I18N']->get('message'),$event["entry"]);

@@ -25,17 +25,17 @@ $numpp = 150;
 
 $s = empty($_GET['s']) ? 0 : sprintf('%d',$_GET['s']);
 if ($total > 500 && $_GET['type'] != 'dl') {
-#  print Paging2('listbounces&id='.$listid,$total,$numpp,'Page');
+#  print Paging2('listbounces&amp;id='.$listid,$total,$numpp,'Page');
   $listing = sprintf($GLOBALS['I18N']->get("Listing %s to %s"),$s,$s+$numpp);
   $limit = "limit $s,".$numpp;
   print $total. " ".$GLOBALS['I18N']->get(" Total")."</p>";
   printf ('<table class="bouncesListing" border="1"><tr><td colspan=4 align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
           %s</td><td>%s</td></tr></table><hr/>',
           $listing,
-          PageLink2('msgbounces&id='.$msgid,"&lt;&lt;","s=0"),
-          PageLink2('msgbounces&id='.$msgid,"&lt;",sprintf('s=%d',max(0,$s-$numpp))),
-          PageLink2('msgbounces&id='.$msgid,"&gt;",sprintf('s=%d',min($total,$s+$numpp))),
-          PageLink2('msgbounces&id='.$msgid,"&gt;&gt;",sprintf('s=%d',$total-$numpp)));
+          PageLink2('msgbounces&amp;id='.$msgid,"&lt;&lt;","s=0"),
+          PageLink2('msgbounces&amp;id='.$msgid,"&lt;",sprintf('s=%d',max(0,$s-$numpp))),
+          PageLink2('msgbounces&amp;id='.$msgid,"&gt;",sprintf('s=%d',min($total,$s+$numpp))),
+          PageLink2('msgbounces&amp;id='.$msgid,"&gt;&gt;",sprintf('s=%d',$total-$numpp)));
   $req = Sql_Query(sprintf('select message.id as messageid,message.subject,umb.user as userid,count(bounce) as numbounces from %s message, %s umb where message.id = umb.message and message.id = %d and date_add(message.entered,interval 3 month) > current_timestamp group by umb.user order by message.entered desc %s',$GLOBALS['tables']['message'],$GLOBALS['tables']['user_message_bounce'],$msgid,$limit));
 }
 
@@ -66,7 +66,7 @@ while ($row = Sql_Fetch_Array($req)) {
     print $userdata['email']."\n";
   }
 
-  $ls->addElement($row['userid'],PageUrl2('user&id='.$row['userid']));
+  $ls->addElement($row['userid'],PageUrl2('user&amp;id='.$row['userid']));
   $ls->addColumn($row['userid'],$GLOBALS['I18N']->get('email'),$userdata['email']);
   $ls->addColumn($row['userid'],$GLOBALS['I18N']->get('# bounces'),$row['numbounces']);
 }

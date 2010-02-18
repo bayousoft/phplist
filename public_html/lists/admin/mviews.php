@@ -142,7 +142,7 @@ $req = Sql_Query(sprintf('select userid,email,um.entered as sent,min(um.viewed) 
 $summary = array();
 while ($row = Sql_Fetch_Array($req)) {
   $element = '<!--'.$row['userid'].'-->'.$row['email'];
-  $ls->addElement($element,PageUrl2('userhistory&id='.$row['userid']));
+  $ls->addElement($element,PageUrl2('userhistory&amp;id='.$row['userid']));
   $ls->addColumn($element,$GLOBALS['I18N']->get('sent'),formatDateTime($row['sent']));
   if ($row['viewcount'] > 1) {
     $ls->addColumn($element,$GLOBALS['I18N']->get('firstview'),formatDateTime($row['firstview'],1));

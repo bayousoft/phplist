@@ -51,7 +51,7 @@ require $coderoot . 'structure.php';
 # This adds a return link. Should be replaced by uniformbreadcrumtrail
 if ($returnpage) {
   if ($returnoption) {
-    $more = "&option=".$returnoption;
+    $more = "&amp;option=".$returnoption;
    }
   echo "<br/>".PageLink2("$returnpage$more","Return to $returnpage");
   $returnurl = "returnpage=$returnpage&returnoption=$returnoption";

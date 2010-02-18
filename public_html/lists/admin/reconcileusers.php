@@ -268,7 +268,7 @@ if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
               deleteUser($row["id"]);
               $deleted++;
             } else {
-              $list .= sprintf('<input type=checkbox name="tagged[%d]" value="1">&nbsp;  ',$row["id"]).PageLink2("user&id=".$row["id"]."&returnpage=reconcileusers&returnoption=invalidemail","User ".$row["id"]). "    [".$row["email"].']<br/>';
+              $list .= sprintf('<input type=checkbox name="tagged[%d]" value="1">&nbsp;  ',$row["id"]).PageLink2("user&amp;id=".$row["id"]."&returnpage=reconcileusers&returnoption=invalidemail","User ".$row["id"]). "    [".$row["email"].']<br/>';
             }
           }
         }
@@ -290,11 +290,11 @@ if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
             $fixemail = fixEmail($row["email"]);
             if (is_email($fixemail)) {
               Sql_Query(sprintf('update %s set email = "%s" where id = %d',$tables["user"],$fixemail,$row["id"]),0);
-              $list .= PageLink2("user&id=".$row["id"]."&returnpage=reconcileusers&returnoption=fixinvalidemail",$GLOBALS['I18N']->get('User')." ".$row["id"]). "    [".$row["email"].'] => fixed to '. $fixemail.'<br/>';
+              $list .= PageLink2("user&amp;id=".$row["id"]."&returnpage=reconcileusers&returnoption=fixinvalidemail",$GLOBALS['I18N']->get('User')." ".$row["id"]). "    [".$row["email"].'] => fixed to '. $fixemail.'<br/>';
               $fixed++;
             } else {
               $notfixed++;
-              $list .= PageLink2("user&id=".$row["id"]."&returnpage=reconcileusers&returnoption=fixinvalidemail",$GLOBALS['I18N']->get('User')." ".$row["id"]). "    [".$row["email"].']<br/>';
+              $list .= PageLink2("user&amp;id=".$row["id"]."&returnpage=reconcileusers&returnoption=fixinvalidemail",$GLOBALS['I18N']->get('User')." ".$row["id"]). "    [".$row["email"].']<br/>';
             }
           }
         }
@@ -428,16 +428,16 @@ function snippetListsSelector ($optionAll = false) {
 
 ?>
 
-<p class="button"><?php echo PageLink2("reconcileusers&option=nolists",$GLOBALS['I18N']->get("Delete all users who are not subscribed to any list"))?>
-<p class="button"><?php echo PageLink2("reconcileusers&option=invalidemail",$GLOBALS['I18N']->get("Find users who have an invalid email"))?>
-<p class="button"><?php echo PageLink2("reconcileusers&option=adduniqid",$GLOBALS['I18N']->get("Make sure that all users have a UniqID"))?>
-<p class="button"><?php echo PageLink2("reconcileusers&option=markinvalidunconfirmed",$GLOBALS['I18N']->get("Mark all users with an invalid email as unconfirmed"))?>
-<p class="button"><?php echo PageLink2("reconcileusers&option=deleteinvalidemail",$GLOBALS['I18N']->get("Delete users who have an invalid email"))?>
-<p class="button"><?php echo PageLink2("reconcileusers&option=markallhtml",$GLOBALS['I18N']->get("Mark all users to receive HTML"))?>
-<p class="button"><?php echo PageLink2("reconcileusers&option=markalltext",$GLOBALS['I18N']->get("Mark all users to receive text"))?>
-<p class="button"><?php echo $GLOBALS['I18N']->get('To try to (automatically)')?> <?php echo PageLink2("reconcileusers&option=fixinvalidemail",$GLOBALS['I18N']->get("Fix emails for users who have an invalid email"))?>
-<p class="button"><?php echo PageLink2("reconcileusers&option=removestaleentries",$GLOBALS['I18N']->get("Remove Stale entries from the database"))?>
-<p class="button"><?php echo PageLink2("reconcileusers&option=mergeduplicates",$GLOBALS['I18N']->get("Merge Duplicate Users"))?>
+<p class="button"><?php echo PageLink2("reconcileusers&amp;option=nolists",$GLOBALS['I18N']->get("Delete all users who are not subscribed to any list"))?>
+<p class="button"><?php echo PageLink2("reconcileusers&amp;option=invalidemail",$GLOBALS['I18N']->get("Find users who have an invalid email"))?>
+<p class="button"><?php echo PageLink2("reconcileusers&amp;option=adduniqid",$GLOBALS['I18N']->get("Make sure that all users have a UniqID"))?>
+<p class="button"><?php echo PageLink2("reconcileusers&amp;option=markinvalidunconfirmed",$GLOBALS['I18N']->get("Mark all users with an invalid email as unconfirmed"))?>
+<p class="button"><?php echo PageLink2("reconcileusers&amp;option=deleteinvalidemail",$GLOBALS['I18N']->get("Delete users who have an invalid email"))?>
+<p class="button"><?php echo PageLink2("reconcileusers&amp;option=markallhtml",$GLOBALS['I18N']->get("Mark all users to receive HTML"))?>
+<p class="button"><?php echo PageLink2("reconcileusers&amp;option=markalltext",$GLOBALS['I18N']->get("Mark all users to receive text"))?>
+<p class="button"><?php echo $GLOBALS['I18N']->get('To try to (automatically)')?> <?php echo PageLink2("reconcileusers&amp;option=fixinvalidemail",$GLOBALS['I18N']->get("Fix emails for users who have an invalid email"))?>
+<p class="button"><?php echo PageLink2("reconcileusers&amp;option=removestaleentries",$GLOBALS['I18N']->get("Remove Stale entries from the database"))?>
+<p class="button"><?php echo PageLink2("reconcileusers&amp;option=mergeduplicates",$GLOBALS['I18N']->get("Merge Duplicate Users"))?>
 
 <hr/>
 <form method="get">

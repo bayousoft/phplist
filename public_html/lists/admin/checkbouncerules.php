@@ -33,7 +33,7 @@ while ($row = Sql_Fetch_Array($req)) {
     $matched++;
   } else {
     $unmatched++;
-    print $GLOBALS['I18N']->get('No match').': '.$row['id'].' '.PageLink2("bounce&id=".$row['id'],$row['comment']).'<br/>';
+    print $GLOBALS['I18N']->get('No match').': '.$row['id'].' '.PageLink2("bounce&amp;id=".$row['id'],$row['comment']).'<br/>';
   }
   flush();
 }

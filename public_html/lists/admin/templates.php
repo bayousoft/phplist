@@ -29,7 +29,7 @@ print formStart('name="templates" class="templatesEdit" ');
 $ls = new WebblerListing($GLOBALS['I18N']->get("Existing templates"));
 while ($row = Sql_fetch_Array($req)) {
   $element = $row['title'];
-  $ls->addElement($element,PageUrl2('template&id='.$row['id']));
+  $ls->addElement($element,PageUrl2('template&amp;id='.$row['id']));
   $ls->addColumn($element,$GLOBALS['I18N']->get('ID'),$row['id']);
   $ls->addColumn($element,$GLOBALS['I18N']->get('delete'),
     sprintf('<a href="javascript:deleteRec(\'%s\');">%s</a>',PageUrl2("templates","","delete=".$row["id"]),$GLOBALS['I18N']->get('delete')));

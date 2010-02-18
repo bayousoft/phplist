@@ -88,7 +88,7 @@ while ($message = Sql_Fetch_Array($req)) {
   print "From: <b>".$message["fromfield"]."</b> <br/>";
   print 'Send this message <input type=radio name="message" value="'.$message["id"].'"><br/><br/>';
   print '<p class="information">[start of message]</p>';
-   print '<iframe src="?page=viewmessage&embed=yes&omitall=yes&id='.$message["id"].'"
+   print '<iframe src="?page=viewmessage&embed=yes&omitall=yes&amp;id='.$message["id"].'"
     scrolling="auto" width=100% height=450 margin=0 frameborder=0>
   </iframe>';
   print '<p class="information">[end of message]</p>';

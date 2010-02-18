@@ -113,22 +113,28 @@ if (!defined("IN_WEBBLER") && !defined("WEBBLER")) {
         $month = $now["mon"];
         $year = $now["year"];
       }
-      $html = sprintf('<input type="hidden" name="%s" value="1">',$name);
+      $html = sprintf('<input type="hidden" name="%s" value="1" />',$name);
 
-      $html .= "<!-- $day / $month / $year -->".'<select name="day['.$name.']">';
+      $html .= "
+     <!-- $day / $month / $year -->".'
+     <select name="day['.$name.']">';
       for ($i=1;$i<32;$i++) {
         $sel = "";
         if ($i == $day)
           $sel = 'selected="selected"';
-        $html .= sprintf('<option value="%d" %s>%s',$i,$sel,$i);
+        $html .= sprintf('
+        <option value="%d" %s>%s</option>',$i,$sel,$i);
       }
-      $html .= '</select><select name="month['.$name.']">';
+      $html .= '
+      </select>
+      <select name="month['.$name.']">';
       reset($this->months);
       while (list($key,$val) = each ($this->months)) {
         $sel = "";
         if ($key == $month)
           $sel = 'selected="selected"';
-        $html .= sprintf('<option value="%s" %s>%s',$key,$sel,$val);
+        $html .= sprintf('
+            <option value="%s" %s>%s</option>',$key,$sel,$val);
       }
       if (DATE_START_YEAR) {
         $start = DATE_START_YEAR;
@@ -141,31 +147,41 @@ if (!defined("IN_WEBBLER") && !defined("WEBBLER")) {
         $end = $year + 10;
       }
 
-      $html .= '</select><select name="year['.$name.']">';
+      $html .= '
+      </select>
+      <select name="year['.$name.']">';
       for ($i=$start;$i<=$end;$i++) {
-        $html .= "<option ";
+        $html .= "
+          <option ";
         if ($i == $year)
           $html .= 'selected="selected"';
-        $html .= ">$i";
+        $html .= ">$i</option>";
       }
-      $html .= "</select>";
+      $html .= "
+      </select>";
       if ($this->useTime) {
-        $html .= '<select name="hour['.$name.']">';
+        $html .= '
+      <select name="hour['.$name.']">';
         for ($i=0;$i<=23;$i++) {
           $sel = "";
           if ($i == $hour)
             $sel = 'selected="selected"';
-          $html .= sprintf('<option value="%d" %s>%02d',$i,$sel,$i);
+          $html .= sprintf('
+          <option value="%d" %s>%02d</option>',$i,$sel,$i);
         }
-        $html .= '</select>';
-        $html .= '<select name="minute['.$name.']">';
+        $html .= '
+        </select>';
+        $html .= '
+        <select name="minute['.$name.']">';
         for ($i=0;$i<=59;$i+=15) {
           $sel = "";
           if ($i == $minute)
             $sel = 'selected="selected"';
-          $html .= sprintf('<option value="%d" %s>%02d',$i,$sel,$i);
+          $html .= sprintf('
+          <option value="%d" %s>%02d</option>',$i,$sel,$i);
         }
-        $html .= '</select>';
+        $html .= '
+        </select>';
       }
       return $html;
     }

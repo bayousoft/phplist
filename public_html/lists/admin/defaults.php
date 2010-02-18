@@ -79,11 +79,11 @@ while (list($key,$attribute) = each ($attributes)) {
   if (strstr($key,':')) {
     list($name,$desc) = explode(":",$key);
     if ($name && $desc) {
-      printf('<input type="checkbox" name="selected[]" value="%s">%s<br/>', $attribute,$desc);
+      printf('<input type="checkbox" name="selected[]" value="%s" />%s<br/>', $attribute,$desc);
     }
   }
 }
-print '<p class="submit"><input type="submit" value="'.$GLOBALS['I18N']->get('add').'"></p></form>';
+print '<input class="submit" type="submit" value="'.$GLOBALS['I18N']->get('add').'" /></form>';
 
 }
 ?>

@@ -12,19 +12,19 @@ $defaultheader = '
 </head>
 <body bgcolor="#ffffff">
 <a name="top"></a>
-<div align=center>
-<table class="defaultheader" cellspacing=0 cellpadding=0 width=710 border=0>
+<div align="center">
+<table class="defaultheader" cellspacing="0" cellpadding="0" width="710" border="0">
 
 <tr>
-<td bgcolor="#000000" rowspan=3><img height=1 alt="" src="images/transparent.png" width=1 border=0></td>
-<td bgcolor="#000000"><img height=1 alt="" src="images/transparent.png" width=708 border=0></td>
-<td bgcolor="#000000" rowspan=3><img height=1 alt="" src="images/transparent.png" width=1 border=0></td>
+<td bgcolor="#000000" rowspan="3"><img height="1" alt="" src="images/transparent.png" width="1" border="0" /></td>
+<td bgcolor="#000000"><img height="1" alt="" src="images/transparent.png" width="708" border="0" /></td>
+<td bgcolor="#000000" rowspan="3"><img height="1" alt="" src="images/transparent.png" width="1" border="0" /></td>
 </tr>
 
 <tr valign="top">
 <td>
 <!--TOP TABLE starts-->
-<table class="defaultconfigTopTable" cellspacing=0 cellpadding=0 width=708 border="0" bgcolor="#ffffff">
+<table class="defaultconfigTopTable" cellspacing="0" cellpadding="0" width="708" border="0" bgcolor="#ffffff">
 
 <tr valign="top">
 <td height="41" background="images/top01.png" colspan="2">
@@ -35,15 +35,15 @@ $defaultheader = '
 </tr>
 
 <tr valign="bottom">
-<td><img src="images/top03a.png" width=20 height=34 alt="" border="0"></td>
+<td><img src="images/top03a.png" width="20" height="34" alt="" border="0" /></td>
 <td background="images/top03b.png" height="34"><!--hello <b>ben</b>:&nbsp;<a class="urhere" href="">you are here &gt; main admin</a>-->
 <td width="132" valign="bottom" background="images/top04.png"><span class="webblermenu">phplist</span></td>
 </tr>
 
 <tr>
-<td bgcolor="#000000"><img height=1 alt="" src="images/transparent.png" width=20 border=0></td>
-<td bgcolor="#000000"><img height=1 alt="" src="images/transparent.png" width=576 border=0></td>
-<td bgcolor="#000000"><img height=1 alt="" src="images/transparent.png" width=132 border=0></td>
+<td bgcolor="#000000"><img height="1" alt="" src="images/transparent.png" width="20" border="0" /></td>
+<td bgcolor="#000000"><img height="1" alt="" src="images/transparent.png" width="576" border="0" /></td>
+<td bgcolor="#000000"><img height="1" alt="" src="images/transparent.png" width="132" border="0" /></td>
 </tr>
 
 <tr valign="top">
@@ -68,25 +68,25 @@ $defaultfooter = '
 
 <!-- end of main page content--><!-- bottom black line-->
 <tr>
-<td bgcolor="#000000" colspan=3><img height=1 alt="" src="images/transparent.png" width=1 border=0></td>
+<td bgcolor="#000000" colspan="3"><img height="1" alt="" src="images/transparent.png" width="1" border="0" /></td>
 </tr>
 
 <tr>
-<td bgcolor="#000000"><img height=1 alt="" src="images/transparent.png" width=1 border=0></td>
+<td bgcolor="#000000"><img height="1" alt="" src="images/transparent.png" width="1" border="0" /></td>
 <td bgcolor="#ff9900" class="bottom">&copy; <a href="http://tincan.co.uk" target="_tincan" class="urhere">tincan limited</a> | <a class="urhere" href="http://www.phplist.com" target="_blank">phplist</a> - version <?php echo VERSION?></td>
-<td bgcolor="#000000"><img height=1 alt="" src="images/transparent.png" width=1 border=0></td>
+<td bgcolor="#000000"><img height="1" alt="" src="images/transparent.png" width="1" border="0" /></td>
 </tr>
 
 <tr>
-<td bgcolor="#000000" colspan=3><img height=1 alt="" src="images/transparent.png" width=1 border=0></td>
+<td bgcolor="#000000" colspan="3"><img height="1" alt="" src="images/transparent.png" width="1" border="0" /></td>
 </tr>
 
 <tr>
-<td colspan=3><img height=3 alt="" src="images/transparent.png" width=1 border=0></td>
+<td colspan="3"><img height="3" alt="" src="images/transparent.png" width="1" border="0" /></td>
 </tr>
 
 <tr>
-<td colspan=3>
+<td colspan="3">
 &nbsp;
 </td>
 </tr>
@@ -630,9 +630,9 @@ if (!TEST && REGISTER && defined("VERSION")) {
 		$v = "dev";
 	else
 		$v = VERSION;
-	$PoweredBy = '<p align=left><a href="http://www.phplist.com"><img src="http://phplist.tincan.co.uk/images/' . $v . '/power-phplist.png" width=88 height=31 title="powered by phplist" alt="powered by phplist" border="0"></a></p>';
+	$PoweredBy = '<p align="left"><a href="http://www.phplist.com"><img src="http://phplist.tincan.co.uk/images/' . $v . '/power-phplist.png" width="88" height="31" title="powered by phplist" alt="powered by phplist" border="0" /></a></p>';
 } else
-	$PoweredBy = '<center><a href="http://www.phplist.com"><img src="images/power-phplist.png" width=88 height=31 title="powered by phplist" alt="powered by phplist" border="0"></a></center>';
+	$PoweredBy = '<center><a href="http://www.phplist.com"><img src="images/power-phplist.png" width="88" height="31" title="powered by phplist" alt="powered by phplist" border="0" /></a></center>';
 
 if (!function_exists("getconfig")) { 
 	function getConfig($item) {

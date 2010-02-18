@@ -182,11 +182,11 @@ return;
 //  if (Sql_Affected_Rows()) {
 //    print "Click on a link to use the corresponding public subscribe page to add this user:";
 //    while ($row = Sql_Fetch_Array($req)) {
-//      printf('<p class="x"><a href="%s&id=%d&email=%s">%s</a></p>',getConfig("subscribeurl"),$row["id"],$find,$row["title"]);
+//      printf('<p class="x"><a href="%s&amp;id=%d&email=%s">%s</a></p>',getConfig("subscribeurl"),$row["id"],$find,$row["title"]);
 //     }
 //  } else {
 //    print "Click this link to use the public subscribe page to add this user:";
-//    printf('<p class="x"><a href="%s&email=%s">%s</a></p>',getConfig("subscribeurl"),$find,$GLOBALS["strSubscribeTitle"]);
+//    printf('<p class="x"><a href="%s&amp;email=%s">%s</a></p>',getConfig("subscribeurl"),$find,$GLOBALS["strSubscribeTitle"]);
 //  }
 //  print '<hr/>';
 //}
@@ -296,13 +296,13 @@ return;
 //  $msgs = Sql_query("SELECT count(*) FROM ".$tables["usermessage"]." where userid = ".$user["id"]);
 //  $nummsgs = Sql_fetch_row($msgs);
 //  $onblacklist = isBlackListed($user["email"]);
-//  $ls->addElement($user["email"],PageURL2("user&start=$start&id=".$user["id"].$find_url));
+//  $ls->addElement($user["email"],PageURL2("user&start=$start&amp;id=".$user["id"].$find_url));
 //  $ls->addColumn($user["email"],"confirmed",
 //    $user["confirmed"]?$GLOBALS["img_tick"]:$GLOBALS["img_cross"]);
 //  $ls->addColumn($user["email"],"bl l",
 //    $onblacklist?$GLOBALS["img_tick"]:$GLOBALS["img_cross"]);
 //  $ls->addColumn($user["email"],"del",sprintf("<a href=\"javascript:deleteRec('%s');\">del</a>",
-//     PageURL2("users","delete","start=$start&delete=".$user["id"])));
+//     PageURL2("users","delete","start=$start&amp;delete=".$user["id"])));
 //   $ls->addColumn($user["email"],"key",$user["foreignkey"]);
 //   $ls->addColumn($user["email"],"&nbsp;",$user["display"]);
 //  $ls->addColumn($user["email"],"lists",$membership[0]);

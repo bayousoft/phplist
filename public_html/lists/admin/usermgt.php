@@ -11,7 +11,7 @@ if ($tables["attribute"] && Sql_Table_Exists($tables["attribute"])) {
   $res = Sql_Query("select * from {$tables['attribute']}",1);
   while ($row = Sql_Fetch_array($res)) {
     if ($row["type"] == "checkboxgroup" || $row["type"] == "select" || $row["type"] == "radio")
-      $attrmenu["editattributes&id=".$row["id"]] = strip_tags($row["name"]);
+      $attrmenu["editattributes&amp;id=".$row["id"]] = strip_tags($row["name"]);
   }
 }
 $html = '';

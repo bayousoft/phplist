@@ -24,7 +24,7 @@ print '</td></tr>';
 
 if ($GLOBALS["require_login"]) {
 print '<tr><td>'.$GLOBALS['I18N']->get('change_admin_passwd').' </td>
-<td>'.PageLink2("admin&id=1",$GLOBALS['I18N']->get('go_there')).'</td><td>';
+<td>'.PageLink2("admin&amp;id=1",$GLOBALS['I18N']->get('go_there')).'</td><td>';
   $query
   = " select password"
   . " from ${tables['admin']}"

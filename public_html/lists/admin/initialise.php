@@ -85,8 +85,8 @@ if ($success) {
     $GLOBALS['I18N']->get("to make sure you are updated when new versions come out. Sometimes security bugs are found which make it important to upgrade. Traffic on the list is very low.").' </p>');
   print '<p class="button">'.$GLOBALS['I18N']->get("Continue with")." ".PageLink2("setup",$GLOBALS['I18N']->get("PHPlist Setup"))."</p>";
 } else {
- print ('<ul><li>'.$GLOBALS['I18N']->get("Maybe you want to")." ".PageLink2("upgrade",$GLOBALS['I18N']->get("Upgrade")).' '.$GLOBALS['I18N']->get("instead?").'
-    <li>'.PageLink2("initialise",$GLOBALS['I18N']->get("Force Initialisation"),"force=yes").' '.$GLOBALS['I18N']->get("(will erase all data!)").' '."</ul>\n");
+ print ('<div class="initialiseOptions"><ul><li>'.$GLOBALS['I18N']->get("Maybe you want to")." ".PageLink2("upgrade",$GLOBALS['I18N']->get("Upgrade")).' '.$GLOBALS['I18N']->get("instead?").'</li>
+    <li>'.PageLink2("initialise",$GLOBALS['I18N']->get("Force Initialisation"),"force=yes").' '.$GLOBALS['I18N']->get("(will erase all data!)").' '."</li></ul></div>\n");
 }
 /*
 if ($_GET["firstinstall"] || $_SESSION["firstinstall"]) {

@@ -95,21 +95,24 @@ ob_end_flush();
 ?>
 
 <?php echo formStart(' class="editlistSave" ')?>
-<input type="hidden" name=id value="<?php echo $id ?>">
-<table class="editlist" border=0>
-<tr><td><?php echo $GLOBALS['I18N']->get('List name'); ?>:</td><td><input type=text name="listname" value="<?php echo  htmlspecialchars(StripSlashes($list["name"]))?>"></td></tr>
-<tr><td><?php echo $GLOBALS['I18N']->get('Public list (listed on the frontend)'); ?></td><td><input type="checkbox" name="active" value="1" <?php echo $list["active"] ? 'checked' : ""; ?>></td></tr>
-<tr><td><?php echo $GLOBALS['I18N']->get('Order for listing'); ?></td><td><input type=text name="listorder" value="<?php echo $list["listorder"] ?>" size="5"></td></tr>
-<!--tr><td><?php echo $GLOBALS['I18N']->get('Subject Prefix'); ?></td><td><input type=text name="prefix" value="<?php echo $list["prefix"]; ?>" size="5"></td></tr>-->
+<input type="hidden" name="id" value="<?php echo $id ?>" />
+<table class="editlist" border="0">
+<tr><td><?php echo $GLOBALS['I18N']->get('List name'); ?>:</td><td><input type="text" name="listname" value="<?php echo  htmlspecialchars(StripSlashes($list["name"]))?>" /></td></tr>
+<tr><td><?php echo $GLOBALS['I18N']->get('Public list (listed on the frontend)'); ?></td>
+    <td><input type="checkbox" name="active" value="1" <?php echo $list["active"] ? 'checked="checked"' : ''; ?> /></td></tr>
+<tr><td><?php echo $GLOBALS['I18N']->get('Order for listing'); ?></td>
+    <td><input type="text" name="listorder" value="<?php echo $list["listorder"] ?>" size="5" /></td></tr>
+<!--tr><td><?php echo $GLOBALS['I18N']->get('Subject Prefix'); ?></td>
+    <td><input type="text" name="prefix" value="<?php echo $list["prefix"]; ?>" size="5" /></td></tr>-->
 <?php if ($GLOBALS["require_login"] && (isSuperUser() || accessLevel("editlist") == "all")) {
   print '<tr><td>' . $GLOBALS['I18N']->get('Owner') . '</td><td><select name="owner">';
   $admins = $GLOBALS["admin_auth"]->listAdmins();
   foreach ($admins as $adminid => $adminname) {
-    printf ('<option value="%d" %s>%s</option>',$adminid,$adminid == $list["owner"]? 'selected="selected"':"",$adminname);
+    printf ('    <option value="%d" %s>%s</option>',$adminid,$adminid == $list["owner"]? 'selected="selected"':'',$adminname);
   }
   print '</select></td></tr>';
 } else {
-  print '<input type="hidden" name="owner" value="'.$_SESSION["logindetails"]["id"].'">';
+  print '<input type="hidden" name="owner" value="'.$_SESSION["logindetails"]["id"].'" />';
 }
 
 $sListCategories = getConfig('list_categories');
@@ -133,6 +136,7 @@ if (sizeof($aListCategories)) {
 ?>
 <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('List Description'); ?></td></tr>
 <tr><td colspan="2"><textarea name="description" cols="55" rows="15"><?php echo htmlspecialchars(StripSlashes($list["description"])) ?></textarea></td></tr>
-<tr><td align="center"><p class="submit"><input type="submit" name="save" value="<?php echo $GLOBALS['I18N']->get('Save'); ?>"></p></td><td align="right"><input type="reset"></td></tr>
+<tr><td align="center"><input class="submit" type="submit" name="save" value="<?php echo $GLOBALS['I18N']->get('Save'); ?>" /></td>
+<td align="right"><input class="reset"  type="reset" /></td></tr>
 </table>
 </form>

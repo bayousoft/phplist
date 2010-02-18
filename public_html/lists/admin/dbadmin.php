@@ -156,7 +156,7 @@ if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
                 deleteUser($row["id"]);
                 $deleted++;
               } else {
-                $list .= sprintf('<input type=checkbox name="tagged[%d]" value="1">&nbsp;  ', $row["id"]) . PageLink2("user&id=" . $row["id"] . "&returnpage=dbadmin&returnoption=delusers", "User " . $row["id"]) . "    [" . $row["email"] . ']<br/>';
+                $list .= sprintf('<input type=checkbox name="tagged[%d]" value="1">&nbsp;  ', $row["id"]) . PageLink2("user&amp;id=" . $row["id"] . "&returnpage=dbadmin&returnoption=delusers", "User " . $row["id"]) . "    [" . $row["email"] . ']<br/>';
               }
             }
             if ($deleted)
@@ -178,7 +178,7 @@ if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
                 deleteMsgHistory($row["id"]);
                 $deleted++;
               }
-              $list .= sprintf('<input type=checkbox name="tagged[%d]" value="1">&nbsp;  ', $row["id"]) . PageLink2("message&id=" . $row["id"] . "&returnpage=dbadmin&returnoption=delmsghistory", "Message " . $row["id"]) . "    [" . $row["subject"] . ']<br/>';
+              $list .= sprintf('<input type=checkbox name="tagged[%d]" value="1">&nbsp;  ', $row["id"]) . PageLink2("message&amp;id=" . $row["id"] . "&returnpage=dbadmin&returnoption=delmsghistory", "Message " . $row["id"]) . "    [" . $row["subject"] . ']<br/>';
             }
             if ($deleted)
               print $GLOBALS['I18N']->get('History of ') . $deleted . " " . $GLOBALS['I18N']->get('messages deleted') . "<br/>";
@@ -199,7 +199,7 @@ if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
                 deleteRssHistory($row["userid"]);
                 $deleted++;
               }
-              $list .= sprintf('<input type=checkbox name="tagged[%d]" value="1">&nbsp;  ', $row["userid"]) . PageLink2("user&id=" . $row["userid"] . "&returnpage=dbadmin&returnoption=delrsshistory", "User " . $row["userid"]) . "    [" . $row["itemcount"] . " items send on " . $row["entered"] . ']<br/>';
+              $list .= sprintf('<input type=checkbox name="tagged[%d]" value="1">&nbsp;  ', $row["userid"]) . PageLink2("user&amp;id=" . $row["userid"] . "&returnpage=dbadmin&returnoption=delrsshistory", "User " . $row["userid"]) . "    [" . $row["itemcount"] . " items send on " . $row["entered"] . ']<br/>';
             }
             if ($deleted)
               print $GLOBALS['I18N']->get('RSS history of ') . $deleted . " " . $GLOBALS['I18N']->get('users deleted') . "<br/>";
@@ -262,8 +262,8 @@ print $find ? " " . $GLOBALS['I18N']->get("found") : " " . $GLOBALS['I18N']->get
 print "</p>";
 ?>
 
-<p class="button"><?php echo PageLink2("dbadmin&option=delusers",$GLOBALS['I18N']->get("Delete users..."))?>
-<p class="button"><?php echo PageLink2("dbadmin&option=delmsghistory",$GLOBALS['I18N']->get("Delete message history..."))?>
-<p class="button"><?php echo PageLink2("dbadmin&option=delrsshistory",$GLOBALS['I18N']->get("Delete RSS history..."))?>
+<p class="button"><?php echo PageLink2("dbadmin&amp;option=delusers",$GLOBALS['I18N']->get("Delete users..."))?>
+<p class="button"><?php echo PageLink2("dbadmin&amp;option=delmsghistory",$GLOBALS['I18N']->get("Delete message history..."))?>
+<p class="button"><?php echo PageLink2("dbadmin&amp;option=delrsshistory",$GLOBALS['I18N']->get("Delete RSS history..."))?>
 <p class="button"><?php echo PageLink2("dbadmin",$GLOBALS['I18N']->get("Return to database manager"))?>
 <hr/>

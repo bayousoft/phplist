@@ -11,7 +11,7 @@ class imageUpload {
   }
 
   function viewImageLink($id,$width,$height,$text) {
-    return sprintf('<a href="javascript:viewImage(\'?page=image&id=%d\',%d,%d);">%s</a>',$id,$width,$height,$text);
+    return sprintf('<a href="javascript:viewImage(\'?page=image&amp;id=%d\',%d,%d);">%s</a>',$id,$width,$height,$text);
   }
 
   function showInput($name,$value,$template_id = 0) {

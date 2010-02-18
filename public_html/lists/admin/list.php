@@ -131,7 +131,7 @@ while ($row = Sql_fetch_array($result)) {
 //    $feed = ereg_replace("/","/ ",$feed);
 //    $feed = ereg_replace("&","& ",$feed);
 //    $desc = sprintf('%s: <a href="%s" target="_blank">%s</a><br /> ', $GLOBALS['I18N']->get('rss source'), $row['rssfeed'], $feed) .
-//    PageLink2("viewrss&id=".$row["id"],$GLOBALS['I18N']->get('(View Items)')) . '<br />'.
+//    PageLink2("viewrss&amp;id=".$row["id"],$GLOBALS['I18N']->get('(View Items)')) . '<br />'.
 //    $desc;
 //  }
 
@@ -146,9 +146,9 @@ while ($row = Sql_fetch_array($result)) {
   $html .= sprintf('
     <tr>
       <td valign="top">%s</td><td valign="top"><b>%s</b><br/>%d %s </td>
-      <td valign="top"><input type="text" name="listorder[%d]" value="%d" size="5"></td>
+      <td valign="top"><input type="text" name="listorder[%d]" value="%d" size="5" /></td>
     <td valign="top">%s<br/>%s<br/>%s<br/><a href="javascript:deleteRec(\'%s\');">%s</a></td>
-    <td valign="top"><input type="checkbox" name="active[%d]" value="1" %s></td>
+    <td valign="top"><input type="checkbox" name="active[%d]" value="1" %s /></td>
     <td valign="top">%s</td></tr><tr><td>&nbsp;</td>
       <td colspan="5">%s</td></tr><tr><td colspan="6"><hr width="50%%" size="4"></td>
     </tr>',
@@ -164,7 +164,7 @@ while ($row = Sql_fetch_array($result)) {
     PageURL2("list","","delete=".$row["id"]),
     $GLOBALS['I18N']->get('delete'),
    $row["id"],
-    $row["active"] ? 'checked' : '',
+    $row["active"] ? 'checked="checked"' : '',
     $GLOBALS['require_login'] ? adminName($row['owner']):$GLOBALS['I18N']->get('n/a'),
     $desc
     );
@@ -173,7 +173,7 @@ while ($row = Sql_fetch_array($result)) {
       PageLink2("editlist",stripslashes($row['name']),"id=".$row["id"]));
     $ls->addColumn($row['id'],
       $GLOBALS['I18N']->get('Order'),
-      sprintf('<input type="text" name="listorder[%d]" value="%d" size="5">',$row['id'],$row['listorder']));
+      sprintf('<input type="text" name="listorder[%d]" value="%d" size="5" />',$row['id'],$row['listorder']));
     $ls->addColumn($row['id'],
       $GLOBALS['I18N']->get('Members'),
       PageLink2("members",$membercount[0],"id=".$row["id"]));
@@ -182,7 +182,7 @@ while ($row = Sql_fetch_array($result)) {
       PageLink2("listbounces",$bouncecount[0],"id=".$row["id"]));
     $ls->addColumn($row['id'],
       $GLOBALS['I18N']->get('Public'),sprintf('<input type="checkbox" name="active[%d]" value="1" %s />',$row["id"],
-    $row["active"] ? 'checked' : ''));
+    $row["active"] ? 'checked="checked"' : ''));
     $ls->addColumn($row['id'],
       $GLOBALS['I18N']->get('Owner'),$GLOBALS['require_login'] ? adminName($row['owner']):$GLOBALS['I18N']->get('n/a'));
     if (trim($desc) != '') {
@@ -219,7 +219,6 @@ if (!$some) {
 */
 ?>
 
-</ul>
 </form>
 <p class="button">
 <?php

@@ -36,22 +36,22 @@ $numpp = 150;
 
 $s = empty($_GET['s']) ? 0 : sprintf('%d',$_GET['s']);
 if ($total > 500 && $_GET['type'] != 'dl') {
-#  print Paging2('listbounces&id='.$listid,$total,$numpp,'Page');
+#  print Paging2('listbounces&amp;id='.$listid,$total,$numpp,'Page');
   $listing = sprintf($GLOBALS['I18N']->get("Listing %s to %s"),$s,$s+$numpp);
   $limit = "limit $s,".$numpp;
   print $total. " ".$GLOBALS['I18N']->get(" Total")."</p>";
-  printf ('<table class="bouncesListing" border=1><tr><td colspan=4 align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
+  printf ('<table class="bouncesListing" border="1"><tr><td colspan="4" align="center">%s</td></tr><tr><td>%s</td><td>%s</td><td>
           %s</td><td>%s</td></tr></table><hr/>',
           $listing,
-          PageLink2('listbounces&id='.$listid,"&lt;&lt;","s=0"),
-          PageLink2('listbounces&id='.$listid,"&lt;",sprintf('s=%d',max(0,$s-$numpp))),
-          PageLink2('listbounces&id='.$listid,"&gt;",sprintf('s=%d',min($total,$s+$numpp))),
-          PageLink2('listbounces&id='.$listid,"&gt;&gt;",sprintf('s=%d',$total-$numpp)));
+          PageLink2('listbounces&amp;id='.$listid,"&lt;&lt;","s=0"),
+          PageLink2('listbounces&amp;id='.$listid,"&lt;",sprintf('s=%d',max(0,$s-$numpp))),
+          PageLink2('listbounces&amp;id='.$listid,"&gt;",sprintf('s=%d',min($total,$s+$numpp))),
+          PageLink2('listbounces&amp;id='.$listid,"&gt;&gt;",sprintf('s=%d',$total-$numpp)));
   $req = Sql_Query(sprintf('select listid,userid,count(bounce) as numbounces from %s listuser, %s umb where listuser.userid = umb.user and listuser.listid = %d  and date_add(time,interval 6 month) > current_timestamp group by umb.user order by listuser.listid %s',$GLOBALS['tables']['listuser'],$GLOBALS['tables']['user_message_bounce'],$listid,$limit));
 }
 
 print '<p class="button">'.PageLink2('listbounces','Select another list');
-print '&nbsp;'.PageLink2('listbounces&type=dl&&amp;id='.$listid,'Download emails');
+print '&nbsp;'.PageLink2('listbounces&amp;type=dl&amp;id='.$listid,'Download emails');
 print '</p>';
 if (isset($_GET['type']) && $_GET['type'] == 'dl') {
   ob_end_clean();
@@ -77,7 +77,7 @@ while ($row = Sql_Fetch_Array($req)) {
     print $userdata['email']."\n";
   }
 
-  $ls->addElement($row['userid'],PageUrl2('user&id='.$row['userid']));
+  $ls->addElement($row['userid'],PageUrl2('user&amp;id='.$row['userid']));
   $ls->addColumn($row['userid'],$GLOBALS['I18N']->get('email'),$userdata['email']);
   $ls->addColumn($row['userid'],$GLOBALS['I18N']->get('# bounces'),$row['numbounces']);
 }

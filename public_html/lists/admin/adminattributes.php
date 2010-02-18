@@ -78,31 +78,31 @@ else {
 while ($row = Sql_Fetch_array($res)) {
   ?>
   <table class="attributeSet" border="1">
-  <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('Attribute').$row["id"] ?></td><td colspan="2"><?php echo $GLOBALS['I18N']->get('Delete'); ?> <input type="checkbox" name="delete[<?php echo $row["id"] ?>]" value="1"></td></tr>
-  <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('Name'); ?> </td><td colspan="2"><input type=text name="name[<?php echo $row["id"]?>]" value="<?php echo htmlspecialchars(stripslashes($row["name"])) ?>" size=40></td></tr>
-  <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('Type'); ?> </td><td colspan="2"><input type="hidden" name="type[<?php echo $row["id"]?>]" value="<?php echo $row["type"]?>"><?php echo $row["type"]?></td></tr>
-  <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('DValue'); ?> </td><td colspan="2"><input type=text name="default[<?php echo $row["id"]?>]" value="<?php echo htmlspecialchars(stripslashes($row["default_value"])) ?>" size="40"></td></tr>
-  <tr><td><?php echo $GLOBALS['I18N']->get('OrderListing'); ?> </td><td><input type=text name="listorder[<?php echo $row["id"]?>]" value="<?php echo $row["listorder"] ?>" size=5></td>
-  <td><?php echo $GLOBALS['I18N']->get('IsAttrRequired'); ?> </td><td><input type=checkbox name="required[<?php echo $row["id"]?>]" value="1" <?php echo $row["required"] ? "checked": "" ?>></td></tr>
+  <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('Attribute').$row["id"] ?></td><td colspan="2"><?php echo $GLOBALS['I18N']->get('Delete'); ?> <input type="checkbox" name="delete[<?php echo $row["id"] ?>]" value="1" /></td></tr>
+  <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('Name'); ?> </td><td colspan="2"><input type="text" name="name[<?php echo $row["id"]?>]" value="<?php echo htmlspecialchars(stripslashes($row["name"])) ?>" size="40" /></td></tr>
+  <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('Type'); ?> </td><td colspan="2"><input type="hidden" name="type[<?php echo $row["id"]?>]" value="<?php echo $row["type"]?>" /><?php echo $row["type"]?></td></tr>
+  <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('DValue'); ?> </td><td colspan="2"><input type="text" name="default[<?php echo $row["id"]?>]" value="<?php echo htmlspecialchars(stripslashes($row["default_value"])) ?>" size="40" /></td></tr>
+  <tr><td><?php echo $GLOBALS['I18N']->get('OrderListing'); ?> </td><td><input type="text" name="listorder[<?php echo $row["id"]?>]" value="<?php echo $row["listorder"] ?>" size="5" /></td>
+  <td><?php echo $GLOBALS['I18N']->get('IsAttrRequired'); ?> </td><td><input type="checkbox" name="required[<?php echo $row["id"]?>]" value="1" <?php echo $row["required"] ? 'checked="checked"': '' ?> /></td></tr>
   </table><hr/>
 <?php } ?>
 
 <a name="new"></a>
 <h3><?php echo $GLOBALS['I18N']->get('AddAttr'); ?></h3>
-<table class="attributeNew" border=1>
-<tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('Name'); ?> </td><td colspan="2"><input type=text name="name[0]" value="" size="40"></td></tr>
+<table class="attributeNew" border="1">
+<tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('Name'); ?> </td><td colspan="2"><input type="text" name="name[0]" value="" size="40" /></td></tr>
 <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('Type'); ?> </td><td colspan="2"><select name="type[0]">
 <?php
 $types = array('checkbox','textline',"hidden");#'radio','select',
 while (list($key,$val) = each($types)) {
-  printf('<option value="%s" %s>%s',$val,"",$val);
+  printf('<option value="%s" %s>%s</option>',$val,"",$val);
 }
 ?>
 </select></td></tr>
-<tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('DValue'); ?> </td><td colspan="2"><input type=text name="default[0]" value="" size="40"></td></tr>
-<tr><td><?php echo $GLOBALS['I18N']->get('OrderListing'); ?> </td><td><input type=text name="listorder[0]" value="" size="5"></td>
-<td><?php echo $GLOBALS['I18N']->get('IsAttrRequired'); ?> </td><td><input type=checkbox name="required[0]" value="1" checked></td></tr>
+<tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('DValue'); ?> </td><td colspan="2"><input type="text" name="default[0]" value="" size="40" /></td></tr>
+<tr><td><?php echo $GLOBALS['I18N']->get('OrderListing'); ?> </td><td><input type="text" name="listorder[0]" value="" size="5" /></td>
+<td><?php echo $GLOBALS['I18N']->get('IsAttrRequired'); ?> </td><td><input type="checkbox" name="required[0]" value="1" checked="checked"></td></tr>
 </table><hr/>
 
-<p class="submit"><input type="submit" name="action" value="<?php echo $GLOBALS['I18N']->get('SaveChanges'); ?>"></p>
+<input class="submit" type="submit" name="action" value="<?php echo $GLOBALS['I18N']->get('SaveChanges'); ?>">
 </form>

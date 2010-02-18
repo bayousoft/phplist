@@ -24,8 +24,8 @@ if (!isset ($_GET["pi"]))
 # make sure magic quotes are on. Try to switch it on, this may fail
 ini_set("magic_quotes_gpc","on");
 
-$GLOBALS["img_tick"] = '<img src="images/tick.gif" alt="Yes">';
-$GLOBALS["img_cross"] = '<img src="images/cross.gif" alt="No">';
+$GLOBALS["img_tick"] = '<img src="images/tick.gif" alt="Yes" />';
+$GLOBALS["img_cross"] = '<img src="images/cross.gif" alt="No" />';
 
 # if keys need expanding with 0-s
 $checkboxgroup_storesize = 1; # this will allow 10000 options for checkboxes
@@ -275,7 +275,7 @@ function Error($msg) {
     clineError($msg);
     return;
   }
-  print '<div class="error" align=center>'.$GLOBALS["I18N"]->get("error").": $msg </div>";
+  print '<div class="error" align="center">'.$GLOBALS["I18N"]->get("error").": $msg </div>";
 
   $GLOBALS["mail_error"] .= 'Error: '.$msg."\n";
   $GLOBALS["mail_error_count"]++;
@@ -443,7 +443,7 @@ function newMenu() {
   if (Sql_Affected_Rows()) {
     $spages["div1"] = $GLOBALS["strSubscribeTitle"];
     while ($row = Sql_Fetch_Array($req)) {
-      $spages[sprintf('%s&id=%d',getConfig("subscribeurl"),$row["id"])] = $row["title"];
+      $spages[sprintf('%s&amp;id=%d',getConfig("subscribeurl"),$row["id"])] = $row["title"];
     }
     $url = getConfig("unsubscribeurl");
     if ($url)
@@ -457,7 +457,7 @@ function newMenu() {
     $res = Sql_Query("select * from {$tables['attribute']}",1);
     while ($row = Sql_Fetch_array($res)) {
       if ($row["type"] != "checkbox" && $row["type"] != "textarea" && $row["type"] != "textline" && $row["type"] != "hidden")
-        $attrmenu["editattributes&id=".$row["id"]] = strip_tags($row["name"]);
+        $attrmenu["editattributes&amp;id=".$row["id"]] = strip_tags($row["name"]);
     }
   }
   */
@@ -483,7 +483,7 @@ function newMenu() {
   if (sizeof($GLOBALS["plugins"])) {
     $html .= $spb."<hr/>".$spe;
     foreach ($GLOBALS["plugins"] as $pluginName => $plugin) {
-      $html .= $spb.PageLink2("main&pi=$pluginName",$pluginName).$spe;
+      $html .= $spb.PageLink2("main&amp;pi=$pluginName",$pluginName).$spe;
     }
   } 
 
@@ -492,15 +492,15 @@ function newMenu() {
 
 function PageLink2($name,$desc="",$url="") {
   if ($url)
-    $url = "&".$url;
+    $url = "&amp;".$url;
   $access = accessLevel($name);
   if ($access == "owner" || $access == "all" || $access == "view") {
     if ($name == "processqueue" && !MANUALLY_PROCESS_QUEUE)
       return "";#'<!-- '.$desc.'-->';
 		elseif ($name == "processbounces" && !MANUALLY_PROCESS_BOUNCES) return ""; #'<!-- '.$desc.'-->';
     else {
-      if (!preg_match("/&pi=/i",$name) && isset($_GET["pi"]) && isset($GLOBALS["plugins"][$_GET["pi"]]) && is_object($GLOBALS["plugins"][$_GET["pi"]])) {
-        $pi = '&pi='.$_GET["pi"];
+      if (!preg_match("/&amp;pi=/i",$name) && isset($_GET["pi"]) && isset($GLOBALS["plugins"][$_GET["pi"]]) && is_object($GLOBALS["plugins"][$_GET["pi"]])) {
+        $pi = '&amp;pi='.$_GET["pi"];
       } else {
         $pi = "";
       }
@@ -529,9 +529,9 @@ function SidebarLink($name,$desc,$url="") {
 
 function PageURL2($name,$desc = "",$url="") {
   if ($url)
-    $url = "&".$url;
-  if (!preg_match("/&pi=/i",$name) && $_GET["pi"] && is_object($GLOBALS["plugins"][$_GET["pi"]])) {
-    $pi = '&pi='.$_GET["pi"];
+    $url = "&amp;".$url;
+  if (!preg_match("/&amp;pi=/i",$name) && $_GET["pi"] && is_object($GLOBALS["plugins"][$_GET["pi"]])) {
+    $pi = '&amp;pi='.$_GET["pi"];
   } else {
     $pi = "";
   }

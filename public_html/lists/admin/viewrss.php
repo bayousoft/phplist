@@ -25,7 +25,7 @@ if ($GLOBALS["require_login"] && !isSuperUser()) {
     case "owner":
       $subselect = "where ".$tables["rssitem"].".list = ". $tables["list"].".id and ".$tables["list"].".owner = ".$_SESSION["logindetails"]["id"];
       if ($_GET["id"]) {
-        $pagingurl = '&id='.$_GET["id"];
+        $pagingurl = '&amp;id='.$_GET["id"];
         $subselect .= " and ". $tables["rssitem"].".list = ".$_GET["id"];
         print "RSS items for ".ListName($_GET["id"])."<br/>";
       }
@@ -40,7 +40,7 @@ if ($GLOBALS["require_login"] && !isSuperUser()) {
   $querytables = $tables["rssitem"];
   $subselect = "";
   if ($_GET["id"]) {
-    $pagingurl = '&id='.$_GET["id"];
+    $pagingurl = '&amp;id='.$_GET["id"];
     $subselect = "where ". $tables["rssitem"].".list = ".$_GET["id"];
     print "RSS items for ".ListName($_GET["id"])."<br/>";
   }

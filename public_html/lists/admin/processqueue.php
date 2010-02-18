@@ -381,7 +381,7 @@ while ($message = Sql_fetch_array($messages)) {
     foreach ($notifications as $notification) {
       sendMail($notification,$GLOBALS['I18N']->get('Message Sending has started'),
         sprintf($GLOBALS['I18N']->get('phplist has started sending the message with subject %s'),$message['subject']."\n".
-        sprintf($GLOBALS['I18N']->get('to view the progress of this message, go to %s'),getConfig('website').$GLOBALS['adminpages'].'/?page=messages&type=sent')));
+        sprintf($GLOBALS['I18N']->get('to view the progress of this message, go to %s'),getConfig('website').$GLOBALS['adminpages'].'/?page=messages&amp;type=sent')));
     }
     Sql_Query(sprintf('insert ignore into %s (name,id,data) values("start_notified",%d,current_timestamp)',
       $GLOBALS['tables']['messagedata'],$messageid));

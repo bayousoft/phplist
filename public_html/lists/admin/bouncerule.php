@@ -57,7 +57,7 @@ if ($num) {
 }  
 $c = 0;
 while ($row = Sql_Fetch_Array($req)) {
-  print PageLink2('bounce&id='.$row['bounce'],$row['bounce']).' ';
+  print PageLink2('bounce&amp;id='.$row['bounce'],$row['bounce']).' ';
   $c++;
   if ($c > 100) break;
 }

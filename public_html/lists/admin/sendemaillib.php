@@ -160,11 +160,11 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   $text["subscribe"] = sprintf('%s',$url);
   $html["subscribeurl"] = sprintf('%s',$url);
   $text["subscribeurl"] = sprintf('%s',$url);
-  #?mid=1&id=1&uid=a9f35f130593a3d6b89cfe5cfb32a0d8&p=forward&email=michiel%40tincan.co.uk&
+  #?mid=1&amp;id=1&uid=a9f35f130593a3d6b89cfe5cfb32a0d8&p=forward&email=michiel%40tincan.co.uk&
   $url = getConfig("forwardurl");$sep = ereg('\?',$url)?'&':'?';
-  $html["forward"] = sprintf('<a href="%s%suid=%s&mid=%d">%s</a>',$url,$sep,$hash,$messageid,$strThisLink);
-  $text["forward"] = sprintf('%s%suid=%s&mid=%d',$url,$sep,$hash,$messageid);
-  $html["forwardurl"] = sprintf('%s%suid=%s&mid=%d',$url,$sep,$hash,$messageid);
+  $html["forward"] = sprintf('<a href="%s%suid=%s&amp;mid=%d">%s</a>',$url,$sep,$hash,$messageid,$strThisLink);
+  $text["forward"] = sprintf('%s%suid=%s&amp;mid=%d',$url,$sep,$hash,$messageid);
+  $html["forwardurl"] = sprintf('%s%suid=%s&amp;mid=%d',$url,$sep,$hash,$messageid);
   $text["forwardurl"] = $text["forward"];
   $html["messageid"] = sprintf('%d',$messageid);
   $text["messageid"] = sprintf('%d',$messageid);
@@ -190,7 +190,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   Michiel Dethmers, Tincan Ltd 2003, 2004, 2005, 2006
 */
   if (!EMAILTEXTCREDITS) {
-    $html["signature"] = $PoweredByImage;#'<div align="center" id="signature"><a href="http://www.phplist.com"><img src="powerphplist.png" width=88 height=31 title="Powered by PHPlist" alt="Powered by PHPlist" border="0"></a></div>';
+    $html["signature"] = $PoweredByImage;#'<div align="center" id="signature"><a href="http://www.phplist.com"><img src="powerphplist.png" width=88 height=31 title="Powered by PHPlist" alt="Powered by PHPlist" border="0" /></a></div>';
     # oops, accidentally became spyware, never intended that, so take it out again :-)
     $html["signature"] = preg_replace('/src=".*power-phplist.png"/','src="powerphplist.png"',$html["signature"]);
   } else {
@@ -381,7 +381,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     }
     if (!empty($forwardmessage)) {
       $url = getConfig("forwardurl");$sep = ereg('\?',$url)?'&':'?';
-      $forwardurl = sprintf('%s%suid=%s&mid=%d',$url,$sep,$hash,$forwardmessage);
+      $forwardurl = sprintf('%s%suid=%s&amp;mid=%d',$url,$sep,$hash,$forwardmessage);
       $htmlmessage = str_replace($matchtext,'<a href="'.$forwardurl.'">'.$forwardtext.'</a>',$htmlmessage);
     } else {
       ## make sure to remove the match, otherwise, it'll be an eternal loop
@@ -402,7 +402,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     }
     if (!empty($forwardmessage)) {
       $url = getConfig("forwardurl");$sep = ereg('\?',$url)?'&':'?';
-      $forwardurl = sprintf('%s%suid=%s&mid=%d',$url,$sep,$hash,$forwardmessage);
+      $forwardurl = sprintf('%s%suid=%s&amp;mid=%d',$url,$sep,$hash,$forwardmessage);
       $textmessage = str_replace($matchtext,$forwardtext.' '.$forwardurl,$textmessage);
     } else {
       ## make sure to remove the match, otherwise, it'll be an eternal loop
@@ -417,9 +417,9 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   $textmessage = eregi_replace("\[USERID\]",$hash,$textmessage);
 
   if (ALWAYS_ADD_USERTRACK) {
-    $htmlmessage .= '<img src="'.$GLOBALS['scheme'].'://'.$website.$GLOBALS["pageroot"].'/ut.php?u='.$hash.'&m='.$messageid.'" border="0">';
+    $htmlmessage .= '<img src="'.$GLOBALS['scheme'].'://'.$website.$GLOBALS["pageroot"].'/ut.php?u='.$hash.'&m='.$messageid.'" border="0" />';
   } else {
-    $htmlmessage = preg_replace("/\[USERTRACK\]/i",'<img src="'.$GLOBALS['scheme'].'://'.$website.$GLOBALS["pageroot"].'/ut.php?u='.$hash.'&m='.$messageid.'" border="0">',$htmlmessage,1);
+    $htmlmessage = preg_replace("/\[USERTRACK\]/i",'<img src="'.$GLOBALS['scheme'].'://'.$website.$GLOBALS["pageroot"].'/ut.php?u='.$hash.'&m='.$messageid.'" border="0" />',$htmlmessage,1);
   }
   # make sure to only include usertrack once, otherwise the stats would go silly
   if (PHP5) {

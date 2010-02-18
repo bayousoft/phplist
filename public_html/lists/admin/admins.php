@@ -78,12 +78,12 @@ if ($total > MAX_USER_PP) {
     $limit = "limit 0,50";
     $start = 0;
   }
-  printf ('<table class="adminsListing" border=1><tr><td colspan=4 align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
+  printf ('<table class="adminsListing" border="1"><tr><td colspan="4" align="center">%s</td></tr><tr><td>%s</td><td>%s</td><td>
           %s</td><td>%s</td></tr></table><hr/>',
           $listing,
           PageLink2("admins","&lt;&lt;","start=0"),
           PageLink2("admins","&lt;",sprintf('start=%d',max(0,$start-MAX_USER_PP))),
-          PageLink2("admins","&gt;",sprintf('start=%d',min($total,$start+MAX_USER_PP))),
+          PageLink2("admins","&gt;",sprintf('start=%d',min($total-MAX_USER_PP,$start+MAX_USER_PP))),
           PageLink2("admins","&gt;&gt;",sprintf('start=%d',$total-MAX_USER_PP)));
   if ($find)
     $result = Sql_query("SELECT id,loginname,email FROM ".$tables["admin"]." where loginname like \"%$find%\" or email like \"%$find%\" order by loginname $limit");
@@ -98,16 +98,16 @@ if ($total > MAX_USER_PP) {
 
 ?>
 <table class="adminsForm">
-<tr><td colspan=4><?php echo formStart('class="adminsFind"')?><input type="hidden" name=id value="<?php echo $listid?>">
-<?php echo $GLOBALS['I18N']->get('Find an admin')?>: <input type=text name=find value="<?php echo $find?>" size=40><p class="submit"><input type="submit" value="Go"></p>
+<tr><td colspan=4><?php echo formStart('class="adminsFind"')?><input type="hidden" name="id" value="<?php echo $listid?>" />
+  <?php echo $GLOBALS['I18N']->get('Find an admin')?>: <input type="text" name="find" value="<?php echo $find?>" size="40" /><input class="submit" type="submit" value="Go">
 </form></td></tr></table>
 <?php
 $ls = new WebblerListing($GLOBALS['I18N']->get('Administrators'));
 while ($admin = Sql_fetch_array($result)) {
   if ($find)
-    $remember_find = "&find=".urlencode($find);
-  $delete_url = sprintf("<a href=\"javascript:deleteRec('%s');\">del</a>",PageURL2("admins","Delete","start=$start&delete=".$admin["id"]));
-  $ls->addElement($admin["loginname"],PageUrl2("admin",$GLOBALS['I18N']->get('Show'),"start=$start&id=".$admin["id"].$remember_find));
+    $remember_find = "&amp;find=".urlencode($find);
+  $delete_url = sprintf("<a href=\"javascript:deleteRec('%s');\">del</a>",PageURL2("admins","Delete","start=$start&amp;delete=".$admin["id"]));
+  $ls->addElement($admin["loginname"],PageUrl2("admin",$GLOBALS['I18N']->get('Show'),"start=$start&amp;id=".$admin["id"].$remember_find));
   if (!$external)
     $ls->addColumn($admin["loginname"],"del",$delete_url);
 }

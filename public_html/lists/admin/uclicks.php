@@ -65,7 +65,7 @@ while ($row = Sql_Fetch_Array($req)) {
       $GLOBALS['tables']['linktrack_uml_click'],$row['messageid'],$id));
   }
 
-  $ls->addElement($element,PageUrl2('mclicks&id='.$row['messageid']));
+  $ls->addElement($element,PageUrl2('mclicks&amp;id='.$row['messageid']));
   $ls->addColumn($element,$GLOBALS['I18N']->get('firstclick'),formatDateTime($row['firstclick'],1));
   $ls->addColumn($element,$GLOBALS['I18N']->get('latestclick'),$row['latestclick']);
   $ls->addColumn($element,$GLOBALS['I18N']->get('sent'),$row['total']);

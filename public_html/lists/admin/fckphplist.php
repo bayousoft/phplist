@@ -67,24 +67,24 @@ config.LinkShowTargets = true ;
 config.LinkTargets = '_blank;_parent;_self;_top' ;
 config.LinkDefaultTarget = '_blank' ;
 config.ImageBrowser = <?php echo $enable_image_upload?> ;
-config.ImageBrowserURL = config.BasePath + "../?page=fckphplist&action=browseimage" ;
+config.ImageBrowserURL = config.BasePath + "../?page=fckphplist&amp;action=browseimage" ;
 config.ImageBrowserWindowWidth  = 600 ;
 config.ImageBrowserWindowHeight = 480 ;
 
 config.ImageUpload = <?php echo $enable_image_upload?> ;
 // Page that effectivelly upload the image.
-config.ImageUploadURL = config.BasePath + "../?page=fckphplist&action=uploadimage" ;
+config.ImageUploadURL = config.BasePath + "../?page=fckphplist&amp;action=uploadimage" ;
 config.ImageUploadWindowWidth  = 600 ;
 config.ImageUploadWindowHeight  = 480 ;
 config.ImageUploadAllowedExtensions = ".gif .jpg .jpeg .png" ;
 
 config.LinkBrowser = false ;
-config.LinkBrowserURL = config.BasePath + "../?page=fckphplist&action=browsefile" ;
+config.LinkBrowserURL = config.BasePath + "../?page=fckphplist&amp;action=browsefile" ;
 config.LinkBrowserWindowWidth  = 400 ;
 config.LinkBrowserWindowHeight  = 250 ;
 
 config.LinkUpload = false ;
-config.LinkUploadURL = config.BasePath + "../?page=fckphplist&action=uploadfile" ;
+config.LinkUploadURL = config.BasePath + "../?page=fckphplist&amp;action=uploadfile" ;
 
 //config.SmileyPath  = config.BasePath + "images/smiley/fun/" ;
 config.SmileyPath = document.location.protocol + '//' + document.location.host +'<?php echo $GLOBALS["pageroot"].'/images/smiley/'?>'

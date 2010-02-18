@@ -67,16 +67,16 @@ if (!isset($_GET["type"]) && !empty($_SESSION["lastmessagetype"])) {
 
 ### Print tabs
 $tabs = new WebblerTabs();
-$tabs->addTab($GLOBALS['I18N']->get("sent"),PageUrl2("messages&type=sent"));
-$tabs->addTab($GLOBALS['I18N']->get("active"),PageUrl2("messages&type=active"));
-$tabs->addTab($GLOBALS['I18N']->get("draft"),PageUrl2("messages&type=draft"));
-#$tabs->addTab($GLOBALS['I18N']->get("queued"),PageUrl2("messages&type=queued"));#
+$tabs->addTab($GLOBALS['I18N']->get("sent"),PageUrl2("messages&amp;type=sent"));
+$tabs->addTab($GLOBALS['I18N']->get("active"),PageUrl2("messages&amp;type=active"));
+$tabs->addTab($GLOBALS['I18N']->get("draft"),PageUrl2("messages&amp;type=draft"));
+#$tabs->addTab($GLOBALS['I18N']->get("queued"),PageUrl2("messages&amp;type=queued"));#
 if (USE_PREPARE) {
-  $tabs->addTab($GLOBALS['I18N']->get("static"),PageUrl2("messages&type=static"));
+  $tabs->addTab($GLOBALS['I18N']->get("static"),PageUrl2("messages&amp;type=static"));
 }
 //obsolete, moved to rssmanager plugin
 #if (ENABLE_RSS) {
-#  $tabs->addTab("rss",PageUrl2("messages&type=rss"));
+#  $tabs->addTab("rss",PageUrl2("messages&amp;type=rss"));
 #}
 if (!empty($_GET['type'])) {
   $tabs->setCurrent($_GET["type"]);
@@ -156,28 +156,28 @@ switch ($_GET["type"]) {
   case "queued":
 #    $subselect = ' status in ("submitted") and (rsstemplate is NULL or rsstemplate = "") ';
     $cond[] = " status in ('submitted', 'suspended') ";
-    $url_keep = '&type=queued';
+    $url_keep = '&amp;type=queued';
     break;
   case "static":
     $cond[] = " status in ('prepared') ";
-    $url_keep = '&type=static';
+    $url_keep = '&amp;type=static';
     break;
 #  case "rss":
 #    $subselect = ' rsstemplate != ""';
-#    $url_keep = '&type=sent';
+#    $url_keep = '&amp;type=sent';
 #    break;
   case "draft":
     $cond[] = " status in ('draft') ";
-    $url_keep = '&type=draft';
+    $url_keep = '&amp;type=draft';
     break;
   case "active":
     $cond[] = " status in ('inprocess','submitted', 'suspended') ";
-    $url_keep = '&type=active';
+    $url_keep = '&amp;type=active';
     break;
   case "sent":
   default:
     $cond[] = " status in ('sent') ";
-    $url_keep = '&type=sent';
+    $url_keep = '&amp;type=sent';
     break;
 }
 
@@ -213,7 +213,7 @@ if ($total)
           PageLink2("messages$url_keep","&gt;",sprintf('start=%d',min($total,$start+MAX_MSG_PP))),
           PageLink2("messages$url_keep","&gt;&gt;",sprintf('start=%d',$total-MAX_MSG_PP)));
 if ($_GET["type"] == "draft") {
-  print '<p class="delete">'.PageLink2("messages&delete=draft",$GLOBALS['I18N']->get("Delete all draft messages without subject")).'</p>';
+  print '<p class="delete">'.PageLink2("messages&amp;delete=draft",$GLOBALS['I18N']->get("Delete all draft messages without subject")).'</p>';
 }
 
 ?>

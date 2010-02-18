@@ -350,7 +350,7 @@ function clean2 ($value) {
 }
 
 if (TEST && REGISTER)
-  $pixel = '<img src="http://phplist.tincan.co.uk/images/pixel.gif" width=1 height=1>';
+  $pixel = '<img src="http://phplist.tincan.co.uk/images/pixel.gif" width="1" height="1" />';
 
 
 function timeDiff($time1,$time2) {
@@ -374,13 +374,13 @@ function timeDiff($time1,$time2) {
 function previewTemplate($id,$adminid = 0,$text = "", $footer = "") {
   global $tables;
   if (defined("IN_WEBBLER")) {
-    $more = '&pi='.$_GET["pi"];
+    $more = '&amp;pi='.$_GET["pi"];
   }
   $tmpl = Sql_Fetch_Row_Query(sprintf('select template from %s where id = %d',$tables["template"],$id));
   $template = stripslashes($tmpl[0]);
   $img_req = Sql_Query(sprintf('select id,filename from %s where template = %d order by filename desc',$tables["templateimage"],$id));
   while ($img = Sql_Fetch_Array($img_req)) {
-    $template = preg_replace("#".preg_quote($img["filename"])."#","?page=image&id=".$img["id"].$more,$template);
+    $template = preg_replace("#".preg_quote($img["filename"])."#","?page=image&amp;id=".$img["id"].$more,$template);
   }
   if ($adminid) {
     $att_req = Sql_Query("select name,value from {$tables["adminattribute"]},{$tables["admin_attribute"]} where {$tables["adminattribute"]}.id = {$tables["admin_attribute"]}.adminattributeid and {$tables["admin_attribute"]}.adminid = $adminid");

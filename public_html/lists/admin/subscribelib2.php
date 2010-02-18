@@ -186,7 +186,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok && $allt
       if (!$canlogin) {
         $msg = $GLOBALS["strUserExists"];
         $msg .= '<p class="information">'.$GLOBALS["strUserExistsExplanationStart"].
-          sprintf('<a href="%s&email=%s">%s</a>',getConfig("preferencesurl"),$email,
+          sprintf('<a href="%s&amp;email=%s">%s</a>',getConfig("preferencesurl"),$email,
           $GLOBALS["strUserExistsExplanationLink"]).
           $GLOBALS["strUserExistsExplanationEnd"];
         return;
@@ -195,7 +195,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok && $allt
 
       $userid = $old_data["id"];
       $old_data = array_merge($old_data,getUserAttributeValues('',$userid));
-      $history_entry = 'http://'.getConfig("website").$GLOBALS["adminpages"].'/?page=user&id='.$userid."\n\n";
+      $history_entry = 'http://'.getConfig("website").$GLOBALS["adminpages"].'/?page=user&amp;id='.$userid."\n\n";
 
       $query = sprintf('update %s set email = "%s",htmlemail = %d,subscribepage = %d,rssfrequency = "%s" where id = %d',$GLOBALS["tables"]["user"],addslashes($email),$htmlemail,$id,$rssfrequency,$userid);
       $result = Sql_query($query);
@@ -434,14 +434,14 @@ elseif (isset($_POST["update"]) && $_POST["update"] && is_email($_POST["email"])
       Fatal_Error("Cannot change to that email address.
       <br/>This email already exists.
       <br/>Please use the preferences URL for this email to make updates.
-      <br/>Click <a href=\"".getConfig("preferencesurl")."&email=$email\">here</a> to request your personal location");
+      <br/>Click <a href=\"".getConfig("preferencesurl")."&amp;email=$email\">here</a> to request your personal location");
       exit;
     }
   }
   # read the current values to compare changes
   $old_data = Sql_Fetch_Array_Query(sprintf('select * from %s where id = %d',$GLOBALS["tables"]["user"],$userid));
   $old_data = array_merge($old_data,getUserAttributeValues('',$userid));
-  $history_entry = 'http://'.getConfig("website").$GLOBALS["adminpages"].'/?page=user&id='.$userid."\n\n";
+  $history_entry = 'http://'.getConfig("website").$GLOBALS["adminpages"].'/?page=user&amp;id='.$userid."\n\n";
 
   if (ASKFORPASSWORD && $_POST["password"]) {
     if (ENCRYPTPASSWORD) {

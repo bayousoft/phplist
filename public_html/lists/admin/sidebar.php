@@ -27,7 +27,7 @@ require_once dirname(__FILE__).'/accesscheck.php';
 #  $req = Sql_Query(sprintf('select * from %s where active',$tables["subscribepage"]));
 #  if (Sql_Affected_Rows()) {
 #    while ($row = Sql_Fetch_Array($req)) {
-#      $html .= $spb.sprintf('<a href="%s&id=%d" target="phplistwindow">%s</a>',getConfig("subscribeurl"),$row["id"],$row["title"]).$spe;
+#      $html .= $spb.sprintf('<a href="%s&amp;id=%d" target="phplistwindow">%s</a>',getConfig("subscribeurl"),$row["id"],$row["title"]).$spe;
 #     }
 #  } else {
 #    $html .= $spb.sprintf('<a href="%s" target="phplistwindow">%s</a>',getConfig("subscribeurl"),$GLOBALS["strSubscribeTitle"]).$spe;

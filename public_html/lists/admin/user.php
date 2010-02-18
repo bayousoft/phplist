@@ -79,7 +79,7 @@ $more = '';
 if (!empty($_REQUEST['returnpage'])) {
   $returnpage = preg_replace('/\W/','',$_REQUEST['returnpage']);
   if (isset($_REQUEST['returnoption'])) {
-    $more = "&option=".preg_replace('/\W/','',$_GET['returnoption']);
+    $more = "&amp;option=".preg_replace('/\W/','',$_GET['returnoption']);
   }
   echo "<br/>".PageLink2("$returnpage$more","Return to $returnpage");
   $returnurl = "returnpage=$returnpage&returnoption=$returnoption";

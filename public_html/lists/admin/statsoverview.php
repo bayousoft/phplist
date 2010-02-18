@@ -82,7 +82,7 @@ if (!$id) {
   $ls = new WebblerListing($GLOBALS['I18N']->get('Last few Messages'));
   while ($row = Sql_Fetch_Array($req)) {
     $element = $row['messageid'].' '.substr($row['subject'],0,50);
-    $ls->addElement($element,PageURL2('message&id='.$row['messageid']));
+    $ls->addElement($element,PageURL2('message&amp;id='.$row['messageid']));
  #   $ls->addColumn($element,$GLOBALS['I18N']->get('owner'),$row['owner']);
     $ls->addColumn($element,$GLOBALS['I18N']->get('date'),$row['sent']);
     $ls->addColumn($element,$GLOBALS['I18N']->get('sent'),$row['total']);
@@ -180,7 +180,7 @@ $req = Sql_Query_Params($query, $params);
 $summary = array();
 while ($row = Sql_Fetch_Array($req)) {
   $element = '<!--'.$row['userid'].'-->'.$row['email'];
-  $ls->addElement($element,PageUrl2('userhistory&id='.$row['userid']));
+  $ls->addElement($element,PageUrl2('userhistory&amp;id='.$row['userid']));
   $ls->addColumn($element,$GLOBALS['I18N']->get('sent'),formatDateTime($row['sent']));
   if ($row['viewcount'] > 1) {
     $ls->addColumn($element,$GLOBALS['I18N']->get('firstview'),formatDateTime($row['firstview'],1));

@@ -1,5 +1,6 @@
 </div>
-</td>
+<table>
+<tr>
 <td>
 <div class="menutableright">
 <?php
@@ -13,13 +14,7 @@ if (0) {#$_SESSION["sidebar_enabled"]) {
 </td>
 </tr>
 
-
-
-
 <tr><td colspan="4">&nbsp;</td></tr>
-
-
-
 <tr><td colspan="4">&nbsp;</td></tr>
 </table>
 <!--TOP TABLE ends-->
@@ -54,4 +49,4 @@ if (0) {#$_SESSION["sidebar_enabled"]) {
 </table>
 
 </div>
-</body></html>
+

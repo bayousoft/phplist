@@ -66,7 +66,7 @@ if ($fwdid && $msgid) {
     and uml_click.clicked',$GLOBALS['tables']['linktrack_uml_click'],$GLOBALS['tables']['user'],$fwdid,$msgid));
 } elseif ($userid && $msgid) {
   print '<h3>'.$GLOBALS['I18N']->get('User Click Details for a message').'</h3>';
-  print $GLOBALS['I18N']->get('User').' '.PageLink2('user&id='.$userid,$userdata['email']);
+  print $GLOBALS['I18N']->get('User').' '.PageLink2('user&amp;id='.$userid,$userdata['email']);
   print '</h3>';
   print '<table class="userclickDetails">
   <tr><td>'.$GLOBALS['I18N']->get('Subject').'<td><td>'.PageLink2('mclicks&amp;id='.$msgid,$messagedata['subject']).'</td></tr>
@@ -109,11 +109,11 @@ while ($row = Sql_Fetch_Array($req)) {
 #  print $row['email'] . "<br/>";
   if (!$userid) {
     $element = $row['email'];
-    $ls->addElement($element,PageUrl2('userhistory&id='.$row['userid']));
+    $ls->addElement($element,PageUrl2('userhistory&amp;id='.$row['userid']));
   } else {
     $element = $row['url'];
-    $ls->addElement($element,PageUrl2('uclicks&id='.$row['forwardid']));
-    $ls->addColumn($element,$GLOBALS['I18N']->get('message'),PageLink2('mclicks&id='.$row['messageid'],$row['messageid']));
+    $ls->addElement($element,PageUrl2('uclicks&amp;id='.$row['forwardid']));
+    $ls->addColumn($element,$GLOBALS['I18N']->get('message'),PageLink2('mclicks&amp;id='.$row['messageid'],$row['messageid']));
   }
 #  $element = sprintf('<a href="%s" target="_blank" class="url" title="%s">%s</a>',$row['url'],$row['url'],substr(str_replace('http://','',$row['url']),0,50));
 #  $total = Sql_Verbose_Query(sprintf('select count(*) as total from %s where messageid = %d and url = "%s"',

@@ -151,7 +151,7 @@ function processBounce ($link,$num,$header) {
      logEvent("$userid ".$GLOBALS['I18N']->get("system message bounced, user marked unconfirmed"));
      addUserHistory($user,$GLOBALS['I18N']->get("Bounced system message"),"
     <br/>".$GLOBALS['I18N']->get("User marked unconfirmed")."
-    <br/><a href=\"./?page=bounce&id=$bounceid\">".$GLOBALS['I18N']->get("View Bounce")."</a>
+    <br/><a href=\"./?page=bounce&amp;id=$bounceid\">".$GLOBALS['I18N']->get("View Bounce")."</a>
 
     ");
     Sql_Query(sprintf('update %s
@@ -383,54 +383,54 @@ if (USE_ADVANCED_BOUNCEHANDLING) {
       }
       switch ($rule['action']) {
         case 'deleteuser':
-          logEvent('User '.$userdata['email'].' deleted by bounce rule '.PageLink2('bouncerule&id='.$rule['id'],$rule['id']));
+          logEvent('User '.$userdata['email'].' deleted by bounce rule '.PageLink2('bouncerule&amp;id='.$rule['id'],$rule['id']));
           $advanced_report .= 'User '.$userdata['email'].' deleted by bounce rule '.$rule['id']."\n";
-          $advanced_report .= 'User: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=user&id='.$userdata['id']."\n";
-          $advanced_report .= 'Rule: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=bouncerule&id='.$rule['id']."\n";
+          $advanced_report .= 'User: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=user&amp;id='.$userdata['id']."\n";
+          $advanced_report .= 'Rule: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=bouncerule&amp;id='.$rule['id']."\n";
           deleteUser($row['user']);
           break;
         case 'unconfirmuser':
-          logEvent('User '.$userdata['email'].' unconfirmed by bounce rule '.PageLink2('bouncerule&id='.$rule['id'],$rule['id']));
+          logEvent('User '.$userdata['email'].' unconfirmed by bounce rule '.PageLink2('bouncerule&amp;id='.$rule['id'],$rule['id']));
           Sql_Query(sprintf('update %s set confirmed = 0 where id = %d',$GLOBALS['tables']['user'],$row['user']));
           $advanced_report .= 'User '.$userdata['email'].' made unconfirmed by bounce rule '.$rule['id']."\n";
-          $advanced_report .= 'User: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=user&id='.$userdata['id']."\n";
-          $advanced_report .= 'Rule: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=bouncerule&id='.$rule['id']."\n";
+          $advanced_report .= 'User: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=user&amp;id='.$userdata['id']."\n";
+          $advanced_report .= 'Rule: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=bouncerule&amp;id='.$rule['id']."\n";
           addUserHistory($userdata['email'],$GLOBALS['I18N']->get("Auto Unsubscribed"),$GLOBALS['I18N']->get("User auto unsubscribed for")." ".$GLOBALS['I18N']->get("bounce rule").' '.$rule['id']);
           addSubscriberStatistics('auto unsubscribe',1);
           break;
         case 'deleteuserandbounce':
-          logEvent('User '.$row['user'].' deleted by bounce rule '.PageLink2('bouncerule&id='.$rule['id'],$rule['id']));
+          logEvent('User '.$row['user'].' deleted by bounce rule '.PageLink2('bouncerule&amp;id='.$rule['id'],$rule['id']));
           $advanced_report .= 'User '.$userdata['email'].' deleted by bounce rule '.$rule['id']."\n";
-          $advanced_report .= 'User: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=user&id='.$userdata['id']."\n";
-          $advanced_report .= 'Rule: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=bouncerule&id='.$rule['id']."\n";
+          $advanced_report .= 'User: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=user&amp;id='.$userdata['id']."\n";
+          $advanced_report .= 'Rule: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=bouncerule&amp;id='.$rule['id']."\n";
           deleteUser($row['user']);
           deleteBounce($row['bounce']);
           break;
         case 'unconfirmuseranddeletebounce':
-          logEvent('User '.$userdata['email'].' unconfirmed by bounce rule '.PageLink2('bouncerule&id='.$rule['id'],$rule['id']));
+          logEvent('User '.$userdata['email'].' unconfirmed by bounce rule '.PageLink2('bouncerule&amp;id='.$rule['id'],$rule['id']));
           Sql_Query(sprintf('update %s set confirmed = 0 where id = %d',$GLOBALS['tables']['user'],$row['user']));
           $advanced_report .= 'User '.$userdata['email'].' made unconfirmed by bounce rule '.$rule['id']."\n";
-          $advanced_report .= 'User: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=user&id='.$userdata['id']."\n";
-          $advanced_report .= 'Rule: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=bouncerule&id='.$rule['id']."\n";
+          $advanced_report .= 'User: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=user&amp;id='.$userdata['id']."\n";
+          $advanced_report .= 'Rule: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=bouncerule&amp;id='.$rule['id']."\n";
           addUserHistory($userdata['email'],$GLOBALS['I18N']->get("Auto Unsubscribed"),$GLOBALS['I18N']->get("User auto unsubscribed for")." ".$GLOBALS['I18N']->get("bounce rule").' '.$rule['id']);
           addSubscriberStatistics('auto unsubscribe',1);
           deleteBounce($row['bounce']);
           break;
         case 'blacklistuser':
-          logEvent('User '.$userdata['email'].' blacklisted by bounce rule '.PageLink2('bouncerule&id='.$rule['id'],$rule['id']));
+          logEvent('User '.$userdata['email'].' blacklisted by bounce rule '.PageLink2('bouncerule&amp;id='.$rule['id'],$rule['id']));
           addUserToBlacklist($userdata['email'],$GLOBALS['I18N']->get("Auto Blacklisted"),$GLOBALS['I18N']->get("User auto blacklisted for")." ".$GLOBALS['I18N']->get("bounce rule").' '.$rule['id']);
           $advanced_report .= 'User '.$userdata['email'].' blacklisted by bounce rule '.$rule['id']."\n";
-          $advanced_report .= 'User: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=user&id='.$userdata['id']."\n";
-          $advanced_report .= 'Rule: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=bouncerule&id='.$rule['id']."\n";
+          $advanced_report .= 'User: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=user&amp;id='.$userdata['id']."\n";
+          $advanced_report .= 'Rule: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=bouncerule&amp;id='.$rule['id']."\n";
           addUserHistory($userdata['email'],$GLOBALS['I18N']->get("Auto Unsubscribed"),$GLOBALS['I18N']->get("User auto unsubscribed for")." ".$GLOBALS['I18N']->get("bounce rule").' '.$rule['id']);
           addSubscriberStatistics('auto blacklist',1);
           break;
         case 'blacklistuseranddeletebounce':
-          logEvent('User '.$userdata['email'].' blacklisted by bounce rule '.PageLink2('bouncerule&id='.$rule['id'],$rule['id']));
+          logEvent('User '.$userdata['email'].' blacklisted by bounce rule '.PageLink2('bouncerule&amp;id='.$rule['id'],$rule['id']));
           addUserToBlacklist($userdata['email'],$GLOBALS['I18N']->get("Auto Blacklisted"),$GLOBALS['I18N']->get("User auto blacklisted for")." ".$GLOBALS['I18N']->get("bounce rule").' '.$rule['id']);
           $advanced_report .= 'User '.$userdata['email'].' blacklisted by bounce rule '.$rule['id']."\n";
-          $advanced_report .= 'User: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=user&id='.$userdata['id']."\n";
-          $advanced_report .= 'Rule: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=bouncerule&id='.$rule['id']."\n";
+          $advanced_report .= 'User: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=user&amp;id='.$userdata['id']."\n";
+          $advanced_report .= 'Rule: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=bouncerule&amp;id='.$rule['id']."\n";
           addUserHistory($userdata['email'],$GLOBALS['I18N']->get("Auto Unsubscribed"),$GLOBALS['I18N']->get("User auto unsubscribed for")." ".$GLOBALS['I18N']->get("bounce rule").' '.$rule['id']);
           addSubscriberStatistics('auto blacklist',1);
           deleteBounce($row['bounce']);
@@ -495,7 +495,7 @@ while ($user = Sql_Fetch_Row($userid_req)) {
       if ($cnt >= $bounce_unsubscribe_threshold) {
         $removed = 1;
         output(sprintf('unsubscribing %d -> %d bounces',$user[0],$cnt));
-        $userurl = PageLink2("user&id=$user[0]",$user[0]);
+        $userurl = PageLink2("user&amp;id=$user[0]",$user[0]);
         logEvent($GLOBALS['I18N']->get("User")." $userurl ".$GLOBALS['I18N']->get("has consecutive bounces")." ($cnt) ".$GLOBALS['I18N']->get("over threshold, user marked unconfirmed"));
         $emailreq = Sql_Fetch_Row_Query("select email from {$tables["user"]} where id = $user[0]");
         addUserHistory($emailreq[0],$GLOBALS['I18N']->get("Auto Unsubscribed"),$GLOBALS['I18N']->get("User auto unsubscribed for")." $cnt ".$GLOBALS['I18N']->get("consecutive bounces"));
@@ -525,7 +525,7 @@ while ($user = Sql_Fetch_Row($userid_req)) {
       if ($cnt >= $bounce_unsubscribe_threshold) {
         $removed = 1;
         output(sprintf('unsubscribing %d -> %d bounces',$user[0],$cnt));
-        $userurl = PageLink2("user&id=$user[0]",$user[0]);
+        $userurl = PageLink2("user&amp;id=$user[0]",$user[0]);
         logEvent("User $userurl has consecutive bounces ($cnt) over treshold, user marked unconfirmed");
         $emailreq = Sql_Fetch_Row_Query("select email from {$tables["user"]} where id = $user[0]");
         addUserHistory($emailreq[0],"Auto Unsubscribed","User auto unsubscribed for $cnt consecutive bounces");
@@ -535,7 +535,7 @@ while ($user = Sql_Fetch_Row($userid_req)) {
           addEmailToBlackList($emailreq, "$cnt consecutive bounces, threshold reached");
         }
         $email_req = Sql_Fetch_Row_Query(sprintf('select email from %s where id = %d',$tables["user"],$user[0]));
-        $unsubscribed_users .= $email_req[0]."\t\t($cnt)\t\t". $GLOBALS['scheme'].'//'.getConfig('website').$GLOBALS['adminpages'].'/?page=user&id='.$user[0]. "\n";
+        $unsubscribed_users .= $email_req[0]."\t\t($cnt)\t\t". $GLOBALS['scheme'].'//'.getConfig('website').$GLOBALS['adminpages'].'/?page=user&amp;id='.$user[0]. "\n";
       }
     } elseif ($bounce["bounce"] == "") {
       #$cnt = 0; DT 051105

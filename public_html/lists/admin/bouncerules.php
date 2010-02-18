@@ -4,7 +4,7 @@ require_once dirname(__FILE__).'/accesscheck.php';
 
 if (isset($_GET['type']) && $_GET['type'] == 'candidate') {
   $type = 'candidate';
-  $url = '&type=candidate';
+  $url = '&amp;type=candidate';
 } else {
   $type = 'active';
 }
@@ -57,8 +57,8 @@ while ($row = Sql_Fetch_Array($count)) {
 }
 
 $tabs = new WebblerTabs();
-$tabs->addTab($GLOBALS['I18N']->get('active'),PageUrl2('bouncerules&type=active'));
-$tabs->addTab($GLOBALS['I18N']->get('candidate'),PageUrl2('bouncerules&type=candidate'));
+$tabs->addTab($GLOBALS['I18N']->get('active'),PageUrl2('bouncerules&amp;type=active'));
+$tabs->addTab($GLOBALS['I18N']->get('candidate'),PageUrl2('bouncerules&amp;type=candidate'));
 if ($type == 'candidate') {
   $tabs->setCurrent($GLOBALS['I18N']->get('candidate'));
 } else {
@@ -78,12 +78,12 @@ if (!Sql_Affected_Rows()) {
 
 while ($row = Sql_Fetch_Array($req)) {
   $element = $GLOBALS['I18N']->get('rule').' '.$row['id'];
-  $ls->addElement($element,PageUrl2('bouncerule&id='.$row['id']));
+  $ls->addElement($element,PageUrl2('bouncerule&amp;id='.$row['id']));
   if ($type == 'candidate') {
     # check if it matches an active rule
     $activerule = matchedBounceRule($row['regex'],1);
     if ($activerule) {
-      $ls->addColumn($element,$GLOBALS['I18N']->get('match'),PageLink2('bouncerule&id='.$activerule,$GLOBALS['I18N']->get('match')));
+      $ls->addColumn($element,$GLOBALS['I18N']->get('match'),PageLink2('bouncerule&amp;id='.$activerule,$GLOBALS['I18N']->get('match')));
     }
   }
   

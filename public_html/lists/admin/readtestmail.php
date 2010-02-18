@@ -238,7 +238,7 @@ function findEmailForUser($link, $mailToFind, $max= 3000) {
       $match[1] = trim($match[1]);
       $found= $mailToFind == $match[1];
       if (!$found) {
-        printf('<a href="?page=readtestmail&email=%s">Get (& delete) %s</a><br />', $match[1], $match[1]);
+        printf('<a href="?page=readtestmail&amp;email=%s">Get (& delete) %s</a><br />', $match[1], $match[1]);
       }
     }
     
