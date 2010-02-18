@@ -287,33 +287,33 @@ if ($GLOBALS["require_login"] && $page != "login") {
     }
   }
 
-  if ($page != "logout") {
-    # print '<div align="right">'.PageLink2("logout",$GLOBALS['I18N']->get('logout'));
+  if ($page != "logout" && !$logoutontop) {
+    print '<div align="right">'.PageLink2("logout",$GLOBALS['I18N']->get('logout')).'</div>';
   }
-#  print '</div>';
 }
- if (LANGUAGE_SWITCH) {
-   $ls = '
-<div align="right" id="languageswitch">
-      <form name="languageswitchform" method="post" action="">';
-   $ls .= '
-          <select name="setlanguage" onchange="document.languageswitchform.submit()">';
-   $lancount = 0;
-   foreach ($GLOBALS['LANGUAGES'] as $iso => $rec) {
-     if (is_dir(dirname(__FILE__).'/lan/'.$iso)) {
-       $ls .= sprintf('
-                <option value="%s" %s>%s</option>',$iso,$_SESSION['adminlanguage']['iso'] == $iso ? 'selected="selected"':'',$rec[0]);
-       $lancount++;
-     }
-   }
-   $ls .= '
-           </select>
-      </form>
-</div>';
-   if ($lancount > 1) {
-     print $ls;
-   }
- }
+
+if (LANGUAGE_SWITCH && !$logoutontop) {
+    $ls = '
+ <div align="right" id="languageswitch">
+       <form name="languageswitchform" method="post" action="">';
+    $ls .= '
+           <select name="setlanguage" onchange="document.languageswitchform.submit()">';
+    $lancount = 0;
+    foreach ($GLOBALS['LANGUAGES'] as $iso => $rec) {
+      if (is_dir(dirname(__FILE__).'/lan/'.$iso)) {
+        $ls .= sprintf('
+                 <option value="%s" %s>%s</option>',$iso,$_SESSION['adminlanguage']['iso'] == $iso ? 'selected="selected"':'',$rec[0]);
+        $lancount++;
+      }
+    }
+    $ls .= '
+            </select>
+       </form>
+ </div>';
+    if ($lancount > 1) {
+      print $ls;
+    }
+  }
 
 if ($page != "login") {
   if (ereg("dev",VERSION) && !TEST) {
