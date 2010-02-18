@@ -1,14 +1,14 @@
-<div align=center>
-  <table class="about" width="75%" border=1 cellspacing=5 cellpadding=5>
+<div align="center">
+  <table class="about" width="75%" border="1" cellspacing="5" cellpadding="5">
   <tr>
     <td colspan="2" class="abouthead"><?php echo NAME?></td>
   </tr>
   <tr>
-    <td width=50 valign=top>
+    <td class="poweredby" valign="top">
       Powered by <a href="http://www.phplist.com" target="_blank">phplist</a>, version <?php echo VERSION?> <a href="http://www.phplist.com" target="_blank"><br/><br/>
-      <img src="../images/power-phplist.png" width=70 height=30 border=0></a>
-  </td>
-  <td valign=top>
+      <img src="../images/power-phplist.png" alt="" width="70" height="30" border="0" /></a>
+    </td>
+    <td class="top">
     phplist is licensed with the <a href="http://www.gnu.org/copyleft" target="_blank">GNU Public License (GPL)</a>.<br/>
     Copyright &copy; 2000-<?php echo date('Y')?> <a href="http://tincan.co.uk" target="_blank">Tincan Ltd.</a><br/><br/>
     <b><?php echo $GLOBALS['I18N']->get('Developers')?></b>:
@@ -37,32 +37,41 @@
         <?php echo $GLOBALS['I18N']->get('thankseveryone')?>
     </p>
     <b><?php echo $GLOBALS['I18N']->get('Portions of the system include')?></b>
-    <ul>
+    <ul class="aboutSystem">
       <li><a href="http://www.webbler.org" target="_blank">Webbler</a> code, by <a href="http://tincan.co.uk" target="_blank">Michiel Dethmers</a></li>
       <li><a href="http://www.fckeditor.net/" target="_blank">FCKeditor</a>, by Frederico Caldeira Knabben and team</li>
       <li>the <a href="http://phpmailer.sourceforge.net/" target="_blank">phpmailer</a> class </li>
       <li>The html email class from, <a href="http://www.phpguru.org/" target="_blank">Richard Heyes</a></li>
     </ul>
+    </td>
     </tr>
+   <?php 
+   $plugins = '
     <tr>
-    <td width=50 valign=top><?php echo $GLOBALS['I18N']->get('Plugins')?></td>
-    <td valign=top>
-<?php 
-## list plugins and allow them to add details
+    <td width="50" valign="top">'. $GLOBALS["I18N"]->get('Plugins'). '</td>
+    <td valign="top">
+      <ul class="aboutplugins">
+';
+   // list plugins and allow them to add details
+$pg = '';
 foreach ($GLOBALS['plugins'] as $pluginName=>$plugin) {
-  echo '<b>' . $pluginName . "</b> version " . $plugin->version;
+  $pg .= '<li><b>' . $pluginName . "</b> version " . $plugin->version;
   if ( $plugin->authors ){
-    echo " by " . $plugin->authors; 
+    $pg .= ' <span class="pluginauthor">by ' . $plugin->authors . '</span>'; 
   }
   if ( $plugin->displayAbout() ){
-    echo '<br/>' . $plugin->displayAbout();
+    $pg .= ' <span class="pluginabout"' . $plugin->displayAbout(). '</span>';
   }
-  echo '<br/>';
+  $pg .= '</li>';
 } 
-?>
+  $plugins .= $pg . '
+        </ul>
       </td>
     </tr>
-  </table>
+';
+if ($pg != "") echo $plugins
+?>
+</table>
 </div>
 
 <!-- some google bombing, who knows, might work :-) -->
