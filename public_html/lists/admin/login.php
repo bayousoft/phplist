@@ -30,8 +30,8 @@ function footer(){
   echo '<form method="post" action="">';
   echo '  <p class="login"><hr width="50%" size="3">';
   echo $GLOBALS['I18N']->get('forgot password').':';
-  echo $GLOBALS['I18N']->get('enter your email').': <input type="text" name="forgotpassword" value="" size="30">';
-  echo '  <p class="submit"><input type="submit" name="process" value="'.$GLOBALS['I18N']->get('send password').'"></p>';
+  echo $GLOBALS['I18N']->get('enter your email').': <input type="text" name="forgotpassword" value="" size="30" />';
+  echo '  <input class="submit" type="submit" name="process" value="'.$GLOBALS['I18N']->get('send password').'" />';
   echo '</form>';
 }
 
@@ -85,32 +85,32 @@ function deleteOldTokens(){
       $row = Sql_Fetch_Row_Query($SQLquery);
       echo "You have requested a password update.\n";
       echo "<form method=\"post\" action=\"\">\n";
-      echo "  <input type=\"hidden\" name=\"page\" value=\"$page\">\n";
-      echo "  <input type=\"hidden\" name=\"name\" value=\"".$row[0]."\">\n";
-      echo "  <table class=\"loginPassUpdate\" width=100% border=0 cellpadding=2 cellspacing=0>\n";
+      echo "  <input type=\"hidden\" name=\"page\" value=\"$page\" />\n";
+      echo "  <input type=\"hidden\" name=\"name\" value=\"".$row[0]."\" />\n";
+      echo "  <table class=\"loginPassUpdate\" width=\"100%\" border=\"0\" cellpadding=\"2\" cellspacing=\"0\">\n";
       echo "    <tr><td><span class=\"general\">".$GLOBALS['I18N']->get('name').":</span></td></tr>\n";
       echo "    <tr><td>".$row[0]."</td></tr>";
       echo "    <tr><td><span class=\"general\">".$GLOBALS['I18N']->get('new password').":</span></td></tr>\n";
-      echo "    <tr><td><input type=password name=\"password1\" value=\"\" size=30></td></tr>";
+      echo "    <tr><td><input type=\"password\" name=\"password1\" value=\"\" size=\"30\" /></td></tr>";
       echo "    <tr><td><span class=\"general\">".$GLOBALS['I18N']->get('confirm password').":</span></td></tr>";
-      echo "    <tr><td><input type=password name=\"password2\" value=\"\" size=30></td></tr>";
-      echo "    <tr><td><p class=\"submit\"><input type=\"submit\" name=\"process\" value=\"".$GLOBALS['I18N']->get('enter')."\"></p></td></tr>";
+      echo "    <tr><td><input type=\"password\" name=\"password2\" value=\"\" size=\"30\" /></td></tr>";
+      echo "    <tr><td><input class=\"submit\" type=\"submit\" name=\"process\" value=\"".$GLOBALS['I18N']->get('enter')."\" /></td></tr>";
       echo "  </table>";
       echo "</form>";
     } else {
-      echo "Unknown token or time expired (More than 24 hrs. passed since the notification email was sent).<br/><br/>";
-      echo "To return and log in again, click: <a href='?page=home'>login</a>.<br/><br/>";
+      echo "<p class=\"information\"> Unknown token or time expired (More than 24 hrs. passed since the notification email was sent).<br/><br/>";
+      echo "To return and log in again, click: <a href='?page=home'>login</a>.</p><br/><br/>";
 	  deleteOldTokens();
   	}
   } else {
   echo "<form method=\"post\" action=\"\">\n";
-  echo "  <input type=\"hidden\" name=\"page\" value=\"$page\">\n";
-  echo "  <table class=\"loginPassUpdate\" width=100% border=0 cellpadding=2 cellspacing=0>\n";
+  echo "  <input type=\"hidden\" name=\"page\" value=\"$page\" />\n";
+  echo "  <table class=\"loginPassUpdate\" width=\"100%\" border=\"0\" cellpadding=\"2\" cellspacing=\"0\">\n";
   echo "    <tr><td><span class=\"general\">".$GLOBALS['I18N']->get('name').":</span></td></tr>\n";
-  echo "    <tr><td><input type=text name=\"login\" value=\"\" size=30></td></tr>";
+  echo "    <tr><td><input type=text name=\"login\" value=\"\" size=\"30\"></td></tr>";
   echo "    <tr><td><span class=\"general\">".$GLOBALS['I18N']->get('password').":</span></td></tr>";
-  echo "    <tr><td><input type=password name=\"password\" value=\"\" size=30></td></tr>";
-  echo "    <tr><td><p class=\"submit\"><input type=\"submit\" name=\"process\" value=\"".$GLOBALS['I18N']->get('enter')."\"></p></td></tr>";
+  echo "    <tr><td><input type=\"password\" name=\"password\" value=\"\" size=\"30\"></td></tr>";
+  echo "    <tr><td><input class=\"submit\" type=\"submit\" name=\"process\" value=\"".$GLOBALS['I18N']->get('enter')."\" /></td></tr>";
   echo "  </table>";
   echo "</form>";
   footer();
