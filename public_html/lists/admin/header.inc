@@ -1,6 +1,6 @@
-<link rel="SHORTCUT ICON" href="./images/phplist.ico" />
+<link rel="SHORTCUT ICON" href="./images/phplist.ico">
 <link href="styles/phplist.css" type="text/css" rel="stylesheet">
-    <link href="styles/domtab.css" type="text/css" rel="stylesheet">
+<link href="styles/domtab.css" type="text/css" rel="stylesheet">
 <script language="Javascript" type="text/javascript" src="js/AjaxRequest.js"></script>
 <script language="Javascript" type="text/javascript" src="js/domtab.js"></script>
 </head>
@@ -18,8 +18,8 @@
 <td>
 <!--TOP TABLE starts-->
 <TABLE cellSpacing="0" cellPadding="0" width="708" bgColor="#ffffff" border="0">
-  <TR vAlign="top">
-    <TD colSpan="2" rowspan="2" height="63" background="images/topstrip.png"><a href="http://www.phplist.com" target="_blank"><img src="images/masthead.png" border="0" width="577" height="75" alt=""></a></TD>
+  <TR valign="top">
+    <TD colspan="2" rowspan="2" height="63" background="images/topstrip.png"><a href="http://www.phplist.com" target="_blank"><img src="images/masthead.png" border="0" width="577" height="75" alt="" /></a></TD>
    <TD align="left" background="images/topstrip.png" bgcolor="#F0D1A3">
    <div class="poweredby"> powered by:<br />
    [<A class="powered" href="http://www.php.net/" target="_new">PHP</A>] + 
