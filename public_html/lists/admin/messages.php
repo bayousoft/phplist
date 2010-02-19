@@ -204,7 +204,7 @@ if (isset($start) && $start > 0) {
   $start = 0;
 }
   print $total. " ".$GLOBALS['I18N']->get("Messages")."</p>";
-if ($total)
+if ($total > MAX_MSG_PP)
   printf ('<table class="messagesListing" border="1"><tr><td colspan="4" align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
           %s</td><td>%s</td></tr></table><hr/>',
           $listing,
