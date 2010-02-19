@@ -66,13 +66,13 @@ if (isset($_GET['find'])) {
 } else {
   $find = '';
 }
-
+$start=$_GET['start'];
 if (isset($_GET['list']))
   echo "<br />".PageLink2("members","Back to Members of this list","id=".sprintf('%d',$_GET['list']))."\n";
 if (isset($start))
-  echo "<br />".PageLink2("users","Back to the list of users","start=$start&unconfirmed=".$_GET["unconfirmed"])."\n";
+  echo "<br />".PageLink2("users","Back to the list of users","start=$start&amp;unconfirmed=".$_GET["unconfirmed"])."\n";
 if ($find)
-  echo "<br />".PageLink2("users","Back to the search results","start=$start&find=".urlencode($find)."&findby=".urlencode($findby)."&unconfirmed=".$_GET["unconfirmed"]."\n");
+  echo "<br />".PageLink2("users","Back to the search results","start=$start&amp;find=".urlencode($find)."&amp;findby=".urlencode($findby)."&amp;unconfirmed=".$_GET["unconfirmed"]."\n");
 
 $more = '';
 
