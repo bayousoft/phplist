@@ -157,7 +157,7 @@ if (!empty($_POST['action']) && $_POST['action'] == "addimages") {
       print "<h3>".$GLOBALS['I18N']->get("Images").'</h3><p class="information">'.$GLOBALS['I18N']->get("Below is the list of images used in your template. If an image is currently unavailable, please upload it to the database.")."</p>";
       print '<p class="information">'.$GLOBALS['I18N']->get("This includes all images, also fully referenced ones, so you may choose not to upload some. If you upload images, they will be included in the emails that use this template.")."</p>";
       print formStart('enctype="multipart/form-data" class="template1" ');
-      print '<input type="hidden" name="id" value="'.$id.'">';
+      print '<input type="hidden" name="id" value="'.$id.'" />';
       ksort($images);
       reset($images);
       while (list($key,$val) = each ($images)) {
@@ -165,7 +165,8 @@ if (!empty($_POST['action']) && $_POST['action'] == "addimages") {
         print $image->showInput($key,$val,$id);
       }
 
-      print '<input type="hidden" name="id" value="'.$id.'"><input type="hidden" name="action" value="addimages"><p class="submit"><input type="submit" name="addimages" value="'.$GLOBALS['I18N']->get("Save Images").'"></p></form>';
+      print '<input type="hidden" name="id" value="'.$id.'" /><input type="hidden" name="action" value="addimages" />
+        <input class="submit" type="submit" name="addimages" value="'.$GLOBALS['I18N']->get("Save Images").'" /></form>';
       return;
     } else {
       print '<p class="information">'.$GLOBALS['I18N']->get("Template does not contain local images")."</p>";
@@ -188,12 +189,12 @@ if (!empty($_POST['action']) && $_POST['action'] == "addimages") {
 <?php echo '<p class="button">'.PageLink2("templates",$GLOBALS['I18N']->get("List of Templates")).'</p>';?>
 
 <?php echo formStart(' enctype="multipart/form-data" class="template2" ')?>
-<input type="hidden" name="id" value="<?php echo $id?>">
+<input type="hidden" name="id" value="<?php echo $id?>" />
 <table class="templateForm">
 <tr>
 
   <td><?php echo $GLOBALS['I18N']->get('Title of this template')?></td>
-  <td><input type="text" name="title" value="<?php echo stripslashes(htmlspecialchars($data["title"]))?>" size="30"></td>
+  <td><input type="text" name="title" value="<?php echo stripslashes(htmlspecialchars($data["title"]))?>" size="30" /></td>
 </tr>
 <tr>
   <td colspan="2"><?php echo $GLOBALS['I18N']->get('Content of the template.')?><br /><?php echo $GLOBALS['I18N']->get('The content should at least have <b>[CONTENT]</b> somewhere.')?><br/><?php echo $GLOBALS['I18N']->get('You can upload a template file or paste the text in the box below'); ?></td>
@@ -264,23 +265,23 @@ tinyMCE.init({
 
 <!--tr>
   <td>Make sure all images<br/>start with this URL (optional)</td>
-  <td><input type="text" name="baseurl" size="40" value="<?php echo htmlspecialchars($baseurl)?>"></td>
+  <td><input type="text" name="baseurl" size="40" value="<?php echo htmlspecialchars($baseurl)?>" /></td>
 </tr-->
 <tr>
   <td><?php echo $GLOBALS['I18N']->get('Check that all links have a full URL')?></td>
-  <td><input type="checkbox" name="checkfulllinks" <?php echo $checkfulllinks?"checked":""?>></td>
+  <td><input type="checkbox" name="checkfulllinks" <?php echo $checkfulllinks?'checked="checked"':''?> /></td>
 </tr>
 <tr>
   <td><?php echo $GLOBALS['I18N']->get('Check that all images have a full URL')?></td>
-  <td><input type="checkbox" name="checkfullimages" <?php echo $checkfullimages?"checked":""?>></td>
+  <td><input type="checkbox" name="checkfullimages" <?php echo $checkfullimages?'checked="checked"':''?> /></td>
 </tr>
 <tr>
   <td><?php echo $GLOBALS['I18N']->get('Check that all external images exist')?></td>
-  <td><input type="checkbox" name="checkimagesexist" <?php echo $checkimagesexist?"checked":""?>></td>
+  <td><input type="checkbox" name="checkimagesexist" <?php echo $checkimagesexist?'checked="checked"':''?> /></td>
 </tr>
 
 <tr>
-  <td colspan="2"><p class="submit"><input type="submit" name="save" value="<?php echo $GLOBALS['I18N']->get('Save Changes')?>"></p></td>
+  <td colspan="2"><input class="submit" type="submit" name="save" value="<?php echo $GLOBALS['I18N']->get('Save Changes')?>" /></td>
 </tr>
 </table>
 </form>

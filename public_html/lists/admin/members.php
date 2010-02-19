@@ -145,9 +145,11 @@ if (isset($_POST["add"])) {
         print ListAllAttributes();
       ?>
       <!--nizar 5 lignes -->
-      <tr><td colspan="2"><input type="hidden" name="action" value="insert"><input
- type="hidden" name="doadd" value="yes"><input type="hidden" name="id" value="<?php echo
- $id ?>"><p class="submit"><input type="submit" name="subscribe" value="<?php echo $GLOBALS['I18N']->get('add user')?>"></p></form></td></tr></table>
+      <tr><td colspan="2"><input type="hidden" name="action" value="insert" />
+	 <input type="hidden" name="doadd" value="yes" />
+	 <input type="hidden" name="id" value="<?php echo $id ?>" />
+	 <input class="submit" type="submit" name="subscribe" value="<?php echo $GLOBALS['I18N']->get('add user')?>">
+      </form></td></tr></table>
       <?php
       return;
     }

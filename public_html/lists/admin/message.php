@@ -115,7 +115,7 @@ while ($lst = Sql_fetch_array($result)) {
 
 <a name="resend"></a><p class="information"><?php echo $GLOBALS['I18N']->get('Send this (same) message to (a) new list(s)'); ?>:</p>
 <?php echo formStart(' class="messageResend" ')?>
-<input type="hidden" name="id" value="<?php echo $id?>">
+<input type="hidden" name="id" value="<?php echo $id?>" />
 <ul>
 <?php
 
@@ -124,8 +124,8 @@ while ($row = Sql_fetch_array($result)) {
   if (!in_array($row[id],$lists_done)) {
     print '<li><input type="checkbox" name="list[' . $row["id"] . ']" value="signup" ';
     if ($list[$row["id"]] == 'signup')
-      print 'checked';
-    print ">".$row['name'];
+      print 'checked="checked"';
+    print " />".$row['name'];
     if ($row["active"])
       print ' (' . $GLOBALS['I18N']->get('List is Active') . ')';
     else
@@ -137,6 +137,6 @@ while ($row = Sql_fetch_array($result)) {
 if (!$some)
   print $GLOBALS['I18N']->get('<b>Note:</b> this message has already been sent to all lists. To resend it to new users use the "Requeue" function.');
 else
-  print '<br /><p class="submit"><input type="submit" name="resend" value="'.$GLOBALS['I18N']->get('Resend').'"></p></form>';
+  print '<br /><input class="submit" type="submit" name="resend" value="'.$GLOBALS['I18N']->get('Resend').'" /></form>';
 
 ?>

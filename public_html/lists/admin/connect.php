@@ -167,8 +167,8 @@ function formStart($additional="") {
     $html = sprintf('<form method="post" action="" %s>',$additional);
 /*    $html = sprintf('<form method=post action="./" %s>
     %s',$additional,isset($page) ?
-    '<input type="hidden" name="page" value="'.$page.'">':(
-    isset($p)?'<input type="hidden" name="p" value="'.$p.'">':"")
+    '<input type="hidden" name="page" value="'.$page.'" />':(
+    isset($p)?'<input type="hidden" name="p" value="'.$p.'" />':"")
     );
 */
   return $html;

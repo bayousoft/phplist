@@ -660,7 +660,7 @@ if ($send || $sendtest || $prepare || $save) {
     } elseif ($send && !is_array($_POST["targetlist"])) {
       $errormessage = $GLOBALS['I18N']->get("selectlist");
     }
-    echo "$errormessage<br/>\n";
+    echo "$errormessage<br/>";
   }
 
   // OK, the message has been saved, now check to see if we need to send a test message
@@ -1435,7 +1435,7 @@ if (!$done) {
   if (!$any) {
     $criteria_content = '<p class="information">'.$GLOBALS['I18N']->get('nocriteria').'</p>';
   } else {
-    $criteria_content .= '</table>\n'.$criteria_acc;
+    $criteria_content .= '</table>'.$criteria_acc;
   #  $shader = new WebblerShader("Message Criteria");
   #  $shader->addContent($criteria_content.'</table>');
   #  $shader->hide();

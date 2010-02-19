@@ -96,9 +96,9 @@ printf("[ <a href=\"javascript:deleteRec2('%s','%s');\">%s</a> |
    }
 print '<br/><br/>';
 printf('<form method="get">
-<input type="hidden" name="page" value="eventlog">
-<input type="hidden" name="start" value="%d">
-%s: <input type=text name="filter" value="%s"> %s <input type="checkbox" name="exclude" value="1" %s>
+<input type="hidden" name="page" value="eventlog" />
+<input type="hidden" name="start" value="%d" />
+%s: <input type="text" name="filter" value="%s" /> %s <input type="checkbox" name="exclude" value="1" %s />
 </form><br/>',$start,
 $GLOBALS['I18N']->get('Filter'),
 htmlspecialchars(stripslashes($filter)),

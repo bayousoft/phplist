@@ -674,14 +674,14 @@ function ListAvailableLists($userid = 0,$lists_to_show = "") {
   $result = Sql_query("SELECT * FROM {$GLOBALS["tables"]["list"]} $subselect order by listorder, name");
   while ($row = Sql_fetch_array($result)) {
     if ($row["active"]) {
-      $html .= '<li class="list"><input type="checkbox" name="list['.$row["id"] . ']" value=signup ';
+      $html .= '<li class="list"><input type="checkbox" name="list['.$row["id"] . ']" value="signup" ';
       if (isset($list[$row["id"]]) && $list[$row['id']] == "signup")
-        $html .= "checked";
+        $html .= 'checked="checked"';
       if ($userid) {
         $req = Sql_Fetch_Row_Query(sprintf('select userid from %s where userid = %d and listid = %d',
           $GLOBALS["tables"]["listuser"],$userid,$row["id"]));
         if (Sql_Affected_Rows())
-          $html .= "checked";
+          $html .= 'checked="checked"';
       }
       $html .= " /><b>".stripslashes($row["name"]).'</b><div class="listdescription">';
       $desc = nl2br(StripSlashes($row["description"]));
@@ -689,7 +689,7 @@ function ListAvailableLists($userid = 0,$lists_to_show = "") {
       $html .= $desc.'</div></li>';
       $some++;
       if ($some == 1) {
-        $singlelisthtml = sprintf('<input type="hidden" name="list[%d]" value="signup">',$row["id"]);
+        $singlelisthtml = sprintf('<input type="hidden" name="list[%d]" value="signup" />',$row["id"]);
         $singlelisthtml .= '<input type="hidden" name="listname['.$row["id"] . ']" value="'.htmlspecialchars(stripslashes($row["name"])).'"/>';
       }
     }
@@ -753,7 +753,7 @@ function ListAttributes($attributes,$attributedata,$htmlchoice = 0,$userid = 0,$
   if (!isset($_GET['page']) || (isset($_GET['page']) && $_GET["page"] != "import1"))
   $html = sprintf('
   <tr><td><div class="required">%s</div></td>
-  <td class="attributeinput"><input type=text name=email value="%s" size="%d">
+  <td class="attributeinput"><input type=text name=email value="%s" size="%d" />
   <script language="Javascript" type="text/javascript">addFieldToCheck("email","%s");</script></td></tr>',
   $GLOBALS["strEmail"],htmlspecialchars($email),$textlinewidth,$GLOBALS["strEmail"]);
 
@@ -763,7 +763,7 @@ if ($emaildoubleentry=='yes')
 if (!isset($_REQUEST['emailconfirm'])) $_REQUEST['emailconfirm'] = '';
 $html .= sprintf('
   <tr><td><div class="required">%s</div></td>
-  <td class="attributeinput"><input type=text name=emailconfirm value="%s" size="%d">
+  <td class="attributeinput"><input type=text name=emailconfirm value="%s" size="%d" />
   <script language="Javascript" type="text/javascript">addFieldToCheck("emailconfirm","%s");</script></td></tr>',
   $GLOBALS["strConfirmEmail"],htmlspecialchars(stripslashes($_REQUEST["emailconfirm"])),$textlinewidth, $GLOBALS["strConfirmEmail"]);
 }
@@ -777,19 +777,19 @@ $html .= sprintf('
       $pwdclass = "required";
       $js = sprintf('<script language="Javascript" type="text/javascript">addFieldToCheck("password","%s");</script>',$GLOBALS["strPassword"]);
       $js2 = sprintf('<script language="Javascript" type="text/javascript">addFieldToCheck("password_check","%s");</script>',$GLOBALS["strPassword2"]);
-      $html .= '<input type="hidden" name="passwordreq" value="1">';
+      $html .= '<input type="hidden" name="passwordreq" value="1" />';
     } else {
       $pwdclass = 'attributename';
-      $html .= '<input type="hidden" name="passwordreq" value="0">';
+      $html .= '<input type="hidden" name="passwordreq" value="0" />';
     }
 
     $html .= sprintf('
   <tr><td><div class="%s">%s</div></td>
-  <td class="attributeinput"><input type=password name=password value="" size="%d">%s</td></tr>',
+  <td class="attributeinput"><input type=password name=password value="" size="%d" />%s</td></tr>',
   $pwdclass,$GLOBALS["strPassword"],$textlinewidth,$js);
     $html .= sprintf('
   <tr><td><div class="%s">%s</div></td>
-  <td class="attributeinput"><input type=password name="password_check" value="" size="%d">%s</td></tr>',
+  <td class="attributeinput"><input type="password" name="password_check" value="" size="%d" />%s</td></tr>',
   $pwdclass,$GLOBALS["strPassword2"],$textlinewidth,$js2);
    }
 
@@ -798,19 +798,19 @@ $html .= sprintf('
     case "textonly":
       if (!isset($htmlemail))
         $htmlemail = 0;
-      $html .= sprintf('<input type="hidden" name="htmlemail" value="0">');
+      $html .= sprintf('<input type="hidden" name="htmlemail" value="0" />');
       break;
     case "htmlonly":
       if (!isset($htmlemail))
         $htmlemail = 1;
-      $html .= sprintf('<input type="hidden" name="htmlemail" value="1">');
+      $html .= sprintf('<input type="hidden" name="htmlemail" value="1" />');
       break;
     case "checkfortext":
       if (!isset($htmlemail))
         $htmlemail = 0;
       $html .= sprintf('<tr><td colspan="2">
       <span class="attributeinput">
-      <input type=checkbox name="textemail" value="1" %s></span>
+      <input type="checkbox" name="textemail" value="1" %s /></span>
       <span class="attributename">%s</span>
       </td></tr>',!$htmlemail,$strPreferTextEmail);
       break;
@@ -824,29 +824,29 @@ $html .= sprintf('
         <span class="attributeinput"><input type=radio name="htmlemail" value="1" %s /></span>
         <span class="attributename">%s</span></td></tr>',
         $strPreferredFormat,
-        !$htmlemail ? "checked":"",$strText,
-        $htmlemail ? "checked":"",$strHTML);
+        !$htmlemail ? 'checked="checked"':'',$strText,
+        $htmlemail ? 'checked="checked"':'',$strHTML);
       break;
     case "radiohtml":
       if (!isset($htmlemail))
         $htmlemail = 1;
       $html .= sprintf('<tr><td colspan="2">
         <span class="attributename">%s</span><br/>
-        <span class="attributeinput"><input type=radio name="htmlemail" value="0" %s /></span>
+        <span class="attributeinput"><input type="radio" name="htmlemail" value="0" %s /></span>
         <span class="attributename">%s</span>
-        <span class="attributeinput"><input type=radio name="htmlemail" value="1" %s /></span>
+        <span class="attributeinput"><input type="radio" name="htmlemail" value="1" %s /></span>
         <span class="attributename">%s</span></td></tr>',
         $strPreferredFormat,
-        !$htmlemail ? "checked":"",$strText,
-        $htmlemail ? "checked":"",$strHTML);
+        !$htmlemail ? 'checked="checked"':'',$strText,
+        $htmlemail ? 'checked="checked"':'',$strHTML);
       break;
     case "checkforhtml":
     default:
       if (!isset($htmlemail))
         $htmlemail = 0;
       $html .= sprintf('<tr><td colspan="2">
-        <span class="attributeinput"><input type=checkbox name="htmlemail" value="1" %s /></span>
-        <span class="attributename">%s</span></td></tr>',$htmlemail ? "checked":"",$strPreferHTMLEmail);
+        <span class="attributeinput"><input type="checkbox" name="htmlemail" value="1" %s /></span>
+        <span class="attributename">%s</span></td></tr>',$htmlemail ? 'checked="checked"':'',$strPreferHTMLEmail);
       break;
   }
   $html .= "\n";
@@ -877,10 +877,10 @@ $html .= sprintf('
           $output[$attr["id"]] = '<tr><td colspan="2">';
           # what they post takes precedence over the database information
           if ($_POST[$fieldname])
-            $checked = $_POST[$fieldname] ? "checked":"";
+            $checked = $_POST[$fieldname] ? 'checked="checked"':'';
           else
-            $checked = $data[$attr["id"]] ? "checked":"";
-          $output[$attr["id"]] .= sprintf("\n".'<input type="checkbox" name="%s" value="on" %s class="attributeinput">',$fieldname,$checked);
+            $checked = $data[$attr["id"]] ? 'checked="checked"':'';
+          $output[$attr["id"]] .= sprintf("\n".'<input type="checkbox" name="%s" value="on" %s class="attributeinput" />',$fieldname,$checked);
           $output[$attr["id"]] .= sprintf("\n".'<span class="%s">%s</span>',$attr["required"] ? 'required' : 'attributename',stripslashes($attr["name"]));
           if ($attr["required"])
             $output[$attr["id"]] .= sprintf('<script language="Javascript" type="text/javascript">addFieldToCheck("%s","%s");</script>',$fieldname,$attr["name"]);
@@ -890,12 +890,12 @@ $html .= sprintf('
           $values_request = Sql_Query("select * from $table_prefix"."listattr_".$attr["tablename"]." order by listorder,name");
           while ($value = Sql_Fetch_array($values_request)) {
             if (!empty($_POST[$fieldname]))
-              $checked = $_POST[$fieldname] == $value["id"] ? "checked":"";
+              $checked = $_POST[$fieldname] == $value["id"] ? 'checked="checked"':'';
             else if ($data[$attr["id"]])
-              $checked = $data[$attr["id"]] == $value["id"] ? "checked":"";
+              $checked = $data[$attr["id"]] == $value["id"] ? 'checked="checked"':'';
             else
-              $checked = $attr["default_value"] == $value["name"] ? "checked":"";
-            $output[$attr["id"]] .= sprintf('&nbsp;%s&nbsp;<input type=radio  class="attributeinput" name="%s" value="%s" %s>',
+              $checked = $attr["default_value"] == $value["name"] ? 'checked="checked"':'';
+            $output[$attr["id"]] .= sprintf('&nbsp;%s&nbsp;<input type="radio"  class="attributeinput" name="%s" value="%s" %s />',
               $value["name"],$fieldname,$value["id"],$checked);
           }
           if ($attr["required"])
@@ -929,16 +929,16 @@ $html .= sprintf('
               $selected = in_array($value["id"],$_POST[$fieldname]) ? "checked" : "";
             } elseif ($data[$attr["id"]]) {
               $selection = explode(",",$data[$attr["id"]]);
-              $selected = in_array($value["id"],$selection) ? "checked":"";
+              $selected = in_array($value["id"],$selection) ? 'checked="checked"':'';
             }
-            $output[$attr["id"]] .= sprintf('<tr><td colspan="2" class="attributeinput"><input type=checkbox name="%s[]"  class="attributeinput" value="%s" %s> %s</td></tr>',
+            $output[$attr["id"]] .= sprintf('<tr><td colspan="2" class="attributeinput"><input type="checkbox" name="%s[]"  class="attributeinput" value="%s" %s /> %s</td></tr>',
               $fieldname, $value["id"], $selected, stripslashes( $value["name"]) );
           }
           break;
         case "textline":
           $output[$attr["id"]] .= sprintf("\n".'<tr><td><div class="%s">%s</div>',$attr["required"] ? 'required' : 'attributename',$attr["name"]);
           $output[$attr["id"]] .= sprintf ('</td><td class="attributeinput">
-            <input type=text name="%s"  class="attributeinput" size="%d" value="%s">',$fieldname,
+            <input type="text" name="%s"  class="attributeinput" size="%d" value="%s" />',$fieldname,
             $textlinewidth,
             $_POST[$fieldname] ? htmlspecialchars(stripslashes($_POST[$fieldname])) : ($data[$attr["id"]] ? $data[$attr["id"]] : $attr["default_value"]));
           if ($attr["required"])
@@ -956,7 +956,7 @@ $html .= sprintf('
             $output[$attr["id"]] .= sprintf('<script language="Javascript" type="text/javascript">addFieldToCheck("%s","%s");</script>',$fieldname,$attr["name"]);
           break;
         case "hidden":
-          $output[$attr["id"]] .= sprintf('<input type="hidden" name="%s" size=40 value="%s">',$fieldname,$data[$attr["id"]] ? $data[$attr["id"]] : $attr["default_value"]);
+          $output[$attr["id"]] .= sprintf('<input type="hidden" name="%s" size="40" value="%s" />',$fieldname,$data[$attr["id"]] ? $data[$attr["id"]] : $attr["default_value"]);
           break;
         case "date":
           require_once dirname(__FILE__)."/date.php";
@@ -1026,13 +1026,13 @@ function ListAllAttributes() {
 //    array_push($options,$data["rssdefault"]);
 //  }
 //  if (sizeof($options) == 1) {
-//    return sprintf('<input type="hidden" name="rssfrequency" value="%s">',$options[0]);
+//    return sprintf('<input type="hidden" name="rssfrequency" value="%s" />',$options[0]);
 //  }
 //
 //  foreach ($options as $freq) {
 //    if ($freq) {
-//      $html .= sprintf('<input type=radio name="rssfrequency" value="%s" %s>&nbsp;%s&nbsp;',
-//        $freq,$freq == $default ? "checked":"",$rssfrequencies[$freq]);
+//      $html .= sprintf('<input type=radio name="rssfrequency" value="%s" %s />&nbsp;%s&nbsp;',
+//        $freq,$freq == $default ? 'checked="checked"':'',$rssfrequencies[$freq]);
 //    }
 //  }
 //  $html .= '</td></tr></table>';

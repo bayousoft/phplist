@@ -268,7 +268,7 @@ if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
               deleteUser($row["id"]);
               $deleted++;
             } else {
-              $list .= sprintf('<input type=checkbox name="tagged[%d]" value="1">&nbsp;  ',$row["id"]).PageLink2("user&amp;id=".$row["id"]."&returnpage=reconcileusers&returnoption=invalidemail","User ".$row["id"]). "    [".$row["email"].']<br/>';
+              $list .= sprintf('<input type="checkbox" name="tagged[%d]" value="1" />&nbsp;  ',$row["id"]).PageLink2("user&amp;id=".$row["id"]."&amp;returnpage=reconcileusers&amp;returnoption=invalidemail","User ".$row["id"]). "    [".$row["email"].']<br/>';
             }
           }
         }
@@ -276,7 +276,7 @@ if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
         print $deleted." ".$GLOBALS['I18N']->get('Users deleted')."<br/>";
         print $c." ".$GLOBALS['I18N']->get('Users apply')."<br/>$list\n";
         if ($c)
-        print '<p class="submit"><input type="submit" name="deletetagged" value="'.$GLOBALS['I18N']->get('Delete Tagged Users').'"></p></form>';
+        print '<input class="submit" type="submit" name="deletetagged" value="'.$GLOBALS['I18N']->get('Delete Tagged Users').'" /></form>';
       } elseif (isset($_GET["option"]) && $_GET["option"] == "fixinvalidemail") {
         Info($GLOBALS['I18N']->get("Trying to fix users with an invalid email"));
         flush();
@@ -441,40 +441,40 @@ function snippetListsSelector ($optionAll = false) {
 
 <hr/>
 <form method="get">
-<input type="hidden" name="page" value="reconcileusers">
-<input type="hidden" name="option" value="markallconfirmed">
+<input type="hidden" name="page" value="reconcileusers" />
+<input type="hidden" name="option" value="markallconfirmed" />
 <p class="information">
 <?php 
   echo sprintf( $GLOBALS['I18N']->get("Mark all users on list %s confirmed"), snippetListsSelector(true) );
 ?>
 </p>
-<p class="submit"><input type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>">
-</p></form>
+<input class="submit" type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>" />
+</form>
 
 <hr/>
 <form method="get">
-<input type="hidden" name="page" value="reconcileusers">
-<input type="hidden" name="option" value="nolistsnewlist">
+<input type="hidden" name="page" value="reconcileusers" />
+<input type="hidden" name="option" value="nolistsnewlist" />
 <p class="information">
 <?php 
   echo sprintf( $GLOBALS['I18N']->get('To move all users who are not subscribed to any list to %s'), snippetListsSelector() );
 ?>
 </p>
-<p class="submit"><input type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>">
-</p></form>
+<input class="submit" type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>" />
+</form>
 
 <hr/>
 <form method="get">
-<input type="hidden" name="page" value="reconcileusers">
-<input type="hidden" name="option" value="bounces">
+<input type="hidden" name="page" value="reconcileusers" />
+<input type="hidden" name="option" value="bounces" />
 <p class="information"><?php echo $GLOBALS['I18N']->get('To delete all users with more than')?>
 <select name="num">
-<option>5</option>
-<option>10</option>
-<option selected="selected">15</option>
-<option>20</option>
-<option>50</option>
-</select> <?php echo $GLOBALS['I18N']->get('bounces')?> <p class="submit"><input type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>"></p></form>
+  <option>5</option>
+  <option>10</option>
+  <option selected="selected">15</option>
+  <option>20</option>
+  <option>50</option>
+</select> <?php echo $GLOBALS['I18N']->get('bounces')?> <input class="submit" type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>" /></form>
 <p class="information"><?php echo $GLOBALS['I18N']->get('Note: this will use the total count of bounces on a user, not consecutive bounces')?></p>
 
 <form method="get">
@@ -488,9 +488,9 @@ function snippetListsSelector ($optionAll = false) {
 </textarea>
 </td></tr>
 </table>
-<input type="hidden" name="page" value="reconcileusers">
-<input type="hidden" name="option" value="resendconfirm">
-<p class="submit"><input type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>"></p></form>
+<input type="hidden" name="page" value="reconcileusers" />
+<input type="hidden" name="option" value="resendconfirm" />
+<input class="submit" type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>" /></form>
 
 <hr/>
 <form method="get">
@@ -499,7 +499,6 @@ function snippetListsSelector ($optionAll = false) {
 <tr><td><?php echo $GLOBALS['I18N']->get('Date they signed up after')?>:</td><td><?php echo $from->showInput("","",$fromval);?></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('Date they signed up before')?>:</td><td><?php echo $to->showInput("","",$toval);?></td></tr>
 </table>
-<input type="hidden" name="page" value="reconcileusers">
-<input type="hidden" name="option" value="deleteunconfirmed">
-<p class="submit"><input type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>"></p></form>
-
+<input type="hidden" name="page" value="reconcileusers" />
+<input type="hidden" name="option" value="deleteunconfirmed" />
+<input class="submit" type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>"></form>

@@ -86,7 +86,7 @@ if (!Sql_Affected_Rows())
 while ($message = Sql_Fetch_Array($req)) {
   print "<hr/>Subject: <b>".$message["subject"]."</b>, ";
   print "From: <b>".$message["fromfield"]."</b> <br/>";
-  print 'Send this message <input type=radio name="message" value="'.$message["id"].'"><br/><br/>';
+  print 'Send this message <input type="radio" name="message" value="'.$message["id"].'" /><br/><br/>';
   print '<p class="information">[start of message]</p>';
    print '<iframe src="?page=viewmessage&embed=yes&omitall=yes&amp;id='.$message["id"].'"
     scrolling="auto" width=100% height=450 margin=0 frameborder=0>
@@ -96,7 +96,7 @@ while ($message = Sql_Fetch_Array($req)) {
 
 $html = '<hr/><p class="information">Please select the lists you want to send it to:
 <ul>
-<li><input type=checkbox name=list[all] value=signup>All Lists</li>
+<li><input type="checkbox" name="list[all]" value="signup" />All Lists</li>
 ';
 
 $result = Sql_query("SELECT * FROM {$tables["list"]} $subselect");
@@ -104,8 +104,8 @@ $num = 0;
 while ($row = Sql_fetch_array($result)) {
   $html .= "<li><input type=checkbox name=list[".$row["id"] . "] value=signup ";
   if ($list[$row["id"]] == "signup")
-    $html .= "checked";
-  $html .= ">".$row["name"];
+    $html .= 'checked="checked"';
+  $html .= " />".$row["name"];
   if ($row["active"])
     $html .= " (List is Active)";
   else
@@ -122,7 +122,7 @@ while ($row = Sql_fetch_array($result)) {
 if (!$some)
   echo $html ."Sorry there are currently no lists available";
 if ($num == 1) {
-  print '<input type="hidden" name="list['.$list.']" value="signup">';
+  print '<input type="hidden" name="list['.$list.']" value="signup" />';
 } else {
   print $html;
   $buttonmsg = ' to the Selected Mailinglists';
@@ -130,6 +130,6 @@ if ($num == 1) {
 
 ?>
 </ul>
-<p class="submit"><input type="submit" name=send value="Send Message <?php echo $buttonmsg?>" onclick="document.sendpreparedform.submit()"></p>
+<input class="submit" type="submit" name=send value="Send Message <?php echo $buttonmsg?>" onclick="document.sendpreparedform.submit()" />
 </form>
 <?php } ?>

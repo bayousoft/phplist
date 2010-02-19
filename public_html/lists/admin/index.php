@@ -169,8 +169,9 @@ $page_title = NAME;
 if (is_file($GLOBALS['design'].'js/select_style.js')) {
   print '<script language="javascript" type="text/javascript" src="js/select_style.js"></script>';
 }
-print '<meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />';           // HTTP/1.1
-print '<meta http-equiv="Pragma" content="no-cache" />';           // HTTP/1.1
+// These two meta tags are included on page-top.php
+// print '<meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />';           // HTTP/1.1
+// print '<meta http-equiv="Pragma" content="no-cache" />';           // HTTP/1.1
 print "<title>".NAME." :: ";
 if (isset($GLOBALS["installation_name"])) {
   print $GLOBALS["installation_name"] .' :: ';

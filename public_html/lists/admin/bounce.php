@@ -101,7 +101,7 @@ if ($id) {
   
   $newruleform = '<form method=post action="./?page=bouncerules">';
   $newruleform .= '<table class="bounceListing">';
-  $newruleform .= sprintf('<tr><td>%s</td><td><input type=text name="newrule" size=30></td></tr>',$GLOBALS['I18N']->get('Regular Expression'));
+  $newruleform .= sprintf('<tr><td>%s</td><td><input type="text" name="newrule" size="30" /></td></tr>',$GLOBALS['I18N']->get('Regular Expression'));
   $newruleform .= sprintf('<tr><td>%s</td><td><select name="action">',$GLOBALS['I18N']->get('Action'));
   foreach ($GLOBALS['bounceruleactions'] as $action => $desc) {
     $newruleform .= sprintf('<option value="%s" %s>%s</option>',$action,'',$desc);
@@ -109,20 +109,20 @@ if ($id) {
   $newruleform .= '</select></td></tr>';
   $newruleform .= sprintf('<tr><td colspan="2">%s</td></tr><tr><td colspan="2"><textarea name="comment" rows=10 cols=65></textarea></td></tr>',
     $GLOBALS['I18N']->get('Memo for this rule'));
-  $newruleform .= '<tr><td colspan="2"><p class="submit"><input type="submit" name="add" value="'.$GLOBALS['I18N']->get('Add new Rule').'"></p></td></tr>';
+  $newruleform .= '<tr><td colspan="2"><p class="submit"><input type="submit" name="add" value="'.$GLOBALS['I18N']->get('Add new Rule').'" /></p></td></tr>';
   $newruleform .= '</table></form>';
 
    print '<form method="get">';
-  print '<input type="hidden" name=page value="'.$page.'">';
-  print '<input type="hidden" name=id value="'.$id.'">';
+  print '<input type="hidden" name=page value="'.$page.'" />';
+  print '<input type="hidden" name=id value="'.$id.'" />';
   print '<table class="bounceActions"><tr><td>'.$GLOBALS['I18N']->get('PossibleActions').'</td></tr>';
-  print '<tr><td>'.$GLOBALS['I18N']->get('ForUser').'</td><td><input type=text name="useremail" value="'.$guessedemail.'" size=35></td></tr>';
-  print '<tr><td>'.$GLOBALS['I18N']->get('IncreaseB').'</td><td><input type=text name=amount value="1" size=5>'.$GLOBALS['I18N']->get('IncreaseBNote').'</td></tr>';
-  print '<tr><td>'.$GLOBALS['I18N']->get('MarkAsUnconfirmed').' </td><td><input type=checkbox name=unconfirm value="1"> '.$GLOBALS['I18N']->get('MarkAsUnconfirmedNote').'</td></tr>';
-  print '<tr><td>'.$GLOBALS['I18N']->get('SetReceiveText').' </td><td><input type=checkbox name=maketext value="1"></td></tr>';
-  print '<tr><td>'.$GLOBALS['I18N']->get('DelUser1').' </td><td><input type=checkbox name=deleteuser value="1"></td></tr>';
-  print '<tr><td>'.$GLOBALS['I18N']->get('DelAndGo').' </td><td><input type=checkbox name=deletebounce value="1" checked></td></tr>';
-  print '<tr><td><p class="submit"><input type="submit" name="doit" value="'.$GLOBALS['I18N']->get('DoAbove').'"></p></td></tr>';
+  print '<tr><td>'.$GLOBALS['I18N']->get('ForUser').'</td><td><input type="text" name="useremail" value="'.$guessedemail.'" size="35" /></td></tr>';
+  print '<tr><td>'.$GLOBALS['I18N']->get('IncreaseB').'</td><td><input type="text" name="amount" value="1" size="5" />'.$GLOBALS['I18N']->get('IncreaseBNote').'</td></tr>';
+  print '<tr><td>'.$GLOBALS['I18N']->get('MarkAsUnconfirmed').' </td><td><input type="checkbox" name="unconfirm" value="1" /> '.$GLOBALS['I18N']->get('MarkAsUnconfirmedNote').'</td></tr>';
+  print '<tr><td>'.$GLOBALS['I18N']->get('SetReceiveText').' </td><td><input type="checkbox" name="maketext" value="1" /></td></tr>';
+  print '<tr><td>'.$GLOBALS['I18N']->get('DelUser1').' </td><td><input type="checkbox" name="deleteuser" value="1" /></td></tr>';
+  print '<tr><td>'.$GLOBALS['I18N']->get('DelAndGo').' </td><td><input type="checkbox" name="deletebounce" value="1" checked="checked" /></td></tr>';
+  print '<tr><td><input class="submit" type="submit" name="doit" value="'.$GLOBALS['I18N']->get('DoAbove').'" /></td></tr>';
   print "</table></form>";
   if (USE_ADVANCED_BOUNCEHANDLING) {
     print '<p class="button"><a href="#newrule">'.$GLOBALS['I18N']->get('Create New Rule based on this bounce').'</a></p>';
