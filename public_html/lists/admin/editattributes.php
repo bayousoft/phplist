@@ -54,8 +54,8 @@ switch ($data['type']) {
 <script language="Javascript" src="js/jslib.js" type="text/javascript"></script>
 
 <br/><?php echo PageLink2("editattributes",$GLOBALS['I18N']->get('AddNew'),"id=$id&amp;action=new")?> <?php echo $data["name"]?>
-<br/><a href="javascript:deleteRec2('<?php echo $GLOBALS['I18N']->get('SureToDeleteAll');?>','<?php echo PageURL2("editattributes",$GLOBALS['I18N']->get('DelAll'),"id=$id&deleteall=yes")?>');"><?php echo $GLOBALS['I18N']->get('DelAll');?></a>
-<hr/><p class="form">
+  <br/><a href="javascript:deleteRec2('<?php echo $GLOBALS['I18N']->get('SureToDeleteAll');?>','<?php echo PageURL2("editattributes",$GLOBALS['I18N']->get('DelAll'),"id=$id&amp;deleteall=yes")?>');"><?php echo $GLOBALS['I18N']->get('DelAll');?></a>
+<hr/>
 <?php echo formStart(' class="editattributesAdd" ')?>
 <input type="hidden" name="action" value="add" />
 <input type="hidden" name="id" value="<?php echo $id?>" />
@@ -69,10 +69,10 @@ if (isset($_POST["addnew"])) {
   $query = sprintf('SELECT MAX(listorder) AS listorder FROM %s',$table);
   $maxitem = Sql_Fetch_Row_Query($query);
   if (!Sql_Affected_Rows() || !is_numeric($maxitem[0])) {
-  $listorder = 1; # insert the listorder as it's in the textarea / start with 1 '
+    $listorder = 1; # insert the listorder as it's in the textarea / start with 1 '
   }
   else {
-  $listorder = $maxitem[0]+1; # One more than the maximun
+    $listorder = $maxitem[0]+1; # One more than the maximum
   }
   while (list($key,$val) = each($items)) {
     $val = clean($val);
@@ -137,7 +137,7 @@ function deleteItem($table,$attributeid,$delete) {
         return 0;
       }
     }
-    print "</p><br />";
+    print "<br />";
     giveAlternative($table,$delete,$attributeid);
 
   }
@@ -170,14 +170,14 @@ if (isset($_GET["action"]) && $_GET["action"] == "new") {
 
   <p class="button"><?php echo $GLOBALS["I18N"]->get("addnew")." ".$data["name"].', '.$GLOBALS["I18N"]->get("oneperline") ?></p><br />
   <textarea name="itemlist" rows="20" cols="50"></textarea><br />
-  <input class="submit" type="Submit" name="addnew" value="<?php echo $GLOBALS["I18N"]->get("addnew")." ".$data["name"] ?>" /><br />
+  <input class="submit" type="submit" name="addnew" value="<?php echo $GLOBALS["I18N"]->get("addnew")." ".$data["name"] ?>" /><br />
 <?php
 }
 
 $rs = Sql_query("select * from $table order by listorder, name");
 $num = Sql_Num_Rows($rs);
 if ($num < 100 && $num > 25)
-  printf('<input class="submit" type="submit" name=action value="%s"><br />',$GLOBALS["I18N"]->get("changeorder"));
+  printf('<input class="submit" type="submit" name="action" value="%s" /><br />',$GLOBALS["I18N"]->get("changeorder"));
 
 while ($row = Sql_Fetch_array($rs)) {
   printf( '<span class="delete"><a href="javascript:deleteRec(\'%s\');">'.$GLOBALS['I18N']->get('Delete').'</a></span>',PageURL2("editattributes","","id=$id&amp;delete=".$row["id"]));
@@ -186,7 +186,7 @@ while ($row = Sql_Fetch_array($rs)) {
   printf(' %s %s <br />', $row["name"],($row["name"] == $data["default_value"]) ? $GLOBALS['I18N']->get('Default'):"");
 }
 if ($num && $num < 100)
-  printf('<input class="submit" type="submit" name="action" value="%s">',$GLOBALS["I18N"]->get("changeorder"));
+  printf('<input class="submit" type="submit" name="action" value="%s" />',$GLOBALS["I18N"]->get("changeorder"));
 
 ?>
 </form>

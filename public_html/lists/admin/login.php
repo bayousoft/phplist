@@ -19,20 +19,20 @@ if (!isset($GLOBALS['msg'])) $GLOBALS['msg'] = '';
 
 
 <script language="Javascript" type="text/javascript">
-
+//<![CDATA[
 if (!navigator.cookieEnabled) {
-  document.writeln('<div class="error"><?php echo $GLOBALS['I18N']->get('In order to login, you need to enable cookies in your browser')?></div>');
+  document.writeln('<div class="error"><?php echo $GLOBALS['I18N']->get('In order to login, you need to enable cookies in your browser')?><\/div>');
 }
-
+//]]>
 </script>
 <?php
 function footer(){
   echo '<form method="post" action="">';
-  echo '  <p class="login"><hr width="50%" size="3">';
+  echo '  <hr width="50%" size="3"/><p class="login">';
   echo $GLOBALS['I18N']->get('forgot password').':';
   echo $GLOBALS['I18N']->get('enter your email').': <input type="text" name="forgotpassword" value="" size="30" />';
   echo '  <input class="submit" type="submit" name="process" value="'.$GLOBALS['I18N']->get('send password').'" />';
-  echo '</form>';
+  echo '</p></form>';
 }
 
 #Delete from the DB every token older than certain elapsed time.
@@ -100,19 +100,19 @@ function deleteOldTokens(){
     } else {
       echo "<p class=\"information\"> Unknown token or time expired (More than 24 hrs. passed since the notification email was sent).<br/><br/>";
       echo "To return and log in again, click: <a href='?page=home'>login</a>.</p><br/><br/>";
-	  deleteOldTokens();
-  	}
-  } else {
-  echo "<form method=\"post\" action=\"\">\n";
-  echo "  <input type=\"hidden\" name=\"page\" value=\"$page\" />\n";
-  echo "  <table class=\"loginPassUpdate\" width=\"100%\" border=\"0\" cellpadding=\"2\" cellspacing=\"0\">\n";
-  echo "    <tr><td><span class=\"general\">".$GLOBALS['I18N']->get('name').":</span></td></tr>\n";
-  echo "    <tr><td><input type=text name=\"login\" value=\"\" size=\"30\"></td></tr>";
-  echo "    <tr><td><span class=\"general\">".$GLOBALS['I18N']->get('password').":</span></td></tr>";
-  echo "    <tr><td><input type=\"password\" name=\"password\" value=\"\" size=\"30\"></td></tr>";
-  echo "    <tr><td><input class=\"submit\" type=\"submit\" name=\"process\" value=\"".$GLOBALS['I18N']->get('enter')."\" /></td></tr>";
-  echo "  </table>";
-  echo "</form>";
-  footer();
+      deleteOldTokens();
+    }
+    } else {
+    echo "<form method=\"post\" action=\"\">\n";
+    echo "  <input type=\"hidden\" name=\"page\" value=\"$page\" />\n";
+    echo "  <table class=\"loginPassUpdate\" width=\"100%\" border=\"0\" cellpadding=\"2\" cellspacing=\"0\">\n";
+    echo "    <tr><td><span class=\"general\">".$GLOBALS['I18N']->get('name').":</span></td></tr>\n";
+    echo "    <tr><td><input type=\"text\" name=\"login\" value=\"\" size=\"30\" /></td></tr>";
+    echo "    <tr><td><span class=\"general\">".$GLOBALS['I18N']->get('password').":</span></td></tr>";
+    echo "    <tr><td><input type=\"password\" name=\"password\" value=\"\" size=\"30\" /></td></tr>";
+    echo "    <tr><td><input class=\"submit\" type=\"submit\" name=\"process\" value=\"".$GLOBALS['I18N']->get('enter')."\" /></td></tr>";
+    echo "  </table>";
+    echo "</form>";
+    footer();
   }
 ?>

@@ -1,1 +1,1 @@
-<p>This document requires you to log in<br/>
+<p class="information">This document requires you to log in</p>

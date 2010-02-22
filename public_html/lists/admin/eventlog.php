@@ -24,7 +24,7 @@ if (isset($_GET['filter'])) {
     $where = ' where page like "%'.$filter.'%" or entry like "%'.$filter.'%"';
     $exclude_url = '';
   }
-  $find_url = '&filter='.urlencode($filter).$exclude_url;
+  $find_url = '&amp;filter='.urlencode($filter).$exclude_url;
 }
 $order = ' order by entered desc, id desc';
 
@@ -95,7 +95,7 @@ printf("[ <a href=\"javascript:deleteRec2('%s','%s');\">%s</a> |
      print '<p class="information">' . $GLOBALS['I18N']->get('No events available') . '</p>';
    }
 print '<br/><br/>';
-printf('<form method="get">
+printf('<form method="get" action="">
 <input type="hidden" name="page" value="eventlog" />
 <input type="hidden" name="start" value="%d" />
 %s: <input type="text" name="filter" value="%s" /> %s <input type="checkbox" name="exclude" value="1" %s />
@@ -103,7 +103,7 @@ printf('<form method="get">
 $GLOBALS['I18N']->get('Filter'),
 htmlspecialchars(stripslashes($filter)),
 $GLOBALS['I18N']->get('Exclude filter'),
-$exclude == 1 ? 'checked':'');
+$exclude == 1 ? 'checked="checked"':'');
 
 $ls = new WebblerListing($GLOBALS['I18N']->get('events'));
 

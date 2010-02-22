@@ -49,11 +49,11 @@ while ($p = Sql_Fetch_Array($req)) {
   if (($require_login && isSuperUser()) || !$require_login) {
     $ls->addColumn($p["id"],$GLOBALS['I18N']->get('owner'),adminName($p["owner"]));
     if ($p["id"] == $default) {
-      $checked = "checked";
+      $checked = 'checked="checked"';
     } else {
       $checked = "";
     }
-    $ls->addColumn($p["id"],$GLOBALS['I18N']->get('default'),sprintf('<input type="radio" name="default" value="%d" %s onchange="document.pagelist.submit()">',$p["id"],$checked));
+    $ls->addColumn($p["id"],$GLOBALS['I18N']->get('default'),sprintf('<input type="radio" name="default" value="%d" %s onchange="document.pagelist.submit()" />',$p["id"],$checked));
   } else {
     $adminname = "";
     $isdefault = "";

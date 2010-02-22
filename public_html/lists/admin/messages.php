@@ -123,7 +123,7 @@ if (isset($_GET['resend'])) {
     print "... ".$GLOBALS['I18N']->get("Done");
   else
     print "... ".$GLOBALS['I18N']->get("failed");
-  print '<br /><hr /><br />\n';
+  print '<br /><hr /><br />';
 }
 
 if (isset($_GET['suspend'])) {
@@ -203,9 +203,9 @@ if (isset($start) && $start > 0) {
   $listing =  $GLOBALS['I18N']->get("Listing message 1 to")." ".$end;
   $start = 0;
 }
-  print $total. " ".$GLOBALS['I18N']->get("Messages")."</p>";
+  print $total. " ".$GLOBALS['I18N']->get("Messages");
 if ($total > MAX_MSG_PP)
-  printf ('<table class="messagesListing" border="1"><tr><td colspan="4" align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
+  printf ('<table class="messagesListing" border="1"><tr><td colspan="4" align="center">%s</td></tr><tr><td>%s</td><td>%s</td><td>
           %s</td><td>%s</td></tr></table><hr/>',
           $listing,
           PageLink2("messages$url_keep","&lt;&lt;","start=0"),
@@ -340,7 +340,7 @@ if ($total) {
     #0012081: Add new 'Mark as sent' button
     if ($msg['status'] == 'suspended') {
       $status .= '<br/>'.
-        PageLink2('messages&markSent='.$msg['id'],$GLOBALS['I18N']->get('Mark as sent'));
+        PageLink2('messages&amp;markSent='.$msg['id'],$GLOBALS['I18N']->get('Mark as sent'));
     }
 
     $totalsent = $msg['astext'] + $msg['ashtml'] + $msg['astextandhtml'] + $msg['aspdf'] + $msg['astextandpdf'];
