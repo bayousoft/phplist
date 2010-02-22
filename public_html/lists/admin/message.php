@@ -99,7 +99,7 @@ if (ALLOW_ATTACHMENTS) {
  # print '</table>';
 }
 
-print '<tr><td colspan="2"<h3>' . $GLOBALS['I18N']->get('Lists this message has been sent to') . ':</h3></td></tr>';
+print '<tr><td colspan="2"><h3>' . $GLOBALS['I18N']->get('Lists this message has been sent to') . ':</h3></td></tr>';
 
 $lists_done = array();
 $result = Sql_Query("select l.name, l.id from $tables[listmessage] lm, $tables[list] l where lm.messageid = $id and lm.listid = l.id");
@@ -116,27 +116,28 @@ while ($lst = Sql_fetch_array($result)) {
 <a name="resend"></a><p class="information"><?php echo $GLOBALS['I18N']->get('Send this (same) message to (a) new list(s)'); ?>:</p>
 <?php echo formStart(' class="messageResend" ')?>
 <input type="hidden" name="id" value="<?php echo $id?>" />
-<ul>
-<?php
 
+<?php
+$messlis = '';
 $result = Sql_query("SELECT * FROM $tables[list] $subselect");
 while ($row = Sql_fetch_array($result)) {
   if (!in_array($row[id],$lists_done)) {
-    print '<li><input type="checkbox" name="list[' . $row["id"] . ']" value="signup" ';
+    $messlis .= '<li><input type="checkbox" name="list[' . $row["id"] . ']" value="signup" ';
     if ($list[$row["id"]] == 'signup')
-      print 'checked="checked"';
-    print " />".$row['name'];
+      $messlis .= 'checked="checked"';
+    $messlis .= " />".$row['name'];
     if ($row["active"])
-      print ' (' . $GLOBALS['I18N']->get('List is Active') . ')';
+      $messlis .= ' (' . $GLOBALS['I18N']->get('List is Active') . ')';
     else
-      print ' (' . $GLOBALS['I18N']->get('List is not Active') . ')';
+      $messlis .= ' (' . $GLOBALS['I18N']->get('List is not Active') . ')';
     $some = 1;
+    $messlis .= '</li>';
   }
 }
 
-if (!$some)
+if ($messlis == '')
   print $GLOBALS['I18N']->get('<b>Note:</b> this message has already been sent to all lists. To resend it to new users use the "Requeue" function.');
 else
-  print '<br /><input class="submit" type="submit" name="resend" value="'.$GLOBALS['I18N']->get('Resend').'" /></form>';
+  print '<ul class="messageList">'.$messlis.'</ul><input class="submit" type="submit" name="resend" value="'.$GLOBALS['I18N']->get('Resend').'" /></form>';
 
 ?>
