@@ -11,6 +11,7 @@ require_once dirname(__FILE__).'/date.php';
 #}
 $id = sprintf('%d',isset($_GET["id"]) ? $_GET['id']:0);
 $delete = sprintf('%d',isset($_GET['delete']) ? $_GET["delete"]:0);
+$start=sprintf('%d',$_GET['start']);
 if (isset($_GET['findby'])) {
   $findby = $_GET['findby'];
 } else {
@@ -66,7 +67,7 @@ if (isset($_GET['find'])) {
 } else {
   $find = '';
 }
-$start=$_GET['start'];
+
 if (isset($_GET['list']))
   echo "<br />".PageLink2("members","Back to Members of this list","id=".sprintf('%d',$_GET['list']))."\n";
 if (isset($start))
