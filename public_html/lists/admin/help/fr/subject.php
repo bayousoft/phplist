@@ -1,1 +1,0 @@
-Tapez l&rsquo;Objet de votre message. Vous ne pouvez pas utiliser de codes-raccourcis pour l&rsquo;Objet.
