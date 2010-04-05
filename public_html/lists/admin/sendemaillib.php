@@ -754,7 +754,7 @@ if (0) {
 
   # so what do we actually send?
   switch($cached[$messageid]["sendformat"]) {
-    case "HTML":
+    case "HTML disabled": # we should not send HTML Only emails
       # send html to users who want it and text to everyone else
       if ($htmlpref) {
         Sql_Query("update {$GLOBALS["tables"]["message"]} set ashtml = ashtml + 1 where id = $messageid");
@@ -862,6 +862,7 @@ if (0) {
       break;
     case "both":
     case "text and HTML":
+    case "HTML":
     default:
       $handled_by_plugin = 0;
       if (!empty($GLOBALS['pluginsendformats'][$cached[$messageid]["sendformat"]])) {
