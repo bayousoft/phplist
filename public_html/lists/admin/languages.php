@@ -34,7 +34,7 @@ $LANGUAGES = array(
 #"is"=>array("Icelandic "," iso-8859-1, windows-1252 "),
 #"ga"=>array("Irish "," iso-8859-1, windows-1252 "),
 "it"=>array("Italian ","iso-8859-1"," iso-8859-1, windows-1252 "),
-"ja"=>array("Japanese ","EUC-JP","shift_jis, iso-2022-jp, euc-jp"),
+#"ja"=>array("Japanese ","EUC-JP","shift_jis, iso-2022-jp, euc-jp"),
 #"lv"=> array("Latvian ","iso-8859-13, windows-1257"),
 #"lt"=> array("Lithuanian "," iso-8859-13, windows-1257"),
 #"mk"=> array("Macedonian ","iso-8859-5, windows-1251"),
@@ -57,6 +57,31 @@ $LANGUAGES = array(
 'cn' => array('Simplified Chinese',"utf-8","utf-8"),
 "vi" => array("Vietnamese","utf-8","utf-8"),
 );
+
+## pick up languages from the lan directory
+$landir = dirname(__FILE__).'/lan/';
+$d = opendir($landir);
+while ($lancode = readdir($d)) {
+#  print "<br/>".$dir;
+  if (!in_array($landir,array_keys($LANGUAGES)) && is_dir($landir.'/'.$lancode) && is_file($landir.'/'.$lancode.'/language_info')) {
+    $lan_info = file_get_contents($landir.'/'.$lancode.'/language_info');
+    $lines = explode("\n",$lan_info);
+    $lan = array();
+    foreach ($lines as $line) {
+      if (preg_match('/(\w+)=([\w -]+)/',$line,$regs)) {
+        $lan[$regs[1]] = $regs[2];
+      }
+    }
+    if (!empty($lan['name']) && !empty($lan['charset'])) {
+      $LANGUAGES[$lancode] = array($lan['name'],$lan['charset'],$lan['charset']);
+    }
+    
+#    print '<br/>'.$landir.'/'.$lancode;
+  }
+}
+ksort($LANGUAGES);
+
+#var_dump($LANGUAGES);
 
 if (!empty($GLOBALS["SessionTableName"])) {
   require_once dirname(__FILE__).'/sessionlib.php';
@@ -107,9 +132,9 @@ if (!isset($_SESSION['adminlanguage']) || !is_array($_SESSION['adminlanguage']))
 ## this interferes with the frontend if an admin is logged in. 
 ## better split the frontend and backend charSets at some point
 ##http://mantis.tincan.co.uk/view.php?id=5528
-if (!isset($GLOBALS['strCharSet'])) {
+#if (!isset($GLOBALS['strCharSet'])) {
   $GLOBALS['strCharSet'] = $_SESSION['adminlanguage']['charset'];
-}
+#}
 
 # internationalisation (I18N)
 class phplist_I18N {
