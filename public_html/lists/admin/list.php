@@ -2,7 +2,6 @@
 <script language="Javascript" src="js/jslib.js" type="text/javascript"></script>
 <hr/>
 
-
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 
@@ -49,14 +48,11 @@ switch ($access) {
     break;
 }
 
+print PageLink2('catlists',$I18N->get('Categorise lists'));
+
 $html = '';
 
-
-$sListCategories = getConfig('list_categories');
-$aConfiguredListCategories = cleanArray(explode(',',$sListCategories));
-foreach ($aConfiguredListCategories as $key => $val) {
-  $aConfiguredListCategories[$key] = trim($val);
-}
+$aConfiguredListCategories = listCategories();
   
 $aListCategories = array();
 $req = Sql_Query(sprintf('select distinct category from %s',$tables['list']));
@@ -87,7 +83,7 @@ if (sizeof($aListCategories)) {
   foreach ($aListCategories as $category) {
     $category = trim($category);
     if ($category == '') {
-      $category = $GLOBALS['I18N']->get('Default');
+      $category = $GLOBALS['I18N']->get('Uncategorised');
     }
 
     $tabs->addTab($category,$baseurl.'&amp;tab='.urlencode($category));
