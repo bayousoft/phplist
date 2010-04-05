@@ -14,13 +14,13 @@
     <b><?php echo $GLOBALS['I18N']->get('Developers')?></b>:
     <ul>
       <li>Michiel Dethmers, Tincan Ltd</li>
-      <li>Bas Ovink, Tincan Ltd</li>
     </ul>
     <b><?php echo $GLOBALS['I18N']->get('Contributors')?></b>
     <ul>
       <li>Damien McKenna</li>
       <li>Pete Ness, Nessoft LLC</li>
       <li>Xavier Dutoit, Sydesy</li>
+      <li>Bas Ovink</li>
       <li>and many others</li>
     </ul>
     <b><a href="http://docs.phplist.com" target="_blank"><?php echo $GLOBALS['I18N']->get('Documentation')?></a></b>
