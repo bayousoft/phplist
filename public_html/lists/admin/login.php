@@ -62,7 +62,7 @@ function deleteOldTokens(){
       $row = Sql_Fetch_Row_Query($SQLquery);
       if ($row[0]) {
         echo("Your password was changed succesfully.\n");
-        echo("To return, click: <a href='/lists/admin/'>Home</a>.\n");
+        echo("To return, click: <a href='./'>Home</a>.\n");
         #Token deletion.
         $SQLquery=sprintf("delete from %s where admin = %d;", $GLOBALS['tables']['admin_password_request'], $row[0]);
         $query = Sql_Query($SQLquery);
