@@ -165,13 +165,14 @@ function displayAbout() {
     if (!$this->enabled)
       return null;
 
+    if (!isset($data['rsstemplate'])) $data['rsstemplate'] = '';
     global $rssfrequencies;
 
     $nippet= $GLOBALS['I18N']->get('rssintro');
     $nippet .= '<br />';
     $nippet .= '<input type=radio name="rsstemplate" value="none">' . $GLOBALS['I18N']->get('No RSS') . ' ';
     foreach ($rssfrequencies as $key => $val) {
-      $nippet .= sprintf('<input type=radio name="rsstemplate" value="%s" %s>%s ', $key, $_POST['rsstemplate'] == $key ? 'checked' : '', $val);
+      $nippet .= sprintf('<input type=radio name="rsstemplate" value="%s" %s>%s ', $key, $data['rsstemplate'] == $key ? 'checked' : '', $val);
     }
     return $nippet;
   }
@@ -183,7 +184,7 @@ function displayAbout() {
     return 'RSS';
   }
 
-  function sendMessageTabSave($messageid= 0, $data= array ()) {
+  function sendMessageTabSave($messageid= 0, &$data= array ()) {
     if (!$this->enabled)
       return null;
 
@@ -198,21 +199,19 @@ function displayAbout() {
     #      $tables['message'],$_POST['rsstemplate'],$_SESSION['logindetails']['id']));
 
     # with RSS message we enforce repeat
-    switch ($_POST['rsstemplate']) {
+    switch ($data['rsstemplate']) {
       case 'weekly' :
-        $_POST['repeatinterval']= 10080;
+        $data['repeatinterval']= 10080;
         break;
       case 'monthly' :
-        $_POST['repeatinterval']= 40320;
+        $data['repeatinterval']= 40320;
         break;
       case 'daily' :
       default :
-        $_POST['repeatinterval']= 1440;
+        $data['repeatinterval']= 1440;
         break;
     }
-    $_POST['repeatuntil']= date('Y-m-d H:i:00', mktime(0, 0, 0, date('m'),
-date('d'),
-date('Y') + 1));
+    $data['repeatuntil']= date('Y-m-d H:i:00', mktime(0, 0, 0, date('m'),date('d'),date('Y') + 1));
 
     return 'RSS message, repeat set';
   }
