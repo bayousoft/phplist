@@ -1,8 +1,16 @@
+<?php
+if (empty($GLOBALS['developer_email'])) {
+  print 'Page not in use';
+  return;
+}
+?>
+
 <script language="Javascript" src="js/jslib.js" type="text/javascript"></script>
 <hr/>
 <H4>Database administration</H4>
 <H3>WARNING: this page is intended to aid development. Return to the <a href="?page=home">home page</a> now if you're not sure what this is.</H3>
-<?php #'
+<?php 
+
 require_once dirname(__FILE__) . '/accesscheck.php';
 
 if (!is_object("date")) {
