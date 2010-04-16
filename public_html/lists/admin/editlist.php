@@ -115,8 +115,7 @@ ob_end_flush();
   print '<input type="hidden" name="owner" value="'.$_SESSION["logindetails"]["id"].'" />';
 }
 
-$sListCategories = getConfig('list_categories');
-$aListCategories = cleanArray(explode(',',$sListCategories));
+$aListCategories = listCategories();
 if (sizeof($aListCategories)) {
   print '<tr><td>'.$GLOBALS['I18N']->get('Category').'</td><td>';
   print '<select name="category">';
