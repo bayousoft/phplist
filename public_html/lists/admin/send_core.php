@@ -1084,7 +1084,12 @@ if (!$done) {
   <tr><td colspan="2"></td></tr>
   <tr><td colspan="2"></td></tr>';
 
+  $currentTime = Sql_Fetch_Row_Query('select now()');
+
   $scheduling_content .= '
+  <tr><td colspan="2">'.$GLOBALS['I18N']->get("Time is Based on the Server Time").
+    '<br/>'.$GLOBALS['I18N']->get('Current Server Time is').' '.$currentTime[0].'</td></tr>
+  </td></tr>
   <tr><td>'.Help("embargo").' '.$GLOBALS['I18N']->get("embargoeduntil").':</td>
     <td>'.$embargo->showInput("embargo","",$_POST["embargo"]).'</td>
   </tr>';
