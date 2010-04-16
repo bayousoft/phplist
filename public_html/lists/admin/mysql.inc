@@ -33,9 +33,9 @@ function Sql_Connect($host,$user,$password,$database) {
       case 0:
         break;
       default:
-        SQL_Error($errno, "Server error:". mysql_error());
+        print SQL_Error($GLOBALS['database_connection'],$errno);
     }
-    print "Cannot connect to Database, please check your configuration";
+ #   print "Cannot connect to Database, please check your configuration";
     exit;
   }
   if (!$db) {
@@ -118,6 +118,8 @@ function Sql_Query($query,$ignore = 0) {
       }
     }
   }
+  
+ # dbg($query);
   $GLOBALS["pagestats"]["number_of_queries"]++;
   $result = mysql_query($query,$GLOBALS["database_connection"]);
   if (!$ignore) {
@@ -181,8 +183,10 @@ function db_db_Query($query,$database,$db_connection) {
 }
 
 function Sql_Verbose_Query($query,$ignore = 0) {
-  if (preg_match("/dev/",VERSION))
+  if (preg_match("/dev/",VERSION)) {
     print "<b>$query</b><br>\n";
+  }
+  dbg($query);
   flush();
   if (!empty($GLOBALS["commandline"])) {
     ob_end_clean();
@@ -290,7 +294,7 @@ function Sql_Replace ($table,$values,$pk) {
 
   $query = ' replace into '.$table.' set ';
   foreach ($values as $key => $val) {
-    $query .= ' '.$key .'="'.mysql_escape_string($val).'",';
+    $query .= ' '.$key .'="'.sql_escape($val).'",';
   }
   $query = substr($query,0,-1);
   return Sql_Query($query);
