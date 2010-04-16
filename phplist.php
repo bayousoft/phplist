@@ -18,12 +18,16 @@ class phplist extends DefaultPlugin {
 
     if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
       include_once $_SERVER["ConfigFile"];
-      $this->message_envelope = $message_envelope;
-      $this->developer_email = $developer_email;
+      if (isset($message_envelope)) {
+        $this->message_envelope = $message_envelope;
+      }
+      if (isset($developer_email)) {
+        $this->developer_email = $developer_email;
+      }
       $this->table_prefix = $table_prefix;
     }
-    require_once dirname(__FILE__).'/'.$this->coderoot()."/structure.php";
-    $this->DBstructure = $DBstruct;
+    include dirname(__FILE__).'/'.$this->coderoot()."/structure.php";
+    $this->DBstructure = $GLOBALS['DBstruct'];
 
     $this->tables = array(
       "user" => $usertable_prefix . "user",
@@ -78,7 +82,7 @@ class phplist extends DefaultPlugin {
   }
 
   function home() {
-    return "public_html/lists/admin/home.php";
+    return "home";
   }
 
   function coderoot() {
@@ -86,10 +90,18 @@ class phplist extends DefaultPlugin {
   }
 
   function codelib() {
-    return array(
-      "public_html/lists/admin/lib.php",
-      "public_html/lists/admin/defaultconfig.inc",
-      "public_html/lists/texts/english.inc");
+    $GLOBALS['tables'] = $this->tables;
+    $_SESSION["logindetails"] = $_SESSION["me"];
+
+    $libs = array(
+      dirname(__FILE__)."/public_html/lists/admin/init.php",
+      dirname(__FILE__)."/public_html/lists/admin/lib.php",
+      dirname(__FILE__)."/public_html/lists/admin/defaultconfig.inc",
+      dirname(__FILE__)."/public_html/lists/texts/english.inc");
+    if (!empty($_SERVER['ConfigFile'])) {
+      array_unshift($libs,$_SERVER['ConfigFile']);
+    }
+    return $libs;
   }
 
   function frontendlib() {
