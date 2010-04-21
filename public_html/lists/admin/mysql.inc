@@ -163,10 +163,15 @@ function Sql_Query_Params($query,$params,$ignore = 0) {
 #  dbg($query);
 
   foreach ($params as $index => $par) {
-    $query = str_replace('PARAM'.$index.'MARAP',sql_escape($par),$query);
+    if (is_numeric($par)) {
+      $query = str_replace('"PARAM'.$index.'MARAP"',sql_escape($par),$query);
+    } else {
+      $query = str_replace('PARAM'.$index.'MARAP',sql_escape($par),$query);
+    }
   }
 
 #  dbg($query);
+#  print $query."<br/>";
   return Sql_Query($query);
 }
 
@@ -297,7 +302,11 @@ function Sql_Replace ($table,$values,$pk) {
 
   $query = ' replace into '.$table.' set ';
   foreach ($values as $key => $val) {
-    $query .= ' '.$key .'="'.sql_escape($val).'",';
+    if (is_numeric($val)) {
+      $query .= ' '.$key .'= '.sql_escape($val).',';
+    } else {
+      $query .= ' '.$key .'="'.sql_escape($val).'",';
+    }
   }
   $query = substr($query,0,-1);
   return Sql_Query($query);
