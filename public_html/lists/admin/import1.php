@@ -211,8 +211,7 @@ if(isset($_REQUEST['import'])) {
           include_once dirname(__FILE__)."/commonlib/lib/userlib.php";
           $uniqid = getUniqid();
 
-      $query = sprintf('INSERT INTO %s (email,entered,confirmed,uniqid,htmlemail) values("%s",current_timestamp,%d,"%s","%s")',
-          $query = sprintf('INSERT INTO %s (email,entered,confirmed,uniqid,htmlemail) values("%s",now(),%d,"%s","%s")',
+          $query = sprintf('INSERT INTO %s (email,entered,confirmed,uniqid,htmlemail) values("%s",current_timestamp,%d,"%s","%s")',
           $tables["user"],$email,$notify != "yes",$uniqid,isset($_POST['htmlemail']) ? '1':'0');
           $result = Sql_query($query);
           $userid = Sql_Insert_Id($tables['user'], 'id');

@@ -1125,9 +1125,6 @@ function printobject($object) {
   $vars = get_object_vars ($object);
   print "Vars:";
   printArray($vars);
-
-function formatTime($time, $short = 0) {
-	return $time;
 }
 
 function printarray($array){

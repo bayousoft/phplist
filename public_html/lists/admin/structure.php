@@ -8,9 +8,11 @@
 
 require_once dirname(__FILE__).'/accesscheck.php';
 
-define ("STRUCTUREVERSION","dev");
+if (!defined('STRUCTUREVERSION')) {
+  define ("STRUCTUREVERSION","dev");
+}
 
-$DBstruct = array( # order of tables is essential for smooth upgrade
+$DBstructuser = array( # order of tables is essential for smooth upgrade
     "attribute" => array ( # attributes of a user or a message
         "id" => array("integer not null primary key auto_increment","ID"),
         "name" => array("varchar(255) not null","Name"),
@@ -37,6 +39,7 @@ $DBstruct = array( # order of tables is essential for smooth upgrade
         "email" => array("varchar(255) not null","Email"),
         "confirmed" => array("tinyint default 0","sys:Is this user confirmed"),
         "blacklisted" => array("tinyint default 0","sys:Is this user blacklisted"),
+        "optedin" => array("tinyint default 0","sys:Did this user manually confirm"),
         "bouncecount" => array("integer default 0","sys:Number of bounces on this user"),
         "entered" => array("datetime", "sysexp:Entered"),
         "modified" => array("timestamp", "sysexp:Last Modified"),
@@ -78,6 +81,9 @@ $DBstruct = array( # order of tables is essential for smooth upgrade
         "index_1" => array("emailidx (email)",""),
         "index_2" => array("emailnameidx (email,name)",""),
     ),
+  );
+  
+  $DBstructphplist = array(
     "list" => array ( # a list in the system
         "id" => array("integer not null primary key auto_increment","ID"),
         "name" => array("varchar(255) not null","Name"),
@@ -89,10 +95,11 @@ $DBstruct = array( # order of tables is essential for smooth upgrade
         "modified" => array("timestamp", "Modified"),
         "active" => array("tinyint","Active"),
         "owner" => array("integer","Admin who is owner of this list"),
+        "category" => array('varchar(255) default ""',"List category"),    
         "index_1" => array("nameidx (name)",""),
         "index_2" => array("listorderidx (listorder)",""),
     ),
-    "listrss" => array( # rss details for a RSS source of a list
+    "listrss" => array( # rss details for a RSS source of a list, obsolete...
         "listid" => array("integer not null","List ID"),
         "type" => array("varchar(255) not null","Type of this entry"),
         "entered" => array("datetime not null",""),
