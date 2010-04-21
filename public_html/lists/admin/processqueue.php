@@ -738,7 +738,7 @@ while ($cansend && $plugin = current($GLOBALS['plugins']) ) {
                unset($running_throttle_delay);
              }
            } elseif (MAILQUEUE_THROTTLE) {
-             sleep(MAILQUEUE_THROTTLE);
+             usleep(MAILQUEUE_THROTTLE * 1000000);
            } elseif (MAILQUEUE_BATCH_SIZE && MAILQUEUE_AUTOTHROTTLE && $sent > 10) {
              $totaltime = $GLOBALS['processqueue_timer']->elapsed(1);
              $msgperhour = (3600/$totaltime) * $sent;

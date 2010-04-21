@@ -11,13 +11,18 @@
 include dirname(__FILE__).'/structure.php';
 
 foreach ($DBstruct as $table => $columns) {
-  print $table.'<br/>';
+  print '<h3>'.$table.'</h3><br/>';
   foreach ($columns as $column => $definition) {
     if (strpos($column,'index') === 0) {
-      print "Adding index: $definition[0] to $table, <br/>";
+      print "Adding index: <b>$definition[0]</b> to $table, <br/>";
       flush();
       # ignore errors, which are most likely that the index already exists
       Sql_Query(sprintf('alter table %s add index %s',$table,$definition[0]),1);
+    } elseif (strpos($column,'unique') === 0) {
+      print "Adding unique index: $definition[0] to $table, <br/>";
+      flush();
+      # ignore errors, which are most likely that the index already exists
+      Sql_Query(sprintf('alter table %s add unique %s',$table,$definition[0]),1);
     }
   }
 }

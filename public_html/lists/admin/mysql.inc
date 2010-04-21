@@ -42,6 +42,9 @@ function Sql_Connect($host,$user,$password,$database) {
     print "Cannot connect to Database, please check your configuration";
     exit;
   }
+  if (strcasecmp($GLOBALS['strCharSet'], 'utf-8') == 0) {
+    mysql_query ("SET NAMES 'utf8'");
+  }
   return $db;
 }
 

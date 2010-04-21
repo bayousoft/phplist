@@ -333,10 +333,18 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok && $allt
 
    $user_att = getUserAttributeValues($email);
 
-  while (list($att_name,$att_value) = each ($user_att)) {
-    if (eregi("\[".$att_name."\]",$thankyoupage,$regs))
-      $thankyoupage = eregi_replace("\[".$att_name."\]",$att_value,$thankyoupage);
-  }
+   while (list($att_name,$att_value) = each ($user_att)) {
+      if (eregi("\[".$att_name."\]",$thankyoupage,$regs))
+         $thankyoupage = eregi_replace("\[".$att_name."\]",$att_value,$thankyoupage);
+   }
+
+   if (is_array($GLOBALS["plugins"])) {
+      reset($GLOBALS["plugins"]);
+
+      foreach ($GLOBALS["plugins"] as $name => $plugin) {
+         $thankyoupage = $plugin->parseThankyou($id,$userid,$thankyoupage);
+      }
+   }
 
   if (is_array($GLOBALS["plugins"])) {
     reset($GLOBALS["plugins"]);

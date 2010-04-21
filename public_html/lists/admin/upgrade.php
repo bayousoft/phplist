@@ -33,9 +33,9 @@ if (!$dbversion)
 output( '<p class="information">'.$GLOBALS['I18N']->get('Your database version').': '.$dbversion.'</p>');
 if ($dbversion == VERSION)
   output($GLOBALS['I18N']->get('Your database is already the correct version, there is no need to upgrade'));
-else
+else 
 
-if ($_GET["doit"] == 'yes') {
+if (isset($_GET["doit"]) && $_GET["doit"] == 'yes') {
   $success = 1;
   # once we are off, this should not be interrupted
   ignore_user_abort(1);
@@ -338,7 +338,11 @@ if ($_GET["doit"] == 'yes') {
       }
       break;
   }
-
+  
+  ## add index on bounces, but ignore the error
+  Sql_Query("create index statusindex on {$tables["user_attribute"]} (status(10))",1);  
+  Sql_Query("create index message_lookup using btree on {$tables["user_message_bounce"]} (message)",1);   
+    
   ## mantis issue 9001, make sure that the "repeat" column in the messages table is renamed to repeatinterval
   # to avoid a name clash with Mysql 5.
   # problem is that this statement will fail if the DB is already running Mysql 5

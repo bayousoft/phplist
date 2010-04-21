@@ -226,7 +226,10 @@ if (isset($GLOBALS["require_login"]) && $GLOBALS["require_login"]) {
       }
       $page = "login";
   } elseif (isset($_REQUEST["forgotpassword"])) {
-    $pass = $GLOBALS["admin_auth"]->getPassword($_REQUEST["forgotpassword"]);
+    $pass = '';
+    if (is_email($_REQUEST["forgotpassword"])) {
+      $pass = $GLOBALS["admin_auth"]->getPassword($_REQUEST["forgotpassword"]);
+    } 
     if ($pass) {
       sendMail ($_REQUEST["forgotpassword"],$GLOBALS['I18N']->get('yourpassword'),"\n\n".$GLOBALS['I18N']->get('yourpasswordis')." $pass");
       $msg = $GLOBALS['I18N']->get('passwordsent');
@@ -324,6 +327,10 @@ if ($page != "login") {
       Info("Running DEV version, but developer email is not set");
     }
   }
+  if (TEST) {
+    print Info($GLOBALS['I18N']->get('Running in testmode, no emails will be sent. Check your config file.'));
+  }
+
   if (ini_get("register_globals") == "on" && WARN_ABOUT_PHP_SETTINGS) {
     Error($GLOBALS['I18N']->get('It is safer to set Register Globals in your php.ini to be <b>off</b> instead of ').ini_get("register_globals") );
   }
@@ -367,6 +374,7 @@ if (empty($_GET['pi'])) {
     @include $GLOBALS['plugins'][$_GET['pi']] .'/info/'.$_SESSION['adminlanguage']['info']."/$include";
   }
 } else {
+  @include "info/en/$include";
 #  print "Not a file: "."info/".$adminlanguage["info"]."/$include";
 }
 

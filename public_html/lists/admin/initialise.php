@@ -7,6 +7,8 @@ $force = !empty($_GET['force']);
 
 print "<h3>".$GLOBALS['I18N']->get("Creating tables")."</h3><br />\n";
 $success = 1;
+$force = !empty($_GET['force']) && $_GET['force'] == 'yes';
+
 while (list($table, $val) = each($DBstruct)) {
   if ($force) {
     if ($table == "attribute") {

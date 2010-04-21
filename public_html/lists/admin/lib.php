@@ -375,6 +375,8 @@ function previewTemplate($id,$adminid = 0,$text = "", $footer = "") {
   global $tables;
   if (defined("IN_WEBBLER")) {
     $more = '&amp;pi='.$_GET["pi"];
+  } else {
+    $more = '';
   }
   $tmpl = Sql_Fetch_Row_Query(sprintf('select template from %s where id = %d',$tables["template"],$id));
   $template = stripslashes($tmpl[0]);

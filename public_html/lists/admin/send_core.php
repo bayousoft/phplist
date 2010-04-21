@@ -1064,17 +1064,29 @@ if (!$done) {
   $forwardcontent = $tmp;
 
   $scheduling_content = '<table class="sendScheduling">';
+// custom code - start
+  $utf8_subject = $subject;
+  $utf8_from = $from;
+  if (strcasecmp($GLOBALS['strCharSet'], 'utf-8') <> 0) {
+     $utf8_subject = iconv($GLOBALS['strCharSet'],'UTF-8',$utf8_subject);
+     $utf8_from = iconv($GLOBALS['strCharSet'],'UTF-8',$utf8_from);
+  }
+
   $maincontent .= '
   <tr><td>'.Help("subject").' '.$GLOBALS['I18N']->get("Subject").':</td>
-    <td><input type="text" name="msgsubject" value="'.htmlentities(iconv('ISO-8859-1','UTF-8',$subject),ENT_QUOTES,'UTF-8').'" size="40"/></td>
-  </tr>
-  <tr><td colspan="2"></td></tr>
+    <td><input type=text name="msgsubject"
+    value="'.htmlentities($subject,ENT_QUOTES,'UTF-8').'" size=40></td></tr>
+  <tr>
+    <td colspan=2>
+    </td></tr>
   <tr><td>'.Help("from").' '.$GLOBALS['I18N']->get("fromline").':</td>
-    <td><input type="text" name="from" value="'.htmlentities(iconv('ISO-8859-1','UTF-8',$from),ENT_QUOTES,'UTF-8').'" size="40"/></td>
-  </tr>
-  <tr><td colspan="2"></td></tr>
-';
+    <td><input type=text name=from
+   value="'.htmlentities($from,ENT_QUOTES,'UTF-8').'" size=40></td></tr>
+  <tr><td colspan=2>
 
+  </td></tr>';
+
+// custom code - end
   #0013076: different content when forwarding 'to a friend'
   $forwardcontent .= $GLOBALS['I18N']->get("When a user forwards to a friend," .
   " the friend will receive this message instead of the one on the content tab.").

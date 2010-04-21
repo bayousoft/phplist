@@ -8,15 +8,6 @@ require_once dirname(__FILE__).'/accesscheck.php';
 print formStart('class="listListing"');
 $some = 0;
 
-if (isset($_GET['delete'])) {
-  $delete = sprintf('%d',$_GET['delete']);
-  # delete the index in delete
-  print $GLOBALS['I18N']->get('Deleting') . " $delete ..\n";
-  $result = Sql_Query_Params("delete from $tables[list] where id = ?", array($delete));
-  $result = Sql_Query_Params("delete from $tables[listuser] where listid = ?", array($delete));
-  $result = Sql_Query_Params("delete from $tables[listmessage] where listid = ?", array($delete));
-  print '..' . $GLOBALS['I18N']->get('Done') . "<br /><hr /><br />\n";
-}
 
 ## quick DB fix
 if (!Sql_Table_Column_Exists($tables['list'],'category')) {
@@ -38,17 +29,33 @@ $access = accessLevel('list');
 switch ($access) {
   case 'owner':
     $subselect = ' where owner = ' . $_SESSION['logindetails']['id'];
+    $subselect_and = ' and owner = ' . $_SESSION['logindetails']['id'];
     break;
   case 'all':
     $subselect = '';
+    $subselect_and = '';
     break;
   case 'none':
   default:
     $subselect = ' where id = 0';
+    $subselect_and = ' and id = 0';
     break;
 }
 
 print PageLink2('catlists',$I18N->get('Categorise lists'));
+
+if (isset($_GET['delete'])) {
+  $delete = sprintf('%d',$_GET['delete']);
+  # delete the index in delete
+  print $GLOBALS['I18N']->get('Deleting') . " $delete ..\n";
+  $result = Sql_query(sprintf('delete from '.$tables['list'].' where id = %d %s',$delete,$subselect_and));
+  $done = Sql_Affected_Rows();
+  if ($done) {
+    $result = Sql_query('delete from '.$tables['listuser']." where listid = $delete $subselect_and");
+    $result = Sql_query('delete from '.$tables['listmessage']." where listid = $delete $subselect_and");
+  }
+  print '..' . $GLOBALS['I18N']->get('Done') . "<br /><hr /><br />\n";
+}
 
 $html = '';
 

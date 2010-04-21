@@ -24,7 +24,16 @@ if (isset($_GET['find'])) { ## those notices are driving me nuts ...
 }
 
 $date = new Date();
-
+if (isset($_GET['find'])) {
+  $find = preg_replace('/\W/','',$_GET['find']);
+} else {
+  $find = '';
+}
+if (isset($_GET['findby'])) {
+  $findby = preg_replace('/\W/','',$_GET['findby']);
+} else {
+  $findby = '';
+}
 $access = accessLevel("user");
 switch ($access) {
   case "owner":
@@ -62,16 +71,12 @@ function groupName($id) {
 require dirname(__FILE__).'/structure.php';
 
 $struct = $DBstruct["user"];
-if (isset($_GET['find'])) {
-  $find = preg_replace('/\W/','',$_GET['find']);
-} else {
-  $find = '';
-}
+
 
 if (isset($_GET['list']))
   echo "<br />".PageLink2("members","Back to Members of this list","id=".sprintf('%d',$_GET['list']))."\n";
 if (isset($start))
-  echo "<br />".PageLink2("users","Back to the list of users","start=$start&amp;unconfirmed=".$_GET["unconfirmed"])."\n";
+  echo "<br />".PageLink2("users","Back to the list of users","start=$start&unconfirmed=".isset($_GET["unconfirmed"])?'1':'0')."\n";
 if ($find)
   echo "<br />".PageLink2("users","Back to the search results","start=$start&amp;find=".urlencode($find)."&amp;findby=".urlencode($findby)."&amp;unconfirmed=".$_GET["unconfirmed"]."\n");
 

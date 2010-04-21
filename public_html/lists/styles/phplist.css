@@ -6,8 +6,6 @@ scrollbar-track-color: #DEDEB6;
 scrollbar-arrow-color: #000000;
 }
 
-a:link {
-	font-size: 11px; color: #ff6600; font-style: normal; font-family: verdana, sans-serif; text-decoration: none;
 div#menutable div#menuheader {
   position:absolute;
   top:-20px;
@@ -23,6 +21,8 @@ div#menutable div#menuheader {
 }
 
 
+a:link {
+	font-size: 11px; color: #ff6600; font-style: normal; font-family: verdana, sans-serif; text-decoration: none;
 }
 a:active {
 	font-size: 11px; color: #ff6600; font-style: normal; font-family: verdana, sans-serif; text-decoration: none;

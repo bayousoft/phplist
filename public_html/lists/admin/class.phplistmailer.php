@@ -40,19 +40,18 @@ class PHPlistMailer extends PHPMailer {
 
       $this->CharSet = getConfig("html_charset");
 
-      if (defined('PHPMAILERHOST') && PHPMAILERHOST != '' && isset($GLOBALS['phpmailer_smtpuser']) && $GLOBALS['phpmailer_smtpuser'] != '') {
-         $this->SMTPAuth = true;
-         $this->Helo = getConfig("website");
-         $this->Host = PHPMAILERHOST;
-
-         $this->Username = $GLOBALS['phpmailer_smtpuser'];
-         $this->Password = $GLOBALS['phpmailer_smtppassword'];
-         #  logEvent('Sending authenticated email via '.PHPMAILERHOST);
-
-         #  logEvent('Sending via smtp');
-         $this->Mailer = "smtp";
-      }
-      else{
+      if (defined('PHPMAILERHOST') && PHPMAILERHOST != '') {
+        //logEvent('Sending email via '.PHPMAILERHOST);
+        $this->SMTPAuth = true;
+        $this->Helo = getConfig("website");
+        $this->Host = PHPMAILERHOST;
+        if ( isset($GLOBALS['phpmailer_smtpuser']) && $GLOBALS['phpmailer_smtpuser'] != ''
+             && isset($GLOBALS['phpmailer_smtppassword']) && $GLOBALS['phpmailer_smtppassword']) {
+          $this->Username = $GLOBALS['phpmailer_smtpuser'];
+          $this->Password = $GLOBALS['phpmailer_smtppassword'];
+        }
+        $this->Mailer = "smtp";
+      } else{
          #  logEvent('Sending via mail');
          $this->Mailer = "mail";
       }
@@ -110,7 +109,7 @@ class PHPlistMailer extends PHPMailer {
       if ($this->AltBody) {
         $this->AltBody .= html_entity_decode($text ,ENT_QUOTES, 'UTF-8' );#$text;
       } else {
-        $this->Body .= html_entity_decode($text ,ENT_QUOTES, 'UTF-8' );#$text;
+        $this->Body .= html_entity_decode($text."\n" ,ENT_QUOTES, 'UTF-8' );#$text;
       }
     }
 
@@ -223,7 +222,7 @@ class PHPlistMailer extends PHPMailer {
         sort($filesystem_images);
         for($i=0; $i<count($filesystem_images); $i++){
           if($image = $this->get_filesystem_image($filesystem_images[$i])){
-            $content_type = $this->image_types[substr($filesystem_images[$i], strrpos($filesystem_images[$i], '.') + 1)];
+            $content_type = $this->image_types[strtolower(substr($filesystem_images[$i], strrpos($filesystem_images[$i], '.') + 1))];
             $cid = $this->add_html_image($image, basename($filesystem_images[$i]), $content_type);
             $this->Body = str_replace(basename($filesystem_images[$i]), "cid:$cid", $this->Body);#@@@
           }
@@ -251,15 +250,18 @@ class PHPlistMailer extends PHPMailer {
         ## addition for filesystem images
     function filesystem_image_exists($filename) {
       ##  find the image referenced and see if it's on the server
-      $localfile = $filename;
+      $elements = parse_url($filename);
+      $localfile = basename($elements['path']);
       if (defined('UPLOADIMAGES_DIR')) {
-        print $_SERVER['DOCUMENT_ROOT'].$localfile;
+      #  print $_SERVER['DOCUMENT_ROOT'].$localfile;
         return is_file($_SERVER['DOCUMENT_ROOT'].$localfile);
-      } else {
-        $elements = parse_url($filename);
-        $localfile = basename($elements['path']);
-        return is_file($_SERVER['DOCUMENT_ROOT'].$GLOBALS['pageroot'].'/'.FCKIMAGES_DIR.'/'.$localfile);
-      }
+      } else 
+      return 
+        is_file($_SERVER['DOCUMENT_ROOT'].$GLOBALS['pageroot'].'/'.FCKIMAGES_DIR.'/image/'.$localfile) 
+        || is_file($_SERVER['DOCUMENT_ROOT'].$GLOBALS['pageroot'].'/'.FCKIMAGES_DIR.'/'.$localfile)
+        ## commandline
+        || is_file('../'.FCKIMAGES_DIR.'/image/'.$localfile) 
+        || is_file('../'.FCKIMAGES_DIR.'/'.$localfile);
     }
 
     function get_filesystem_image($filename) {
@@ -273,7 +275,13 @@ class PHPlistMailer extends PHPMailer {
         $elements = parse_url($filename);
         $localfile = basename($elements['path']);
         return base64_encode( file_get_contents($_SERVER['DOCUMENT_ROOT'].$GLOBALS['pageroot'].'/'.FCKIMAGES_DIR.'/'.$localfile));
-      } 
+      } elseif (is_file($_SERVER['DOCUMENT_ROOT'].$GLOBALS['pageroot'].'/'.FCKIMAGES_DIR.'/image/'.$localfile)) {
+        return base64_encode( file_get_contents($_SERVER['DOCUMENT_ROOT'].$GLOBALS['pageroot'].'/'.FCKIMAGES_DIR.'/image/'.$localfile));
+      } elseif (is_file('../'.FCKIMAGES_DIR.'/'.$localfile)) {   ## commandline
+        return base64_encode( file_get_contents('../'.FCKIMAGES_DIR.'/'.$localfile));
+      } elseif (is_file('../'.FCKIMAGES_DIR.'/image/'.$localfile)) {
+        return base64_encode( file_get_contents('../'.FCKIMAGES_DIR.'/image/'.$localfile));
+      }
       return '';
     }
     ## end addition

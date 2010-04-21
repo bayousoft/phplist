@@ -4,6 +4,10 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 
+$delete = sprintf('%d',$_GET['delete']);
+$start = sprintf('%d',$_GET["start"]);
+$id = sprintf('%d',$_GET['id']);
+
 if ($delete) {
   # delete the index in delete
   print "Deleting $delete ..";

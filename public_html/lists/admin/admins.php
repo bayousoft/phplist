@@ -18,7 +18,17 @@ else
 	$find = 0;
 	
 require_once dirname(__FILE__).'/accesscheck.php';
+
 $external = $require_login && $GLOBALS["admin_auth_module"] != 'phplist_auth.inc';
+$start = isset($_GET['start']) ? sprintf('%d',$_GET['start']):0;
+$listid = isset($_GET['id']) ? sprintf('%d',$_GET['id']): 0;
+$find = isset($_REQUEST['find']) ? $_REQUEST['find'] : '';
+
+if (!empty($find)) {
+  $remember_find = "&find=".urlencode($find);
+} else {
+  $remember_find = '';
+}
 
 # with external admins we simply display information
 if (!$external) {
@@ -26,12 +36,16 @@ if (!$external) {
 
   if (isset($_GET["delete"]) && $_GET["delete"]) {
     # delete the index in delete
-    print $GLOBALS['I18N']->get('Deleting')." $delete ..\n";
-    Sql_query(sprintf('delete from %s where id = %d',$GLOBALS["tables"]["admin"],$_GET["delete"]));
-    Sql_query(sprintf('delete from %s where adminid = %d',$GLOBALS["tables"]["admin_attribute"],$_GET["delete"]));
-    Sql_query(sprintf('delete from %s where adminid = %d',$GLOBALS["tables"]["admin_task"],$_GET["delete"]));
-    print '..'.$GLOBALS['I18N']->get('Done')."<br /><hr/><br />\n";
-    Redirect("admins&start=$start");
+    if ($_GET['delete'] == $_SESSION['logindetails']['id']) {
+      print $GLOBALS['I18N']->get('You cannot delete yourself')."\n";
+    } else {
+      print $GLOBALS['I18N']->get('Deleting')." $delete ..\n";
+      Sql_query(sprintf('delete from %s where id = %d',$GLOBALS["tables"]["admin"],$_GET["delete"]));
+      Sql_query(sprintf('delete from %s where adminid = %d',$GLOBALS["tables"]["admin_attribute"],$_GET["delete"]));
+      Sql_query(sprintf('delete from %s where adminid = %d',$GLOBALS["tables"]["admin_task"],$_GET["delete"]));
+      print '..'.$GLOBALS['I18N']->get('Done')."<br /><hr><br />\n";
+      Redirect("admins&start=$start");
+    }
   }
   
   ob_end_flush();
@@ -97,9 +111,9 @@ if ($total > MAX_USER_PP) {
 }
 
 ?>
-<table class="adminsForm">
-<tr><td colspan=4><?php echo formStart('class="adminsFind"')?><input type="hidden" name="id" value="<?php echo $listid?>" />
-  <?php echo $GLOBALS['I18N']->get('Find an admin')?>: <input type="text" name="find" value="<?php echo $find?>" size="40" /><input class="submit" type="submit" value="Go">
+<table>
+<tr><td colspan=4><?php echo formStart('action=""')?><input type="hidden" name="id" value="<?php echo $listid?>">
+<?php echo $GLOBALS['I18N']->get('Find an admin')?>: <input type=text name="find" value="<?php echo htmlspecialchars($find)?>" size="40"><input type="submit" value="Go">
 </form></td></tr></table>
 <?php
 $ls = new WebblerListing($GLOBALS['I18N']->get('Administrators'));
@@ -108,7 +122,7 @@ while ($admin = Sql_fetch_array($result)) {
     $remember_find = "&amp;find=".urlencode($find);
   $delete_url = sprintf("<a href=\"javascript:deleteRec('%s');\">del</a>",PageURL2("admins","Delete","start=$start&amp;delete=".$admin["id"]));
   $ls->addElement($admin["loginname"],PageUrl2("admin",$GLOBALS['I18N']->get('Show'),"start=$start&amp;id=".$admin["id"].$remember_find));
-  if (!$external)
+  if (!$external && $admin['id'] != $_SESSION['logindetails']['id'])
     $ls->addColumn($admin["loginname"],"del",$delete_url);
 }
 print $ls->display();

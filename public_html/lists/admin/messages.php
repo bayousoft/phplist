@@ -299,7 +299,8 @@ if ($total) {
         %s
         %s
         </table>',
-        $msg["processed"],
+      #  $msg["processed"],
+        $msg['astext'] + $msg['ashtml'] + $msg['astextandhtml'] + $msg['aspdf'] + $msg['astextandpdf'],
         $msg["astext"],
         $msg["ashtml"] + $msg["astextandhtml"], //bug 0009687
         $msg["aspdf"],

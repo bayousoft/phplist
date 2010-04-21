@@ -3,6 +3,7 @@
 ob_start();
 //$er = error_reporting(0); 
 require_once dirname(__FILE__) .'/admin/commonlib/lib/unregister_globals.php';
+require_once dirname(__FILE__) .'/admin/commonlib/lib/unregister_globals.php';
 require_once dirname(__FILE__) .'/admin/commonlib/lib/magic_quotes.php';
 ## none of our parameters can contain html for now
 $_GET = removeXss($_GET);
@@ -290,7 +291,7 @@ if ($login_required && empty($_SESSION["userloggedin"]) && !$canlogin) {
 }
 
 function LoginPage($id,$userid,$email = "",$msg = "") {
-  global $data;
+  $data = PageData($id);
   list($attributes,$attributedata) = PageAttributes($data);
   $html = '<title>'.$GLOBALS["strLoginTitle"].'</title>';
   $html .= $data["header"];
@@ -306,7 +307,7 @@ function LoginPage($id,$userid,$email = "",$msg = "") {
   $html .= formStart('name="loginform"');
   $html .= '<table border=0>';
   $html .= '<tr><td>'.$GLOBALS["strEmail"].'</td><td><input type=text name="email" value="'.$email.'" size="30"></td></tr>';
-  $html .= '<tr><td>'.$GLOBALS["strPassword"].'</td><td><input type=password name="password" value="'.$_POST["password"].'" size="30"></td></tr>';
+  $html .= '<tr><td>'.$GLOBALS["strPassword"].'</td><td><input type="password" name="password" value="'.$_POST["password"].'" size="30"></td></tr>';
   $html .= '</table>';
    $html .= '<p><input type=submit name="login" value="'.$GLOBALS["strLogin"].'"></p>';
   if (ENCRYPTPASSWORD) {
@@ -632,14 +633,14 @@ function unsubscribePage($id) {
     if (UNSUBSCRIBE_JUMPOFF) {
       $_POST["unsubscribe"] = 1;
       $_POST["email"] = $email;
+      $_REQUEST['unsubscribeemail'] = $email;
       $_POST["unsubscribereason"] = '"Jump off" set, reason not requested';
     }
     $blacklist = false; //invariant
   } else {
     if (isset($_REQUEST['unsubscribeemail'])) {
       $email = $_REQUEST['unsubscribeemail'];
-    } 
-    else {
+    } else {
        if (isset($_REQUEST['email'])) {
           if (UNSUBSCRIBE_JUMPOFF) {
              $_POST["unsubscribe"] = 1;
@@ -663,7 +664,7 @@ function unsubscribePage($id) {
     }
   }
 
-  $unsubscribeemail = (isset($_REQUEST['unsubscribeemail']))?$_REQUEST['unsubscribeemail']:'';
+  $unsubscribeemail = (isset($_REQUEST['unsubscribeemail']))?$_REQUEST['unsubscribeemail']:$_REQUEST['email'];
   
   if ( is_email($unsubscribeemail) && isset($_POST['unsubscribe']) && (isset($_REQUEST['email']) || isset($_REQUEST['unsubscribeemail'])) && isset($_POST['unsubscribereason'])) {
 
@@ -789,14 +790,14 @@ function unsubscribePage($id) {
     }
     $res .= '<p><input type=submit value="'.$GLOBALS["strUnsubscribe"].'">';
   } else {
-    if ( empty($blacklist) ) {
+    if ($blacklist) {
+      $res .= $GLOBALS["strExplainBlacklist"];
+    } elseif (!UNSUBSCRIBE_JUMPOFF) {      
       list($r,$c) = explode(",",getConfig("textarea_dimensions"));
       if (!$r) $r = 5;
       if (!$c) $c = 65;
       $res .= $GLOBALS["strUnsubscribeRequestForReason"];
       $res .= sprintf('<br/><textarea name="unsubscribereason" cols="%d" rows="%d" wrap="virtual"></textarea>',$c,$r) . $finaltext;
-    } else {      
-      $res .= $GLOBALS["strExplainBlacklist"];
     }
     $res .= '<p><input type=submit name="unsubscribe" value="'.$GLOBALS["strUnsubscribe"].'"></p>';
   }
@@ -807,6 +808,11 @@ function unsubscribePage($id) {
 }
 
 ########################################
+if (!function_exists("htmlspecialchars_decode")) {
+   function htmlspecialchars_decode($string, $quote_style = ENT_COMPAT) {
+       return strtr($string, array_flip(get_html_translation_table(HTML_SPECIALCHARS, $quote_style)));
+   }
+}
 function forwardPage($id) {
   global $data, $tables, $envelope;
   $ok = true;

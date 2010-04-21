@@ -176,6 +176,8 @@ if(isset($_REQUEST['import'])) {
     }
 
     while (list($email,$data) = each ($user_list)) {
+      ## a lot of spreadsheet include those annoying quotes
+      $email = str_replace('"', '', $email);      
       $done++;
       if ($done % 50 ==0) {
         print "$done/$todo<br/>";
@@ -209,12 +211,9 @@ if(isset($_REQUEST['import'])) {
           include_once dirname(__FILE__)."/commonlib/lib/userlib.php";
           $uniqid = getUniqid();
 
-/*<<<<<<< .working
       $query = sprintf('INSERT INTO %s (email,entered,confirmed,uniqid,htmlemail) values("%s",current_timestamp,%d,"%s","%s")',
-=======*/
           $query = sprintf('INSERT INTO %s (email,entered,confirmed,uniqid,htmlemail) values("%s",now(),%d,"%s","%s")',
-// >>>>>>> .merge-right.r1462
-          $tables["user"],$email,$notify != "yes",$uniqid,$htmlemail);
+          $tables["user"],$email,$notify != "yes",$uniqid,isset($_POST['htmlemail']) ? '1':'0');
           $result = Sql_query($query);
           $userid = Sql_Insert_Id($tables['user'], 'id');
 

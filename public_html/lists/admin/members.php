@@ -119,11 +119,9 @@ if (isset($_REQUEST["processtags"]) && $access != "view") {
 }
 if (isset($_POST["add"])) {
   if ($_POST["new"]) {
-    // TODO Validate email address.
-    $query = sprintf('select * from %s where email = ?', $tables['user']);
-    $result = Sql_Query_Params($query, array($_POST['new']));
-    if (Sql_Num_rows($result)) {
-      print '<p class="information">'.$GLOBALS['I18N']->get("Users found, click add to add this user").":<br /><ul>\n";
+    $result = Sql_query(sprintf('select * from %s where email = "%s"',$tables["user"],$_POST["new"]));
+    if (Sql_affected_rows()) {
+      print "<p>".$GLOBALS['I18N']->get("Users found, click add to add this user").":<br /><ul>\n";
       while ($user = Sql_fetch_array($result)) {
         printf ("<li>[ ".PageLink2("members",$GLOBALS['I18N']->get("Add"),'add=1&amp;id=$id&amp;doadd='.$user["id"]).' ] %s </li>',
  $user["email"]);
@@ -145,11 +143,9 @@ if (isset($_POST["add"])) {
         print ListAllAttributes();
       ?>
       <!--nizar 5 lignes -->
-      <tr><td colspan="2"><input type="hidden" name="action" value="insert" />
-	 <input type="hidden" name="doadd" value="yes" />
-	 <input type="hidden" name="id" value="<?php echo $id ?>" />
-	 <input class="submit" type="submit" name="subscribe" value="<?php echo $GLOBALS['I18N']->get('add user')?>">
-      </form></td></tr></table>
+      <tr><td colspan=2><input type=hidden name=action value="insert"><input
+ type=hidden name=doadd value="yes"><input type=hidden name=id value="<?php echo
+ $id ?>"><input type=submit name=subscribe value="<?php echo $GLOBALS['I18N']->get('add user')?>"></form></td></tr></table>
       <?php
       return;
     }
@@ -160,18 +156,14 @@ if (isset($_REQUEST["doadd"])) {
     $email = trim($_POST["email"]);
     #TODO validate email address.
     print $GLOBALS['I18N']->get("Inserting user")." $email";
-    Sql_Start_Transaction();
-    $query
-    = ' insert into %s (email, entered, confirmed, htmlemail, uniqid)'
-    . ' values(?, current_timestamp, 1, ?, ?)';
-    $query = sprintf($query, $tables['user']);
-    $result = Sql_Query_Params($query, array($email, $htmlemail, getUniqid()));
-    $userid = Sql_Insert_Id($tables['user'], 'id');
-    $query
-    = ' insert into %s (userid, listid, entered)'
-    . ' values (?, ?, current_timestamp)';
-    $query = sprintf($query, $tables['listuser']);
-    $result = Sql_Query_Params($query, array($userid, $id));
+    $result = Sql_query(sprintf('
+      insert into %s (email,entered,confirmed,htmlemail,uniqid)
+       values("%s",now(),1,%d,"%s")',
+      $tables["user"],$email,!empty($_POST['htmlemail']) ? '1':'0',getUniqid()));
+    $userid = Sql_insert_id();
+    $query = "insert into $tables[listuser] (userid,listid,entered)
+ values($userid,$id,now())";
+    $result = Sql_query($query);
     # remember the users attributes
     $res = Sql_Query("select * from $tables[attribute]");
     while ($row = Sql_Fetch_Array($res)) {
@@ -222,15 +214,18 @@ if (isset($id)) {
   $offset = 0;
   $start = $_GET['start'];
   if ($total > MAX_USER_PP) {
-    if (isset($start) && $start) {
-      $listing = $GLOBALS['I18N']->get("Listing user")." $start ".$GLOBALS['I18N']->get("to")." " . ($start + MAX_USER_PP);
-      $offset = $start;
-    } else {
-      $listing = $GLOBALS['I18N']->get("Listing user 1 to 50");
-      $start = 0;
-    }
-  printf ('<table class="membersListing" border="1"><tr><td colspan="4" align="center">%s</td></tr><tr><td>%s</td><td>%s</td><td>
-          %s</td><td>%s</td></tr></table><hr/>',
+      if (isset($_GET['start']) && (int) $_GET['start'] > 0) {
+        $start = (int) $_GET["start"];
+        $listing = $GLOBALS['I18N']->get("Listing user")." $start ".$GLOBALS['I18N']->get("to")." " . ($start + MAX_USER_PP);
+        $limit = "limit $start,".MAX_USER_PP;
+     } else {
+        $listing = $GLOBALS['I18N']->get("Listing user 1 to 50");
+        $limit = "limit 0,50";
+        $start = 0;
+     }
+
+     printf ('<table border=1><tr><td colspan=4 align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
+          %s</td><td>%s</td></tr></table><p><hr>',
           $listing,
           PageLink2("members","&lt;&lt;","start=0&amp;id=$id"),
           PageLink2("members","&lt;",sprintf('start=%d&amp;id=%d',max(0,$start-MAX_USER_PP),$id)),

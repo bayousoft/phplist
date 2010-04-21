@@ -259,12 +259,12 @@ if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
         flush();
         $req = Sql_Query("select id,email from {$tables["user"]}");
         $c=0;
-        print '<form method=post>';
+        print '<form method="post" action="">';
         while ($row = Sql_Fetch_Array($req)) {
           set_time_limit(60);
           if (!is_email($row["email"])) {
             $c++;
-            if (is_array($tagged) && in_array($row["id"],array_keys($tagged))) {
+            if (isset($_POST['tagged']) && is_array($_POST['tagged']) && in_array($row["id"],array_keys($_POST['tagged']))) {
               deleteUser($row["id"]);
               $deleted++;
             } else {

@@ -149,7 +149,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   $html["blacklisturl"] = sprintf('%s%semail=%s',$url,$sep,$email);
   $text["blacklisturl"] = sprintf('%s%semail=%s',$url,$sep,$email);
 
-  #0013076: Problem found during testing: mesage part must be parsed correctly as well.  
+  #0013076: Problem found during testing: message part must be parsed correctly as well.  
   if ($forwardContent) {
     $html["unsubscribe"] = $html["blacklist"];
     $text["unsubscribe"] = $text["blacklist"];
@@ -269,7 +269,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   ### @@@TODO don't use forward and forward form in a forwarded message as it'll fail
 
   #0013076: Blacklisting posibility for unknown users
-  foreach (array("forwardform","subscribe","preferences","unsubscribe","signature", 'blacklist') as $item) {
+  foreach (array("forwardform","subscribe","preferences","unsubscribe", 'blacklist') as $item) { #BUGFIX 0015303, 1/2
     # hmm str_ireplace and stripos would be faster, presumably, but that's php5 only
     if (PHP5) {
       if (stripos($htmlmessage,'['.$item.']')) {
@@ -334,13 +334,13 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     $html["footer"] = eregi_replace("\[FORWARD\]",$html["forward"],$html["footer"]);
     $html["footer"] = eregi_replace("\[FORWARDFORM\]",$html["forwardform"],$html["footer"]);
   }
+  $text["footer"] = eregi_replace("\[BLACKLIST\]",$text["blacklist"],$text['footer']);
+  $html["footer"] = eregi_replace("\[BLACKLIST\]",$html["blacklist"],$html['footer']);
   if (sizeof($forwardedby) && isset($forwardedby['email'])) {
     $htmlmessage    = eregi_replace("\[FORWARDEDBY]",$forwardedby["email"],$htmlmessage);
     $textmessage    = eregi_replace("\[FORWARDEDBY]",$forwardedby["email"],$textmessage);
     $html["footer"] = eregi_replace("\[FORWARDEDBY]",$forwardedby["email"],$html["footer"]);
     $text["footer"] = eregi_replace("\[FORWARDEDBY]",$forwardedby["email"],$text["footer"]);
-    $text["footer"] = eregi_replace("\[BLACKLIST\]",$text["blacklist"],$text['footer']);
-    $html["footer"] = eregi_replace("\[BLACKLIST\]",$html["blacklist"],$html['footer']);
     $text["footer"] = eregi_replace("\[UNSUBSCRIBE\]",$text["blacklist"],$text['footer']);
     $html["footer"] = eregi_replace("\[UNSUBSCRIBE\]",$html["blacklist"],$html['footer']);
   } else {
@@ -357,7 +357,11 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   if (eregi("\[SIGNATURE\]",$htmlmessage))
     $htmlmessage = eregi_replace("\[SIGNATURE\]",$html["signature"],$htmlmessage);
   elseif ($html["signature"])
-    $htmlmessage .= '<br />'.$html["signature"];
+# BUGFIX 0015303, 2/2
+//    $htmlmessage .= '<br />'.$html["signature"];
+      $htmlmessage = addHTMLFooter($htmlmessage, '
+'. $html["signature"]);
+# END BUGFIX 0015303, 2/2
   if (eregi("\[FOOTER\]",$textmessage))
     $textmessage = eregi_replace("\[FOOTER\]",$text["footer"],$textmessage);
   else

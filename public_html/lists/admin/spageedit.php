@@ -45,7 +45,10 @@ if (isset($_POST["save"]) || isset($_POST["activate"]) || isset($_POST["deactiva
   foreach (array("subscribesubject","subscribemessage","confirmationsubject","confirmationmessage") as $item) {
     SaveConfig("$item:$id",stripslashes($_POST[$item]),0);
   }
-
+/*   dbg($_POST); */
+/*   print("<pre>"); */
+/*   print_r($_POST); */
+/*   print("</pre>"); */
   ## rewrite attributes
   Sql_Query(sprintf('delete from %s where id = %d and name like "attribute___"',
     $tables["subscribepage_data"],$id));
@@ -54,9 +57,16 @@ if (isset($_POST["save"]) || isset($_POST["activate"]) || isset($_POST["deactiva
   if (isset($_POST['attr_use']) && is_array($_POST['attr_use'])) {
     $cnt=0;
     while (list($att,$val) = each ($_POST['attr_use'])) {
-      $default = $attr_default[$att];
-      $order = $attr_listorder[$att];
-      $required = $attr_required[$att];
+//BUGFIX 15285 - note 50677 (part 1: Attribute order) - by tipichris - mantis.phplist.com/view.php?id=15285
+     // $default = $attr_default[$att];
+     // $order = $attr_listorder[$att];
+     // $required = $attr_required[$att];
+      $default = $_POST['attr_default'][$att];
+      ## rather crude sanitisation
+      $default = preg_replace('/[^\w -\.]+/','',$default);
+      $order = sprintf('%d',$_POST['attr_listorder'][$att]);
+      $required = !empty($_POST['attr_required'][$att]);
+//END BUGFIX 15285 - note 50677 (part 1)     
 
       Sql_Query(sprintf('insert into %s (id,name,data) values(%d,"attribute%03d","%s")',
         $tables["subscribepage_data"],$id,$att,

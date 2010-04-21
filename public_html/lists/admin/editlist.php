@@ -2,23 +2,39 @@
 
 require_once 'accesscheck.php';
 
+if (!empty($_GET['id'])) {
+  $id = sprintf('%d',$_GET["id"]);
+} else {
+  $id = 0;
+}
+
 if ($GLOBALS["require_login"] && !isSuperUser()) {
   $access = accessLevel("list");
   switch ($access) {
     case "owner":
       $subselect = " where owner = ".$_SESSION["logindetails"]["id"];
+      $subselect_and = " and owner = ".$_SESSION["logindetails"]["id"];
       if ($id) {
         Sql_Query("select id from ".$tables["list"]. $subselect . " and id = $id");
         if (!Sql_Affected_Rows()) {
           Fatal_Error($GLOBALS['I18N']->get('You do not have enough priviliges to view this page'));
           return;
         }
+      } else {
+        $numlists = Sql_Fetch_Row_query("select count(*) from {$tables['list']} $subselect");
+        if (!($numlists[0] < MAXLIST)) {
+          Fatal_Error($GLOBALS['I18N']->get('You cannot create a new list because you have reached maximum number of lists.'));
+          return;
+        }
       }
       break;
     case "all":
-      $subselect = ""; break;
+      $subselect = ""; 
+      $subselect_and = "";
+      break;
     case "none":
     default:
+      $subselect_and = " and owner = -1";
       if ($id) {
         Fatal_Error($GLOBALS['I18N']->get('You do not have enough priviliges to view this page'));
         return;
@@ -28,18 +44,14 @@ if ($GLOBALS["require_login"] && !isSuperUser()) {
   }
 }
 
-if (!empty($_GET['id'])) {
-  $id = sprintf('%d',$_GET["id"]);
-} else {
-  $id = 0;
-}
-if ($id)
+if ($id) {
   echo "<br />".PageLink2("members",$GLOBALS['I18N']->get('Members of this list'),"id=$id");
+}
 echo "<hr />";
 if (isset($_POST["save"]) && $_POST["save"] == $GLOBALS['I18N']->get('Save') && isset($_POST["listname"]) && $_POST["listname"]) {
-  if ($GLOBALS["require_login"] && !isSuperUser())
+  if ($GLOBALS["require_login"] && !isSuperUser()) {
     $owner = $_SESSION["logindetails"]["id"];
-
+  }
   if (!isset($_POST["active"])) $_POST["active"] = 0;
   $_POST['listname'] = removeXss($_POST['listname']);
   ## prefix isn't used any more
@@ -67,7 +79,7 @@ if (isset($_POST["save"]) && $_POST["save"] == $GLOBALS['I18N']->get('Save') && 
   $result = Sql_Query_Params($query, array($_POST['listname'],
      $_POST['description'], $_POST['listorder'], $_POST['owner'],
      $_POST['prefix'], $_POST['active']));
-  if (!$id)
+  if (!$id) {
     $id = Sql_Insert_Id($tables['list'], 'id');
   ## allow plugins to save their fields
   foreach ($GLOBALS['plugins'] as $plugin) {
@@ -75,6 +87,7 @@ if (isset($_POST["save"]) && $_POST["save"] == $GLOBALS['I18N']->get('Save') && 
   }
 
   $_SESSION['action_result'] = $GLOBALS['I18N']->get('Record Saved') . ": $id";
+  }
   Redirect('list');
 }
 

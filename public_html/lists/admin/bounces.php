@@ -16,10 +16,10 @@ if (isset($_REQUEST['delete']) && $_REQUEST['delete']) {
 if (isset($_GET['action']) && $_GET['action']) {
   switch($_GET['action']) {
     case "deleteunidentified":
-      Sql_Query(sprintf('delete from %s where comment = "unidentified bounce" and date_add(date,interval 2 month) < current_timestamp',$tables["bounce"]));
+      Sql_Query(sprintf('delete from %s where status = "unidentified bounce" and `date` < date_sub(now(),interval 2 month)',$tables["bounce"]));
       break;
     case "deleteprocessed":
-      Sql_Query(sprintf('delete from %s where comment != "not processed" and date_add(date,interval 2 month) < current_timestamp',$tables["bounce"]));
+      Sql_Query(sprintf('delete from %s where comment != "not processed" and `date` < date_sub(now(),interval 2 month)',$tables["bounce"]));
       break;
     case "deleteall":
       Sql_Query(sprintf('delete from %s',$tables["bounce"]));

@@ -14,8 +14,12 @@ if (isset($_GET['delete'])) {
 } else {
   $delete = 0;
 }
-$useremail = isset($_GET["useremail"]) ? $_GET["useremail"] : '';
-
+$useremail = isset($_GET["useremail"]) ? $_GET["useremail"] : ''; ## @TODO sanitize
+$deletebounce = isset($_GET["deletebounce"]); #BUGFIX #15286 - nickyoung
+$amount = isset($_GET["amount"]) ? sprintf('%d',$_GET["amount"]) : ''; #BUGFIX #15286 - CS2 
+$unconfirm = isset($_GET["unconfirm"]); #BUGFIX #15286 - CS2 
+$maketext = isset($_GET["maketext"]); #BUGFIX #15286 - CS2 
+$deleteuser = isset($_GET["deleteuser"]);  #BUGFIX #15286 - CS2 
 if (!$id && !$delete) {
   Fatal_Error($GLOBALS['I18N']->get('NoRecord'));
   exit;

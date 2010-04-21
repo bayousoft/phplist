@@ -10,23 +10,25 @@ set_time_limit(500);
 
 <?php
 ob_end_flush();
-if(isset($import)) {
+if(!empty($_POST['import'])) {
 
-  $test_import = (isset($import_test) && $import_test == "yes");
-  if($import_file == "none")
+  $test_import = (isset($_POST['import_test']) && $_POST['import_test'] == "yes");
+  if(empty($_FILES['import_file']['tmp_name']))
     Fatal_Error($GLOBALS['I18N']->get("File is either to large or does not exist."));
-  if(empty($import_file))
+  if(empty($_FILES['import_file']))
     Fatal_Error($GLOBALS['I18N']->get("No file was specified."));
 #  if( !ereg("^[0-9A-Za-z_\.-/\s]+$", $import_file_name) )
 #    Fatal_Error("Use of wrong characters: $import_file_name");
 
-  if ($import_file && $import_file != "none") {
-    $fp = fopen ($import_file, "r");
-    $email_list = fread($fp, filesize ($import_file));
+  if ($_FILES['import_file']['tmp_name'] && $_FILES['import_file']['tmp_name'] != "none") {
+    $fp = fopen ($_FILES['import_file']['tmp_name'], "r");
+    $email_list = fread($fp, filesize ($_FILES['import_file']['tmp_name']));
     fclose($fp);
-    unlink($import_file);
+    unlink($_FILES['import_file']['tmp_name']);
   }
 
+  $import_attribute = array();
+  
   // Clean up email file
   $email_list = trim($email_list);
   $email_list = str_replace("\r","\n",$email_list);
@@ -34,11 +36,15 @@ if(isset($import)) {
   $email_list = str_replace("\n\n","\n",$email_list);
 
   // Change delimiter for new line.
-  if(isset($import_record_delimiter) && $import_record_delimiter != "") {
-    $email_list = str_replace($import_record_delimiter,"\n",$email_list);
+  if(isset($_POST['import_record_delimiter']) && $_POST['import_record_delimiter'] != "") {
+    $email_list = str_replace($_POST['import_record_delimiter'],"\n",$email_list);
   };
 
-  if (!isset($import_field_delimiter) || $import_field_delimiter == "" || $import_field_delimiter == "TAB")
+  if (isset($_POST['import_field_delimiter'])) {
+    $import_field_delimiter = $_POST['import_field_delimiter'];
+  }
+
+  if (!isset($_POST['import_field_delimiter']) || $_POST['import_field_delimiter'] == "" || $_POST['import_field_delimiter'] == "TAB") 
     $import_field_delimiter = "\t";
 
   // Check file for illegal characters
