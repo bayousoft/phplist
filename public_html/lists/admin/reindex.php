@@ -12,16 +12,22 @@ include dirname(__FILE__).'/structure.php';
 
 foreach ($DBstruct as $table => $columns) {
   print '<h3>'.$table.'</h3><br/>';
+  cl_output($GLOBALS['I18N']->get('processing ').$table);
   foreach ($columns as $column => $definition) {
     if (strpos($column,'index') === 0) {
-      print "Adding index: <b>$definition[0]</b> to $table, <br/>";
+      printf($GLOBALS['I18N']->get("Adding index <b>%s</b> to %s<br/>"),$definition[0],$table);
+      cl_output(sprintf($GLOBALS['I18N']->get("Adding index <b>%s</b> to %s<br/>"),$definition[0],$table));
       flush();
       # ignore errors, which are most likely that the index already exists
       Sql_Query(sprintf('alter table %s add index %s',$table,$definition[0]),1);
     } elseif (strpos($column,'unique') === 0) {
-      print "Adding unique index: $definition[0] to $table, <br/>";
+      printf($GLOBALS['I18N']->get("Adding unique index <b>%s</b> to %s<br/>"),$definition[0],$table);
+      cl_output(sprintf($GLOBALS['I18N']->get("Adding unique index <b>%s</b> to %s<br/>"),$definition[0],$table));
       flush();
       # ignore errors, which are most likely that the index already exists
+      ## hmm, mysql seems to create a new one each time
+      ## that's when they're not "named" in the structure -> fix
+      
       Sql_Query(sprintf('alter table %s add unique %s',$table,$definition[0]),1);
     }
   }

@@ -27,6 +27,12 @@ if (php_sapi_name() == "cli") {
   $cline = parseCLine();
   $dir = dirname($_SERVER["SCRIPT_FILENAME"]);
   chdir($dir);
+  
+  if (!is_file($cline['c'])) {
+    print "Cannot find config file\n";
+    exit;
+  }
+  
 } else {
   $GLOBALS["commandline"] = 0;
   header("Cache-Control: no-cache, must-revalidate");           // HTTP/1.1
@@ -40,8 +46,7 @@ if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
    $configfile = $_SERVER["ConfigFile"];
 } elseif (isset($cline["c"]) && is_file($cline["c"])) {
   #print '<!-- using (cline)'.$cline["c"].' -->'."\n";
-   $configfile = $cline["c"];
-
+  $configfile = $cline["c"];
 # obsolete, set Config in Linux environment, use -c /path/to/config instead
 /*} elseif (isset($_ENV["CONFIG"]) && is_file($_ENV["CONFIG"]) && filesize($_ENV["CONFIG"]) > 1) {
 #  print '<!-- using '.$_ENV["CONFIG"].'-->'."\n";
@@ -56,6 +61,8 @@ if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
 if (is_file($configfile) && filesize($configfile) > 20) {
   print '<!-- using config '.$configfile.'-->';
   include $configfile;
+} elseif ($GLOBALS["commandline"]) {
+  print 'Cannot find config file'."\n";
 } else {
   $GLOBALS['installer'] = 1;
   include(dirname(__FILE__).'/install.php');
@@ -291,12 +298,12 @@ if ($GLOBALS["require_login"] && $page != "login") {
     }
   }
 
-  if ($page != "logout" && !$logoutontop) {
+  if ($page != "logout" && empty($logoutontop)) {
     print '<div align="right">'.PageLink2("logout",$GLOBALS['I18N']->get('logout')).'</div>';
   }
 }
 
-if (LANGUAGE_SWITCH && !$logoutontop) {
+if (LANGUAGE_SWITCH && empty($logoutontop)) {
     $ls = '
  <div align="right" id="languageswitch">
        <form name="languageswitchform" method="post" action="">';

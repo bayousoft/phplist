@@ -64,9 +64,7 @@ function output ($message,$reset = 0) {
   #$message = html_entity_decode($message,ENT_QUOTES,$_SESSION['adminlanguage']['charset']);
   $message = html_entity_decode($message,ENT_QUOTES,'UTF-8');
   if ($GLOBALS["commandline"]) {
-    ob_end_clean();
-    print strip_tags($message) . "\n";
-    ob_start();
+    cl_output($message);
   } else {
     if ($reset)
       print '<script language="Javascript" type="text/javascript">
