@@ -31,7 +31,7 @@ $GLOBALS["img_cross"] = '<img src="images/cross.gif" alt="No" />';
 $checkboxgroup_storesize = 1; # this will allow 10000 options for checkboxes
 
 # identify pages that can be run on commandline
-$commandline_pages = array('send','processqueue','processbounces','import','upgrade','convertstats'); // ,'getrss' //Obsolete by rssmanager plugin
+$commandline_pages = array('send','processqueue','processbounces','import','upgrade','convertstats','reindex'); // ,'getrss' //Obsolete by rssmanager plugin
 
 if (isset($message_envelope))
   $envelope = "-f$message_envelope";
@@ -1034,6 +1034,14 @@ function formatDateTime ($datetime,$short = 0) {
   $date = substr($datetime,0,10);
   $time = substr($datetime,11,8);
   return formatDate($date,$short). " ".formatTime($time,$short);
+}
+
+function cl_output($message) {
+  if ($GLOBALS["commandline"]) {
+    ob_end_clean();
+    print strip_tags($message) . "\n";
+    ob_start();
+  } 
 }
 
 function phplist_shutdown () {
