@@ -378,7 +378,7 @@ if (empty($_GET['pi'])) {
 
 } elseif (isset($_GET['pi']) && !empty($GLOBALS['plugins'][$_GET['pi']]) && is_object($GLOBALS['plugins'][$_GET['pi']])) {
   if (is_file($GLOBALS['plugins'][$_GET['pi']]->coderoot.'/info/'.$_SESSION['adminlanguage']['info']."/$include")) {
-    @include $GLOBALS['plugins'][$_GET['pi']] .'/info/'.$_SESSION['adminlanguage']['info']."/$include";
+    @include $GLOBALS['plugins'][$_GET['pi']]->coderoot .'/info/'.$_SESSION['adminlanguage']['info']."/$include";
   }
 } else {
   @include "info/en/$include";
