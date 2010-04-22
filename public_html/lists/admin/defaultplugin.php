@@ -31,17 +31,21 @@ class phplistPlugin {
   function phplistplugin() {
     # constructor
     # Startup code, other objects might not be constructed yet 
-    //print ("<BR>Construct " . $this->name);
+    #print ("<BR>Construct " . $this->name);
     ## try to prepend PLUGIN ROOTDIR, if necessary
     if (!is_dir($this->coderoot)) {
-      $this->coderoot= PLUGIN_ROOTDIR . '/' . $this->coderoot;
+      $this->coderoot = PLUGIN_ROOTDIR . '/' . $this->coderoot;
+    }
+    ## always enable in dev mode
+    if (!empty($GLOBALS['developer_email'])) {
+      $this->enabled = 1;
     }
   }
   
-    function activate() {
+  function activate() {
     # Startup code, all other objects are constructed 
     # returns success or failure, false means we cannot start
-    }
+  }
     
   function displayAbout() {
     # Return html snippet to tell about coopyrights of used third party code.
