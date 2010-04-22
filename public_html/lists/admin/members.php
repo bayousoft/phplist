@@ -6,6 +6,8 @@
 require_once dirname(__FILE__).'/accesscheck.php';
 $access = accessLevel("members");
 $id = sprintf('%d',$_REQUEST["id"]);
+$start = sprintf('%d',$_GET['start']);
+
 switch ($access) {
   case "owner":
     $subselect = " where owner = ".$_SESSION["logindetails"]["id"];
@@ -123,7 +125,7 @@ if (isset($_POST["add"])) {
     if (Sql_affected_rows()) {
       print "<p>".$GLOBALS['I18N']->get("Users found, click add to add this user").":<br /><ul>\n";
       while ($user = Sql_fetch_array($result)) {
-        printf ("<li>[ ".PageLink2("members",$GLOBALS['I18N']->get("Add"),'add=1&amp;id=$id&amp;doadd='.$user["id"]).' ] %s </li>',
+        printf ("<li>[ ".PageLink2("members",$GLOBALS['I18N']->get("Add"),"add=1&amp;id=$id&amp;doadd=".$user["id"]).' ] %s </li>',
  $user["email"]);
       }
       print "</ul>\n";
@@ -211,18 +213,16 @@ if (isset($id)) {
   $row = Sql_Fetch_row($result);
   $total = $row[0];
   print "$total ".$GLOBALS['I18N']->get("Users on this list");
-  $offset = 0;
-  $start = $_GET['start'];
+  $offset = $start;
+
   if ($total > MAX_USER_PP) {
-      if (isset($_GET['start']) && (int) $_GET['start'] > 0) {
-        $start = (int) $_GET["start"];
+      if ($start > 0) {
         $listing = $GLOBALS['I18N']->get("Listing user")." $start ".$GLOBALS['I18N']->get("to")." " . ($start + MAX_USER_PP);
         $limit = "limit $start,".MAX_USER_PP;
      } else {
         $listing = $GLOBALS['I18N']->get("Listing user 1 to 50");
         $limit = "limit 0,50";
-        $start = 0;
-     }
+      }
 
      printf ('<table border=1><tr><td colspan=4 align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
           %s</td><td>%s</td></tr></table><p><hr>',
