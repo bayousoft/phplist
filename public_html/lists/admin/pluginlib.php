@@ -6,7 +6,7 @@ if (!defined("PLUGIN_ROOTDIR")) {
   define("PLUGIN_ROOTDIR","notdefined");
 }
 if (is_dir(PLUGIN_ROOTDIR)) {
-  include_once "defaultplugin.php";
+  include_once dirname(__FILE__). "/defaultplugin.php";
   $files = array();
   $dh=opendir(PLUGIN_ROOTDIR);
   while (false!==($file = readdir($dh))) {
