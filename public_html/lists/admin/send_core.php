@@ -1011,6 +1011,19 @@ if (!$done) {
     if (defined("WARN_SAVECHANGES")) {
       $tabs->addLinkCode(' onclick="return savechanges();" ');
     }
+  #$baseurl = sprintf('./?page=%s&amp;id=%d',$_GET["page"],$_GET["id"]);
+
+    ### allow plugins to add tabs
+    $plugintabs = array();
+    foreach ($GLOBALS['plugins'] as $plugin) {
+      print $plugin->name;
+      $plugintab = $plugin->sendMessageTab($id,$messagedata);
+      if ($plugintab) {
+        $plugintabname = substr(strip_tags($plugin->sendMessageTabTitle()),0,10);
+        $plugintabs[$plugintabname] = $plugintab;
+        $tabs->addTab($GLOBALS['I18N']->get($plugintabname),"$baseurl&amp;tab=".urlencode($plugintabname));
+      }
+    }
     print $tabs->display();
   }
 
@@ -1652,45 +1665,6 @@ if (!$done) {
     $GLOBALS['I18N']->get('email to alert when sending of this message has finished'),
     $GLOBALS['I18N']->get('separate multiple with a comma'),$notify_end);
   $show_lists = 0;
-
-
-  #$baseurl = sprintf('./?page=%s&amp;id=%d',$_GET["page"],$_GET["id"]);
-  if ($_GET["id"]) {
-    $tabs = new WebblerTabs();
-    $tabs->addTab($GLOBALS['I18N']->get("Content"),$baseurl.'&amp;tab=Content');
-    $tabs->addTab($GLOBALS['I18N']->get("Format"),$baseurl.'&amp;tab=Format');
-    if (ALLOW_ATTACHMENTS) {
-      $tabs->addTab($GLOBALS['I18N']->get("Attach"),$baseurl.'&amp;tab=Attach');
-    }
-    $tabs->addTab($GLOBALS['I18N']->get("Scheduling"),$baseurl.'&amp;tab=Scheduling');
-#    if (USE_rss) {
-#      $tabs->addTab("rss",$baseurl.'&amp;tab=rss');
-#    }
-    $tabs->addTab($GLOBALS['I18N']->get("Criteria"),$baseurl.'&amp;tab=Criteria');
-    $tabs->addTab($GLOBALS['I18N']->get("Lists"),$baseurl.'&amp;tab=Lists');
-#    $tabs->addTab("Review and Send",$baseurl.'&amp;tab=Review');
-    $tabs->addTab($GLOBALS['I18N']->get("Misc"),$baseurl.'&amp;tab=Misc');
-
-    if ($_GET["tab"]) {
-      $tabs->setCurrent($GLOBALS['I18N']->get($_GET["tab"]));
-    } else {
-      $tabs->setCurrent($GLOBALS['I18N']->get("Content"));
-    }
-    if (defined("WARN_SAVECHANGES")) {
-      $tabs->addLinkCode(' onclick="return savechanges();" ');
-    }
-  }
-
-  ### allow plugins to add tabs
-  $plugintabs = array();
-  foreach ($GLOBALS['plugins'] as $plugin) {
-    $plugintab = $plugin->sendMessageTab($id,$messagedata);
-    if ($plugintab) {
-      $plugintabname = substr(strip_tags($plugin->sendMessageTabTitle()),0,10);
-      $plugintabs[$plugintabname] = $plugintab;
-      $tabs->addTab($GLOBALS['I18N']->get($plugintabname),"$baseurl&amp;tab=".urlencode($plugintabname));
-    }
-  }
 
   if (!empty($messagedata['htmlsize'])) {
     $misc_content .= $GLOBALS['I18N']->get('Estimated size of HTML email').': '.formatBytes($messagedata['htmlsize']).'<br/>';
