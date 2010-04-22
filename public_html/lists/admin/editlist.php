@@ -70,24 +70,27 @@ if (isset($_POST["save"]) && $_POST["save"] == $GLOBALS['I18N']->get('Save') && 
   } else {
     $query
     = ' insert into %s'
-    . '    (name, description, entered, listorder, owner, prefix, active)'
+    . '    (name, description, entered, listorder, owner, prefix, active, category)'
     . ' values'
-    . '    (?, ?, current_timestamp, ?, ?, ?, ?)';
+    . '    (?, ?, current_timestamp, ?, ?, ?, ?, ?)';
     $query = sprintf($query, $tables['list']);
-  }
 #  print $query;
-  $result = Sql_Query_Params($query, array($_POST['listname'],
-     $_POST['description'], $_POST['listorder'], $_POST['owner'],
-     $_POST['prefix'], $_POST['active']));
+    $result = Sql_Query_Params($query, array($_POST['listname'],
+       $_POST['description'], $_POST['listorder'], $_POST['owner'],
+       $_POST['prefix'], $_POST['active'], $_POST['category']));
+  }
   if (!$id) {
     $id = Sql_Insert_Id($tables['list'], 'id');
-  ## allow plugins to save their fields
-  foreach ($GLOBALS['plugins'] as $plugin) {
-    $result = $result && $plugin->processEditList($id);
-  }
+    ## allow plugins to save their fields
+    foreach ($GLOBALS['plugins'] as $plugin) {
+      $result = $result && $plugin->processEditList($id);
+    }
 
-  $_SESSION['action_result'] = $GLOBALS['I18N']->get('Record Saved') . ": $id";
+    $_SESSION['action_result'] = $GLOBALS['I18N']->get('Record Saved') . ": $id";
   }
+  
+  print '<h3>'.$_SESSION['action_result'].'</h3>';
+  return;
   Redirect('list');
 }
 
