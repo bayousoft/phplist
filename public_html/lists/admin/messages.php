@@ -313,24 +313,14 @@ if ($total) {
     } else { ##Status <> sent
 //      $status = $msg['status'].'<br/>'.$msg['rsstemplate']; //Obsolete by rssmanager plugin
       if ($msg['status'] == 'inprocess') {
-/*        $status .= '<br/>'.
-        '<meta http-equiv="Refresh" content="300" />'.
-        $messagedata['to process'].' '.$GLOBALS['I18N']->get('still to process').'<br/>'.
-        $GLOBALS['I18N']->get('ETA').': '.$messagedata['ETA'].'<br/>'.
-        $GLOBALS['I18N']->get('Processing').' '.sprintf('%d',$messagedata['msg/hr']).' '.$GLOBALS['I18N']->get('msgs/hr')
-        ;*/
-        ## try with ajax
+
       #  $status .= '<br/>';
-        $status = '
+        $status = '<div id="messagestatus'.$msg['id'].'"></div>';
+        $status .= '
         <script type="text/javascript">
-        function fetchProgress'.$msg['id'].'() {
-          fetchProgress('.$msg['id'].');
-          setTimeout(fetchProgress'.$msg['id'].',3000);
-        }
-        fetchProgress'.$msg['id'].'();
+          messageStatusUpdate('.$msg['id'].');
         </script>
         ';
-        $status .= '<div id="messagestatus'.$msg['id'].'"></div>';
       }
       $sendstats = '';
     }
@@ -344,7 +334,15 @@ if ($total) {
         PageLink2('messages&amp;markSent='.$msg['id'],$GLOBALS['I18N']->get('Mark as sent'));
     }
 
-    $totalsent = $msg['astext'] + $msg['ashtml'] + $msg['astextandhtml'] + $msg['aspdf'] + $msg['astextandpdf'];
+    $totalsentcount = $msg['astext'] + $msg['ashtml'] + $msg['astextandhtml'] + $msg['aspdf'] + $msg['astextandpdf'];
+
+    $totalsent = '<div id="totalsent'.$msg['id'].'">'.$totalsentcount.'</div>';
+    $totalsent .= '
+    <script type="text/javascript">
+      totalSentUpdate('.$msg['id'].');
+    </script>
+    ';
+
 
     ## allow plugins to add information
     foreach ($GLOBALS['plugins'] as $plugin) {
