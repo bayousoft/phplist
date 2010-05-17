@@ -1,4 +1,9 @@
 @import url(shader.css);
+@import url(menu.css);
+
+#mainContent {
+  width: 70%; float: left;
+}
 
 li{
 	font-size: 11px; color: #0000; font-style: normal; font-family: verdana, sans-serif;
@@ -24,9 +29,7 @@ a:visited {
 a:hover {font-size: 11px; color: #ff6600; font-style: normal; font-family: verdana, sans-serif;
 	text-decoration: underline;
 }
-/*p {
-	font-weight: normal; font-size: 11px; color: #666666; font-style: normal; font-family: verdana, sans-serif; text-decoration: none;
-}*/
+
 td {
 	font-weight: normal; font-size: 11px; color: #666666; font-style: normal; font-family: verdana, sans-serif; text-decoration: none;
 }
@@ -74,7 +77,14 @@ a:visited.abouthead {
 
 
 .menutable {background-color : white; border-left : 1px black solid; border-right : 1px black solid; display : block; width : 132px;}
-.menutableright {background-color : white; border-left : 1px black solid;  border-bottom : 1px black solid; display : block; width : 132px;}
+.menutableright {
+  background-color : white; 
+  border-left : 1px black solid;  
+  border-bottom : 1px black solid; 
+  display : block; 
+  width : 132px;
+  float: left;
+}
 
 .menuhd {font-family: verdana, sans-serif;font-size : 11px; color : black;background-color : #CCCC99; font-weight: normal; border-top: 1px black solid;  border-bottom: 1px black solid;display : block; text-align : left; text-decoration : none; padding: 2px;vertical-align : top; padding-left : 3px;}
 
