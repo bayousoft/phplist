@@ -53,7 +53,6 @@ if (!isset($usertable_prefix)) {
 
 include_once dirname(__FILE__)."/pluginlib.php";
 include_once dirname(__FILE__)."/structure.php";
-include_once dirname(__FILE__)."/ajax_functions.php";
 
 $tables = array();
 foreach ($GLOBALS["DBstructuser"] as $tablename => $tablecolumns) {
