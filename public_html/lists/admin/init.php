@@ -126,7 +126,7 @@ if (!defined('MERGE_DUPLICATES_DELETE_DUPLICATE')) define('MERGE_DUPLICATES_DELE
 if (!defined('USE_PERSONALISED_REMOTEURLS')) define('USE_PERSONALISED_REMOTEURLS',1);
 if (!defined('USE_LOCAL_SPOOL')) define('USE_LOCAL_SPOOL',0);
 if (!defined('SEND_LISTADMIN_COPY')) define('SEND_LISTADMIN_COPY',0);
-if (!defined('EMAIL_ADDRESS_VALIDATION_LEVEL')) define('EMAIL_ADDRESS_VALIDATION_LEVEL',2);
+if (!defined('EMAIL_ADDRESS_VALIDATION_LEVEL')) define('EMAIL_ADDRESS_VALIDATION_LEVEL',1);
 if (!defined('BLACKLIST_EMAIL_ON_BOUNCE')) define('BLACKLIST_EMAIL_ON_BOUNCE',1);
 if (!defined('MANUALLY_PROCESS_BOUNCES')) define('MANUALLY_PROCESS_BOUNCES',1);
 if (!defined('ENCRYPT_ADMIN_PASSWORDS')) define('ENCRYPT_ADMIN_PASSWORDS',0);
@@ -164,4 +164,171 @@ if (!defined("WORKAROUND_OUTLOOK_BUG") && defined("USE_CARRIAGE_RETURNS")) {
 }
 if (!isset($GLOBALS["blacklist_gracetime"])) $GLOBALS["blacklist_gracetime"] = 5;
 if (!isset($GLOBALS["message_envelope"])) $GLOBALS["message_envelope"] = '';
-?>
+
+# list of pages and categorisation in the system
+$system_pages = array (
+	"system" => array (
+		"adminattributes" => "none",
+		"attributes" => "none",
+		"upgrade" => "none",
+		"configure" => "none",
+		"spage" => "owner",
+		"spageedit" => "owner",
+		"defaultconfig" => "none",
+		"defaults" => "none",
+		"initialise" => "none",
+		"bounces" => "none",
+		"bounce" => "none",
+		"processbounces" => "none",
+		"eventlog" => "none",
+		"reconcileusers" => "none",
+		"getrss" => "owner",
+		"viewrss" => "owner",
+		"purgerss" => "none",
+		"setup" => "none",
+		"dbcheck" => "none",
+		
+	),
+	"list" => array (
+		"list" => "owner",
+		"editlist" => "owner",
+		"members" => "owner"
+	),
+	"user" => array (
+		"user" => "none",
+		"users" => "none",
+		"dlusers" => "none",
+		"editattributes" => "none",
+		"usercheck" => "none",
+		"import1" => "none",
+		"import2" => "none",
+		"import3" => "none",
+		"import4" => "none",
+		"import" => "none",
+		"export" => "none",
+		"massunconfirm" => "none",
+		
+	),
+	"message" => array (
+		"message" => "owner",
+		"messages" => "owner",
+		"processqueue" => "none",
+		"send" => "owner",
+		"preparesend" => "none",
+		"sendprepared" => "all",
+		"template" => "none",
+		"templates" => "none"
+	),
+	"clickstats" => array (
+		'statsmgt' => 'owner',
+		'mclicks' => 'owner',
+		'uclicks' => 'owner',
+		'userclicks' => 'owner',
+		'mviews' => 'owner',
+		'statsoverview' => 'owner',
+		
+	),
+	"admin" => array (
+		"admins" => "none",
+		"admin" => "owner"
+	)
+);
+
+$GLOBALS['pagecategories'] = array(
+  ## category title => main page to link to
+  'subscribers' => 'usermgt',
+  'campaigns' => 'campaignmgt',
+  'statistics' => 'statsoverview',
+  'hide' => '',
+  'system' => 'system',
+  'develop' => 'develop',
+  'config' => 'setup',
+  'info' => '',
+);
+
+$GLOBALS['pageclassification'] = array(
+  "send"  => array('category' => 'campaigns','mainmenu' => 1),
+  "mviews"  => array('category' => 'statistics','mainmenu' => 1),
+  "users"  => array('category' => 'subscribers','mainmenu' => 1),
+  "usermgt"  => array('category' => 'subscribers','mainmenu' => 1),
+  "import"  => array('category' => 'subscribers','mainmenu' => 1),
+  "about"  => array('category' => 'info','mainmenu' => 1),
+  "accesscheck"  => array('category' => 'hide'),
+  "addprefix"  => array('category' => 'hide'),
+  "adminattributes"  => array('category' => 'config'),
+  "admin"  => array('category' => 'config','mainmenu' => 1),
+  "admins"  => array('category' => 'config','mainmenu' => 1),
+  "attributes"  => array('category' => 'config','mainmenu' => 1),
+  "bounce"  => array('category' => 'system'),
+  "bouncerule"  => array('category' => 'config'),
+  "bouncerules"  => array('category' => 'config'),
+  "bounces"  => array('category' => 'system'),
+  "campaign_core"  => array('category' => 'hide'),
+  "campaign"  => array('category' => 'campaigns'),
+  "catlists"  => array('category' => 'config'),
+  "checkbouncerules"  => array('category' => 'config'),
+  "checki18n"  => array('category' => 'develop','mainmenu' => 1),
+  "community"  => array('category' => 'info','mainmenu' => 1),
+  "configure"  => array('category' => 'config','mainmenu' => 1),
+  "convertstats"  => array('category' => 'system'),
+  "dbadmin"  => array('category' => 'develop','mainmenu' => 1),
+  "dbcheck"  => array('category' => 'system','mainmenu' => 1),
+  "defaults"  => array('category' => 'config'),
+  "dlusers"  => array('category' => 'subscribers'),
+  "domainstats"  => array('category' => 'statistics','mainmenu' => 1),
+  "editattributes"  => array('category' => 'config'),
+  "editlist"  => array('category' => 'config','mainmenu' => 1),
+  "eventlog"  => array('category' => 'system','mainmenu' => 1),
+  "export"  => array('category' => 'subscribers','mainmenu' => 1),
+  "generatebouncerules"  => array('category' => 'config'),
+  "getrss"  => array('category' => 'system'),
+  "home"  => array('category' => 'info'),
+  "import1"  => array('category' => 'subscribers'),
+  "import2"  => array('category' => 'subscribers'),
+  "import3"  => array('category' => 'subscribers'),
+  "import4"  => array('category' => 'subscribers'),
+  "importadmin"  => array('category' => 'system','mainmenu' => 1),
+  "info"  => array('category' => 'hide'),
+  "initialise"  => array('category' => 'system'),
+  "listbounces"  => array('category' => 'subscribers'),
+  "list"  => array('category' => 'config'),
+  "massremove"  => array('category' => 'subscribers','mainmenu' => 1),
+  "massunconfirm"  => array('category' => 'subscribers','mainmenu' => 1),
+  "mclicks"  => array('category' => 'statistics','mainmenu' => 1),
+  "members"  => array('category' => 'subscribers','mainmenu' => 1),
+  "message"  => array('category' => 'campaigns'),
+  "messages"  => array('category' => 'campaigns','mainmenu' => 1),
+  "templates"  => array('category' => 'campaigns','mainmenu' => 1),
+  "bouncemgt"  => array('category' => 'campaigns','mainmenu' => 1),
+  "msgbounces"  => array('category' => 'info'),
+  "msgstatus"  => array('category' => 'hide'),
+  "processbounces"  => array('category' => 'system'),
+  "processqueue"  => array('category' => 'system'),
+  "purgerss"  => array('category' => 'system'),
+  "reconcileusers"  => array('category' => 'subscribers','mainmenu' => 1),
+  "reindex"  => array('category' => 'system'),
+  "resetstats"  => array('category' => 'system'),
+  "sendprepared"  => array('category' => 'campaigns'),
+  "setup"  => array('category' => 'config','mainmenu' => 1),
+  "spageedit"  => array('category' => 'config','mainmenu' => 1),
+  "spage"  => array('category' => 'config'),
+  "statsmgt"  => array('category' => 'statistics','mainmenu' => 1),
+  "statsoverview"  => array('category' => 'statistics','mainmenu' => 1),
+  "stresstest"  => array('category' => 'develop'),
+  "subscriberstats"  => array('category' => 'statistics','mainmenu' => 1),
+  "template"  => array('category' => 'campaigns'),
+  "tests"  => array('category' => 'develop'),
+  "uclicks"  => array('category' => 'statistics'),
+  "upgrade"  => array('category' => 'system'),
+  "usercheck"  => array('category' => 'subscribers'),
+  "userclicks"  => array('category' => 'statistics'),
+  "userhistory"  => array('category' => 'subscribers'),
+  "user"  => array('category' => 'subscribers'),
+  "viewmessage"  => array('category' => 'campaigns'),
+  "viewrss"  => array('category' => 'system'),
+  "viewtemplate"  => array('category' => 'campaigns'),
+  "vote"  => array('category' => 'info'),
+
+);
+
+

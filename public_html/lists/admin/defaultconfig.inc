@@ -528,6 +528,8 @@ Thank you.
 
 "pagefooter" => array($defaultfooter,"Footer of public pages","textarea"),
 
+"remoteurl_append" => array("","String to always append to remote URL when using send-a-webpage","text"),
+
 "html_charset" => array("UTF-8","Charset for HTML messages","text"),
 "text_charset" => array("UTF-8","Charset for Text messages","text"),
 "wordwrap" => array("75","Width for Wordwrap of Text messages","text"),
@@ -803,75 +805,6 @@ function getUserConfig($item, $userid = 0) {
 	}
 	return $value;
 }
-
-# list of pages and categorisation in the system
-$system_pages = array (
-	"system" => array (
-		"adminattributes" => "none",
-		"attributes" => "none",
-		"upgrade" => "none",
-		"configure" => "none",
-		"spage" => "owner",
-		"spageedit" => "owner",
-		"defaultconfig" => "none",
-		"defaults" => "none",
-		"initialise" => "none",
-		"bounces" => "none",
-		"bounce" => "none",
-		"processbounces" => "none",
-		"eventlog" => "none",
-		"reconcileusers" => "none",
-		"getrss" => "owner",
-		"viewrss" => "owner",
-		"purgerss" => "none",
-		"setup" => "none",
-		"dbcheck" => "none",
-		
-	),
-	"list" => array (
-		"list" => "owner",
-		"editlist" => "owner",
-		"members" => "owner"
-	),
-	"user" => array (
-		"user" => "none",
-		"users" => "none",
-		"dlusers" => "none",
-		"editattributes" => "none",
-		"usercheck" => "none",
-		"import1" => "none",
-		"import2" => "none",
-		"import3" => "none",
-		"import4" => "none",
-		"import" => "none",
-		"export" => "none",
-		"massunconfirm" => "none",
-		
-	),
-	"message" => array (
-		"message" => "owner",
-		"messages" => "owner",
-		"processqueue" => "none",
-		"send" => "owner",
-		"preparesend" => "none",
-		"sendprepared" => "all",
-		"template" => "none",
-		"templates" => "none"
-	),
-	"clickstats" => array (
-		'statsmgt' => 'owner',
-		'mclicks' => 'owner',
-		'uclicks' => 'owner',
-		'userclicks' => 'owner',
-		'mviews' => 'owner',
-		'statsoverview' => 'owner',
-		
-	),
-	"admin" => array (
-		"admins" => "none",
-		"admin" => "owner"
-	)
-);
 
 $access_levels = array (
 	0 => "none",
