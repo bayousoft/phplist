@@ -59,7 +59,7 @@ function setMessageData($msgid,$name,$value) {
   }
     
   Sql_Replace($GLOBALS['tables']['messagedata'], array('id' => $msgid, 'name' => $name, 'data' => $value), array('name', 'id'));
- # print "<br/>setting $name for $msgid to $value";
+#  print "<br/>setting $name for $msgid to $value";
 #  exit;
 }
 
@@ -655,6 +655,11 @@ function fetchUrl($url,$userdata = array()) {
   if (!isset($GLOBALS['urlcache'])) {
     $GLOBALS['urlcache'] = array();
   }
+  
+  $url_append = getConfig('remoteurl_append');
+  if ($url_append) {
+    $url = $url.$url_append;
+  }
 
   # keep in memory cache in case we send a page to many emails
   if (isset($GLOBALS['urlcache'][$url]) && is_array($GLOBALS['urlcache'][$url])
@@ -1024,6 +1029,11 @@ function listCategories() {
     $aConfiguredListCategories[$key] = trim($val);
   }
   return $aConfiguredListCategories;
+}
+
+function addEmailLink($address) {
+  $div = '<div><a class="ajaxable" href="./?page=pageaction&action=addemail&email='.$address.'" target="_blank">'.$GLOBALS['I18N']->get('Add').'</a></div>';
+  return $div;
 }
 
 ?>
