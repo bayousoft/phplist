@@ -14,7 +14,7 @@ if (is_file(dirname(__FILE__) .'/../../../VERSION')) {
 
 define("VERSION",$version.'dev');
 
-include_once dirname(__FILE__)."/commonlib/lib/userlib.php";
+require_once dirname(__FILE__)."/commonlib/lib/userlib.php";
 include_once dirname(__FILE__)."/commonlib/lib/maillib.php";
 
 # set some variables
@@ -53,6 +53,7 @@ if (!isset($usertable_prefix)) {
 
 include_once dirname(__FILE__)."/pluginlib.php";
 include_once dirname(__FILE__)."/structure.php";
+include_once dirname(__FILE__)."/ajax_functions.php";
 
 $tables = array();
 foreach ($GLOBALS["DBstructuser"] as $tablename => $tablecolumns) {
@@ -490,6 +491,47 @@ function newMenu() {
   return $html . $pixel;
 }
 
+function topMenu() {
+  $topmenu = '';
+  $topmenu .= '<div id="menu">';
+  foreach ($GLOBALS['pagecategories'] as $category => $categorypage) {
+    if (
+      $category == 'hide' ||
+      ($category == 'develop' && empty($GLOBALS['developer_email']))) 
+      continue;
+    
+    $thismenu = '';
+    foreach ($GLOBALS['pageclassification'] as $page => $pagedetails) {
+      if ($pagedetails['category'] == $category && !empty($pagedetails['mainmenu'])) {
+        $page_title = '';
+        include dirname(__FILE__).'/lan/'.$_SESSION['adminlanguage']['iso'].'/pagetitles.php';
+        if (!empty($page_title)) {
+          $title = $page_title;
+        } else {
+          $title = $page;
+        }
+        
+        $link = PageLink2($page,$title);
+        if ($link) {
+          $thismenu .= '<li>'.$link.'</li>';
+        }
+      }
+    }
+    if (!empty($thismenu)) {
+      $categoryurl = PageUrl2($categorypage);
+      if ($categoryurl) {
+        $topmenu .=  '<ul><li><h3><a href="'.$categoryurl.'">'.$GLOBALS['I18N']->get($category).'</a></h3><ul>'.$thismenu.'</ul></li></ul>';
+      } else {
+        $topmenu .=  '<ul><li><h3>'.$GLOBALS['I18N']->get($category).$categoryurl.'</h3><ul>'.$thismenu.'</ul></li></ul>';
+      }
+    }
+  }
+
+  $topmenu .=  '</div>';
+
+  return $topmenu;
+}
+
 function PageLink2($name,$desc="",$url="") {
   if ($url)
     $url = "&amp;".$url;
@@ -504,7 +546,7 @@ function PageLink2($name,$desc="",$url="") {
       } else {
         $pi = "";
       }
-      return sprintf('<a href="./?page=%s%s%s">%s</a>',$name,$url,$pi,strtolower($desc));
+      return sprintf('<a href="./?page=%s%s%s" title="%s">%s</a>',$name,$url,$pi,$desc,strtolower($desc));
     }
 	} else
 		return "";
@@ -528,14 +570,20 @@ function SidebarLink($name,$desc,$url="") {
 }
 
 function PageURL2($name,$desc = "",$url="") {
+  if (empty($name)) return '';
   if ($url)
     $url = "&amp;".$url;
-  if (!preg_match("/&amp;pi=/i",$name) && $_GET["pi"] && is_object($GLOBALS["plugins"][$_GET["pi"]])) {
-    $pi = '&amp;pi='.$_GET["pi"];
+  $access = accessLevel($name);
+  if ($access == "owner" || $access == "all" || $access == "view") {
+    if (!preg_match("/&amp;pi=/i",$name) && $_GET["pi"] && is_object($GLOBALS["plugins"][$_GET["pi"]])) {
+      $pi = '&amp;pi='.$_GET["pi"];
+    } else {
+      $pi = "";
+    }
+    return sprintf('./?page=%s%s%s',$name,$url,$pi);
   } else {
-    $pi = "";
+    return '';
   }
-  return sprintf('./?page=%s%s%s',$name,$url,$pi);
 }
 
 function Redirect($page) {
