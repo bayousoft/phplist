@@ -491,8 +491,9 @@ function newMenu() {
 }
 
 function topMenu() {
+  if (empty($_SESSION["logindetails"])) return '';
   $topmenu = '';
-  $topmenu .= '<div id="menu">';
+  $topmenu .= '<div id="menuTop">';
   foreach ($GLOBALS['pagecategories'] as $category => $categorypage) {
     if (
       $category == 'hide' ||
@@ -551,6 +552,16 @@ function PageLink2($name,$desc="",$url="") {
 		return "";
 #    return "\n<!--$name disabled $access -->\n";
 #    return "\n$name disabled $access\n";
+}
+
+function PageLinkDialog ($name,$desc="",$url="") {
+  ## as PageLink2, but add the option to ajax it in a popover window
+  $link = PageLink2($name,$desc,$url);
+  if ($link) {
+    $link = str_replace('<a ','<div><a class="opendialog"',$link);
+    $link .= '</div>';
+  }
+  return $link;
 }
 
 function SidebarLink($name,$desc,$url="") {
@@ -1199,6 +1210,51 @@ function printarray($array){
    }
   }
 }
+
+function Paging($base_url,$start,$total,$numpp = 10,$label = "") {
+  $page = 1;
+  $data = PagingPrevious($base_url,$start,$total,$numpp,$label);#.'&nbsp;|&nbsp;';
+  if (!isset($GLOBALS['config']['paginglabeltitle'])) {
+    $labeltitle = $label;
+  } else {
+    $labeltitle = $GLOBALS['config']['paginglabeltitle'];
+  }
+
+  for ($i = 0;$i<=$total;$i+=$numpp) {
+    if ($i == $start)
+      $data .= sprintf('<a class="current" title="%s %s" class="paging-item">%s%s</a>',$labeltitle,$page,$label,$page);
+    else
+      $data .= sprintf('<a href="%s&amp;s=%d" title="%s %s" rel="nofollow" class="paging-item">%s%s</a>',$base_url,$i,$labeltitle,$page,$label,$page);
+    $page++;
+  }
+  if ($page == 1)
+    return "";
+  $data .= PagingNext($base_url,$start,$total,$numpp,$label,$page);
+  return '<div class="scroll-pane"><div class="paging scroll-content">'.$data.'</div></div>'.
+	'<div class="scroll-bar-wrap">
+		<div class="scroll-bar"></div>
+	</div>';
+}
+
+function PagingNext($base_url,$start,$total,$numpp,$label = "") {
+  if (!isset($GLOBALS['config']["pagingnext"])) $GLOBALS['config']["pagingnext"] = '&gt;&gt;';
+  if (($start + $numpp - 1) < $total)
+    $data = sprintf('<a href="%s&amp;s=%d" title="Next" class="pagingnext paging-item" rel="nofollow">%s</a>',$base_url,$start + $numpp,$GLOBALS['config']["pagingnext"]);
+  else
+    $data = sprintf('<a class="pagingnext paging-item">%s</a>',$GLOBALS['config']["pagingnext"]);
+  return $data;
+}
+
+function PagingPrevious($base_url,$start,$total,$numpp,$label = "") {
+  if (!isset($GLOBALS['config']["pagingback"])) $GLOBALS['config']["pagingback"] = '&lt;&lt;';
+  $page = 1;
+  if ($start > 1)
+    $data = sprintf('<a href="%s&amp;s=%d" title="Previous" class="pagingprevious paging-item" rel="nofollow">%s</a>',$base_url,$start - $numpp,$GLOBALS['config']["pagingback"]);
+  else
+    $data = sprintf('<a class="pagingprevious paging-item">%s</a>',$GLOBALS['config']["pagingback"]);
+  return $data;
+}
+
 
 class timer {
   var $start;
