@@ -88,9 +88,9 @@ a:visited.abouthead {
 
 .menuhd {font-family: verdana, sans-serif;font-size : 11px; color : black;background-color : #CCCC99; font-weight: normal; border-top: 1px black solid;  border-bottom: 1px black solid;display : block; text-align : left; text-decoration : none; padding: 2px;vertical-align : top; padding-left : 3px;}
 
-.bottom {font-family: verdana, sans-serif;font-size : 10px; font-weight : bold; padding: 2px; padding-left:20px;}
+.bottom { border-top: 1px solid black;  border-bottom: 1px solid black; font-family: verdana, sans-serif;font-size : 10px; font-weight : bold; padding: 2px; padding-left:20px;}
 .input {font-family: verdana, sans-serif;font-size : 10px; font-weight : normal;}
-
+.bottomrow { border-bottom: 1px solid black; }
 .searchBoxinput {font-family: verdana, sans-serif;font-size : 11px; font-weight : normal; margin : 0px; padding : 0px;color : #000000;border: 1px #999966 solid; padding-left:2px; height:15px; width:110px;}
 
 .dropdown {font-family: verdana, sans-serif;font-size : 11px; font-weight : normal; margin : 0px; padding : 0px;color : #000000;border: 1px #999966 solid; padding-left:5px; height:15px; width:250px;}
