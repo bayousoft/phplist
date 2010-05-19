@@ -48,7 +48,7 @@ if ($checkinterval && !defined('IN_WEBBLER') && !defined('WEBBLER')) {
       $thisversion = VERSION;
       $thisversion = preg_replace("/[^\.\d]/","",$thisversion);
       if (!versionCompare($thisversion,$latestversion)) {
-        print '<div align="center" class="newversion">';
+        print '<div class="newversion">';
         print $GLOBALS['I18N']->get('A new version of PHPlist is available!');
         print '<br/>';
         print '<br/>'.$GLOBALS['I18N']->get('The new version may have fixed security issues,<br/>so it is recommended to upgrade as soon as possible');
@@ -72,74 +72,34 @@ if (!stristr($_SERVER['HTTP_USER_AGENT'],'firefox')) {
 <?php
 #$ls = new WebblerListing("System Functions");
 
-$some = 0;
-$ls = new WebblerListing($GLOBALS['I18N']->get('System Functions'));
-if (checkAccess("initialise") && !$_GET["pi"]) {
-  $some = 1;
-  $element = $GLOBALS['I18N']->get('setup');
-  $ls->addElement($element,PageURL2("setup"));
-  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Setup ').NAME);
-}
-if (checkAccess("upgrade") && !$_GET["pi"] && $upgrade_required) {
-  $some = 1;
-  $element = $GLOBALS['I18N']->get('upgrade');
-  $ls->addElement($element,PageURL2("upgrade"));
-  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Upgrade'));
-}
-if (checkAccess("dbcheck")) {
-  $some = 1;
-  $element = $GLOBALS['I18N']->get('dbcheck');
-  $ls->addElement($element,PageURL2("dbcheck"));
-  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Check Database structure'));
-}
-
-if (checkAccess("eventlog")) {
-  $some = 1;
-  $element = $GLOBALS['I18N']->get('eventlog');
-  $ls->addElement($element,PageURL2("eventlog"));
-  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('View the eventlog'));
-}
-if (checkAccess("admin") && $GLOBALS["require_login"] && !isSuperUser()) {
-  $some = 1;
-  $element = $GLOBALS['I18N']->get('admin');
-  $ls->addElement($element,PageURL2("admin"));
-  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Change your details (e.g. password)'));;
-}
-if ($some)
-  print $ls->display();
+print '<div class="accordion">';
 
 $some = 0;
-$ls = new WebblerListing($GLOBALS['I18N']->get('Configuration Functions'));
-if (checkAccess("configure")) {
+$ls = new WebblerListing($GLOBALS['I18N']->get('Main'));
+if (checkAccess("send") && !$_GET["pi"]) {
   $some = 1;
-  $element = $GLOBALS['I18N']->get('configure');
-  $ls->addElement($element,PageURL2("configure"));
-  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Configure').' '.NAME);
+  $element = $GLOBALS['I18N']->get('send');
+  $ls->addElement($element,PageURL2("send"));
+  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Send a campaign '));
 }
-if (checkAccess("attributes") && !$_GET["pi"]) {
+if (checkAccess("messages")) {
   $some = 1;
-  $element = $GLOBALS['I18N']->get('attributes');
-  $ls->addElement($element,PageURL2("attributes"));
-  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Configure Attributes'));
-  if (Sql_table_exists($tables["attribute"])) {
-    $res = Sql_Query("select * from ".$tables["attribute"],0);
-    while ($row = Sql_Fetch_array($res)) {
-      if ($row["type"] != "checkbox" && $row["type"] != "textarea" && $row["type"] != "textline" && $row["type"] != "hidden") {
-        $ls->addElement($row["name"],PageURL2("editattributes&amp;id=".$row["id"]));
-        $ls->addColumn($row["name"],"&nbsp;",$GLOBALS['I18N']->get('Control values for').' '.$row["name"]);
-      }
-    }
-  }
+  $element = $GLOBALS['I18N']->get('messages');
+  $ls->addElement($element,PageURL2("messages"));
+  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('messages'));
 }
-if (checkAccess("spage")) {
+if (checkAccess("users")) {
   $some = 1;
-  $element = $GLOBALS['I18N']->get('spage');
-  $ls->addElement($element,PageURL2("spage"));
-  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Configure Subscribe Pages'));
+  $element = $GLOBALS['I18N']->get('users');
+  $ls->addElement($element,PageURL2("users"));
+  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Subscribers'));
 }
 
-if ($some)
-  print $ls->display();
+if ($some) {
+  print '<h3><a name="main">'.$GLOBALS['I18N']->get('Main').'</a></h3>';
+  $ls->noShader();
+  print '<div>'. $ls->display() .'</div>';
+}
 
 $some = 0;
 $ls = new WebblerListing($GLOBALS['I18N']->get('List and user functions'));
@@ -173,8 +133,46 @@ if (checkAccess("export") && !$_GET["pi"]) {
   $ls->addElement($element,PageURL2("export"));
   $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Export Users'));
 }
-if ($some)
-  print $ls->display();
+if ($some) {
+  print '<h3><a name="list">'.$GLOBALS['I18N']->get('List and user functions').'</a></h3>';
+  $ls->noShader();
+  print '<div>'. $ls->display() .'</div>';
+}
+$some = 0;
+$ls = new WebblerListing($GLOBALS['I18N']->get('Configuration Functions'));
+if (checkAccess("configure")) {
+  $some = 1;
+  $element = $GLOBALS['I18N']->get('configure');
+  $ls->addElement($element,PageURL2("configure"));
+  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Configure').' '.NAME);
+}
+if (checkAccess("attributes") && !$_GET["pi"]) {
+  $some = 1;
+  $element = $GLOBALS['I18N']->get('attributes');
+  $ls->addElement($element,PageURL2("attributes"));
+  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Configure Attributes'));
+  if (Sql_table_exists($tables["attribute"])) {
+    $res = Sql_Query("select * from ".$tables["attribute"],0);
+    while ($row = Sql_Fetch_array($res)) {
+      if ($row["type"] != "checkbox" && $row["type"] != "textarea" && $row["type"] != "textline" && $row["type"] != "hidden") {
+        $ls->addElement($row["name"],PageURL2("editattributes&amp;id=".$row["id"]));
+        $ls->addColumn($row["name"],"&nbsp;",$GLOBALS['I18N']->get('Control values for').' '.$row["name"]);
+      }
+    }
+  }
+}
+if (checkAccess("spage")) {
+  $some = 1;
+  $element = $GLOBALS['I18N']->get('spage');
+  $ls->addElement($element,PageURL2("spage"));
+  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Configure Subscribe Pages'));
+}
+
+if ($some) {
+  print '<h3><a name="config">'.$GLOBALS['I18N']->get('Configuration Functions').'</a></h3>';
+  $ls->noShader();
+  print '<div>'. $ls->display() .'</div>';
+}
 
 $some = 0;
 $ls = new WebblerListing($GLOBALS['I18N']->get('Administrator Functions'));
@@ -190,8 +188,11 @@ if (checkAccess("adminattributes")) {
   $ls->addElement($element,PageURL2("adminattributes"));
   $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Configure Attributes for administrators'));
 }
-if ($some)
-  print $ls->display();
+if ($some) {
+  print '<h3><a name="admin">'.$GLOBALS['I18N']->get('Administrator Functions').'</a></h3>';
+  $ls->noShader();
+  print '<div>'. $ls->display() .'</div>';
+}
 
 $some = 0;
 $ls = new WebblerListing($GLOBALS['I18N']->get('Message Functions'));
@@ -248,8 +249,11 @@ if (checkAccess("bounces")) {
   $ls->addElement($element,PageURL2("bounces"));
   $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('View Bounces'));
 }
-if ($some)
-  print $ls->display();
+if ($some) {
+  print '<h3><a name="msg">'.$GLOBALS['I18N']->get('Message Functions').'</a></h3>';
+  $ls->noShader();
+  print '<div>'. $ls->display() .'</div>';
+}
 
 //obsolete, moved to rssmanager plugin
 //$some = 0;
@@ -277,21 +281,66 @@ if ($some)
 //if ($some && ENABLE_RSS && !array_key_exists("rssmanager", $GLOBALS["plugins"]))
 //  print $ls->display();
 
-
+$some = 0;
 $ls = new WebblerListing($GLOBALS['I18N']->get('Plugins'));
 if (sizeof($GLOBALS["plugins"])) {
   foreach ($GLOBALS["plugins"] as $pluginName => $plugin) {
     $menu = $plugin->adminmenu();
     if (is_array($menu)) {
       foreach ($menu as $page => $desc) {
+        $some = 1;
         $ls->addElement($desc,PageUrl2("$page&amp;pi=$pluginName"));
 #        $ls->addColumn($page,"&nbsp;",$desc);
       }
     }
   }
 }
-print $ls->display();
+if ($some) {
+  print '<h3><a name="plugins">'.$GLOBALS['I18N']->get('Plugins').'</a></h3>';
+  $ls->noShader();
+  print '<div>'. $ls->display() .'</div>';
+}
 
+$some = 0;
+$ls = new WebblerListing($GLOBALS['I18N']->get('System Functions'));
+if (checkAccess("initialise") && !$_GET["pi"]) {
+  $some = 1;
+  $element = $GLOBALS['I18N']->get('setup');
+  $ls->addElement($element,PageURL2("setup"));
+  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Setup ').NAME);
+}
+if (checkAccess("upgrade") && !$_GET["pi"] && $upgrade_required) {
+  $some = 1;
+  $element = $GLOBALS['I18N']->get('upgrade');
+  $ls->addElement($element,PageURL2("upgrade"));
+  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Upgrade'));
+}
+if (checkAccess("dbcheck")) {
+  $some = 1;
+  $element = $GLOBALS['I18N']->get('dbcheck');
+  $ls->addElement($element,PageURL2("dbcheck"));
+  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Check Database structure'));
+}
+
+if (checkAccess("eventlog")) {
+  $some = 1;
+  $element = $GLOBALS['I18N']->get('eventlog');
+  $ls->addElement($element,PageURL2("eventlog"));
+  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('View the eventlog'));
+}
+if (checkAccess("admin") && $GLOBALS["require_login"] && !isSuperUser()) {
+  $some = 1;
+  $element = $GLOBALS['I18N']->get('admin');
+  $ls->addElement($element,PageURL2("admin"));
+  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Change your details (e.g. password)'));;
+}
+if ($some) {
+  print '<h3><a name="system">'.$GLOBALS['I18N']->get('System Functions').'</a></h3>';
+  $ls->noShader();
+  print '<div>'. $ls->display() .'</div>';
+}
+
+print '</div>';
 ?>
 
 
