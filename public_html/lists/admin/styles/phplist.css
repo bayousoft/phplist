@@ -268,3 +268,17 @@ html>body #maincontent_install div { float:left; padding:1em; clear:both;}
   border: 3px dashed #ff9900;
   width: 200px;
 }
+
+.paging {
+  border: 1px solid red;
+}
+.paging-item {
+  width: 50px;
+  height: 20px;
+  border: 1px solid green;
+  padding: 8px;
+}
+
+#languageswitcher {
+  float: right;
+}

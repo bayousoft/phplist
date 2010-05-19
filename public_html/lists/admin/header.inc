@@ -32,4 +32,5 @@
 <br />
 <?
 print topMenu();
+print $languageswitcher;
 ?>
