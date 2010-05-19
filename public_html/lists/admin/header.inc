@@ -1,9 +1,4 @@
-<link rel="SHORTCUT ICON" href="./images/phplist.ico">
-<link href="styles/phplist.css" type="text/css" rel="stylesheet">
-<link href="styles/domtab.css" type="text/css" rel="stylesheet">
-<script language="Javascript" type="text/javascript" src="js/AjaxRequest.js"></script>
-<script language="Javascript" type="text/javascript" src="js/domtab.js"></script>
-</head>
+  </head>
 <body bgcolor="#ffffff" background="images/bg.png">
 <a name="top"></a>
 <div align=center>
@@ -35,3 +30,6 @@
     <TD>&nbsp;</TD>
 <td><div align="left">
 <br />
+<?
+print topMenu();
+?>
