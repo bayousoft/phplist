@@ -1,4 +1,4 @@
-<?
+<?php
 
 $status = '';
 
@@ -29,13 +29,28 @@ if ($id != "website" && $id != "domain") {
 }
 
 #  print "VALUE:".$value . '<br/>';
-if ($val[2] == "textarea")
+if ($val[2] == "textarea") {
   printf('<textarea name="values[%s]" rows=25 cols=55>%s</textarea>',
     $id,htmlspecialchars(stripslashes($value)));
-else if ($val[2] == "text")
+} else if ($val[2] == "text") {
   printf('<input type="text" name="values[%s]" size="70" value="%s" />',
   $id,htmlspecialchars(stripslashes($value)));
-else if ($val[2] == "boolean")
-  printf('<input type="text" name="values[%s]" size="10" value="%s" />',
-  $id,htmlspecialchars(stripslashes($value)));
+} else if ($val[2] == "boolean") {
+  printf ('<select name="values[%s]">',$id);
+  print '<option value="true" ';
+  if ($value == 'true') {
+    print 'selected="selected"';
+  }
+  print '>';
+  print $GLOBALS['I18N']->get('Yes') ;
+  print '  </option>';
+  print '<option value="false" ';
+  if ($value == 'false') {
+    print 'selected="selected"';
+  }
+  print '>';
+  print $GLOBALS['I18N']->get('No') ;
+  print '  </option>';
+  print '</select>';
+}
 print '</div><input type="hidden" name="save" value="1" /><input class="submit" type="submit" name="savebutton" value="' . $GLOBALS['I18N']->get('save changes') . '" /></form>';
