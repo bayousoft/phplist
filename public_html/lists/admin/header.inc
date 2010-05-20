@@ -1,5 +1,6 @@
   </head>
 <body bgcolor="#ffffff" background="images/bg.png">
+<div id="dialog"></div>
 <a name="top"></a>
 <div align=center>
 <table class="header" cellspacing="0" cellpadding="0" width="710" border="0">
