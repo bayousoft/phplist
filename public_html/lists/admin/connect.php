@@ -744,7 +744,7 @@ function upgradeTable($table,$tablestructure) {
 }
 
 function Help($topic, $text = '?') {
-	return sprintf('<span class="query"><a href="javascript:help(\'help/?topic=%s\')">%s</a></span>', $topic, $text);
+	return sprintf('<span class="helplink"><a href="help/?topic=%s" class="helpdialog" target="_blank">%s</a></span>', $topic, $text);
 }
 
 # Debugging system, needs $debug = TRUE and $verbose = TRUE or $debug_log = {path} in config.php
@@ -1127,7 +1127,8 @@ function trimArray($array) {
   $result = array();
   if (!is_array($array)) return $array;
   foreach ($array as $key => $val) {
-    if (isset($key) && trim($val)) {
+    $testval = trim($val);
+    if (isset($key) && !empty($testval)) {
       $result[$key] = $val;
     }
   }
@@ -1171,14 +1172,9 @@ function secs2time($secs) {
 }
 
 function cleanCommaList($sList) {
-  if (!strpos($sList,',')) return $sList;
+  if (strpos($sList,',') === false) return $sList;
   $aList = explode(',',$sList);
-  foreach ($aList as $key=>$value) {
-    if(!$value) {
-       array_splice($aList, $key, 1);  //Remove null value from array
-    }
-  }
-  return join(',',$aList);
+  return join(',',trimArray($aList));
 }
 
 function printobject($object) {
@@ -1222,7 +1218,7 @@ function Paging($base_url,$start,$total,$numpp = 10,$label = "") {
 
   for ($i = 0;$i<=$total;$i+=$numpp) {
     if ($i == $start)
-      $data .= sprintf('<a class="current" title="%s %s" class="paging-item">%s%s</a>',$labeltitle,$page,$label,$page);
+      $data .= sprintf('<a class="current paging-item" title="%s %s" class="paging-item">%s%s</a>',$labeltitle,$page,$label,$page);
     else
       $data .= sprintf('<a href="%s&amp;s=%d" title="%s %s" rel="nofollow" class="paging-item">%s%s</a>',$base_url,$i,$labeltitle,$page,$label,$page);
     $page++;
@@ -1232,7 +1228,7 @@ function Paging($base_url,$start,$total,$numpp = 10,$label = "") {
   $data .= PagingNext($base_url,$start,$total,$numpp,$label,$page);
   return '<div class="scroll-pane"><div class="paging scroll-content">'.$data.'</div></div>'.
 	'<div class="scroll-bar-wrap">
-		<div class="scroll-bar"></div>
+		<div class="scroll-bar1"></div>
 	</div>';
 }
 
