@@ -132,6 +132,10 @@ if (!defined('MANUALLY_PROCESS_BOUNCES')) define('MANUALLY_PROCESS_BOUNCES',1);
 if (!defined('ENCRYPT_ADMIN_PASSWORDS')) define('ENCRYPT_ADMIN_PASSWORDS',0);
 if (!defined('PASSWORD_CHANGE_TIMEFRAME')) define('PASSWORD_CHANGE_TIMEFRAME','1 day');
 
+# check whether Pear HTTP/Request is available
+@include_once "HTTP/Request.php";
+$GLOBALS['has_pear_http_request'] = class_exists('HTTP_Request');
+
 ## fairly crude way to determine php version, but mostly needed for the stripos
 if (function_exists('stripos')) {
   define('PHP5',1);
