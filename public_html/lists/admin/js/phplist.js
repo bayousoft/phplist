@@ -23,11 +23,12 @@ function openDialog(url) {
     modal: true,
     show: 'blind',
     hide: 'explode',
-    buttons: {
-      Ok: function() {
-        $(this).dialog('close');
-      }
-    }
+    // this doesn't seem to work
+    //buttons: {
+      //Ok: function() {
+        //$(this).dialog('close');
+      //}
+    //}
   });
   var destpage = urlParameter('page',url);
   var url = url.replace(/page=/,'origpage=');
