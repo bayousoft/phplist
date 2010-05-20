@@ -1,5 +1,4 @@
 <?php
-// 2004-1-7  This function really isn't quite ready for register globals.
 require_once dirname(__FILE__).'/accesscheck.php';
 
 #initialisation###############
@@ -59,12 +58,12 @@ if (isset($_GET['id'])) {
   $id = 0;
 }
 if (isset($_POST['save'])) {
-  $save = $_POST["save"]; // Save button pressed?
+  $save = !empty($_POST["save"]); // Save button pressed?
 } else {
   $save = '';
 }
 if (isset($_POST['sendtest'])) {
-  $sendtest = $_POST["sendtest"];
+  $sendtest = !empty($_POST["sendtest"]);
 } else {
   $sendtest = '';
 }
@@ -84,14 +83,14 @@ if (!$id) {
   $id = Sql_Insert_Id($GLOBALS['tables']['message'], 'id');
   # 0008720: Using -p send from the commandline doesn't seem to work '
   if(!$GLOBALS["commandline"]){
-    Redirect($_GET["page"].'&amp;id='.$id);
+    Redirect($_GET["page"].'&id='.$id);
     exit;
   }
 }
 
 if (isset($_GET['deleterule']) && $_GET["deleterule"]) {
   Sql_Query(sprintf('delete from %s where name = "criterion%d" and id = %d',$GLOBALS["tables"]["messagedata"],$_GET["deleterule"],$_GET["id"]));
-  Redirect($_GET["page"].'&amp;id="'.$id.'"&tab="'.$_GET["tab"].'"');
+  Redirect($_GET["page"].'&id='.$id.'&tab='.$_GET["tab"]);
 }
 ob_end_flush();
 
@@ -141,6 +140,9 @@ if ($id) {
      $_POST["forwardmessage"] = "";
   }
   else $_POST["forwardmessage"] = sprintf("%s", $_POST["forwardmessage"]);
+  if (!isset($_POST['sendurl'])) {
+    $_POST['sendurl'] = '';
+  }
 
   if (!isset($_POST["forwardfooter"])) {
      $_POST["forwardfooter"] = "";
@@ -177,6 +179,7 @@ if ($id) {
   $_POST["from"] = stripslashes($_POST["from"]);
   $_POST["tofield"] = stripslashes($_POST["tofield"]);
   $_POST["replyto"] = stripslashes($_POST["replyto"]);
+  $_POST['sendurl'] = stripslashes($_POST['sendurl']);
   $_POST["message"] = stripslashes($_POST["message"]);
   #0013076: different content when forwarding 'to a friend'
   $_POST["forwardmessage"] = isset($_POST["forwardmessage"]) ? stripslashes($_POST["forwardmessage"]):'';
@@ -240,7 +243,16 @@ if (preg_match("/\n|\r/",$_POST["forwardfooter"])) {
   $forwardfooter = $_POST["forwardfooter"];
 }
 
-$message = $_POST["message"];
+if (!empty($_POST['sendurl'])) {
+  if (!$GLOBALS["has_pear_http_request"]) {
+    print Warn($GLOBALS['I18N']->get('warnnopearhttprequest'));
+  } else {
+    $_POST["message"] = '[URL:'.$_POST['sendurl'].']';
+  }
+} else {
+  $message = $_POST["message"];
+}
+$sendurl = $_POST['sendurl'];
 
 // If the variable isn't filled in, then the input fields don't default to the
 // values selected.  Need to fill it in so a post will correctly display.
@@ -255,12 +267,6 @@ if ((isset($_POST['year']) && is_array($_POST["year"])) || !$_POST["repeatuntil"
 if (!isset($_SESSION["fckeditor_height"])) {
   $_SESSION["fckeditor_height"] = getConfig("fckeditor_height");
 }
-if (isset($_POST['expand']) && $_POST["expand"]) {
-  // request to expand editor area
-//  $defaultheight = getConfig("fckeditor_height");
-//  SaveConfig("fckeditor_height",$curheight+100,1);
-  $_SESSION["fckeditor_height"] += 100;
-}
 if (isset($_REQUEST['prepare'])) {
   $prepare = $_REQUEST['prepare'];
 } else {
@@ -273,8 +279,10 @@ if ($send || $sendtest || $prepare || $save) {
 
   ## remember any data entered
   foreach ($_POST as $key => $val) {
+  #  print $key;
     setMessageData($id,$key,$val);
   }
+#print "Save";
 
   if ($save || $sendtest) {
     // We're just saving, not sending.
@@ -324,6 +332,7 @@ if ($send || $sendtest || $prepare || $save) {
   ### allow plugins manipulate data or save it somewhere else
   $plugintabs = array();
   foreach ($GLOBALS['plugins'] as $plugin) {
+  #  print "Saving ".$plugin->name;
     $resultMsg = $plugin->sendMessageTabSave($id,$messagedata);
   }
 
@@ -713,9 +722,10 @@ if ($send || $sendtest || $prepare || $save) {
         print '<br/>';
       } else {
         print $GLOBALS['I18N']->get("emailnotfound").": $address<br/>";
+        print addEmailLink($address);
       }
     }
-    echo "<HR>";
+    echo "<hr/>";
   }
 } elseif (isset($_POST["deleteattachments"]) && is_array($_POST["deleteattachments"]) && $id) {
   if (ALLOW_ATTACHMENTS) {
@@ -1016,7 +1026,7 @@ if (!$done) {
     ### allow plugins to add tabs
     $plugintabs = array();
     foreach ($GLOBALS['plugins'] as $plugin) {
-      print $plugin->name;
+   #   print $plugin->name;
       $plugintab = $plugin->sendMessageTab($id,$messagedata);
       if ($plugintab) {
         $plugintabname = substr(strip_tags($plugin->sendMessageTabTitle()),0,10);
@@ -1066,17 +1076,17 @@ if (!$done) {
     }
   }
 
-  $formatting_content = '<table class="sendListing">';
+  $formatting_content = '<div id="formatcontent">';
 
   #0013076: different content when forwarding 'to a friend'
   //  value="'.htmlentities($subject,ENT_QUOTES,'UTF-8').'" size="40"></td></tr> --> previous code in line 1032
   //  value="'.htmlentities($from,ENT_QUOTES,'UTF-8').'" size="40"></td></tr> --> previous code in line 1038
 
-  $tmp = '<table class="sendContent">';
+  $tmp = '<div id="maincontent">';
   $maincontent = $tmp;
   $forwardcontent = $tmp;
 
-  $scheduling_content = '<table class="sendScheduling">';
+  $scheduling_content = '<div id="schedulecontent">';
 // custom code - start
   $utf8_subject = $subject;
   $utf8_from = $from;
@@ -1086,45 +1096,41 @@ if (!$done) {
   }
 
   $maincontent .= '
-  <tr><td>'.Help("subject").' '.$GLOBALS['I18N']->get("Subject").':</td>
-    <td><input type=text name="msgsubject"
-    value="'.htmlentities($subject,ENT_QUOTES,'UTF-8').'" size=40></td></tr>
-  <tr>
-    <td colspan=2>
-    </td></tr>
-  <tr><td>'.Help("from").' '.$GLOBALS['I18N']->get("fromline").':</td>
-    <td><input type=text name=from
-   value="'.htmlentities($from,ENT_QUOTES,'UTF-8').'" size=40></td></tr>
-  <tr><td colspan=2>
-
-  </td></tr>';
+  <div>'.Help("subject").' '.$GLOBALS['I18N']->get("Subject").':</div>
+    <div><input type=text name="msgsubject"
+    value="'.htmlentities($subject,ENT_QUOTES,'UTF-8').'" size=40></div>
+  <div>'.Help("from").' '.$GLOBALS['I18N']->get("fromline").':</div>
+    <div><input type=text name="from"
+   value="'.htmlentities($from,ENT_QUOTES,'UTF-8').'" size=40></div>';
+   
+   if ($GLOBALS['has_pear_http_request']) {
+      $maincontent .= '
+      <div>'.Help("url").' '.$GLOBALS['I18N']->get("URL").':</div>
+        <div><input type=text name="sendurl"
+       value="'.htmlspecialchars($sendurl).'" size=40></div>';
+   }
 
 // custom code - end
   #0013076: different content when forwarding 'to a friend'
   $forwardcontent .= $GLOBALS['I18N']->get("When a user forwards to a friend," .
   " the friend will receive this message instead of the one on the content tab.").
-  '<tr><td>'.Help("subject").' '.$GLOBALS['I18N']->get("Subject").':</td>
-    <td><input type="text" name="forwardsubject" value="'.htmlentities($forwardsubject,ENT_QUOTES,'UTF-8').'" size="40"/></td>
-  </tr>
-  <tr><td colspan="2"></td></tr>
-  <tr><td colspan="2"></td></tr>';
+  '<div>'.Help("subject").' '.$GLOBALS['I18N']->get("Subject").':</div>
+    <div><input type="text" name="forwardsubject" value="'.htmlentities($forwardsubject,ENT_QUOTES,'UTF-8').'" size="40"/></div>';
 
   $currentTime = Sql_Fetch_Row_Query('select now()');
 
   $scheduling_content .= '
-  <tr><td colspan="2">'.$GLOBALS['I18N']->get("Time is Based on the Server Time").
-    '<br/>'.$GLOBALS['I18N']->get('Current Server Time is').' '.$currentTime[0].'</td></tr>
-  </td></tr>
-  <tr><td>'.Help("embargo").' '.$GLOBALS['I18N']->get("embargoeduntil").':</td>
-    <td>'.$embargo->showInput("embargo","",$_POST["embargo"]).'</td>
-  </tr>';
+  <div>'.$GLOBALS['I18N']->get("Time is Based on the Server Time").
+    '<br/>'.$GLOBALS['I18N']->get('Current Server Time is').' '.$currentTime[0].'</div>
+  <div>'.Help("embargo").' '.$GLOBALS['I18N']->get("embargoeduntil").':</div>
+    <div>'.$embargo->showInput("embargo","",$_POST["embargo"]).'</div>';
 
   if (USE_REPETITION) {
     $repeatinterval = $_POST["repeatinterval"];
 
     $scheduling_content .= '
-    <tr><td>'.Help("repetition").' '.$GLOBALS['I18N']->get("repeatevery").':</td>
-        <td><select name="repeatinterval">
+    <div>'.Help("repetition").' '.$GLOBALS['I18N']->get("repeatevery").':</div>
+        <div><select name="repeatinterval">
       <option value="0"';
       if ($repeatinterval == 0) { $scheduling_content .= ' selected="selected"'; }
       $scheduling_content .= '>-- '.$GLOBALS['I18N']->get("norepetition").'</option>
@@ -1138,29 +1144,15 @@ if (!$done) {
       if ($repeatinterval == 10080) { $scheduling_content .= ' selected="selected"'; }
       $scheduling_content .= '>'.$GLOBALS['I18N']->get("week").'</option>
       </select>
-        </td>
-        <td>  '.$GLOBALS['I18N']->get("repeatuntil").':</td>
-        <td>'.$repeatuntil->showInput("repeatuntil","",$_POST["repeatuntil"]);
-      $scheduling_content .= '</td></tr>';
+        </div>
+        <div>  '.$GLOBALS['I18N']->get("repeatuntil").':</div>
+        <div>'.$repeatuntil->showInput("repeatuntil","",$_POST["repeatuntil"]);
+      $scheduling_content .= '</div>';
   }
-  $scheduling_content.="</table>";
-/*
-  $formatting_content .= '
-    <tr><td colspan="2">'.Help("format").' '.$GLOBALS['I18N']->get("format").': <b>'.$GLOBALS['I18N']->get("autodetect").'</b>
-    <input type="radio" name="htmlformatted" value="auto" ';
-    $formatting_content .= !isset($htmlformatted) || $htmlformatted == "auto"?"checked":"";
-    $formatting_content .= '/>
-  <b>'.$GLOBALS['I18N']->get("html").'</b> <input type="radio" name="htmlformatted" value="1" ';
-    $formatting_content .= $htmlformatted == "1" ?"checked":"";
-    $formatting_content .= '/>
-  <b>'.$GLOBALS['I18N']->get("text").'</b> <input type="radio" name="htmlformatted" value="0" ';
-    $formatting_content .= $htmlformatted == "0" ?"checked":"";
-    $formatting_content .= '/></td></tr>';
-*/
-  $formatting_content .= '<tr><td><input type="hidden" name="htmlformatted" value="auto"/></td></tr>';
+  $formatting_content .= '<div><input type="hidden" name="htmlformatted" value="auto"/></div>';
 
   $formatting_content .= '
-    <tr><td colspan="2">'.Help("sendformat").' '.$GLOBALS['I18N']->get("sendas").':
+    <div>'.Help("sendformat").' '.$GLOBALS['I18N']->get("sendas").':
   '.$GLOBALS['I18N']->get("html").' <input type="radio" name="sendformat" value="HTML" ';
     $formatting_content .= $_POST["sendformat"]=="HTML"?'checked="checked"':'';
     $formatting_content .= '/>
@@ -1196,22 +1188,21 @@ if (!$done) {
       }
     }
   }
-  $formatting_content .= '</td></tr>';
+  $formatting_content .= '</div>';
 
   $req = Sql_Query("select id,title from {$tables["template"]} order by listorder");
   if (Sql_Num_Rows($req)) {
-    $formatting_content .= '<tr><td>'.Help("usetemplate").' '.$GLOBALS['I18N']->get("usetemplate").': </td>
-      <td><select name="template"><option value="0">-- '.$GLOBALS['I18N']->get("selectone").'</option>';
+    $formatting_content .= '<div>'.Help("usetemplate").' '.$GLOBALS['I18N']->get("usetemplate").': </div>
+      <div><select name="template"><option value="0">-- '.$GLOBALS['I18N']->get("selectone").'</option>';
     $req = Sql_Query("select id,title from {$tables["template"]} order by listorder");
     while ($row = Sql_Fetch_Array($req)) {
       if ($row["title"]) {
-	$formatting_content .= sprintf('<option value="%d" %s>%s</option>',$row["id"], $row["id"]==$_POST["template"]?'selected="selected"':'',$row["title"]);
+        $formatting_content .= sprintf('<option value="%d" %s>%s</option>',$row["id"], $row["id"]==$_POST["template"]?'selected="selected"':'',$row["title"]);
       }
     }
-    $formatting_content .= '</select></td></tr>';
+    $formatting_content .= '</select></div>';
   }
-  $formatting_content .= '</table>
-';
+  $formatting_content .= '</div>';
 
 //obsolete, moved to rssmanager plugin
 //  if (ENABLE_RSS) {
@@ -1225,9 +1216,7 @@ if (!$done) {
 //  }
 
   #0013076: different content when forwarding 'to a friend'
-  $tmp = '<tr><td colspan="2">'.Help("message").' '.$GLOBALS['I18N']->get("message").'. </td></tr>
-
-  <tr><td colspan="2">';
+  $tmp = '<div>'.Help("message").' '.$GLOBALS['I18N']->get("message").'. </div>';
   $maincontent .= $tmp;
   $forwardcontent .= $tmp;
 
@@ -1253,17 +1242,6 @@ if (!$done) {
     $oFCKeditor->Height = $h;
     $oFCKeditor->Width = $w;
     $maincontent .= $oFCKeditor->CreateHtml() ;
-    $maincontent .= '</td></tr>';
-
-    $maincontent .= '<script language="Javascript" type="text/javascript">
-    function expand() {
-      document.sendmessageform.expand.value = 1;
-      document.sendmessageform.save.value = 1
-      document.sendmessageform.submit();
-    }
-    </script>';
-
-    $maincontent .= '<tr><td colspan="2" align="right"><a href="javascript:expand();" class="button">'.$GLOBALS['I18N']->get("expand").'</a></td></tr>';
 
   } elseif ($useTinyMCE) {
 
@@ -1272,7 +1250,9 @@ if (!$done) {
   $tinyMCE_theme = TINYMCETHEME;
   $tinyMCE_opts = TINYMCEOPTS;
 
-  $maincontent .= "<script language='javascript' type='text/javascript' src='{$tinyMCE_path}'></script>\n"
+  $maincontent .= "
+  
+      <script language='javascript' type='text/javascript' src='{$tinyMCE_path}'></script>\n"
         ."<script language='javascript' type='text/javascript'>\n"
         ."   tinyMCE.init({\n"
         ."      mode : 'exact',\n"
@@ -1285,7 +1265,8 @@ if (!$done) {
         ."<textarea name='message' id='message' cols='65' rows='20'>{$_POST['message']}</textarea>";
 
   } else {
-    $maincontent    .= '<textarea name="message" cols="65" rows="20">'.htmlspecialchars($_POST["message"]).'</textarea>';
+    $maincontent    .= ' 
+<textarea name="message" cols="65" rows="20">'.htmlspecialchars($_POST["message"]).'</textarea>';
   }
 
   #0013076: different content when forwarding 'to a friend'
@@ -1293,46 +1274,44 @@ if (!$done) {
 
   #0013076: different content when forwarding 'to a friend'
   $tmp = '
-  </td></tr>
+  </div>
   ';
   $maincontent .= $tmp;
   $forwardcontent .= $tmp;
 
   if (USE_MANUAL_TEXT_PART) {
-  $maincontent .= '<tr><td colspan="2">
+  $maincontent .= '<div>
     '.$GLOBALS['I18N']->get("plaintextversion").'
-  </td></tr>
-  <tr><td colspan="2">
+  </div>
+  <div>
     <textarea name="textmessage" cols="65" rows="20">'.$_POST["textmessage"].'</textarea>
-  </td></tr>';
+  </div>';
   }
 
   #0013076: different content when forwarding 'to a friend'
-  $maincontent .= '<tr><td colspan="2">'.$GLOBALS['I18N']->get("messagefooter").'. <br/>
+  $maincontent .= '<div>'.$GLOBALS['I18N']->get("messagefooter").'. <br/>
     <p class="information">'.
     $GLOBALS['I18N']->get("messagefooterexplanation1").'</p>
     <p class="information">'.
     $GLOBALS['I18N']->get("messagefooterexplanation2").'</p>
     <p class="information">'.
     $GLOBALS['I18N']->get("messagefooterexplanation3").'</p>
-   </td></tr>
-  <tr><td colspan="2"><textarea name="footer" cols="65" rows="5">'.$footer.'</textarea></td></tr>
-  </table>';
-  $forwardcontent .= '<tr><td colspan="2">'.$GLOBALS['I18N']->get("forwardfooter").'. <br/>
+   </div>
+  <div><textarea name="footer" cols="65" rows="5">'.$footer.'</textarea></div>';
+  $forwardcontent .= '<div>'.$GLOBALS['I18N']->get("forwardfooter").'. <br/>
     '.$GLOBALS['I18N']->get("messageforwardfooterexplanation").'<br/>'.
-  '.</td></tr>
-  <tr><td colspan="2"><textarea name="forwardfooter" cols="65" rows="5">'.$forwardfooter.'</textarea></td></tr>
-  </table>';
+  '.</div>
+  <div><textarea name="forwardfooter" cols="65" rows="5">'.$forwardfooter.'</textarea></div>';
 
   if (ALLOW_ATTACHMENTS) {
     // If we have a message id saved, we want to query the attachments that are associated with this
     // message and display that (and allow deletion of!)
 
-    $att_content = '<table class="sendAttachment"><tr><td colspan="2">'.Help("attachments").' '.$GLOBALS['I18N']->get("addattachments").' </td></tr>';
-    $att_content .= '<tr><td colspan="2">
+    $att_content = '<div id="sendAttachment"><div>'.Help("attachments").' '.$GLOBALS['I18N']->get("addattachments").' </div>';
+    $att_content .= '<div>
       '.$GLOBALS['I18N']->get("uploadlimits").':<br/>
       '.$GLOBALS['I18N']->get("maxtotaldata").': '.ini_get("post_max_size").'<br/>
-      '.$GLOBALS['I18N']->get("maxfileupload").': '.ini_get("upload_max_filesize").'</td></tr>';
+      '.$GLOBALS['I18N']->get("maxfileupload").': '.ini_get("upload_max_filesize").'</div>';
 
     if ($id) {
       $result = Sql_Query(sprintf("Select Att.id, Att.filename, Att.remotefile, Att.mimetype, Att.description, Att.size, MsgAtt.id linkid".
@@ -1342,11 +1321,9 @@ if (!$done) {
         $id));
 
 
-      $tabletext = "";
       $ls = new WebblerListing($GLOBALS['I18N']->get('currentattachments'));
 
       while ($row = Sql_fetch_array($result)) {
-  #      $tabletext .= "<tr><td>".$row["remotefile"]."</td><td>".$row["description"]."&nbsp;</td><td>".$row["size"]."</td>";
         $ls->addElement($row["id"]);
         $ls->addColumn($row["id"],$GLOBALS['I18N']->get('filename'),$row["remotefile"]);
         $ls->addColumn($row["id"],$GLOBALS['I18N']->get('desc'),$row["description"]);
@@ -1358,30 +1335,19 @@ if (!$done) {
           $ls->addColumn($row["id"],$GLOBALS['I18N']->get('file'),$GLOBALS["img_cross"]);
         }
         $ls->addColumn($row["id"],$GLOBALS['I18N']->get('del'),sprintf('<input type="checkbox" name="deleteattachments[]" value="%s"/>',$row["linkid"]));
-
-        // Probably need to check security rights here...
-  #      $tabletext .= "<td><input type="checkbox" name="\""deleteattachments[]\" value="\""".$row["linkid"]."\"/></td>";
-  #      $tabletext .= "</tr>\n";
       }
       $ls->addButton($GLOBALS['I18N']->get('delchecked'),"javascript:document.sendmessageform.submit()");
-      $att_content .= '<tr><td colspan="2">'.$ls->display().'</td></tr>';
-
-  #    if ($tabletext) {
-  #      print '<tr><td colspan="2"><table class="x" border="1"><tr><td>Filename</td><td>Description</td><td>Size</td><td>&nbsp;</td></tr>\n';
-  #      print "$tabletext";
-  #      print '<tr><td colspan="4" align="center"><p class="submit"><input type="submit" name="deleteatt" value="Delete Checked"/></p></td></tr>';
-  #      print '</table></td></tr>\n';
-  #    }
+      $att_content .= '<div>'.$ls->display().'</div>';
     }
     for ($att_cnt = 1;$att_cnt <= NUMATTACHMENTS;$att_cnt++) {
-      $att_content .= sprintf  ('<tr><td>%s</td><td><input type="file" name="attachment%d"/>&nbsp;&nbsp;<input class="submit" type="submit" name="save" value="%s"/></td></tr>',$GLOBALS['I18N']->get('newattachment'),$att_cnt,$GLOBALS['I18N']->get('addandsave'));
+      $att_content .= sprintf  ('<div>%s</div><div><input type="file" name="attachment%d"/>&nbsp;&nbsp;<input class="submit" type="submit" name="save" value="%s"/></div>',$GLOBALS['I18N']->get('newattachment'),$att_cnt,$GLOBALS['I18N']->get('addandsave'));
       if (FILESYSTEM_ATTACHMENTS) {
-        $att_content .= sprintf('<tr><td><b>%s</b> %s:</td><td><input type="text" name="localattachment%d" size="50"/></td></tr>',$GLOBALS['I18N']->get('or'),$GLOBALS['I18N']->get('pathtofile'),$att_cnt,$att_cnt);
+        $att_content .= sprintf('<div><b>%s</b> %s:</div><div><input type="text" name="localattachment%d" size="50"/></div>',$GLOBALS['I18N']->get('or'),$GLOBALS['I18N']->get('pathtofile'),$att_cnt,$att_cnt);
       }
-      $att_content .= sprintf ('<tr><td colspan="2">%s:</td></tr>
-        <tr><td colspan="2"><textarea name="attachment%d_description" cols="65" rows="3" wrap="virtual"></textarea></td></tr>',$GLOBALS['I18N']->get('attachmentdescription'),$att_cnt);
+      $att_content .= sprintf ('<div>%s:</div>
+        <div><textarea name="attachment%d_description" cols="65" rows="3" wrap="virtual"></textarea></div>',$GLOBALS['I18N']->get('attachmentdescription'),$att_cnt);
     }
-    $att_content .= '</table>';
+    $att_content .= '</div>';
     # $shader = new WebblerShader("Attachments");
     # $shader->addContent($att_content);
     # $shader->initialstate = 'closed';
@@ -1402,21 +1368,20 @@ if (!$done) {
   }
 
   // Display the HTML for the "Send Test" button, and the input field for the email addresses
-  $sendtest_content = sprintf('<table class="sendTest"><tr><td valign="top">
-    <input class="submit" type="submit" name="sendtest" value="%s"/>%s: </td>
-    <td><input type="text" name="testtarget" size="40" value="'.$_POST["testtarget"].'"/><br />%s
-    </td></tr></table>',
+  $sendtest_content = sprintf('<div class="sendTest"><div>
+    <input class="submit" type="submit" name="sendtest" value="%s"/>%s: </div>
+    <div><input type="text" name="testtarget" size="40" value="'.$_POST["testtarget"].'"/><br />%s
+    </div></div>',
     $GLOBALS['I18N']->get('sendtestmessage'),$GLOBALS['I18N']->get('toemailaddresses'),
     $GLOBALS['I18N']->get('sendtestexplain'));
 
   $criteria_content = $GLOBALS['I18N']->get('criteriaexplanation').'
-  <table class="sendCriteria">
-  ';
+  <div class="sendCriteria">';
 
   $any = 0;
   for ($i=1;$i<=NUMCRITERIAS;$i++) {
-    $criteria_content .= sprintf('<tr><td colspan="2"><hr/><h3>%s %d</h3></td>
-    <td>%s <input type="checkbox" name="use[%d]"/></td></tr>',$GLOBALS['I18N']->get('criterion'),$i,
+    $criteria_content .= sprintf('<div><h3>%s %d</h3></div>
+    <div>%s <input type="checkbox" name="use[%d]"/></div>',$GLOBALS['I18N']->get('criterion'),$i,
     $GLOBALS['I18N']->get('usethisone'),$i);
     $attributes_request = Sql_Query("select * from $tables[attribute]");
     while ($attribute = Sql_Fetch_array($attributes_request)) {
@@ -1428,10 +1393,10 @@ if (!$done) {
       switch ($attribute["type"]) {
         case "checkbox":
           $any = 1;
-          $criteria_content .= sprintf ('<tr><td>'.$criteria_cnt.'<input type="radio" name="criteria[%d]" value="%d"/>
-             %s</td><td><b>%s</b></td><td><select name="attr%d%d[]">
+          $criteria_content .= sprintf ('<div>'.$criteria_cnt.'<input type="radio" name="criteria[%d]" value="%d"/>
+             %s</div><div><b>%s</b></div><div><select name="attr%d%d[]">
                   <option value="0">Not checked</option>
-                  <option value="1">Checked</option></select></td></tr>',
+                  <option value="1">Checked</option></select></div>',
                   $i,$attribute["id"],
                   $attribute["name"],$GLOBALS['I18N']->get('is'),$attribute["id"],$i);
           break;
@@ -1441,22 +1406,21 @@ if (!$done) {
           $some = 0;
           $thisone = "";
           $values_request = Sql_Query("select * from $table_prefix"."listattr_".$attribute["tablename"]);
-          $thisone .= sprintf ('<tr><td valign="top">'.$criteria_cnt.'<input type="radio" name="criteria[%d]" value="%d"/> %s</td>
-                  <td valign="top"><b>%s</b></td><td><select name="attr%d%d[]" size="4" multiple="multiple">',
+          $thisone .= sprintf ('<div>'.$criteria_cnt.'<input type="radio" name="criteria[%d]" value="%d"/> %s</div>
+                  <div><b>%s</b></div><div><select name="attr%d%d[]" size="4" multiple="multiple">',
                   $i,$attribute["id"],strip_tags($attribute["name"]),$GLOBALS['I18N']->get('is'),$attribute["id"],$i);
           while ($value = Sql_Fetch_array($values_request)) {
-	    if($value["name"]) {
-	      $some = 1;
-	      $thisone .= sprintf ('<option value="%d">%s</option>',$value["id"],$value["name"]);
-	    }
+            if($value["name"]) {
+              $some = 1;
+              $thisone .= sprintf ('<option value="%d">%s</option>',$value["id"],$value["name"]);
+            }
           }
-          $thisone .= "</select></td></tr>";
+          $thisone .= "</select></div>";
           if ($some)
             $criteria_content .= $thisone;
           $any = $any || $some;
           break;
         default:
-	  $criteria_acc .= $criteria_cnt."\n";
           $criteria_content .= "\n<!-- error: huh, unknown type ".$attribute["type"]." -->\n";
       }
     }
@@ -1465,7 +1429,7 @@ if (!$done) {
   if (!$any) {
     $criteria_content = '<p class="information">'.$GLOBALS['I18N']->get('nocriteria').'</p>';
   } else {
-    $criteria_content .= '</table>'.$criteria_acc;
+    $criteria_content .= '</div>';
   #  $shader = new WebblerShader("Message Criteria");
   #  $shader->addContent($criteria_content.'</table>');
   #  $shader->hide();
@@ -1656,10 +1620,10 @@ if (!$done) {
   $notify_end = isset($messagedata['notify_end'])?$messagedata['notify_end']:'';#$admin_details['email'];
 
   $misc_content = sprintf('
-    <table class="sendNotify">
-    <tr valign="top"><td>%s<br/>%s</td><td><input type="text" name="notify_start" value="%s" size="35"/></td></tr>
-    <tr valign="top"><td>%s<br/>%s</td><td><input type="text" name="notify_end" value="%s" size="35"/></td></tr>
-    </table>',
+    <div class="sendNotify">
+    <div>%s<br/>%s</div><div><input type="text" name="notify_start" value="%s" size="35"/></div>
+    <div>%s<br/>%s</div><div><input type="text" name="notify_end" value="%s" size="35"/></div>
+    </div>',
     $GLOBALS['I18N']->get('email to alert when sending of this message starts'),
     $GLOBALS['I18N']->get('separate multiple with a comma'),$notify_start,
     $GLOBALS['I18N']->get('email to alert when sending of this message has finished'),
@@ -1752,12 +1716,11 @@ if (!$_POST["status"]) {
   $savecaption = $GLOBALS['I18N']->get('savechanges');#"Save &quot;".$_POST["status"]."&quot; message edits";
 
 }
-print '<table class="sendSubmit"><tr><td>
+print '<div class="sendSubmit"><div>
     <input class="submit" type="submit" name="save" value="'.$savecaption.'"/>
-    </td></tr></table>
+    </div></div>
     <input type="hidden" name="id" value="'.$id.'"/>
     <input type="hidden" name="status" value="'.$_POST["status"].'"/>
-    <input type="hidden" name="expand" value="0"/>
 ';
 
 ?>
