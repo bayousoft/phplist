@@ -69,6 +69,8 @@ if (is_file($configfile) && filesize($configfile) > 20) {
   exit;
 }
 
+$ajax = isset($_GET['ajaxed']);
+
 if (!isset($database_host) || !isset($database_user) || !isset($database_password) || !isset($database_name)) {
  # print $GLOBALS['I18N']->get('Database details incomplete, please check your config file');
   print 'Database details incomplete, please check your config file';
@@ -112,7 +114,9 @@ if (Sql_Table_exists($tables["config"],1)) {
   }
 }
 
-include_once dirname(__FILE__).'/'.$GLOBALS['design'].'pagetop.php';
+if (!$ajax) {
+  include_once dirname(__FILE__).'/'.$GLOBALS['design'].'pagetop.php';
+}
 
 if ($GLOBALS["commandline"]) {
   if (!isset($_SERVER["USER"]) && sizeof($GLOBALS["commandline_users"])) {
@@ -173,9 +177,6 @@ if (!$GLOBALS["admin_auth_module"]) {
 $page_title = NAME;
 @include_once dirname(__FILE__)."/lan/".$_SESSION['adminlanguage']['iso']."/pagetitles.php";
 
-if (is_file($GLOBALS['design'].'js/select_style.js')) {
-  print '<script language="javascript" type="text/javascript" src="js/select_style.js"></script>';
-}
 // These two meta tags are included on page-top.php
 // print '<meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />';           // HTTP/1.1
 // print '<meta http-equiv="Pragma" content="no-cache" />';           // HTTP/1.1
@@ -267,8 +268,33 @@ if (isset($GLOBALS["require_login"]) && $GLOBALS["require_login"]) {
   }
 }
 
+if (LANGUAGE_SWITCH && empty($logoutontop) && !$ajax) {
+    $languageswitcher = '
+ <div id="languageswitcher">
+       <form name="languageswitchform" method="post" action="">';
+    $languageswitcher .= '
+           <select name="setlanguage" onchange="document.languageswitchform.submit()">';
+    $lancount = 0;
+    foreach ($GLOBALS['LANGUAGES'] as $iso => $rec) {
+      if (is_dir(dirname(__FILE__).'/lan/'.$iso)) {
+        $languageswitcher .= sprintf('
+                 <option value="%s" %s>%s</option>',$iso,$_SESSION['adminlanguage']['iso'] == $iso ? 'selected="selected"':'',$rec[0]);
+        $lancount++;
+      }
+    }
+    $languageswitcher .= '
+            </select>
+       </form>
+ </div>';
+    if ($lancount <= 1) {
+      $languageswitcher = '';
+    }
+}
+
 $include = '';
-include $GLOBALS['design']."header.inc";
+if (!$ajax) {
+  include $GLOBALS['design']."header.inc";
+}
 if ($page != '' && $page != 'install') {
   if ($IsCommandlinePlugin) {
     $include =  'plugins/' . $GLOBALS["commandlinePlugins"][$page];
@@ -282,7 +308,9 @@ if ($page != '' && $page != 'install') {
   $include = "home.php";
 }
 
-print '<h4>'.NAME.' - '.strtolower($page_title).'</h4>';
+if (!$ajax) {
+  print '<h4 class="pagetitle">'.NAME.' - '.strtolower($page_title).'</h4>';
+}
 
 if ($GLOBALS["require_login"] && $page != "login") {
   if ($page == 'logout') {
@@ -298,35 +326,12 @@ if ($GLOBALS["require_login"] && $page != "login") {
     }
   }
 
-  if ($page != "logout" && empty($logoutontop)) {
+  if ($page != "logout" && empty($logoutontop) && !$ajax) {
     print '<div align="right">'.PageLink2("logout",$GLOBALS['I18N']->get('logout')).'</div>';
   }
 }
 
-if (LANGUAGE_SWITCH && empty($logoutontop)) {
-    $ls = '
- <div align="right" id="languageswitch">
-       <form name="languageswitchform" method="post" action="">';
-    $ls .= '
-           <select name="setlanguage" onchange="document.languageswitchform.submit()">';
-    $lancount = 0;
-    foreach ($GLOBALS['LANGUAGES'] as $iso => $rec) {
-      if (is_dir(dirname(__FILE__).'/lan/'.$iso)) {
-        $ls .= sprintf('
-                 <option value="%s" %s>%s</option>',$iso,$_SESSION['adminlanguage']['iso'] == $iso ? 'selected="selected"':'',$rec[0]);
-        $lancount++;
-      }
-    }
-    $ls .= '
-            </select>
-       </form>
- </div>';
-    if ($lancount > 1) {
-      print $ls;
-    }
-  }
-
-if ($page != "login") {
+if (!$ajax && $page != "login") {
   if (ereg("dev",VERSION) && !TEST) {
     if ($GLOBALS["developer_email"]) {
       Info("Running DEV version. All emails will be sent to ".$GLOBALS["developer_email"]);
@@ -481,7 +486,7 @@ if (ereg("dev",VERSION)) {
 #  print '-->';
 }
 
-if (isset($GLOBALS["commandline"]) && $GLOBALS["commandline"]) {
+if ($ajax || (isset($GLOBALS["commandline"]) && $GLOBALS["commandline"])) {
   @ob_clean();
   exit;
 } elseif (!isset($_GET["omitall"])) {
