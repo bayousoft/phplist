@@ -3,12 +3,13 @@
 # configuration to make PHPlist work via AdoDB
 # which will make it work with any database supported by AdoDB
 
-require_once dirname(__FILE__).'/../config/site.php';
+if (is_file($adodb_inc_file)) {
+  require_once $adodb_inc_file;
+} 
 
-if (is_readable($site['adodb_inc_file'])) {
-  require_once $site['adodb_inc_file'];
-} else {
-  print("ADOdb specified, but inc file cannot be found");
+if (!function_exists('ADONewConnection')) {
+  print 'Error, AdoDB specified but not available';
+  exit;
 }
 
 $GLOBALS['adodb_connection'] = ADONewConnection($site['adodb_driver']);
