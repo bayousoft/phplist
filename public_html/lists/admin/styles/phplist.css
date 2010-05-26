@@ -289,3 +289,11 @@ html>body #maincontent_install div { float:left; padding:1em; clear:both;}
 #languageswitcher {
   float: right;
 }
+
+#remoteurlsjtatus {
+  float: right;
+}
+
+#addtoqueue {
+  float: right;
+}
