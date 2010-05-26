@@ -34,9 +34,6 @@ $GLOBALS['bounceruleactions'] = array(
   'deletebounce' => $GLOBALS['I18N']->get('delete bounce'),
 );
 
-# check whether Pear HTTP/Request is available
-@include_once "HTTP/Request.php";
-$GLOBALS['has_pear_http_request'] = class_exists('HTTP_Request');
 if( !isset($GLOBALS["developer_email"]) ) {
   ini_set('error_append_string','phplist version '.VERSION);
   ini_set('error_prepend_string','<p class="error">Sorry a software error occurred:<br/>
@@ -82,25 +79,47 @@ function loadMessageData($msgid) {
     'from' => '',
     'subject' => '',
     'forwardsubject' => '',
-    'footer' => '',
-    'forwardfooter' => '',
+    'footer' => getConfig("messagefooter"),
+    'forwardfooter' => getConfig("forwardfooter"),
     'status' => '',
     'tofield' => '',
     'replyto' => '',
     'targetlist' => '',
     'criteria_match' => '',
+    'sendurl' => '',
+    'sendmethod' => 'remoteurl', ## make a config
+    'testtarget' => '',
   );
   $msgdata_req = Sql_Query(sprintf('select * from %s where id = %d',
     $GLOBALS['tables']['messagedata'],$msgid));
   while ($row = Sql_Fetch_Array($msgdata_req)) {
     if (strpos($row['data'],'SER:') === 0) {
       $data = substr($row['data'],4);
-      $data = unserialize(stripslashes($data));
+      $data = @unserialize(stripslashes($data));
     } else {
       $data = stripslashes($row['data']);
     }
     $messagedata[stripslashes($row['name'])] = $data;
   }
+  // Load lists that were targetted with message...
+  $result = Sql_Query(sprintf('select list.name,list.id 
+    from '.$GLOBALS['tables']['listmessage'].' listmessage,'.$GLOBALS['tables']['list'].' list
+     where listmessage.messageid = %d and listmessage.listid = list.id',$msgid));
+  while ($lst = Sql_fetch_array($result)) {
+    $messagedata["targetlist"][$lst["id"]] = 1;
+  }
+  
+  ## backwards, check that the content has a url and use it to fill the sendurl
+  if (empty($messagedata['sendurl'])) {
+    if (preg_match('/\[URL:(.*)\]/iU',$messagedata['message'],$regs)) {
+      $messagedata['sendurl'] = $regs[1];
+    }
+  }
+  if (empty($messagedata['sendurl']) && !empty($messagedata['message'])) {
+    # if there's a message and no url, make sure to show the editor, and not the URL input
+    $messagedata['sendmethod'] = 'inputhere';
+  }
+
   $GLOBALS['MD'][$msgid] = $messagedata;
 #  print_r($messagedata);
   return $messagedata;
@@ -642,6 +661,12 @@ function fetchStyles($text) {
 }
 
 */
+
+/* verify that a redirection is to ourselves */
+function isValidRedirect($url) {
+  ## we might want to add some more checks here
+  return strpos($url,$_SERVER['HTTP_HOST']);
+}
 
 function fetchUrl($url,$userdata = array()) {
   require_once "HTTP/Request.php";
