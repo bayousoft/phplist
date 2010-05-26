@@ -390,6 +390,13 @@ if (empty($_GET['pi'])) {
 #  print "Not a file: "."info/".$adminlanguage["info"]."/$include";
 }
 
+if (!empty($_GET['action']) && $_GET['page'] != 'pageaction') {
+  $action = basename($_GET['action']);
+  if (is_file(dirname(__FILE__).'/actions/'.$action.'.php')) {
+    include dirname(__FILE__).'/actions/'.$action.'.php';
+    print '<div id="actionresult">'.$status.'</div>';
+  }
+}
 
 /*
 if (USEFCK) {
