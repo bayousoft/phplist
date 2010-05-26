@@ -98,6 +98,7 @@ if (checkAccess("users")) {
 if ($some) {
   print '<h3><a name="main">'.$GLOBALS['I18N']->get('Main').'</a></h3>';
   $ls->noShader();
+  $ls->noHeader();
   print '<div>'. $ls->display() .'</div>';
 }
 
@@ -136,6 +137,7 @@ if (checkAccess("export") && !$_GET["pi"]) {
 if ($some) {
   print '<h3><a name="list">'.$GLOBALS['I18N']->get('List and user functions').'</a></h3>';
   $ls->noShader();
+  $ls->noHeader();
   print '<div>'. $ls->display() .'</div>';
 }
 $some = 0;
@@ -171,6 +173,7 @@ if (checkAccess("spage")) {
 if ($some) {
   print '<h3><a name="config">'.$GLOBALS['I18N']->get('Configuration Functions').'</a></h3>';
   $ls->noShader();
+  $ls->noHeader();
   print '<div>'. $ls->display() .'</div>';
 }
 
@@ -191,6 +194,7 @@ if (checkAccess("adminattributes")) {
 if ($some) {
   print '<h3><a name="admin">'.$GLOBALS['I18N']->get('Administrator Functions').'</a></h3>';
   $ls->noShader();
+  $ls->noHeader();
   print '<div>'. $ls->display() .'</div>';
 }
 
@@ -252,6 +256,7 @@ if (checkAccess("bounces")) {
 if ($some) {
   print '<h3><a name="msg">'.$GLOBALS['I18N']->get('Message Functions').'</a></h3>';
   $ls->noShader();
+  $ls->noHeader();
   print '<div>'. $ls->display() .'</div>';
 }
 
@@ -298,6 +303,7 @@ if (sizeof($GLOBALS["plugins"])) {
 if ($some) {
   print '<h3><a name="plugins">'.$GLOBALS['I18N']->get('Plugins').'</a></h3>';
   $ls->noShader();
+  $ls->noHeader();
   print '<div>'. $ls->display() .'</div>';
 }
 
@@ -337,6 +343,7 @@ if (checkAccess("admin") && $GLOBALS["require_login"] && !isSuperUser()) {
 if ($some) {
   print '<h3><a name="system">'.$GLOBALS['I18N']->get('System Functions').'</a></h3>';
   $ls->noShader();
+  $ls->noHeader();
   print '<div>'. $ls->display() .'</div>';
 }
 
