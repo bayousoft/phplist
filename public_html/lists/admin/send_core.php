@@ -34,41 +34,26 @@ $embargo = new date("embargo");
 $embargo->useTime = true;
 $repeatuntil = new date("repeatuntil");
 $repeatuntil->useTime = true;
-if (empty($_GET['id'])) {
-  $_GET['id'] = '';
-}
-$baseurl = PageURL2($_GET["page"].'&amp;id='.$_GET["id"]);
 
-echo '<script language="Javascript" src="js/jslib.js" type="text/javascript"></script><hr/>';
-
-// load some variables in a register globals-safe fashion
-if (isset($_POST['send'])) {
-  $send = $_POST["send"]; // Only get this from the POST variable (not session or anywhere else)
-} else {
-  $send = '';
-}
-if (isset($_POST['prepare'])) {
-  $prepare = $_POST["prepare"];
-} else {
-  $prepare = '';
-}
+### variable initialisation and sanity checks
 if (isset($_GET['id'])) {
-  $id = sprintf('%d',$_GET["id"]);  // Only get this from the GET variable
+  $id = sprintf('%d',$_GET['id']);
 } else {
   $id = 0;
 }
-if (isset($_POST['save'])) {
-  $save = !empty($_POST["save"]); // Save button pressed?
-} else {
-  $save = '';
-}
-if (isset($_POST['sendtest'])) {
-  $sendtest = !empty($_POST["sendtest"]);
-} else {
-  $sendtest = '';
-}
-if (!isset($_GET['tab'])) $_GET['tab'] = '';
+## page actions
+$send = isset($_POST["send"]);
+$prepare = isset($_POST['prepare']);
+$save = !empty($_POST["save"]) || !empty($_POST['followupto']);
+$sendtest = !empty($_POST["sendtest"]);
+$baseurl = PageURL2($_GET["page"].'&amp;id='.$id);
 
+if (!isset($_GET['tab'])) $_GET['tab'] = '';
+if (!empty($_GET['tab'])) {
+  $baseurl .= '&tab='.$_GET['tab'];
+}
+
+### if we're not working on an existing message, create one and redirect to edit it
 if (!$id) {
   $defaulttemplate = getConfig('defaultmessagetemplate');
   $query
@@ -82,25 +67,27 @@ if (!$id) {
   Sql_Query_Params($query, array($_SESSION['logindetails']['id'], $defaulttemplate));
   $id = Sql_Insert_Id($GLOBALS['tables']['message'], 'id');
   # 0008720: Using -p send from the commandline doesn't seem to work '
-  if(!$GLOBALS["commandline"]){
+  if(!$GLOBALS["commandline"]) {
     Redirect($_GET["page"].'&id='.$id);
     exit;
   }
 }
 
+# load all message data
+$messagedata = loadMessageData($id);
+//var_dump($messagedata);exit;
+
 if (isset($_GET['deleterule']) && $_GET["deleterule"]) {
-  Sql_Query(sprintf('delete from %s where name = "criterion%d" and id = %d',$GLOBALS["tables"]["messagedata"],$_GET["deleterule"],$_GET["id"]));
+  Sql_Query(sprintf('delete from %s where name = "criterion%d" and id = %d',$GLOBALS["tables"]["messagedata"],$_GET["deleterule"],$id));
   Redirect($_GET["page"].'&id='.$id.'&tab='.$_GET["tab"]);
 }
 ob_end_flush();
 
 #load database data###########################
 
-// If we were passed an ID in the get, and we *weren't* posted a send, then
-// initialize the variables from the database.
-#if (((!$send) && (!$save) && (!$sendtest)) && ($id)) {
 if ($id) {
   // Load message attributes / values
+  print '<div id="addtoqueue"><input class="submit" type="submit" name="send" id="addtoqueuebutton" value="'.$GLOBALS['I18N']->get('sendmessage').'" /></div>';
 
   require dirname(__FILE__)."/structure.php";  // This gets the database structures into DBStruct
 
@@ -110,198 +97,81 @@ if ($id) {
     $done = 1;
     return;
   }
-  while ($msg = Sql_fetch_array($result)) {
-    foreach ($DBstruct["message"] as $field => $rec) {
-      if (!isset($_POST[$field])) {
-  #      print "Db: $field = $msg[$field]<br/>";
-        $_POST[$field] = $msg[$field];
+  ## remember any data entered
+  foreach ($_POST as $key => $val) {
+  #  print $key;
+    setMessageData($id,$key,$val);
+    if (get_magic_quotes_gpc()) {
+      if (is_string($val)) {
+        $messagedata[$key] = stripslashes($val);
+      } else {
+        $messagedata[$key] = $val;
       }
+    } else {
+      $messagedata[$key] = $val;
     }
   }
-  if (!isset($_POST['targetlist']) || !is_array($_POST["targetlist"])) {
-    $_POST["targetlist"] = array();
-    // Load lists that were targetted with message...
-    $result = Sql_Query("select $tables[list].name,$tables[list].id from $tables[listmessage],$tables[list] where $tables[listmessage].messageid = $id and $tables[listmessage].listid = $tables[list].id");
-    while ($lst = Sql_fetch_array($result)) {
-      $_POST["targetlist"][$lst["id"]] = 1;
-    }
+  if ((isset($_POST["embargo"]['year']) && is_array($_POST["embargo"]))) {
+    $messagedata["embargo"] = $embargo->getDate() ." ".$embargo->getTime().':00';
   }
 
-  // A bit of additional cleanup
-  if (!isset($_POST["from"]))
-    $_POST["from"] = $_POST["fromfield"];  // Database field name doesn't match form fieldname...
-
-  if (!isset($_POST["forwardsubject"])) {
-     $_POST["forwardsubject"] = "";
-  }
-  else $_POST["forwardsubject"] = sprintf("%s", $_POST["forwardsubject"]);
-
-  if (!isset($_POST["forwardmessage"])) {
-     $_POST["forwardmessage"] = "";
-  }
-  else $_POST["forwardmessage"] = sprintf("%s", $_POST["forwardmessage"]);
-  if (!isset($_POST['sendurl'])) {
-    $_POST['sendurl'] = '';
-  }
-
-  if (!isset($_POST["forwardfooter"])) {
-     $_POST["forwardfooter"] = "";
-  }
-  else $_POST["forwardfooter"] = sprintf("%s", $_POST["forwardfooter"]);
-
-  if (!isset($_POST["msgsubject"])) {
-    $_POST["msgsubject"] = sprintf("%s",$_POST["subject"]);
-  } else {
-    $_POST['subject'] = sprintf("%s",$_POST['msgsubject']);
-  }
-  if ((!isset($_POST["year"]) || !is_array($_POST["year"])) && $_POST["embargo"] && $_POST["embargo"] != "0000-00-00 00:00:00") {
-     $embargo->setDateTime($_POST["embargo"]);
-  }
-  if ((!isset($_POST["year"]) || !is_array($_POST["year"])) && $_POST["repeatuntil"] && $_POST["repeatuntil"] != "0000-00-00 00:00:00") {
-    $repeatuntil->setDateTime($_POST["repeatuntil"]);
-  }
-
-  # not sure why this is here, but it breaks things when tables are used in the
-  # message, so for now disable it.
-  if (0) {#$usefck) {
-    $_POST["message"] = nl2br($_POST["message"]);
-  }
-
-  // Load the criteria settings...
-}
-
-// If we've got magic quotes on, then we need to get rid of the slashes - either
-// from the database or from the previous $_POST
-#if (get_magic_quotes_gpc()) {
-  $_POST["msgsubject"] = stripslashes($_POST["msgsubject"]);
-  #0013076: different content when forwarding 'to a friend'
-  $_POST["forwardsubject"] = isset($_POST["forwardsubject"])  ? stripslashes($_POST["forwardsubject"]):'';
-  $_POST["from"] = stripslashes($_POST["from"]);
-  $_POST["tofield"] = stripslashes($_POST["tofield"]);
-  $_POST["replyto"] = stripslashes($_POST["replyto"]);
-  $_POST['sendurl'] = stripslashes($_POST['sendurl']);
-  $_POST["message"] = stripslashes($_POST["message"]);
-  #0013076: different content when forwarding 'to a friend'
-  $_POST["forwardmessage"] = isset($_POST["forwardmessage"]) ? stripslashes($_POST["forwardmessage"]):'';
-  $_POST["textmessage"] = stripslashes($_POST["textmessage"]);
-  $_POST["footer"] = stripslashes($_POST["footer"]);
-  #0013076: different content when forwarding 'to a friend'
-  $_POST["forwardfooter"] = isset($_POST["forwardfooter"]) ? stripslashes($_POST["forwardfooter"]):'';
-#}
-
-#input checking#######################
-$duplicate_attribute = 0;
-# check the criterias, one attribute can only exist once
-if ($send) {
-  $used_attributes = array();
-  for ($i=1;$i<=NUMCRITERIAS;$i++) {
-    if (isset($_POST["use"][$i])) {
-      $attribute = $_POST["criteria"][$i];
-      if (!in_array($attribute,$used_attributes))
-        array_push($used_attributes,$attribute);
-      else
-        $duplicate_attribute = 1;
-    }
+  if ((isset($_POST["repeatuntil"]['year']) && is_array($_POST["repeatuntil"]))) {
+    $messagedata["repeatuntil"] = $repeatuntil->getDate() ." ".$repeatuntil->getTime().':00';
   }
 }
 
-if (!isset($id)) { $id = $_POST["id"]; }; // Pull in the id value from the post if it wasnt in the get
-
-#if ($_POST["htmlformatted"] == "auto")
-  $htmlformatted = strip_tags($_POST["message"]) != $_POST["message"];
-#else
-#  $htmlformatted = $_POST["htmlformatted"];
+$htmlformatted = strip_tags($messagedata["message"]) != $messagedata["message"];
 
 # sanitise the header fields, what else do we need to check on?
-if (preg_match("/\n|\r/",$_POST["from"])) {
-  $from = "";
-} else {
-  $from = $_POST["from"];
-}
+if (preg_match("/\n|\r/",$messagedata["from"])) {
+  $messagedata["from"] = "";
+} 
+if (preg_match("/\n|\r/",$messagedata["forwardsubject"])) {
+  $messagedata["forwardsubject"] = "";
+} 
+if (preg_match("/\n|\r/",$messagedata["forwardmessage"])) {
+  $messagedata["forwardmessage"] = "";
+} 
+if (preg_match("/\n|\r/",$messagedata["forwardfooter"])) {
+  $messagedata["forwardfooter"] = "";
+} 
 
-if (preg_match("/\n|\r/",$_POST["msgsubject"])) {
-  $subject = "";
-} else {
-  $subject = $_POST["msgsubject"];
-}
-
-if (preg_match("/\n|\r/",$_POST["forwardsubject"])) {
-  $forwardsubject = "";
-} else {
-  $forwardsubject = $_POST["forwardsubject"];
-}
-
-if (preg_match("/\n|\r/",$_POST["forwardmessage"])) {
-  $forwardmessage = "";
-} else {
-  $forwardmessage = $_POST["forwardmessage"];
-}
-
-if (preg_match("/\n|\r/",$_POST["forwardfooter"])) {
-  $forwardfooter = "";
-} else {
-  $forwardfooter = $_POST["forwardfooter"];
-}
-
-if (!empty($_POST['sendurl'])) {
+if (!empty($messagedata['sendurl'])) {
   if (!$GLOBALS["has_pear_http_request"]) {
     print Warn($GLOBALS['I18N']->get('warnnopearhttprequest'));
   } else {
-    $_POST["message"] = '[URL:'.$_POST['sendurl'].']';
+    $messagedata["message"] = '[URL:'.$messagedata['sendurl'].']';
   }
-} else {
-  $message = $_POST["message"];
-}
-$sendurl = $_POST['sendurl'];
+} 
 
 // If the variable isn't filled in, then the input fields don't default to the
 // values selected.  Need to fill it in so a post will correctly display.
-if ((isset($_POST['year']) && is_array($_POST["year"])) || $_POST["embargo"] || $_POST["embargo"] == "0000-00-00 00:00:00") {
-  $_POST["embargo"] = $embargo->getDate() ." ".$embargo->getTime().':00';
-}
-
-if ((isset($_POST['year']) && is_array($_POST["year"])) || !$_POST["repeatuntil"] || $_POST["repeatuntil"] == "0000-00-00 00:00:00") {
-  $_POST["repeatuntil"] = $repeatuntil->getDate() ." ".$repeatuntil->getTime().':00';
-}
 
 if (!isset($_SESSION["fckeditor_height"])) {
   $_SESSION["fckeditor_height"] = getConfig("fckeditor_height");
-}
-if (isset($_REQUEST['prepare'])) {
-  $prepare = $_REQUEST['prepare'];
-} else {
-  $prepare = '';
 }
 
 #actions and store in database#######################
 
 if ($send || $sendtest || $prepare || $save) {
 
-  ## remember any data entered
-  foreach ($_POST as $key => $val) {
-  #  print $key;
-    setMessageData($id,$key,$val);
-  }
-#print "Save";
-
   if ($save || $sendtest) {
     // We're just saving, not sending.
-    if (!isset($_POST['status']) || $_POST["status"] == "") {
+    if (!isset($messagedata['status']) || $messagedata["status"] == "") {
       // No status - move to draft state
-      $status = "draft";
-    } else {
-      // Keep the status the same
-      $status = $_POST["status"];
-    }
+      $messagedata['status'] = "draft";
+    } 
   } elseif ($send) {
     // We're sending - change state to "send-it" status!
-    if (is_array($_POST["targetlist"]) && sizeof($_POST["targetlist"]) && $subject && $from && $message && !$duplicate_attribute) {
-      $status = "submitted";
+    if (is_array($messagedata["targetlist"]) && sizeof($messagedata["targetlist"]) 
+      && !empty($messagedata['subject']) && !empty($messagedata['from']) && 
+      !empty($messagedata['message']) && empty($duplicate_attribute)) {
+      $messagedata['status'] = "submitted";
     } else {
       if (USE_PREPARE) {
-        $status = "prepared";
+        $messagedata['status'] = "prepared";
       } else {
-        $status = "draft";
+        $messagedata['status'] = "draft";
       }
     }
   }
@@ -336,7 +206,7 @@ if ($send || $sendtest || $prepare || $save) {
     $resultMsg = $plugin->sendMessageTabSave($id,$messagedata);
   }
 
-  if (!$htmlformatted  && strip_tags($_POST["message"]) !=  $_POST["message"])
+  if (!$htmlformatted  && strip_tags($messagedata["message"]) !=  $messagedata["message"])
     $errormsg = '<span  class="error">'.$GLOBALS['I18N']->get("htmlusedwarning").'</span>';
   $query = sprintf('update %s  set '
      . '  subject = ?'
@@ -356,24 +226,27 @@ if ($send || $sendtest || $prepare || $save) {
      . ', rsstemplate = ?'         //Leftover from the preplugin era
      . ' where id = ?', $tables["message"]);
   $result = Sql_Query_Params($query, array(
-       $subject
-     , $from
-     , $_POST["tofield"]
-     , $_POST["replyto"]
-     , $_POST["embargo"]
-     , $_POST["repeatinterval"]
-     , $_POST["repeatuntil"]
-     , $_POST["message"]
-     , $_POST["textmessage"]
-     , $_POST["footer"]
-     , $status
+       $messagedata['subject']
+     , $messagedata['from']
+     , $messagedata["tofield"]
+     , $messagedata["replyto"]
+     , sprintf('%04d-%02d-%02d %02d:%02d',
+        $messagedata["embargo"]['year'],$messagedata["embargo"]['month'],$messagedata["embargo"]['day'],
+        $messagedata["embargo"]['hour'],$messagedata["embargo"]['minute'])
+     , $messagedata["repeatinterval"]
+     , sprintf('%04d-%02d-%02d %02d:%02d',
+        $messagedata["repeatuntil"]['year'],$messagedata["repeatuntil"]['month'],$messagedata["repeatuntil"]['day'],
+        $messagedata["repeatuntil"]['hour'],$messagedata["repeatuntil"]['minute'])
+     , $messagedata["message"]
+     , $messagedata["textmessage"]
+     , $messagedata["footer"]
+     , $messagedata['status']
      , $htmlformatted ? '1' : '0'
-     , $_POST["sendformat"]
-     , $_POST["template"]
-     , $_POST["rsstemplate"]          //Leftover from the preplugin era
+     , $messagedata["sendformat"]
+     , $messagedata["template"]
+     , $messagedata["rsstemplate"]          //Leftover from the preplugin era
      , $id));
 #    print $query;
-    $messageid = $id;
 #    print "Message ID: $id";
     #    exit;
     if (!$GLOBALS["has_pear_http_request"] && preg_match("/\[URL:/i",$_POST["message"])) {
@@ -381,50 +254,31 @@ if ($send || $sendtest || $prepare || $save) {
     }
 
   // More  "Insert  only"  stuff  here (no need  to change  it on  an edit!)
-  if (isset($_POST["targetlist"]) && is_array($_POST["targetlist"]))  {
-    Sql_query("delete from {$tables["listmessage"]} where messageid = $messageid");
-    if ( (isset($_POST["targetlist"]["all"]) && $_POST["targetlist"]["all"] == "on") ||
-      (isset($_POST["targetlist"]["allactive"]) && $_POST["targetlist"]["allactive"] == "on")
-      )
-    {
+  if (isset($messagedata["targetlist"]) && is_array($messagedata["targetlist"]))  {
+    Sql_query("delete from {$tables["listmessage"]} where messageid = $id");
+    if ( (isset($messagedata["targetlist"]["all"])) ||
+      (isset($messagedata["targetlist"]["allactive"]))
+      ) {
       $res = Sql_query("select * from  $tables[list] $subselect");
       while($row = Sql_fetch_array($res))  {
         $listid  =  $row["id"];
-        if ($row["active"] || $_POST["targetlist"]["all"] == "on")  {
-          $result  =  Sql_query("insert ignore into $tables[listmessage]  (messageid,listid,entered) values($messageid,$listid,current_timestamp)");
+        if ($row["active"] || $messagedata["targetlist"]["all"] == "on")  {
+          $result  =  Sql_query("insert ignore into $tables[listmessage]  (messageid,listid,entered) values($id,$listid,current_timestamp)");
         }
       }
     } else {
-      foreach($_POST["targetlist"] as $listid => $val) {
+      foreach($messagedata["targetlist"] as $listid => $val) {
         $query
         = ' insert into ' . $tables['listmessage']
         . '    (messageid,listid,entered)'
         . ' values'
         . '    (?, ?, current_timestamp)';
-        $result = Sql_Query_Params($query, array($messageid, $listid));
+        $result = Sql_Query_Params($query, array($id, $listid));
       }
     }
   } else {
     #  mark this  message  as listmessage for list  0
-    $result  =  Sql_query("insert ignore into $tables[listmessage]  (messageid,listid,entered) values($messageid,0,current_timestamp)");
-  }
-  if (USE_LIST_EXCLUDE) {
-    if (isset($_POST["excludelist"]) && is_array($_POST["excludelist"])) {
-      $exclude = join(",",$_POST["excludelist"]);
-      Sql_Query(sprintf('replace into %s (name,id,data) values("excludelist",%d,"%s")',$tables["messagedata"],$messageid,$exclude));
-    } else {
-      Sql_Query(sprintf('replace into %s (name,id,data) values("excludelist",%d,"%s")',$tables["messagedata"],$messageid,0));
-    }
-  }
-
-  #0013076: different content when forwarding 'to a friend'
-  if (FORWARD_ALTERNATIVE_CONTENT && $_GET['tab'] == 'Forward') {
-    foreach( array('forwardsubject', 'forwardmessage', 'forwardfooter') as $var) {
-      if (isset($_REQUEST[$var])) {
-        Sql_Query(sprintf('replace into %s (name,id,data) values("%s",%d,"%s")',
-          $tables["messagedata"], $var, $messageid, sql_escape($_REQUEST[$var])));
-      }
-    }
+    $result  =  Sql_query("insert ignore into $tables[listmessage]  (messageid,listid,entered) values($id,0,current_timestamp)");
   }
 
 # we want to create a join on tables as follows, in order to find users who have their attributes to the values chosen
@@ -440,133 +294,38 @@ if ($send || $sendtest || $prepare || $save) {
 #  and table3.attributeid = 3 and table3.value in (4,5,6)
 #  ...
 
-  # check the criterias, create the selection query
-  $used_tables = array();
-  for ($i=1;$i<=NUMCRITERIAS;$i++) {
-    if (isset($_POST["use"][$i])) {
-      $attribute = $_POST["criteria"][$i];
-      $type = $_POST["attrtype"][$attribute];
-      switch($type) {
-        case "checkboxgroup":
-          $values = "attr$attribute$i";
-          $or_clause = '';
-          if (isset($where_clause)) {
-            $where_clause .= " and ";
-            $select_clause .= " left join $tables[user_attribute] as table$i on table$first.userid = table$i.userid ";
-          } else {
-            $select_clause = "table$i.userid from $tables[user_attribute] as table$i ";
-            $first = $i;
-          }
-
-          $where_clause .= "table$i.attributeid = $attribute and (";
-          if (is_array($_POST[$values])) {
-            foreach ($_POST[$values] as $val) {
-              if ($or_clause != '') {
-                $or_clause .= " or ";
-              }
-              $or_clause .= "find_in_set('$val',table$i.value) > 0";
-            }
-          }
-          $where_clause .= $or_clause . ")";
-          break;
-        case "checkbox":
-          $values = "attr$attribute$i";
-          $value = $_POST[$values][0];
-
-          if (isset($where_clause)) {
-            $where_clause .= " and ";
-            $select_clause .= " left join $tables[user_attribute] as table$i on table$first.userid = table$i.userid ";
-          } else {
-            $select_clause = "table$i.userid from $tables[user_attribute] as table$i ";
-            $first = $i;
-          }
-
-          $where_clause .= "table$i.attributeid = $attribute and ";
-          if ($value) {
-            $where_clause .= "( length(table$i.value) and table$i.value != \"off\" and table$i.value != \"0\") ";
-          } else {
-            $where_clause .= "( table$i.value = \"\" or table$i.value = \"0\" or table$i.value = \"off\") ";
-          }
-          break;
-         default:
-          $values = "attr$attribute$i";
-          if (isset($where_clause)) {
-            $where_clause .= " and ";
-            $select_clause .= " left join $tables[user_attribute] as table$i on table$first.userid = table$i.userid ";
-          } else {
-            $select_clause = "table$i.userid from $tables[user_attribute] as table$i ";
-            $first = $i;
-          }
-
-          $where_clause .= "table$i.attributeid = $attribute and table$i.value in (";
-          $list = array();
-          if (is_array($_POST[$values])) {
-            while (list($key,$val) = each ($_POST[$values]))
-              array_push($list,$val);
-          }
-          $where_clause .= join(", ",$list) . ")";
-      }
-    }
-  }
-
-  # if no selection was made, use all
-  if (!isset($where_clause)) {
-    $count_query = "";
-#    $count_query = addslashes("select distinct userid from $tables[user_attribute]");
-  } else {
-    $count_query = addslashes("select $select_clause where $where_clause");
-    Sql_query("update $tables[message] set userselection = \"$count_query\" where id = $messageid");
-  }
- # commented, because this could take too long
- # Sql_Query($count_query);
- # $num = Sql_Affected_rows();
-
   # new criteria system, add one by one:
-  if (isset($_POST["criteria_attribute"]) && $_POST["criteria_attribute"]) {
-    $operator = $_POST["criteria_operator"];
-    if (is_array($_POST["criteria_values"])) {
-      $values = join(", ",$_POST["criteria_values"]);
+  if (!empty($_POST["criteria_attribute"])) {
+    $operator = $messagedata["criteria_operator"];
+    if (is_array($messagedata["criteria_values"])) {
+      $values = join(", ",$messagedata["criteria_values"]);
       $values = cleanCommaList($values);
     } else {
-      $values = $_POST["criteria_values"];
+      $values = $messagedata["criteria_values"];
     }
     foreach ($_POST["attribute_names"] as $key => $val) {
       $att_names[$key] = $val;
     }
     $newcriterion = array(
       "attribute" => sprintf('%d',$_POST["criteria_attribute"]),
-      "attribute_name" => $att_names[$_POST["criteria_attribute"]],
+      "attribute_name" => $att_names[$messagedata["criteria_attribute"]],
       "operator" => $operator,
       "values" => $values,
     );
     # find out what number we are
     $numarr = Sql_Fetch_Row_Query(sprintf('select data from %s where id = %d and name = "numcriteria"',
-      $tables["messagedata"],$messageid));
+      $tables["messagedata"],$id));
     $num = sprintf('%d',$numarr[0]+1);
     # store this one
 #    print $att_names[$_POST["criteria_attribute"]];
 #    print $_POST["attribute_names[".$_POST["criteria_attribute"]."]"];
     print '<p class="information">'.$GLOBALS['I18N']->get("adding")." ".$newcriterion["attribute_name"]." ".$newcriterion["operator"]." ".$newcriterion["values"]."</p>";
     Sql_Query(sprintf('insert into %s (name,id,data) values("criterion%d",%d,"%s")',
-      $tables["messagedata"],$num,$messageid,delimited($newcriterion)));
+      $tables["messagedata"],$num,$id,delimited($newcriterion)));
     # increase number
     Sql_Query(sprintf('replace into %s (name,id,data) values("numcriteria",%d,"%s")',
-      $tables["messagedata"],$messageid,$num));
-    # save overall operator
+      $tables["messagedata"],$id,$num));
   }
-  if (isset($_POST["criteria_match"])) {
-    Sql_Query(sprintf('replace into %s (name,id,data) values("criteria_overall_operator",%d,"%s")',
-      $tables["messagedata"],$messageid,$_POST["criteria_match"]));
-  }
-  if (isset($_POST['notify_start']) && $_POST['notify_start']) {
-    Sql_Query(sprintf('replace into %s set name = "notify_start",id = %d,data = "%s"',
-      $GLOBALS['tables']['messagedata'],$id,$_POST['notify_start']));
-  }
-  if (isset($_POST['notify_end']) && $_POST['notify_end']) {
-    Sql_Query(sprintf('replace into %s set name = "notify_end",id = %d,data = "%s"',
-      $GLOBALS['tables']['messagedata'],$id,$_POST['notify_end']));
-  }
-
 
   if (ALLOW_ATTACHMENTS && isset($_FILES) && is_array($_FILES) && sizeof($_FILES) > 0) {
     for ($att_cnt = 1;$att_cnt <= NUMATTACHMENTS;$att_cnt++) {
@@ -606,9 +365,9 @@ if ($send || $sendtest || $prepare || $save) {
           $tables["attachment"],
           basename($newfile),$remotename,$type,$description,$file_size)
           );
-          $attachmentid = Sql_Insert_Id($tables['attachement'], 'id');
+          $attachmentid = Sql_Insert_Id($tables['attachment'], 'id');
           Sql_query(sprintf('insert into %s (messageid,attachmentid) values(%d,%d)',
-          $tables["message_attachment"],$messageid,$attachmentid));
+          $tables["message_attachment"],$id,$attachmentid));
           if (is_file($tmpfile)) {
             unlink($tmpfile);
           }
@@ -629,21 +388,26 @@ if ($send || $sendtest || $prepare || $save) {
         );
         $attachmentid = Sql_Insert_Id($tables['attachment'], 'id');
         Sql_query(sprintf('insert into %s (messageid,attachmentid) values(%d,%d)',
-        $tables["message_attachment"],$messageid,$attachmentid));
+        $tables["message_attachment"],$id,$attachmentid));
         print Info($GLOBALS['I18N']->get("addingattachment")." ".$att_cnt. " mime: $type");
       }
     }
   }
+  
+  ## when followupto is set, go there
+  if (!empty($_POST['followupto']) && isValidRedirect($_POST['followupto'])) {
+    Header('Location: '.$_POST['followupto']);
+    exit;
+  } 
 
-  if (!empty($_POST["id"])) {
+  if (!empty($id)) {
     print "<h3>".$GLOBALS['I18N']->get("saved")."</H3><br/>";
   } else {
-    $id = $messageid; // New ID - need to set it for later use (test email).
+#    $id = $messageid; // New ID - need to set it for later use (test email).
     print "<h3>".$GLOBALS['I18N']->get("added")."</H3><br/>";
   }
 
   // If we're sending the message, just return now to the calling script
-
   # we only need to check that everything is there, once we actually want to send
   if ($send && $subject && $from && $message && !$duplicate_atribute && sizeof($_POST["targetlist"])) {
     if ($status == "submitted") {
@@ -654,17 +418,17 @@ if ($send || $sendtest || $prepare || $save) {
     return;
   } elseif ($send || $sendtest) {
     $errormessage = "";
-    if ($subject != stripslashes($_POST["subject"])) {
+    if ($messagedata['subject'] != stripslashes($_POST["subject"])) {
       $errormessage = $GLOBALS['I18N']->get("errorsubject");
-    } elseif ($from != $_POST["from"]) {
+    } elseif ($messagedata['from'] != $_POST["from"]) {
       $errormessage = $GLOBALS['I18N']->get("errorfrom");
-    } elseif (!$from) {
+    } elseif (empty($messagedata['from'])) {
       $errormessage = $GLOBALS['I18N']->get("enterfrom");
-    } elseif (!$message) {
+    } elseif (empty($messagedata['message'])) {
       $errormessage = $GLOBALS['I18N']->get("entermessage");
-    } elseif (!$subject) {
+    } elseif (empty($messagedata['subject'])) {
       $errormessage = $GLOBALS['I18N']->get("entersubject");
-    } elseif ($duplicate_attribute) {
+    } elseif (!empty($duplicate_attribute)) {
       $errormessage = $GLOBALS['I18N']->get("duplicateattribute");
     } elseif ($send && !is_array($_POST["targetlist"])) {
       $errormessage = $GLOBALS['I18N']->get("selectlist");
@@ -677,7 +441,7 @@ if ($send || $sendtest || $prepare || $save) {
 
     echo "<HR>";
     // Let's send test messages to everyone that was specified in the
-    if ($_POST["testtarget"] == "") {
+    if ($messagedata["testtarget"] == "") {
       print $GLOBALS['I18N']->get("notargetemail")."<br/>";
     }
 
@@ -722,7 +486,8 @@ if ($send || $sendtest || $prepare || $save) {
         print '<br/>';
       } else {
         print $GLOBALS['I18N']->get("emailnotfound").": $address<br/>";
-        print addEmailLink($address);
+        printf('<div><a href="%s&action=addemail&email='.$address.'" class="ajaxable">%s</a></div>',$baseurl,$GLOBALS['I18N']->get("add"));
+#        print addEmailLink($address);
       }
     }
     echo "<hr/>";
@@ -733,7 +498,7 @@ if ($send || $sendtest || $prepare || $save) {
     $deleteattachments = $_POST["deleteattachments"];
     foreach($deleteattachments as $attid)
     {
-      $result = Sql_Query(sprintf("Delete from %s where id = %d and messageid = %d",
+      $result = Sql_Query(sprintf("delete from %s where id = %d and messageid = %d",
         $tables["message_attachment"],
         $attid,
         $id));
@@ -748,22 +513,6 @@ if ($send || $sendtest || $prepare || $save) {
   }
 }
 
-# load all message data
-$messagedata = loadMessageData($id);
-
-#0013076: different content when forwarding 'to a friend'
-if (FORWARD_ALTERNATIVE_CONTENT) {
-  foreach( array('forwardsubject', 'forwardmessage', 'forwardfooter') as $var) {
-  	if (isset($_REQUEST[$var])) {
-      ${$var} = stripslashes($_REQUEST[$var]);
-    } else {
-      ${$var} = stripslashes($messagedata[$var]);
-    }
-  }
-  if (!$forwardfooter)
-    $forwardfooter = getConfig("forwardfooter");
-}
-
 ##############################
 # Stacked attributes, processing and calculation
 ##############################
@@ -775,7 +524,6 @@ $num = sprintf('%d',isset($messagedata['numcriteria']) ? $messagedata['numcriter
   #  print '<br/>'.$num . " criteria already defined";
 $ls = new WebblerListing($GLOBALS['I18N']->get("existingcriteria"));
 $used_attributes = array();
-$delete_base = sprintf('%s&amp;id=%d&amp;tab=%s',$_GET["page"],$_GET["id"],$_GET["tab"]);
 $tc = 0; # table counter
 if (!isset($messagedata['criteria_overall_operator'])) {
   $messagedata['criteria_overall_operator'] = '';
@@ -785,23 +533,27 @@ $mainoperator = $messagedata['criteria_overall_operator'] == "all"? ' and ':' or
 $subqueries = array();
 
 for ($i = 1; $i<=$num;$i++) {
-  $crit_data = parseDelimitedData($messagedata[sprintf('criterion%d',$i)]);
-  if ($crit_data["attribute"]) {
+  if (isset($messagedata[sprintf('criterion%d',$i)])) {
+    $crit_data = parseDelimitedData($messagedata[sprintf('criterion%d',$i)]);
+  } else {
+    $crit_data = array();
+  }
+  if (!empty($crit_data["attribute"])) {
     array_push($used_attributes,$crit_data["attribute"]);
+  
     $ls->addElement('<!--'.$crit_data["attribute"].'-->'.$crit_data["attribute_name"]);
     $ls->addColumn('<!--'.$crit_data["attribute"].'-->'.$crit_data["attribute_name"],$GLOBALS['I18N']->get('operator'),$GLOBALS['I18N']->get($crit_data["operator"]));
-    $ls->addColumn('<!--'.$crit_data["attribute"].'-->'.$crit_data["attribute_name"],$GLOBALS['I18N']->get('values'),$crit_data["values"]);
-    $ls->addColumn('<!--'.$crit_data["attribute"].'-->'.$crit_data["attribute_name"],$GLOBALS['I18N']->get('remove'),PageLink2($delete_base.'&amp;deleterule='.$i,$GLOBALS['I18N']->get("remove")));
-    if (isset($_POST["criteria"][$i])) {
-      $attribute = $_POST["criteria"][$i];
+    if (isset($messagedata["criteria"][$i])) {
+      $attribute = $messagedata["criteria"][$i];
     } else {
       $attribute = '';
     }
     ## fix 6063
-    $crit_data["values"] = str_replace(" ", "",$crit_data["values"]);
+    $crit_data["values"] = cleanCommaList($crit_data["values"]);
+    $crit_data['displayvalues'] = $crit_data['values'];
 
     # hmm, rather get is some other way, this is a bit unnecessary
-    $type = Sql_Fetch_Row_Query("select type from {$tables["attribute"]} where id = ".$crit_data["attribute"]);
+    $type = Sql_Fetch_Row_Query("select type,tablename from {$tables["attribute"]} where id = ".$crit_data["attribute"]);
     $operator = $where_clause = $select_clause = "";
     switch($type[0]) {
       case "checkboxgroup":
@@ -830,6 +582,13 @@ for ($i = 1; $i<=$num;$i++) {
         $where_clause .= $or_clause . ") ) ";
         $subqueries[$i]['query'] = sprintf('select userid from %s as table%d where attributeid = %d
           and %s',$GLOBALS['tables']['user_attribute'],$tc,$crit_data['attribute'],$or_clause);
+
+        $crit_data['displayvalues'] = '';
+        $values_req = Sql_Query(sprintf('select * from %slistattr_%s where id in (%s) order by listorder,name',$GLOBALS['table_prefix'],$type[1],$crit_data['values']));
+        while ($val = Sql_Fetch_Array($values_req)) {
+          $crit_data['displayvalues'] .= $val['name'].', ';
+        }
+          
         break;
       case "checkbox":
         $value = $crit_data["values"][0];
@@ -910,8 +669,15 @@ for ($i = 1; $i<=$num;$i++) {
           $crit_data["operator"] == "isnot" ? 'not' :'',
           $crit_data["values"]);
 
+        $crit_data['displayvalues'] = '';
+        $values_req = Sql_Query(sprintf('select * from %slistattr_%s where id in (%s) order by listorder,name',$GLOBALS['table_prefix'],$type[1],$crit_data['values']));
+        while ($val = Sql_Fetch_Array($values_req)) {
+          $crit_data['displayvalues'] .= $val['name'].', ';
+        }
     }
     $tc++;
+    $ls->addColumn('<!--'.$crit_data["attribute"].'-->'.$crit_data["attribute_name"],$GLOBALS['I18N']->get('values'),$crit_data["displayvalues"]);
+    $ls->addColumn('<!--'.$crit_data["attribute"].'-->'.$crit_data["attribute_name"],$GLOBALS['I18N']->get('remove'),PageLinkAjax($baseurl.'&amp;action=deleterule&deleterule='.$i,$GLOBALS['I18N']->get("remove")));
   }
 }
 $existing_criteria = '';
@@ -949,9 +715,9 @@ if (sizeof($subqueries)) {
     printf('.. '.$GLOBALS['I18N']->get('%d users apply'),$num_users).'</p>';
   }
 
-  if ($messageid) {
+  if ($id) {
     Sql_query(sprintf('update %s set userselection = "%s" where id = %d',
-      $tables["message"],addslashes($count_query),$messageid));
+      $tables["message"],addslashes($count_query),$id));
   }
 
   if (!isset($_GET['calculate'])) {
@@ -961,9 +727,9 @@ if (sizeof($subqueries)) {
   }
   $existing_criteria = $ls->display();
 } else {
-  if ($messageid) {
+  if ($id) {
     Sql_query(sprintf('update %s set userselection = "" where id = %d',
-      $tables["message"],$messageid));
+      $tables["message"],$id));
   }
 }
 
@@ -974,17 +740,6 @@ if (sizeof($subqueries)) {
 # Stacked attributes, end
 ##############################
 
-
-// Pull in $footer variable from post
-if (isset($_POST["footer"]))
-  $footer = $_POST["footer"];
-
-// If $id wasn't passed in (if it was passed, then $_POST should have
-// the database value in it already, and if it's empty, then we should
-// leave it empty) and $footer is blank, load the default.
-if (!$footer)
-  $footer = getConfig("messagefooter");
-
 echo $errormsg;
 if (!$done) {
   if (ALLOW_ATTACHMENTS) {
@@ -993,8 +748,8 @@ if (!$done) {
     $enctype = '';
   }
 
-  #$baseurl = sprintf('./?page=%s&amp;id=%d',$_GET["page"],$_GET["id"]);
-  if ($_GET["id"]) {
+  #$baseurl = sprintf('./?page=%s&amp;id=%d',$_GET["page"],$id);
+  if ($id) {
     $tabs = new WebblerTabs();
     $tabs->addTab($GLOBALS['I18N']->get("Content"),$baseurl.'&amp;tab=Content');
     if (FORWARD_ALTERNATIVE_CONTENT) {
@@ -1019,9 +774,9 @@ if (!$done) {
       $tabs->setCurrent($GLOBALS['I18N']->get("Content"));
     }
     if (defined("WARN_SAVECHANGES")) {
-      $tabs->addLinkCode(' onclick="return savechanges();" ');
+      $tabs->addLinkCode(' class="savechanges" ');
     }
-  #$baseurl = sprintf('./?page=%s&amp;id=%d',$_GET["page"],$_GET["id"]);
+  #$baseurl = sprintf('./?page=%s&amp;id=%d',$_GET["page"],$id);
 
     ### allow plugins to add tabs
     $plugintabs = array();
@@ -1061,17 +816,18 @@ if (!$done) {
   print formStart($enctype . ' name="sendmessageform" class="sendSend" ');
   #print '<form method="post" enctype="multipart/form-data" name="sendmessageform" onSubmit="return checkForm()">';
   print '<input type="hidden" name="workaround_fck_bug" value="1" />';
+  print '<input type="hidden" name="followupto" value="" />';
 
   if ($_GET["page"] == "preparemessage")
     print Help("preparemessage",$GLOBALS['I18N']->get("whatisprepare"));
 
   if (!defined("IN_WEBBLER")) {
-    if (!$from && is_object($GLOBALS["admin_auth"]) && $GLOBALS['require_login']) {
+    if (empty($messagedata['from']) && is_object($GLOBALS["admin_auth"]) && $GLOBALS['require_login']) {
       $adminemail = $GLOBALS["admin_auth"]->adminEmail($_SESSION["logindetails"]["id"]);
       if ($adminemail && USE_ADMIN_DETAILS_FOR_MESSAGES) {
-        $from = $GLOBALS["admin_auth"]->adminName($_SESSION["logindetails"]["id"]).' '.$adminemail;
+        $messagedata['from'] = $GLOBALS["admin_auth"]->adminName($_SESSION["logindetails"]["id"]).' '.$adminemail;
       } else {
-        $from = getConfig("message_from_name") . ' '.getConfig("message_from_address");
+        $messagedata['from'] = getConfig("message_from_name") . ' '.getConfig("message_from_address");
       }
     }
   }
@@ -1086,50 +842,64 @@ if (!$done) {
   $maincontent = $tmp;
   $forwardcontent = $tmp;
 
-  $scheduling_content = '<div id="schedulecontent">';
 // custom code - start
-  $utf8_subject = $subject;
-  $utf8_from = $from;
+  $utf8_subject = $messagedata['subject'];
+  $utf8_from = $messagedata['from'];
   if (strcasecmp($GLOBALS['strCharSet'], 'utf-8') <> 0) {
      $utf8_subject = iconv($GLOBALS['strCharSet'],'UTF-8',$utf8_subject);
      $utf8_from = iconv($GLOBALS['strCharSet'],'UTF-8',$utf8_from);
   }
 
   $maincontent .= '
-  <div>'.Help("subject").' '.$GLOBALS['I18N']->get("Subject").':</div>
-    <div><input type=text name="msgsubject"
-    value="'.htmlentities($subject,ENT_QUOTES,'UTF-8').'" size=40></div>
-  <div>'.Help("from").' '.$GLOBALS['I18N']->get("fromline").':</div>
-    <div><input type=text name="from"
-   value="'.htmlentities($from,ENT_QUOTES,'UTF-8').'" size=40></div>';
+  <div><h3>'.Help("subject").' '.$GLOBALS['I18N']->get("Subject").':</h3></div>
+    <div><input type="text" name="subject"
+    value="'.htmlentities($utf8_subject,ENT_QUOTES,'UTF-8').'" size="60" /></div>
+  <div><h3>'.Help("from").' '.$GLOBALS['I18N']->get("fromline").':</h3></div>
+    <div><input type="text" name="from"
+   value="'.htmlentities($utf8_from,ENT_QUOTES,'UTF-8').'" size="60" /></div>';
    
    if ($GLOBALS['has_pear_http_request']) {
+      $maincontent .= sprintf('
+      
+      <div id="contentchoice">
+      <h3>'.Help("sendmethod").' '.$GLOBALS['I18N']->get("Send your message from").':</h3>
+      <input type="radio" name="sendmethod" value="remoteurl" %s />'.$GLOBALS['I18N']->get("a URL (website)").'
+      <input type="radio" name="sendmethod" value="inputhere" %s />'.$GLOBALS['I18N']->get("Enter it here").'
+      </div>',
+        $messagedata['sendmethod'] == 'remoteurl' ? 'checked="checked"':'',
+        $messagedata['sendmethod'] == 'inputhere' ? 'checked="checked"':''
+      );
+      
       $maincontent .= '
-      <div>'.Help("url").' '.$GLOBALS['I18N']->get("URL").':</div>
-        <div><input type=text name="sendurl"
-       value="'.htmlspecialchars($sendurl).'" size=40></div>';
+      <div id="remoteurl"><h3>'.Help("sendurl").' '.$GLOBALS['I18N']->get("URL").':</h3>
+        <div><input type=text name="sendurl" id="remoteurlinput"
+       value="'.$messagedata['sendurl'].'" size="60" /></div><span id="remoteurlstatus"></span></div>';
+      if (isset($messagedata['sendmethod']) && $messagedata['sendmethod'] != 'remoteurl') {
+        $maincontent .= '<script type="text/javascript">$("#remoteurl").hide();</script>';
+      }
    }
 
 // custom code - end
   #0013076: different content when forwarding 'to a friend'
   $forwardcontent .= $GLOBALS['I18N']->get("When a user forwards to a friend," .
   " the friend will receive this message instead of the one on the content tab.").
-  '<div>'.Help("subject").' '.$GLOBALS['I18N']->get("Subject").':</div>
-    <div><input type="text" name="forwardsubject" value="'.htmlentities($forwardsubject,ENT_QUOTES,'UTF-8').'" size="40"/></div>';
+  '<div><h3>'.Help("subject").' '.$GLOBALS['I18N']->get("Subject").':</h3></div>
+    <div><input type="text" name="forwardsubject" value="'.htmlentities($forwardsubject,ENT_QUOTES,'UTF-8').'" size="40" /></div>';
 
   $currentTime = Sql_Fetch_Row_Query('select now()');
 
+  $scheduling_content = '<div id="schedulecontent">';
   $scheduling_content .= '
-  <div>'.$GLOBALS['I18N']->get("Time is Based on the Server Time").
-    '<br/>'.$GLOBALS['I18N']->get('Current Server Time is').' '.$currentTime[0].'</div>
-  <div>'.Help("embargo").' '.$GLOBALS['I18N']->get("embargoeduntil").':</div>
-    <div>'.$embargo->showInput("embargo","",$_POST["embargo"]).'</div>';
+  <div><h3>'.$GLOBALS['I18N']->get("Time is Based on the Server Time").
+    '</h3><br/>'.$GLOBALS['I18N']->get('Current Server Time is').' '.$currentTime[0].'</div>
+  <div><h3>'.Help("embargo").' '.$GLOBALS['I18N']->get("embargoeduntil").':</h3></div>
+    <div>'.$embargo->showInput("embargo","",$messagedata["embargo"]).'</div>';
 
   if (USE_REPETITION) {
-    $repeatinterval = $_POST["repeatinterval"];
+    $repeatinterval = $messagedata["repeatinterval"];
 
     $scheduling_content .= '
-    <div>'.Help("repetition").' '.$GLOBALS['I18N']->get("repeatevery").':</div>
+    <div><h3>'.Help("repetition").' '.$GLOBALS['I18N']->get("repeatevery").':</h3></div>
         <div><select name="repeatinterval">
       <option value="0"';
       if ($repeatinterval == 0) { $scheduling_content .= ' selected="selected"'; }
@@ -1145,46 +915,34 @@ if (!$done) {
       $scheduling_content .= '>'.$GLOBALS['I18N']->get("week").'</option>
       </select>
         </div>
-        <div>  '.$GLOBALS['I18N']->get("repeatuntil").':</div>
-        <div>'.$repeatuntil->showInput("repeatuntil","",$_POST["repeatuntil"]);
+        <div>  <h3>'.$GLOBALS['I18N']->get("repeatuntil").':</h3></div>
+        <div>'.$repeatuntil->showInput("repeatuntil","",$messagedata["repeatuntil"]);
       $scheduling_content .= '</div>';
   }
-  $formatting_content .= '<div><input type="hidden" name="htmlformatted" value="auto"/></div>';
+  $formatting_content .= '<div><input type="hidden" name="htmlformatted" value="auto" /></div>';
 
   $formatting_content .= '
-    <div>'.Help("sendformat").' '.$GLOBALS['I18N']->get("sendas").':
+    <div><h3>'.Help("sendformat").' '.$GLOBALS['I18N']->get("sendas").':</h3>
   '.$GLOBALS['I18N']->get("html").' <input type="radio" name="sendformat" value="HTML" ';
-    $formatting_content .= $_POST["sendformat"]=="HTML"?'checked="checked"':'';
+    $formatting_content .= $messagedata["sendformat"]=="HTML"?'checked="checked"':'';
     $formatting_content .= '/>
   '.$GLOBALS['I18N']->get("text").' <input type="radio" name="sendformat" value="text" ';
-    $formatting_content .= $_POST["sendformat"]=="text"?'checked="checked"':'';
+    $formatting_content .= $messagedata["sendformat"]=="text"?'checked="checked"':'';
     $formatting_content .= '/>
   ';
-
-  if (USE_PDF) {
-    $formatting_content .= $GLOBALS['I18N']->get("pdf").' <input type="radio" name="sendformat" value="PDF" ';
-    $formatting_content .= $_POST["sendformat"]=="PDF"?'checked="checked"':'';
-    $formatting_content .= '/>';
-  }
 
 //  0009687: Confusing use of the word "Both", indicating one email with both text and html and not two emails
 //  $formatting_content .= $GLOBALS['I18N']->get("textandhtml").' <input type="radio" name="sendformat" value="text and HTML" ';
 //  $formatting_content .= $_POST["sendformat"]=="text and HTML" || !isset($_POST["sendformat"]) ?"checked":"";
 //  $formatting_content .= '/>';
 
-  if (USE_PDF) {
-    $formatting_content .= $GLOBALS['I18N']->get("textandpdf").' <input type="radio" name="sendformat" value="text and PDF" ';
-    $formatting_content .= $_POST["sendformat"]=="text and PDF" ?'checked="checked"':'';
-    $formatting_content .= '/>';
-  }
-
   foreach ($GLOBALS['plugins'] as $plugin) {
     $plugins_sendformats = $plugin->sendFormats();
     if (is_array($plugins_sendformats) && sizeof($plugins_sendformats)) {
       foreach ($plugins_sendformats as $val => $desc) {
         $val = preg_replace("/\W/",'',strtolower(trim($val)));
-        $formatting_content .= sprintf('%s <input type="radio" name="sendformat" value="%s" %s/>',
-          $desc,$val, $_POST["sendformat"]==$val?'checked="checked"':'');
+        $formatting_content .= sprintf('%s <input type="radio" name="sendformat" value="%s" %s />',
+          $desc,$val, $messagedata["sendformat"]==$val?'checked="checked"':'');
       }
     }
   }
@@ -1192,12 +950,12 @@ if (!$done) {
 
   $req = Sql_Query("select id,title from {$tables["template"]} order by listorder");
   if (Sql_Num_Rows($req)) {
-    $formatting_content .= '<div>'.Help("usetemplate").' '.$GLOBALS['I18N']->get("usetemplate").': </div>
+    $formatting_content .= '<div><h3>'.Help("usetemplate").' '.$GLOBALS['I18N']->get("usetemplate").':</h3> </div>
       <div><select name="template"><option value="0">-- '.$GLOBALS['I18N']->get("selectone").'</option>';
     $req = Sql_Query("select id,title from {$tables["template"]} order by listorder");
     while ($row = Sql_Fetch_Array($req)) {
       if ($row["title"]) {
-        $formatting_content .= sprintf('<option value="%d" %s>%s</option>',$row["id"], $row["id"]==$_POST["template"]?'selected="selected"':'',$row["title"]);
+        $formatting_content .= sprintf('<option value="%d" %s>%s</option>',$row["id"], $row["id"]==$messagedata["template"]?'selected="selected"':'',$row["title"]);
       }
     }
     $formatting_content .= '</select></div>';
@@ -1216,7 +974,7 @@ if (!$done) {
 //  }
 
   #0013076: different content when forwarding 'to a friend'
-  $tmp = '<div>'.Help("message").' '.$GLOBALS['I18N']->get("message").'. </div>';
+  $tmp = '<div id="messagecontent"><h3>'.Help("message").' '.$GLOBALS['I18N']->get("message").'.</h3> ';
   $maincontent .= $tmp;
   $forwardcontent .= $tmp;
 
@@ -1225,7 +983,7 @@ if (!$done) {
     $oFCKeditor->BasePath = './FCKeditor/';
     //$oFCKeditor->ToolbarSet = 'Accessibility' ;
     $oFCKeditor->ToolbarSet = 'Default' ;
-    $oFCKeditor->Value = stripslashes($_POST["message"]);
+    $oFCKeditor->Value = stripslashes($messagedata["message"]);
     $w = getConfig("fckeditor_width");
     $h = getConfig("fckeditor_height");
     if ($_SESSION["fckeditor_height"]) {
@@ -1241,7 +999,8 @@ if (!$done) {
     }
     $oFCKeditor->Height = $h;
     $oFCKeditor->Width = $w;
-    $maincontent .= $oFCKeditor->CreateHtml() ;
+    
+    $maincontent .= '<div>'.$oFCKeditor->CreateHtml() .'</div>';
 
   } elseif ($useTinyMCE) {
 
@@ -1262,34 +1021,37 @@ if (!$done) {
         ."    {$tinyMCE_opts}\n"
         ."   });\n"
         ."</script>\n"
-        ."<textarea name='message' id='message' cols='65' rows='20'>{$_POST['message']}</textarea>";
+        ."<textarea name='message' id='message' cols='65' rows='20'>{$messagedata['message']}</textarea>";
 
   } else {
     $maincontent    .= ' 
-<textarea name="message" cols="65" rows="20">'.htmlspecialchars($_POST["message"]).'</textarea>';
+      <textarea name="message" cols="65" rows="20">'.htmlspecialchars($messagedata["message"]).'</textarea>';
   }
 
   #0013076: different content when forwarding 'to a friend'
-  $forwardcontent .= '<textarea name="forwardmessage" cols="65" rows="20">'.htmlspecialchars($forwardmessage).'</textarea>';
+  $forwardcontent .= '<textarea name="forwardmessage" cols="65" rows="20">'.htmlspecialchars($messagedata['forwardmessage']).'</textarea>';
 
   #0013076: different content when forwarding 'to a friend'
   $tmp = '
   </div>
+  </div> <!-- end of message content -->
   ';
+  
+  if (isset($messagedata['sendmethod']) && $messagedata['sendmethod'] != 'inputhere') {
+    $maincontent .= '<script type="text/javascript">$("#messagecontent").hide()</script>';
+  }
   $maincontent .= $tmp;
   $forwardcontent .= $tmp;
 
   if (USE_MANUAL_TEXT_PART) {
   $maincontent .= '<div>
-    '.$GLOBALS['I18N']->get("plaintextversion").'
-  </div>
-  <div>
-    <textarea name="textmessage" cols="65" rows="20">'.$_POST["textmessage"].'</textarea>
+    <h3>'.Help("plaintextversion").' '.$GLOBALS['I18N']->get("plaintextversion").'</h3>
+    <textarea name="textmessage" cols="65" rows="20">'.$messagedata["textmessage"].'</textarea>
   </div>';
   }
 
   #0013076: different content when forwarding 'to a friend'
-  $maincontent .= '<div>'.$GLOBALS['I18N']->get("messagefooter").'. <br/>
+  $maincontent .= '<div><h3>'.Help("footer").' '.$GLOBALS['I18N']->get("messagefooter").'.</h3> 
     <p class="information">'.
     $GLOBALS['I18N']->get("messagefooterexplanation1").'</p>
     <p class="information">'.
@@ -1297,17 +1059,17 @@ if (!$done) {
     <p class="information">'.
     $GLOBALS['I18N']->get("messagefooterexplanation3").'</p>
    </div>
-  <div><textarea name="footer" cols="65" rows="5">'.$footer.'</textarea></div>';
-  $forwardcontent .= '<div>'.$GLOBALS['I18N']->get("forwardfooter").'. <br/>
+  <div><textarea name="footer" cols="65" rows="5">'.$messagedata['footer'].'</textarea></div>';
+  $forwardcontent .= '<div><h3>'.$GLOBALS['I18N']->get("forwardfooter").'.</h3> <br/>
     '.$GLOBALS['I18N']->get("messageforwardfooterexplanation").'<br/>'.
   '.</div>
-  <div><textarea name="forwardfooter" cols="65" rows="5">'.$forwardfooter.'</textarea></div>';
+  <div><textarea name="forwardfooter" cols="65" rows="5">'.$messagedata['forwardfooter'].'</textarea></div>';
 
   if (ALLOW_ATTACHMENTS) {
     // If we have a message id saved, we want to query the attachments that are associated with this
     // message and display that (and allow deletion of!)
 
-    $att_content = '<div id="sendAttachment"><div>'.Help("attachments").' '.$GLOBALS['I18N']->get("addattachments").' </div>';
+    $att_content = '<div id="sendAttachment"><div>'.Help("attachments").' <h3>'.$GLOBALS['I18N']->get("addattachments").'</h3> </div>';
     $att_content .= '<div>
       '.$GLOBALS['I18N']->get("uploadlimits").':<br/>
       '.$GLOBALS['I18N']->get("maxtotaldata").': '.ini_get("post_max_size").'<br/>
@@ -1356,21 +1118,21 @@ if (!$done) {
 
   // Load the email address for the admin user so we can use that as the default value in the testtarget field
   # @@@ this only works with phplist authentication, needs to be abstracted
-  if (!isset($_POST["testtarget"])) {
+  if (!isset($messagedata["testtarget"])) {
     $res = Sql_Query(sprintf("Select email from %s where id = %d", $tables["admin"], $_SESSION["logindetails"]["id"]));
     $admin_details = Sql_Fetch_Array($res);
 
-    $_POST["testtarget"] = $admin_details["email"];
+    $messagedata["testtarget"] = $admin_details["email"];
   }
   // if there isn't one, load the developer one, just being lazy here :-)
-  if (!$_POST["testtarget"]) {
-    $_POST["testtarget"] = $GLOBALS["developer_email"];
+  if (empty($messagedata["testtarget"]) && isset($GLOBALS["developer_email"])) {
+    $messagedata["testtarget"] = $GLOBALS["developer_email"];
   }
 
   // Display the HTML for the "Send Test" button, and the input field for the email addresses
   $sendtest_content = sprintf('<div class="sendTest"><div>
     <input class="submit" type="submit" name="sendtest" value="%s"/>%s: </div>
-    <div><input type="text" name="testtarget" size="40" value="'.$_POST["testtarget"].'"/><br />%s
+    <div><input type="text" name="testtarget" size="40" value="'.$messagedata["testtarget"].'"/><br />%s
     </div></div>',
     $GLOBALS['I18N']->get('sendtestmessage'),$GLOBALS['I18N']->get('toemailaddresses'),
     $GLOBALS['I18N']->get('sendtestexplain'));
@@ -1445,9 +1207,6 @@ if (!$done) {
   /* new criteria content system */
   # list existing defined ones:
   # find out how many there are
-  if ($messageid) {
-    $id = $messageid;
-  }
 
   $att_js = '
   <script language="javascript" type="text/javascript">
@@ -1593,8 +1352,8 @@ if (!$done) {
 
   $existing_overall_operator = $messagedata['criteria_overall_operator'] == "any" ? "any":"all";
   $criteria_overall_operator =
-    sprintf('%s <input type="radio" name="criteria_match" value="all" %s/>
-      %s <input type="radio" name="criteria_match" value="any" %s/>',
+    sprintf('%s <input type="radio" name="criteria_overall_operator" value="all" %s/>
+      %s <input type="radio" name="criteria_overall_operator" value="any" %s/>',
       $GLOBALS['I18N']->get('matchallrules'),
       $existing_overall_operator == "all"? 'checked="checked"':'',
       $GLOBALS['I18N']->get('matchanyrules'),
@@ -1641,7 +1400,7 @@ if (!$done) {
     if (is_array($messagedata['targetlist']) && sizeof($messagedata['targetlist'])) {
       $lists = $messagedata['targetlist'];
       if (isset($messagedata['excludelist'])) {
-        $excludelists = explode(',',$messagedata['excludelist']);
+        $excludelists = $messagedata['excludelist'];
       } else {
         $excludelists = array();
       }
@@ -1659,8 +1418,8 @@ if (!$done) {
       }
       unset($lists['all']);
       unset($lists['allactive']);
-      if (isset($messagedata['excludelist']) && trim($messagedata['excludelist']) != '') {
-        $exclude = sprintf(' and listuser.listid not in (%s)',$messagedata['excludelist']);
+      if (isset($messagedata['excludelist']) && is_array($messagedata['excludelist'])) {
+        $exclude = sprintf(' and listuser.listid not in (%s)',join(',',$messagedata['excludelist']));
       } else {
         $exclude = '';
       }
@@ -1688,7 +1447,7 @@ if (!$done) {
     case "Attach": print $att_content; break;
     case "Criteria": print $criteria_content; break;
     case "Format": print $formatting_content;break;
-    case "Scheduling": print $scheduling_content;
+    case "Scheduling": print $scheduling_content;break;
 //    case "RSS": print $rss_content;break;            //Obsolete by rssmanager plugin
     case "Lists": $show_lists = 1;break;
     case "Review": print $review_content; break;
@@ -1710,17 +1469,60 @@ if (!$done) {
 }
 print $sendtest_content;
 
-if (!$_POST["status"]) {
+if (empty($messagedata["status"])) {
   $savecaption = $GLOBALS['I18N']->get('saveasdraft');
 } else {
   $savecaption = $GLOBALS['I18N']->get('savechanges');#"Save &quot;".$_POST["status"]."&quot; message edits";
 
 }
+
+## if all is there, we can enable the send button
+$allReady = true;
+print '<script type="text/javascript">
+$("#addtoqueue").html("");
+</script>';
+
+$testValue = trim($messagedata['subject']);
+if (empty($testValue)) {
+  $allReady = false;
+  print '<script type="text/javascript">
+  $("#addtoqueue").append("<div>subject missing</div>");
+  </script>';
+}
+$testValue = trim($messagedata['message']);
+if (empty($testValue)) {
+  $allReady = false;
+  print '<script type="text/javascript">
+  $("#addtoqueue").append("<div>message content missing</div>");
+  </script>';
+} 
+$testValue = trim($messagedata['from']);
+if (empty($testValue)) {
+  $allReady = false;
+  print '<script type="text/javascript">
+  $("#addtoqueue").append("<div>From missing</div>");
+  </script>';
+} 
+if (empty($messagedata['targetlist'])) {
+  $allReady = false;
+  print '<script type="text/javascript">
+  $("#addtoqueue").append("<div>target missing</div>");
+  </script>';
+} 
+if ($allReady) {
+  print '<script type="text/javascript">
+  $("#addtoqueue").html(\'<input class="submit" type="submit" name="send" id="addtoqueuebutton" value="'.$GLOBALS['I18N']->get('sendmessage').'" />\');
+  </script>';
+}
+    
+
+
+
 print '<div class="sendSubmit"><div>
     <input class="submit" type="submit" name="save" value="'.$savecaption.'"/>
     </div></div>
     <input type="hidden" name="id" value="'.$id.'"/>
-    <input type="hidden" name="status" value="'.$_POST["status"].'"/>
+    <input type="hidden" name="status" value="'.$messagedata["status"].'"/>
 ';
 
 ?>
