@@ -65,6 +65,10 @@ function loadMessageData($msgid) {
     $GLOBALS['MD'] = array();
   }
   if (isset($GLOBALS['MD'][$msgid])) return $GLOBALS['MD'][$msgid];
+  
+  ## when loading an old message that hasn't got data stored in message data, load it from the message table
+  $prevMsgData = Sql_Fetch_Array_Query(sprintf('select * from %s where id = %d',
+    $GLOBALS['tables']['message'],$msgid));
 
   $messagedata = array(
     'template' => '',
@@ -90,6 +94,10 @@ function loadMessageData($msgid) {
     'sendmethod' => 'remoteurl', ## make a config
     'testtarget' => '',
   );
+  foreach ($prevMsgData as $key => $val) {
+    $messagedata[$key] = $val;
+  }
+  
   $msgdata_req = Sql_Query(sprintf('select * from %s where id = %d',
     $GLOBALS['tables']['messagedata'],$msgid));
   while ($row = Sql_Fetch_Array($msgdata_req)) {
@@ -1025,16 +1033,16 @@ function parseDate($strdate,$format = 'Y-m-d') {
 	elseif (preg_match("#(\d{2,2}).(\d{2,2}).(\d{4,4})#", $strdate, $regs)) {
     $newvalue = mktime(0,0,0,$regs[2],$regs[1],$regs[3]);
 	}
-	elseif (preg_match("#(\d{4,4}).(\d{2,2}).(\d{2,2})#", $value, $regs)) {
+	elseif (preg_match("#(\d{4,4}).(\d{2,2}).(\d{2,2})#", $strdate, $regs)) {
     $newvalue = mktime(0,0,0,$regs[3],$regs[1],$regs[1]);
 	}
-	elseif (preg_match("#(\d{2,2}).(\w{3,3}).(\d{2,4})#", $value, $regs)) {
+	elseif (preg_match("#(\d{2,2}).(\w{3,3}).(\d{2,4})#", $strdate, $regs)) {
     $newvalue = strtotime($value);
 	}
-	elseif (preg_match("#(\d{2,4}).(\w{3,3}).(\d{2,2})#", $value, $regs)) {
-    $newvalue = strtotime($value);
+	elseif (preg_match("#(\d{2,4}).(\w{3,3}).(\d{2,2})#", $strdate, $regs)) {
+    $newvalue = strtotime($strdate);
   } else {
-    $newvalue = strtotime($value);
+    $newvalue = strtotime($strdate);
     if ($newvalue < 0) {
       $newvalue = 0;
     }
@@ -1056,9 +1064,5 @@ function listCategories() {
   return $aConfiguredListCategories;
 }
 
-function addEmailLink($address) {
-  $div = '<div><a class="ajaxable" href="./?page=pageaction&action=addemail&email='.$address.'" target="_blank">'.$GLOBALS['I18N']->get('Add').'</a></div>';
-  return $div;
-}
 
 ?>
