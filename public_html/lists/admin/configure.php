@@ -19,23 +19,28 @@ if (empty($_REQUEST['id'])) {
     return;
   }
 }
-
+print formStart(' class="configForm" ');
 # configure options
 reset($default_config);
-if (!empty($_REQUEST['save']) && $id) {
+if (!empty($_REQUEST['save'])) {
   $info = $default_config[$id];
-  if (is_array($_POST)) {
-    if ($id == "website" || $id == "domain") {
-      $_POST["values"][$id] = str_replace("[DOMAIN]","",$_POST["values"][$id]);
-      $_POST["values"][$id] = str_replace("[WEBSITE]","",$_POST["values"][$id]);
+  if (is_array($_POST['values'])) {
+    foreach ($_POST['values'] as $id => $value) {
+      if (isset($default_config[$id])) {
+        $info = $default_config[$id];
+        if ($id == "website" || $id == "domain") {
+          $value = str_replace("[DOMAIN]","",$value);
+          $value = str_replace("[WEBSITE]","",$value);
+        }
+        if ($value == "" && !$info[3]) {
+          Error("$info[1] " . $GLOBALS['I18N']->get('cannot be empty'));
+        } else {
+          SaveConfig($id,$value,0);
+        }
+      }
     }
-    if ($_POST["values"][$id] == "" && !$info[3]) {
-      Error("$info[1] " . $GLOBALS['I18N']->get('cannot be empty'));
-    } else {
-      SaveConfig($id,$_POST["values"][$id],0);
-      Redirect("configure");
-      exit;
-    }
+    Redirect("configure");
+    exit;
   }
 }
 
@@ -48,9 +53,10 @@ if (!$id) {
       else
         $value = $val[0];
       printf('<div class="configEdit"><a href="%s" class="ajaxable">%s</a> <b>%s</b></div>',PageURL2("configure","","id=$key"),$GLOBALS['I18N']->get('edit'),$GLOBALS['I18N']->get($val[1]));
-      printf('<div id="edit_%s" class="configcontent">'.nl2br(htmlspecialchars(stripslashes($value))) . '</div></div>',$key);
+      printf('<div id="edit_%s" class="configcontent">%s</div>',$key,nl2br(htmlspecialchars(stripslashes($value))));
     }
   }
+  print '</form>';
 } else {
   include dirname(__FILE__).'/actions/configure.php';
 }
