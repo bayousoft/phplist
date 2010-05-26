@@ -41,15 +41,18 @@ if (!defined("IN_WEBBLER") && !defined("WEBBLER")) {
     }
 
     function setTime($time) {
-      list($hr,$min,$sec) = explode(":",$time);
-      if (!isset($_REQUEST['hour']) || !is_array($_REQUEST["hour"])) {
-        $_REQUEST["hour"] = array();
+      if (strpos($time,':')) {
+        list($hr,$min,$sec) = explode(":",$time);
+      } else {
+        $hr = date('h');
+        $min = date('j');
+        $sec = date('s');
       }
-      if (!isset($_REQUEST['minute']) || !is_array($_REQUEST["minute"])) {
-        $_REQUEST["minute"] = array();
+      if (!isset($_REQUEST[$this->name]) || !is_array($_REQUEST[$this->name])) {
+        $_REQUEST[$this->name] = array();
       }
-      $_REQUEST["hour"][$this->name] = $hr;
-      $_REQUEST["minute"][$this->name] = $min;
+      $_REQUEST[$this->name]["hour"] = $hr;
+      $_REQUEST[$this->name]["minute"] = $min;
     }
 
     function setDateTime($datetime) {
@@ -61,37 +64,34 @@ if (!defined("IN_WEBBLER") && !defined("WEBBLER")) {
 
     function setDate($date) {
       list($year,$month,$day) = explode("-",$date);
-      if (!isset($_REQUEST['year']) || !is_array($_REQUEST["year"])) {
-        $_REQUEST["year"] = array();
+      if (!isset($_REQUEST[$this->name]) || !is_array($_REQUEST[$this->name])) {
+        $_REQUEST[$this->name] = array();
       }
-      if (!isset($_REQUEST['month']) || !is_array($_REQUEST["month"])) {
-        $_REQUEST["month"] = array();
-      }
-      if (!isset($_REQUEST['day']) || !is_array($_REQUEST["day"])) {
-        $_REQUEST["day"] = array();
-      }
-      $_REQUEST["year"][$this->name] = $year;
-      $_REQUEST["month"][$this->name] = $month;
-      $_REQUEST["day"][$this->name] = $day;
+      $_REQUEST[$this->name]["year"] = $year;
+      $_REQUEST[$this->name]["month"] = $month;
+      $_REQUEST[$this->name]["day"] = $day;
     }
 
     function getDate($value = "") {
       if (!$value)
         $value = $this->name;
-      if (!$value)
-        return date("Y-m-d");
-      if (isset($_REQUEST["year"]) && is_array($_REQUEST["year"]) && isset($_REQUEST["month"]) && isset($_REQUEST["day"]) && isset($_REQUEST["year"][$value])) {
-        return sprintf("%04d-%02d-%02d",$_REQUEST["year"][$value],$_REQUEST["month"][$value],$_REQUEST["day"][$value]);
-      } else {
-        return date("Y-m-d");
+      if (!$value) {
+        $return = date("Y-m-d");
       }
+      if (isset($_REQUEST[$value]["year"]) && is_array($_REQUEST[$value]) && isset($_REQUEST[$value]["month"]) && isset($_REQUEST[$value]["day"])) {
+        $return =  sprintf("%04d-%02d-%02d",$_REQUEST[$value]["year"],$_REQUEST[$value]["month"],$_REQUEST[$value]["day"]);
+      } else {
+        $return =  date("Y-m-d");
+      }
+     # print "Date ".$value.' '.$return;
+      return $return;
     }
 
     function getTime($value = "") {
       if (!$value)
         $value = $this->name;
-      if (isset($_REQUEST["hour"]) && isset($_REQUEST["minute"])) {
-        return sprintf("%02d:%02d",$_REQUEST["hour"][$value],$_REQUEST["minute"][$value]);
+      if (isset($_REQUEST[$value]["hour"]) && isset($_REQUEST[$value]["minute"])) {
+        return sprintf("%02d:%02d",$_REQUEST[$value]["hour"],$_REQUEST[$value]["minute"]);
       } else {
         return date("H:i");
       }
@@ -101,11 +101,20 @@ if (!defined("IN_WEBBLER") && !defined("WEBBLER")) {
       if (!$name)
         $name = $this->name;
   #    dbg("$name $fielddata $value $document_id");
-      $year = substr($value,0,4);
-      $month = substr($value,5,2);
-      $day = substr($value,8,2);
-      $hour = substr($value,11,2);
-      $minute = substr($value,14,2);
+      if (!is_array($value)) {
+        $year = substr($value,0,4);
+        $month = substr($value,5,2);
+        $day = substr($value,8,2);
+        $hour = substr($value,11,2);
+        $minute = substr($value,14,2);
+      } else {
+        $year = $value['year'];
+        $month = $value['month'];
+        $day = $value['day'];
+        $hour = $value['hour'];
+        $minute = $value['minute'];
+      }
+        
 
       if (!$day && !$month && !$year) {
         $now = getdate(time());
@@ -113,11 +122,11 @@ if (!defined("IN_WEBBLER") && !defined("WEBBLER")) {
         $month = $now["mon"];
         $year = $now["year"];
       }
-      $html = sprintf('<input type="hidden" name="%s" value="1" />',$name);
+      $html = '';
 
-      $html .= "
-     <!-- $day / $month / $year -->".'
-     <select name="day['.$name.']">';
+      $html .= " 
+      <!-- $day / $month / $year -->".'
+     <select name="'.$name.'[day]">';
       for ($i=1;$i<32;$i++) {
         $sel = "";
         if ($i == $day)
@@ -127,7 +136,7 @@ if (!defined("IN_WEBBLER") && !defined("WEBBLER")) {
       }
       $html .= '
       </select>
-      <select name="month['.$name.']">';
+      <select name="'.$name.'[month]">';
       reset($this->months);
       while (list($key,$val) = each ($this->months)) {
         $sel = "";
@@ -135,6 +144,9 @@ if (!defined("IN_WEBBLER") && !defined("WEBBLER")) {
           $sel = 'selected="selected"';
         $html .= sprintf('
             <option value="%s" %s>%s</option>',$key,$sel,$val);
+      }
+      if ($year < 1800) {
+        $year = date('Y');
       }
       if (DATE_START_YEAR) {
         $start = DATE_START_YEAR;
@@ -149,7 +161,7 @@ if (!defined("IN_WEBBLER") && !defined("WEBBLER")) {
 
       $html .= '
       </select>
-      <select name="year['.$name.']">';
+      <select name="'.$name.'[year]">';
       for ($i=$start;$i<=$end;$i++) {
         $html .= "
           <option ";
@@ -161,7 +173,7 @@ if (!defined("IN_WEBBLER") && !defined("WEBBLER")) {
       </select>";
       if ($this->useTime) {
         $html .= '
-      <select name="hour['.$name.']">';
+      <select name="'.$name.'[hour]">';
         for ($i=0;$i<=23;$i++) {
           $sel = "";
           if ($i == $hour)
@@ -172,7 +184,7 @@ if (!defined("IN_WEBBLER") && !defined("WEBBLER")) {
         $html .= '
         </select>';
         $html .= '
-        <select name="minute['.$name.']">';
+        <select name="'.$name.'[minute]">';
         for ($i=0;$i<=59;$i+=15) {
           $sel = "";
           if ($i == $minute)
