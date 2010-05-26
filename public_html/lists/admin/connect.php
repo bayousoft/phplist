@@ -564,6 +564,17 @@ function PageLinkDialog ($name,$desc="",$url="") {
   return $link;
 }
 
+function PageLinkAjax ($name,$desc="",$url="") {
+  ## as PageLink2, but add the option to ajax it in a popover window
+  $link = PageLink2($name,$desc,$url);
+  if ($link) {
+    $link = str_replace('<a ','<div><a class="ajaxable"',$link);
+    $link .= '</div>';
+  }
+  return $link;
+}
+
+
 function SidebarLink($name,$desc,$url="") {
   if ($url)
     $url = "&".$url;
@@ -594,6 +605,54 @@ function PageURL2($name,$desc = "",$url="") {
   } else {
     return '';
   }
+}
+
+function ListofLists($messagedata,$fieldname,$subselect) {
+  $categoryhtml = array();
+  $categoryhtml['selected'] = '';
+  $categoryhtml['all'] = '
+  <ul>
+  <li><input type="checkbox" name="'.$fieldname.'[all]"';
+  if (!empty($messagedata[$fieldname]["all"])) {
+    $categoryhtml['all'] .= "checked";
+  }
+  $categoryhtml['all'].= ' />'.$GLOBALS['I18N']->get('alllists').'</li>';
+
+  $categoryhtml['all'] .= '<li><input type="checkbox" name="'.$fieldname.'[allactive]"';
+  if (!empty($messagedata[$fieldname]["allactive"])) {
+    $categoryhtml['all'] .= 'checked="checked"';
+  }
+  $categoryhtml['all'] .= ' />'.$GLOBALS['I18N']->get('All Active Lists').'</li>';
+
+  $result = Sql_query('SELECT * FROM '.$GLOBALS['tables']['list']. $subselect.' order by category, name');
+  while ($list = Sql_fetch_array($result)) {
+    if (empty($list['category'])) {
+      $list['category'] = 'Uncategorised';
+    }
+    if (!isset($categoryhtml[$list['category']])) {
+      $categoryhtml[$list['category']] = '';
+    }
+    if (isset($messagedata[$fieldname][$list["id"]]) && $messagedata[$fieldname][$list["id"]]) {
+      $list['category'] = 'selected';
+    }
+    $categoryhtml[$list['category']] .= sprintf('<li><input type=checkbox name="'.$fieldname.'[%d]" value="%d" ',$list["id"],$list["id"]);
+    # check whether this message has been marked to send to a list (when editing)
+    if (isset($messagedata[$fieldname][$list["id"]]) && $messagedata[$fieldname][$list["id"]]) {
+      $categoryhtml[$list['category']] .= "checked";
+    }
+    $categoryhtml[$list['category']] .= ">".stripslashes($list["name"]);
+    if ($list["active"]) {
+      $categoryhtml[$list['category']] .= ' (<font color=red>'.$GLOBALS['I18N']->get('listactive').'</font>)';
+    } else {
+      $categoryhtml[$list['category']] .= ' (<font color=red>'.$GLOBALS['I18N']->get('listnotactive').'</font>)';
+    }
+
+    $desc = nl2br(stripslashes($list["description"]));
+
+    $categoryhtml[$list['category']] .= "<br />$desc</li>";
+    $some = 1;
+  }
+  return $categoryhtml;
 }
 
 function Redirect($page) {
@@ -1208,7 +1267,7 @@ function printarray($array){
 }
 
 function Paging($base_url,$start,$total,$numpp = 10,$label = "") {
-  $page = 1;
+  $page = 0;
   $data = PagingPrevious($base_url,$start,$total,$numpp,$label);#.'&nbsp;|&nbsp;';
   if (!isset($GLOBALS['config']['paginglabeltitle'])) {
     $labeltitle = $label;
