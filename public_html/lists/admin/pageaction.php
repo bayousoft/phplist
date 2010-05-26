@@ -17,6 +17,9 @@ if (!empty($_GET['action'])) {
 }
 
 print $status;
+if (!empty($GLOBALS['developer_email'])) {
+  print $_SERVER['REQUEST_URI'];
+}
 
 if ($ajax) {
   exit;  
