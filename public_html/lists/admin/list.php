@@ -7,6 +7,12 @@ require_once dirname(__FILE__).'/accesscheck.php';
 
 print formStart('class="listListing"');
 $some = 0;
+if (isset($_GET['s'])) {
+  $s = sprintf('%d',$_GET['s']);
+} else {
+  $s = 0;
+}
+$baseurl = './?page=list';
 
 
 ## quick DB fix
@@ -85,7 +91,6 @@ if (sizeof($aListCategories)) {
   } else {
     $subselect .= ' and category = "'.$current.'"';
   }
-  $baseurl = './?page=list';
   $tabs = new WebblerTabs();
   foreach ($aListCategories as $category) {
     $category = trim($category);
@@ -98,12 +103,27 @@ if (sizeof($aListCategories)) {
   $tabs->setCurrent($current);
   print $tabs->display();
 }
+$countquery
+= ' select *'
+. ' from ' . $tables['list']
+. $subselect;
+$countresult = Sql_query($countquery);
+$total = Sql_Num_Rows($countresult);
+
+print '<p>'.$total .' '. $GLOBALS['I18N']->get('Lists').'</p>';
+
+if ($total > 10) {
+  $limit = ' limit 10 offset '.$s;
+} else {
+  $limit = '';
+}
+print Paging($baseurl,$s,$total);
 
 $query
 = ' select *'
 . ' from ' . $tables['list']
 . $subselect
-. ' order by listorder';
+. ' order by listorder '.$limit;
 $result = Sql_query($query);
 $ls = new WebblerListing($GLOBALS['I18N']->get('Lists'));
 while ($row = Sql_fetch_array($result)) {
