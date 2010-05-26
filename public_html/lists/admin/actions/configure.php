@@ -12,9 +12,19 @@ if (empty($_REQUEST['id'])) {
   }
 }
 
+/*
+printf('<script type="text/javascript">
+$(".configValue").each(function() {
+  if (this.id != "edit_%s") {
+    this.innerHTML = "Not editing";
+  }
+});
+</script>',$id);
+*/
+
 $val = $default_config[$id];
-printf('%s<div class="configEditing">' . $GLOBALS['I18N']->get('editing') . ' <b>%s</b></div>',formStart(' class="configForm" '),$GLOBALS['I18N']->get($val[1]));
-printf('<div class="configValue"><input type="hidden" name="id" value="%s" />',$id);
+printf('<div class="configEditing">' . $GLOBALS['I18N']->get('editing') . ' <b>%s</b></div>',$GLOBALS['I18N']->get($val[1]));
+printf('<div class="configValue" id="edit_%s"><input type="hidden" name="id" value="%s" />',$id,$id);
 $dbval = getConfig($id);
 #  print $dbval.'<br/>';
 if (isset($dbval))
@@ -53,4 +63,4 @@ if ($val[2] == "textarea") {
   print '  </option>';
   print '</select>';
 }
-print '</div><input type="hidden" name="save" value="1" /><input class="submit" type="submit" name="savebutton" value="' . $GLOBALS['I18N']->get('save changes') . '" /></form>';
+print '<input type="hidden" name="save" value="1" /><br/><input class="submit" type="submit" name="savebutton" value="' . $GLOBALS['I18N']->get('save changes') . '" /></div>';
