@@ -54,8 +54,9 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
       $cached[$messageid]["fromname"] = $message["fromfield"] . "@$domain";
     }
     # erase double spacing
-    while (ereg("  ",$cached[$messageid]["fromname"]))
+    while (ereg("  ",$cached[$messageid]["fromname"])) {
       $cached[$messageid]["fromname"] = str_replace("  "," ",$cached[$messageid]["fromname"]);
+    }
 
     ## this has weird effects when used with only one word, so take it out for now
 #    $cached[$messageid]["fromname"] = eregi_replace("@","",$cached[$messageid]["fromname"]);
@@ -118,9 +119,10 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
       $cached[$messageid]["text_charset"] = 'iso-8859-1';
   }# else
   #  dbg("Using cached {$cached[$messageid]["fromemail"]}");
-  if (VERBOSE)
+  if (VERBOSE) {
     output($GLOBALS['I18N']->get('sendingmessage').' '.$messageid.' '.$GLOBALS['I18N']->get('withsubject').' '.
       $cached[$messageid]["subject"].' '.$GLOBALS['I18N']->get('to').' '.$email);
+  }
 
   # erase any placeholders that were not found
 #  $msg = ereg_replace("\[[A-Z ]+\]","",$msg);
@@ -510,19 +512,6 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     $destinationemail = $email;
   }
 
-  foreach ($GLOBALS['plugins'] as $plugin) {
-    $textmessage = $plugin->parseOutgoingTextMessage($messageid,$textmessage,$destinationemail, $userdata);
-    $htmlmessage = $plugin->parseOutgoingHTMLMessage($messageid,$htmlmessage,$destinationemail, $userdata);
-    $plugin_attachments = $plugin->getMessageAttachment($messageid,$mail->Body);
-    if (!empty($plugin_attachments[0]['content'])) {
-      foreach ($plugins_attachments as $plugin_attachment) {
-        $mail->add_attachment($plugin_attachment['content'],
-            basename($plugin_attachment["filename"]),
-            $plugin_attachment["mimetype"]);
-      }
-    }
-  }
-
   # this should move into a plugin
   if (!ereg('@',$destinationemail) && isset($GLOBALS["expand_unqualifiedemail"])) {
     $destinationemail .= $GLOBALS["expand_unqualifiedemail"];
@@ -755,6 +744,19 @@ if (0) {
     if (VERBOSE)
       output($GLOBALS['I18N']->get('sendingtextonlyto')." $domaincheck");
   }
+  
+  foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
+    $textmessage = $plugin->parseOutgoingTextMessage($messageid,$textmessage,$destinationemail, $userdata);
+    $htmlmessage = $plugin->parseOutgoingHTMLMessage($messageid,$htmlmessage,$destinationemail, $userdata);
+    $plugin_attachments = $plugin->getMessageAttachment($messageid,$mail->Body);
+    if (!empty($plugin_attachments[0]['content'])) {
+      foreach ($plugins_attachments as $plugin_attachment) {
+        $mail->add_attachment($plugin_attachment['content'],
+            basename($plugin_attachment["filename"]),
+            $plugin_attachment["mimetype"]);
+      }
+    }
+  }
 
   # so what do we actually send?
   switch($cached[$messageid]["sendformat"]) {
@@ -763,7 +765,7 @@ if (0) {
       if ($htmlpref) {
         Sql_Query("update {$GLOBALS["tables"]["message"]} set ashtml = ashtml + 1 where id = $messageid");
 
-        foreach ($GLOBALS['plugins'] as $plugin) {
+        foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
           $plugin->processSuccesFailure ($messageid, 'ashtml', $userdata);
         }
         $mail->add_html($htmlmessage,"",$cached[$messageid]["templateid"]);
@@ -774,7 +776,7 @@ if (0) {
         addAttachments($messageid,$mail,"HTML");
       } else {
         Sql_Query("update {$GLOBALS["tables"]["message"]} set astext = astext + 1 where id = $messageid");
-        foreach ($GLOBALS['plugins'] as $plugin) {
+        foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
           $plugin->processSuccesFailure ($messageid, 'astext', $userdata);
         }
         $mail->add_text($textmessage);
@@ -783,7 +785,7 @@ if (0) {
       break;
     case "PDF":
       # send a PDF file to users who want html and text to everyone else
-      foreach ($GLOBALS['plugins'] as $plugin) {
+      foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
         $plugin->processSuccesFailure ($messageid, 'astext', $userdata);
       }
       if ($htmlpref) {
@@ -819,7 +821,7 @@ if (0) {
       }
       break;
     case "text and PDF":
-      foreach ($GLOBALS['plugins'] as $plugin) {
+      foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
         $plugin->processSuccesFailure ($messageid, 'astext', $userdata);
       }
       # send a PDF file to users who want html and text to everyone else
@@ -857,7 +859,7 @@ if (0) {
       break;
     case "text":
       # send as text
-      foreach ($GLOBALS['plugins'] as $plugin) {
+      foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
         $plugin->processSuccesFailure ($messageid, 'astext', $userdata);
       }
       Sql_Query("update {$GLOBALS["tables"]["message"]} set astext = astext + 1 where id = $messageid");
@@ -881,15 +883,15 @@ if (0) {
         # send one big file to users who want html and text to everyone else
         if ($htmlpref) {
           Sql_Query("update {$GLOBALS["tables"]["message"]} set astextandhtml = astextandhtml + 1 where id = $messageid");
-        foreach ($GLOBALS['plugins'] as $plugin) {
-          $plugin->processSuccesFailure($messageid, 'ashtml', $userdata);
-        }
+          foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
+            $plugin->processSuccesFailure($messageid, 'ashtml', $userdata);
+          }
         #  dbg("Adding HTML ".$cached[$messageid]["templateid"]);
           $mail->add_html($htmlmessage,$textmessage,$cached[$messageid]["templateid"]);
           addAttachments($messageid,$mail,"HTML");
         } else {
           Sql_Query("update {$GLOBALS["tables"]["message"]} set astext = astext + 1 where id = $messageid");
-          foreach ($GLOBALS['plugins'] as $plugin) {
+          foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
             $plugin->processSuccesFailure($messageid, 'astext', $userdata);
           }
           $mail->add_text($textmessage);
