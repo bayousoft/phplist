@@ -1,4 +1,6 @@
 
+var busyImage = '<img src="styles/images/ui-anim_basic_16x16.gif" with="16" height="16" border="0">';
+
 function urlParameter( name, link) {
   name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
   var regexS = "[\\?&]"+name+"=([^&#]*)";
@@ -52,6 +54,7 @@ $("a.ajaxable").click(function() {
     url += '&action='+thispage;
   }
   parent = $(this).parent();
+  parent.html(busyImage);
   url = url.replace(/page=/,'origpage=');
   //alert(url+'&ajaxed=true&page=pageaction');
   parent.load(url+'&ajaxed=true&page=pageaction');
@@ -114,6 +117,7 @@ $("#emailsearch").autocomplete({
   });
 
   $("#remoteurlinput").blur(function() {
+    $("#remoteurlstatus").html(busyImage);
     $("#remoteurlstatus").load("./?page=pageaction&action=checkurl&ajaxed=true&url="+this.value);
   })
 
