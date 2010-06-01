@@ -55,8 +55,11 @@ $DBstructuser = array( # order of tables is essential for smooth upgrade
         "unique_1" => array(" email (email)","sys:unique"),
         "index_1" => array("foreignkey (foreignkey)","sys:Foreign Key"),
         "index_2" => array("idxuniqid (uniqid)","sys:index"),
-   #     "index_3" => array("emailidx (email)","sys:index"),
+    #    "index_3" => array("emailidx (email)","sys:index"),
         "index_4" => array("enteredindex (entered)","sys:index"),
+        "index_5" => array('confidx (confirmed)','sys:index'),
+        "index_6" => array('blidx (blacklisted)','sys:index'),
+        "index_7" => array('optidx (optedin)','sys:index'),
     ),
     "user_history" => array(
         "id" => array("integer not null primary key auto_increment","sys:ID"),
@@ -222,6 +225,7 @@ $DBstructuser = array( # order of tables is essential for smooth upgrade
           "index_1" => array("messageidindex (messageid)",""),
           "index_2" => array("useridindex (userid)",""),
           "index_3" => array("enteredindex (entered)",""),
+          "index_4" => array("statusidx (status)",""),
       ),
       "sendprocess" => array( # keep track of running send processes to avoid to many running concurrently
           "id" => array("integer not null primary key auto_increment","ID"),
