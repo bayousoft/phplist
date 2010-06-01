@@ -67,7 +67,7 @@ function loadMessageData($msgid) {
   if (isset($GLOBALS['MD'][$msgid])) return $GLOBALS['MD'][$msgid];
   
   ## when loading an old message that hasn't got data stored in message data, load it from the message table
-  $prevMsgData = Sql_Fetch_Array_Query(sprintf('select * from %s where id = %d',
+  $prevMsgData = Sql_Fetch_Assoc_Query(sprintf('select * from %s where id = %d',
     $GLOBALS['tables']['message'],$msgid));
 
   $messagedata = array(
@@ -100,7 +100,7 @@ function loadMessageData($msgid) {
   
   $msgdata_req = Sql_Query(sprintf('select * from %s where id = %d',
     $GLOBALS['tables']['messagedata'],$msgid));
-  while ($row = Sql_Fetch_Array($msgdata_req)) {
+  while ($row = Sql_Fetch_Assoc($msgdata_req)) {
     if (strpos($row['data'],'SER:') === 0) {
       $data = substr($row['data'],4);
       $data = @unserialize(stripslashes($data));
@@ -504,26 +504,34 @@ function logEvent($msg) {
 function getPageLock($force = 0) {
   global $tables;
   $thispage = $GLOBALS["page"];
+  
+  if ($GLOBALS["commandline"] && $thispage == 'processqueue') {
+    $max = MAX_SENDPROCESSES;
+  } else {
+    $max = 1;
+  }
+  
   ## allow killing other processes
   if ($force) {
     Sql_Query_Params("delete from ".$tables['sendprocess']." where page = ?",array($thispage));
   }
 
   $query
-  = ' select current_timestamp - modified, id'
+  = ' select current_timestamp - modified as age, id'
   . ' from ' . $tables['sendprocess']
   . ' where page = ?'
-  . ' and alive = 1'
-  . ' order by started desc';
+  . ' and alive > 0'
+  . ' order by age desc';
   $running_req = Sql_Query_Params($query, array($thispage));
-  $running_res = Sql_Fetch_row($running_req);
+  $running_res = Sql_Fetch_Assoc($running_req);
+  $count = Sql_Num_Rows($running_req);
   $waited = 0;
-  while ($running_res[1]) { # a process is already running
-    if ($running_res[0] > 600) {# some sql queries can take quite a while
+  while ($running_res['age'] && $count >= $max) { # a process is already running
+    if ($running_res['age'] > 600) {# some sql queries can take quite a while
       # process has been inactive for too long, kill it
-      Sql_query("update {$tables["sendprocess"]} set alive = 0 where id = $running_res[1]");
-    } else {
-      output ($GLOBALS['I18N']->get('A process for this page is already running and it was still alive').' '.$running_res[0].' '.$GLOBALS['I18N']->get('seconds ago'));
+      Sql_query("update {$tables["sendprocess"]} set alive = 0 where id = ".$running_res['id']);
+    } elseif ($count >= $max) {
+      output ($GLOBALS['I18N']->get('A process for this page is already running and it was still alive').' '.$running_res['age'].' '.$GLOBALS['I18N']->get('seconds ago').' '.$count);
       sleep(1); # to log the messages in the correct order
       if ($GLOBALS["commandline"]) {
         output("Running commandline, quitting. We'll find out what to do in the next run.");
@@ -541,20 +549,28 @@ function getPageLock($force = 0) {
       exit;
     }
     $query
-    = ' select current_timestamp - modified, id'
+    = ' select current_timestamp - modified as age, id'
     . ' from ' . $tables['sendprocess']
     . ' where page = ?'
-    . '   and alive = 1'
-    . ' order by started desc';
+    . ' and alive > 0'
+    . ' order by age desc';
     $running_req = Sql_Query_Params($query, array($thispage));
-    $running_res = Sql_Fetch_row($running_req);
+    $running_res = Sql_Fetch_Assoc($running_req);
+    $count = Sql_Num_Rows($running_req);
   }
   $query
   = ' insert into ' . $tables['sendprocess']
   . '    (started, page, alive, ipaddress)'
   . ' values'
   . '    (current_timestamp, ?, 1, ?)';
-  $res = Sql_Query_Params($query, array($thispage, getenv('REMOTE_ADDR')));
+  
+  if (!empty($GLOBALS['commandline'])) {
+    $processIdentifier = SENDPROCESS_ID;
+  } else {
+    $processIdentifier = $_SERVER['REMOTE_ADDR'];
+  }
+  
+  $res = Sql_Query_Params($query, array($thispage, $processIdentifier));
   $send_process_id = Sql_Insert_Id($tables['sendprocess'], 'id');
   $abort = ignore_user_abort(1);
   return $send_process_id;
@@ -1062,6 +1078,38 @@ function listCategories() {
     $aConfiguredListCategories[$key] = trim($val);
   }
   return $aConfiguredListCategories;
+}
+
+function getNiceBackTrace( $bTrace = false ) {
+  $sTrace = '';
+  $aBackTrace = debug_backtrace();
+  $iMin = 0;
+  if ( $bTrace ) {
+    $iMax = count($aBackTrace) - 1;
+    $iMax = count($aBackTrace) ;
+  } else {
+    $iMax = 3;
+  }
+  for($iIndex = $iMin; $iIndex < $iMax; $iIndex++){
+    
+    if ( $bTrace ) {
+      $sTrace .= "\n"; 
+    }
+    
+    $sTrace .= $iIndex . sprintf("%s#%4d:%s() ",
+      pad_right($aBackTrace[$iIndex]['file'], 30),
+      $aBackTrace[$iIndex]['line'],
+      pad_right($aBackTrace[$iIndex]['function'], 15)
+    );
+  }
+  
+  return $sTrace;
+  
+}
+
+function pad_right($str,$len) {
+  $str = str_pad( $str, $len, ' ', STR_PAD_LEFT);
+  return substr( $str, strlen( $str ) - $len, $len );
 }
 
 
