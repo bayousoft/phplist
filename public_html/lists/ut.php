@@ -12,8 +12,6 @@ $_REQUEST = removeXss($_REQUEST);
 
 if ($_SERVER["ConfigFile"] && is_file($_SERVER["ConfigFile"])) {
   include $_SERVER["ConfigFile"];
-} elseif ($_ENV["CONFIG"] && is_file($_ENV["CONFIG"])) {
-  include $_ENV["CONFIG"];
 } elseif (is_file("config/config.php")) {
   include "config/config.php";
 }
