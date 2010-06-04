@@ -68,7 +68,7 @@ function requireAccessLevel($page,$level) {
 
 function isSuperUser() {
   ## for now mark webbler admins superuser
-  if (defined('WEBBLER')) return 1;
+  if (defined('WEBBLER') || defined('IN_WEBBLER')) return 1;
   global $tables;
   $issuperuser = 0;
 #  if (!isset($_SESSION["adminloggedin"])) return 0;
