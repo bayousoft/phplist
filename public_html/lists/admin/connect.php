@@ -371,7 +371,6 @@ $main_menu = array(
   "div1" => "<hr />",
   "list" => "Lists",
   "send"=>"Send a message",
-  "campaign"=>"Start a campaign",
   "users" => "Users",
   "usermgt" => "Manage Users",
   "spage" => "Subscribe Pages",
