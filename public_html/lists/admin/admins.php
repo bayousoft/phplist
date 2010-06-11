@@ -81,7 +81,7 @@ if ($external) {
   $total = $totalres[0];
 }
 
-print '<p class="info">$total '.$GLOBALS['I18N']->get('Administrators');
+print '<p class="info">'.$total . ' '.$GLOBALS['I18N']->get('Administrators');
 print $find ? ' '.$GLOBALS['I18N']->get('found').'</p>': '</p>';
 if ($total > MAX_USER_PP) {
   if (isset($start) && $start) {
