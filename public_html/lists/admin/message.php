@@ -29,16 +29,17 @@ switch ($access) {
     break;
 }
 
-if ($_POST['resend'] && is_array($_POST['list'])) {
+if (!empty($_POST['resend']) && is_array($_POST['list'])) {
   if ($_POST['list']['all']) {
     $res = Sql_query("select * from $tables[list]");
     while($list = Sql_fetch_array($res))
-      if ($list["active"])
-        $result = Sql_query("insert into $tables[listmessage] (messageid,listid,entered) values($id,$list[id],current_timestamp)");
+      if ($list["active"]) {
+        $result = Sql_query(sprintf('insert into %s (messageid,listid,entered) values(%d,%d,current_timestamp)',$tables['listmessage'],$id,$list['id']));
+      }
   } else {
     foreach($_POST['list'] as $key => $val) {
       if ($val == 'signup') {
-        $result = Sql_query("insert into $tables[listmessage] (messageid,listid,entered) values($id,$key,current_timestamp)");
+        $result = Sql_query(sprintf('insert into %s (messageid,listid,entered) values(%d,%d,current_timestamp)',$tables['listmessage'],$id,$key));
       }
     }
   }
@@ -49,7 +50,8 @@ if ($_POST['resend'] && is_array($_POST['list'])) {
 require $coderoot . 'structure.php';
 
 # This adds a return link. Should be replaced by uniformbreadcrumtrail
-if ($returnpage) {
+## non-functional using RG
+if (isset($returnpage)) {
   if ($returnoption) {
     $more = "&amp;option=".$returnoption;
    }
@@ -106,7 +108,7 @@ $result = Sql_Query("select l.name, l.id from $tables[listmessage] lm, $tables[l
 if (!Sql_Num_Rows($result))
   print '<tr><td colspan="2">' . $GLOBALS['I18N']->get('None yet') . '</td></tr>';
 while ($lst = Sql_fetch_array($result)) {
-  array_push($lists_done,$lst[id]);
+  array_push($lists_done,$lst['id']);
   printf ('<tr><td>%d</td><td>%s</td></tr>',$lst['id'],$lst['name']);
 }
 
@@ -121,7 +123,7 @@ while ($lst = Sql_fetch_array($result)) {
 $messlis = '';
 $result = Sql_query("SELECT * FROM $tables[list] $subselect");
 while ($row = Sql_fetch_array($result)) {
-  if (!in_array($row[id],$lists_done)) {
+  if (!in_array($row['id'],$lists_done)) {
     $messlis .= '<li><input type="checkbox" name="list[' . $row["id"] . ']" value="signup" ';
     if ($list[$row["id"]] == 'signup')
       $messlis .= 'checked="checked"';
