@@ -119,6 +119,17 @@ class phplist_I18N {
     }
   }
 
+  function pageTitle($page) {
+    $page_title = '';
+    include dirname(__FILE__).'/lan/'.$this->language.'/pagetitles.php';
+    if (!empty($page_title)) {
+      $title = $page_title;
+    } else {
+      $title = $page;
+    }
+    return $title;
+  }
+
   function formatText($text) {
     # we've decided to spell phplist all lowercase '
     $text = str_replace('PHPlist','phpList',$text);
