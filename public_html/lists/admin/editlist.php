@@ -56,6 +56,13 @@ if (isset($_POST["save"]) && $_POST["save"] == $GLOBALS['I18N']->get('Save') && 
   $_POST['listname'] = removeXss($_POST['listname']);
   ## prefix isn't used any more
   $_POST['prefix'] = '';
+  
+  $categories = listCategories();
+  if (isset($_POST['category']) && in_array($_POST['category'],$categories)) {
+    $category = $_POST['category'];
+  } else {
+    $category = '';
+  }
 
   if ($id) {
     $query
@@ -66,7 +73,7 @@ if (isset($_POST["save"]) && $_POST["save"] == $GLOBALS['I18N']->get('Save') && 
     $query = sprintf($query, $tables['list']);
     $result = Sql_Query_Params($query, array($_POST['listname'],
        $_POST['description'], $_POST['active'], $_POST['listorder'],
-       $_POST['prefix'], $_POST['owner'], $_POST['category'], $id));
+       $_POST['prefix'], $_POST['owner'], $category, $id));
   } else {
     $query
     = ' insert into %s'
@@ -77,7 +84,7 @@ if (isset($_POST["save"]) && $_POST["save"] == $GLOBALS['I18N']->get('Save') && 
 #  print $query;
     $result = Sql_Query_Params($query, array($_POST['listname'],
        $_POST['description'], $_POST['listorder'], $_POST['owner'],
-       $_POST['prefix'], $_POST['active'], $_POST['category']));
+       $_POST['prefix'], $_POST['active'], $category));
   }
   if (!$id) {
     $id = Sql_Insert_Id($tables['list'], 'id');
@@ -112,35 +119,35 @@ ob_end_flush();
 
 <?php echo formStart(' class="editlistSave" ')?>
 <input type="hidden" name="id" value="<?php echo $id ?>" />
-<table class="editlist" border="0">
-<tr><td><?php echo $GLOBALS['I18N']->get('List name'); ?>:</td><td><input type="text" name="listname" value="<?php echo  htmlspecialchars(StripSlashes($list["name"]))?>" /></td></tr>
-<tr><td><?php echo $GLOBALS['I18N']->get('Public list (listed on the frontend)'); ?></td>
-    <td><input type="checkbox" name="active" value="1" <?php echo $list["active"] ? 'checked="checked"' : ''; ?> /></td></tr>
-<tr><td><?php echo $GLOBALS['I18N']->get('Order for listing'); ?></td>
-    <td><input type="text" name="listorder" value="<?php echo $list["listorder"] ?>" size="5" /></td></tr>
-<!--tr><td><?php echo $GLOBALS['I18N']->get('Subject Prefix'); ?></td>
-    <td><input type="text" name="prefix" value="<?php echo $list["prefix"]; ?>" size="5" /></td></tr>-->
+<div><?php echo $GLOBALS['I18N']->get('List name'); ?>:</div><div><input type="text" name="listname" value="<?php echo  htmlspecialchars(StripSlashes($list["name"]))?>" /></div>
+<div><?php echo $GLOBALS['I18N']->get('Public list (listed on the frontend)'); ?></div>
+<div><input type="checkbox" name="active" value="1" <?php echo $list["active"] ? 'checked="checked"' : ''; ?> /></div>
+<div><?php echo $GLOBALS['I18N']->get('Order for listing'); ?></div>
+<div><input type="text" name="listorder" value="<?php echo $list["listorder"] ?>" size="5" /></div>
 <?php if ($GLOBALS["require_login"] && (isSuperUser() || accessLevel("editlist") == "all")) {
-  print '<tr><td>' . $GLOBALS['I18N']->get('Owner') . '</td><td><select name="owner">';
+  if (empty($list["owner"])) {
+    $list["owner"] = $_SESSION["logindetails"]["id"];
+  }
+  print '<div>' . $GLOBALS['I18N']->get('Owner') . '</div><div><select name="owner">';
   $admins = $GLOBALS["admin_auth"]->listAdmins();
   foreach ($admins as $adminid => $adminname) {
     printf ('    <option value="%d" %s>%s</option>',$adminid,$adminid == $list["owner"]? 'selected="selected"':'',$adminname);
   }
-  print '</select></td></tr>';
+  print '</select></div>';
 } else {
   print '<input type="hidden" name="owner" value="'.$_SESSION["logindetails"]["id"].'" />';
 }
 
 $aListCategories = listCategories();
 if (sizeof($aListCategories)) {
-  print '<tr><td>'.$GLOBALS['I18N']->get('Category').'</td><td>';
+  print '<div>'.$GLOBALS['I18N']->get('Category').'</div>';
   print '<select name="category">';
   print '<option value="">-- '.$GLOBALS['I18N']->get('choose category').'</option>';
   foreach ($aListCategories as $category) {
     $category = trim($category);
     printf('<option value="%s" %s>%s</option>',$category,$category == $list['category'] ? 'selected="selected"':'',$category);
   }
-  print '</select></td></tr>';
+  print '</select></div>';
 }
 
   ### allow plugins to add rows
@@ -149,9 +156,8 @@ if (sizeof($aListCategories)) {
   }
 
 ?>
-<tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('List Description'); ?></td></tr>
-<tr><td colspan="2"><textarea name="description" cols="55" rows="15"><?php echo htmlspecialchars(StripSlashes($list["description"])) ?></textarea></td></tr>
-<tr><td align="center"><input class="submit" type="submit" name="save" value="<?php echo $GLOBALS['I18N']->get('Save'); ?>" /></td>
-<td align="right"><input class="reset"  type="reset" /></td></tr>
-</table>
+<div><?php echo $GLOBALS['I18N']->get('List Description'); ?></div>
+<div><textarea name="description" cols="55" rows="15">
+<?php echo htmlspecialchars(StripSlashes($list["description"])) ?></textarea></div>
+<div><input class="submit" type="submit" name="save" value="<?php echo $GLOBALS['I18N']->get('Save'); ?>" /></div>
 </form>
