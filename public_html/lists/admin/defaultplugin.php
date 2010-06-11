@@ -27,6 +27,19 @@ class phplistPlugin {
   # These files can be called from the commandline
   # This should hold an array per file: filename (without .php) => path relative to admin/
   var $commandlinePlugins=array();
+  public $configArray = array();
+  
+  /* array of pages in this plugin to add to the menu
+   * 
+   * example format: 
+   * 
+   */
+  public $menuLinks = array(); 
+    
+  
+  function name() {
+    return $this->name;
+  }
 
   function phplistplugin() {
     # constructor
@@ -344,6 +357,11 @@ function deleteUser($id) {
     # Currently used in spageedit.php
     # 200710 Bas
     return true;
+  }
+  
+  function importContent() {
+    # purpose: show content for this plugin on the import page
+    return '';
   }
 
   ######################################
