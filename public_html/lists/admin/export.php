@@ -23,6 +23,8 @@ function quoteEnclosed($value,$col_delim = "\t",$row_delim = "\n") {
   return $value;
 }
 
+$fromdate = '';
+$todate = '';
 $from = new date("from");
 $to = new date("to");
 if (isset($_REQUEST['list'])) {
@@ -67,12 +69,12 @@ switch ($access) {
 
 require dirname(__FILE__). '/structure.php';
 if (isset($_POST['processexport'])) {
-  $fromval= $from->getDate("from");
-  $toval =  $to->getDate("to");
+  $fromdate= $from->getDate("from");
+  $todate =  $to->getDate("to");
   if ($list)
-    $filename = sprintf($GLOBALS['I18N']->get('ExportOnList'),ListName($list),$fromval,$toval,date("Y-M-d"));
+    $filename = sprintf($GLOBALS['I18N']->get('ExportOnList'),ListName($list),$fromdate,$todate,date("Y-M-d"));
   else
-    $filename = sprintf($GLOBALS['I18N']->get('ExportFromval'),$fromval,$toval,date("Y-M-d"));
+    $filename = sprintf($GLOBALS['I18N']->get('ExportFromval'),$fromdate,$todate,date("Y-M-d"));
   ob_end_clean();
   $filename = trim(strip_tags($filename));
 
@@ -126,12 +128,12 @@ if (isset($_POST['processexport'])) {
   if ($list) {
     $result = Sql_query(sprintf('select * from
       %s where user.id = listuser.userid and listuser.listid = %d and %s >= "%s 00:00:00" and %s  <= "%s 23:59:59" %s
-      ',$querytables,$list,$column,$fromval,$column,$toval,$subselect)
+      ',$querytables,$list,$column,$fromdate,$column,$todate,$subselect)
       );
   } else {
     $result = Sql_query(sprintf('
       select * from %s where %s >= "%s 00:00:00" and %s  <= "%s 23:59:59" %s',
-      $querytables,$column,$fromval,$column,$toval,$subselect));
+      $querytables,$column,$fromdate,$column,$todate,$subselect));
   }
 
   print $GLOBALS['I18N']->get('ListMembership').$row_delim;
@@ -177,8 +179,8 @@ if ($list)
 <br/><br/>
 <table class="exportForm">
 
-<tr><td><?php echo $GLOBALS['I18N']->get('DateFrom');?></td><td><?php echo $from->showInput("","",$fromval);?></td></tr>
-<tr><td><?php echo $GLOBALS['I18N']->get('DateTo');?> </td><td><?php echo $to->showInput("","",$toval);?></td></tr>
+<tr><td><?php echo $GLOBALS['I18N']->get('DateFrom');?></td><td><?php echo $from->showInput("","",$fromdate);?></td></tr>
+<tr><td><?php echo $GLOBALS['I18N']->get('DateTo');?> </td><td><?php echo $to->showInput("","",$todate);?></td></tr>
 <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('DateToUsed');?></td></tr>
 <tr><td><input type=radio name="column" value="entered" checked></td><td><?php echo $GLOBALS['I18N']->get('WhenSignedUp');?></td></tr>
 <tr><td><input type=radio name="column" value="modified"></td><td><?php echo $GLOBALS['I18N']->get('WhenRecordChanged');?></td></tr>
