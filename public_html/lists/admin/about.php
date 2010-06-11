@@ -46,7 +46,7 @@
     </td>
     </tr>
    <?php 
-   $plugins = '
+   $pluginsHTML = '
     <tr>
     <td width="50" valign="top">'. $GLOBALS["I18N"]->get('Plugins'). '</td>
     <td valign="top">
@@ -54,27 +54,26 @@
 ';
    // list plugins and allow them to add details
 $pg = '';
-foreach ($GLOBALS['plugins'] as $pluginName=>$plugin) {
-  $pg .= '<li><b>' . $pluginName . "</b> version " . $plugin->version;
-  if ( $plugin->authors ){
-    $pg .= ' <span class="pluginauthor">by ' . $plugin->authors . '</span>'; 
-  }
-  if ( $plugin->displayAbout() ){
-    $pg .= ' <span class="pluginabout"' . $plugin->displayAbout(). '</span>';
-  }
-  $pg .= '</li>';
-} 
-  $plugins .= $pg . '
-        </ul>
-      </td>
-    </tr>
-';
-if ($pg != "") echo $plugins
+if (isset($GLOBALS['plugins']) && is_array($GLOBALS['plugins']) && sizeof($GLOBALS['plugins'])) {
+  foreach ($GLOBALS['plugins'] as $pluginName=>$plugin) {
+    $pg .= '<li><b>' . $pluginName . "</b> version " . $plugin->version;
+    if ( $plugin->authors ){
+      $pg .= ' <span class="pluginauthor">by ' . $plugin->authors . '</span>'; 
+    }
+    if ( $plugin->displayAbout() ){
+      $pg .= ' <span class="pluginabout"' . $plugin->displayAbout(). '</span>';
+    }
+    $pg .= '</li>';
+  } 
+    $pluginsHTML .= $pg . '
+          </ul>
+        </td>
+      </tr>
+  ';
+  if ($pg != "") echo $pluginsHTML;
+}
 ?>
 </table>
 </div>
 
-<!-- some google bombing, who knows, might work :-) -->
-<div style="display:none">
-  <a href="http://www.phplist.com">Newsletter</a><a href="http://www.phplist.com">Newsletter Manager</a><a href="http://www.phplist.com">Open Source Newsletter</a><a href="http://www.phplist.com">Open Source Newsletter Manager</a><a href="http://www.phplist.com">Opt In</a><a href="http://www.phplist.com">Opt In Marketing</a><a href="http://www.phplist.com">Double Opt In Marketing</a><a href="http://www.phplist.com">Newsletter Software</a><a href="http://www.phplist.com">Mailinglist</a><a href="http://www.phplist.com">Permission Marketing</a>
-</div>
+
