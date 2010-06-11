@@ -19,9 +19,11 @@ if (defined("IN_WEBBLER") && is_object($GLOBALS["config"]["plugins"]["phplist"])
 }
 
 $usephpmailer = 0;
-if (PHPMAILER && is_file(dirname(__FILE__).'/phpmailer/class.phpmailer.php')) {
-  include_once dirname(__FILE__) . '/class.phplistmailer.php';
-  $usephpmailer = 1;
+if (PHPMAILER && is_file(PHPMAILER_PATH)) {
+  include_once dirname(__FILE__).'/class.phplistmailer.php';
+  $usephpmailer = 1;  
+} else {
+  require_once dirname(__FILE__)."/class.html.mime.mail.inc";
 }
 
 $GLOBALS['bounceruleactions'] = array(
@@ -94,8 +96,10 @@ function loadMessageData($msgid) {
     'sendmethod' => 'remoteurl', ## make a config
     'testtarget' => '',
   );
-  foreach ($prevMsgData as $key => $val) {
-    $messagedata[$key] = $val;
+  if (is_array($prevMsgData)) {
+    foreach ($prevMsgData as $key => $val) {
+      $messagedata[$key] = $val;
+    }
   }
   
   $msgdata_req = Sql_Query(sprintf('select * from %s where id = %d',
@@ -129,7 +133,7 @@ function loadMessageData($msgid) {
   }
 
   $GLOBALS['MD'][$msgid] = $messagedata;
-#  print_r($messagedata);
+ # print_r($messagedata);
   return $messagedata;
 }
 
@@ -170,12 +174,12 @@ function sendAdminPasswordToken ($adminId){
   $urlroot = getConfig('website').$GLOBALS['adminpages'];
   #Build the email body to be sent, and finally send it.
   $emailBody = $GLOBALS['I18N']->get('Hello, '.$adminName)."\n\n";
-  $emailBody.= $GLOBALS['I18N']->get('You have requested a new password at PHPList.')."\n\n";
+  $emailBody.= $GLOBALS['I18N']->get('You have requested a new password at phpList.')."\n\n";
   $emailBody.= $GLOBALS['I18N']->get('To enter a new one, please visit the following link:')."\n\n";
   $emailBody.= sprintf('http://%s/?page=login&token=%s',$urlroot, $key)."\n\n";
   $emailBody.= $GLOBALS['I18N']->get('You have 24 hours left to change your password. After that, your token won\'t be valid.');
   sendMail ($email, $GLOBALS['I18N']->get('New password'), "\n\n".$emailBody);
-  return $GLOBALS['I18N']->get('A password change token has been sent to the corresponding email address.');
+  return Info($GLOBALS['I18N']->get('A password change token has been sent to the corresponding email address.'));
 }
 
 function sendMail ($to,$subject,$message,$header = "",$parameters = "",$skipblacklistcheck = 0) {
@@ -504,6 +508,9 @@ function logEvent($msg) {
 function getPageLock($force = 0) {
   global $tables;
   $thispage = $GLOBALS["page"];
+  if ($thispage == 'pageaction') {
+    $thispage = $_GET['action'];
+  }
   
   if ($GLOBALS["commandline"] && $thispage == 'processqueue') {
     $max = MAX_SENDPROCESSES;
@@ -777,7 +784,7 @@ function fetchUrl($url,$userdata = array()) {
       $content = $cache;
     }
   } else {
-    logEvent('Fetching '.$url.' failed on HEAD, '.$headreq->getMessage());
+    logEvent('Fetching '.$url.' failed on HEAD');
     return 0;
   }
   $GLOBALS['urlcache'][$url] = array(
