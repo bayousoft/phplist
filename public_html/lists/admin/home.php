@@ -76,23 +76,31 @@ print '<div class="accordion">';
 
 $some = 0;
 $ls = new WebblerListing($GLOBALS['I18N']->get('Main'));
+if (checkAccess("setup") && !$_GET["pi"]) {
+  if (!empty($_SESSION['firstinstall'])) {
+    $some = 1;
+    $element = $GLOBALS['I18N']->get('Continue Configuration');
+    $ls->addElement($element,PageURL2("setup"));
+    $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Continue the Configuration process of phpList'));
+  }
+}
 if (checkAccess("send") && !$_GET["pi"]) {
   $some = 1;
-  $element = $GLOBALS['I18N']->get('send');
+  $element = $GLOBALS['I18N']->get('Send a campaign');
   $ls->addElement($element,PageURL2("send"));
-  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Send a campaign '));
+  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Start or continue a campaign'));
 }
 if (checkAccess("messages")) {
   $some = 1;
-  $element = $GLOBALS['I18N']->get('messages');
+  $element = $GLOBALS['I18N']->get('Manage Campaigns');
   $ls->addElement($element,PageURL2("messages"));
-  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('messages'));
+  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('View current campaigns'));
 }
 if (checkAccess("users")) {
   $some = 1;
-  $element = $GLOBALS['I18N']->get('users');
+  $element = $GLOBALS['I18N']->get('Manage Subscribers');
   $ls->addElement($element,PageURL2("users"));
-  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Subscribers'));
+  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Search, edit and add Subscribers'));
 }
 
 if ($some) {
@@ -106,9 +114,9 @@ $some = 0;
 $ls = new WebblerListing($GLOBALS['I18N']->get('List and user functions'));
 if (checkAccess("list")) {
   $some = 1;
-  $element = $GLOBALS['I18N']->get('list');
+  $element = $GLOBALS['I18N']->get('Manage Lists');
   $ls->addElement($element,PageURL2("list"));
-  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('List the current lists'));
+  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('View, edit and add lists, that your subscribers can sign up to'));
 }
 if (checkAccess("users")) {
   $some = 1;
