@@ -5,20 +5,17 @@ ob_start();
 require_once dirname(__FILE__) .'/admin/commonlib/lib/unregister_globals.php';
 require_once dirname(__FILE__) .'/admin/commonlib/lib/unregister_globals.php';
 require_once dirname(__FILE__) .'/admin/commonlib/lib/magic_quotes.php';
+
 ## none of our parameters can contain html for now
 $_GET = removeXss($_GET);
 $_POST = removeXss($_POST);
 $_REQUEST = removeXss($_REQUEST);
 $_SERVER = removeXss($_SERVER);
+$_COOKIE = removeXss($_COOKIE);
 
 if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
-#  print '<!-- using '.$_SERVER["ConfigFile"].'-->'."\n";
   include $_SERVER["ConfigFile"];
-} elseif (isset($_ENV["CONFIG"]) && is_file($_ENV["CONFIG"])) {
-#  print '<!-- using '.$_ENV["CONFIG"].'-->'."\n";
-  include $_ENV["CONFIG"];
 } elseif (is_file("config/config.php")) {
-#  print '<!-- using config/config.php -->'."\n";
   include "config/config.php";
 } else {
   print "Error, cannot find config file\n";
@@ -27,7 +24,7 @@ if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
 
 require_once dirname(__FILE__).'/admin/init.php';
 
-if (0) {#isset($GLOBALS["developer_email"]) && $GLOBALS['show_dev_errors']) {
+if (isset($GLOBALS["developer_email"]) && $GLOBALS['show_dev_errors']) {
   error_reporting(E_ALL & ~E_NOTICE);
 } else {
   error_reporting(0);
@@ -409,7 +406,7 @@ function compareEmail()
 //  if (ENABLE_RSS) {
 //    $html .= rssOptions($data,$userid);
 //   }
-  foreach ($GLOBALS['plugins'] as $plugin) {
+  foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
     if ($plugin->enabled) {
       $html .= $plugin->displaySubscriptionChoice($data,$userid);
     }
@@ -540,8 +537,8 @@ function checkGroup(name,value) {
 //    $html .= rssOptions($data);
 //   }
 
-  foreach ($GLOBALS['plugins'] as $plugin) {
-    dbg($plugin->name());
+  foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
+  #  dbg($plugin->name);
     if ($plugin->enabled) {
       $html .= $plugin->displaySubscriptionChoice($data);
     }
