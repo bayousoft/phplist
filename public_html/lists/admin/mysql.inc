@@ -294,6 +294,11 @@ function Sql_create_Table ($table,$structure) {
   $res = Sql_Query($query);
 }
 
+function Sql_Drop_Table($table) {
+#  print '<br/>DROP '.$table;
+  return mysql_query('drop table if exists '.$table);
+}
+
 function sql_escape($text) {
   return mysql_real_escape_string($text);
 }
