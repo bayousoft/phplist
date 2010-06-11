@@ -135,6 +135,7 @@ function fetchEmailsFromHeader($header,$folder,$fieldlist = array()) {
 
 function processImapFolder($server,$user,$password,$folder,$fieldlist = array()) {
   $result = array();
+  #$port =  "993/imap/ssl/novalidate-cert";
   $port =  "143/imap/notls";
   $mbox = imap_open("{".$server.":".$port."}$folder",$user,$password, OP_READONLY);
   if (!$mbox) {
@@ -165,6 +166,7 @@ function processImapFolder($server,$user,$password,$folder,$fieldlist = array())
 }
 
 function getImapFolders($server,$user,$password) {
+  #$port =  "993/imap/ssl/novalidate-cert";
   $port =  "143/imap/notls";
   $mbox = @imap_open("{".$server.":".$port."}",$user,$password,OP_HALFOPEN);
   if (!$mbox) {
