@@ -65,6 +65,9 @@ if (!empty($_POST['selected']) && is_array($_POST['selected'])) {
     fclose ($fp);
   }
   print $GLOBALS['I18N']->get('done')."<br/><br/>";
+  
+  print PageLink2("attributes",$GLOBALS['I18N']->get('return to editing attributes'));
+  
 #@@@@ not sure about this one:  print '<p class="button">'.PageLink2("attributes",$GLOBALS['I18N']->get('continue')).'</p>';
 
 } else {
