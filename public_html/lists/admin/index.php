@@ -327,7 +327,10 @@ if ($GLOBALS["require_login"] && $page != "login") {
   }
 
   if ($page != "logout" && empty($logoutontop) && !$ajax) {
-    print '<div align="right">'.PageLink2("logout",$GLOBALS['I18N']->get('logout')).'</div>';
+    print '<div class="right">'.PageLink2("logout",$GLOBALS['I18N']->get('logout')).'</div>';
+    if (!empty($_SESSION['firstinstall'])) {
+      print '<div class="info right">'.PageLink2("setup",$GLOBALS['I18N']->get('Continue Configuration')).'</div>';
+    }
   }
 }
 
@@ -485,6 +488,15 @@ if (ereg("dev",VERSION)) {
 #  print "\n\n".'<!--';
   print '<br clear="all" />';
   print $GLOBALS["pagestats"]["number_of_queries"]." db queries in $elapsed seconds";
+  if (function_exists('memory_get_peak_usage')) {
+    $memory_usage = 'Peak: ' .memory_get_peak_usage();
+  } elseif (function_exists("memory_get_usage")) {
+    $memory_usage = memory_get_usage();
+  } else {
+    $memory_usage = 'Cannot determine with this PHP version';
+  }
+  print '<br/>Memory usage: '.$memory_usage;
+  
   if (isset($GLOBALS["statslog"])) {
     if ($fp = @fopen($GLOBALS["statslog"],"a")) {
       @fwrite($fp,getenv("REQUEST_URI")."\t".$GLOBALS["pagestats"]["number_of_queries"]."\t$elapsed\n");
