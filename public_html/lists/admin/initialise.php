@@ -15,7 +15,7 @@ while (list($table, $val) = each($DBstruct)) {
       $req = Sql_Query("select tablename from {$tables["attribute"]}");
       while ($row = Sql_Fetch_Row($req))
         Sql_Drop_Table($table_prefix . 'listattr_' . $row[0]);
-     }
+    }
     Sql_Drop_Table($tables[$table]);
   }
   $query = "CREATE TABLE $tables[$table] (\n";
@@ -45,6 +45,7 @@ while (list($table, $val) = each($DBstruct)) {
     if (!$error || $force) {
       if ($table == "admin") {
         # create a default admin
+        $_SESSION['firstinstall'] = 1;
         Sql_Query(sprintf('insert into %s (loginname,namelc,email,created,modified,  password,passwordchanged,superuser,disabled) values("%s","%s","%s",current_timestamp,current_timestamp,"%s",current_timestamp,%d,0)',$tables["admin"],"admin","admin","","phplist",1));
       } elseif ($table == "task") {
         while (list($type,$pages) = each ($system_pages)) {
