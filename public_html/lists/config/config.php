@@ -656,6 +656,11 @@ define("FORWARD_ALTERNATIVE_CONTENT",0);
 # to 1. If you tend to send out html emails, it is recommended to do so.
 define("PHPMAILER",1);
 
+# when using phpmailer, you can provide the path to the class here
+# if not set, the version included in the distribution will be used
+## eg for Debian based systems, it may be something like this
+#define ('PHPMAILER_PATH','/usr/share/php/libphp-phpmailer/class.phpmailer.php');
+
 # To use a SMTP please give your server hostname here, leave it blank to use the standard
 # PHP mail() command.
 define("PHPMAILERHOST",'');
@@ -695,6 +700,9 @@ $database_module = "mysql.inc";
 #$database_module = 'adodb.inc';
 #$adodb_inc_file = '/path/to/adodb_inc.php';
 #$adodb_driver = 'mysql';
+#$adodb_inc_file = '/usr/share/php/adodb/adodb.inc.php';
+$adodb_driver = 'mysql';  // not really a site variable
+
 
 # if you want more trouble, make this 63 (very unlikely you will like the result)
 $error_level = error_reporting(0);
