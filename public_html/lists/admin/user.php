@@ -11,7 +11,7 @@ require_once dirname(__FILE__).'/date.php';
 #}
 $id = sprintf('%d',isset($_GET["id"]) ? $_GET['id']:0);
 $delete = sprintf('%d',isset($_GET['delete']) ? $_GET["delete"]:0);
-$start=sprintf('%d',$_GET['start']);
+$start=isset($_GET['start'])? sprintf('%d',$_GET['start']):0;
 if (isset($_GET['findby'])) {
   $findby = $_GET['findby'];
 } else {
