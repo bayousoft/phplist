@@ -34,6 +34,11 @@ $embargo = new date("embargo");
 $embargo->useTime = true;
 $repeatuntil = new date("repeatuntil");
 $repeatuntil->useTime = true;
+if (ALLOW_ATTACHMENTS) {
+  $enctype = 'enctype="multipart/form-data"';
+} else {
+  $enctype = '';
+}
 
 ### variable initialisation and sanity checks
 if (isset($_GET['id'])) {
@@ -77,8 +82,8 @@ if (!$id) {
 $messagedata = loadMessageData($id);
 //var_dump($messagedata);exit;
 
-if (isset($_GET['deleterule']) && $_GET["deleterule"]) {
-  Sql_Query(sprintf('delete from %s where name = "criterion%d" and id = %d',$GLOBALS["tables"]["messagedata"],$_GET["deleterule"],$id));
+if (!empty($_GET['deletecriterion'])) {
+  include dirname(__FILE__).'/actions/deletecriterion.php';
   Redirect($_GET["page"].'&id='.$id.'&tab='.$_GET["tab"]);
 }
 ob_end_flush();
@@ -87,37 +92,22 @@ ob_end_flush();
 
 if ($id) {
   // Load message attributes / values
-  print '<div id="addtoqueue"><input class="submit" type="submit" name="send" id="addtoqueuebutton" value="'.$GLOBALS['I18N']->get('sendmessage').'" /></div>';
-
-  require dirname(__FILE__)."/structure.php";  // This gets the database structures into DBStruct
-
   $result = Sql_query("SELECT * FROM {$tables['message']} where id = $id $ownership");
   if (!Sql_Num_Rows($result)) {
     print $GLOBALS['I18N']->get("noaccess");
     $done = 1;
     return;
   }
-  ## remember any data entered
-  foreach ($_POST as $key => $val) {
-  #  print $key;
-    setMessageData($id,$key,$val);
-    if (get_magic_quotes_gpc()) {
-      if (is_string($val)) {
-        $messagedata[$key] = stripslashes($val);
-      } else {
-        $messagedata[$key] = $val;
-      }
-    } else {
-      $messagedata[$key] = $val;
-    }
-  }
-  if ((isset($_POST["embargo"]['year']) && is_array($_POST["embargo"]))) {
-    $messagedata["embargo"] = $embargo->getDate() ." ".$embargo->getTime().':00';
-  }
 
-  if ((isset($_POST["repeatuntil"]['year']) && is_array($_POST["repeatuntil"]))) {
-    $messagedata["repeatuntil"] = $repeatuntil->getDate() ." ".$repeatuntil->getTime().':00';
+  print formStart($enctype . ' name="sendmessageform" class="sendSend" id="sendmessageform" ');
+  if (empty($send)) {
+    print '<div id="addtoqueue"><button class="submit" type="submit" name="send" id="addtoqueuebutton">'.$GLOBALS['I18N']->get('sendmessage').'</button></div>';
+  } else {
+    print '<div id="addtoqueue"></div>';
   }
+  require dirname(__FILE__)."/structure.php";  // This gets the database structures into DBStruct
+
+  include dirname(__FILE__).'/actions/storemessage.php';
 }
 
 $htmlformatted = strip_tags($messagedata["message"]) != $messagedata["message"];
@@ -128,9 +118,6 @@ if (preg_match("/\n|\r/",$messagedata["from"])) {
 } 
 if (preg_match("/\n|\r/",$messagedata["forwardsubject"])) {
   $messagedata["forwardsubject"] = "";
-} 
-if (preg_match("/\n|\r/",$messagedata["forwardmessage"])) {
-  $messagedata["forwardmessage"] = "";
 } 
 if (preg_match("/\n|\r/",$messagedata["forwardfooter"])) {
   $messagedata["forwardfooter"] = "";
@@ -294,38 +281,7 @@ if ($send || $sendtest || $prepare || $save) {
 #  and table3.attributeid = 3 and table3.value in (4,5,6)
 #  ...
 
-  # new criteria system, add one by one:
-  if (!empty($_POST["criteria_attribute"])) {
-    $operator = $messagedata["criteria_operator"];
-    if (is_array($messagedata["criteria_values"])) {
-      $values = join(", ",$messagedata["criteria_values"]);
-      $values = cleanCommaList($values);
-    } else {
-      $values = $messagedata["criteria_values"];
-    }
-    foreach ($_POST["attribute_names"] as $key => $val) {
-      $att_names[$key] = $val;
-    }
-    $newcriterion = array(
-      "attribute" => sprintf('%d',$_POST["criteria_attribute"]),
-      "attribute_name" => $att_names[$messagedata["criteria_attribute"]],
-      "operator" => $operator,
-      "values" => $values,
-    );
-    # find out what number we are
-    $numarr = Sql_Fetch_Row_Query(sprintf('select data from %s where id = %d and name = "numcriteria"',
-      $tables["messagedata"],$id));
-    $num = sprintf('%d',$numarr[0]+1);
-    # store this one
-#    print $att_names[$_POST["criteria_attribute"]];
-#    print $_POST["attribute_names[".$_POST["criteria_attribute"]."]"];
-    print '<p class="information">'.$GLOBALS['I18N']->get("adding")." ".$newcriterion["attribute_name"]." ".$newcriterion["operator"]." ".$newcriterion["values"]."</p>";
-    Sql_Query(sprintf('insert into %s (name,id,data) values("criterion%d",%d,"%s")',
-      $tables["messagedata"],$num,$id,delimited($newcriterion)));
-    # increase number
-    Sql_Query(sprintf('replace into %s (name,id,data) values("numcriteria",%d,"%s")',
-      $tables["messagedata"],$id,$num));
-  }
+  # criteria system, add one by one:
 
   if (ALLOW_ATTACHMENTS && isset($_FILES) && is_array($_FILES) && sizeof($_FILES) > 0) {
     for ($att_cnt = 1;$att_cnt <= NUMATTACHMENTS;$att_cnt++) {
@@ -339,8 +295,9 @@ if ($send || $sendtest || $prepare || $save) {
         if (is_file($GLOBALS['tmpdir'].'/'.$newtmpfile) && filesize($GLOBALS['tmpdir'].'/'.$newtmpfile)) {
           $tmpfile = $GLOBALS['tmpdir'].'/'.$newtmpfile;
         }
-        if (strlen($_POST[$type]) > 255)
+        if (strlen($type) > 255) {
           print Warn($GLOBALS['I18N']->get("longmimetype"));
+        }
         $description = $_POST[$fieldname."_description"];
       } else {
         $tmpfile = '';
@@ -409,8 +366,8 @@ if ($send || $sendtest || $prepare || $save) {
 
   // If we're sending the message, just return now to the calling script
   # we only need to check that everything is there, once we actually want to send
-  if ($send && $subject && $from && $message && !$duplicate_atribute && sizeof($_POST["targetlist"])) {
-    if ($status == "submitted") {
+  if ($send && !empty($messagedata['subject']) && !empty($messagedata['from']) && !empty($messagedata['message']) && empty($duplicate_atribute) && sizeof($messagedata["targetlist"])) {
+    if ($messagedata['status'] == "submitted") {
       print "<h3>".$GLOBALS['I18N']->get("queued")."</h3>";
       print '<p class="button">'.PageLink2("processqueue",$GLOBALS['I18N']->get("processqueue")).'</p>';
     }
@@ -418,9 +375,9 @@ if ($send || $sendtest || $prepare || $save) {
     return;
   } elseif ($send || $sendtest) {
     $errormessage = "";
-    if ($messagedata['subject'] != stripslashes($_POST["subject"])) {
+    if ($messagedata['subject'] != stripslashes($messagedata['subject'])) {
       $errormessage = $GLOBALS['I18N']->get("errorsubject");
-    } elseif ($messagedata['from'] != $_POST["from"]) {
+    } elseif (!empty($_POST["from"]) && $messagedata['from'] != $_POST["from"]) {
       $errormessage = $GLOBALS['I18N']->get("errorfrom");
     } elseif (empty($messagedata['from'])) {
       $errormessage = $GLOBALS['I18N']->get("enterfrom");
@@ -452,7 +409,7 @@ if ($send || $sendtest || $prepare || $save) {
     include "sendemaillib.php";
 
     // OK, let's get to sending!
-    $emailaddresses = split('[/,,/;]', $_POST["testtarget"]);
+    $emailaddresses = split('[/,,/;]', $messagedata["testtarget"]);
 
     foreach ($emailaddresses as $address) {
       $address = trim($address);
@@ -487,7 +444,6 @@ if ($send || $sendtest || $prepare || $save) {
       } else {
         print $GLOBALS['I18N']->get("emailnotfound").": $address<br/>";
         printf('<div><a href="%s&action=addemail&email='.$address.'" class="ajaxable">%s</a></div>',$baseurl,$GLOBALS['I18N']->get("add"));
-#        print addEmailLink($address);
       }
     }
     echo "<hr/>";
@@ -517,224 +473,7 @@ if ($send || $sendtest || $prepare || $save) {
 # Stacked attributes, processing and calculation
 ##############################
 
-if (STACKED_ATTRIBUTE_SELECTION) {
-
-# read criteria and parse it into a user query
-$num = sprintf('%d',isset($messagedata['numcriteria']) ? $messagedata['numcriteria']: 0);
-  #  print '<br/>'.$num . " criteria already defined";
-$ls = new WebblerListing($GLOBALS['I18N']->get("existingcriteria"));
-$used_attributes = array();
-$tc = 0; # table counter
-if (!isset($messagedata['criteria_overall_operator'])) {
-  $messagedata['criteria_overall_operator'] = '';
-}
-$mainoperator = $messagedata['criteria_overall_operator'] == "all"? ' and ':' or ';
-
-$subqueries = array();
-
-for ($i = 1; $i<=$num;$i++) {
-  if (isset($messagedata[sprintf('criterion%d',$i)])) {
-    $crit_data = parseDelimitedData($messagedata[sprintf('criterion%d',$i)]);
-  } else {
-    $crit_data = array();
-  }
-  if (!empty($crit_data["attribute"])) {
-    array_push($used_attributes,$crit_data["attribute"]);
-  
-    $ls->addElement('<!--'.$crit_data["attribute"].'-->'.$crit_data["attribute_name"]);
-    $ls->addColumn('<!--'.$crit_data["attribute"].'-->'.$crit_data["attribute_name"],$GLOBALS['I18N']->get('operator'),$GLOBALS['I18N']->get($crit_data["operator"]));
-    if (isset($messagedata["criteria"][$i])) {
-      $attribute = $messagedata["criteria"][$i];
-    } else {
-      $attribute = '';
-    }
-    ## fix 6063
-    $crit_data["values"] = cleanCommaList($crit_data["values"]);
-    $crit_data['displayvalues'] = $crit_data['values'];
-
-    # hmm, rather get is some other way, this is a bit unnecessary
-    $type = Sql_Fetch_Row_Query("select type,tablename from {$tables["attribute"]} where id = ".$crit_data["attribute"]);
-    $operator = $where_clause = $select_clause = "";
-    switch($type[0]) {
-      case "checkboxgroup":
-        $or_clause = '';
-        if ($tc) {
-          $where_clause .= " $mainoperator ";
-          $select_clause .= " left join $tables[user_attribute] as table$tc on table0.userid = table$tc.userid ";
-        } else {
-          $select_clause = "table$tc.userid from $tables[user_attribute] as table$tc ";
-        }
-
-        $where_clause .= " ( table$tc.attributeid = ".$crit_data["attribute"]." and (";
-        if ($crit_data["operator"] == "is") {
-          $operator = ' or ';
-          $compare = ' > ';
-        } else {
-          $operator = ' and ';
-          $compare = ' <  ';
-        }
-        foreach (explode(",",$crit_data["values"]) as $val) {
-          if ($or_clause != '') {
-            $or_clause .= " $operator ";
-          }
-          $or_clause .= "find_in_set('$val',table$tc.value) $compare 0";
-        }
-        $where_clause .= $or_clause . ") ) ";
-        $subqueries[$i]['query'] = sprintf('select userid from %s as table%d where attributeid = %d
-          and %s',$GLOBALS['tables']['user_attribute'],$tc,$crit_data['attribute'],$or_clause);
-
-        $crit_data['displayvalues'] = '';
-        $values_req = Sql_Query(sprintf('select * from %slistattr_%s where id in (%s) order by listorder,name',$GLOBALS['table_prefix'],$type[1],$crit_data['values']));
-        while ($val = Sql_Fetch_Array($values_req)) {
-          $crit_data['displayvalues'] .= $val['name'].', ';
-        }
-          
-        break;
-      case "checkbox":
-        $value = $crit_data["values"][0];
-
-        if ($tc) {
-          $where_clause .= " $mainoperator ";
-          $select_clause .= " left join $tables[user_attribute] as table$tc on table0.userid = table$tc.userid ";
-        } else {
-          $select_clause = "table$tc.userid from $tables[user_attribute] as table$tc";
-        }
-
-        $where_clause .= " ( table$tc.attributeid = ".$crit_data["attribute"]." and ";
-        if ($crit_data["operator"] == "isnot") {
-          $where_clause .= ' not ';
-        }
-        $valueselect = '';
-        if ($value) {
-          $valueselect = " length(table$tc.value) and table$tc.value != \"off\" and table$tc.value != \"0\" ";
-        } else {
-          $valueselect = " table$tc.value = \"\" or table$tc.value = \"0\" or table$tc.value = \"off\" ";
-        }
-
-        $where_clause .= '( '.$valueselect . ') ) ';
-        $subqueries[$i]['query'] = sprintf('select userid from %s as table%d where attributeid = %d
-          and %s',$GLOBALS['tables']['user_attribute'],$tc,$crit_data['attribute'],$valueselect);
-
-        break;
-      case "date":
-        $date_value = parseDate($crit_data["values"]);
-        if (!$date_value) {
-          break;
-        }
-        if (isset($where_clause)) {
-          $where_clause .= " $mainoperator ";
-          $select_clause .= " left join $tables[user_attribute] as table$tc on table0.userid = table$tc.userid ";
-        } else {
-          $select_clause = " table$tc.userid from $tables[user_attribute] as table$tc ";
-        }
-
-        $where_clause .= ' ( table'.$tc.'.attributeid = '.$crit_data["attribute"].' and table'.$tc.'.value != "" and table'.$tc.'.value ';
-        $dateoperator = '';
-        switch ($crit_data["operator"]) {
-          case "is":
-            $where_clause .= ' = "'.$date_value . '" )';$dateoperator = '=';break;
-          case "isnot":
-            $where_clause .= ' != "'.$date_value . '" )';$dateoperator = '!=';break;
-          case "isbefore":
-            $where_clause .= ' <= "'.$date_value . '" )';$dateoperator = '<=';break;
-          case "isafter":
-            $where_clause .= ' >= "'.$date_value . '" )';$dateoperator = '>=';break;
-        }
-#        $where_clause .= " )";
-        $subqueries[$i]['query'] = sprintf('select userid from %s where attributeid = %d and value != "" and value %s "%s" ',$GLOBALS['tables']['user_attribute'],
-          $crit_data['attribute'],
-          $dateoperator,
-          $date_value);
-
-        break;
-      default:
-        if (isset($where_clause)) {
-          $where_clause .= " $mainoperator ";
-          $select_clause .= " left join $tables[user_attribute] as table$tc on table0.userid = table$tc.userid ";
-        } else {
-          $select_clause = " table$tc.userid from $tables[user_attribute] as table$tc ";
-        }
-
-        $where_clause .= " ( table$tc.attributeid = ".$crit_data["attribute"]." and table$tc.value ";
-        if ($crit_data["operator"] == "isnot") {
-          $where_clause .= ' not in (';
-        } else {
-          $where_clause .= ' in (';
-        }
-        $where_clause .= cleanCommaList($crit_data["values"]) . ") )";
-        $subqueries[$i]['query'] = sprintf('select userid from %s
-        where attributeid = %d and
-        value %s in (%s) ',$GLOBALS['tables']['user_attribute'],
-          $crit_data['attribute'],
-          $crit_data["operator"] == "isnot" ? 'not' :'',
-          $crit_data["values"]);
-
-        $crit_data['displayvalues'] = '';
-        $values_req = Sql_Query(sprintf('select * from %slistattr_%s where id in (%s) order by listorder,name',$GLOBALS['table_prefix'],$type[1],$crit_data['values']));
-        while ($val = Sql_Fetch_Array($values_req)) {
-          $crit_data['displayvalues'] .= $val['name'].', ';
-        }
-    }
-    $tc++;
-    $ls->addColumn('<!--'.$crit_data["attribute"].'-->'.$crit_data["attribute_name"],$GLOBALS['I18N']->get('values'),$crit_data["displayvalues"]);
-    $ls->addColumn('<!--'.$crit_data["attribute"].'-->'.$crit_data["attribute_name"],$GLOBALS['I18N']->get('remove'),PageLinkAjax($baseurl.'&amp;action=deleterule&deleterule='.$i,$GLOBALS['I18N']->get("remove")));
-  }
-}
-$existing_criteria = '';
-if (sizeof($subqueries)) {
-#    $count_query = "select distinct $select_clause where $where_clause";
-#    $count_query = addslashes($count_query);
-  if (!empty($_GET["calculate"])) {
-    ob_end_flush();
-   # print "<h3>$count_query</h3>";
-    print '<p class="information">'.$GLOBALS['I18N']->get("calculating")." ... </p>";
-    flush();
-  }
-  foreach ($subqueries as $qid => $querydetails) {
-    $req = Sql_Query($querydetails['query']);
-    $subqueries[$qid]['results'] = array();
-    while ($row = Sql_Fetch_Row($req)) {
-      array_push($subqueries[$qid]['results'],$row[0]);
-    }
-  }
-  $first = array_shift($subqueries);
-  $userids = $first['results'];
-  foreach ($subqueries as $subquery) {
-    if ($messagedata['criteria_overall_operator'] == 'all') {
-      $userids = array_intersect($userids,$subquery['results']);
-    } else {
-      $userids = array_merge($userids,$subquery['results']);
-    }
-  }
-  $userids = array_unique($userids);
-  $num_users = sizeof($userids);
-
-  $count_query = sprintf('select * from %s where id in (%s)',$GLOBALS['tables']['user'],join(', ',$userids));
-
-  if (!empty($_GET["calculate"])) {
-    printf('.. '.$GLOBALS['I18N']->get('%d users apply'),$num_users).'</p>';
-  }
-
-  if ($id) {
-    Sql_query(sprintf('update %s set userselection = "%s" where id = %d',
-      $tables["message"],addslashes($count_query),$id));
-  }
-
-  if (!isset($_GET['calculate'])) {
-    $ls->addButton($GLOBALS['I18N']->get("calculate"),$baseurl.'&amp;tab='.$_GET["tab"].'&amp;calculate=1');
-  } else {
-    $ls->addButton($GLOBALS['I18N']->get("reload"),$baseurl.'&amp;tab='.$_GET["tab"]);
-  }
-  $existing_criteria = $ls->display();
-} else {
-  if ($id) {
-    Sql_query(sprintf('update %s set userselection = "" where id = %d',
-      $tables["message"],$id));
-  }
-}
-
-
-} // end of define STACKED_ATTRIBUTES
+## moved to plugin
 
 ##############################
 # Stacked attributes, end
@@ -742,54 +481,50 @@ if (sizeof($subqueries)) {
 
 echo $errormsg;
 if (!$done) {
-  if (ALLOW_ATTACHMENTS) {
-    $enctype = 'enctype="multipart/form-data"';
-  } else {
-    $enctype = '';
-  }
 
   #$baseurl = sprintf('./?page=%s&amp;id=%d',$_GET["page"],$id);
   if ($id) {
     $tabs = new WebblerTabs();
-    $tabs->addTab($GLOBALS['I18N']->get("Content"),$baseurl.'&amp;tab=Content');
+    $tabbaseurl = preg_replace('/&tab=[^&]+/','',$baseurl);
+    $tabs->addTab($GLOBALS['I18N']->get("Content"),$tabbaseurl.'&amp;tab=Content');
     if (FORWARD_ALTERNATIVE_CONTENT) {
-      $tabs->addTab($GLOBALS['I18N']->get("Forward"),$baseurl.'&amp;tab=Forward');
+      $tabs->addTab($GLOBALS['I18N']->get("Forward"),$tabbaseurl.'&amp;tab=Forward');
     }
-    $tabs->addTab($GLOBALS['I18N']->get("Format"),$baseurl.'&amp;tab=Format');
+    $tabs->addTab($GLOBALS['I18N']->get("Format"),$tabbaseurl.'&amp;tab=Format');
     if (ALLOW_ATTACHMENTS) {
-      $tabs->addTab($GLOBALS['I18N']->get("Attach"),$baseurl.'&amp;tab=Attach');
+      $tabs->addTab($GLOBALS['I18N']->get("Attach"),$tabbaseurl.'&amp;tab=Attach');
     }
-    $tabs->addTab($GLOBALS['I18N']->get("Scheduling"),$baseurl.'&amp;tab=Scheduling');
+    $tabs->addTab($GLOBALS['I18N']->get("Scheduling"),$tabbaseurl.'&amp;tab=Scheduling');
 #    if (USE_RSS) {
   #      $tabs->addTab("RSS",$baseurl.'&amp;tab=RSS');
 #    }
-    $tabs->addTab($GLOBALS['I18N']->get("Criteria"),$baseurl.'&amp;tab=Criteria');
-    $tabs->addTab($GLOBALS['I18N']->get("Lists"),$baseurl.'&amp;tab=Lists');
+#    $tabs->addTab($GLOBALS['I18N']->get("Criteria"),$tabbaseurl.'&amp;tab=Criteria');
+    $tabs->addTab($GLOBALS['I18N']->get("Lists"),$tabbaseurl.'&amp;tab=Lists');
 #    $tabs->addTab("Review and Send",$baseurl.'&amp;tab=Review');
-    $tabs->addTab($GLOBALS['I18N']->get("Misc"),$baseurl.'&amp;tab=Misc');
+    $tabs->addTab($GLOBALS['I18N']->get("Misc"),$tabbaseurl.'&amp;tab=Misc');
 
     if ($_GET["tab"]) {
       $tabs->setCurrent($GLOBALS['I18N']->get($_GET["tab"]));
     } else {
       $tabs->setCurrent($GLOBALS['I18N']->get("Content"));
     }
-    if (defined("WARN_SAVECHANGES")) {
+//    if (defined("WARN_SAVECHANGES")) {
       $tabs->addLinkCode(' class="savechanges" ');
-    }
+//    }
   #$baseurl = sprintf('./?page=%s&amp;id=%d',$_GET["page"],$id);
 
     ### allow plugins to add tabs
     $plugintabs = array();
-    foreach ($GLOBALS['plugins'] as $plugin) {
+    foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
    #   print $plugin->name;
       $plugintab = $plugin->sendMessageTab($id,$messagedata);
       if ($plugintab) {
         $plugintabname = substr(strip_tags($plugin->sendMessageTabTitle()),0,10);
         $plugintabs[$plugintabname] = $plugintab;
-        $tabs->addTab($GLOBALS['I18N']->get($plugintabname),"$baseurl&amp;tab=".urlencode($plugintabname));
+        $tabs->addTab($GLOBALS['I18N']->get($plugintabname),"$tabbaseurl&amp;tab=".urlencode($plugintabname));
       }
     }
-    print $tabs->display();
+  # print $tabs->display();
   }
 
   ?>
@@ -797,7 +532,7 @@ if (!$done) {
   <script language="Javascript" type="text/javascript">
   // some debugging stuff to see what happens
   function checkForm() {
-    return true;
+  //  return true;
     for (var i=0;i < document.sendmessageform.elements.length;i++) {
       alert(document.sendmessageform.elements[i].name+" "+document.sendmessageform.elements[i].value);
     }
@@ -813,7 +548,6 @@ if (!$done) {
   function submitform() { document.sendmessageform.submit() }
   </script>
   <?php
-  print formStart($enctype . ' name="sendmessageform" class="sendSend" ');
   #print '<form method="post" enctype="multipart/form-data" name="sendmessageform" onSubmit="return checkForm()">';
   print '<input type="hidden" name="workaround_fck_bug" value="1" />';
   print '<input type="hidden" name="followupto" value="" />';
@@ -884,16 +618,19 @@ if (!$done) {
   $forwardcontent .= $GLOBALS['I18N']->get("When a user forwards to a friend," .
   " the friend will receive this message instead of the one on the content tab.").
   '<div><h3>'.Help("subject").' '.$GLOBALS['I18N']->get("Subject").':</h3></div>
-    <div><input type="text" name="forwardsubject" value="'.htmlentities($forwardsubject,ENT_QUOTES,'UTF-8').'" size="40" /></div>';
+    <div><input type="text" name="forwardsubject" value="'.htmlentities($messagedata['forwardsubject'],ENT_QUOTES,'UTF-8').'" size="40" /></div>';
 
   $currentTime = Sql_Fetch_Row_Query('select now()');
 
   $scheduling_content = '<div id="schedulecontent">';
   $scheduling_content .= '
   <div><h3>'.$GLOBALS['I18N']->get("Time is Based on the Server Time").
-    '</h3><br/>'.$GLOBALS['I18N']->get('Current Server Time is').' '.$currentTime[0].'</div>
+    '</h3><div class="info">'.$GLOBALS['I18N']->get('Current Server Time is').' <span id="servertime">'.$currentTime[0].'</span></div></div>
   <div><h3>'.Help("embargo").' '.$GLOBALS['I18N']->get("embargoeduntil").':</h3></div>
-    <div>'.$embargo->showInput("embargo","",$messagedata["embargo"]).'</div>';
+    <div>'.$embargo->showInput("embargo","",$messagedata["embargo"]).'</div>
+    <script type="text/javascript">
+    getServerTime();
+    </script>';
 
   if (USE_REPETITION) {
     $repeatinterval = $messagedata["repeatinterval"];
@@ -1024,12 +761,12 @@ if (!$done) {
         ."<textarea name='message' id='message' cols='65' rows='20'>{$messagedata['message']}</textarea>";
 
   } else {
-    $maincontent    .= ' 
-      <textarea name="message" cols="65" rows="20">'.htmlspecialchars($messagedata["message"]).'</textarea>';
+    $maincontent    .= '
+      <div><textarea name="message" cols="65" rows="20">'.htmlspecialchars($messagedata["message"]).'</textarea></div>';
   }
 
   #0013076: different content when forwarding 'to a friend'
-  $forwardcontent .= '<textarea name="forwardmessage" cols="65" rows="20">'.htmlspecialchars($messagedata['forwardmessage']).'</textarea>';
+  $forwardcontent .= '<div><textarea name="forwardmessage" cols="65" rows="20">'.htmlspecialchars($messagedata['forwardmessage']).'</textarea></div>';
 
   #0013076: different content when forwarding 'to a friend'
   $tmp = '
@@ -1137,240 +874,7 @@ if (!$done) {
     $GLOBALS['I18N']->get('sendtestmessage'),$GLOBALS['I18N']->get('toemailaddresses'),
     $GLOBALS['I18N']->get('sendtestexplain'));
 
-  $criteria_content = $GLOBALS['I18N']->get('criteriaexplanation').'
-  <div class="sendCriteria">';
 
-  $any = 0;
-  for ($i=1;$i<=NUMCRITERIAS;$i++) {
-    $criteria_content .= sprintf('<div><h3>%s %d</h3></div>
-    <div>%s <input type="checkbox" name="use[%d]"/></div>',$GLOBALS['I18N']->get('criterion'),$i,
-    $GLOBALS['I18N']->get('usethisone'),$i);
-    $attributes_request = Sql_Query("select * from $tables[attribute]");
-    while ($attribute = Sql_Fetch_array($attributes_request)) {
-      $criteria_content .= "\n\n";
-      $criteria_cnt = sprintf('<input type="hidden" name="attrtype[%d]" value="%s"/>',
-        $attribute["id"],$attribute["type"]);
-/*       $criteria_content .= sprintf('<input type="hidden" name="attrtype[%d]" value="%s"/>', */
-/*         $attribute["id"],$attribute["type"]); */
-      switch ($attribute["type"]) {
-        case "checkbox":
-          $any = 1;
-          $criteria_content .= sprintf ('<div>'.$criteria_cnt.'<input type="radio" name="criteria[%d]" value="%d"/>
-             %s</div><div><b>%s</b></div><div><select name="attr%d%d[]">
-                  <option value="0">Not checked</option>
-                  <option value="1">Checked</option></select></div>',
-                  $i,$attribute["id"],
-                  $attribute["name"],$GLOBALS['I18N']->get('is'),$attribute["id"],$i);
-          break;
-        case "select":
-        case "radio":
-        case "checkboxgroup":
-          $some = 0;
-          $thisone = "";
-          $values_request = Sql_Query("select * from $table_prefix"."listattr_".$attribute["tablename"]);
-          $thisone .= sprintf ('<div>'.$criteria_cnt.'<input type="radio" name="criteria[%d]" value="%d"/> %s</div>
-                  <div><b>%s</b></div><div><select name="attr%d%d[]" size="4" multiple="multiple">',
-                  $i,$attribute["id"],strip_tags($attribute["name"]),$GLOBALS['I18N']->get('is'),$attribute["id"],$i);
-          while ($value = Sql_Fetch_array($values_request)) {
-            if($value["name"]) {
-              $some = 1;
-              $thisone .= sprintf ('<option value="%d">%s</option>',$value["id"],$value["name"]);
-            }
-          }
-          $thisone .= "</select></div>";
-          if ($some)
-            $criteria_content .= $thisone;
-          $any = $any || $some;
-          break;
-        default:
-          $criteria_content .= "\n<!-- error: huh, unknown type ".$attribute["type"]." -->\n";
-      }
-    }
-  }
-
-  if (!$any) {
-    $criteria_content = '<p class="information">'.$GLOBALS['I18N']->get('nocriteria').'</p>';
-  } else {
-    $criteria_content .= '</div>';
-  #  $shader = new WebblerShader("Message Criteria");
-  #  $shader->addContent($criteria_content.'</table>');
-  #  $shader->hide();
-  #  print $shader->display();
-  }
-						      
-  ##############################
-  # Stacked attributes, display
-  ##############################
-
-  if (STACKED_ATTRIBUTE_SELECTION) {
-
-  /* new criteria content system */
-  # list existing defined ones:
-  # find out how many there are
-
-  $att_js = '
-  <script language="javascript" type="text/javascript">
-    var values = Array();
-    var operators = Array();
-    var value_divs = Array();
-    var value_default = Array();
-  ';
-  if (sizeof($used_attributes)) {
-    $already_used = ' and id not in ('.join(',',$used_attributes).')';
-  } else {
-    $already_used = "";
-  }
-  $att_drop = '';
-  $attreq = Sql_Query(sprintf('select * from %s where type in ("select","radio","date","checkboxgroup","checkbox") %s',$tables["attribute"],$already_used));
-  while ($att = Sql_Fetch_array($attreq)) {
-    if($att["name"]){
-      $att_drop .= sprintf('<option value="%d" %s>%s</option>',
-			   $att["id"],"",$att["name"]);
-    }
-    $num = Sql_Affected_Rows();
-    switch ($att["type"]) {
-      case "select":case "radio":case "checkboxgroup":
-        $att_js .= sprintf('value_divs[%d] = "criteria_values_select";'."\n",$att["id"]);
-        $att_js .= sprintf('value_default[%d] = "";'."\n",$att["id"]);
-        $value_req = Sql_Query(sprintf('select * from %s order by listorder,name',
-          $GLOBALS["table_prefix"]."listattr_".$att["tablename"]));
-        $num = Sql_Num_Rows($value_req);
-        $att_js .= sprintf('values[%d] = new Array(%d);'."\n",$att["id"],$num+1);
-        #$att_js .= sprintf('values[%d][0] =  new Option("[choose]","0",false,true);'."\n",$att["id"]);
-        $c = 0;
-        while ($value = Sql_Fetch_Array($value_req)) {
-          $att_js .= sprintf('values[%d][%d] =  new Option("%s","%d",false,false);'."\n",$att["id"],
-            $c,$value["name"],$value["id"]);
-          $c++;
-        }
-        $att_js .= sprintf('operators[%d] = new Array(2);'."\n",$att["id"]);
-        $att_js .= sprintf('operators[%d][0] =  new Option("%s","is",false,true);'."\n",$att["id"],$GLOBALS['I18N']->get('is'));
-        $att_js .= sprintf('operators[%d][1] =  new Option("%s","isnot",false,true);'."\n",$att["id"],$GLOBALS['I18N']->get('isnot'));
-        break;
-      case "checkbox":
-        $att_js .= sprintf('value_divs[%d] = "criteria_values_select";'."\n",$att["id"]);
-        $att_js .= sprintf('value_default[%d] = "";'."\n",$att["id"]);
-        $att_js .= sprintf('values[%d] = new Array(%d);'."\n",$att["id"],2);
-        $att_js .= sprintf('values[%d][0] =  new Option("%s",0,false,true);'."\n",$att["id"],$GLOBALS['I18N']->get('unchecked'));
-        $att_js .= sprintf('values[%d][1] =  new Option("%s",1,false,true);'."\n",$att["id"],$GLOBALS['I18N']->get('checked'));
-        $att_js .= sprintf('operators[%d] = new Array(2);'."\n",$att["id"]);
-        $att_js .= sprintf('operators[%d][0] =  new Option("%s","is",false,true);'."\n",$att["id"],$GLOBALS['I18N']->get('is'));
-        $att_js .= sprintf('operators[%d][1] =  new Option("%s","isnot",false,true);'."\n",$att["id"],$GLOBALS['I18N']->get('isnot'));
-        break;
-      case "date":
-        $att_js .= sprintf('value_divs[%d] = "criteria_values_text";'."\n",$att["id"]);
-        $att_js .= sprintf('value_default[%d] = "%s";'."\n",$att["id"],$GLOBALS['I18N']->get('dd-mm-yyyy'));
-        $att_js .= sprintf('values[%d] = new Array(%d);'."\n",$att["id"],1);
-        $att_js .= sprintf('values[%d][%d] =  new Option("%s","%d",false,false);'."\n",$att["id"],$c,
-          "Date","dd-mm-yyyy"); # just to avoid javascript errors, not actually used
-        $att_js .= sprintf('operators[%d] = new Array(4);'."\n",$att["id"]);
-        $att_js .= sprintf('operators[%d][0] =  new Option("%s","is",false,true);'."\n",$att["id"],$GLOBALS['I18N']->get('is'));
-        $att_js .= sprintf('operators[%d][1] =  new Option("%s","isnot",false,true);'."\n",$att["id"],$GLOBALS['I18N']->get('isnot'));
-        $att_js .= sprintf('operators[%d][2] =  new Option("%s","isbefore",false,true);'."\n",$att["id"],$GLOBALS['I18N']->get('isbefore'));
-        $att_js .= sprintf('operators[%d][3] =  new Option("%s","isafter",false,true);'."\n",$att["id"],$GLOBALS['I18N']->get('isafter'));
-    }
-  }
-  $att_js .= '
-
-  var browser = navigator.appName.substring ( 0, 9 );
-  var warned = browser != "Microsoft";
-
-  function findEl(name) {
-    var div;
-    if (document.getElementById){
-      div = document.getElementById(name);
-    } else if (document.all){
-      div = document.all[name];
-    }
-    return div;
-  }
-
-  function changeDropDowns() {
-    var choice = document.sendmessageform.criteria_attribute.options[document.sendmessageform.criteria_attribute.selectedIndex].value;
-    if (choice == "")
-      return;
-    if (!warned) {
-      alert("'.$GLOBALS['I18N']->get('buggywithie').'");
-      warned = 1;
-    }
-    var value_el_select = findEl("criteria_values_select");
-    var value_el_text = findEl("criteria_values_text");
-    for (i=0;i<value_el_select.length;) {
-      value_el_select.options[i] = null;
-    }
-    for (i=0;i<values[choice].length;i++) {
-      value_el_select.options[i] = values[choice][i];
-    }
-    value_el_select.selectedIndex = 0;
-    value_el_text.value = value_default[choice];
-
-    for (i=0;i<document.sendmessageform.criteria_operator.length;) {
-      document.sendmessageform.criteria_operator.options[i] = null;
-    }
-    for (i=0;i<operators[choice].length;i++) {
-      document.sendmessageform.criteria_operator.options[i] = operators[choice][i];
-    }
-    document.sendmessageform.criteria_operator.selectedIndex = 0;
-    var div1 = findEl("criteria_values_select");
-    var div2 = findEl("criteria_values_text");
-    var div3 = findEl(value_divs[choice]);
-    div1.style.visibility = "hidden";
-    div2.style.visibility = "hidden";
-    div3.style.visibility = "visible";
-
-  }
-  </script>
-
-  ';
-
-  $att_drop = '<select name="criteria_attribute" onchange="changeDropDowns()" class="criteria_element" >';
-  $att_drop .= '<option value="">['.$GLOBALS['I18N']->get('selectattribute').']</option>';
-  $att_names = '';# to remember them later
-  $attreq = Sql_Query(sprintf('select * from %s where type in ("select","radio","date","checkboxgroup","checkbox") %s',$tables["attribute"],$already_used));
-  while ($att = Sql_Fetch_array($attreq)) {
-    $att_drop .= sprintf('<option value="%d" %s>%s</option>',
-      $att["id"],"",substr(stripslashes($att["name"]),0,30).' ('.$GLOBALS['I18N']->get($att["type"]).')');
-    $att_names .= sprintf('<input type="hidden" name="attribute_names[%d]" value="%s"/>',$att["id"],stripslashes($att["name"]));
-  }
-  $att_drop .= '</select>'.$att_names;
-
-  $operator_drop = '
-    <select name="criteria_operator" class="criteria_element" >
-    <option value="is">'.$GLOBALS['I18N']->get('is').'</option>
-    <option value="isnot">'.$GLOBALS['I18N']->get('isnot').'</option>
-    <option value="isbefore">'.$GLOBALS['I18N']->get('isbefore').'</option>
-    <option value="isafter">'.$GLOBALS['I18N']->get('isafter').'</option>
-  </select>
-  ';
-
-  $values_drop = '<span id="values_span" class="values_span">';
-  $values_drop .= '<input class="criteria_element" name="criteria_values[]" id="criteria_values_text" size="15" type="text"/>';
-#  $values_drop .= '</span>';
-#  $values_drop .= '<span id="values_select">';
-  $values_drop .= '<select class="criteria_element" name="criteria_values[]" id="criteria_values_select" multiple="multiple" size="10"></select>';
-  $values_drop .= '</span>';
-
-  $existing_overall_operator = $messagedata['criteria_overall_operator'] == "any" ? "any":"all";
-  $criteria_overall_operator =
-    sprintf('%s <input type="radio" name="criteria_overall_operator" value="all" %s/>
-      %s <input type="radio" name="criteria_overall_operator" value="any" %s/>',
-      $GLOBALS['I18N']->get('matchallrules'),
-      $existing_overall_operator == "all"? 'checked="checked"':'',
-      $GLOBALS['I18N']->get('matchanyrules'),
-      $existing_overall_operator == "any"? 'checked="checked"':'');
-
-  $criteria_content = $criteria_overall_operator.$existing_criteria.$att_js.
-  '<div class="criteria_container">'.
-  '<span class="criteria_element">'.$att_drop.'</span>'.
-  '<span class="criteria_element">'.$operator_drop.'</span>'.
-  '<span class="criteria_element">'.$values_drop.'</span>'.
-  '<span class="criteria_element"><p class="submit"><input type="submit" name="save" value="'.$GLOBALS['I18N']->get('addcriterion').'"/></p></span>';
-  '</div>';
-  } // end of if (STACKED_ATTRIBUTE_SELECTION)
-
-  ##############################
-  # Stacked attributes, display end
-  ##############################
 
   # notification of progress of message sending
   # defaulting to admin_details['email'] gives the wrong impression that this is the
@@ -1442,10 +946,10 @@ if (!$done) {
     }
   }
 
-//  print $tabs->display();
+  print $tabs->display();
   switch ($_GET["tab"]) {
     case "Attach": print $att_content; break;
-    case "Criteria": print $criteria_content; break;
+ //   case "Criteria": print $criteria_content; break; // moved to plugin
     case "Format": print $formatting_content;break;
     case "Scheduling": print $scheduling_content;break;
 //    case "RSS": print $rss_content;break;            //Obsolete by rssmanager plugin
@@ -1467,7 +971,7 @@ if (!$done) {
       break;
   }
 }
-print $sendtest_content;
+#print $sendtest_content;
 
 if (empty($messagedata["status"])) {
   $savecaption = $GLOBALS['I18N']->get('saveasdraft');
@@ -1483,46 +987,45 @@ $("#addtoqueue").html("");
 </script>';
 
 $testValue = trim($messagedata['subject']);
-if (empty($testValue)) {
+if (empty($testValue) || $testValue == '(no subject)') {
   $allReady = false;
   print '<script type="text/javascript">
-  $("#addtoqueue").append("<div>subject missing</div>");
+  $("#addtoqueue").append(\'<div class="missing">subject missing</div>\');
   </script>';
 }
 $testValue = trim($messagedata['message']);
-if (empty($testValue)) {
+$testValue2 = trim($messagedata['sendurl']);
+if (empty($testValue) && empty($testValue2)) {
   $allReady = false;
   print '<script type="text/javascript">
-  $("#addtoqueue").append("<div>message content missing</div>");
+  $("#addtoqueue").append(\'<div class="missing">message content missing</div>\');
   </script>';
 } 
 $testValue = trim($messagedata['from']);
 if (empty($testValue)) {
   $allReady = false;
   print '<script type="text/javascript">
-  $("#addtoqueue").append("<div>From missing</div>");
+  $("#addtoqueue").append(\'<div class="missing">From missing</div>\');
   </script>';
 } 
 if (empty($messagedata['targetlist'])) {
   $allReady = false;
   print '<script type="text/javascript">
-  $("#addtoqueue").append("<div>target missing</div>");
+  $("#addtoqueue").append(\'<div class="missing">destination lists missing</div>\');
   </script>';
 } 
 if ($allReady) {
   print '<script type="text/javascript">
-  $("#addtoqueue").html(\'<input class="submit" type="submit" name="send" id="addtoqueuebutton" value="'.$GLOBALS['I18N']->get('sendmessage').'" />\');
+  $("#addtoqueue").html(\'<button class="submit" type="submit" name="send" id="addtoqueuebutton">'.$GLOBALS['I18N']->get('sendmessage').'</button>\');
   </script>';
 }
     
 
-
-
-print '<div class="sendSubmit"><div>
+print '<div class="sendSubmit">
     <input class="submit" type="submit" name="save" value="'.$savecaption.'"/>
-    </div></div>
     <input type="hidden" name="id" value="'.$id.'"/>
-    <input type="hidden" name="status" value="'.$messagedata["status"].'"/>
+    <input type="hidden" name="status" value="'.$messagedata["status"].'"/></div>
 ';
+
 
 ?>

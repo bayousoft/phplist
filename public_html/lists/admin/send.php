@@ -78,8 +78,10 @@ if (!empty($_GET['delete'])) {
     while ($row = Sql_Fetch_Row($req)) {
       deleteMessage($row[0]);
     }
+    print Info($GLOBALS['I18N']->get('campaigns deleted'));
   } else {
     deleteMessage(sprintf('%d',$_GET['delete']));
+    print Info($GLOBALS['I18N']->get('campaign deleted'));
   }
 }
 
@@ -136,19 +138,23 @@ foreach ($categoryhtml as $category => $content) {
   $listindex .= sprintf('<li><a href="#include%d">%s</a></li>',$tabno,$category);
   $listhtml .= sprintf('<div id="include%d"><ul>%s</ul></div>',$tabno,$content);
   $tabno++;
+  $some = 1;
 }
 
 $list_content .= '<div class="tabbed"><ul>'.$listindex.'</ul>';
 $list_content .= $listhtml;
-
-$list_content .= '</div>';
+$list_content .= '</div>'; ## close tabbed
 
 if (USE_LIST_EXCLUDE) {
   $list_content .= '
-    <h3><a name="excludelists">'.$GLOBALS['I18N']->get('selectexcludelist').'</a></h3><div><p class="button">'.$GLOBALS['I18N']->get('excludelistexplain').'</p>';
+    <h3><a name="excludelists">'.$GLOBALS['I18N']->get('selectexcludelist').'</a></h3>';
+
+
   $categoryhtml = ListofLists($messagedata,'excludelist',$subselect);
   $tabno = 1;
   $listindex = $listhtml = '';
+  $listindex .= ' <li><a href="#excludehelp">?</a></li>';
+  $listhtml .= sprintf('<div id="excludehelp"><ul>%s</ul></div>',$GLOBALS['I18N']->get('excludelistexplain'));
 
   foreach ($categoryhtml as $category => $content) {
     if ($category != 'all') {
@@ -160,18 +166,18 @@ if (USE_LIST_EXCLUDE) {
 
   $list_content .= '<div class="tabbed"><ul>'.$listindex.'</ul>';
   $list_content .= $listhtml;
-
-  $list_content .= '</div>';
+  $list_content .= '</div>'; ## close tabbed
 
 }
 
-$list_content .= '</div></div>'; ## close accordion
+$list_content .= '</div>'; ## close accordion
 
 if (!$some) {
   $list_content = $GLOBALS['I18N']->get('nolistsavailable');
 }
 
 if (isset($show_lists) && $show_lists) {
+ # print htmlspecialchars($list_content);
   print $list_content;
 } 
 
