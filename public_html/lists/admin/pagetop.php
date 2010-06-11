@@ -26,6 +26,8 @@
 <link href="styles/jquery-ui-1.8.1.all.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.8.1.all.min.js"></script>
+<!--script type="text/javascript" src="js/jquery.tools.1.2.2.min.js"></script-->
+<script type="text/javascript" src="js/jquery.tools.scrollable.js"></script>
 <script language="Javascript" type="text/javascript" src="js/phplist.js"></script>
 
 <?
