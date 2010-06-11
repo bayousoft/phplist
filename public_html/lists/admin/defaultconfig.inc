@@ -127,7 +127,8 @@ $default_config = array (
 "website" => array (
   $D_website,
   "Website address (without http://)",
-  "text"
+  "text",
+  0 ## indication this value cannot be empty (1 being it can be empty)
 ),
 
   # what is your domain (for sending emails)
@@ -163,7 +164,8 @@ $default_config = array (
 "report_address" => array (
   'listreports@[DOMAIN]',
   "Who gets the reports (email address, separate multiple emails with a comma)",
-  "text"
+  "text",
+  1
 ),
 
   # where will messages appear to come from
@@ -554,10 +556,11 @@ div.emailfooter a { font-size: 11px; color: #ff6600; font-style: normal; font-fa
 </style>
 ',"CSS for HTML messages without a template","textarea"),
 
-"alwayssendtextto" => array("mail.com\nemail.com","Domains that only accept text emails, one per line","textarea"),
-# do not do anything with this line
-"last one" => "blah");
+"alwayssendtextto" => array("mail.com\nemail.com","Domains that only accept text emails, one per line","textarea",
+  1)
+);
 
+/*
 //if (defined("ENABLE_RSS") && ENABLE_RSS) { //@B@ Has to move to plugin!
   $default_config["rssthreshold"] = array (
     4,
@@ -606,7 +609,7 @@ div.emailfooter a { font-size: 11px; color: #ff6600; font-style: normal; font-fa
     "Template for separator between feeds in RSS feeds (HTML)",
     "textarea"
   );
-
+*/
 //}
 
 #if (USEFCK) {
@@ -620,7 +623,6 @@ $default_config["fckeditor_height"] = array (
 	"Height in px of FCKeditor Area",
 	"text"
 );
-#}
 
 ########## certainly do not edit after this #########
 
