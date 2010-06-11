@@ -330,6 +330,9 @@ while ($row = Sql_Fetch_Array($req)) {
 
 print '</table>';
 if ($GLOBALS["require_login"] && (isSuperUser() || accessLevel("spageedit") == "all")) {
+  if (!isset($data['owner'])) {
+    $data['owner'] = 0;
+  }
   print '<br/>'.$GLOBALS['I18N']->get('Owner').': <select name="owner">';
   $admins = $GLOBALS["admin_auth"]->listAdmins();
   foreach ($admins as $adminid => $adminname) {
