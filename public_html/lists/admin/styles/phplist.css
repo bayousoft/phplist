@@ -270,20 +270,54 @@ html>body #maincontent_install div { float:left; padding:1em; clear:both;}
 
 #excludelist { float: left; }
 
-#checklist {
+#addtoqueue {
   float: right;
   border: 3px dashed #ff9900;
   width: 200px;
+  padding: 10px;
 }
 
 .paging {
-  border: 1px solid red;
+	/* required settings for scrollable*/
+	position:relative;
+	overflow:hidden;
+	width: 600px;
+	height:20px;
+  float: left;
 }
+
+.paging .items {
+	/* this cannot be too large */
+	width:20000em;
+	position:absolute;
+  background-color: #dddddd;
+  border: 1px solid #333333;
+}
+
 .paging-item {
   width: 50px;
   height: 20px;
-  border: 1px solid green;
   padding: 8px;
+}
+.pagingwrapper  {
+	position:relative;
+	overflow:hidden;
+	width: 640px;
+	height:20px;
+}
+.pagingwrapper .next {
+  display: inline;
+  float: right;
+	position:relative;
+  background-color: #dddddd;
+  border: 1px solid #333333;
+}
+.pagingwrapper .prev {
+  display: inline;
+  float: left;
+	position:relative;
+  background-color: #dddddd;
+  border: 1px solid #333333;
 }
 
 #languageswitcher {
@@ -295,5 +329,53 @@ html>body #maincontent_install div { float:left; padding:1em; clear:both;}
 }
 
 #addtoqueue {
+  float: right;
+}
+
+div.checkboxes > span {
+  padding: 3px;
+  background-color:#F7E7C3; 
+  border: 1px solid black;
+}
+
+.shade1 {
+  background-color:#dddddd;
+  padding: 3px;
+}
+.shade2 {
+  background-color:#ffffff;
+  padding: 3px;
+}
+.shade0 {
+  background-color:#ffffff;
+  padding: 3px;
+}
+
+.border {
+  border: 1px dashed red;
+}
+#hiddendiv {
+  display: none;
+}
+.disabled {
+    background-color:#dddddd;
+}
+.info {
+  border: 2px solid green;
+  padding: 10px;
+  margin: 10px;
+  background-color:#dddddd;
+}  
+.error {
+  border: 2px solid red;
+  padding: 10px;
+  margin: 10px;
+  background-color:#dddddd;
+}  
+
+.left {
+  float: left;
+}
+.right {
   float: right;
 }
