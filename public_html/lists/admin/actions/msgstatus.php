@@ -17,6 +17,7 @@ if (isset($messagedata['to process'])) {
  $num_users = $messagedata['to process'];
 }
 
+$sent = $totaltime = $sampletime = $samplesent = 0;
 if (!isset($messagedata['sampletime'])) { ## take a "sample" of the send speed, to calculate msg/hr
   $sampletime = time();
   $samplesent = $totalsent;
@@ -79,10 +80,10 @@ if ($message['status'] != 'inprocess') {
 }
 
 if (!empty($GLOBALS['developer_email'])) {
-  $html .= '<br/>ST: '.$messagedata['sampletime'];
-  $html .= '<br/>SS: '.$messagedata['samplesent'];
-  $html .= '<br/>TT: '.$totaltime;
-  $html .= '<br/>TS: '.$sent;
+  if (isset($messagedata['sampletime'])) $html .= '<br/>ST: '.$messagedata['sampletime'];
+  if (isset($messagedata['samplesent'])) $html .= '<br/>SS: '.$messagedata['samplesent'];
+  if (isset($totaltime)) $html .= '<br/>TT: '.$totaltime;
+  if (isset($sent)) $html .= '<br/>TS: '.$sent;
 }
 
 $status = $html;
