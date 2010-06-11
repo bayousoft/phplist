@@ -135,7 +135,7 @@ if (isset($_GET['suspend'])) {
     print "... ".$GLOBALS['I18N']->get("Done");
   else
     print "... ".$GLOBALS['I18N']->get("failed");
-  print'<br /><hr /><br />\n';
+  print'<br /><hr /><br />';
 }
 #0012081: Add new 'Mark as sent' button
 if (isset($_GET['markSent'])) {
@@ -233,7 +233,7 @@ if ($total) {
 
     $uniqueviews = Sql_Fetch_Row_Query("select count(userid) from {$tables["usermessage"]} where viewed is not null and messageid = ".$msg["id"]);
 
-    ## need a better way to do this, it's way too slow '
+    ## need a better way to do this, it's way too slow 
     #$clicks = Sql_Fetch_Row_Query("select sum(clicked) from {$tables["linktrack"]} where messageid = ".$msg["id"]);
     $clicks = array(0);
 
@@ -261,10 +261,10 @@ if ($total) {
       $clicked = '';
     }
 
-    $status = '';
+    $statusdiv = '';
     ## Rightmost two columns per message
     if ($msg['status'] == 'sent') {
-      $status = $GLOBALS['I18N']->get("Sent").": ".$msg['sent'].'<br/>'.$GLOBALS['I18N']->get("Time to send").': '.timeDiff($msg["sendstart"],$msg["sent"]);
+      $statusdiv = $GLOBALS['I18N']->get("Sent").": ".$msg['sent'].'<br/>'.$GLOBALS['I18N']->get("Time to send").': '.timeDiff($msg["sendstart"],$msg["sent"]);
 
       if ($msg['viewed']) {
         $viewed = sprintf('<tr><td></td>
@@ -312,25 +312,29 @@ if ($total) {
         );
     } else { ##Status <> sent
 //      $status = $msg['status'].'<br/>'.$msg['rsstemplate']; //Obsolete by rssmanager plugin
-      if ($msg['status'] == 'inprocess') {
+   #   if ($msg['status'] == 'inprocess') {
 
       #  $status .= '<br/>';
-        $status = '<div id="messagestatus'.$msg['id'].'"></div>';
-        $status .= '
+        $_GET['id'] = $msg['id'];
+        $statusdiv = '<div id="messagestatus'.$msg['id'].'">';
+        include 'actions/msgstatus.php';
+        $statusdiv .= $status;
+        $statusdiv .= '</div>';
+        $statusdiv .= '
         <script type="text/javascript">
           messageStatusUpdate('.$msg['id'].');
         </script>
         ';
       }
       $sendstats = '';
-    }
+   # }
     if ($msg['status'] == 'inprocess' || $msg['status'] == 'submitted') {
-      $status .= '<br/>'.
+      $statusdiv .= '<br/>'.
         PageLink2('messages&suspend='.$msg['id'],$GLOBALS['I18N']->get('Suspend Sending'));
     }
     #0012081: Add new 'Mark as sent' button
     if ($msg['status'] == 'suspended') {
-      $status .= '<br/>'.
+      $statusdiv .= '<br/>'.
         PageLink2('messages&amp;markSent='.$msg['id'],$GLOBALS['I18N']->get('Mark as sent'));
     }
 
@@ -342,7 +346,6 @@ if ($total) {
       totalSentUpdate('.$msg['id'].');
     </script>
     ';
-
 
     ## allow plugins to add information
     foreach ($GLOBALS['plugins'] as $plugin) {
@@ -369,7 +372,7 @@ PageURL2("messages$url_keep","","delete=".$msg["id"]));
       %s
       </td>
       </tr>',
-      $status.
+      $statusdiv.
       $sendstats,
       PageLink2("message",$GLOBALS['I18N']->get("View"),"id=".$msg["id"]),
       $msg['status'] != 'inprocess' ? PageLink2("messages",$GLOBALS['I18N']->get("Requeue"),"resend=".$msg["id"]) : $totalsent." ".$GLOBALS['I18N']->get("sent"),
