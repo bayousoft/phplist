@@ -359,9 +359,96 @@ function Info($msg) {
     print "\n".strip_tags($GLOBALS["I18N"]->get("information").": ".$msg)."\n";
     @ob_start();
   } else {
-    print '<center><table class="connectInfo" border="1"><tr><td class="error">'.$GLOBALS["I18N"]->get("information").": $msg </td></tr></table></center>";
+ #   print '<div class="info">'.$GLOBALS["I18N"]->get("information").": $msg </div>";
   }
 }
+
+function pageTitle($page) {
+  $page_title = '';
+  include dirname(__FILE__).'/lan/'.$_SESSION['adminlanguage']['iso'].'/pagetitles.php';
+  if (!empty($page_title)) {
+    $title = $page_title;
+  } else {
+    $title = $page;
+  }
+  return $title;
+}
+
+$GLOBALS['pagecategories'] = array(
+  ## category title => array( 
+    # toplink => page to link top menu to
+    # pages => pages in this category
+    
+  'subscribers' => array(
+     'toplink' => 'usermgt',
+     'pages' => array(
+        'users',
+        'usermgt',
+        'members',
+        'import',
+        'import1',
+        'import2',
+        'import3',
+        'import4',
+        'dlusers',
+        'export',
+        'listbounces',
+        'massremove',
+        'massunconfirm',
+        'reconcileusers',
+        'usercheck',
+        'userhistory',
+        'user',
+      ),
+   ),
+  'campaigns' => array(
+      'toplink' => 'campaignmgt',
+      'pages' => array(
+        'send',
+        'sendprepared',
+        'message',
+        'messages',
+        'viewmessage',
+        'templates',
+        'template',
+        'viewtemplate',
+        'bouncemgt',
+      ),
+  ),
+  'statistics' => array(
+      'toplink' => 'statsoverview',
+      'pages' => array('mviews','mclicks','uclicks','userclicks','statsmgt','statsoverview','domainstats'),
+  ),
+  'system' => array(
+      'toplink' => 'system',
+      'pages' => array('bounce','bounces','convertstats','dbcheck','eventlog','generatebouncerules','initialise','upgrade','processqueue','processbounces','reindex','resetstats',),
+  ),
+  'develop' => array(
+      'toplink' => 'develop',
+      'pages' => array('checki18n','dbadmin','stresstest','subscriberstats','tests'),
+  ),
+  'config' => array(
+      'toplink' => 'setup',
+      'pages' => array('setup','configure','list','editlist','catlists','spage','spageedit','admins','admin','importadmin','adminattributes','attributes','editattributes','defaults','bouncerules','bouncerule','checkbouncerules'),
+  ),
+  'info' => array(
+      'toplink' => 'about',
+      'pages' => array('about','community','home','vote'),
+  ),
+  'plugins' => array(
+    'toplink' => 'plugins',
+    'pages' => array(),
+  ),
+);
+
+$GLOBALS['pageclassification'] = array(
+  "import1"  => array('category' => 'subscribers'),
+  "import2"  => array('category' => 'subscribers'),
+  "import3"  => array('category' => 'subscribers'),
+  "import4"  => array('category' => 'subscribers'),
+
+
+);
 
 
 $main_menu = array(
@@ -491,37 +578,45 @@ function newMenu() {
 
 function topMenu() {
   if (empty($_SESSION["logindetails"])) return '';
+  
+  if ($_SESSION["logindetails"]['superuser']) {
+    if (sizeof($GLOBALS["plugins"])) {
+      foreach ($GLOBALS["plugins"] as $pluginName => $plugin) {
+        array_push($GLOBALS['pagecategories']['plugins']['pages'],'main&pi='.$pluginName);
+        $menulinks = $plugin->menuLinks;
+        foreach ($menulinks as $link => $linkDetails) {
+          if (isset($GLOBALS['pagecategories'][$linkDetails['category']])) {
+            array_push($GLOBALS['pagecategories'][$linkDetails['category']]['pages'],$link.'&pi='.$pluginName);
+          }
+        }
+#          PageLink2("main&amp;pi=$pluginName",$pluginName).$spe;
+      }
+    } 
+  }
+  
   $topmenu = '';
   $topmenu .= '<div id="menuTop">';
-  foreach ($GLOBALS['pagecategories'] as $category => $categorypage) {
+  foreach ($GLOBALS['pagecategories'] as $category => $categoryDetails) {
     if (
       $category == 'hide' ||
       ($category == 'develop' && empty($GLOBALS['developer_email']))) 
       continue;
     
     $thismenu = '';
-    foreach ($GLOBALS['pageclassification'] as $page => $pagedetails) {
-      if ($pagedetails['category'] == $category && !empty($pagedetails['mainmenu'])) {
-        $page_title = '';
-        include dirname(__FILE__).'/lan/'.$_SESSION['adminlanguage']['iso'].'/pagetitles.php';
-        if (!empty($page_title)) {
-          $title = $page_title;
-        } else {
-          $title = $page;
-        }
-        
-        $link = PageLink2($page,$title);
-        if ($link) {
-          $thismenu .= '<li>'.$link.'</li>';
-        }
+    foreach ($categoryDetails['pages'] as $page) {
+      $title = $GLOBALS['I18N']->pageTitle($page);
+      
+      $link = PageLink2($page,$title);
+      if ($link) {
+        $thismenu .= '<li>'.$link.'</li>';
       }
     }
-    if (!empty($thismenu)) {
-      $categoryurl = PageUrl2($categorypage);
+    if (!empty($categoryDetails['toplink'])) {
+      $categoryurl = PageUrl2($categoryDetails['toplink']);
       if ($categoryurl) {
         $topmenu .=  '<ul><li><h3><a href="'.$categoryurl.'">'.$GLOBALS['I18N']->get($category).'</a></h3><ul>'.$thismenu.'</ul></li></ul>';
       } else {
-        $topmenu .=  '<ul><li><h3>'.$GLOBALS['I18N']->get($category).$categoryurl.'</h3><ul>'.$thismenu.'</ul></li></ul>';
+        $topmenu .=  '<ul><li><h3><span>'.$GLOBALS['I18N']->get($category).$categoryurl.'</span></h3><ul>'.$thismenu.'</ul></li></ul>';
       }
     }
   }
@@ -535,6 +630,13 @@ function PageLink2($name,$desc="",$url="") {
   if ($url)
     $url = "&amp;".$url;
   $access = accessLevel($name);
+  $name = str_replace('&amp;','&',$name);
+  $name = str_replace('&','&amp;',$name);
+  
+  if (empty($desc)) {
+    $desc = $name;
+  }
+  
   if ($access == "owner" || $access == "all" || $access == "view") {
     if ($name == "processqueue" && !MANUALLY_PROCESS_QUEUE)
       return "";#'<!-- '.$desc.'-->';
@@ -610,7 +712,6 @@ function ListofLists($messagedata,$fieldname,$subselect) {
   $categoryhtml = array();
   $categoryhtml['selected'] = '';
   $categoryhtml['all'] = '
-  <ul>
   <li><input type="checkbox" name="'.$fieldname.'[all]"';
   if (!empty($messagedata[$fieldname]["all"])) {
     $categoryhtml['all'] .= "checked";
@@ -639,18 +740,21 @@ function ListofLists($messagedata,$fieldname,$subselect) {
     if (isset($messagedata[$fieldname][$list["id"]]) && $messagedata[$fieldname][$list["id"]]) {
       $categoryhtml[$list['category']] .= "checked";
     }
-    $categoryhtml[$list['category']] .= ">".stripslashes($list["name"]);
+    $categoryhtml[$list['category']] .= " />".stripslashes($list["name"]);
     if ($list["active"]) {
-      $categoryhtml[$list['category']] .= ' (<font color=red>'.$GLOBALS['I18N']->get('listactive').'</font>)';
+      $categoryhtml[$list['category']] .= ' (<span class="activelist">'.$GLOBALS['I18N']->get('listactive').'</span>)';
     } else {
-      $categoryhtml[$list['category']] .= ' (<font color=red>'.$GLOBALS['I18N']->get('listnotactive').'</font>)';
+      $categoryhtml[$list['category']] .= ' (<span class="inactivelist">'.$GLOBALS['I18N']->get('listnotactive').'</span>)';
     }
 
-    $desc = nl2br(stripslashes($list["description"]));
-
-    $categoryhtml[$list['category']] .= "<br />$desc</li>";
+    if (!empty($list["description"])) {
+      $desc = nl2br(stripslashes($list["description"]));
+      $categoryhtml[$list['category']] .= "<br />$desc";
+    }
+    $categoryhtml[$list['category']] .= "</li>";
     $some = 1;
   }
+  if (empty($categoryhtml['selected'])) unset($categoryhtml['selected']);
   return $categoryhtml;
 }
 
@@ -1266,8 +1370,8 @@ function printarray($array){
 }
 
 function Paging($base_url,$start,$total,$numpp = 10,$label = "") {
-  $page = 0;
-  $data = PagingPrevious($base_url,$start,$total,$numpp,$label);#.'&nbsp;|&nbsp;';
+  $page = 1;
+  $data = '';#PagingPrevious($base_url,$start,$total,$numpp,$label);#.'&nbsp;|&nbsp;';
   if (!isset($GLOBALS['config']['paginglabeltitle'])) {
     $labeltitle = $label;
   } else {
@@ -1283,11 +1387,8 @@ function Paging($base_url,$start,$total,$numpp = 10,$label = "") {
   }
   if ($page == 1)
     return "";
-  $data .= PagingNext($base_url,$start,$total,$numpp,$label,$page);
-  return '<div class="scroll-pane"><div class="paging scroll-content">'.$data.'</div></div>'.
-	'<div class="scroll-bar-wrap">
-		<div class="scroll-bar1"></div>
-	</div>';
+ # $data .= PagingNext($base_url,$start,$total,$numpp,$label,$page);
+  return '<div class="pagingwrapper"><a class="prev browse left">&lt;&lt;</a><div class="paging"><div class="items">'.$data.'</div></div><a class="next browse right">&gt;&gt;</a></div>';
 }
 
 function PagingNext($base_url,$start,$total,$numpp,$label = "") {
