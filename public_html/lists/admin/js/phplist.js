@@ -18,6 +18,18 @@ function messageStatusUpdate(msgid) {
    setTimeout("messageStatusUpdate("+msgid+")",5000);
 }
 
+function getServerTime() {
+   $('#servertime').load('./?page=pageaction&ajaxed=true&action=getservertime',"",function() {
+   });
+   setTimeout("getServerTime()",5000);
+}
+
+function refreshCriteriaList() {
+  var id = urlParameter('id',document.location);
+  $("#existingCriteria").html(busyImage);
+  $("#existingCriteria").load('./?page=pageaction&ajaxed=true&action=listcriteria&id='+id);
+}
+
 function openDialog(url) {
   $("#dialog").dialog({
     minHeight: 400,
@@ -39,6 +51,8 @@ function totalSentUpdate(msgid) {
 
 $(document).ready(function(){
 
+$(".paging").scrollable();
+
 $(".configurelink").click(function() {
  // alert(this.href);
   $("#configurecontent").load('./?page=ajaxcall&action=test');
@@ -56,7 +70,7 @@ $("a.ajaxable").click(function() {
   parent = $(this).parent();
   parent.html(busyImage);
   url = url.replace(/page=/,'origpage=');
-  //alert(url+'&ajaxed=true&page=pageaction');
+//  alert(url+'&ajaxed=true&page=pageaction');
   parent.load(url+'&ajaxed=true&page=pageaction');
   return false;
 })
@@ -105,7 +119,7 @@ $("#emailsearch").autocomplete({
 */
 
   $("#listinvalid").load("./?page=pageaction&action=listinvalid&ajaxed=true",function() {
-   alert("Loaded")
+ //  alert("Loaded")
    });
 
   $(".tabbed").tabs({
@@ -115,6 +129,7 @@ $("#emailsearch").autocomplete({
       }
     }
   });
+  $(".tabbed1").tabs();
 
   $("#remoteurlinput").blur(function() {
     $("#remoteurlstatus").html(busyImage);
@@ -130,13 +145,72 @@ $("#emailsearch").autocomplete({
       $("#messagecontent").show();
     }
   })
-
+  
   $("a.savechanges").click(function() {
     if (changed) {
       document.sendmessageform.followupto.value = this.href;
       document.sendmessageform.submit();
       return false;
     }
+  });
+
+  $("#criteriaSelect").change(function() {
+    var val = $("#criteriaSelect").val();
+    var operator = '';
+    switch (aT[val]) {
+      case 'checkbox':
+        $("#criteriaAttributeOperator").html('<input type="hidden" name="criteria_operator" value="is" />');
+        $("#criteriaAttributeValues").html('CHECKED <input type="radio" name="criteria_values" value="checked" /> UNCHECKED <input type="radio" name="criteria_values" value="unchecked" />');
+        break;
+      case 'checkboxgroup':
+      case 'select':
+      case 'radio':
+        $("#criteriaAttributeOperator").html('IS <input type="radio" name="criteria_operator" value="is" checked="checked" /> IS NOT <input type="radio" name="criteria_operator" value="isnot" />');
+        $("#criteriaAttributeValues").html(busyImage);
+        $("#criteriaAttributeValues").load("./?page=pageaction&ajaxed=true&action=attributevalues&name=criteria_values&type=multiselect&attid="+val);
+        break;
+      case 'date':
+        $("#criteriaAttributeOperator").html('IS <input type="radio" name="criteria_operator" value="is" checked="checked" /> IS NOT <input type="radio" name="criteria_operator" value="isnot" /> IS BEFORE <input type="radio" name="criteria_operator" value="isbefore" /> IS AFTER <input type="radio" name="criteria_operator" value="isafter" />');
+        $("#criteriaAttributeValues").html('<input type="text" id="datepicker" name="criteria_values" size="30"/>');
+        $("#datepicker").datepicker({dateFormat: 'yy-mm-dd' });
+        break;
+      default:
+        $("#criteriaAttributeOperator").html('');
+        $("#criteriaAttributeValues").html('');
+        break;
+    }
+      
+//    alert(val + " "+aT[val]);
+  })
+
+  $("#refreshCriteria").click(refreshCriteriaList);
+  
+  $("#addcriterionbutton").click(function() {
+    $("#addcriterionbutton").addClass('disabled');
+    var request = document.location.search+'&'+$("#sendmessageform").serialize();
+    var attr = urlParameter('criteria_attribute',request);
+    if (attr == '') {
+      alert('Select an attribute to add');
+      return false;
+    }
+    var vals = urlParameter('criteria_values',request);
+    var arrVals = urlParameter('criteria_values[]',request);
+    if (vals == '' && arrVals) {
+      alert('Select a value to add');
+      return false;
+    }
+    
+    request = request.replace(/\?/,'');
+    request = request.replace(/page=/,'origpage=');
+    request = './?page=pageaction&action=storemessage&'+request;
+    alert(request);
+    $("#existingCriteria").html(busyImage);
+ //   $("#hiddendiv").load(request);
+ //   $("#sendmessageform").submit();
+ //   setTimeout("refreshCriteriaList()",5000);
+
+//    refreshCriteriaList();
+    return true;
   });
 
 })
