@@ -21,7 +21,7 @@ function messageStatusUpdate(msgid) {
 function getServerTime() {
    $('#servertime').load('./?page=pageaction&ajaxed=true&action=getservertime',"",function() {
    });
-   setTimeout("getServerTime()",5000);
+   setTimeout("getServerTime()",60100); // just over a minute
 }
 
 function refreshCriteriaList() {
