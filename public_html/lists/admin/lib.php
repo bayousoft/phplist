@@ -19,8 +19,13 @@ if (defined("IN_WEBBLER") && is_object($GLOBALS["config"]["plugins"]["phplist"])
 }
 
 $usephpmailer = 0;
-if (PHPMAILER && is_file(PHPMAILER_PATH)) {
-  include_once dirname(__FILE__).'/class.phplistmailer.php';
+if (PHPMAILER) {
+  if (is_file(PHPMAILER_PATH)) {
+    include_once PHPMAILER_PATH;
+  } else {
+    ## fall back to old version, should be phased out
+    include_once dirname(__FILE__).'/class.phplistmailer.php';
+  }
   $usephpmailer = 1;  
 } else {
   require_once dirname(__FILE__)."/class.html.mime.mail.inc";
@@ -49,6 +54,8 @@ function listName($id) {
 }
 
 function setMessageData($msgid,$name,$value) {
+  if ($name == 'PHPSESSID') return;
+  
   if (is_array($value) || is_object($value)) {
     $value = 'SER:'.serialize($value);
   }
@@ -79,9 +86,11 @@ function loadMessageData($msgid) {
     'forwardmessage' => '',
     'textmessage' => '',
     'rsstemplate' => '',
-    'embargo' => '',
-    'repeatinterval' => '',
-    'repeatuntil' => '',
+    'embargo' => array('year' => date('Y'),'month' => date('m'),'day' => date('d'),'hour' => date('H'),'minute' => date('i')),
+    'repeatinterval' => 0,
+    'repeatuntil' =>  array('year' => date('Y'),'month' => date('m'),'day' => date('d'),'hour' => date('H'),'minute' => date('i')),
+    'requeueinterval' => 0,
+    'requeueuntil' =>  array('year' => date('Y'),'month' => date('m'),'day' => date('d'),'hour' => date('H'),'minute' => date('i')),
     'from' => '',
     'subject' => '',
     'forwardsubject' => '',
@@ -95,6 +104,8 @@ function loadMessageData($msgid) {
     'sendurl' => '',
     'sendmethod' => 'remoteurl', ## make a config
     'testtarget' => '',
+    'notify_start' =>  getConfig("notifystart_default"),
+    'notify_end' =>  getConfig("notifyend_default"),
   );
   if (is_array($prevMsgData)) {
     foreach ($prevMsgData as $key => $val) {
@@ -113,6 +124,13 @@ function loadMessageData($msgid) {
     }
     $messagedata[stripslashes($row['name'])] = $data;
   }
+  
+  foreach (array('embargo','repeatuntil','requeueuntil') as $datefield) {
+    if (!is_array($messagedata[$datefield])) {
+      $messagedata[$datefield] = array('year' => date('Y'),'month' => date('m'),'day' => date('d'),'hour' => date('H'),'minute' => date('i'));
+    }
+  }
+  
   // Load lists that were targetted with message...
   $result = Sql_Query(sprintf('select list.name,list.id 
     from '.$GLOBALS['tables']['listmessage'].' listmessage,'.$GLOBALS['tables']['list'].' list
@@ -133,7 +151,7 @@ function loadMessageData($msgid) {
   }
 
   $GLOBALS['MD'][$msgid] = $messagedata;
- # print_r($messagedata);
+//  var_dump($messagedata);
   return $messagedata;
 }
 
@@ -632,12 +650,12 @@ function stripComments($content) {
 }
 
 function compressContent($content) {
+  $content = preg_replace("/\n/",' ',$content);
+  $content = preg_replace("/\r/",'',$content);
   $content = removeJavascript($content);
   $content = stripComments($content);
-  $content = preg_replace("/\n/",'',$content);
-  $content = preg_replace("/\r/",'',$content);
 
-  #$content = preg_replace('/\s*(<.*? >)\s*/',"\\1",$content);
+  ## find some clean way to remove double spacing
 
   return $content;
 }
@@ -699,12 +717,27 @@ function isValidRedirect($url) {
   return strpos($url,$_SERVER['HTTP_HOST']);
 }
 
+/* check the url_append config and expand the url with it
+ */
+
+function expandURL($url) {
+  $url_append = getConfig('remoteurl_append');
+  if ($url_append) {
+    if (strpos($url,'?')) {
+      $url = $url.$url_append;
+    } else {
+      $url = $url.'?'.$url_append;
+    }
+  }
+  return $url;
+}
+
 function fetchUrl($url,$userdata = array()) {
   require_once "HTTP/Request.php";
  # logEvent("Fetching $url");
   if (sizeof($userdata)) {
     foreach ($userdata as $key => $val) {
-      $url = eregi_replace("\[$key\]",urlencode($val),$url);
+      $url = str_ireplace("[$key]",urlencode($val),$url);
     }
   }
 
@@ -712,10 +745,7 @@ function fetchUrl($url,$userdata = array()) {
     $GLOBALS['urlcache'] = array();
   }
   
-  $url_append = getConfig('remoteurl_append');
-  if ($url_append) {
-    $url = $url.$url_append;
-  }
+  $url = expandUrl($url);
 
   # keep in memory cache in case we send a page to many emails
   if (isset($GLOBALS['urlcache'][$url]) && is_array($GLOBALS['urlcache'][$url])
@@ -1087,6 +1117,7 @@ function listCategories() {
   return $aConfiguredListCategories;
 }
 
+if (!function_exists('getnicebacktrace')) {
 function getNiceBackTrace( $bTrace = false ) {
   $sTrace = '';
   $aBackTrace = debug_backtrace();
@@ -1113,11 +1144,13 @@ function getNiceBackTrace( $bTrace = false ) {
   return $sTrace;
   
 }
+}
+if (!function_exists('pad_right')) {
 
 function pad_right($str,$len) {
   $str = str_pad( $str, $len, ' ', STR_PAD_LEFT);
   return substr( $str, strlen( $str ) - $len, $len );
 }
-
+}
 
 ?>
