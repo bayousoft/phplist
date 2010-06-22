@@ -1,4 +1,4 @@
-<?
+<?php
 
 $site = array
 	(

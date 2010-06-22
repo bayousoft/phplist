@@ -30,7 +30,7 @@
 <script type="text/javascript" src="js/jquery.tools.scrollable.js"></script>
 <script language="Javascript" type="text/javascript" src="js/phplist.js"></script>
 
-<?
+<?php
 if (isset($GLOBALS['config']['head'])) {
   foreach ( $GLOBALS['config']['head'] as $sHtml ) {
     print $sHtml;

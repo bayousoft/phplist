@@ -69,7 +69,7 @@ $dbpass = $GLOBALS["I18N"]->get($GLOBALS['strJsDbPass']);
 
 <br>
 <br>
-<div class="wrong"><?echo $msg?></div>
+<div class="wrong"><?phpecho $msg?></div>
 <style type="text/css">
 //table tr td input { float:right; }
 </style>
@@ -77,7 +77,7 @@ $dbpass = $GLOBALS["I18N"]->get($GLOBALS['strJsDbPass']);
 <table width=500>
   <tr>
     <td>
-    <div class="explain"><?echo $GLOBALS["I18N"]->get($GLOBALS['strDbExplain'])?></div>
+    <div class="explain"><?phpecho $GLOBALS["I18N"]->get($GLOBALS['strDbExplain'])?></div>
     </td>
   </tr>
 </table>
@@ -87,28 +87,28 @@ function validation(){
    var frm = document.pageForm;
    
    if (frm.database_name.value == ""){
-      alert("<?echo $dbname?>");
+      alert("<?phpecho $dbname?>");
       frm.database_name.focus();
 
       return false;
    }
    
    if (frm.database_host.value == ""){
-      alert("<?echo $dbhost?>");
+      alert("<?phpecho $dbhost?>");
       frm.database_host.focus();
 
       return false;
    }
    
    if (frm.database_user.value == ""){
-      alert("<?echo $dbuser?>");
+      alert("<?phpecho $dbuser?>");
       frm.database_user.focus();
 
       return false;
    }
    
    if (frm.database_password.value == ""){
-      alert("<?echo $dbpass?>");
+      alert("<?phpecho $dbpass?>");
       frm.database_password.focus();
 
       return false;
@@ -119,11 +119,11 @@ function validation(){
 </script>
 
 <form method="post" name="pageForm">
-  <input type="hidden" name="page" value="<?echo $nextPage?>"/>
-  <input type="hidden" name="submited" value="<?echo $inTheSame?>"/>
+  <input type="hidden" name="page" value="<?phpecho $nextPage?>"/>
+  <input type="hidden" name="submited" value="<?phpecho $inTheSame?>"/>
 
   <table border=0 width=500>
-    <?echo $HTMLElements?>
+    <?phpecho $HTMLElements?>
   </table>
 </form>
 <?php

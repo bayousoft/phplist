@@ -1,4 +1,4 @@
-<?
+<?php
 require_once dirname(__FILE__).'/accesscheck.php';
 
 ### add "Ajaxable actions" that just return the result, but show in the full page when not ajaxed

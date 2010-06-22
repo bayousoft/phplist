@@ -32,7 +32,7 @@ delSessionData();
   </script>
   <p>
   <form name="lang_change" action="" method=POST>
-  <?echo languagePack("","langChange();")?>
+  <?phpecho languagePack("","langChange();")?>
   </form>
   </p>
 </div>
@@ -68,14 +68,14 @@ function validation(){
 </div>
 <div id="maincontent_install">
   <div class="intro_install"><?php print $GLOBALS["I18N"]->get(sprintf('%s',$GLOBALS["strIntroInstaller"]));?></div>
-  <?  if ($errno){ ?>
+  <?php  if ($errno){ ?>
   <div class="allwrong"><?php print $msg?></div>
-  <?}?>
+  <?php}?>
   <div class="intro_install">
   <?php print $GLOBALS["I18N"]->get(sprintf('%s',$GLOBALS["strChooseInstallation"]));?>
   <form method="post" name="pageForm">
-    <input type="hidden" name="page" value="<?echo $nextPage?>"/>
-    <input type="hidden" name="submited" value="<?echo $inTheSame?>"/>
+    <input type="hidden" name="page" value="<?phpecho $nextPage?>"/>
+    <input type="hidden" name="submited" value="<?phpecho $inTheSame?>"/>
     <input type=radio name=insttype value=BASIC checked>Basic installation<br>
     <input type=radio name=insttype value=ADVANCED>Advanced installation
   </form>

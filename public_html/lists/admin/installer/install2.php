@@ -57,12 +57,12 @@ while (!$withAdvanced){
 
 <br>
 <br>
-<div class="wrong"><?echo $msg?></div>
+<div class="wrong"><?phpecho $msg?></div>
 <style type="text/css">
 //table tr td input { float:right; }
 </style>
 
-<?echo $JSElements;?>
+<?phpecho $JSElements;?>
 <script type='text/javascript'>
 function submission(opt){
    if (opt != "Back"){
@@ -89,20 +89,20 @@ function submission(opt){
   </tr>
 </table>
 <form method="post" name="backForm">
-  <input type="hidden" name="page" value="<?echo $page?>"/>
-  <input type="hidden" name="group" value="<?echo $group-2  // because $group was incremented yet to say what is the next group?>"/>
+  <input type="hidden" name="page" value="<?phpecho $page?>"/>
+  <input type="hidden" name="group" value="<?phpecho $group-2  // because $group was incremented yet to say what is the next group?>"/>
   <input type="hidden" name="option" id="option" value="Back"/>
 </form>
 <form method="post" name="pageForm">
-  <input type="hidden" name="page" value="<?echo $page?>"/>
-  <input type="hidden" name="group" value="<?echo $group?>"/>
+  <input type="hidden" name="page" value="<?phpecho $page?>"/>
+  <input type="hidden" name="group" value="<?phpecho $group?>"/>
   <input type="hidden" name="option" id="option"/>
   <table border=0>
-  <?echo $HTMLElements?>
+  <?phpecho $HTMLElements?>
   </table>
   <br>
   <br>
-  <input type=button value="&laquo;&nbsp;Back" onClick="javascript:submission('Back')" <?echo ($group-1 <= 0)?"disabled":""?>>
-  <input type=button value="Next&nbsp;&raquo;" onClick="javascript:submission('Next')" <?echo ($group == sizeof($parameters))?"disabled":""?>>
+  <input type=button value="&laquo;&nbsp;Back" onClick="javascript:submission('Back')" <?phpecho ($group-1 <= 0)?"disabled":""?>>
+  <input type=button value="Next&nbsp;&raquo;" onClick="javascript:submission('Next')" <?phpecho ($group == sizeof($parameters))?"disabled":""?>>
   <input type=button value="Finish Advance installation" onClick="javascript:submission('Finish')">
 </form>

@@ -32,7 +32,7 @@
     <td>&nbsp;</td>
 <td><div align="left">
 <br />
-<?
+<?php
 print topMenu();
 print $languageswitcher;
 ?>

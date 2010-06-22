@@ -1,4 +1,4 @@
-<?
+<?php
 ## 
 if (!$GLOBALS["commandline"]) {
   @ob_end_flush();

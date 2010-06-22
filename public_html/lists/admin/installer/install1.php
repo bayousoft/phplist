@@ -78,7 +78,7 @@ $mailpass = $GLOBALS["I18N"]->get($GLOBALS['strJsMailPass']);
 ?>
 <br>
 <br>
-<div class="wrong"><?echo $msg?></div>
+<div class="wrong"><?phpecho $msg?></div>
 <style type="text/css">
 //table tr td input { float:right; }
 </style>
@@ -86,7 +86,7 @@ $mailpass = $GLOBALS["I18N"]->get($GLOBALS['strJsMailPass']);
 <table width=500>
   <tr>
     <td>
-    <div class="explain"><?echo $GLOBALS["I18N"]->get($GLOBALS['strExplainInstall'])?></div>
+    <div class="explain"><?phpecho $GLOBALS["I18N"]->get($GLOBALS['strExplainInstall'])?></div>
     </td>
   </tr>
 </table>
@@ -105,14 +105,14 @@ function validation(){
    var frm = document.pageForm;
    
    if (frm.message_envelope.value == ""){
-      alert("<?echo $mailacc?>");
+      alert("<?phpecho $mailacc?>");
       frm.message_envelope.focus();
 
       return false;
    }
    else
    if (!validarEmail(frm.message_envelope.value)){
-      alert("<?echo $mailvalidacc?>");
+      alert("<?phpecho $mailvalidacc?>");
       frm.message_envelope.focus();
       frm.message_envelope.select();
 
@@ -121,7 +121,7 @@ function validation(){
 
    if (frm.bounce_mailbox_host.value == ""){
       alert("You must enter the mail server (host) for this account");
-      alert("<?echo $mailhost?>");
+      alert("<?phpecho $mailhost?>");
       frm.bounce_mailbox_host.focus();
 
       return false;
@@ -129,7 +129,7 @@ function validation(){
    
    if (frm.bounce_mailbox_user.value == ""){
       alert("You must enter the user for connect to the mail server (host)");
-      alert("<?echo $mailuser?>");
+      alert("<?phpecho $mailuser?>");
       frm.bounce_mailbox_user.focus();
 
       return false;
@@ -137,7 +137,7 @@ function validation(){
    
    if (frm.bounce_mailbox_password.value == ""){
       alert("You must enter the password for this user");
-      alert("<?echo $mailpass?>");
+      alert("<?phpecho $mailpass?>");
       frm.bounce_mailbox_password.focus();
 
       return false;
@@ -148,11 +148,11 @@ function validation(){
 </script>
 
 <form method="post" name="pageForm">
-  <input type="hidden" name="page" value="<?echo $nextPage?>"/>
-  <input type="hidden" name="submited" value="<?echo $inTheSame?>"/>
+  <input type="hidden" name="page" value="<?phpecho $nextPage?>"/>
+  <input type="hidden" name="submited" value="<?phpecho $inTheSame?>"/>
 
   <table border=0 width=350>
-    <?echo $HTMLElements?>
+    <?phpecho $HTMLElements?>
   </table>
 </form>
 <?php
