@@ -6,7 +6,7 @@ if (isset($_POST["usercheck"])) {
   $users = explode("\n",$_POST["usercheck"]);
   foreach ($users as $user) {
     $user = trim($user);
-    if ($_POST["check"] == "foreignkey") {
+    if (isset($_POST['check']) && $_POST["check"] == "foreignkey") {
       $exists = Sql_Query(sprintf('select id,foreignkey,email,password from %s where foreignkey = "%s"',$tables["user"],$user));
     } else {
       $exists = Sql_Query(sprintf('select id,foreignkey,email,password from %s where email = "%s"',$tables["user"],$user));
@@ -16,13 +16,15 @@ if (isset($_POST["usercheck"])) {
       $lsexist->addElement($user,PageUrl2("user&amp;id=".$id["id"]));
       $lsexist->addColumn($user,$GLOBALS["I18N"]->get('email'),$id['email']);
       $lsexist->addColumn($user,$GLOBALS["I18N"]->get('key'),$id['foreignkey']);
-      $lsexist->addColumn($user,$GLOBALS["I18N"]->get('passwd'),$id['password']);
+    #  $lsexist->addColumn($user,$GLOBALS["I18N"]->get('passwd'),$id['password']);
     } else {
       $lsnonexist->addElement($user);
     }
   }
   print $lsexist->display();
   print $lsnonexist->display();
+} else {
+  $_POST['usercheck'] = '';
 }
 
 $GLOBALS["I18N"]->get("existcheckintro");
