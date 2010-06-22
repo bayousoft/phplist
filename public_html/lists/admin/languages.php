@@ -196,76 +196,94 @@ class phplist_I18N {
       return $pluginroot.'/';
     }
   }
+  
+  function getTranslation($text,$page,$basedir) {
+    if (is_file($basedir.'/'.$this->language.'/'.$page.'.php')) {
+      @include $basedir.'/'.$this->language.'/'.$page.'.php';
+    } elseif (!isset($GLOBALS['developer_email'])) {
+      @include $basedir.'/'.$this->defaultlanguage.'/'.$page.'.php';
+    }
+    if (isset($lan) && is_array($lan) && isset($lan[$text])) {
+      return $this->formatText($lan[$text]);
+    }
+    if (isset($lan) && is_array($lan) && isset($lan[strtolower($text)])) {
+      return $this->formatText($lan[strtolower($text)]);
+    }
+    if (isset($lan) && is_array($lan) && isset($lan[strtoupper($text)])) {
+      return $this->formatText($lan[strtoupper($text)]);
+    }
+    if (is_file($basedir.'/'.$this->language.'.php')) {
+      @include $basedir.'/'.$this->language.'.php';
+    } elseif (!isset($GLOBALS['developer_email'])) {
+      @include $basedir.'/'.$this->defaultlanguage.'.php';
+    }
+    if (is_file($basedir.'/'.$this->language.'/common.php')) {
+      @include $basedir.'/'.$this->language.'/common.php';
+    } elseif (!isset($GLOBALS['developer_email'])) {
+      @include $basedir.'/'.$this->defaultlanguage.'/common.php';
+    }
+    if (isset($lan) && is_array($lan) && isset($lan[$text])) {
+      return $this->formatText($lan[$text]);
+    }
+    if (isset($lan) && is_array($lan) && isset($lan[strtolower($text)])) {
+      return $this->formatText($lan[strtolower($text)]);
+    }
+    if (isset($lan) && is_array($lan) && isset($lan[strtoupper($text)])) {
+      return $this->formatText($lan[strtoupper($text)]);
+    }
 
+    if (is_file($basedir.'/'.$this->language.'/frontend.php')) {
+      @include $basedir.'/'.$this->language.'/frontend.php';
+    } elseif (!isset($GLOBALS['developer_email'])) {
+      @include $basedir.'/'.$this->defaultlanguage.'/frontend.php';
+    }
+    if (isset($lan) && is_array($lan) && isset($lan[$text])) {
+      return $this->formatText($lan[$text]);
+    }
+    if (isset($lan) && is_array($lan) && isset($lan[strtolower($text)])) {
+      return $this->formatText($lan[strtolower($text)]);
+    }
+    if (isset($lan) && is_array($lan) && isset($lan[strtoupper($text)])) {
+      return $this->formatText($lan[strtoupper($text)]);
+    }
+    return '';
+  }
+  
+  
   function get($text) {
+    if (trim($text) == "") return "";
+    if (strip_tags($text) == "") return $text;
+    $translation = '';
+    
     $this->basedir = dirname(__FILE__).'/lan/';
-    if (isset($_GET["page"]))
+    if (isset($_GET["page"])) {
       $page = basename($_GET["page"]);
-    else
+    } else {
       $page = "home";
+    }
       
-    if ($page == 'campaign') { ## for now use the language from the send page
-      $page = 'send';
-    }  
-
     if (!empty($_GET['pi'])) {
       $plugin_languagedir = $this->getPluginBasedir();
       if (is_dir($plugin_languagedir)) {
-        $this->basedir = $plugin_languagedir;
+        $translation = $this->getTranslation($text,$page,$plugin_languagedir);
       }
     }
     
-    if (trim($text) == "") return "";
-    if (strip_tags($text) == "") return $text;
-    if (is_file($this->basedir.$this->language.'/'.$page.'.php')) {
-      @include $this->basedir.$this->language.'/'.$page.'.php';
-    } elseif (!isset($GLOBALS['developer_email'])) {
-      @include $this->basedir.$this->defaultlanguage.'/'.$page.'.php';
-    }
-    if (isset($lan) && is_array($lan) && isset($lan[$text])) {
-      return $this->formatText($lan[$text]);
-    }
-    if (isset($lan) && is_array($lan) && isset($lan[strtolower($text)])) {
-      return $this->formatText($lan[strtolower($text)]);
-    }
-    if (isset($lan) && is_array($lan) && isset($lan[strtoupper($text)])) {
-      return $this->formatText($lan[strtoupper($text)]);
-    }
-    if (is_file($this->basedir.$this->language.'/common.php')) {
-      @include $this->basedir.$this->language.'/common.php';
-    } elseif (!isset($GLOBALS['developer_email'])) {
-      @include $this->basedir.$this->defaultlanguage.'/common.php';
-    }
-    if (isset($lan) && is_array($lan) && isset($lan[$text])) {
-      return $this->formatText($lan[$text]);
-    }
-    if (isset($lan) && is_array($lan) && isset($lan[strtolower($text)])) {
-      return $this->formatText($lan[strtolower($text)]);
-    }
-    if (isset($lan) && is_array($lan) && isset($lan[strtoupper($text)])) {
-      return $this->formatText($lan[strtoupper($text)]);
-    }
-
-    if (is_file($this->basedir.$this->language.'/frontend.php')) {
-      @include $this->basedir.$this->language.'/frontend.php';
-    } elseif (!isset($GLOBALS['developer_email'])) {
-      @include $this->basedir.$this->defaultlanguage.'/frontend.php';
-    }
-    if (isset($lan) && is_array($lan) && isset($lan[$text])) {
-      return $this->formatText($lan[$text]);
-    }
-    if (isset($lan) && is_array($lan) && isset($lan[strtolower($text)])) {
-      return $this->formatText($lan[strtolower($text)]);
-    }
-    if (isset($lan) && is_array($lan) && isset($lan[strtoupper($text)])) {
-      return $this->formatText($lan[strtoupper($text)]);
+    ## if a plugin did not return the translation, find it in core
+    if (empty($translation)) {
+      $translation = $this->getTranslation($text,$page,$this->basedir);
     }
   
     # spelling mistake, retry with old spelling
-    if ($text == 'over threshold, user marked unconfirmed') {
+    if ($text == 'over threshold, user marked unconfirmed' && empty($translation)) {
       return $this->get('over treshold, user marked unconfirmed');
     }
-    return $this->missingText($text);
+    
+    if (!empty($translation)) {
+      return $translation;
+    } else {
+      return $this->missingText($text);
+    }
   }
 }
 
