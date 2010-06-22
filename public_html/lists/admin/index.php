@@ -107,7 +107,8 @@ include_once dirname(__FILE__)."/languages.php";
 include_once dirname(__FILE__)."/lib.php";
 require_once dirname(__FILE__)."/commonlib/lib/interfacelib.php";
 
-if (Sql_Table_exists($tables["config"],1)) {
+if (!empty($_SESSION['hasconf']) || Sql_Table_exists($tables["config"],1)) {
+  $_SESSION['hasconf'] = true;
   ### Activate all plugins
   foreach ($GLOBALS['plugins'] as $plugin) {
     $plugin->activate();
@@ -335,7 +336,7 @@ if ($GLOBALS["require_login"] && $page != "login") {
 }
 
 if (!$ajax && $page != "login") {
-  if (ereg("dev",VERSION) && !TEST) {
+  if (strpos(VERSION,"dev") && !TEST) {#
     if ($GLOBALS["developer_email"]) {
       Info("Running DEV version. All emails will be sent to ".$GLOBALS["developer_email"]);
     } else {
