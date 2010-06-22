@@ -560,6 +560,14 @@ $GLOBALS['pagecategories'] = array(
   ),
 );
 
+function pageCategory($page) {
+  foreach ($GLOBALS['pagecategories'] as $category => $cat_details) {
+    if (in_array($page,$cat_details['pages'])) {
+      return $category;
+    }
+  }
+  return '';
+}
 
 $main_menu = array(
   "configure" => "Configure",
@@ -630,8 +638,7 @@ function newMenu() {
 /*   if ($GLOBALS["require_login"]) */
 /*     $html .= $spb.PageLink2("logout",$GLOBALS["I18N"]->get("logout")).'<br />'.$spe; */
 
-  $_GET["pi"] = '';
-  $html .= $spb.PageLink2("home",$GLOBALS["I18N"]->get("Main Page")).$spe;
+  $html .= $spb.PageLink2("home",$GLOBALS["I18N"]->get("Main Page"),'',true).$spe;
 
   /*
   $req = Sql_Query(sprintf('select * from %s %s',$tables["subscribepage"],$subselect));
@@ -657,6 +664,26 @@ function newMenu() {
     }
   }
   */
+  
+  $thispage = $_GET['page'];
+  $thispage_category = pageCategory($thispage);
+  
+  if (empty($thispage_category) && empty($_GET['pi'])) {
+    return '';
+  } elseif (!empty($_GET['pi'])) {
+    $thispage_category = 'plugins';
+  }
+
+  $GLOBALS['main_menu'] = array(
+    "community" => 'Help',
+    "about" =>  'about',
+    "logout" => "logout",
+    "div1" => "<hr />",
+    'category' => $thispage_category,
+  );
+  foreach ($GLOBALS['pagecategories'][$thispage_category]['menulinks'] as $category_page) {
+    $GLOBALS['main_menu'][$category_page] = $category_page;
+  }
 
   foreach ($GLOBALS["main_menu"] as $page => $desc) {
     if (!$desc) continue;
@@ -670,18 +697,21 @@ function newMenu() {
       // don't use the link for a rule
       elseif ($desc == "<hr />") {
         $html .= '<div class="menulinkleft">'.$desc.'</div>';
-      }
-      else {
+      } elseif ($page == 'category') {
+        $html .= '<div class="menulinkleft category"><h4>'.$GLOBALS['I18N']->get($thispage_category).'</h4></div>';
+      } else {
         $html .= $spb.$link.$spe;
       }
     }
   }
+/*
   if (sizeof($GLOBALS["plugins"])) {
     $html .= $spb."<hr/>".$spe;
     foreach ($GLOBALS["plugins"] as $pluginName => $plugin) {
       $html .= $spb.PageLink2("main&amp;pi=$pluginName",$pluginName).$spe;
     }
   } 
+*/
 
   return $html . $pixel;
 }
@@ -716,13 +746,13 @@ function topMenu() {
     foreach ($categoryDetails['menulinks'] as $page) {
       $title = $GLOBALS['I18N']->pageTitle($page);
       
-      $link = PageLink2($page,$title);
+      $link = PageLink2($page,$title,'',true);
       if ($link) {
         $thismenu .= '<li>'.$link.'</li>';
       }
     }
     if (!empty($categoryDetails['toplink'])) {
-      $categoryurl = PageUrl2($categoryDetails['toplink']);
+      $categoryurl = PageUrl2($categoryDetails['toplink'],'',true);
       if ($categoryurl) {
         $topmenu .=  '<ul><li><h3><a href="'.$categoryurl.'">'.$GLOBALS['I18N']->get($category).'</a></h3><ul>'.$thismenu.'</ul></li></ul>';
       } else {
@@ -736,7 +766,7 @@ function topMenu() {
   return $topmenu;
 }
 
-function PageLink2($name,$desc="",$url="") {
+function PageLink2($name,$desc="",$url="",$no_plugin = false) {
   if ($url)
     $url = "&amp;".$url;
   $access = accessLevel($name);
@@ -752,7 +782,7 @@ function PageLink2($name,$desc="",$url="") {
       return "";#'<!-- '.$desc.'-->';
 		elseif ($name == "processbounces" && !MANUALLY_PROCESS_BOUNCES) return ""; #'<!-- '.$desc.'-->';
     else {
-      if (!preg_match("/&amp;pi=/i",$name) && isset($_GET["pi"]) && isset($GLOBALS["plugins"][$_GET["pi"]]) && is_object($GLOBALS["plugins"][$_GET["pi"]])) {
+      if (!$no_plugin && !preg_match("/&amp;pi=/i",$name) && isset($_GET["pi"]) && isset($GLOBALS["plugins"][$_GET["pi"]]) && is_object($GLOBALS["plugins"][$_GET["pi"]])) {
         $pi = '&amp;pi='.$_GET["pi"];
       } else {
         $pi = "";
