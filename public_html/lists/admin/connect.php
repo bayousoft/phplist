@@ -31,7 +31,7 @@ $GLOBALS["img_cross"] = '<img src="images/cross.gif" alt="No" />';
 $checkboxgroup_storesize = 1; # this will allow 10000 options for checkboxes
 
 # identify pages that can be run on commandline
-$commandline_pages = array('send','processqueue','processbounces','import','upgrade','convertstats','reindex'); // ,'getrss' //Obsolete by rssmanager plugin
+$commandline_pages = array('send','processqueueforked','processqueue','processbounces','import','upgrade','convertstats','reindex'); // ,'getrss' //Obsolete by rssmanager plugin
 
 if (isset($message_envelope))
   $envelope = "-f$message_envelope";
@@ -98,14 +98,18 @@ $GLOBALS["mail_error_count"] = 0;
 function SaveConfig($item,$value,$editable=1,$ignore_errors = 0) {
   global $tables;
   ## in case DB hasn't been initialised
-  $hasconf = Sql_Table_Exists($tables["config"]);
-  if (!$hasconf) return;
+  if (empty($_SESSION['hasconf'])) {
+    $_SESSION['hasconf'] = Sql_Table_Exists($tables["config"]);
+  } 
+  if (empty($_SESSION['hasconf'])) return;
   if ($value == "false" || $value == "no") {
     $value = 0;
 	} else
 		if ($value == "true" || $value == "yes") {
     $value = 1;
   }
+  ## force reloading config values in session
+  unset($_SESSION['config']);
   return Sql_Replace( $tables["config"], array('item'=>$item, 'value'=>$value, 'editable'=>$editable), 'item');
 }
 
@@ -359,7 +363,7 @@ function Info($msg) {
     print "\n".strip_tags($GLOBALS["I18N"]->get("information").": ".$msg)."\n";
     @ob_start();
   } else {
- #   print '<div class="info">'.$GLOBALS["I18N"]->get("information").": $msg </div>";
+    print '<div class="info">'.$GLOBALS["I18N"]->get("information").": $msg </div>";
   }
 }
 
@@ -400,6 +404,19 @@ $GLOBALS['pagecategories'] = array(
         'userhistory',
         'user',
       ),
+     'menulinks' => array(
+        'users',
+        'usermgt',
+        'members',
+        'import',
+        'export',
+        'listbounces',
+        'massremove',
+        'massunconfirm',
+        'reconcileusers',
+        'usercheck',
+      ),
+      
    ),
   'campaigns' => array(
       'toplink' => 'campaignmgt',
@@ -414,40 +431,133 @@ $GLOBALS['pagecategories'] = array(
         'viewtemplate',
         'bouncemgt',
       ),
+      'menulinks' => array(
+        'send',
+        'messages',
+        'templates',
+        'bouncemgt',
+      ),
   ),
   'statistics' => array(
       'toplink' => 'statsoverview',
-      'pages' => array('mviews','mclicks','uclicks','userclicks','statsmgt','statsoverview','domainstats'),
+      'pages' => array(
+        'mviews',
+        'mclicks',
+        'uclicks',
+        'userclicks',
+        'statsmgt',
+        'statsoverview',
+        'domainstats'
+      ),
+      'menulinks' => array(
+        'mviews',
+        'mclicks',
+        'uclicks',
+        'statsmgt',
+        'statsoverview',
+        'domainstats'
+      ),
   ),
   'system' => array(
       'toplink' => 'system',
-      'pages' => array('bounce','bounces','convertstats','dbcheck','eventlog','generatebouncerules','initialise','upgrade','processqueue','processbounces','reindex','resetstats',),
+      'pages' => array(
+        'bounce',
+        'bounces',
+        'convertstats',
+        'dbcheck',
+        'eventlog',
+        'generatebouncerules',
+        'initialise',
+        'upgrade',
+        'processqueue',
+        'processbounces',
+        'reindex',
+        'resetstats',
+      ),
+      'menulinks' => array(
+        'bounces',
+        'dbcheck',
+        'eventlog',
+        'generatebouncerules',
+        'initialise',
+        'upgrade',
+        'processqueue',
+        'processbounces',
+        'reindex',
+      ),
   ),
   'develop' => array(
       'toplink' => 'develop',
-      'pages' => array('checki18n','dbadmin','stresstest','subscriberstats','tests'),
+      'pages' => array(
+        'checki18n',
+        'stresstest',
+        'subscriberstats',
+        'tests',
+        'resetstats',
+      ),
+      'menulinks' => array(
+        'checki18n',
+        'stresstest',
+        'subscriberstats',
+        'tests',
+        'resetstats',
+      ),
   ),
   'config' => array(
       'toplink' => 'setup',
-      'pages' => array('setup','configure','list','editlist','catlists','spage','spageedit','admins','admin','importadmin','adminattributes','attributes','editattributes','defaults','bouncerules','bouncerule','checkbouncerules'),
+      'pages' => array(
+        'setup',
+        'configure',
+        'list',
+        'editlist',
+        'catlists',
+        'spage',
+        'spageedit',
+        'admins',
+        'admin',
+        'importadmin',
+        'adminattributes',
+        'attributes',
+        'editattributes',
+        'defaults',
+        'bouncerules',
+        'bouncerule',
+        'checkbouncerules',
+      ),
+      'menulinks' => array(
+        'setup',
+        'configure',
+        'list',
+        'attributes',
+        'editattributes',
+        'spage',
+        'admins',
+        'importadmin',
+        'adminattributes',
+        'bouncerules',
+        'checkbouncerules',
+        'catlists',
+      ),
   ),
   'info' => array(
       'toplink' => 'about',
-      'pages' => array('about','community','home','vote'),
+      'pages' => array(
+        'about',
+        'community',
+        'home',
+        'vote'
+      ),
+      'menulinks' => array(
+        'about',
+        'community',
+        'home',
+      ),
   ),
   'plugins' => array(
     'toplink' => 'plugins',
     'pages' => array(),
+    'menulinks' => array(),
   ),
-);
-
-$GLOBALS['pageclassification'] = array(
-  "import1"  => array('category' => 'subscribers'),
-  "import2"  => array('category' => 'subscribers'),
-  "import3"  => array('category' => 'subscribers'),
-  "import4"  => array('category' => 'subscribers'),
-
-
 );
 
 
@@ -582,11 +692,11 @@ function topMenu() {
   if ($_SESSION["logindetails"]['superuser']) {
     if (sizeof($GLOBALS["plugins"])) {
       foreach ($GLOBALS["plugins"] as $pluginName => $plugin) {
-        array_push($GLOBALS['pagecategories']['plugins']['pages'],'main&pi='.$pluginName);
+        array_push($GLOBALS['pagecategories']['plugins']['menulinks'],'main&pi='.$pluginName);
         $menulinks = $plugin->menuLinks;
         foreach ($menulinks as $link => $linkDetails) {
           if (isset($GLOBALS['pagecategories'][$linkDetails['category']])) {
-            array_push($GLOBALS['pagecategories'][$linkDetails['category']]['pages'],$link.'&pi='.$pluginName);
+            array_push($GLOBALS['pagecategories'][$linkDetails['category']]['menulinks'],$link.'&pi='.$pluginName);
           }
         }
 #          PageLink2("main&amp;pi=$pluginName",$pluginName).$spe;
@@ -603,7 +713,7 @@ function topMenu() {
       continue;
     
     $thismenu = '';
-    foreach ($categoryDetails['pages'] as $page) {
+    foreach ($categoryDetails['menulinks'] as $page) {
       $title = $GLOBALS['I18N']->pageTitle($page);
       
       $link = PageLink2($page,$title);
@@ -1159,8 +1269,7 @@ $msgdata = Sql_Fetch_Array_Query(
   $req = Sql_Query(sprintf('select * from %s where id = %d',
     $GLOBALS['tables']['messagedata'],$msgid));
   while ($row = Sql_Fetch_Array($req)) {
-    Sql_Query(sprintf('insert into %s (name,id,data) values("%s",%d,"%s")',
-      $GLOBALS['tables']['messagedata'],$row['name'],$id,addslashes($row['data'])));
+    setMessageData($id,$row['name'],$row['data']);
   }
 
   # check whether the new embargo is not on an exclusion
@@ -1188,6 +1297,12 @@ $msgdata = Sql_Fetch_Array_Query(
 
   Sql_Query(sprintf('update %s set embargo = "%s",status = "submitted",sent = "" where id = %d',
       $GLOBALS["tables"]["message"],$msgdata["newembargo"],$id));
+      
+  list($e['year'],$e['month'],$e['day'],$e['hour'],$e['minute'],$e['second']) = 
+    sscanf($msgdata["newembargo"],'%04d-%02d-%02d %02d:%02d:%02d');
+  unset($e['second']);  
+  setMessageData($id,'embargo',$e);
+      
   foreach (array("processed","astext","ashtml","astextandhtml","aspdf","astextandpdf","viewed", "bouncecount") as $item) {
     Sql_Query(sprintf('update %s set %s = 0 where id = %d',
         $GLOBALS["tables"]["message"],$item,$id));
