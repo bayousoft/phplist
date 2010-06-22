@@ -8,9 +8,23 @@ if (!$id) {
   return;
 }
 
+if (isset($_REQUEST['sendmethod']) && $_REQUEST['sendmethod'] == 'inputhere') {
+  $_REQUEST['sendurl'] = '';
+}
+
+if (!empty($_REQUEST['sendurl'])) {
+  if (!$GLOBALS["has_pear_http_request"]) {
+    print Warn($GLOBALS['I18N']->get('warnnopearhttprequest'));
+  } else {
+    $_REQUEST["message"] = '[URL:'.$_REQUEST['sendurl'].']';
+  }
+} 
+
 ## remember any data entered
 foreach ($_REQUEST as $key => $val) {
-#  print $key;
+/*
+  print $key .' '.$val;
+*/
   setMessageData($id,$key,$val);
   if (get_magic_quotes_gpc()) {
     if (is_string($val)) {
@@ -22,15 +36,20 @@ foreach ($_REQUEST as $key => $val) {
     $messagedata[$key] = $val;
   }
 }
+unset($GLOBALS['MD']);
+
+$messagedata = loadMessageData($id);
+
+/*
 if (!empty($_REQUEST["criteria_attribute"])) {
   include dirname(__FILE__).'/addcriterion.php';
 }
-if ((isset($_REQUEST["embargo"]['year']) && is_array($_REQUEST["embargo"]))) {
-  $messagedata["embargo"] = $embargo->getDate() ." ".$embargo->getTime().':00';
-}
+*/
 
-if ((isset($_REQUEST["repeatuntil"]['year']) && is_array($_REQUEST["repeatuntil"]))) {
-  $messagedata["repeatuntil"] = $repeatuntil->getDate() ." ".$repeatuntil->getTime().':00';
-}
+/*
+print '<hr/>';
+var_dump($messagedata);
+#exit;
+*/
 
 $status = 'OK';
