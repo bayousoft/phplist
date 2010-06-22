@@ -1,4 +1,4 @@
-<?
+<?php
 $lan = array(
 'Manage PGP keys' => 'Manage PGP keys',
 'Add a key' => 'Add a key',

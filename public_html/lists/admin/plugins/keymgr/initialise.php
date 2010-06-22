@@ -1,4 +1,4 @@
-<?
+<?php
 
 $plugin = $GLOBALS["plugins"]['keymanager'];
 if (!is_object($plugin)) {

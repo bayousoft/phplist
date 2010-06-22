@@ -1,4 +1,4 @@
-<?
+<?php
 $pl = $GLOBALS["plugins"]['keymanager'];
 if (!is_object($pl)) {
   print $GLOBALS['I18N']->get('Error initialising key manager');

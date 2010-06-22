@@ -1,4 +1,4 @@
-<?
+<?php
 $lan = array(
 'Manage PGP keys' => 'Manage PGP keys',
 'PGP key manager for phplist' => 'PGP key manager for phplist',
