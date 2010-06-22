@@ -77,6 +77,8 @@ class phplistPlugin {
       $store= $value;
     }
     Sql_Query(sprintf('replace into %s set item = "%s-%s",value="%s",editable=0', $GLOBALS['tables']['config'], $this->name, addslashes($name), addslashes($store)));
+    ## force refresh of config in session
+    unset($_SESSION['config']);
     return 1;
   }
 
@@ -84,12 +86,20 @@ class phplistPlugin {
     # read a value from the general config to be retrieved at a later stage
     # parameters: name -> name of the variable
     # returns value
+    
+    if (isset($_SESSION['config'][$this->name.'-'.addslashes($name)])) {
+      return $_SESSION['config'][$this->name.'-'.addslashes($name)];
+    }
+    
     $req= Sql_Fetch_Array_Query(sprintf('select value from  %s where item = "%s-%s"', $GLOBALS['tables']['config'], $this->name, addslashes($name)));
     $result= stripslashes($req[0]);
     if (!empty ($result) && strpos('SER:', $result) == 1) {
       $result= substr($result, 4);
-      return unserialize($result);
+      $value= unserialize($result);
+    } else {
+      $value = $result;
     }
+    $_SESSION['config'][$this->name.'-'.addslashes($name)] = $value;
     return $result;
   }
 
