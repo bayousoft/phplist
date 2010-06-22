@@ -132,6 +132,7 @@ $("#emailsearch").autocomplete({
   $(".tabbed1").tabs();
 
   $("#remoteurlinput").blur(function() {
+    if (!this.value) return;
     $("#remoteurlstatus").html(busyImage);
     $("#remoteurlstatus").load("./?page=pageaction&action=checkurl&ajaxed=true&url="+this.value);
   })
