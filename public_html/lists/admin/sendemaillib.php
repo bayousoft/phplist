@@ -3,13 +3,13 @@ require_once dirname(__FILE__).'/accesscheck.php';
 
 # send an email library
 
-if (PHPMAILER && is_file(dirname(__FILE__).'/phpmailer/class.phpmailer.php')) {
-  # phplistmailer, extended of the popular phpmail class
-  # this is still very experimental
-  include_once dirname(__FILE__)."/class.phplistmailer.php";
+if (PHPMAILER) {
+  include_once dirname(__FILE__).'/class.phplistmailer.php';
 } else {
   require_once dirname(__FILE__)."/class.html.mime.mail.inc";
 }
+#require_once dirname(__FILE__)."/class.html.mime.mail.inc";
+#require_once dirname(__FILE__)."/Rmail/Rmail.php";
 
 if (!function_exists("output")) {
   function output($text) {
@@ -17,135 +17,97 @@ if (!function_exists("output")) {
 }
 
 function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$forwardedby = array()) {
+  $getspeedstats = !empty($GLOBALS['getspeedstats']) && isset($GLOBALS['processqueue_timer']);
+  $sqlCountStart = $GLOBALS["pagestats"]["number_of_queries"];
+    
+  ## for testing concurrency, put in a delay to check if multiple send processes cause duplicates
+  #usleep(rand(0,10) * 1000000);
+    
   global $strThisLink,$PoweredByImage,$PoweredByText,$cached,$website;
   if ($email == "")
     return 0;
+  if ($getspeedstats) output('sendEmail start '.$GLOBALS['processqueue_timer']->interval(1));
+  
   #0013076: different content when forwarding 'to a friend'
   if (FORWARD_ALTERNATIVE_CONTENT) {
     $forwardContent = sizeof( $forwardedby ) > 0;
-    $messagedata = loadMessageData($messageid);
   } else {
     $forwardContent = 0;
   }
 
   if (empty($cached[$messageid])) {
-    $domain = getConfig("domain");
-    $message = Sql_query("select * from {$GLOBALS["tables"]["message"]} where id = $messageid");
-    $cached[$messageid] = array();
-    $message = Sql_fetch_array($message);
-    if (ereg("([^ ]+@[^ ]+)",$message["fromfield"],$regs)) {
-      # if there is an email in the from, rewrite it as "name <email>"
-      $message["fromfield"] = ereg_replace($regs[0],"",$message["fromfield"]);
-      $cached[$messageid]["fromemail"] = $regs[0];
-      # if the email has < and > take them out here
-      $cached[$messageid]["fromemail"] = str_replace("<","",$cached[$messageid]["fromemail"]);
-      $cached[$messageid]["fromemail"] = str_replace(">","",$cached[$messageid]["fromemail"]);
-      # make sure there are no quotes around the name
-      $cached[$messageid]["fromname"] = str_replace('"',"",ltrim(rtrim($message["fromfield"])));
-    } elseif (ereg(" ",$message["fromfield"],$regs)) {
-      # if there is a space, we need to add the email
-      $cached[$messageid]["fromname"] = $message["fromfield"];
-      $cached[$messageid]["fromemail"] = "listmaster@$domain";
-    } else {
-      $cached[$messageid]["fromemail"] = $message["fromfield"] . "@$domain";
-
-      ## makes more sense not to add the domain to the word, but the help says it does
-      ## so let's keep it for now
-      $cached[$messageid]["fromname"] = $message["fromfield"] . "@$domain";
-    }
-    # erase double spacing
-    while (ereg("  ",$cached[$messageid]["fromname"])) {
-      $cached[$messageid]["fromname"] = str_replace("  "," ",$cached[$messageid]["fromname"]);
-    }
-
-    ## this has weird effects when used with only one word, so take it out for now
-#    $cached[$messageid]["fromname"] = eregi_replace("@","",$cached[$messageid]["fromname"]);
-
-   if (ereg("([^ ]+@[^ ]+)",$message["replyto"],$regs)) {
-      # if there is an email in the from, rewrite it as "name <email>"
-      $message["replyto"] = ereg_replace($regs[0],"",$message["replyto"]);
-      $cached[$messageid]["replytoemail"] = $regs[0];
-      # if the email has < and > take them out here
-      $cached[$messageid]["replytoemail"] = ereg_replace("<","",$cached[$messageid]["replytoemail"]);
-      $cached[$messageid]["replytoemail"] = ereg_replace(">","",$cached[$messageid]["replytoemail"]);
-      # make sure there are no quotes around the name
-      $cached[$messageid]["replytoname"] = ereg_replace('"',"",ltrim(rtrim($message["replyto"])));
-    } elseif (ereg(" ",$message["replyto"],$regs)) {
-      # if there is a space, we need to add the email
-      $cached[$messageid]["replytoname"] = $message["replyto"];
-      $cached[$messageid]["replytoemail"] = "listmaster@$domain";
-    } else {
-      $cached[$messageid]["replytoemail"] = $message["replyto"] . "@$domain";
-
-      ## makes more sense not to add the domain to the word, but the help says it does
-      ## so let's keep it for now
-      $cached[$messageid]["replytoname"] = $message["replyto"] . "@$domain";
-    }
-    
-    $cached[$messageid]["replytoname"] = trim($cached[$messageid]["replytoname"]);    
-    $cached[$messageid]["fromname"] = trim($cached[$messageid]["fromname"]);
-    $cached[$messageid]["to"] = $message["tofield"];
-    #0013076: different content when forwarding 'to a friend'
-    $cached[$messageid]["subject"] = $forwardContent ? stripslashes($messagedata["forwardsubject"]) : $message["subject"];
-    $cached[$messageid]["replyto"] =$message["replyto"];
-    #0013076: different content when forwarding 'to a friend'
-    $cached[$messageid]["content"] = $forwardContent ? stripslashes($messagedata["forwardmessage"]) : $message["message"];
-    if (USE_MANUAL_TEXT_PART && !$forwardContent) {
-      $cached[$messageid]["textcontent"] = $message["textmessage"];
-    } else {
-      $cached[$messageid]["textcontent"] = '';
-    }
-    #0013076: different content when forwarding 'to a friend'
-    $cached[$messageid]["footer"] = $forwardContent ? stripslashes($messagedata["forwardfooter"]) : $message["footer"];
-    $cached[$messageid]["htmlformatted"] = $message["htmlformatted"];
-    $cached[$messageid]["sendformat"] = $message["sendformat"];
-    if ($message["template"]) {
-      $req = Sql_Fetch_Row_Query("select template from {$GLOBALS["tables"]["template"]} where id = {$message["template"]}");
-      $cached[$messageid]["template"] = stripslashes($req[0]);
-      $cached[$messageid]["templateid"] = $message["template"];
-   #   dbg("TEMPLATE: ".$req[0]);
-    } else {
-      $cached[$messageid]["template"] = '';
-      $cached[$messageid]["templateid"] = 0;
-    }
-
-    ## @@ put this here, so it can become editable per email sent out at a later stage
-    $cached[$messageid]["html_charset"] = getConfig("html_charset");
-    ## @@ need to check on validity of charset
-    if (!$cached[$messageid]["html_charset"])
-      $cached[$messageid]["html_charset"] = 'iso-8859-1';
-    $cached[$messageid]["text_charset"] = getConfig("text_charset");
-    if (!$cached[$messageid]["text_charset"])
-      $cached[$messageid]["text_charset"] = 'iso-8859-1';
-  }# else
+    precacheMessage($messageid,$forwardContent);
+  } else {
   #  dbg("Using cached {$cached[$messageid]["fromemail"]}");
+    output('Using cached message');
+  }
   if (VERBOSE) {
     output($GLOBALS['I18N']->get('sendingmessage').' '.$messageid.' '.$GLOBALS['I18N']->get('withsubject').' '.
       $cached[$messageid]["subject"].' '.$GLOBALS['I18N']->get('to').' '.$email);
   }
+  
+  ## at this stage we don't know whether the content is HTML or text, it's just content
+  $content = $cached[$messageid]['content'];
 
   # erase any placeholders that were not found
 #  $msg = ereg_replace("\[[A-Z ]+\]","",$msg);
 
 #0011857: forward to friend, retain attributes
+  if (VERBOSE && $getspeedstats) {
+    output('Load user start');
+  }
+  $userdata = array();
+  $user_att_values = array();
+
   if ($hash == 'forwarded' && defined('KEEPFORWARDERATTRIBUTES') && KEEPFORWARDERATTRIBUTES) {
     $user_att_values = getUserAttributeValues($forwardedby['email']);
   } else {
     $user_att_values = getUserAttributeValues($email);
   } 
-  
+  ## the editor seems to replace spaces with &nbsp; so add those
+  foreach ($user_att_values as $key => $val) {
+    if (strpos($key,' ')) {
+      $newkey = str_replace(' ','&nbsp;',$key);
+      $user_att_values[$newkey] = $val;
+    }
+  }
+ 
   $query = sprintf('select * from %s where email = ?', $GLOBALS["tables"]["user"]);
   $rs = Sql_Query_Params($query, array($email));
   $userdata = Sql_Fetch_Assoc($rs);
 
-  $url = getConfig("unsubscribeurl");$sep = ereg('\?',$url)?'&':'?';
+  if (stripos($content,"[LISTS]") !== false) {
+    $listsarr = array();
+    $req = Sql_Query(sprintf('select list.name from %s as list,%s as listuser where list.id = listuser.listid and listuser.userid = %d',$GLOBALS["tables"]["list"],$GLOBALS["tables"]["listuser"],$userdata["id"]));
+    while ($row = Sql_Fetch_Row($req)) {
+      array_push($listsarr,$row[0]);
+    }
+    if (!empty($listsarr)) {
+      $html['lists'] = join('<br/>',$listsarr);
+      $text['lists'] = join("\n",$listsarr);
+    } else {
+      $html['lists'] = $GLOBALS['strNoListsFound'];
+      $text['lists'] = $GLOBALS['strNoListsFound'];
+    }
+    unset($listsarr);
+  }
+
+  if (VERBOSE && $getspeedstats) {
+    output('Load user end');
+  }
+
+  if (VERBOSE && $getspeedstats) {
+    output('define placeholders start');
+  }
+
+  $url = getConfig("unsubscribeurl");$sep = strpos($url,'?') === false ? '?':'&';
   $html["unsubscribe"] = sprintf('<a href="%s%suid=%s">%s</a>',$url,$sep,$hash,$strThisLink);
   $text["unsubscribe"] = sprintf('%s%suid=%s',$url,$sep,$hash);
   $html["unsubscribeurl"] = sprintf('%s%suid=%s',$url,$sep,$hash);
   $text["unsubscribeurl"] = sprintf('%s%suid=%s',$url,$sep,$hash);
 
   #0013076: Blacklisting posibility for unknown users
-  $url = getConfig("blacklisturl");$sep = ereg('\?',$url)?'&':'?';
+  $url = getConfig("blacklisturl");$sep = strpos($url,'?') === false ? '?':'&';
   $html["blacklist"] = sprintf('<a href="%s%semail=%s">%s</a>',$url,$sep,$email,$strThisLink);
   $text["blacklist"] = sprintf('%s%semail=%s',$url,$sep,$email);
   $html["blacklisturl"] = sprintf('%s%semail=%s',$url,$sep,$email);
@@ -157,13 +119,13 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     $text["unsubscribe"] = $text["blacklist"];
   }
   
-  $url = getConfig("subscribeurl");$sep = ereg('\?',$url)?'&':'?';
+  $url = getConfig("subscribeurl");$sep = strpos($url,'?') === false ? '?':'&';
   $html["subscribe"] = sprintf('<a href="%s">%s</a>',$url,$strThisLink);
   $text["subscribe"] = sprintf('%s',$url);
   $html["subscribeurl"] = sprintf('%s',$url);
   $text["subscribeurl"] = sprintf('%s',$url);
   #?mid=1&amp;id=1&uid=a9f35f130593a3d6b89cfe5cfb32a0d8&p=forward&email=michiel%40tincan.co.uk&
-  $url = getConfig("forwardurl");$sep = ereg('\?',$url)?'&':'?';
+  $url = getConfig("forwardurl");$sep = strpos($url,'?') === false ? '?':'&';
   $html["forward"] = sprintf('<a href="%s%suid=%s&amp;mid=%d">%s</a>',$url,$sep,$hash,$messageid,$strThisLink);
   $text["forward"] = sprintf('%s%suid=%s&amp;mid=%d',$url,$sep,$hash,$messageid);
   $html["forwardurl"] = sprintf('%s%suid=%s&amp;mid=%d',$url,$sep,$hash,$messageid);
@@ -174,147 +136,19 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 
   # make sure there are no newlines, otherwise they get turned into <br/>s
   $html["forwardform"] = sprintf('<form method="get" action="%s" name="forwardform" class="forwardform"><input type="hidden" name="uid" value="%s" /><input type="hidden" name="mid" value="%d" /><input type="hidden" name="p" value="forward" /><input type=text name="email" value="" class="forwardinput" /><input name="Send" type="submit" value="%s" class="forwardsubmit"/></form>',$url,$hash,$messageid,$GLOBALS['strForward']);
-  $text["signature"] = "\n\n-- Powered by PHPlist, www.phplist.com --\n\n";
-  $url = getConfig("preferencesurl");$sep = ereg('\?',$url)?'&':'?';
+  $text["signature"] = "\n\n-- Powered by phpList, www.phplist.com --\n\n";
+  $url = getConfig("preferencesurl");$sep = strpos($url,'?') === false ? '?':'&';
   $html["preferences"] = sprintf('<a href="%s%suid=%s">%s</a>',$url,$sep,$hash,$strThisLink);
   $text["preferences"] = sprintf('%s%suid=%s',$url,$sep,$hash);
   $html["preferencesurl"] = sprintf('%s%suid=%s',$url,$sep,$hash);
   $text["preferencesurl"] = sprintf('%s%suid=%s',$url,$sep,$hash);
-/*
-  We request you retain the signature below in your emails including the links.
-  This not only gives respect to the large amount of time given freely
-  by the developers  but also helps build interest, traffic and use of
-  PHPlist, which is beneficial to it's future development.
+  #historical, not sure it's still used
+  $html["userid"] = $hash;
+  $text["userid"] = $hash;
 
-  You can configure how the credits are added to your pages and emails in your
-  config file.
-
-  Michiel Dethmers, Tincan Ltd 2003, 2004, 2005, 2006
-*/
-  if (!EMAILTEXTCREDITS) {
-    $html["signature"] = $PoweredByImage;#'<div align="center" id="signature"><a href="http://www.phplist.com"><img src="powerphplist.png" width=88 height=31 title="Powered by PHPlist" alt="Powered by PHPlist" border="0" /></a></div>';
-    # oops, accidentally became spyware, never intended that, so take it out again :-)
-    $html["signature"] = preg_replace('/src=".*power-phplist.png"/','src="powerphplist.png"',$html["signature"]);
-  } else {
-    $html["signature"] = $PoweredByText;
-  }
-
-  $content = $cached[$messageid]["content"];
-  if (preg_match("/##LISTOWNER=(.*)/",$content,$regs)) {
-    $listowner = $regs[1];
-    $content = ereg_replace($regs[0],"",$content);
-  } else {
-    $listowner = 0;
-  }
-
-## Fetch external content
-  if ($GLOBALS["has_pear_http_request"] && preg_match("/\[URL:([^\s]+)\]/i",$content,$regs)) {
-    while (isset($regs[1]) && strlen($regs[1])) {
-      $url = $regs[1];
-      if (!preg_match('/^http/i',$url)) {
-        $url = 'http://'.$url;
-      }
-      $remote_content = fetchUrl($url,$userdata);
-
-      # @@ don't use this
-      #      $remote_content = includeStyles($remote_content);
-
-      if ($remote_content) {
-        $content = eregi_replace(preg_quote($regs[0]),$remote_content,$content);
-        $cached[$messageid]["htmlformatted"] = strip_tags($content) != $content;
-      } else {
-        logEvent("Error fetching URL: $regs[1] to send to $email");
-        return 0;
-      }
-      preg_match("/\[URL:([^\s]+)\]/i",$content,$regs);
-    }
-  }
-
-#~Bas 0008857 
-// @B@ Switched off for now, needs rigid testing, or config setting 
-// $content = mailto2href($content);
-// $content = encodeLinks($content);
-
-## Fill text and html versions depending on given versions.
-  if ($cached[$messageid]["htmlformatted"]) {
-    if (!$cached[$messageid]["textcontent"]) {
-      $textcontent = HTML2Text($content);
-    } else {
-      $textcontent = $cached[$messageid]["textcontent"];
-    }
-    $htmlcontent = $content;
-  } else {
-#    $textcontent = $content;
-    if (!$cached[$messageid]["textcontent"]) {
-      $textcontent = $content;
-    } else {
-      $textcontent = $cached[$messageid]["textcontent"];
-    }
-    $htmlcontent = parseText($content);
-  }
-
-  $defaultstyle = getConfig("html_email_style");
-  $adddefaultstyle = 0;
-
-  if ($cached[$messageid]["template"])
-    # template used
-    $htmlmessage = eregi_replace("\[CONTENT\]",$htmlcontent,$cached[$messageid]["template"]);
-  else {
-    # no template used
-    $htmlmessage = $htmlcontent;
-    $adddefaultstyle = 1;
-  }
-  $textmessage = $textcontent;
-
-## Parse placeholders
-
-  ### @@@TODO don't use forward and forward form in a forwarded message as it'll fail
-
-  #0013076: Blacklisting posibility for unknown users
-  foreach (array("forwardform","subscribe","preferences","unsubscribe", 'blacklist') as $item) { #BUGFIX 0015303, 1/2
-    # hmm str_ireplace and stripos would be faster, presumably, but that's php5 only
-    if (PHP5) {
-      if (stripos($htmlmessage,'['.$item.']')) {
-        $htmlmessage = str_ireplace('['.$item.']',$html[$item],$htmlmessage);
-        unset($html[$item]); # @@@ not sure, it allows only using any item once, which may not be desired
-      }
-      if (stripos($textmessage,'['.$item.']')) {
-        $textmessage = str_ireplace('['.$item.']',$text[$item],$textmessage);
-        unset($text[$item]);
-      }
-    } else {
-      if (eregi('\['.$item.'\]',$htmlmessage,$regs)) {
-        $htmlmessage = eregi_replace('\['.$item.'\]',$html[$item],$htmlmessage);
-        unset($html[$item]);
-      }
-      if (eregi('\['.$item.'\]',$textmessage,$regs)) {
-        $textmessage = eregi_replace('\['.$item.'\]',$text[$item],$textmessage);
-        unset($text[$item]);
-      }
-    }
-  }
-  #0013076: Blacklisting posibility for unknown users
-
-   foreach (array("forward","forwardurl","subscribeurl","preferencesurl","unsubscribeurl",'blacklisturl') as $item) {
-    if (PHP5) {
-      if (stripos($htmlmessage,'['.$item.']')) {
-        $htmlmessage = str_ireplace('['.$item.']',$html[$item],$htmlmessage);
-      }
-      if (stripos($textmessage,'['.$item.']')) {
-        $textmessage = str_ireplace('['.$item.']',$text[$item],$textmessage);
-      }
-    } else {
-      if (eregi('\['.$item.'\]',$htmlmessage,$regs)) {
-        $htmlmessage = eregi_replace('\['.$item.'\]',$html[$item],$htmlmessage);
-      }
-      if (eregi('\['.$item.'\]',$textmessage,$regs)) {
-        $textmessage = eregi_replace('\['.$item.'\]',$text[$item],$textmessage);
-      }
-    }
-  }
   if ($hash != 'forwarded') {
-    $text['footer'] = $cached[$messageid]["footer"];
-    $html['footer'] = $cached[$messageid]["footer"];
+    $text['footer'] = $cached[$messageid]["textfooter"];
+    $html['footer'] = $cached[$messageid]["htmlfooter"];
   } else {
     #0013076: different content when forwarding 'to a friend'
     if( FORWARD_ALTERNATIVE_CONTENT ) {
@@ -324,7 +158,167 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     }
     $html['footer'] = $text['footer'];
   }
+  
+/*
+  We request you retain the signature below in your emails including the links.
+  This not only gives respect to the large amount of time given freely
+  by the developers  but also helps build interest, traffic and use of
+  PHPlist, which is beneficial to it's future development.
 
+  You can configure how the credits are added to your pages and emails in your
+  config file.
+
+  Michiel Dethmers, Tincan Ltd 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010
+*/
+  if (!EMAILTEXTCREDITS) {
+    $html["signature"] = $PoweredByImage;#'<div align="center" id="signature"><a href="http://www.phplist.com"><img src="powerphplist.png" width=88 height=31 title="Powered by PHPlist" alt="Powered by PHPlist" border="0" /></a></div>';
+    # oops, accidentally became spyware, never intended that, so take it out again :-)
+    $html["signature"] = preg_replace('/src=".*power-phplist.png"/','src="powerphplist.png"',$html["signature"]);
+  } else {
+    $html["signature"] = $PoweredByText;
+  }
+#  $content = $cached[$messageid]["htmlcontent"];
+
+  if (VERBOSE && $getspeedstats) {
+    output('define placeholders end');
+  }
+
+  if ($cached[$messageid]['userspecific_url']) {
+    if (VERBOSE && $getspeedstats) {
+      output('fetch URL start');
+    }
+
+    ## Fetch external content, only if the URL has placeholders
+    if ($GLOBALS["has_pear_http_request"] && preg_match("/\[URL:([^\s]+)\]/i",$htmlcontent,$regs)) {
+      while (isset($regs[1]) && strlen($regs[1])) {
+        $url = $regs[1];
+        if (!preg_match('/^http/i',$url)) {
+          $url = 'http://'.$url;
+        }
+        $remote_content = fetchUrl($url,$userdata);
+
+        # @@ don't use this
+        #      $remote_content = includeStyles($remote_content);
+
+        if ($remote_content) {
+          $content = str_replace($regs[0],$remote_content,$content);
+          $cached[$messageid]["htmlformatted"] = strip_tags($content) != $content;
+        } else {
+          logEvent("Error fetching URL: $regs[1] to send to $email");
+          return 0;
+        }
+        preg_match("/\[URL:([^\s]+)\]/i",$htmlcontent,$regs);
+      }
+    }
+    if (VERBOSE && $getspeedstats) {
+      output('fetch URL end');
+    }
+  }
+
+#~Bas 0008857 
+// @B@ Switched off for now, needs rigid testing, or config setting 
+// $content = mailto2href($content);
+// $content = encodeLinks($content);
+
+## Fill text and html versions depending on given versions.
+
+  if (VERBOSE && $getspeedstats) {
+    output('parse text to html or html to text start');
+  }
+
+  if ($cached[$messageid]["htmlformatted"]) {
+    if (empty($cached[$messageid]["textcontent"])) {
+      $textcontent = 'HTML -> HTMLCONTENT Converted '.HTML2Text($content);
+    } else {
+      $textcontent = 'HTML -> TEXTCONTENT '.$cached[$messageid]["textcontent"];
+    }
+    $htmlcontent = $content;
+  } else {
+    if (empty($cached[$messageid]["textcontent"])) {
+      $textcontent = 'NOT HTML -> CONTENT ' .$content;
+    } else {
+      $textcontent = 'NOT HTML -> TEXTCONTENT '.$cached[$messageid]["textcontent"];
+    }
+    $htmlcontent = parseText($content);
+  }
+
+  if (VERBOSE && $getspeedstats) {
+    output('parse text to html or html to text end');
+  }
+
+  $defaultstyle = getConfig("html_email_style");
+  $adddefaultstyle = 0;
+  
+  if (VERBOSE && $getspeedstats) {
+    output('merge into template start');
+  }
+
+  if ($cached[$messageid]["template"])
+    # template used
+    $htmlmessage = str_replace("[CONTENT]",$htmlcontent,$cached[$messageid]["template"]);
+  else {
+    # no template used
+    $htmlmessage = $htmlcontent;
+    $adddefaultstyle = 1;
+  }
+  $textmessage = $textcontent;
+  
+  if (VERBOSE && $getspeedstats) {
+    output('merge into template end');
+  }
+## Parse placeholders
+
+  if (VERBOSE && $getspeedstats) {
+    output('parse placeholders start');
+  }
+
+
+/*
+  var_dump($html);
+  var_dump($userdata);
+  var_dump($user_att_values);
+  exit;
+*/
+
+
+#  print htmlspecialchars($htmlmessage);exit;
+
+  ### @@@TODO don't use forward and forward form in a forwarded message as it'll fail
+
+  if (strpos($htmlmessage, "[FOOTER]") !== false)
+    $htmlmessage = str_ireplace("[FOOTER]",$html["footer"],$htmlmessage);
+  elseif ($html["footer"])
+    $htmlmessage = addHTMLFooter($htmlmessage,'<br />'.$html["footer"]);
+    
+    
+/*
+  if (strpos($htmlmessage,"[SIGNATURE]") !== false)
+    $htmlmessage = str_ireplace("[SIGNATURE]",$html["signature"],$htmlmessage);
+  elseif ($html["signature"])
+*/
+# BUGFIX 0015303, 2/2
+//    $htmlmessage .= '<br />'.$html["signature"];
+/*
+      $htmlmessage = addHTMLFooter($htmlmessage, '
+'. $html["signature"]);
+*/
+
+# END BUGFIX 0015303, 2/2
+
+  if (strpos($textmessage,"[FOOTER]"))
+    $textmessage = str_ireplace("[FOOTER]",$text["footer"],$textmessage);
+  else
+    $textmessage .= "\n\n".$text["footer"];
+/*
+  if (eregi("\[SIGNATURE\]",$textmessage))
+    $textmessage = eregi_replace("\[SIGNATURE\]",$text["signature"],$textmessage);
+  else
+    $textmessage .= "\n".$text["signature"];
+*/
+
+// CUT 1
+
+/*
   $text["footer"] = eregi_replace("\[MESSAGEID\]",$text["messageid"],$text['footer']);
   $html["footer"] = eregi_replace("\[MESSAGEID\]",$html["messageid"],$html['footer']);
   $text["footer"] = eregi_replace("\[SUBSCRIBE\]",$text["subscribe"],$text['footer']);
@@ -349,29 +343,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     $text["footer"] = eregi_replace("\[UNSUBSCRIBE\]",$text["unsubscribe"],$text['footer']);
     $html["footer"] = eregi_replace("\[UNSUBSCRIBE\]",$html["unsubscribe"],$html['footer']);
   }
-
-  $html["footer"] = '<div class="emailfooter">'.nl2br($html["footer"]).'</div>';
-
-  if (eregi("\[FOOTER\]",$htmlmessage))
-    $htmlmessage = eregi_replace("\[FOOTER\]",$html["footer"],$htmlmessage);
-  elseif ($html["footer"])
-    $htmlmessage = addHTMLFooter($htmlmessage,'<br /><br />'.$html["footer"]);
-  if (eregi("\[SIGNATURE\]",$htmlmessage))
-    $htmlmessage = eregi_replace("\[SIGNATURE\]",$html["signature"],$htmlmessage);
-  elseif ($html["signature"])
-# BUGFIX 0015303, 2/2
-//    $htmlmessage .= '<br />'.$html["signature"];
-      $htmlmessage = addHTMLFooter($htmlmessage, '
-'. $html["signature"]);
-# END BUGFIX 0015303, 2/2
-  if (eregi("\[FOOTER\]",$textmessage))
-    $textmessage = eregi_replace("\[FOOTER\]",$text["footer"],$textmessage);
-  else
-    $textmessage .= "\n\n".$text["footer"];
-  if (eregi("\[SIGNATURE\]",$textmessage))
-    $textmessage = eregi_replace("\[SIGNATURE\]",$text["signature"],$textmessage);
-  else
-    $textmessage .= "\n".$text["signature"];
+*/
 
   ### addition to handle [FORWARDURL:Message ID:Link Text] (link text optional)
 
@@ -419,93 +391,46 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 #  $req = Sql_Query(sprintf('select filename,data from %s where template = %d',
 #    $GLOBALS["tables"]["templateimage"],$cached[$messageid]["templateid"]));
 
-  $htmlmessage = eregi_replace("\[USERID\]",$hash,$htmlmessage);
-  $textmessage = eregi_replace("\[USERID\]",$hash,$textmessage);
-
   if (ALWAYS_ADD_USERTRACK) {
     $htmlmessage .= '<img src="'.$GLOBALS['scheme'].'://'.$website.$GLOBALS["pageroot"].'/ut.php?u='.$hash.'&m='.$messageid.'" border="0" />';
   } else {
-    $htmlmessage = preg_replace("/\[USERTRACK\]/i",'<img src="'.$GLOBALS['scheme'].'://'.$website.$GLOBALS["pageroot"].'/ut.php?u='.$hash.'&m='.$messageid.'" border="0" />',$htmlmessage,1);
+    ## can't use str_replace or str_ireplace, because those replace all, and we only want to replace one
+    $htmlmessage = preg_replace( '/\[USERTRACK\]/i','<img src="'.$GLOBALS['scheme'].'://'.$website.$GLOBALS["pageroot"].'/ut.php?u='.$hash.'&m='.$messageid.'" border="0" />',$htmlmessage,1);
   }
   # make sure to only include usertrack once, otherwise the stats would go silly
-  if (PHP5) {
-    $htmlmessage = str_ireplace('[USERTRACK]','',$htmlmessage);
-  } else {
-    $htmlmessage = eregi_replace("\[USERTRACK\]",'',$htmlmessage);
-  }
+  $htmlmessage = str_ireplace('[USERTRACK]','',$htmlmessage);
 
-  if ($listowner) {
-    $att_req = Sql_Query("select name,value from {$GLOBALS["tables"]["adminattribute"]},{$GLOBALS["tables"]["admin_attribute"]} where {$GLOBALS["tables"]["adminattribute"]}.id = {$GLOBALS["tables"]["admin_attribute"]}.adminattributeid and {$GLOBALS["tables"]["admin_attribute"]}.adminid = $listowner");
-    while ($att = Sql_Fetch_Array($att_req))
+  if (!empty($cached[$messageid]['listowner'])) {
+    $att_req = Sql_Query("select name,value from {$GLOBALS["tables"]["adminattribute"]},{$GLOBALS["tables"]["admin_attribute"]} where {$GLOBALS["tables"]["adminattribute"]}.id = {$GLOBALS["tables"]["admin_attribute"]}.adminattributeid and {$GLOBALS["tables"]["admin_attribute"]}.adminid = ".$cached[$messageid]['listowner']);
+    while ($att = Sql_Fetch_Array($att_req)) {
       $htmlmessage = preg_replace("#\[LISTOWNER.".strtoupper(preg_quote($att["name"]))."\]#",$att["value"],$htmlmessage);
-  }
-
-  if (is_array($GLOBALS["default_config"])) {
-    foreach($GLOBALS["default_config"] as $key => $val) {
-      if (is_array($val)) {
-        $htmlmessage = eregi_replace("\[$key\]",getConfig($key),$htmlmessage);
-        $textmessage = eregi_replace("\[$key\]",getConfig($key),$textmessage);
-      }
     }
   }
+  $htmlmessage = parsePlaceHolders($htmlmessage,$html);
+  $textmessage = parsePlaceHolders($textmessage,$text);
 
-// obsolete by rssmanager plugin
-//  if (ENABLE_RSS && sizeof($rssitems)) {
-//    $rssentries = array();
-//    $request = join(",",$rssitems);
-//    $texttemplate = getConfig("rsstexttemplate");
-//    $htmltemplate = getConfig("rsshtmltemplate");
-//    $textseparatortemplate = getConfig("rsstextseparatortemplate");
-//    $htmlseparatortemplate = getConfig("rsshtmlseparatortemplate");
-//    $req = Sql_Query("select * from {$GLOBALS["tables"]["rssitem"]} where id in ($request) order by list,added");
-//    $curlist = "";
-//    while ($row = Sql_Fetch_array($req)) {
-//      if ($curlist != $row["list"]) {
-//        $row["listname"] = ListName($row["list"]);
-//        $curlist = $row["list"];
-//        $rssentries["text"] .= parserssTemplate($textseparatortemplate,$row);
-//        $rssentries["html"] .= parserssTemplate($htmlseparatortemplate,$row);
-//      }
-//
-//      $data_req = Sql_Query("select * from {$GLOBALS["tables"]["rssitem_data"]} where itemid = {$row["id"]}");
-//      while ($data = Sql_Fetch_Array($data_req))
-//        $row[$data["tag"]] = $data["data"];
-//
-//      $rssentries["text"] .= HTML2Text(parserssTemplate($texttemplate,$row));
-//      $rssentries["html"] .= parserssTemplate($htmltemplate,$row);
-//    }
-//    $htmlmessage = eregi_replace("\[rss\]",$rssentries["html"],$htmlmessage);
-//    $textmessage = eregi_replace("\[rss\]",$rssentries["text"],$textmessage);
-//  }
-
-  if (is_array($userdata)) {
-    foreach ($userdata as $name => $value) {
-      if (eregi("\[".$name."\]",$htmlmessage,$regs)) {
-        $htmlmessage = eregi_replace("\[".$name."\]",$value,$htmlmessage);
-      }
-      if (eregi("\[".$name."\]",$textmessage,$regs)) {
-        $textmessage = eregi_replace("\[".$name."\]",$value,$textmessage);
-      }
-    }
+  if (VERBOSE && $getspeedstats) {
+    output('parse placeholders end');
   }
+
+  if (VERBOSE && $getspeedstats) {
+    output('parse userdata start');
+  }
+  
+  $htmlmessage = parsePlaceHolders($htmlmessage,$userdata);
+  $textmessage = parsePlaceHolders($textmessage,$userdata);
+
+//CUT 2
   
   $destinationemail = '';
   if (is_array($user_att_values)) {
-    foreach ($user_att_values as $att_name => $att_value) {
-      if (eregi("\[".$att_name."\]",$htmlmessage,$regs)) {
-        # the value may be a multiline textarea field
-        $htmlatt_value = str_replace("\n","<br/>\n",$att_value);
-        $htmlmessage = eregi_replace("\[".$att_name."\]",$htmlatt_value,$htmlmessage);
-      }
-      if (eregi("\[".$att_name."\]",$textmessage,$regs)) {
-        $textmessage = eregi_replace("\[".$att_name."\]",$att_value,$textmessage);
-      }
-      # @@@ undocumented, use alternate field for real email to send to
-      ## would be good to move into a plugin instead
-      if (isset($GLOBALS["alternate_email"]) && strtolower($att_name) == strtolower($GLOBALS["alternate_email"])) {
-        $destinationemail = $att_value;
-      }
-    }
+// CUT 3
+    $htmlmessage = parsePlaceHolders($htmlmessage,$user_att_values);
+    $textmessage = parsePlaceHolders($textmessage,$user_att_values);
+  }
+
+  if (VERBOSE && $getspeedstats) {
+    output('parse userdata end');
   }
 
   if (!$destinationemail) {
@@ -516,28 +441,26 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   if (!ereg('@',$destinationemail) && isset($GLOBALS["expand_unqualifiedemail"])) {
     $destinationemail .= $GLOBALS["expand_unqualifiedemail"];
   }
-
-  foreach ($GLOBALS['plugins'] as $plugin) {
+  
+  if (VERBOSE && $getspeedstats) {
+    output('pass to plugins for destination email start');
+  }
+  foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
 #    print "Checking Destination for ".$plugin->name."<br/>";
     $destinationemail = $plugin->setFinalDestinationEmail($messageid,$user_att_values,$destinationemail);
   }
-
-  if (eregi("\[LISTS\]",$htmlmessage)) {
-    $lists = "";$listsarr = array();
-    $req = Sql_Query(sprintf('select list.name from %s as list,%s as listuser where list.id = listuser.listid and listuser.userid = %d',$GLOBALS["tables"]["list"],$GLOBALS["tables"]["listuser"],$user_system_values["id"]));
-    while ($row = Sql_Fetch_Row($req)) {
-      array_push($listsarr,$row[0]);
-    }
-    $lists_html = join('<br/>',$listsarr);
-    $lists_text = join("\n",$listsarr);
-    $htmlmessage = ereg_replace("\[LISTS\]",$lists_html,$htmlmessage);
-    $textmessage = ereg_replace("\[LISTS\]",$lists_text,$textmessage);
+  if (VERBOSE && $getspeedstats) {
+    output('pass to plugins for destination email end');
   }
+
 
   ## click tracking
   # for now we won't click track forwards, as they are not necessarily users, so everything would fail
+  if (VERBOSE && $getspeedstats) {
+    output('click track start');
+  }
 
-  if (CLICKTRACK && $hash != 'forwarded') {
+  if (CLICKTRACK && $hash != 'forwarded' && !empty($userdata['id'])) {
     $urlbase = '';
     # let's leave this for now
     /*
@@ -662,29 +585,31 @@ if (0) {
       $textmessage = str_replace('[%%%'.$linkid.'%%%]',$newlink, $textmessage);
     }
   }
-
-  #@B@ Why is this done twice????
-  if (eregi("\[LISTS\]",$htmlmessage)) {
-    $lists = "";$listsarr = array();
-    $req = Sql_Query(sprintf('select list.name from %s as list,%s as listuser where list.id = listuser.listid and listuser.userid = %d',$tables["list"],$tables["listuser"],$user_system_values["id"]));
-    while ($row = Sql_Fetch_Row($req)) {
-      array_push($listsarr,$row[0]);
-    }
-    $lists_html = join('<br/>',$listsarr);
-    $lists_text = join("\n",$listsarr);
-    $htmlmessage = ereg_replace("\[LISTS\]",$lists_html,$htmlmessage);
-    $textmessage = ereg_replace("\[LISTS\]",$lists_text,$textmessage);
+  if (VERBOSE && $getspeedstats) {
+    output('click track end');
   }
 
   #0011996: forward to friend - personal message
-  if (FORWARD_PERSONAL_NOTE_SIZE && $hash = 'forwarded' && !empty($forwardedby['personalNote']) ) {
+  if (FORWARD_PERSONAL_NOTE_SIZE && $hash == 'forwarded' && !empty($forwardedby['personalNote']) ) {
     $htmlmessage =  nl2br($forwardedby['personalNote']) . '<br/>' .  $htmlmessage;
     $textmessage = $forwardedby['personalNote'] . "\n" . $textmessage;
   }
+
+  if (VERBOSE && $getspeedstats) {
+    output('cleanup start');
+  }
   
-  ## remove any existing placeholders
-  $htmlmessage = eregi_replace("\[[A-Z\. ]+\]","",$htmlmessage);
-  $textmessage = eregi_replace("\[[A-Z\. ]+\]","",$textmessage);
+  ## allow fallback to default value for the ones that do not have a value
+  ## delimiter is %% to avoid interfering with markup
+  
+  preg_match_all('/\[.*\%\%([^\]]+)\]/Ui',$htmlmessage,$matches);
+  for ($i = 0; $i<count($matches[0]);$i++) {
+    $htmlmessage = str_ireplace($matches[0][$i],$matches[1][$i],$htmlmessage);
+  }
+
+  ## remove any remaining placeholders
+  $htmlmessage = preg_replace("/\[[A-Z\. ]+\]/i","",$htmlmessage);
+  $textmessage = preg_replace("/\[[A-Z\. ]+\]/i","",$textmessage);
 
   # check that the HTML message as proper <head> </head> and <body> </body> tags
   # some readers fail when it doesn't
@@ -702,18 +627,25 @@ if (0) {
   if (!preg_match("#<html.*</html>#ims",$htmlmessage)) {
     $htmlmessage = '<html>'.$htmlmessage.'</html>';
   }
+  
+  ## remove trailing code after </html>
+  $htmlmessage = preg_replace('#</html>.*#msi','</html>',$htmlmessage);
+  
+  ## the editor sometimes places <p> and </p> around the URL
+  $htmlmessage = str_ireplace('<p><!DOCTYPE','<!DOCTYPE',$htmlmessage);
+  $htmlmessage = str_ireplace('</html></p>','</html>',$htmlmessage);
 
-  # particularly Outlook seems to have trouble if it is not \r\n
-  # reports have come that instead this creates lots of trouble
-  # this is now done in the global sendMail function, so it is not
-  # necessary here
-#  if (USE_CARRIAGE_RETURNS) {
-#    $htmlmessage = preg_replace("/\r?\n/", "\r\n", $htmlmessage);
-#    $textmessage = preg_replace("/\r?\n/", "\r\n", $textmessage);
-#  }
+  if (VERBOSE && $getspeedstats) {
+    output('cleanup end');
+  }
 
-  # build the email
-  if (!PHPMAILER) {
+  $htmlmessage = compressContent($htmlmessage);
+
+ # print htmlspecialchars($htmlmessage);exit;
+
+  if ($getspeedstats) output('build Start '.$GLOBALS['processqueue_timer']->interval(1));
+
+  if (0) {  ## old method retired
     $mail = new html_mime_mail(
       array('X-Mailer: PHPlist v'.VERSION,
             "X-MessageId: $messageid",
@@ -725,17 +657,16 @@ if (0) {
             "List-Owner: <mailto:".getConfig("admin_address").">"
     ));
   } else {
+    # build the email
     $mail = new PHPlistMailer($messageid,$destinationemail);
     if ($forwardedby) {
       $mail->add_timestamp();
     }
-    #$mail->IsSMTP();
     $mail->addCustomHeader("List-Help: <".$text["preferences"].">");
     $mail->addCustomHeader("List-Unsubscribe: <".$text["unsubscribe"].">");
     $mail->addCustomHeader("List-Subscribe: <".getConfig("subscribeurl").">");
     $mail->addCustomHeader("List-Owner: <mailto:".getConfig("admin_address").">");
-    ##$mail->IsSMTP();
-  }
+}
 
   list($dummy,$domaincheck) = split('@',$destinationemail);
   $text_domains = explode("\n",trim(getConfig("alwayssendtextto")));
@@ -745,6 +676,7 @@ if (0) {
       output($GLOBALS['I18N']->get('sendingtextonlyto')." $domaincheck");
   }
   
+/*
   foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
     $textmessage = $plugin->parseOutgoingTextMessage($messageid,$textmessage,$destinationemail, $userdata);
     $htmlmessage = $plugin->parseOutgoingHTMLMessage($messageid,$htmlmessage,$destinationemail, $userdata);
@@ -757,32 +689,10 @@ if (0) {
       }
     }
   }
+*/
 
   # so what do we actually send?
   switch($cached[$messageid]["sendformat"]) {
-    case "HTML disabled": # we should not send HTML Only emails
-      # send html to users who want it and text to everyone else
-      if ($htmlpref) {
-        Sql_Query("update {$GLOBALS["tables"]["message"]} set ashtml = ashtml + 1 where id = $messageid");
-
-        foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
-          $plugin->processSuccesFailure ($messageid, 'ashtml', $userdata);
-        }
-        $mail->add_html($htmlmessage,"",$cached[$messageid]["templateid"]);
-//        if (ENABLE_RSS && sizeof($rssitems))            //Obsolete by rssmanager plugin
-//          updateRSSStats($rssitems,"ashtml");
-//      #  dbg("Adding HTML ".$cached[$messageid]["templateid"]);
-//       $mail->add_html($htmlmessage,$textmessage,$cached[$messageid]["templateid"]);
-        addAttachments($messageid,$mail,"HTML");
-      } else {
-        Sql_Query("update {$GLOBALS["tables"]["message"]} set astext = astext + 1 where id = $messageid");
-        foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
-          $plugin->processSuccesFailure ($messageid, 'astext', $userdata);
-        }
-        $mail->add_text($textmessage);
-        addAttachments($messageid,$mail,"text");
-      }
-      break;
     case "PDF":
       # send a PDF file to users who want html and text to everyone else
       foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
@@ -895,6 +805,8 @@ if (0) {
             $plugin->processSuccesFailure($messageid, 'astext', $userdata);
           }
           $mail->add_text($textmessage);
+#          $mail->setText($textmessage);
+#          $mail->Encoding = TEXTEMAIL_ENCODING;
           addAttachments($messageid,$mail,"text");
         }
       } 
@@ -908,6 +820,7 @@ if (0) {
         "text_charset" => $cached[$messageid]["text_charset"],
         "text_encoding" => TEXTEMAIL_ENCODING)
       );
+
 
   if (!TEST) {
     if ($hash != 'forwarded' || !sizeof($forwardedby)) {
@@ -923,17 +836,31 @@ if (0) {
     if (!empty($cached[$messageid]["replytoemail"])) {
       $mail->AddReplyTo($cached[$messageid]["replytoemail"],$cached[$messageid]["replytoname"]);
     }
+    if ($getspeedstats) output('build End '.$GLOBALS['processqueue_timer']->interval(1));
+    if ($getspeedstats) output('send Start '.$GLOBALS['processqueue_timer']->interval(1));
+    
+    if (!empty($GLOBALS['developer_email'])) {
+      $destinationemail = $GLOBALS['developer_email'];
+    }
+    
+#    $mail->setSMTPParams('nogal');
     if (!$mail->send("", $destinationemail, $fromname, $fromemail, $subject)) {
+#    if (!$mail->send(array($destinationemail),'spool')) {
+      output("Error sending message $messageid to $email ($destinationemail)");
       logEvent("Error sending message $messageid to $email ($destinationemail)");
       return 0;
     } else {
       ## only save the estimated size of the message when sending a test message
+      if ($getspeedstats) output('send End '.$GLOBALS['processqueue_timer']->interval(1));
       if (!isset($GLOBALS['send_process_id'])) {
-        if ($mail->mailsize) {
+        if (!empty($mail->mailsize)) {
           $name = $htmlpref ? 'htmlsize' : 'textsize';
           Sql_Replace($GLOBALS['tables']['messagedata'], array('id' => $messageid, 'name' => $name, 'data' => $mail->mailsize), array('name', 'id'));
         }
       }
+      $sqlCount = $GLOBALS["pagestats"]["number_of_queries"] - $sqlCountStart;
+      output('It took '.$sqlCount.'  queries to send this message');
+#exit;
    #   logEvent("Sent message $messageid to $email ($destinationemail)");
       return 1;
     }
@@ -1192,6 +1119,28 @@ function clickTrackLinkId($messageid,$userid,$url,$link) {
   ',$GLOBALS['tables']['linktrack'],$messageid,$userid,$fwdid));*/
   return $fwdid;
 }
+ 
+function parsePlaceHolders($content,$array = array()) {
+  foreach ($array as $key => $val) {
+    if (PHP5) {
+      if (stripos($content,'['.$key.']')) {
+        $content = str_ireplace('['.$key.']',$val,$content);
+      } elseif (preg_match('/\['.$key.'%%([^\]]+)\]/i',$content,$regs)) {
+        if (!empty($val)) {
+          $content = str_ireplace($regs[0],$val,$content);
+        } else {
+          $content = str_ireplace($regs[1],$regs[1],$content);
+        }
+      }
+    } else { 
+      $key = str_replace('/','\/',$key);
+      if (preg_match('/\['.$key.'\]/i',$content,$match)) {
+        $content = str_replace($match[0],$val,$content);
+      }
+    }
+  }
+  return $content;
+}
 
 function parseText($text) {
   # bug in PHP? get rid of newlines at the beginning of text
@@ -1262,6 +1211,176 @@ function addHTMLFooter($message,$footer) {
   }
   return $message;
 }
+
+/* preloadMessage
+ * 
+ * load message in memory cache $GLOBALS['cached']
+ */
+
+function precacheMessage($messageid,$forwardContent = 0) {
+  global $cached;
+  $domain = getConfig("domain");
+#    $message = Sql_query("select * from {$GLOBALS["tables"]["message"]} where id = $messageid");
+#    $cached[$messageid] = array();
+#    $message = Sql_fetch_array($message);
+  $message = loadMessageData($messageid);
+
+  if (preg_match("/([^ ]+@[^ ]+)/",$message["from"],$regs)) {
+    # if there is an email in the from, rewrite it as "name <email>"
+    $message["from"] = str_replace($regs[0],"",$message["from"]);
+    $cached[$messageid]["fromemail"] = $regs[0];
+    # if the email has < and > take them out here
+    $cached[$messageid]["fromemail"] = str_replace("<","",$cached[$messageid]["fromemail"]);
+    $cached[$messageid]["fromemail"] = str_replace(">","",$cached[$messageid]["fromemail"]);
+    # make sure there are no quotes around the name
+    $cached[$messageid]["fromname"] = str_replace('"',"",ltrim(rtrim($message["fromfield"])));
+  } elseif (strpos($message["from"]," ")) {
+    # if there is a space, we need to add the email
+    $cached[$messageid]["fromname"] = $message["from"];
+    $cached[$messageid]["fromemail"] = "listmaster@$domain";
+  } else {
+    $cached[$messageid]["fromemail"] = $message["from"] . "@$domain";
+
+    ## makes more sense not to add the domain to the word, but the help says it does
+    ## so let's keep it for now
+    $cached[$messageid]["fromname"] = $message["from"] . "@$domain";
+  }
+  # erase double spacing 
+  while (strpos($cached[$messageid]["fromname"],"  ")) {
+    $cached[$messageid]["fromname"] = str_replace("  "," ",$cached[$messageid]["fromname"]);
+  }
+
+  ## this has weird effects when used with only one word, so take it out for now
+#    $cached[$messageid]["fromname"] = eregi_replace("@","",$cached[$messageid]["fromname"]);
+
+ if (preg_match("/([^ ]+@[^ ]+)/",$message["replyto"],$regs)) {
+    # if there is an email in the from, rewrite it as "name <email>"
+    $message["replyto"] = str_replace($regs[0],"",$message["replyto"]);
+    $cached[$messageid]["replytoemail"] = $regs[0];
+    # if the email has < and > take them out here
+    $cached[$messageid]["replytoemail"] = str_replace("<","",$cached[$messageid]["replytoemail"]);
+    $cached[$messageid]["replytoemail"] = str_replace(">","",$cached[$messageid]["replytoemail"]);
+    # make sure there are no quotes around the name
+    $cached[$messageid]["replytoname"] = str_replace('"',"",ltrim(rtrim($message["replyto"])));
+  } elseif (strpos($message["replyto"]," ")) {
+    # if there is a space, we need to add the email
+    $cached[$messageid]["replytoname"] = $message["replyto"];
+    $cached[$messageid]["replytoemail"] = "listmaster@$domain";
+  } else {
+    if (!empty($message["replyto"])) {
+      $cached[$messageid]["replytoemail"] = $message["replyto"] . "@$domain";
+
+      ## makes more sense not to add the domain to the word, but the help says it does
+      ## so let's keep it for now
+      $cached[$messageid]["replytoname"] = $message["replyto"] . "@$domain";
+    }
+  }
+  
+  $cached[$messageid]["fromname"] = trim($cached[$messageid]["fromname"]);
+  $cached[$messageid]["to"] = $message["tofield"];
+  #0013076: different content when forwarding 'to a friend'
+  $cached[$messageid]["subject"] = $forwardContent ? stripslashes($message["forwardsubject"]) : $message["subject"];
+  #0013076: different content when forwarding 'to a friend'
+  $cached[$messageid]["content"] = $forwardContent ? stripslashes($message["forwardmessage"]) : $message["message"];
+  if (USE_MANUAL_TEXT_PART && !$forwardContent) {
+    $cached[$messageid]["textcontent"] = $message["textmessage"];
+  } else {
+    $cached[$messageid]["textcontent"] = '';
+  }
+  #0013076: different content when forwarding 'to a friend'
+  $cached[$messageid]["footer"] = $forwardContent ? stripslashes($message["forwardfooter"]) : $message["footer"];
+  
+  if (strip_tags($cached[$messageid]["footer"]) != $cached[$messageid]["footer"]) {
+    $cached[$messageid]["textfooter"] = HTML2Text($cached[$messageid]["footer"]);
+    $cached[$messageid]["htmlfooter"] = $cached[$messageid]["footer"];
+  } else {
+    $cached[$messageid]["textfooter"] = $cached[$messageid]["footer"];
+    $cached[$messageid]["htmlfooter"] = parseText($cached[$messageid]["footer"]);
+  }
+  
+  $cached[$messageid]["htmlformatted"] = strip_tags($cached[$messageid]["content"]) != $cached[$messageid]["content"];
+  $cached[$messageid]["sendformat"] = $message["sendformat"];
+  if ($message["template"]) {
+    $req = Sql_Fetch_Row_Query("select template from {$GLOBALS["tables"]["template"]} where id = {$message["template"]}");
+    $cached[$messageid]["template"] = stripslashes($req[0]);
+    $cached[$messageid]["templateid"] = $message["template"];
+ #   dbg("TEMPLATE: ".$req[0]);
+  } else {
+    $cached[$messageid]["template"] = '';
+    $cached[$messageid]["templateid"] = 0;
+  }
+
+  ## @@ put this here, so it can become editable per email sent out at a later stage
+  $cached[$messageid]["html_charset"] = getConfig("html_charset");
+  ## @@ need to check on validity of charset
+  if (!$cached[$messageid]["html_charset"]) {
+    $cached[$messageid]["html_charset"] = 'iso-8859-1';
+  }
+  $cached[$messageid]["text_charset"] = getConfig("text_charset");
+  if (!$cached[$messageid]["text_charset"]) {
+    $cached[$messageid]["text_charset"] = 'iso-8859-1';
+  }
+    
+  ## if we are sending a URL that contains user attributes, we cannot pre-parse the message here
+  ## but that has quite some impact on speed. So check if that's the case and apply
+  $cached[$messageid]['userspecific_url'] = preg_match('/\[.+\]/',$message['sendurl']);
+
+  if (!$cached[$messageid]['userspecific_url']) {
+    ## Fetch external content here, because URL does not contain placeholders
+#      if ($GLOBALS["has_pear_http_request"] && !empty($message['sendurl'])) {
+    if ($GLOBALS["has_pear_http_request"] && preg_match("/\[URL:([^\s]+)\]/i",$cached[$messageid]["content"],$regs)) {
+      $remote_content = fetchUrl($regs[1],array());
+    #  $remote_content = fetchUrl($message['sendurl'],array());
+
+      # @@ don't use this
+      #      $remote_content = includeStyles($remote_content);
+
+      if ($remote_content) {
+        $cached[$messageid]['content'] = str_replace($regs[0],$remote_content,$cached[$messageid]['content']);
+      #  $cached[$messageid]['content'] = $remote_content;
+        $cached[$messageid]["htmlformatted"] = strip_tags($remote_content) != $remote_content;
+      } else {
+        logEvent("Error fetching URL: ".$message['sendurl']. ' cannot proceed');
+        return 0;
+      }
+    }
+    
+    if (VERBOSE && $GLOBALS['getspeedstats']) {
+      output('fetch URL end');
+    }
+/*
+print $message['sendurl'];
+print $remote_content;exit;
+*/
+  } // end if not userspecific url
+/*
+    else {
+print $message['sendurl'];
+exit;
+}
+*/
+
+  if (VERBOSE && $GLOBALS['getspeedstats']) {
+    output('parse config start');
+  }
+  if (is_array($GLOBALS["default_config"])) {
+    foreach($GLOBALS["default_config"] as $key => $val) {
+      if (is_array($val)) {
+        $cached[$messageid]['content'] = str_replace("[$key]",getConfig($key),$cached[$messageid]['content']);
+        $cached[$messageid]["textcontent"] = str_replace("[$key]",getConfig($key),$cached[$messageid]["textcontent"]);
+      }
+    }
+  }
+  if (VERBOSE && $GLOBALS['getspeedstats']) {
+    output('parse config end');
+  }
+  if (preg_match("/##LISTOWNER=(.*)/",$cached[$messageid]['content'],$regs)) {
+    $cached[$messageid]['listowner'] = $regs[1];
+    $cached[$messageid]['content'] = str_replace($regs[0],"",$cached[$messageid]['content']);
+  } else {
+    $cached[$messageid]['listowner'] = 0;
+  }
+}  
 
 # make sure the 0 template has the powered by image
 $query
