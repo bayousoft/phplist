@@ -30,6 +30,9 @@ function Sql_Connect($host,$user,$password,$database) {
       case 1040: # too many connections
         Fatal_Error("Sorry, the server is currently too busy, please try again later.");
         exit;
+      case 2006: # "gone away"
+        Fatal_Error("Sorry, the server is currently too busy, please try again later.");
+        exit;
       case 0:
         break;
       default:
@@ -45,6 +48,7 @@ function Sql_Connect($host,$user,$password,$database) {
   if (strcasecmp($GLOBALS['strCharSet'], 'utf-8') == 0) {
     mysql_query ("SET NAMES 'utf8'");
   }
+  unset($GLOBALS['lastquery']);
   return $db;
 }
 
@@ -55,13 +59,18 @@ function Sql_has_error ($dbconnection) {
 function Sql_Error ($dbconnection,$errno = 0) {
   $msg = mysql_error($dbconnection);
   if (empty($GLOBALS['commandline'])) {
+/*
+    output('DB error'.$errno);
+    print debug_print_backtrace(); 
+*/
     return '<div id="dberror">Database error '. $errno.' while doing query '.$GLOBALS['lastquery']. ' ' .$msg.'</div>';
   } else {
-    return 'Database error '.$errno.' while doing query '.$GLOBALS['lastquery']. ' ' .$msg."\n";
+    print 'Database error '.$errno.' while doing query '.$GLOBALS['lastquery']. ' ' .$msg."\n";
   }
     if (function_exists("logevent")) {
       logevent("Database error: $msg");
     }
+
 #  return "<table class="x" border=1><tr><td class=\"error\">Database Error</td></tr><tr><td><!--$errno: -->$msg</td></tr></table>";
 }
 
@@ -92,6 +101,14 @@ function Sql_Check_error($dbconnection,$errno = 0) {
 }
 
 function Sql_Query($query,$ignore = 0) {
+  if (empty($GLOBALS['database_connection'])) {
+    $GLOBALS['database_connection'] = Sql_Connect(
+      $GLOBALS['database_host'],
+      $GLOBALS['database_user'],
+      $GLOBALS['database_password'],
+      $GLOBALS['database_name']);
+  }
+  
   if (isset($GLOBALS['lastquery'])) {
     unset($GLOBALS['lastquery']);
   }
@@ -103,7 +120,9 @@ function Sql_Query($query,$ignore = 0) {
   #    print "Sql: $query\n";
   #    ob_start();
   #  }
-    # time queries to see how slow they are, so they can
+  sqllog($query,'/tmp/queries.log');
+  
+  # time queries to see how slow they are, so they can
     # be optimized
     $now =  gettimeofday();
     $start = $now["sec"] * 1000000 + $now["usec"];
@@ -141,8 +160,12 @@ function Sql_Query($query,$ignore = 0) {
 #      sqllog(' ['.$elapsed.'] '.$query,"/tmp/phplist-sqltimer.log");
     }
   }
-
   return $result;
+}
+
+function Sql_Close() {
+  mysql_close($GLOBALS["database_connection"]);
+  unset($GLOBALS["database_connection"]);
 }
 
 function Sql_Query_Params($query,$params,$ignore = 0) {
