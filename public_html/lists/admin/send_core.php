@@ -30,10 +30,13 @@ $done = 0;
 $messageid = 0;
 $forwardsubject = $forwardmessage = $forwardfooter = '';
 $duplicate_atribute = 0; # not actually used it seems @@@ check
-$embargo = new date("embargo");
+$embargo = new date('embargo');
 $embargo->useTime = true;
 $repeatuntil = new date("repeatuntil");
 $repeatuntil->useTime = true;
+$requeueuntil = new date("requeueuntil");
+$requeueuntil->useTime = true;
+
 if (ALLOW_ATTACHMENTS) {
   $enctype = 'enctype="multipart/form-data"';
 } else {
@@ -80,7 +83,9 @@ if (!$id) {
 
 # load all message data
 $messagedata = loadMessageData($id);
-//var_dump($messagedata);exit;
+#var_dump($messagedata);
+#exit;
+
 
 if (!empty($_GET['deletecriterion'])) {
   include dirname(__FILE__).'/actions/deletecriterion.php';
@@ -123,14 +128,6 @@ if (preg_match("/\n|\r/",$messagedata["forwardfooter"])) {
   $messagedata["forwardfooter"] = "";
 } 
 
-if (!empty($messagedata['sendurl'])) {
-  if (!$GLOBALS["has_pear_http_request"]) {
-    print Warn($GLOBALS['I18N']->get('warnnopearhttprequest'));
-  } else {
-    $messagedata["message"] = '[URL:'.$messagedata['sendurl'].']';
-  }
-} 
-
 // If the variable isn't filled in, then the input fields don't default to the
 // values selected.  Need to fill it in so a post will correctly display.
 
@@ -163,38 +160,16 @@ if ($send || $sendtest || $prepare || $save) {
     }
   }
 
-//Obsolete by rssmanager plugin
-//   if (ENABLE_RSS && $_POST["rsstemplate"]) {
-//    # mark previous RSS templates with this frequency and owner as sent
-//    # this should actually be much more complex than this:
-//    # templates should be allowed by list and therefore a subset of lists, but
-//    # for now we leave it like this
-//    # the trouble is that this may duplicate RSS messages to users, because
-//    # it can cause multiple template for lists. The user_rss should handle that, but it is
-//    # not guaranteed which message will be used.
-//#    Sql_Query(sprintf('update %s set status = "sent" where rsstemplate = "%s" and owner = %d',
-//#      $tables["message"],$_POST["rsstemplate"],$_SESSION["logindetails"]["id"]));
-//
-//
-//    # with RSS message we enforce repeat
-//    switch ($_POST["rsstemplate"]) {
-//      case "weekly": $_POST["repeatinterval"] = 10080; break;
-//      case "monthly": $_POST["repeatinterval"] = 40320; break;
-//      case "daily":
-//      default: $_POST["repeatinterval"] = 1440; break;
-//    }
-//    $_POST["repeatuntil"] = date("Y-m-d H:i:00",mktime(0,0,0,date("m"),date("d"),date("Y")+1));
-//  }
-
   ### allow plugins manipulate data or save it somewhere else
   $plugintabs = array();
-  foreach ($GLOBALS['plugins'] as $plugin) {
+  foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
   #  print "Saving ".$plugin->name;
     $resultMsg = $plugin->sendMessageTabSave($id,$messagedata);
   }
 
   if (!$htmlformatted  && strip_tags($messagedata["message"]) !=  $messagedata["message"])
     $errormsg = '<span  class="error">'.$GLOBALS['I18N']->get("htmlusedwarning").'</span>';
+    
   $query = sprintf('update %s  set '
      . '  subject = ?'
      . ', fromfield = ?'
@@ -210,17 +185,16 @@ if ($send || $sendtest || $prepare || $save) {
      . ', htmlformatted = ?'
      . ', sendformat  =  ?'
      . ', template  =  ?'
-     . ', rsstemplate = ?'         //Leftover from the preplugin era
      . ' where id = ?', $tables["message"]);
   $result = Sql_Query_Params($query, array(
        $messagedata['subject']
      , $messagedata['from']
-     , $messagedata["tofield"]
-     , $messagedata["replyto"]
+     , $messagedata['tofield']
+     , $messagedata['replyto']
      , sprintf('%04d-%02d-%02d %02d:%02d',
-        $messagedata["embargo"]['year'],$messagedata["embargo"]['month'],$messagedata["embargo"]['day'],
-        $messagedata["embargo"]['hour'],$messagedata["embargo"]['minute'])
-     , $messagedata["repeatinterval"]
+        $messagedata['embargo']['year'],$messagedata['embargo']['month'],$messagedata['embargo']['day'],
+        $messagedata['embargo']['hour'],$messagedata['embargo']['minute'])
+     , $messagedata['repeatinterval']
      , sprintf('%04d-%02d-%02d %02d:%02d',
         $messagedata["repeatuntil"]['year'],$messagedata["repeatuntil"]['month'],$messagedata["repeatuntil"]['day'],
         $messagedata["repeatuntil"]['hour'],$messagedata["repeatuntil"]['minute'])
@@ -231,7 +205,6 @@ if ($send || $sendtest || $prepare || $save) {
      , $htmlformatted ? '1' : '0'
      , $messagedata["sendformat"]
      , $messagedata["template"]
-     , $messagedata["rsstemplate"]          //Leftover from the preplugin era
      , $id));
 #    print $query;
 #    print "Message ID: $id";
@@ -410,6 +383,7 @@ if ($send || $sendtest || $prepare || $save) {
 
     // OK, let's get to sending!
     $emailaddresses = split('[/,,/;]', $messagedata["testtarget"]);
+ //   var_dump($messagedata);exit;
 
     foreach ($emailaddresses as $address) {
       $address = trim($address);
@@ -626,8 +600,8 @@ if (!$done) {
   $scheduling_content .= '
   <div><h3>'.$GLOBALS['I18N']->get("Time is Based on the Server Time").
     '</h3><div class="info">'.$GLOBALS['I18N']->get('Current Server Time is').' <span id="servertime">'.$currentTime[0].'</span></div></div>
-  <div><h3>'.Help("embargo").' '.$GLOBALS['I18N']->get("embargoeduntil").':</h3></div>
-    <div>'.$embargo->showInput("embargo","",$messagedata["embargo"]).'</div>
+  <div><h3>'.Help('embargo').' '.$GLOBALS['I18N']->get("embargoeduntil").':</h3></div>
+    <div>'.$embargo->showInput('embargo',"",$messagedata['embargo']).'</div>
     <script type="text/javascript">
     getServerTime();
     </script>';
@@ -656,6 +630,29 @@ if (!$done) {
         <div>'.$repeatuntil->showInput("repeatuntil","",$messagedata["repeatuntil"]);
       $scheduling_content .= '</div>';
   }
+
+  $requeueinterval = $messagedata["requeueinterval"];
+  $scheduling_content .= '
+  <div><h3>'.Help("requeueing").' '.$GLOBALS['I18N']->get("requeueevery").':</h3></div>
+      <div><select name="requeueinterval">
+    <option value="0"';
+    if ($requeueinterval == 0) { $scheduling_content .= ' selected="selected"'; }
+    $scheduling_content .= '>-- '.$GLOBALS['I18N']->get("norequeueing").'</option>
+    <option value="60"';
+    if ($requeueinterval == 60) { $scheduling_content .= ' selected="selected"'; }
+    $scheduling_content .= '>'.$GLOBALS['I18N']->get("hour").'</option>
+    <option value="1440"';
+    if ($requeueinterval == 1440) { $scheduling_content .= ' selected="selected"'; }
+    $scheduling_content .= '>'.$GLOBALS['I18N']->get("day").'</option>
+    <option value="10080"';
+    if ($requeueinterval == 10080) { $scheduling_content .= ' selected="selected"'; }
+    $scheduling_content .= '>'.$GLOBALS['I18N']->get("week").'</option>
+    </select>
+      </div>
+      <div>  <h3>'.$GLOBALS['I18N']->get("requeueuntil").':</h3></div>
+      <div>'.$requeueuntil->showInput("requeueuntil","",$messagedata["requeueuntil"]);
+    $scheduling_content .= '</div>';
+    
   $formatting_content .= '<div><input type="hidden" name="htmlformatted" value="auto" /></div>';
 
   $formatting_content .= '
@@ -884,8 +881,8 @@ if (!$done) {
 
   $misc_content = sprintf('
     <div class="sendNotify">
-    <div>%s<br/>%s</div><div><input type="text" name="notify_start" value="%s" size="35"/></div>
-    <div>%s<br/>%s</div><div><input type="text" name="notify_end" value="%s" size="35"/></div>
+    <div>%s<br/>%s</div><div><input type="text" name="notify_start" id="notify_start" value="%s" size="35"/></div>
+    <div>%s<br/>%s</div><div><input type="text" name="notify_end" id="notify_end" value="%s" size="35"/></div>
     </div>',
     $GLOBALS['I18N']->get('email to alert when sending of this message starts'),
     $GLOBALS['I18N']->get('separate multiple with a comma'),$notify_start,
@@ -971,7 +968,7 @@ if (!$done) {
       break;
   }
 }
-#print $sendtest_content;
+print $sendtest_content;
 
 if (empty($messagedata["status"])) {
   $savecaption = $GLOBALS['I18N']->get('saveasdraft');
@@ -1018,7 +1015,7 @@ if ($allReady) {
   print '<script type="text/javascript">
   $("#addtoqueue").html(\'<button class="submit" type="submit" name="send" id="addtoqueuebutton">'.$GLOBALS['I18N']->get('sendmessage').'</button>\');
   </script>';
-}
+} 
     
 
 print '<div class="sendSubmit">
