@@ -43,9 +43,10 @@ if (!empty($_REQUEST['save'])) {
     }
     if (!$haserror) {
       print Info($GLOBALS['I18N']->get('Changes Saved'));
+      unset($id);
     }
     
-    if ($_SESSION['firstinstall']) {
+    if (!empty($_SESSION['firstinstall'])) {
       print PageLink2('setup',$GLOBALS['I18N']->get('Continue phpList configuration'));
     }
     
@@ -54,7 +55,7 @@ if (!empty($_REQUEST['save'])) {
   }
 }
 
-if (!$id) {
+if (empty($id)) {
   $alternate = 1;
   while (list($key,$val) = each($default_config)) {
     if (is_array($val)) {
