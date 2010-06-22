@@ -4,7 +4,7 @@ $id = sprintf('%d',$_GET['id']);
 if (!$id) {
   return '';
 }
-$message = Sql_Fetch_Assoc_Query(sprintf('select *,embargo - now() as timetowait from %s where id = %d',$GLOBALS['tables']['message'],$id));
+$message = Sql_Fetch_Assoc_Query(sprintf('select *,unix_timestamp(embargo) - unix_timestamp(now()) as secstowait from %s where id = %d',$GLOBALS['tables']['message'],$id));
 $messagedata = loadMessageData($id);
 
 $totalsent = $messagedata['astext'] + 
@@ -50,9 +50,9 @@ setMessageData($id,'msg/hr',$msgperhour);
 if ($message['status'] != 'inprocess') {
   $html = $GLOBALS['I18N']->get($message['status']);
   
-  if ($message['timetowait'] > 0) {
-    $timetowait = secs2time($message['timetowait']);
-    $html .= '<br/>'.sprintf($GLOBALS['I18N']->get('%s left before embargo'),$timetowait);
+  if ($message['secstowait'] > 0) {
+    $secstowait = secs2time($message['secstowait']);
+    $html .= '<br/>'.sprintf($GLOBALS['I18N']->get('%s left until embargo'),$secstowait);
   }
   
   if ($message['status'] != 'submitted') {
