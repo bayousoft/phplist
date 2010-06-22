@@ -159,6 +159,18 @@ $default_config = array (
   "text",
   1
 ),
+"notifystart_default" => array(
+  '',
+  "Default for 'email to alert when sending starts'",
+  "text",
+  1
+),
+"notifyend_default" => array(
+  '',
+  "Default for 'email to alert when sending finishes'",
+  "text",
+  1
+),
 
   # report address is the person who gets the reports
 "report_address" => array (
@@ -645,11 +657,19 @@ if (!function_exists("getconfig")) {
 		if ($item != 'website' && isset ($GLOBALS['config'][$item])) {
 			return $GLOBALS['config'][$item];
 		}
+    if (isset($_SESSION['config'][$item])) {
+      return $_SESSION['config'][$item];
+    }
 		if (!isset ($GLOBALS['config']) || !is_array($GLOBALS['config'])) {
 			$GLOBALS['config'] = array ();
 		}
 
-		$hasconf = Sql_Table_Exists($tables["config"], 1);
+    if (empty($_SESSION['hasconf'])) {
+      $hasconf = Sql_Table_Exists($tables["config"], 1);
+      $_SESSION['hasconf'] = $hasconf;
+    } else {
+      $hasconf = $_SESSION['hasconf'];
+    }
 		# correct old methods for finding public urls
 		# @@@@ hmm maybe need to revert this
 		/*
@@ -712,9 +732,12 @@ if (!function_exists("getconfig")) {
 		# if this is a subpage item, and no value was found get the global one
 		if (!$value && ereg(":", $item)) {
 			list ($a, $b) = split(":", $item);
-			return getConfig($a);
+			$value = getConfig($a);
+      $_SESSION['config'][$item] = $value;
+      return $value;
 		} else {
 			$GLOBALS['config'][$item] = stripslashes($value);
+      $_SESSION['config'][$item] = $GLOBALS['config'][$item];
 			return $GLOBALS['config'][$item];
 		}
 	}
