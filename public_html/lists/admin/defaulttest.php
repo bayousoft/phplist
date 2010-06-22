@@ -9,8 +9,8 @@ class phplistTest {
   function phplistTest() {
     $this->userdata = Sql_Fetch_Assoc_Query(sprintf('select * from %s where email = "%s"',$GLOBALS['tables']['user'],$GLOBALS['developer_email']));
     if (!$this->userdata['id']) {
-      print "Bounce user needs to exist: ".$GLOBALS['developer_email'].'<br/>';
-      return 0;
+      Sql_Query(sprintf('insert into %s (email) values("%s")',$GLOBALS['tables']['user'],$GLOBALS['developer_email']));
+      print "Bounce user created: ".$GLOBALS['developer_email'].'<br/>';
     }
     $GLOBALS['message_envelope'] = $GLOBALS['developer_email'];
     return 1;

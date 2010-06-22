@@ -1,5 +1,6 @@
 <?php
 
+error_reporting(E_ALL);
 ## test suite for certain elements of phplist
 print '<h3>'.$GLOBALS['I18N']->get('phplist test suite').'</h3>';
 
