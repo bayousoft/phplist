@@ -445,14 +445,22 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 #    preg_match_all('/<a href=([^> ]*)([^>]*)>(.*)<\/a>/Umis',$htmlmessage,$links);
     $clicktrack_root = sprintf('%s://%s/lt.php',$GLOBALS["scheme"],$website.$GLOBALS["pageroot"]);
     for($i=0; $i<count($links[2]); $i++){
-      $link = cleanUrl($links[2][$i]); //@B@ hier gaat het mis
+      $link = cleanUrl($links[2][$i]); 
       $link = str_replace('"','',$link);
       if (preg_match('/\.$/',$link)) {
         $link = substr($link,0,-1);
       }
       $linkid = 0;
-#      print "LINK: $link<br/>";
-      if ((preg_match('/^http|ftp/',$link) || preg_match('/^http|ftp/',$urlbase)) && $link != 'http://www.phplist.com' && !strpos($link,$clicktrack_root)) {
+
+      $linktext = $links[4][$i];
+
+      ## if the link is text containing a "protocol" eg http:// then do not track it, otherwise
+      ## it will look like Phishing
+      ## it's ok when the link is an image
+      $linktext = strip_tags($linktext);
+      $looksLikePhishing = stripos($linktext,'https://') !== false || stripos($linktext,'http://') !== false;
+      
+      if (!$looksLikePhishing && (preg_match('/^http|ftp/',$link) || preg_match('/^http|ftp/',$urlbase)) && $link != 'http://www.phplist.com' && !strpos($link,$clicktrack_root)) {
         # take off personal uids
         $url = cleanUrl($link,array('PHPSESSID','uid'));
 
@@ -627,6 +635,10 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   preg_match_all('/\[.*\%\%([^\]]+)\]/Ui',$htmlmessage,$matches);
   for ($i = 0; $i<count($matches[0]);$i++) {
     $htmlmessage = str_ireplace($matches[0][$i],$matches[1][$i],$htmlmessage);
+  }
+  preg_match_all('/\[.*\%\%([^\]]+)\]/Ui',$textmessage,$matches);
+  for ($i = 0; $i<count($matches[0]);$i++) {
+    $textmessage = str_ireplace($matches[0][$i],$matches[1][$i],$textmessage);
   }
 
   ## remove any remaining placeholders
