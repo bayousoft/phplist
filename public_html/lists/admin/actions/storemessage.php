@@ -20,7 +20,17 @@ if (!empty($_REQUEST['sendurl'])) {
   }
 } 
 
-## remember any data entered
+## checkboxes cannot be detected when unchecked, so they need registering in the "cb" array
+## to be identified as listed, but not checked
+## find the "cb" array and uncheck all checkboxes in it
+## then the processing below will re-check them, if they were
+if (isset($_REQUEST['cb']) && is_array($_REQUEST['cb'])) {
+  foreach ($_REQUEST['cb'] as $cbname => $cbval) {
+    ## $cbval is a dummy
+    setMessageData($id,$cbname,'0');
+  }
+}
+## remember all data entered
 foreach ($_REQUEST as $key => $val) {
 /*
   print $key .' '.$val;
