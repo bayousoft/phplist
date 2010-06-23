@@ -379,3 +379,11 @@ div.checkboxes > span {
 .right {
   float: right;
 }
+
+.sendTest {
+  padding: 10px;
+  margin: 10px;
+  background-color:#dddddd;
+  border: 3px dashed #ff9900;
+  width: 500px;
+}
