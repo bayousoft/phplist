@@ -657,7 +657,10 @@ function compressContent($content) {
   $content = stripComments($content);
 
   ## find some clean way to remove double spacing
-
+  $content = preg_replace("/\t/"," ",$content);
+  while (preg_match("/  /",$content)) {
+    $content = preg_replace("/  /"," ",$content);
+  }
   return $content;
 }
 
