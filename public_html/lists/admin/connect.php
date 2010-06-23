@@ -407,7 +407,6 @@ $GLOBALS['pagecategories'] = array(
      'menulinks' => array(
         'users',
         'usermgt',
-        'members',
         'import',
         'export',
         'listbounces',
