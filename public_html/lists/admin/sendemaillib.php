@@ -215,12 +215,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     }
   }
 
-#~Bas 0008857 
-// @B@ Switched off for now, needs rigid testing, or config setting 
-// $content = mailto2href($content);
-// $content = encodeLinks($content);
-
-## Fill text and html versions depending on given versions.
+  ## Fill text and html versions depending on given versions.
 
   if (VERBOSE && $getspeedstats) {
     output('parse text to html or html to text start');
@@ -228,16 +223,16 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 
   if ($cached[$messageid]["htmlformatted"]) {
     if (empty($cached[$messageid]["textcontent"])) {
-      $textcontent = 'HTML -> HTMLCONTENT Converted '.HTML2Text($content);
+      $textcontent = HTML2Text($content);
     } else {
-      $textcontent = 'HTML -> TEXTCONTENT '.$cached[$messageid]["textcontent"];
+      $textcontent = $cached[$messageid]["textcontent"];
     }
     $htmlcontent = $content;
   } else {
     if (empty($cached[$messageid]["textcontent"])) {
-      $textcontent = 'NOT HTML -> CONTENT ' .$content;
+      $textcontent = $content;
     } else {
-      $textcontent = 'NOT HTML -> TEXTCONTENT '.$cached[$messageid]["textcontent"];
+      $textcontent = $cached[$messageid]["textcontent"];
     }
     $htmlcontent = parseText($content);
   }
@@ -266,7 +261,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   if (VERBOSE && $getspeedstats) {
     output('merge into template end');
   }
-## Parse placeholders
+  ## Parse placeholders
 
   if (VERBOSE && $getspeedstats) {
     output('parse placeholders start');
@@ -314,35 +309,6 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     $textmessage = eregi_replace("\[SIGNATURE\]",$text["signature"],$textmessage);
   else
     $textmessage .= "\n".$text["signature"];
-*/
-
-// CUT 1
-
-/*
-  $text["footer"] = eregi_replace("\[MESSAGEID\]",$text["messageid"],$text['footer']);
-  $html["footer"] = eregi_replace("\[MESSAGEID\]",$html["messageid"],$html['footer']);
-  $text["footer"] = eregi_replace("\[SUBSCRIBE\]",$text["subscribe"],$text['footer']);
-  $html["footer"] = eregi_replace("\[SUBSCRIBE\]",$html["subscribe"],$html['footer']);
-  $text["footer"] = eregi_replace("\[PREFERENCES\]",$text["preferences"],$text["footer"]);
-  $html["footer"] = eregi_replace("\[PREFERENCES\]",$html["preferences"],$html["footer"]);
-  if ($hash != 'forwarded') {
-    $text["footer"] = eregi_replace("\[FORWARD\]",$text["forward"],$text["footer"]);
-    $html["footer"] = eregi_replace("\[FORWARD\]",$html["forward"],$html["footer"]);
-    $html["footer"] = eregi_replace("\[FORWARDFORM\]",$html["forwardform"],$html["footer"]);
-  }
-  $text["footer"] = eregi_replace("\[BLACKLIST\]",$text["blacklist"],$text['footer']);
-  $html["footer"] = eregi_replace("\[BLACKLIST\]",$html["blacklist"],$html['footer']);
-  if (sizeof($forwardedby) && isset($forwardedby['email'])) {
-    $htmlmessage    = eregi_replace("\[FORWARDEDBY]",$forwardedby["email"],$htmlmessage);
-    $textmessage    = eregi_replace("\[FORWARDEDBY]",$forwardedby["email"],$textmessage);
-    $html["footer"] = eregi_replace("\[FORWARDEDBY]",$forwardedby["email"],$html["footer"]);
-    $text["footer"] = eregi_replace("\[FORWARDEDBY]",$forwardedby["email"],$text["footer"]);
-    $text["footer"] = eregi_replace("\[UNSUBSCRIBE\]",$text["blacklist"],$text['footer']);
-    $html["footer"] = eregi_replace("\[UNSUBSCRIBE\]",$html["blacklist"],$html['footer']);
-  } else {
-    $text["footer"] = eregi_replace("\[UNSUBSCRIBE\]",$text["unsubscribe"],$text['footer']);
-    $html["footer"] = eregi_replace("\[UNSUBSCRIBE\]",$html["unsubscribe"],$html['footer']);
-  }
 */
 
   ### addition to handle [FORWARDURL:Message ID:Link Text] (link text optional)
@@ -453,7 +419,6 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     output('pass to plugins for destination email end');
   }
 
-
   ## click tracking
   # for now we won't click track forwards, as they are not necessarily users, so everything would fail
   if (VERBOSE && $getspeedstats) {
@@ -515,7 +480,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 
     # hmm, this is no point, it's not just *our* topdomain, but any 
 
-if (0) {
+  if (0) {
     preg_match_all('#(https?://'.$GLOBALS['website'].'/?)\s+#mis',$textmessage,$links);
 #    preg_match_all('#(https?://[a-z0-9\./\#\?&:@=%\-]+)#ims',$textmessage,$links);
 #    preg_match_all('!(https?:\/\/www\.[a-zA-Z0-9\.\/#~\?+=&%@-_]+)!mis',$textmessage,$links);
@@ -543,7 +508,7 @@ if (0) {
       }
     }
 
-}
+  }
     #now find the rest
     # @@@ needs to expand to find complete urls like:
     #http://user:password@www.web-site.com:1234/document.php?parameter=something&otherpar=somethingelse#anchor
@@ -587,6 +552,63 @@ if (0) {
   }
   if (VERBOSE && $getspeedstats) {
     output('click track end');
+  }
+
+  ## if we're not tracking clicks, we should add Google tracking here
+  ## otherwise, we can add it when redirecting on the click
+  if (!CLICKTRACK && $cached[$messageid]['google_track']) { 
+    preg_match_all('/<a(.*)href=["\'](.*)["\']([^>]*)>(.*)<\/a>/Umis',$htmlmessage,$links);
+    for($i=0; $i<count($links[2]); $i++){
+      $link = cleanUrl($links[2][$i]);
+      $link = str_replace('"','',$link);  
+      ## http://www.google.com/support/analytics/bin/answer.py?hl=en&answer=55578
+
+      $trackingcode = 'utm_source=emailcampaign'.$messageid.'&utm_medium=phpList&utm_content=HTMLemail&utm_campaign='.urlencode($cached[$messageid]["subject"]);
+      ## take off existing tracking code, if found
+      if (strpos($link,'utm_medium') !== false) {
+        $link = preg_replace('/utm_(\w+)\=[^&]+/','',$link);
+      }
+        
+      if (strpos($link,'?')) {
+        $newurl = $link.'&'.$trackingcode;
+      } else {
+        $newurl = $link.'?'.$trackingcode;
+      }
+      $newlink = sprintf('<a%shref="%s" %s>%s</a>',$links[1][$i],$newurl,$links[3][$i],$links[4][$i]);
+      $htmlmessage = str_replace($links[0][$i], $newlink, $htmlmessage);
+    }
+    
+    preg_match_all('#(https?://[^\s\>\}\,]+)#mis',$textmessage,$links);
+    rsort($links[1]);
+    $newlinks = array();
+
+    for($i=0; $i<count($links[1]); $i++){
+      $link = cleanUrl($links[1][$i]);
+      if (preg_match('/\.$/',$link)) {
+        $link = substr($link,0,-1);
+      }
+  
+      if (preg_match('/^http|ftp/',$link) && $link != 'http://www.phplist.com') {# && !strpos($link,$clicktrack_root)) {
+        $url = cleanUrl($link,array('PHPSESSID','uid'));
+        $trackingcode = 'utm_source=emailcampaign'.$messageid.'&utm_medium=phpList&utm_content=textemail&utm_campaign='.urlencode($cached[$messageid]["subject"]);
+        ## take off existing tracking code, if found
+        if (strpos($link,'utm_medium') !== false) {
+          $link = preg_replace('/utm_(\w+)\=[^&]+/','',$link);
+        }
+        if (strpos($link,'?')) {
+          $newurl = $link.'&'.$trackingcode;
+        } else {
+          $newurl = $link.'?'.$trackingcode;
+        }
+
+        $newlinks[$i] = $newurl;
+        $textmessage = str_replace($links[1][$i], '[%%%'.$i.'%%%]', $textmessage);
+      }
+    }
+    foreach ($newlinks as $linkid => $newlink) {
+      $textmessage = str_replace('[%%%'.$linkid.'%%%]',$newlink, $textmessage);
+    }
+    unset($newlinks);
   }
 
   #0011996: forward to friend - personal message
@@ -1353,6 +1375,13 @@ print $message['sendurl'];
 print $remote_content;exit;
 */
   } // end if not userspecific url
+
+  
+  if ($cached[$messageid]["htmlformatted"]) {
+    $cached[$messageid]["content"] = compressContent($cached[$messageid]["content"]);
+  }
+
+  $cached[$messageid]['google_track'] = $message['google_track'];
 /*
     else {
 print $message['sendurl'];
