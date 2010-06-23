@@ -888,6 +888,14 @@ if (!$done) {
     $GLOBALS['I18N']->get('separate multiple with a comma'),$notify_start,
     $GLOBALS['I18N']->get('email to alert when sending of this message has finished'),
     $GLOBALS['I18N']->get('separate multiple with a comma'),$notify_end);
+
+  $misc_content .= sprintf('
+    <div class="campaignTracking">
+    <div>%s</div><div><input type="hidden" name="cb[google_track]" value="1" /><input type="checkbox" name="google_track" id="google_track" value="1" %s /></div>
+    </div>',
+     $GLOBALS['I18N']->get('add Google tracking code'),
+     !empty($messagedata['google_track']) ? 'checked="checked"':'');
+   
   $show_lists = 0;
 
   if (!empty($messagedata['htmlsize'])) {
