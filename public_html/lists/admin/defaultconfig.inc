@@ -171,7 +171,11 @@ $default_config = array (
   "text",
   1
 ),
-
+"always_add_googletracking" => array(
+  '0',
+  "Always add Google tracking code to campaigns",
+  "boolean",
+),
   # report address is the person who gets the reports
 "report_address" => array (
   'listreports@[DOMAIN]',

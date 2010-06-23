@@ -106,6 +106,7 @@ function loadMessageData($msgid) {
     'testtarget' => '',
     'notify_start' =>  getConfig("notifystart_default"),
     'notify_end' =>  getConfig("notifyend_default"),
+    'google_track' => getConfig('always_add_googletracking') == 'true',
   );
   if (is_array($prevMsgData)) {
     foreach ($prevMsgData as $key => $val) {
