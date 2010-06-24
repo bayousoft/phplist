@@ -11,10 +11,11 @@ $_REQUEST = removeXss($_REQUEST);
 
 if ($_SERVER["ConfigFile"] && is_file($_SERVER["ConfigFile"])) {
   include $_SERVER["ConfigFile"];
-} elseif ($_ENV["CONFIG"] && is_file($_ENV["CONFIG"])) {
-  include $_ENV["CONFIG"];
 } elseif (is_file("config/config.php")) {
   include "config/config.php";
+} else {
+  print "Error, cannot find config file\n";
+  exit;
 }
 #error_reporting($er);
 
@@ -24,6 +25,12 @@ include_once dirname(__FILE__)."/texts/".$GLOBALS["language_module"];
 require_once dirname(__FILE__)."/admin/defaultconfig.inc";
 require_once dirname(__FILE__).'/admin/connect.php';
 include_once dirname(__FILE__)."/admin/languages.php";
+include_once dirname(__FILE__)."/admin/lib.php";
+if (isset($GLOBALS["developer_email"]) && $GLOBALS['show_dev_errors']) {
+  error_reporting(E_ALL);
+} else {
+  error_reporting(0);
+}
 
 $id = sprintf('%s',$_GET['id']);
 if ($id != $_GET['id']) {
@@ -49,6 +56,10 @@ if (!$fwdid || $linkdata['id'] != $fwdid || !$userid || !$messageid) {
   # maybe some logging?
   exit;
 }
+
+## hmm a bit heavy to use here @@@optimise
+$messagedata = loadMessageData($messageid);
+$trackingcode = '';
 #print "$track<br/>";
 #print "User $userid, Mess $messageid, Link $linkid";
 
@@ -67,10 +78,13 @@ if (empty($ml['firstclick'])) {
 if ($msgtype == 'H') {
   $query = sprintf('update %s set htmlclicked = htmlclicked + 1 where forwardid = ? and messageid = ?', $GLOBALS['tables']['linktrack_ml']);
   Sql_Query_Params($query, array($fwdid, $messageid));
+  $trackingcode = 'utm_source=emailcampaign'.$messageid.'&utm_medium=phpList&utm_content=HTMLemail&utm_campaign='.urlencode($messagedata["subject"]);
 } elseif ($msgtype == 'T') {
   $query = sprintf('update %s set textclicked = textclicked + 1 where forwardid = ? and messageid = ?', $GLOBALS['tables']['linktrack_ml']);
   Sql_Query_Params($query, array($fwdid, $messageid));
-}
+  $trackingcode = 'utm_source=emailcampaign'.$messageid.'&utm_medium=phpList&utm_content=textemail&utm_campaign='.urlencode($messagedata["subject"]);
+} 
+
 $query = sprintf('select viewed from %s where messageid = ? and userid = ?', $GLOBALS['tables']['usermessage']);
 $rs = Sql_Query_Params($query, array($messageid, $userid));
 $viewed = Sql_Fetch_Row($rs);
@@ -120,6 +134,18 @@ if ($linkdata['personalise']) {
 #print "$url<br/>";
 if (!isset($_SESSION['entrypoint'])) {
   $_SESSION['entrypoint'] = $url;
+}
+
+if (!empty($messagedata['google_track'])) {
+  ## take off existing tracking code, if found
+  if (strpos($url,'utm_medium') !== false) {
+    $url = preg_replace('/utm_(\w+)\=[^&]+/','',$url);
+  }
+  if (strpos($url,'?')) {
+    $url = $url.'&'.$trackingcode;
+  } else {
+    $url = $url.'?'.$trackingcode;
+  }
 }
 
 header("Location: " . $url);

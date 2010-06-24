@@ -21,6 +21,11 @@ if ($_SERVER["ConfigFile"] && is_file($_SERVER["ConfigFile"])) {
   exit;
 }
 #error_reporting($er);
+if (isset($GLOBALS["developer_email"]) && $GLOBALS['show_dev_errors']) {
+  error_reporting(E_ALL);
+} else {
+  error_reporting(0);
+}
 
 require_once dirname(__FILE__).'/admin/'.$GLOBALS["database_module"];
 require_once dirname(__FILE__)."/texts/english.inc";
