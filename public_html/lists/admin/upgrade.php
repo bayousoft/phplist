@@ -335,6 +335,8 @@ if (isset($_GET["doit"]) && $_GET["doit"] == 'yes') {
       }
       if ($minor < 11 || ($minor == 11 && $sub < 4)) {
         Sql_Query(sprintf('alter table %s add column category varchar(255) default ""',$tables['list']));
+        Sql_Query(sprintf('alter table %s add column requeueinterval integer default 0',$tables['message']));
+        Sql_Query(sprintf('alter table %s add column requeueuntil datetime',$tables['message']));
       }
       break;
   }
