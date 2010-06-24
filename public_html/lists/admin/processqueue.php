@@ -234,8 +234,10 @@ function finish ($flag,$message) {
   } elseif ($flag == "info") {
     $subject = "Maillist Processing info";
   }
-  if (!$nothingtodo)
+  if (!$nothingtodo) {
     output($GLOBALS['I18N']->get('Finished this run'));
+  } 
+
   if (!TEST && !$nothingtodo)
     sendReport($subject,$message);
 }
@@ -354,6 +356,17 @@ if ($reload) {
 
 $script_stage = 1; # we are active
 $notsent = $sent = $invalid = $unconfirmed = $cannotsend = 0;
+
+## check for messages that need requeuing
+$req = Sql_Query(sprintf('select id,requeueinterval,embargo < now() as inthepast from %s where requeueinterval > 0 and requeueuntil > now() and status = "sent"',$tables['message']));
+while ($msg = Sql_Fetch_Assoc($req)) {
+  if ($msg['inthepast']) {
+    Sql_query(sprintf('update %s set status = "submitted",embargo = date_add(now(),interval %d minute) where id = %d',$GLOBALS['tables']['message'],$msg['requeueinterval'],$msg['id']));
+  } else {
+    Sql_query(sprintf('update %s set status = "submitted",embargo = date_add(embargo,interval %d minute) where id = %d',$GLOBALS['tables']['message'],$msg['requeueinterval'],$msg['id']));
+  }
+  ## @@@ need to update message data as well
+}
 
 //rsstemplate Leftover from the preplugin era
 $query
@@ -925,24 +938,7 @@ while ($message = Sql_fetch_array($messages)) {
     if (!$failed_sent) {
       repeatMessage($messageid);
       $status = Sql_query(sprintf('update %s set status = "sent",sent = current_timestamp where id = %d',$GLOBALS['tables']['message'],$messageid));
-      
-      if (!empty($msgdata['requeueinterval'])) {
-        ## requeue message, requeueinterval from the previous embargo
-        if ($msgdata['requeueuntil']['year'] <= date('Y') &&
-          $msgdata['requeueuntil']['month'] <= date('m') &&
-          $msgdata['requeueuntil']['day'] <= date('d') &&
-          $msgdata['requeueuntil']['hour'] <= date('H') && 
-          $msgdata['requeueuntil']['minute'] <= date('i')) {
-         
-          output('Requeuing message ');
-       
-          Sql_query(sprintf('update %s set status = "submitted",embargo = date_add(embargo,interval %d minute) where id = %d',$GLOBALS['tables']['message'],$msgdata['requeueinterval'],$messageid));
-          ## @@@ need to update message data as well
-          
-          
-        }
-      }
-      
+            
       if (!empty($msgdata['notify_end']) && !isset($msgdata['end_notified'])) {
         $notifications = explode(',',$msgdata['notify_end']);
         foreach ($notifications as $notification) {
