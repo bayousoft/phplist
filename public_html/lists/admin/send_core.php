@@ -206,40 +206,25 @@ if ($send || $sendtest || $prepare || $save) {
      , $messagedata["sendformat"]
      , $messagedata["template"]
      , $id));
+
+    ## do this seperately, so that the above query doesn't fail when the DB hasn't been upgraded
+    $query = sprintf('update %s ' 
+     . 'set requeueinterval = ?'
+     . ', requeueuntil = ?'
+     . ' where id = ?', $tables["message"]);    
+    $result = Sql_Query_Params($query, array(
+      $messagedata['requeueinterval']
+     , sprintf('%04d-%02d-%02d %02d:%02d',
+        $messagedata['requeueuntil']['year'],$messagedata['requeueuntil']['month'],$messagedata['requeueuntil']['day'],
+        $messagedata['requeueuntil']['hour'],$messagedata['requeueuntil']['minute'])
+     ,$id));
+
 #    print $query;
 #    print "Message ID: $id";
     #    exit;
     if (!$GLOBALS["has_pear_http_request"] && preg_match("/\[URL:/i",$_POST["message"])) {
       print Warn($GLOBALS['I18N']->get('warnnopearhttprequest'));
     }
-
-  // More  "Insert  only"  stuff  here (no need  to change  it on  an edit!)
-  if (isset($messagedata["targetlist"]) && is_array($messagedata["targetlist"]))  {
-    Sql_query("delete from {$tables["listmessage"]} where messageid = $id");
-    if ( (isset($messagedata["targetlist"]["all"])) ||
-      (isset($messagedata["targetlist"]["allactive"]))
-      ) {
-      $res = Sql_query("select * from  $tables[list] $subselect");
-      while($row = Sql_fetch_array($res))  {
-        $listid  =  $row["id"];
-        if ($row["active"] || $messagedata["targetlist"]["all"] == "on")  {
-          $result  =  Sql_query("insert ignore into $tables[listmessage]  (messageid,listid,entered) values($id,$listid,current_timestamp)");
-        }
-      }
-    } else {
-      foreach($messagedata["targetlist"] as $listid => $val) {
-        $query
-        = ' insert into ' . $tables['listmessage']
-        . '    (messageid,listid,entered)'
-        . ' values'
-        . '    (?, ?, current_timestamp)';
-        $result = Sql_Query_Params($query, array($id, $listid));
-      }
-    }
-  } else {
-    #  mark this  message  as listmessage for list  0
-    $result  =  Sql_query("insert ignore into $tables[listmessage]  (messageid,listid,entered) values($id,0,current_timestamp)");
-  }
 
 # we want to create a join on tables as follows, in order to find users who have their attributes to the values chosen
 # (independent of their list membership).
