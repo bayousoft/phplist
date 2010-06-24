@@ -6,7 +6,7 @@
 <td>
 <div class="menutableright">
 <?php
-	print NewMenu();
+  print NewMenu();
   ?>
 </div>
 </td>
@@ -26,7 +26,7 @@
 
 <tr>
 <td bgcolor="#ff9900" class="bottom"><img height="1" alt="" src="images/transparent.png" width="1" border="0" /></td>
-<td bgcolor="#ff9900" class="bottom">&copy; <a href="http://tincan.co.uk" target="_tincan" class="urhere">tincan limited</a> | <span class="urhere"><?php echo NAME?> powered by </span><a class="urhere" href="http://www.phplist.com" target="_blank">phplist</a> - version <?=VERSION?></td>
+<td bgcolor="#ff9900" class="bottom">&copy; <a href="http://tincan.co.uk" target="_tincan" class="urhere">tincan limited</a> | <span class="urhere"><?php echo NAME?> powered by </span><a class="urhere" href="http://www.phplist.com" target="_blank">phplist</a> - version <?php echo VERSION?></td>
 <td bgcolor="#ff9900" class="bottom"><img height="1" alt="" src="images/transparent.png" width="1" border="0" /></td>
 </tr>
 
