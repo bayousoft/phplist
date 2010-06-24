@@ -56,14 +56,36 @@ function listName($id) {
 function setMessageData($msgid,$name,$value) {
   if ($name == 'PHPSESSID') return;
   
-  if (is_array($value) || is_object($value)) {
-    $value = 'SER:'.serialize($value);
-  }
   if (NO_MAGIC_QUOTES) {
  #   print "Escaping";
     $value = sql_escape($value);
   }
-    
+
+  if ($name == 'targetlist' && is_array($value))  {
+    Sql_query(sprintf('delete from %s where messageid = %d',$GLOBALS['tables']["listmessage"],$msgid));
+    if ( !empty($value["all"]) || !empty($value["allactive"])) {
+      $res = Sql_query('select * from '. $GLOBALS['tables']['list']. ' '.$subselect);
+      while ($row = Sql_Fetch_Array($res))  {
+        $listid  =  $row["id"];
+        if ($row["active"] || $value["all"] == "on")  {
+          $result  =  Sql_query("insert ignore into ".$GLOBALS['tables']["listmessage"]."  (messageid,listid,entered) values($msgid,$listid,current_timestamp)");
+        }
+      }
+    } else {
+      foreach($value as $listid => $val) {
+        $query
+        = ' insert into ' . $GLOBALS['tables']["listmessage"]
+        . '    (messageid,listid,entered)'
+        . ' values'
+        . '    (?, ?, current_timestamp)';
+        $result = Sql_Query_Params($query, array($msgid, $listid));
+      }
+    }
+  }
+  if (is_array($value) || is_object($value)) {
+    $value = 'SER:'.serialize($value);
+  }
+  
   Sql_Replace($GLOBALS['tables']['messagedata'], array('id' => $msgid, 'name' => $name, 'data' => $value), array('name', 'id'));
 #  print "<br/>setting $name for $msgid to $value";
 #  exit;
