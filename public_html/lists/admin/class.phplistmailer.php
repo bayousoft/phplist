@@ -14,6 +14,7 @@ class PHPlistMailer extends PHPMailer {
     public $messageid = 0;
     public $destionationemail = '';
     public $estimatedsize = 0;
+    public $mailsize = 0;
     public $image_types = array(
                   'gif'  => 'image/gif',
                   'jpg'  => 'image/jpeg',
@@ -25,8 +26,9 @@ class PHPlistMailer extends PHPMailer {
                   'tiff'  => 'image/tiff',
                   'swf'  => 'application/x-shockwave-flash'
                   );
-                  
+
     public $LE              = "\n";
+    public $Hello = '';
 
     function PHPlistMailer($messageid,$email) {
     #  parent::PHPMailer();
@@ -40,7 +42,7 @@ class PHPlistMailer extends PHPMailer {
         $this->WordWrap = $newwrap;
       }
       $this->destinationemail = $email;
-      $this->SingleTo = true;
+      $this->SingleTo = false;
 
       $this->CharSet = getConfig("html_charset");
 
@@ -88,22 +90,22 @@ class PHPlistMailer extends PHPMailer {
 
     function add_timestamp()
     {
-      #0013076: 
+      #0013076:
       # Add a line like Received: from [10.1.2.3] by website.example.com with HTTP; 01 Jan 2003 12:34:56 -0000
       # more info: http://www.spamcop.net/fom-serve/cache/369.html
       $ip_address = $_SERVER['REMOTE_ADDR'];
       if ( !empty($_SERVER['REMOTE_HOST']) ) {
-        $ip_domain = $_SERVER['REMOTE_HOST'];        
+        $ip_domain = $_SERVER['REMOTE_HOST'];
       } else {
         $ip_domain = gethostbyaddr($ip_address);
       }
       $hostname = $_SERVER["HTTP_HOST"];
       $request_time = date('r',$_SERVER['REQUEST_TIME']);
       $sTimeStamp = "from $ip_domain [$ip_address] by $hostname with HTTP; $request_time";
-      $this->addTimeStamp($sTimeStamp);      
+      $this->addTimeStamp($sTimeStamp);
     }
-    
-    
+
+
     function add_text($text) {
       $this->Encoding = TEXTEMAIL_ENCODING;
       if (!$this->Body) {
@@ -146,9 +148,13 @@ class PHPlistMailer extends PHPMailer {
       return $body;
     }
 
-    function send($to_name = "", $to_addr, $from_name, $from_addr, $subject = '', $headers = '',$envelope = '') {
-      $this->From = $from_addr;
-      $this->FromName = $from_name;
+    function Send($to_name = "", $to_addr, $from_name, $from_addr, $subject = '', $headers = '',$envelope = '') {
+      if (method_exists($this,'SetFrom')) {
+        $this->SetFrom($from_addr, $from_name);
+      } else {
+        $this->From = $from_addr;
+        $this->FromName = $from_name;
+      }
       if (strstr(VERSION, "dev")) {
         # make sure we are not sending out emails to real users
         # when developing
@@ -224,7 +230,7 @@ class PHPlistMailer extends PHPMailer {
             $content_type = $this->image_types[strtolower(substr($html_images[$i], strrpos($html_images[$i], '.') + 1))];
             $cid = $this->add_html_image($image, basename($html_images[$i]), $content_type);
             if (!empty($cid)) {
-              $this->Body = str_replace(basename($html_images[$i]), "cid:$cid", $this->Body);#@@@
+              $this->Body = str_replace(basename($html_images[$i]), "cid:$cid", $this->Body);
             }
           }
         }
@@ -246,7 +252,7 @@ class PHPlistMailer extends PHPMailer {
       }
         ## end addition
     }
-  
+
     function add_html_image($contents, $name = '', $content_type='application/octet-stream') {
       ## in phpMailer 2 and up we cannot use AddStringAttachment, because that doesn't use a cid
       ## we can't write to "attachment" either, because it's private
@@ -254,28 +260,40 @@ class PHPlistMailer extends PHPMailer {
       /* one way to do it, is using a temporary file, but that'll have
        * quite an effect on performance and also isn't backward compatible,
        * because EncodeFile would need to be reverted to the default
-      
+
       file_put_contents('/tmp/'.$name,base64_decode($contents));
       $cid = md5(uniqid(time()));
       $this->AddEmbeddedImage('/tmp/'.$name, $cid, $name,'base64', $content_type);
       */
 
-      /* So, for now the only way to get this working in phpMailer 2 or up is to make 
-       * the attachment array public
+      /* So, for now the only way to get this working in phpMailer 2 or up is to make
+       * the attachment array public or add the AddEmbeddedImageString method
        * we need to add instructions how to patch phpMailer for that.
        * find out here whether it's been done and give an error if not
        */
 
-      if (isset($this->attachment) && is_array($this->attachment)) {
+      /* @@TODO additional optimisation:
+       *
+       * - we store the image base64 encoded
+       * - then we decode it to pass it back to phpMailer
+       * - when then encodes it again
+       * - best would be to take out a step in there, but that would require more modifications
+       * to phpMailer
+       */
+
+      if (method_exists($this,'AddEmbeddedImageString')) {
+        $cid = md5(uniqid(time()));
+        $this->AddEmbeddedImageString(base64_decode($contents), $cid, $name, $this->encoding, $content_type);
+      } elseif (isset($this->attachment) && is_array($this->attachment)) {
         // Append to $attachment array
         $cid = md5(uniqid(time()));
         $cur = count($this->attachment);
-        $this->attachment[$cur][0] = $contents;
+        $this->attachment[$cur][0] = base64_decode($contents);
         $this->attachment[$cur][1] = '';#$filename;
         $this->attachment[$cur][2] = $name;
-        $this->attachment[$cur][3] = $this->encoding;
+        $this->attachment[$cur][3] = 'base64';
         $this->attachment[$cur][4] = $content_type;
-        $this->attachment[$cur][5] = false; // isStringAttachment
+        $this->attachment[$cur][5] = true; // isStringAttachment
         $this->attachment[$cur][6] = "inline";
         $this->attachment[$cur][7] = $cid;
       } else {
@@ -289,28 +307,28 @@ class PHPlistMailer extends PHPMailer {
     ## addition for filesystem images
     function filesystem_image_exists($filename) {
       ##  find the image referenced and see if it's on the server
-      
+
       $elements = parse_url($filename);
       $localfile = basename($elements['path']);
-      
+
       $localfile = urldecode($localfile);
  #     print '<h3>CHECK'.$localfile.'</h3>';
-      
+
       if (defined('UPLOADIMAGES_DIR')) {
         $docroot = getConfig('docroot');
       #  print $_SERVER['DOCUMENT_ROOT'].$localfile;
-        return 
-          is_file($_SERVER['DOCUMENT_ROOT'].UPLOADIMAGES_DIR.'/image/'.$localfile) 
+        return
+          is_file($_SERVER['DOCUMENT_ROOT'].UPLOADIMAGES_DIR.'/image/'.$localfile)
           || is_file($_SERVER['DOCUMENT_ROOT'].UPLOADIMAGES_DIR.'/'.$localfile)
           ## commandline
           || is_file($docroot.UPLOADIMAGES_DIR.'/'.$localfile)
           || is_file($docroot.UPLOADIMAGES_DIR.'/image/'.$localfile);
-      } else 
-      return 
-        is_file($_SERVER['DOCUMENT_ROOT'].$GLOBALS['pageroot'].'/'.FCKIMAGES_DIR.'/image/'.$localfile) 
+      } else
+      return
+        is_file($_SERVER['DOCUMENT_ROOT'].$GLOBALS['pageroot'].'/'.FCKIMAGES_DIR.'/image/'.$localfile)
         || is_file($_SERVER['DOCUMENT_ROOT'].$GLOBALS['pageroot'].'/'.FCKIMAGES_DIR.'/'.$localfile)
         ## commandline
-        || is_file('../'.FCKIMAGES_DIR.'/image/'.$localfile) 
+        || is_file('../'.FCKIMAGES_DIR.'/image/'.$localfile)
         || is_file('../'.FCKIMAGES_DIR.'/'.$localfile);
     }
 
@@ -328,7 +346,7 @@ class PHPlistMailer extends PHPMailer {
             ## save the document root to be able to retrieve the file later from commandline
             SaveConfig("docroot",$_SERVER['DOCUMENT_ROOT'],0,1);
             return base64_encode( file_get_contents($_SERVER['DOCUMENT_ROOT'].$localfile));
-          } 
+          }
         }
       } elseif (is_file($_SERVER['DOCUMENT_ROOT'].$GLOBALS['pageroot'].'/'.FCKIMAGES_DIR.'/'.$localfile)) {
         $elements = parse_url($filename);
@@ -365,22 +383,24 @@ class PHPlistMailer extends PHPMailer {
       $req = Sql_Fetch_Row($rs);
       return $req[0];
     }
-    
+
     function EncodeFile ($path, $encoding = "base64") {
       # as we already encoded the contents in $path, return $path
       return chunk_split($path, 76, $this->LE);
     }
 
     function MailSend($header, $body) {
+      $this->mailsize = strlen($header.$body);
+     
       ## we don't really use multiple to's so pass that on to phpmailer, if there are any
       if (!$this->SingleTo || !USE_LOCAL_SPOOL) {
 output('Not single or not spool');
         return parent::MailSend($header,$body);
-      } 
+      }
       if (!is_dir(USE_LOCAL_SPOOL) || !is_writable(USE_LOCAL_SPOOL)) {
 output('Not writable spool: '.USE_LOCAL_SPOOL);
         ## if local spool is not set, send the normal way
-        return parent::MailSend($header,$body);        
+        return parent::MailSend($header,$body);
       }
       if (empty($GLOBALS['developer_email'])) {
         $header .= "To: ".$this->destinationemail.$this->LE;
