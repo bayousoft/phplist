@@ -1,4 +1,4 @@
-#!/usr/local/bin/php
+#!/usr/bin/php
 <?php
 
 /* Scripts to convert tabs to two spaces and trim trailing spaces */
