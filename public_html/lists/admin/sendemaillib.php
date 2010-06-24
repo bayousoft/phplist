@@ -564,7 +564,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 
   ## if we're not tracking clicks, we should add Google tracking here
   ## otherwise, we can add it when redirecting on the click
-  if (!CLICKTRACK && $cached[$messageid]['google_track']) { 
+  if (!CLICKTRACK && !empty($cached[$messageid]['google_track'])) { 
     preg_match_all('/<a(.*)href=["\'](.*)["\']([^>]*)>(.*)<\/a>/Umis',$htmlmessage,$links);
     for($i=0; $i<count($links[2]); $i++){
       $link = cleanUrl($links[2][$i]);
@@ -574,7 +574,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
       $trackingcode = 'utm_source=emailcampaign'.$messageid.'&utm_medium=phpList&utm_content=HTMLemail&utm_campaign='.urlencode($cached[$messageid]["subject"]);
       ## take off existing tracking code, if found
       if (strpos($link,'utm_medium') !== false) {
-        $link = preg_replace('/utm_(\w+)\=[^&]+/','',$link);
+        $link = preg_replace('/utm_(\w+)\=[^&]+&/U','',$link);
       }
         
       if (strpos($link,'?')) {
@@ -582,6 +582,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
       } else {
         $newurl = $link.'?'.$trackingcode;
       }
+   #   print $link. ' '.$newurl.' <br/>';
       $newlink = sprintf('<a%shref="%s" %s>%s</a>',$links[1][$i],$newurl,$links[3][$i],$links[4][$i]);
       $htmlmessage = str_replace($links[0][$i], $newlink, $htmlmessage);
     }
@@ -619,6 +620,8 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     unset($newlinks);
   }
 
+#  print htmlspecialchars($htmlmessage);exit;
+
   #0011996: forward to friend - personal message
   if (FORWARD_PERSONAL_NOTE_SIZE && $hash == 'forwarded' && !empty($forwardedby['personalNote']) ) {
     $htmlmessage =  nl2br($forwardedby['personalNote']) . '<br/>' .  $htmlmessage;
@@ -644,6 +647,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   ## remove any remaining placeholders
   $htmlmessage = preg_replace("/\[[A-Z\. ]+\]/i","",$htmlmessage);
   $textmessage = preg_replace("/\[[A-Z\. ]+\]/i","",$textmessage);
+#  print htmlspecialchars($htmlmessage);exit;
 
   # check that the HTML message as proper <head> </head> and <body> </body> tags
   # some readers fail when it doesn't
@@ -672,7 +676,6 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   if (VERBOSE && $getspeedstats) {
     output('cleanup end');
   }
-
   $htmlmessage = compressContent($htmlmessage);
 
  # print htmlspecialchars($htmlmessage);exit;
@@ -700,7 +703,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     $mail->addCustomHeader("List-Unsubscribe: <".$text["unsubscribe"].">");
     $mail->addCustomHeader("List-Subscribe: <".getConfig("subscribeurl").">");
     $mail->addCustomHeader("List-Owner: <mailto:".getConfig("admin_address").">");
-}
+  }
 
   list($dummy,$domaincheck) = split('@',$destinationemail);
   $text_domains = explode("\n",trim(getConfig("alwayssendtextto")));
@@ -846,6 +849,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
       } 
       break;
   }
+#  print htmlspecialchars($htmlmessage);exit;
 
   $mail->build_message(
       array(
@@ -1267,7 +1271,7 @@ function precacheMessage($messageid,$forwardContent = 0) {
     $cached[$messageid]["fromemail"] = str_replace("<","",$cached[$messageid]["fromemail"]);
     $cached[$messageid]["fromemail"] = str_replace(">","",$cached[$messageid]["fromemail"]);
     # make sure there are no quotes around the name
-    $cached[$messageid]["fromname"] = str_replace('"',"",ltrim(rtrim($message["fromfield"])));
+    $cached[$messageid]["fromname"] = str_replace('"',"",ltrim(rtrim($message["from"])));
   } elseif (strpos($message["from"]," ")) {
     # if there is a space, we need to add the email
     $cached[$messageid]["fromname"] = $message["from"];
@@ -1321,6 +1325,7 @@ function precacheMessage($messageid,$forwardContent = 0) {
   } else {
     $cached[$messageid]["textcontent"] = '';
   }
+#  var_dump($cached);exit;
   #0013076: different content when forwarding 'to a friend'
   $cached[$messageid]["footer"] = $forwardContent ? stripslashes($message["forwardfooter"]) : $message["footer"];
   
