@@ -135,6 +135,7 @@ class phplist_I18N {
     $text = str_replace('PHPlist','phpList',$text);
 
     if (isset($GLOBALS["developer_email"])) {
+      return '<font color=#A704FF>'.str_replace("\n","",$text).'</font>';
       return str_replace("\n","",$text);
 #       return 'TE'.$text.'XT';
     }
@@ -165,6 +166,7 @@ class phplist_I18N {
       $line = "'".$text."' => '".$text."',";
       $this->appendText('/tmp/'.$prefix.$page.'.php',$line);
 
+      return '<font color=#FF1717>'.$text.'</font>';#MISSING TEXT
       return $text;#MISSING TEXT
     }
     return $text;
