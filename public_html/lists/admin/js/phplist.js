@@ -214,4 +214,9 @@ $("#emailsearch").autocomplete({
     return true;
   });
 
+  var chopOff = document.title.lastIndexOf(":") + 2;
+  var doctitle = document.title.substring(chopOff);
+  var docurl = document.location.search;
+  document.cookie="browsetrail="+escape(docurl+"SEP"+doctitle);
+
 })
