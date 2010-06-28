@@ -9,6 +9,15 @@
   print NewMenu();
   ?>
 </div>
+<div class="menutableright">
+<?php
+
+  print recentlyVisited();
+?>
+
+
+</div>
+
 </td>
 </tr>
 

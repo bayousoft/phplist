@@ -19,7 +19,7 @@ include_once dirname(__FILE__)."/commonlib/lib/maillib.php";
 
 # set some variables
 if (!isset ($_GET["pi"]))
-	$_GET["pi"] = "";
+  $_GET["pi"] = "";
 
 # make sure magic quotes are on. Try to switch it on, this may fail
 ini_set("magic_quotes_gpc","on");
@@ -104,8 +104,8 @@ function SaveConfig($item,$value,$editable=1,$ignore_errors = 0) {
   if (empty($_SESSION['hasconf'])) return;
   if ($value == "false" || $value == "no") {
     $value = 0;
-	} else
-		if ($value == "true" || $value == "yes") {
+  } else
+    if ($value == "true" || $value == "yes") {
     $value = 1;
   }
   ## force reloading config values in session
@@ -124,9 +124,9 @@ function SaveConfig($item,$value,$editable=1,$ignore_errors = 0) {
   Michiel Dethmers, Tincan Ltd 2001,2004
 */
 if (ereg("dev", VERSION))
-	$v = "dev";
+  $v = "dev";
 else
-	$v = VERSION;
+  $v = VERSION;
 if (REGISTER) {
   $PoweredByImage = '<p class="poweredby"><a href="http://www.phplist.com"><img src="http://phplist.tincan.co.uk/images/'.$v.'/power-phplist.png" width=70 height=30 title="Powered by PHPlist version '.$v.', &copy; tincan ltd" alt="Powered by PHPlist'.$v.', &copy tincan ltd" border="0"/></a></p>';
 } else {
@@ -134,15 +134,15 @@ if (REGISTER) {
 }
 $PoweredByText = '<span class="poweredphplist">powered by <a href="http://www.phplist.com" class="poweredphplist" target="_blank">phplist</a> v '.$v.', &copy; <a href="http://tincan.co.uk/powered" target="_blank" class="poweredphplist">tincan ltd</a></span>';
 if (!TEST && REGISTER) {
-	if (!PAGETEXTCREDITS) {
-		;
+  if (!PAGETEXTCREDITS) {
+    ;
     $PoweredBy = $PoweredByImage;
   } else {
     $PoweredBy = $PoweredByText;
   }
 } else {
   if (!PAGETEXTCREDITS) {
-		;
+    ;
     $PoweredBy = $PoweredByImage;
   } else {
     $PoweredBy = $PoweredByText;
@@ -160,12 +160,12 @@ function formStart($additional="") {
     $html = sprintf('<form method="post" action="%s" %s>',$form_action,$additional);
     # retain all get variables as hidden ones
     foreach (array (
-		    "p",
-		    "page"
-		    ) as $key) {
+        "p",
+        "page"
+        ) as $key) {
       $val = $_REQUEST[$key];
       if ($val)
-	$html .= sprintf('<input type="hidden" name="%s" value="%s" />', $key, $val);
+  $html .= sprintf('<input type="hidden" name="%s" value="%s" />', $key, $val);
     }
   } else
     $html = sprintf('<form method="post" action="" %s>',$additional);
@@ -219,26 +219,26 @@ function sendMessageStats($msgid) {
   if (!isset($stats_collection_address)) {
     $stats_collection_address = 'phplist-stats@tincan.co.uk';
   }
-	$data = Sql_Fetch_Array_Query(sprintf('select * from %s where id = %d', $tables["message"], $msgid));
+  $data = Sql_Fetch_Array_Query(sprintf('select * from %s where id = %d', $tables["message"], $msgid));
   $msg .= "PHPlist version ".VERSION . "\n";
   $diff = timeDiff($data["sendstart"],$data["sent"]);
 
   if ($data["id"] && $data["processed"] > 10 && $diff != "very little time") {
     $msg .= "\n".'Time taken: '.$diff;
-		foreach (array (
-				'entered',
-				'processed',
-				'sendstart',
-				'sent',
-				'htmlformatted',
-				'sendformat',
-				'template',
-				'astext',
-				'ashtml',
-				'astextandhtml',
-				'aspdf',
-				'astextandpdf'
-			) as $item) {
+    foreach (array (
+        'entered',
+        'processed',
+        'sendstart',
+        'sent',
+        'htmlformatted',
+        'sendformat',
+        'template',
+        'astext',
+        'ashtml',
+        'astextandhtml',
+        'aspdf',
+        'astextandpdf'
+      ) as $item) {
         $msg .= "\n".$item.' => '.$data[$item];
     }
     if ($stats_collection_address == 'phplist-stats@tincan.co.uk' && $data["processed"] > 500) {
@@ -438,7 +438,7 @@ $GLOBALS['pagecategories'] = array(
       ),
   ),
   'statistics' => array(
-      'toplink' => 'statsoverview',
+      'toplink' => 'statsmgt',
       'pages' => array(
         'mviews',
         'mclicks',
@@ -449,11 +449,10 @@ $GLOBALS['pagecategories'] = array(
         'domainstats'
       ),
       'menulinks' => array(
+        'statsoverview',
         'mviews',
         'mclicks',
         'uclicks',
-        'statsmgt',
-        'statsoverview',
         'domainstats'
       ),
   ),
@@ -592,14 +591,16 @@ $main_menu = array(
 );
 
 function newMenu() {
-	if (isset ($GLOBALS["firsttime"])) {
-		return;
-	}
+  if (isset ($GLOBALS["firsttime"])) {
+    return;
+  }
   if (!CLICKTRACK) {
     unset($GLOBALS["main_menu"]['statsmgt']);
   }
-  $spb ='<div class="menulinkleft">';
-  $spe = '</div>';
+  $shade = 1;
+  $spb = '<li class="shade0">';
+#  $spb = '<li class="shade2">';
+  $spe = '</li>';
   $nm = strtolower(NAME);
   if ($nm != "phplist") {
     $GLOBALS["main_menu"]["community"] = "";
@@ -611,22 +612,22 @@ function newMenu() {
     $GLOBALS["main_menu"]["bouncemgt"] = '';
   }
 
-	if ($GLOBALS["require_login"] && (!isset ($_SESSION["adminloggedin"]) || !$_SESSION["adminloggedin"]))
-		return $spb . PageLink2('home', $GLOBALS["I18N"]->get('Main Page')) . '<br />' . $spe . $spb . PageLink2('about', $GLOBALS["I18N"]->get('about') . ' phplist') . '<br />' . $spe;
+  if ($GLOBALS["require_login"] && (!isset ($_SESSION["adminloggedin"]) || !$_SESSION["adminloggedin"]))
+    return $spb . PageLink2('home', $GLOBALS["I18N"]->get('Main Page')) . '<br />' . $spe . $spb . PageLink2('about', $GLOBALS["I18N"]->get('about') . ' phplist') . '<br />' . $spe;
 
   $access = accessLevel("spage");
   switch ($access) {
     case "owner":
-			$subselect = sprintf(' where owner = %d', $_SESSION["logindetails"]["id"]);
-			break;
+      $subselect = sprintf(' where owner = %d', $_SESSION["logindetails"]["id"]);
+      break;
     case "all":
     case "view":
-			$subselect = "";
-			break;
+      $subselect = "";
+      break;
     case "none":
     default:
-			$subselect = " where id = 0";
-			break;
+      $subselect = " where id = 0";
+      break;
   }
   if (TEST && REGISTER)
     $pixel = '<img src="http://phplist.tincan.co.uk/images/pixel.gif" width="1" height="1" alt="" />';
@@ -663,12 +664,16 @@ function newMenu() {
     }
   }
   */
-  
-  $thispage = $_GET['page'];
+
+  if (isset($_GET['page'])) {
+    $thispage = $_GET['page'];
+  } else {
+    $thispage = 'home';
+  }
   $thispage_category = pageCategory($thispage);
   
   if (empty($thispage_category) && empty($_GET['pi'])) {
-    return '';
+    $thispage_category = '';
   } elseif (!empty($_GET['pi'])) {
     $thispage_category = 'plugins';
   }
@@ -695,9 +700,10 @@ function newMenu() {
       } 
       // don't use the link for a rule
       elseif ($desc == "<hr />") {
-        $html .= '<div class="menulinkleft">'.$desc.'</div>';
+        $html .= '<li>'.$desc.'</li>';
       } elseif ($page == 'category') {
-        $html .= '<div class="menulinkleft category"><h4>'.$GLOBALS['I18N']->get($thispage_category).'</h4></div>';
+      #  $html .= '<li><h3>'.$GLOBALS['I18N']->get($thispage_category).'</h3></li>';
+        $html .= '<li><h3>'.$GLOBALS['I18N']->get('In this section').'</h3></li>';
       } else {
         $html .= $spb.$link.$spe;
       }
@@ -712,8 +718,33 @@ function newMenu() {
   } 
 */
 
-  return $html . $pixel;
+  return '<ul class="contextmenu">'.$html.'</ul>' . $pixel;
 }
+
+function recentlyVisited() {
+  $html = '';
+  if (isset($_SESSION['browsetrail']) && is_array($_SESSION['browsetrail'])) {
+    $shade = 0;
+    $html .= '<h3>'.$GLOBALS['I18N']->get('Recently Visited').'</h3><ul class="recentlyvisited">';
+    $browsetrail = array_unique($_SESSION['browsetrail']);
+    $browsetrail = array_reverse($browsetrail);
+    foreach ($browsetrail as $pageid => $visitedpage) {
+      if (strpos($visitedpage,'SEP')) {
+        list($pageurl,$pagetitle) = explode('SEP',$visitedpage);
+        if ($pagetitle != 'phplist') {  ## pages with no title
+          $pagetitle = str_replace('%',' ',$pagetitle);
+          if (strpos($pagetitle,' ') > 20) $pagetitle = substr($pagetitle,0,10).' ...';
+          $html .= '<li class="shade'.$shade.'"><a href="./'.$pageurl.'" title="'.htmlspecialchars($pagetitle).'"><!--'.$pageid.'-->'.$pagetitle.'</a></li>';
+          $shade = !$shade;
+        }
+      }
+    }
+    $html .= '</ul>';
+  }
+  $_SESSION['browsetrail'] = array_slice($_SESSION['browsetrail'],0,6);
+  return $html;
+}
+
 
 function topMenu() {
   if (empty($_SESSION["logindetails"])) return '';
@@ -779,7 +810,7 @@ function PageLink2($name,$desc="",$url="",$no_plugin = false) {
   if ($access == "owner" || $access == "all" || $access == "view") {
     if ($name == "processqueue" && !MANUALLY_PROCESS_QUEUE)
       return "";#'<!-- '.$desc.'-->';
-		elseif ($name == "processbounces" && !MANUALLY_PROCESS_BOUNCES) return ""; #'<!-- '.$desc.'-->';
+    elseif ($name == "processbounces" && !MANUALLY_PROCESS_BOUNCES) return ""; #'<!-- '.$desc.'-->';
     else {
       if (!$no_plugin && !preg_match("/&amp;pi=/i",$name) && isset($_GET["pi"]) && isset($GLOBALS["plugins"][$_GET["pi"]]) && is_object($GLOBALS["plugins"][$_GET["pi"]])) {
         $pi = '&amp;pi='.$_GET["pi"];
@@ -788,8 +819,8 @@ function PageLink2($name,$desc="",$url="",$no_plugin = false) {
       }
       return sprintf('<a href="./?page=%s%s%s" title="%s">%s</a>',$name,$url,$pi,$desc,strtolower($desc));
     }
-	} else
-		return "";
+  } else
+    return "";
 #    return "\n<!--$name disabled $access -->\n";
 #    return "\n$name disabled $access\n";
 }
@@ -822,7 +853,7 @@ function SidebarLink($name,$desc,$url="") {
   if ($access == "owner" || $access == "all") {
     if ($name == "processqueue" && !MANUALLY_PROCESS_QUEUE)
       return '<!-- '.$desc.'-->';
-		elseif ($name == "processbounces" && !MANUALLY_PROCESS_BOUNCES) return '<!-- ' . $desc . '-->';
+    elseif ($name == "processbounces" && !MANUALLY_PROCESS_BOUNCES) return '<!-- ' . $desc . '-->';
     else
       return sprintf('<a href="./?page=%s%s" target="phplistwindow">%s</a>',$name,$url,strtolower($desc));
   } else
@@ -1045,7 +1076,7 @@ function upgradeTable($table,$tablestructure) {
 }
 
 function Help($topic, $text = '?') {
-	return sprintf('<span class="helplink"><a href="help/?topic=%s" class="helpdialog" target="_blank">%s</a></span>', $topic, $text);
+  return sprintf('<span class="helplink"><a href="help/?topic=%s" class="helpdialog" target="_blank">%s</a></span>', $topic, $text);
 }
 
 # Debugging system, needs $debug = TRUE and $verbose = TRUE or $debug_log = {path} in config.php
@@ -1103,12 +1134,12 @@ function PageData($id) {
     while ($row = Sql_Fetch_Array($req)) {
       $data['attributes'] .= $row['id'].'+';
       $data[sprintf('attribute%03d',$row['id'])] = '';
-			foreach (array (
-					'id',
-					'default_value',
-					'listorder',
-					'required'
-				) as $key) {
+      foreach (array (
+          'id',
+          'default_value',
+          'listorder',
+          'required'
+        ) as $key) {
         $data[sprintf('attribute%03d',$row['id'])] .= $row[$key].'###';
       }
     }
@@ -1132,18 +1163,18 @@ function PageData($id) {
     $data[$row["name"]] = preg_replace('/<\?=VERSION\?>/i', VERSION, $row["data"]);
   }
 
-	if (!isset ($data['lists']))
-		$data['lists'] = '';
-	if (!isset ($data['emaildoubleentry']))
-		$data['emaildoubleentry'] = '';
-	if (!isset ($data['rssdefault']))
-		$data['rssdefault'] = '';
-	if (!isset ($data['rssintro']))
-		$data['rssintro'] = '';
-	if (!isset ($data['rss']))
-		$data['rss'] = '';
-	if (!isset ($data['lists']))
-		$data['lists'] = '';
+  if (!isset ($data['lists']))
+    $data['lists'] = '';
+  if (!isset ($data['emaildoubleentry']))
+    $data['emaildoubleentry'] = '';
+  if (!isset ($data['rssdefault']))
+    $data['rssdefault'] = '';
+  if (!isset ($data['rssintro']))
+    $data['rssintro'] = '';
+  if (!isset ($data['rss']))
+    $data['rss'] = '';
+  if (!isset ($data['lists']))
+    $data['lists'] = '';
   return $data;
 }
 
@@ -1153,7 +1184,7 @@ function PageAttributes($data) {
   if (is_array($attributes)) {
     foreach ($attributes as $attribute) {
       if (isset($data[sprintf('attribute%03d',$attribute)])) {
-				list ($attributedata[$attribute]["id"], $attributedata[$attribute]["default_value"], $attributedata[$attribute]["listorder"], $attributedata[$attribute]["required"]) = explode('###', $data[sprintf('attribute%03d', $attribute)]);
+        list ($attributedata[$attribute]["id"], $attributedata[$attribute]["default_value"], $attributedata[$attribute]["listorder"], $attributedata[$attribute]["required"]) = explode('###', $data[sprintf('attribute%03d', $attribute)]);
         if (!isset($sorted) || !is_array($sorted)) {
           $sorted = array();
         }
@@ -1165,22 +1196,16 @@ function PageAttributes($data) {
       asort($attributes);
     }
   }
-	return array (
-		$attributes,
-		$attributedata
-	);
+  return array (
+    $attributes,
+    $attributedata
+  );
 }
 
 
 function formatDate ($date,$short = 0) {
-	$months = array (
-		"",
-		$GLOBALS['I18N']->get("January"
-	), $GLOBALS['I18N']->get("February"), $GLOBALS['I18N']->get("March"), $GLOBALS['I18N']->get("April"), $GLOBALS['I18N']->get("May"), $GLOBALS['I18N']->get("June"), $GLOBALS['I18N']->get("July"), $GLOBALS['I18N']->get("August"), $GLOBALS['I18N']->get("September"), $GLOBALS['I18N']->get("October"), $GLOBALS['I18N']->get("November"), $GLOBALS['I18N']->get("December"));
-	$shortmonths = array (
-		"",
-		$GLOBALS['I18N']->get("Jan"
-	), $GLOBALS['I18N']->get("Feb"), $GLOBALS['I18N']->get("Mar"), $GLOBALS['I18N']->get("Apr"), $GLOBALS['I18N']->get("May"), $GLOBALS['I18N']->get("Jun"), $GLOBALS['I18N']->get("Jul"), $GLOBALS['I18N']->get("Aug"), $GLOBALS['I18N']->get("Sep"), $GLOBALS['I18N']->get("Oct"), $GLOBALS['I18N']->get("Nov"), $GLOBALS['I18N']->get("Dec"));
+  $months = array ("",$GLOBALS['I18N']->get("January"), $GLOBALS['I18N']->get("February"), $GLOBALS['I18N']->get("March"), $GLOBALS['I18N']->get("April"), $GLOBALS['I18N']->get("May"), $GLOBALS['I18N']->get("June"), $GLOBALS['I18N']->get("July"), $GLOBALS['I18N']->get("August"), $GLOBALS['I18N']->get("September"), $GLOBALS['I18N']->get("October"), $GLOBALS['I18N']->get("November"), $GLOBALS['I18N']->get("December"));
+  $shortmonths = array ("",$GLOBALS['I18N']->get("Jan"),$GLOBALS['I18N']->get("Feb"),$GLOBALS['I18N']->get("Mar"), $GLOBALS['I18N']->get("Apr"), $GLOBALS['I18N']->get("May"), $GLOBALS['I18N']->get("Jun"), $GLOBALS['I18N']->get("Jul"), $GLOBALS['I18N']->get("Aug"), $GLOBALS['I18N']->get("Sep"), $GLOBALS['I18N']->get("Oct"), $GLOBALS['I18N']->get("Nov"), $GLOBALS['I18N']->get("Dec"));
   $year = substr($date,0,4);
   $month = substr($date,5,2);
   $day = substr($date,8,2);
@@ -1199,10 +1224,10 @@ $oldnewpoweredimage = 'iVBORw0KGgoAAAANSUhEUgAAAFgAAAAfCAYAAABjyArgAAAABmJLR0QA/
 $newpoweredimage = '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';
 
 function FileNotFound() {
-	ob_end_clean();
-	header("HTTP/1.0 404 File Not Found");
-	printf('<html><head><title>404 Not Found</title></head><body><h1>Not Found</h1>The requested document was not found on this server<br/>Please contact the <a href="mailto:%s?subject=File not Found: %s">Administrator</a><p><hr><address><a href="http://tincan.co.uk/phplist" target="_tincan">phplist</a> version %s</address></body></html>', getConfig("admin_address"), $_SERVER["REQUEST_URI"], VERSION);
-	exit;
+  ob_end_clean();
+  header("HTTP/1.0 404 File Not Found");
+  printf('<html><head><title>404 Not Found</title></head><body><h1>Not Found</h1>The requested document was not found on this server<br/>Please contact the <a href="mailto:%s?subject=File not Found: %s">Administrator</a><p><hr><address><a href="http://tincan.co.uk/phplist" target="_tincan">phplist</a> version %s</address></body></html>', getConfig("admin_address"), $_SERVER["REQUEST_URI"], VERSION);
+  exit;
 }
 
 function findMime($filename) {
@@ -1231,8 +1256,8 @@ function findMime($filename) {
 }
 
 function excludedDateForRepetition($date) {
-	if (!is_array($GLOBALS["repeat_exclude"]))
-		return 0;
+ if (!is_array($GLOBALS["repeat_exclude"]))
+   return 0;
   foreach ($GLOBALS["repeat_exclude"] as $exclusion) {
     $formatted_value = Sql_Fetch_Row_Query(sprintf('select date_format("%s","%s")',$date,$exclusion["format"]));
     foreach ($exclusion["values"] as $disallowed) {
