@@ -116,7 +116,7 @@ print '<table class="bouncerulesAction">';
 printf('<tr><td>%s</td><td><input type=text name="newrule" size=30></td></tr>',$GLOBALS['I18N']->get('Regular Expression'));
 printf('<tr><td>%s</td><td><select name="action">',$GLOBALS['I18N']->get('Action'));
 foreach ($GLOBALS['bounceruleactions'] as $action => $desc) {
-  printf('<option value="%s" %s>%s</option>',$action,$data['action'] == $action ? 'selected="selected"':'',$desc);
+  printf('<option value="%s">%s</option>',$action,$desc);
 }
 print '</select></td></tr>';
 printf('<tr><td colspan="2">%s</td></tr><tr><td colspan="2"><textarea name="comment" rows=10 cols=65></textarea></td></tr>',
