@@ -1,8 +1,8 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 
-$spb ='<span class="menulinkleft">';
-$spe = '</span>';
+$spb ='<div>';
+$spe = '</div>';
 
 print $spb.PageLink2("users",$GLOBALS['I18N']->get('users')).$spe;
 print $spb.PageLink2("attributes",$GLOBALS['I18N']->get('userattributes')).$spe;
