@@ -1,8 +1,8 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 
-$spb ='<span class="menulinkleft">';
-$spe = '</span>';
+$spb ='<div>';
+$spe = '</div>';
 
 print $spb.PageLink2("bouncerules",$GLOBALS['I18N']->get('List Bounce Rules')).$spe;
 print $spb.PageLink2("bounces",$GLOBALS['I18N']->get('View Bounces')).$spe;
