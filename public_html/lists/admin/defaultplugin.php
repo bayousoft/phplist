@@ -12,22 +12,25 @@ class phplistPlugin {
   ############################################################
   # Registration & Config
   
-  var $name= "Default Plugin";
-  var $version= "unknown";
-  var $authors= "";
-  var $enabled= 0; // use directly, can be privitsed later and calculated with __get and __set
+  public $name= "Default Plugin";
+  public $version= "unknown";
+  public $authors= "";
+  public $enabled= 0; // use directly, can be privitsed later and calculated with __get and __set
+  public $system_root = ''; ## root dir of the phpList admin directory
   #@@Some ideas to implement this:
   # * Start each method with if (!$this->enabled) return parent :: parentMethod($args);
   # * Don't add to manage Global plugins if disabled
-  var $coderoot= "./PLUGIN_ROOTDIR/defaultplugin/"; # coderoot relative to the phplist admin directory
+  public $coderoot= "./PLUGIN_ROOTDIR/defaultplugin/"; # coderoot relative to the phplist admin directory
   # optional configuration variables
-  var $configvars= array ();
+  public $configvars= array ();
   # config var    array( type, name [array values]));
-  var $DBstruct= array ();
+  public $DBstruct= array ();
   # These files can be called from the commandline
   # This should hold an array per file: filename (without .php) => path relative to admin/
-  var $commandlinePlugins=array();
+  public $commandlinePlugins=array();
   public $configArray = array();
+
+  public $importTabTitle = ''; ## title of the tab for the import page
   
   /* array of pages in this plugin to add to the menu
    * 
@@ -53,6 +56,8 @@ class phplistPlugin {
     if (!empty($GLOBALS['developer_email'])) {
       $this->enabled = 1;
     }
+    $this->importTabTitle = $this->name;
+    $this->system_root = dirname(__FILE__);
   }
   
   function activate() {
