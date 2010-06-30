@@ -394,6 +394,7 @@ $GLOBALS['pagecategories'] = array(
         'import2',
         'import3',
         'import4',
+        'importsimple',
         'dlusers',
         'export',
         'listbounces',
@@ -685,8 +686,10 @@ function newMenu() {
     "div1" => "<hr />",
     'category' => $thispage_category,
   );
-  foreach ($GLOBALS['pagecategories'][$thispage_category]['menulinks'] as $category_page) {
-    $GLOBALS['main_menu'][$category_page] = $category_page;
+  if (!empty($thispage_category)) {
+    foreach ($GLOBALS['pagecategories'][$thispage_category]['menulinks'] as $category_page) {
+      $GLOBALS['main_menu'][$category_page] = $category_page;
+    }
   }
 
   foreach ($GLOBALS["main_menu"] as $page => $desc) {
@@ -878,18 +881,19 @@ function PageURL2($name,$desc = "",$url="") {
   }
 }
 
-function ListofLists($messagedata,$fieldname,$subselect) {
+#function ListofLists($messagedata,$fieldname,$subselect) {
+function ListofLists($current,$fieldname,$subselect) {
   $categoryhtml = array();
   $categoryhtml['selected'] = '';
   $categoryhtml['all'] = '
   <li><input type="checkbox" name="'.$fieldname.'[all]"';
-  if (!empty($messagedata[$fieldname]["all"])) {
+  if (!empty($current["all"])) {
     $categoryhtml['all'] .= "checked";
   }
   $categoryhtml['all'].= ' />'.$GLOBALS['I18N']->get('alllists').'</li>';
 
   $categoryhtml['all'] .= '<li><input type="checkbox" name="'.$fieldname.'[allactive]"';
-  if (!empty($messagedata[$fieldname]["allactive"])) {
+  if (!empty($current["allactive"])) {
     $categoryhtml['all'] .= 'checked="checked"';
   }
   $categoryhtml['all'] .= ' />'.$GLOBALS['I18N']->get('All Active Lists').'</li>';
@@ -902,12 +906,12 @@ function ListofLists($messagedata,$fieldname,$subselect) {
     if (!isset($categoryhtml[$list['category']])) {
       $categoryhtml[$list['category']] = '';
     }
-    if (isset($messagedata[$fieldname][$list["id"]]) && $messagedata[$fieldname][$list["id"]]) {
+    if (isset($current[$list["id"]]) && $current[$list["id"]]) {
       $list['category'] = 'selected';
     }
     $categoryhtml[$list['category']] .= sprintf('<li><input type=checkbox name="'.$fieldname.'[%d]" value="%d" ',$list["id"],$list["id"]);
     # check whether this message has been marked to send to a list (when editing)
-    if (isset($messagedata[$fieldname][$list["id"]]) && $messagedata[$fieldname][$list["id"]]) {
+    if (isset($current[$list["id"]]) && $current[$list["id"]]) {
       $categoryhtml[$list['category']] .= "checked";
     }
     $categoryhtml[$list['category']] .= " />".stripslashes($list["name"]);
@@ -926,6 +930,46 @@ function ListofLists($messagedata,$fieldname,$subselect) {
   }
   if (empty($categoryhtml['selected'])) unset($categoryhtml['selected']);
   return $categoryhtml;
+}
+
+function listSelectHTML ($current,$fieldname,$subselect) {
+  $categoryhtml = ListofLists($current,$fieldname,$subselect);
+  $tabno = 1;
+  $listindex = $listhtml = '';
+  foreach ($categoryhtml as $category => $content) {
+    $listindex .= sprintf('<li><a href="#%s%d">%s</a></li>',$fieldname,$tabno,$category);
+    $listhtml .= sprintf('<div id="%s%d"><ul>%s</ul></div>',$fieldname,$tabno,$content);
+    $tabno++;
+    $some = 1;
+  }
+
+  $html = '<div class="tabbed"><ul>'.$listindex.'</ul>';
+  $html .= $listhtml;
+  $html .= '</div>'; ## close tabbed
+
+  if (!$some) {
+    $html = $GLOBALS['I18N']->get('nolistsavailable');
+  }
+  return $html;
+}
+
+function getSelectedLists($fieldname) {
+  if (in_array('all',array_keys($_POST[$fieldname]))) {
+    ## load all lists
+    $_POST[$fieldname] = array();
+    $req = Sql_Query(sprintf('select id from %s',$GLOBALS['tables']['list']));
+    while ($row = Sql_Fetch_Row($req)) {
+      $_POST[$fieldname][$row[0]] = $row[0];
+    }
+  } elseif (in_array('allactive',array_keys($_POST[$fieldname]))) {
+    ## load all active lists
+    $_POST[$fieldname] = array();
+    $req = Sql_Query(sprintf('select id from %s where active',$GLOBALS['tables']['list']));
+    while ($row = Sql_Fetch_Row($req)) {
+      $_POST[$fieldname][$row[0]] = $row[0];
+    }
+  }
+  return $_POST[$fieldname];
 }
 
 function Redirect($page) {
