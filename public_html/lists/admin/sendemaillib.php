@@ -17,7 +17,7 @@ if (!function_exists("output")) {
 }
 
 function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$forwardedby = array()) {
-  $getspeedstats = !empty($GLOBALS['getspeedstats']) && isset($GLOBALS['processqueue_timer']);
+  $getspeedstats = VERBOSE && !empty($GLOBALS['getspeedstats']) && isset($GLOBALS['processqueue_timer']);
   $sqlCountStart = $GLOBALS["pagestats"]["number_of_queries"];
     
   ## for testing concurrency, put in a delay to check if multiple send processes cause duplicates
@@ -39,7 +39,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     precacheMessage($messageid,$forwardContent);
   } else {
   #  dbg("Using cached {$cached[$messageid]["fromemail"]}");
-    output('Using cached message');
+    if (VERBOSE) output('Using cached message');
   }
   if (VERBOSE) {
     output($GLOBALS['I18N']->get('sendingmessage').' '.$messageid.' '.$GLOBALS['I18N']->get('withsubject').' '.
@@ -897,7 +897,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
         }
       }
       $sqlCount = $GLOBALS["pagestats"]["number_of_queries"] - $sqlCountStart;
-      output('It took '.$sqlCount.'  queries to send this message');
+      if ($getspeedstats) output('It took '.$sqlCount.'  queries to send this message');
 #exit;
    #   logEvent("Sent message $messageid to $email ($destinationemail)");
       return 1;
