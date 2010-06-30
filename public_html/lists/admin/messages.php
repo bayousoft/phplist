@@ -375,7 +375,7 @@ PageURL2("messages$url_keep","","delete=".$msg["id"]));
       $statusdiv.
       $sendstats,
       PageLink2("message",$GLOBALS['I18N']->get("View"),"id=".$msg["id"]),
-      $msg['status'] != 'inprocess' ? PageLink2("messages",$GLOBALS['I18N']->get("Requeue"),"resend=".$msg["id"]) : $totalsent." ".$GLOBALS['I18N']->get("sent"),
+      $msg['status'] != 'inprocess' ? PageLink2("messages",$GLOBALS['I18N']->get("Requeue"),"resend=".$msg["id"]) : $totalsent,
       $msg["status"] != 'prepared' ? PageLink2("send",$GLOBALS['I18N']->get("Edit"),"id=".$msg["id"]) : PageLink2("preparesend",$GLOBALS['I18N']->get("Edit"),"id=".$msg["id"]),
       $clicks[0] && CLICKTRACK ? PageLink2("mclicks",$GLOBALS['I18N']->get("click stats"),"id=".$msg["id"]).'<br/>':'',
       $deletelink
