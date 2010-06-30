@@ -62,41 +62,25 @@ a:link.phphead,
 a:hover.phphead,
 a:visited.phphead {font-size: 14px; color: #000000; font-style: normal; font-family: verdana, sans-serif; text-decoration: none; padding-left:20px;}
 
-.abouthead,
-a:active.abouthead,
-a:link.abouthead,
-a:hover.abouthead,
-a:visited.abouthead {
-	font-size: 18px;
-  color: #ff9900;
-  font-style: bold;
-  font-family: verdana, sans-serif;
-  text-decoration: none;
-  text-align: center;
-  border: 1px solid black;
+ul.recentlyvisited,
+ul.contextmenu {
+  border: 2px black solid;
+  padding: 3px;
 }
 
-.menulinkleft {margin : 0px; padding : 0px;}
-.menulinkleft a:link,
-.menulinkleft a:active,
-.menulinkleft a:visited {font-family: verdana, sans-serif;font-size : 11px; color : #000000;background-color : #F9F9F9; font-weight: normal; display : block; text-align : left; text-decoration : none; padding-left: 5px;line-height : 15px;border-top: 2px white solid;}
-.menulinkleft a:hover {font-family: verdana, sans-serif;font-size : 11px; color : #000000;background-color : #EBEBEB; font-weight: normal; display : block; text-align : left; text-decoration : none;}
-
-
-.menutable {background-color : white; border-left : 1px black solid; border-right : 1px black solid; display : block; width : 132px;}
-.menutableright {
-  background-color : white; 
-  border-left : 1px black solid;  
-  border-bottom : 1px black solid; 
-  display : block; 
-  width : 132px;
-  float: left;
+ul.recentlyvisited li,
+ul.contextmenu li {
+  list-style-type : none;  
+  padding: 5px;
+  line-height : 15px;
+  font-weight : bold;
+  border: 1px solid  #CCCC99; 
 }
 
 .menuhd {font-family: verdana, sans-serif;font-size : 11px; color : black;background-color : #CCCC99; font-weight: normal; border-top: 1px black solid;  border-bottom: 1px black solid;display : block; text-align : left; text-decoration : none; padding: 2px;vertical-align : top; padding-left : 3px;}
 
 .bottom { border-top: 1px solid black;  border-bottom: 1px solid black; font-family: verdana, sans-serif;font-size : 10px; font-weight : bold; padding: 2px; padding-left:20px;}
-.input {font-family: verdana, sans-serif;font-size : 10px; font-weight : normal;}
+.input {font-family: verdana, sans-serif;font-size : 10px; }
 .bottomrow { border-bottom: 1px solid black; }
 .searchBoxinput {font-family: verdana, sans-serif;font-size : 11px; font-weight : normal; margin : 0px; padding : 0px;color : #000000;border: 1px #999966 solid; padding-left:2px; height:15px; width:110px;}
 
