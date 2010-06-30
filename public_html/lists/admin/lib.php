@@ -65,7 +65,7 @@ function setMessageData($msgid,$name,$value) {
   if ($name == 'targetlist' && is_array($value))  {
     Sql_query(sprintf('delete from %s where messageid = %d',$GLOBALS['tables']["listmessage"],$msgid));
     if ( !empty($value["all"]) || !empty($value["allactive"])) {
-      $res = Sql_query('select * from '. $GLOBALS['tables']['list']. ' '.$subselect);
+      $res = Sql_query('select * from '. $GLOBALS['tables']['list']. ' '.$GLOBALS['subselect']);
       while ($row = Sql_Fetch_Array($res))  {
         $listid  =  $row["id"];
         if ($row["active"] || $value["all"] == "on")  {
@@ -146,7 +146,9 @@ function loadMessageData($msgid) {
     } else {
       $data = stripslashes($row['data']);
     }
-    $messagedata[stripslashes($row['name'])] = $data;
+    if (!in_array($row['name'],array('astext','ashtml','astextandhtml','aspdf','astextandpdf'))) { ## don't overwrite counters in the message table from the data table
+      $messagedata[stripslashes($row['name'])] = $data;
+    }
   }
   
   foreach (array('embargo','repeatuntil','requeueuntil') as $datefield) {
