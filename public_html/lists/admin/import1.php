@@ -92,29 +92,22 @@ if(isset($_REQUEST['import'])) {
     $email_list = str_replace($import_record_delimiter,"\n",$email_list);
   };
 
-  if (!isset($import_field_delimiter) || $import_field_delimiter == "" || $import_field_delimiter == "TAB")
-    $import_field_delimiter = "\t";
-
-  // Check file for illegal characters
-  $illegal_cha = array(",", ";", ":", "#","\t");
-  for($i=0; $i<count($illegal_cha); $i++) {
-    if( ($illegal_cha[$i] != $import_field_delimiter) && ($illegal_cha[$i] != $import_record_delimiter) && (strpos($email_list, $illegal_cha[$i]) != false) ) {
-      Fatal_Error($GLOBALS['I18N']->get('invalid_delimiter')." $import_field_delimiter, $import_record_delimiter");return;
-    }
-  };
-
   // Split file/emails into array
   $email_list = explode("\n",$email_list);
 
   // Parse the lines into records
   $hasinfo = 0;
   foreach ($email_list as $line) {
-    $uservalues = explode($import_field_delimiter,$line);
-    $email = trim(array_shift($uservalues));
-    $info = join(" ",$uservalues);
-    $hasinfo = $hasinfo || $info != "";
+    $info = '';
+    $email = trim($line); ## just take the entire line up to the first space to be the email
+    if (strpos($email,' ')) {
+      list($email,$info) = explode(' ',$email);
+    }
+
+    ## actually looks like the "info" bit will get lost, but
+    ## in a way, that doesn't matter
     $user_list[$email] = array (
-      "info" => $info
+      'info' => $info,
     );
   }
 
@@ -149,11 +142,9 @@ if(isset($_REQUEST['import'])) {
     $count_email_add = 0;
     $count_email_exist = 0;
     $count_list_add = 0;
-    if (isset($_REQUEST['lists']) && is_array($_REQUEST['lists'])) {
-      $lists = $_REQUEST['lists'];
-    } else {
-      $lists = array();
-    }
+    $additional_emails = 0;
+    $some = 0;
+    $lists = getSelectedLists('importlists');
     $num_lists = sizeof($lists);
     $todo = sizeof($user_list);
     $done = 0;
@@ -172,7 +163,15 @@ if(isset($_REQUEST['import'])) {
     $attributes = array();
     while ($row = Sql_Fetch_Array($res)) {
       $fieldname = "attribute" .$row["id"];
-      $attributes[$row["id"]] = $_POST[$fieldname];
+      if (isset($_POST[$fieldname])) {
+        if (is_array($_POST[$fieldname])) {
+          $attributes[$row["id"]] = join(',',$_POST[$fieldname]);
+        } else {
+          $attributes[$row["id"]] = $_POST[$fieldname];
+        }
+      } else {
+        $attributes[$row["id"]] = '';
+      }
     }
 
     while (list($email,$data) = each ($user_list)) {
@@ -221,10 +220,10 @@ if(isset($_REQUEST['import'])) {
           $history_entry = $GLOBALS['I18N']->get('import_new_user');
 
           # add the attributes for this user
-          reset($attributes);
-          while (list($attr,$value) = each($attributes))
+          foreach($attributes as $attr => $value) {
             Sql_query(sprintf('replace into %s (attributeid,userid,value) values("%s","%s","%s")',
               $tables["user_attribute"],$attr,$userid,addslashes($value)));
+          }
         }
 
         #add this user to the lists identified
@@ -296,17 +295,16 @@ if(isset($_REQUEST['import'])) {
     if(!$some && !$additional_emails) {
       print "<br/>".$GLOBALS['I18N']->get('all_emails_exist');
     } else {
-      print "$count_email_add $dispemail ".$GLOBALS['I18N']->get('import_successful')." $num_lists $displists.<br/>$additional_emails $dispemail2 ".$GLOBALS['I18N']->get('subscribed')." $displists";
+      print "<br/>$count_email_add $dispemail ".$GLOBALS['I18N']->get('import_successful')." $num_lists $displists.<br/>$additional_emails $dispemail2 ".$GLOBALS['I18N']->get('subscribed')." $displists";
     }
   }; // end else
-  print '<p class="button">'.PageLink2("import",$GLOBALS['I18N']->get('import_more_emails')).'</p>';
+  print '<p class="button">'.PageLink2("import1",$GLOBALS['I18N']->get('import_more_emails')).'</p>';
 
 
 } else {
 ?>
 
 
-<ul>
 <?php echo FormStart(' enctype="multipart/form-data" name="import"')?>
 <?php
 if ($GLOBALS["require_login"] && !isSuperUser()) {
@@ -326,21 +324,14 @@ $result = Sql_query("SELECT id,name FROM ".$tables["list"]."$subselect ORDER BY 
 $c=0;
 if (Sql_Affected_Rows() == 1) {
   $row = Sql_fetch_array($result);
-  printf('<input type="hidden" name="listname[%d]" value="%s"><input type="hidden" name="lists[%d]" value="%d">'.$GLOBALS['I18N']->get('adding_users').' <b>%s</b>',$c,stripslashes($row["name"]),$c,$row["id"],stripslashes($row["name"]));
+  printf('<input type="hidden" name="listname[%d]" value="%s"><input type="hidden" name="importlists[%d]" value="%d">'.$GLOBALS['I18N']->get('adding_users').' <b>%s</b>',$c,stripslashes($row["name"]),$c,$row["id"],stripslashes($row["name"]));
 } else {
   print '<p class="button">'.$GLOBALS['I18N']->get('select_lists').'</p>';
-  while ($row = Sql_fetch_array($result)) {
-    printf('<li><input type="hidden" name="listname[%d]" value="%s"><input type=checkbox name="lists[%d]" value="%d">%s',$c,stripslashes($row["name"]),$c,$row["id"],stripslashes($row["name"]));
-    $some = 1;$c++;
-  }
-
-  if (!$some)
-   echo $GLOBALS['I18N']->get('no_lists').PageLink2("editlist",$GLOBALS['I18N']->get('add_list'));
+  print ListSelectHTML(array(),'importlists',$subselect);
 }
 
 ?>
 
-</ul>
 
 <script language="Javascript" type="text/javascript">
 
@@ -355,8 +346,6 @@ function addFieldToCheck(value,name) {
 <table class="import1" border="1">
 <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('info_emails_file'); ?></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('emails_file'); ?></td><td><input type="file" name="import_file"></td></tr>
-<tr><td><?php echo $GLOBALS['I18N']->get('field_delimiter'); ?></td><td><input type="text" name="import_field_delimiter" size="5"> <?php echo $GLOBALS['I18N']->get('tab_default'); ?></td></tr>
-<tr><td><?php echo $GLOBALS['I18N']->get('record_delimiter'); ?></td><td><input type="text" name="import_record_delimiter" size="5"> <?php echo $GLOBALS['I18N']->get('line_break_default'); ?></td></tr>
 <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('info_test_output'); ?></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('test_output'); ?></td><td><input type="checkbox" name="import_test" value="yes"></td></tr>
 <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('info_notification_email'); ?></td></tr>
@@ -370,5 +359,6 @@ print ListAllAttributes();
 
 <tr><td><p class="input"><input type="submit" name="import" value="<?php echo $GLOBALS['I18N']->get('import'); ?>"></p></td><td>&nbsp;</td></tr>
 </table>
+</form>
 <?php } ?>
 
