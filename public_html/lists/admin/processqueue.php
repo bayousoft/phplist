@@ -819,7 +819,7 @@ while ($message = Sql_fetch_array($messages)) {
              }
            } elseif (MAILQUEUE_THROTTLE) {
              usleep(MAILQUEUE_THROTTLE * 1000000);
-           } elseif (MAILQUEUE_BATCH_SIZE && MAILQUEUE_AUTOTHROTTLE && $sent > 10) {
+           } elseif (MAILQUEUE_BATCH_PERIOD && MAILQUEUE_BATCH_PERIOD > 0 && MAILQUEUE_BATCH_SIZE && MAILQUEUE_AUTOTHROTTLE && $sent > 10) {
              $totaltime = $GLOBALS['processqueue_timer']->elapsed(1);
              $msgperhour = (3600/$totaltime) * $sent;
              $msgpersec = $msgperhour / 3600;
@@ -834,7 +834,7 @@ while ($message = Sql_fetch_array($messages)) {
                if (VERBOSE) {
                  output($GLOBALS['I18N']->get('waiting for').' '.$delay.' '.$GLOBALS['I18N']->get('seconds').' '.
                    $GLOBALS['I18N']->get('to make sure we don\'t exceed our limit of').MAILQUEUE_BATCH_SIZE.' '.
-                   $GLOBALS['I18N']->get('messages in').' '.MAILQUEUE_BATCH_PERIOD.$GLOBALS['I18N']->get('seconds'));
+                   $GLOBALS['I18N']->get('messages in').' '.MAILQUEUE_BATCH_PERIOD.' '.$GLOBALS['I18N']->get('seconds'));
                }
                $delay = $delay * 1000000;
                usleep($delay);
