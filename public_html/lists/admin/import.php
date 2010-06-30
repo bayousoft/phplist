@@ -6,6 +6,48 @@ if (!ALLOW_IMPORT) {
   return;
 }
 
+/*
+ *
+ * would be nice to make it tabbed, but that needs more work
+ * 
+print '<div id="importoptions" class="tabbed">';
+
+$c = 1;
+$tabs = '';
+$html = '';
+
+$tabs .= sprintf('<li><a href="./?page=%s&ajaxed=true">%s</a></li>','importsimple',$GLOBALS['I18N']->get('import'));
+$tabs .= sprintf('<li><a href="./?page=%s&ajaxed=true">%s</a></li>','import1',$GLOBALS['I18N']->get('import from file'));
+$tabs .= sprintf('<li><a href="./?page=%s&ajaxed=true">%s</a></li>','import2',$GLOBALS['I18N']->get('import from CSV'));
+foreach ($GLOBALS['plugins'] as $pluginName => $plugin) {
+  if (!empty($plugin->importPage)) {
+    $tabs .= sprintf('<li><a href="./?pi=%s&amp;page=%s&ajaxed=true">%s</a></li>',$pluginName,$plugin->importPage,$plugin->importTabTitle);
+  }
+}
+
+print '<ul>'.$tabs.'</ul>';
+print $html;
+print '</div>';
+*/
+
+print '<p><h3>'.$GLOBALS['I18N']->get('Please choose one of the import methods below').'</h3></p>';
+
+print '<ul>';
+
+print '<li>'.PageLink2('importsimple',$GLOBALS['I18N']->get('copy and paste list of emails')).'</li>';
+print '<li>'.PageLink2('import1',$GLOBALS['I18N']->get('import by uploading a file with emails')).'</li>';
+print '<li>'.PageLink2('import2',$GLOBALS['I18N']->get('import by uploading a CSV file with emails and additional data')).'</li>';
+
+foreach ($GLOBALS['plugins'] as $pluginName => $plugin) {
+  if (!empty($plugin->importPage)) {
+    printf('<li><a href="./?pi=%s&amp;page=%s">%s</a></li>',$pluginName,$plugin->importPage,$plugin->importTabTitle);
+  }
+}
+
+print '</ul>';
+
+
+
 if ($GLOBALS['commandline']) {
   $file = $cline['f'];
   if (!is_file($file)) {
@@ -25,7 +67,7 @@ if ($GLOBALS['commandline']) {
   $_POST['lists'] = explode(',',$cline['l']);
   $_POST['groups'] = explode(',',$cline['g']);
 
-  
+
   $_POST['import'] = 1;
   $_POST['overwrite'] = 'yes';
   $_POST['notify'] = 'no';
@@ -38,4 +80,6 @@ if ($GLOBALS['commandline']) {
   print "\nAll done\n";
   exit;
 }
-?>
+
+
+
