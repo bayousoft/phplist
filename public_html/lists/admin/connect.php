@@ -901,7 +901,7 @@ function ListofLists($current,$fieldname,$subselect) {
   $result = Sql_query('SELECT * FROM '.$GLOBALS['tables']['list']. $subselect.' order by category, name');
   while ($list = Sql_fetch_array($result)) {
     if (empty($list['category'])) {
-      $list['category'] = 'Uncategorised';
+      $list['category'] = $GLOBALS['I18N']->get('Uncategorised');
     }
     if (!isset($categoryhtml[$list['category']])) {
       $categoryhtml[$list['category']] = '';
