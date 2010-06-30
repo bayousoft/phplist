@@ -129,52 +129,20 @@ $list_content = '
 <h3><a name="lists">'.$GLOBALS['I18N']->get('selectlists').':</a></h3>
 ';
 
-$listindex = $listhtml = '';
 
-$categoryhtml = ListofLists($messagedata,'targetlist',$subselect);
-
-$tabno = 1;
-foreach ($categoryhtml as $category => $content) {
-  $listindex .= sprintf('<li><a href="#include%d">%s</a></li>',$tabno,$category);
-  $listhtml .= sprintf('<div id="include%d"><ul>%s</ul></div>',$tabno,$content);
-  $tabno++;
-  $some = 1;
-}
-
-$list_content .= '<div class="tabbed"><ul>'.$listindex.'</ul>';
-$list_content .= $listhtml;
-$list_content .= '</div>'; ## close tabbed
+$list_content .= listSelectHTML($messagedata['targetlist'],'targetlist',$subselect);
 
 if (USE_LIST_EXCLUDE) {
   $list_content .= '
     <h3><a name="excludelists">'.$GLOBALS['I18N']->get('selectexcludelist').'</a></h3>';
 
-
-  $categoryhtml = ListofLists($messagedata,'excludelist',$subselect);
-  $tabno = 1;
-  $listindex = $listhtml = '';
-  $listindex .= ' <li><a href="#excludehelp">?</a></li>';
-  $listhtml .= sprintf('<div id="excludehelp"><ul>%s</ul></div>',$GLOBALS['I18N']->get('excludelistexplain'));
-
-  foreach ($categoryhtml as $category => $content) {
-    if ($category != 'all') {
-      $listindex .= sprintf('<li><a href="#exclude%d">%s</a></li>',$tabno,$category);
-      $listhtml .= sprintf('<div id="exclude%d"><ul>%s</ul></div>',$tabno,$content);
-      $tabno++;
-    }
+  if (!isset($messagedata['excludelist']) || !is_array($messagedata['excludelist'])) {
+    $messagedata['excludelist'] = array();
   }
-
-  $list_content .= '<div class="tabbed"><ul>'.$listindex.'</ul>';
-  $list_content .= $listhtml;
-  $list_content .= '</div>'; ## close tabbed
-
+  $list_content .= listSelectHTML($messagedata['excludelist'],'excludelist',$subselect);
 }
 
 $list_content .= '</div>'; ## close accordion
-
-if (!$some) {
-  $list_content = $GLOBALS['I18N']->get('nolistsavailable');
-}
 
 if (isset($show_lists) && $show_lists) {
  # print htmlspecialchars($list_content);
