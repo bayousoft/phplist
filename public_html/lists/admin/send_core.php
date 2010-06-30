@@ -126,6 +126,17 @@ if (preg_match("/\n|\r/",$messagedata["forwardsubject"])) {
 } 
 if (preg_match("/\n|\r/",$messagedata["forwardfooter"])) {
   $messagedata["forwardfooter"] = "";
+}
+
+## check that the message does not contain URLs that look like click tracking links
+## it seems people are pasting the results of test messages back in the editor, which would duplicate
+## tracking
+
+$hasClickTrackLinks = preg_match('/lt.php\?id=\w{24}/',$messagedata["message"]) ||
+(CLICKTRACK_LINKMAP && preg_match('#'.CLICKTRACK_LINKMAP.'/\w{24}#',$messagedata['message']));
+
+if ($hasClickTrackLinks) {
+  print Error($GLOBALS['I18N']->get('You should not paste the results of a test email back into the editor').'<br/>'.$GLOBALS['I18N']->get('This will break the click track statistics.'));
 } 
 
 // If the variable isn't filled in, then the input fields don't default to the
