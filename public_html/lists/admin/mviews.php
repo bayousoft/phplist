@@ -8,6 +8,11 @@ if (isset($_GET['id'])) {
 } else {
   $id = 0;
 }
+if (isset($_GET['start'])) {
+  $start = sprintf('%d',$_GET['start']);
+} else {
+  $start = 0;
+}
 
 $addcomparison = 0;
 $access = accessLevel('mviews');
@@ -35,12 +40,24 @@ switch ($access) {
     break;
 }
 
-if (!$id) {
-  print $GLOBALS['I18N']->get('Select Message to view');
-  $timerange = ' and date_add(msg.entered,interval 6 month) > current_timestamp';
-  $timerange = '';
+$download = !empty($_GET['dl']);
+if ($download) {
+  ob_end_clean();
+#  header("Content-type: text/plain");
+  header('Content-type: text/csv');
+  header('Content-disposition:  attachment; filename="phpList Message open statistics.csv"');
+  ob_start();
+}  
 
-  $req = Sql_Query(sprintf('select msg.id as messageid,count(um.viewed) as views, count(um.status) as total,subject,date_format(sent,"%%e %%b %%Y") as sent,bouncecount as bounced from %s um,%s msg where um.messageid = msg.id %s %s
+if (!$id) {
+  print '<p>'.PageLink2('mviews&dl=true',$GLOBALS['I18N']->get('Download as CSV file')).'</p>';
+  print '<p>'.$GLOBALS['I18N']->get('Select Message to view').'</p>';
+  $timerange = ' and msg.entered  > date_sub(current_timestamp,interval 12 month)';
+#  $timerange = '';
+
+  $req = Sql_Query(sprintf('select msg.id as messageid,count(um.viewed) as views, count(um.status) as total,
+    subject,date_format(sent,"%%e %%b %%Y") as sent,bouncecount as bounced from %s um,%s msg
+    where um.messageid = msg.id %s %s
     group by msg.id order by msg.entered desc limit 10',
     $GLOBALS['tables']['usermessage'],$GLOBALS['tables']['message'],$subselect,$timerange));
   if (!Sql_Affected_Rows()) {
@@ -51,12 +68,19 @@ if (!$id) {
   while ($row = Sql_Fetch_Array($req)) {
     $element = $row['messageid'].' '.substr($row['subject'],0,50);
     $ls->addElement($element);
-    $ls->addColumn($element,$GLOBALS['I18N']->get('date'),$row['sent']);
+    if (!empty($row['sent'])) {
+      $ls->addColumn($element,$GLOBALS['I18N']->get('date'),$row['sent']);
+    } else {
+      $ls->addColumn($element,$GLOBALS['I18N']->get('date'),$GLOBALS['I18N']->get('in progress'));
+    }
     $ls->addColumn($element,$GLOBALS['I18N']->get('sent'),$row['total']);
     $ls->addColumn($element,$GLOBALS['I18N']->get('bounced'),$row['bounced']);
     $ls->addColumn($element,$GLOBALS['I18N']->get('views'),$row['views'],$row['views'] ? PageURL2('mviews&amp;id='.$row['messageid']):'');
-    $perc = sprintf('%0.2f',($row['views'] / $row['total'] * 100));
-    $ls->addColumn($element,$GLOBALS['I18N']->get('rate'),$perc.' %');
+    $openrate = sprintf('%0.2f',($row['views'] / $row['total'] * 100));
+    $ls->addColumn($element,$GLOBALS['I18N']->get('rate'),$openrate.' %');
+    $bouncerate = sprintf('%0.2f',($row['bounced'] / $row['total'] * 100));
+    $ls->addColumn($element,$GLOBALS['I18N']->get('bounce rate'),$bouncerate.' %');
+    
   }
   if ($addcomparison) {
     $total = Sql_Fetch_Array_Query(sprintf('select count(entered) as total from %s um', $GLOBALS['tables']['usermessage']));
@@ -66,6 +90,10 @@ if (!$id) {
     $ls->addColumn($overall,$GLOBALS['I18N']->get('views'),$viewed['viewed']);
     $perc = sprintf('%0.2f',($viewed['viewed'] / $total['total'] * 100));
     $ls->addColumn($overall,$GLOBALS['I18N']->get('rate'),$perc.' %');
+  }
+  if ($download) {
+    ob_end_clean();
+    print $ls->tabDelimited();
   }
 
   print $ls->display();
@@ -90,7 +118,6 @@ $req = Sql_Query(sprintf('select um.userid
     $GLOBALS['tables']['usermessage'],$GLOBALS['tables']['message'],$id,$subselect));
 
 $total = Sql_Num_Rows($req);
-$start = sprintf('%d',$_GET['start']);
 $offset = 0;
 if (isset($start) && $start > 0) {
   $listing = sprintf($GLOBALS['I18N']->get("Listing user %d to %d"),$start,$start + MAX_USER_PP);
