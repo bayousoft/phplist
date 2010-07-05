@@ -780,7 +780,9 @@ function topMenu() {
   foreach ($GLOBALS['pagecategories'] as $category => $categoryDetails) {
     if (
       $category == 'hide' ||
-      ($category == 'develop' && empty($GLOBALS['developer_email']))) 
+      ($category == 'develop' && empty($GLOBALS['developer_email']))
+      || count($categoryDetails['menulinks']) == 0
+      ) 
       continue;
     
     $thismenu = '';
