@@ -86,7 +86,7 @@ if (!empty($_GET['delete'])) {
 }
 
 
-$req = Sql_Query(sprintf('select id,entered,subject,unix_timestamp(now()) - unix_timestamp(entered) as age from %s where status = "draft" %s',$GLOBALS['tables']['message'],$ownership));
+$req = Sql_Query(sprintf('select id,entered,subject,unix_timestamp(current_timestamp) - unix_timestamp(entered) as age from %s where status = "draft" %s order by entered desc',$GLOBALS['tables']['message'],$ownership));
 $numdraft = Sql_Num_Rows($req);
 if ($numdraft > 0 && !isset($_GET['id']) && !isset($_GET['new'])) {
   print '<p class="button">'.PageLink2('send&amp;new=1',$I18N->get('start a new message')).'</p>';
