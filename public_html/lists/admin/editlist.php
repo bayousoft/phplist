@@ -113,6 +113,9 @@ if (!empty($id)) {
     'description' => '',
   );
 }
+if (empty($list['category'])) {
+  $list['category'] = '';
+}
 ob_end_flush();
 
 ?>
