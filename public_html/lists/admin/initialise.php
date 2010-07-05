@@ -2,13 +2,39 @@
 require_once dirname(__FILE__).'/accesscheck.php';
 
 include dirname(__FILE__).'/structure.php';
-ob_end_flush();
-$force = !empty($_GET['force']);
+@ob_end_flush();
 
-print "<h3>".$GLOBALS['I18N']->get("Creating tables")."</h3><br />\n";
 $success = 1;
 $force = !empty($_GET['force']) && $_GET['force'] == 'yes';
 
+if (!empty($_REQUEST['firstinstall']) && empty($_REQUEST['adminemail'])) {
+  print '<form method="post" action="">';
+  print '<input type="hidden" name="firstinstall" value="1" />';
+  print '<input type="hidden" name="page" value="initialise" />';
+  print '<p>'.$GLOBALS['I18N']->get('Please enter your email.').'</p>';
+
+  /* would be nice to do this, but needs more work
+  if (ENCRYPT_ADMIN_PASSWORDS) {
+    print '<p>'.$GLOBALS['I18N']->get('After Database initialisation, you will receive an email with a token to set your login password.').'</p>';
+    print '<p>'.$GLOBALS['I18N']->get('The initial <i>login name</i> will be' ).' "admin"'.'</p>';
+  }
+  */
+  print '<input type="text" name="adminemail" value="" size="25" /><br/>';
+  /*
+  if (!ENCRYPT_ADMIN_PASSWORDS) {
+    */
+    print '<p>'.$GLOBALS['I18N']->get('The initial <i>login name</i> will be' ).' "admin"'.'</p>';
+    print '<p>'.$GLOBALS['I18N']->get('Please enter the password you want to use for this account.').'</p>';
+    print '<input type="text" name="adminpassword" value="" size="25" id="initialadminpassword" /><br/><br/>';
+/*
+  } 
+*/
+  print '<input type="submit" value="'.$GLOBALS['I18N']->get('Continue').'" id="initialisecontinue" disabled="disabled" />';
+  print '</form>';
+  return;
+} 
+
+print "<h3>".$GLOBALS['I18N']->get("Creating tables")."</h3><br />\n";
 while (list($table, $val) = each($DBstruct)) {
   if ($force) {
     if ($table == "attribute") {
@@ -46,7 +72,29 @@ while (list($table, $val) = each($DBstruct)) {
       if ($table == "admin") {
         # create a default admin
         $_SESSION['firstinstall'] = 1;
-        Sql_Query(sprintf('insert into %s (loginname,namelc,email,created,modified,  password,passwordchanged,superuser,disabled) values("%s","%s","%s",current_timestamp,current_timestamp,"%s",current_timestamp,%d,0)',$tables["admin"],"admin","admin","","phplist",1));
+        if (isset($_REQUEST['adminemail'])) {
+          $adminemail = $_REQUEST['adminemail'];
+        } else {
+          $adminemail = '';
+        }
+        if (isset($_REQUEST['adminpassword'])) {
+          $adminpass = $_REQUEST['adminpassword'];
+        } else {
+          $adminpass = 'phplist';
+        }
+        if (ENCRYPT_ADMIN_PASSWORDS) {
+          $adminpwd = md5($adminpass);
+        } else {
+          $adminpwd = $adminpass;
+        }
+        
+        Sql_Query(sprintf('insert into %s (loginname,namelc,email,created,modified,password,passwordchanged,superuser,disabled)
+          values("%s","%s","%s",current_timestamp,current_timestamp,"%s",current_timestamp,%d,0)',
+          $tables["admin"],"admin","admin",$adminemail,$adminpwd,1));
+
+        /* to send the token at the end, doesn't work yet
+        $adminid = Sql_Insert_Id();
+        */
       } elseif ($table == "task") {
         while (list($type,$pages) = each ($system_pages)) {
           foreach ($pages as $page => $access_level)
@@ -86,7 +134,10 @@ if ($success) {
     '.$GLOBALS['I18N']->get("Please make sure to").'
     <a href="http://tincan.co.uk/lists/?p=subscribe"> '.$GLOBALS['I18N']->get("subscribe to the announcements list")."</a> ".
     $GLOBALS['I18N']->get("to make sure you are updated when new versions come out. Sometimes security bugs are found which make it important to upgrade. Traffic on the list is very low.").' </p>');
-  print '<p class="button">'.$GLOBALS['I18N']->get("Continue with")." ".PageLink2("setup",$GLOBALS['I18N']->get("PHPlist Setup"))."</p>";
+  if (ENCRYPT_ADMIN_PASSWORDS && !empty($adminid)) {
+    print sendAdminPasswordToken($adminid);
+  }
+  print '<p class="button">'.$GLOBALS['I18N']->get("Continue with")." ".PageLink2("setup",$GLOBALS['I18N']->get("phpList Setup"))."</p>";
 } else {
  print ('<div class="initialiseOptions"><ul><li>'.$GLOBALS['I18N']->get("Maybe you want to")." ".PageLink2("upgrade",$GLOBALS['I18N']->get("Upgrade")).' '.$GLOBALS['I18N']->get("instead?").'</li>
     <li>'.PageLink2("initialise",$GLOBALS['I18N']->get("Force Initialisation"),"force=yes").' '.$GLOBALS['I18N']->get("(will erase all data!)").' '."</li></ul></div>\n");

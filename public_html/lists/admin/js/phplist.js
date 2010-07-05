@@ -184,6 +184,12 @@ $("#emailsearch").autocomplete({
 //    alert(val + " "+aT[val]);
   })
 
+  $("#initialadminpassword").keyup(function() {
+    if (this.value.length > 8) {
+      $("#initialisecontinue").removeAttr('disabled');
+    }
+  });
+
   $("#refreshCriteria").click(refreshCriteriaList);
   
   $("#addcriterionbutton").click(function() {
