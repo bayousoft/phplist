@@ -18,6 +18,11 @@ if (isset($_GET['userid'])) {
 } else {
   $userid = 0;
 }
+if (isset($_GET['s'])) {
+  $start = sprintf('%d',$_GET['s']);
+} else {
+  $start = 0;
+}
 
 if (!$msgid && !$fwdid && !$userid) {
   print $GLOBALS['I18N']->get('Invalid Request');
@@ -37,6 +42,7 @@ switch ($access) {
     break;
 }
 
+#$limit = ' limit 100';
 
 $ls = new WebblerListing($GLOBALS['I18N']->get('User Click Statistics'));
 
@@ -60,10 +66,10 @@ if ($fwdid && $msgid) {
   <tr><td>'.$GLOBALS['I18N']->get('Entered').'<td><td>'.$messagedata['entered'].'</td></tr>
   <tr><td>'.$GLOBALS['I18N']->get('Sent').'<td><td>'.$messagedata['sent'].'</td></tr>
   </table><hr/>';
-  $req = Sql_query(sprintf('select user.email,user.id as userid,firstclick,date_format(latestclick,
+  $query = sprintf('select htmlclicked, textclicked, user.email,user.id as userid,firstclick,date_format(latestclick,
     "%%e %%b %%Y %%H:%%i") as latestclick,clicked from %s as uml_click, %s as user where uml_click.userid = user.id 
     and uml_click.forwardid = %d and uml_click.messageid = %d
-    and uml_click.clicked',$GLOBALS['tables']['linktrack_uml_click'],$GLOBALS['tables']['user'],$fwdid,$msgid));
+    and uml_click.clicked',$GLOBALS['tables']['linktrack_uml_click'],$GLOBALS['tables']['user'],$fwdid,$msgid);
 } elseif ($userid && $msgid) {
   print '<h3>'.$GLOBALS['I18N']->get('User Click Details for a message').'</h3>';
   print $GLOBALS['I18N']->get('User').' '.PageLink2('user&amp;id='.$userid,$userdata['email']);
@@ -73,15 +79,15 @@ if ($fwdid && $msgid) {
   <tr><td>'.$GLOBALS['I18N']->get('Entered').'<td><td>'.$messagedata['entered'].'</td></tr>
   <tr><td>'.$GLOBALS['I18N']->get('Sent').'<td><td>'.$messagedata['sent'].'</td></tr>
   </table><hr/>';
-  $req = Sql_query(sprintf('select user.email,user.id as userid,firstclick,date_format(latestclick,
+  $query = sprintf('select htmlclicked, textclicked,user.email,user.id as userid,firstclick,date_format(latestclick,
     "%%e %%b %%Y %%H:%%i") as latestclick,clicked,messageid,forwardid,url from %s as uml_click, %s as user, %s as forward where uml_click.userid = user.id 
-    and uml_click.userid = %d and uml_click.messageid = %d and forward.id = uml_click.forwardid',$GLOBALS['tables']['linktrack_uml_click'],$GLOBALS['tables']['user'],$GLOBALS['tables']['linktrack_forward'], $userid,$msgid));
+    and uml_click.userid = %d and uml_click.messageid = %d and forward.id = uml_click.forwardid',$GLOBALS['tables']['linktrack_uml_click'],$GLOBALS['tables']['user'],$GLOBALS['tables']['linktrack_forward'], $userid,$msgid);
 } elseif ($fwdid) {
   print '<h3>'.$GLOBALS['I18N']->get('User Click Details for a URL').' <b>'.$urldata['url'].'</b></h3>';
-  $req = Sql_query(sprintf('select user.email, user.id as userid,firstclick,date_format(latestclick,
+  $query = sprintf('select user.email, user.id as userid,firstclick,date_format(latestclick,
     "%%e %%b %%Y %%H:%%i") as latestclick,clicked from %s as uml_click, %s as user where uml_click.userid = user.id 
     and uml_click.forwardid = %d group by uml_click.userid',$GLOBALS['tables']['linktrack_uml_click'],$GLOBALS['tables']['user'],
-    $fwdid));
+    $fwdid);
 } elseif ($msgid) {
   print '<h3>'.$GLOBALS['I18N']->get('User Click Details for a Message').'</h3>';
   print '<table class="userclickDetails">
@@ -89,22 +95,32 @@ if ($fwdid && $msgid) {
   <tr><td>'.$GLOBALS['I18N']->get('Entered').'<td><td>'.$messagedata['entered'].'</td></tr>
   <tr><td>'.$GLOBALS['I18N']->get('Sent').'<td><td>'.$messagedata['sent'].'</td></tr>
   </table><hr/>';
-  $req = Sql_query(sprintf('select user.email,user.id as userid,firstclick,date_format(latestclick,
+  $query = sprintf('select user.email,user.id as userid,firstclick,date_format(latestclick,
     "%%e %%b %%Y %%H:%%i") as latestclick,clicked from %s as uml_click, %s as user where uml_click.userid = user.id 
     and uml_click.messageid = %d',$GLOBALS['tables']['linktrack_uml_click'],$GLOBALS['tables']['user'],
-    $msgid));
+    $msgid);
 } elseif ($userid) {
   print '<h3>'.$GLOBALS['I18N']->get('User Click Details').'</h3>';
-  $req = Sql_query(sprintf('select user.email,user.id as userid,firstclick,date_format(latestclick,
-    "%%e %%b %%Y %%H:%%i") as latestclick,clicked,messageid,forwardid,url from %s as uml_click, %s as user, %s as forward where uml_click.userid = user.id 
-    and uml_click.userid = %d and forward.id = uml_click.forwardid',$GLOBALS['tables']['linktrack_uml_click'],$GLOBALS['tables']['user'],$GLOBALS['tables']['linktrack_forward'],
-    $userid));
+  $query = sprintf('select sum(htmlclicked) as htmlclicked,sum(textclicked) as textclicked,user.email,user.id as userid,min(firstclick) as firstclick,date_format(max(latestclick),
+    "%%e %%b %%Y %%H:%%i") as latestclick,sum(clicked) as clicked,messageid,forwardid,url from %s as uml_click, %s as user, %s as forward where uml_click.userid = user.id 
+    and uml_click.userid = %d and forward.id = uml_click.forwardid group by url',$GLOBALS['tables']['linktrack_uml_click'],$GLOBALS['tables']['user'],$GLOBALS['tables']['linktrack_forward'],
+    $userid);
 }
 
 #ob_end_flush();
 #flush();
+
+$req = Sql_Query($query);
+$total = Sql_Num_Rows($req);
+if ($total > 100) {
+  print Paging(PageUrl2('userclicks&msgid='.$msgid.'&fwdid='.$fwdid.'&userid='.$userid),$start,$total,100);
+
+  $limit = ' limit '.$start.', 100';
+  $req = Sql_Query($query.' '.$limit);
+}
   
 $summary = array();
+$summary['totalclicks'] = 0;
 while ($row = Sql_Fetch_Array($req)) {
 #  print $row['email'] . "<br/>";
   if (!$userid) {
@@ -126,12 +142,14 @@ while ($row = Sql_Fetch_Array($req)) {
   $ls->addColumn($element,$GLOBALS['I18N']->get('firstclick'),formatDateTime($row['firstclick'],1));
   $ls->addColumn($element,$GLOBALS['I18N']->get('latestclick'),$row['latestclick']);
   $ls->addColumn($element,$GLOBALS['I18N']->get('clicks'),$row['clicked']);
+  $ls->addColumn($element,$GLOBALS['I18N']->get('HTML'),$row['htmlclicked']);
+  $ls->addColumn($element,$GLOBALS['I18N']->get('text'),$row['textclicked']);
 #  $ls->addColumn($element,$GLOBALS['I18N']->get('sent'),$total['total']);
 #  $perc = sprintf('%0.2f',($row['numclicks'] / $totalsent['total'] * 100));
 #  $ls->addColumn($element,$GLOBALS['I18N']->get('clickrate'),$perc.'%');
   $summary['totalclicks'] += $row['clicked'];
 }
-$ls->addElement('total');
-$ls->addColumn('total',$GLOBALS['I18N']->get('clicks'),$summary['totalclicks']);
+$ls->addElement($GLOBALS['I18N']->get('total'));
+$ls->addColumn($GLOBALS['I18N']->get('total'),$GLOBALS['I18N']->get('clicks'),$summary['totalclicks']);
 print $ls->display();
 ?>
