@@ -49,7 +49,7 @@ if (isset($_GET["doit"]) && $_GET["doit"] == 'yes') {
       }
     }
   }
-  ob_end_flush();
+  @ob_end_flush();
 
   print '<script language="Javascript" src="js/progressbar.js" type="text/javascript"></script>';
   print '<script language="Javascript" type="text/javascript"> document.write(progressmeter); start();</script>';
@@ -333,7 +333,7 @@ if (isset($_GET["doit"]) && $_GET["doit"] == 'yes') {
       if ($minor < 11 || ($minor == 11 && $sub < 3)) {
         Sql_Query(sprintf('alter table %s add column optedin tinyint default 0',$tables['user']));
       }
-      if ($minor < 11 || ($minor == 11 && $sub < 4)) {
+      if ($minor < 11 || ($minor == 11 && $sub < 5)) {
         Sql_Query(sprintf('alter table %s add column category varchar(255) default ""',$tables['list']));
         Sql_Query(sprintf('alter table %s add column requeueinterval integer default 0',$tables['message']));
         Sql_Query(sprintf('alter table %s add column requeueuntil datetime',$tables['message']));
@@ -413,5 +413,5 @@ if (isset($_GET["doit"]) && $_GET["doit"] == 'yes') {
 </div>
 
 <?php
-ob_end_flush();
+@ob_end_flush();
 ?>
