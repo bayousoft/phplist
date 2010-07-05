@@ -71,7 +71,7 @@ if ($download) {
   header('Content-disposition:  attachment; filename="phpList URL click statistics for '.$urldata['url'].'.csv"');
 }
 $req = Sql_Query(sprintf('select messageid,firstclick,date_format(latestclick,
-  "%%e %%b %%Y %%H:%%i") as latestclick,total,clicked from %s where forwardid = %d 
+  "%%e %%b %%Y %%H:%%i") as latestclick,total,clicked from %s where forwardid = %d and firstclick is not null order by firstclick desc
   ',$GLOBALS['tables']['linktrack_ml'],$id));
 $summary = array();
 $summary['totalsent'] = 0;
@@ -80,7 +80,7 @@ $summary['uniqueclicks'] = 0;
 
 while ($row = Sql_Fetch_Array($req)) {
   $msgsubj = Sql_Fetch_Row_query(sprintf('select subject from %s where id = %d',$GLOBALS['tables']['message'],$row['messageid']));
-  $element = $GLOBALS['I18N']->get('msg').' '.$row['messageid'].': '.substr($msgsubj[0],0,25);
+  $element = $GLOBALS['I18N']->get('msg').' '.$row['messageid'].': '.substr($msgsubj[0],0,25). '...';
 #  $element = sprintf('<a href="%s" target="_blank" class="url" title="%s">%s</a>',$row['url'],$row['url'],substr(str_replace('http://','',$row['url']),0,50));
 #  $total = Sql_Verbose_Query(sprintf('select count(*) as total from %s where messageid = %d and url = "%s"',
 #    $GLOBALS['tables']['linktrack'],$id,$row['url']));
