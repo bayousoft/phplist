@@ -4,9 +4,12 @@ require_once dirname(__FILE__).'/accesscheck.php';
 print '<script language="javascript" type="text/javascript" src="js/jslib.js"></script>';
 
 $listid = empty($_GET['id']) ? 0 : sprintf('%d',$_GET['id']);
+$download = isset($_GET['type']) && $_GET['type'] == 'dl';
 
 if (!$listid) {
-  $req = Sql_Query(sprintf('select listid,userid,count(distinct userid) as numusers from %s listuser, %s umb where listuser.userid = umb.user group by listuser.listid order by listuser.listid',$GLOBALS['tables']['listuser'],$GLOBALS['tables']['user_message_bounce']));
+  $req = Sql_Query(sprintf('select listuser.listid,count(distinct userid) as numusers from %s listuser,
+    %s umb, %s lm where listuser.listid = lm.listid and listuser.userid = umb.user group by listuser.listid
+    order by listuser.listid',$GLOBALS['tables']['listuser'],$GLOBALS['tables']['user_message_bounce'],$GLOBALS['tables']['listmessage']));
   $ls = new WebblerListing($GLOBALS['I18N']->get('Choose a list'));
   while ($row = Sql_Fetch_Array($req)) {
     $element = $GLOBALS['I18N']->get('list').' '.$row['listid'];
@@ -19,23 +22,25 @@ if (!$listid) {
 }
 
 $query
-= ' select lu.listid, lu.userid, count(umb.bounce) as numbounces'
+= ' select lu.userid, count(umb.bounce) as numbounces'
 . ' from %s lu'
 . '    join %s umb'
 . '       on lu.userid = umb.user'
-. ' where current_timestamp < umb.time + "6 months"'
-. '   and lu.listid = ? '
-. ' group by lu.listid '
-. ' order by lu.listid'
+. ' where '
+#. ' current_timestamp < date_add(umb.time,interval 6 month) '
+#. ' and ' 
+. ' lu.listid = ? '
+. ' group by lu.userid '
 ;
 $query = sprintf($query, $GLOBALS['tables']['listuser'], $GLOBALS['tables']['user_message_bounce']);
+#print $query;
 $req = Sql_Query_Params($query, array($listid));
 $total = Sql_Num_Rows($req);
 $limit = '';
 $numpp = 150;
 
 $s = empty($_GET['s']) ? 0 : sprintf('%d',$_GET['s']);
-if ($total > 500 && $_GET['type'] != 'dl') {
+if ($total > 500 && !$download) {
 #  print Paging2('listbounces&amp;id='.$listid,$total,$numpp,'Page');
   $listing = sprintf($GLOBALS['I18N']->get("Listing %s to %s"),$s,$s+$numpp);
   $limit = "limit $s,".$numpp;
@@ -47,33 +52,26 @@ if ($total > 500 && $_GET['type'] != 'dl') {
           PageLink2('listbounces&amp;id='.$listid,"&lt;",sprintf('s=%d',max(0,$s-$numpp))),
           PageLink2('listbounces&amp;id='.$listid,"&gt;",sprintf('s=%d',min($total,$s+$numpp))),
           PageLink2('listbounces&amp;id='.$listid,"&gt;&gt;",sprintf('s=%d',$total-$numpp)));
-  $req = Sql_Query(sprintf('select listid,userid,count(bounce) as numbounces from %s listuser, %s umb where listuser.userid = umb.user and listuser.listid = %d  and date_add(time,interval 6 month) > current_timestamp group by umb.user order by listuser.listid %s',$GLOBALS['tables']['listuser'],$GLOBALS['tables']['user_message_bounce'],$listid,$limit));
+
+  $query .= $limit;
+  $req = Sql_Query_Params($query, array($listid));
 }
 
-print '<p class="button">'.PageLink2('listbounces','Select another list');
+print '<p class="button">'.PageLink2('listbounces','Select another list').'<br/>';
 print '&nbsp;'.PageLink2('listbounces&amp;type=dl&amp;id='.$listid,'Download emails');
 print '</p>';
-if (isset($_GET['type']) && $_GET['type'] == 'dl') {
+if ($download) {
   ob_end_clean();
   Header("Content-type: text/plain");
   $filename = 'Bounces on '.listName($listid);
   header("Content-disposition:  attachment; filename=\"$filename\"");
 }
 
-$currentlist = 0;
-$ls = new WebblerListing('');
+$ls = new WebblerListing($GLOBALS['I18N']->get('Bounces on').' '.listName($listid));
 while ($row = Sql_Fetch_Array($req)) {
-  if ($currentlist != $row['listid']) {
-    if ($_GET['type'] != 'dl') {
-      print $ls->display();
-    }
-    $currentlist = $row['listid'];
-    flush();
-    $ls = new WebblerListing(listName($row['listid']));
-  }
   $userdata = Sql_Fetch_Array_Query(sprintf('select * from %s where id = %d',
     $GLOBALS['tables']['user'],$row['userid']));
-  if ($_GET['type'] == 'dl') {
+  if ($download) {
     print $userdata['email']."\n";
   }
 
@@ -81,8 +79,8 @@ while ($row = Sql_Fetch_Array($req)) {
   $ls->addColumn($row['userid'],$GLOBALS['I18N']->get('email'),$userdata['email']);
   $ls->addColumn($row['userid'],$GLOBALS['I18N']->get('# bounces'),$row['numbounces']);
 }
-if (isset($_GET['type']) && $_GET['type'] != 'dl') {
+if (!$download) {
   print $ls->display();
 } else {
-  return;
+  exit;
 }
