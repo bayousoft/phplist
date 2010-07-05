@@ -94,7 +94,7 @@ if (Sql_Affected_Rows()) {
 
 print '</td></tr>';
 print '<tr><td>'.$GLOBALS['I18N']->get('Add some subscribers').'</td>
-<td>'.PageLink2("users",$GLOBALS['I18N']->get('go_there')).'</td><td>';
+<td>'.PageLink2("import",$GLOBALS['I18N']->get('go_there')).'</td><td>';
 $req = Sql_Query("select * from {$tables["user"]}");
 if (Sql_Affected_Rows()) {
   print $GLOBALS["img_tick"];
@@ -108,7 +108,7 @@ print '</td></tr>';
 print '</table>';
 
 if ($alldone) {
-  print Info($GLOBALS['I18N']->get('Congratulations, phpList is set up, you are ready to start mailing'));
+  print Info($GLOBALS['I18N']->get('Congratulations, phpList is set up, you are ready to start mailing').'<br/>'.'<div class="button">'.PageLink2('send',$GLOBALS['I18N']->get('Start a message campaign')).'</div>');
   unset($_SESSION['firstinstall']);
 }
 
