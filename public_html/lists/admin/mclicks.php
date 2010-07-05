@@ -32,38 +32,79 @@ switch ($access) {
     break;
 }
 
+$download = !empty($_GET['dl']);
+if ($download) {
+  ob_end_clean();
+#  header("Content-type: text/plain");
+  header('Content-type: text/csv');
+  header('Content-disposition:  attachment; filename="phpList Message click statistics.csv"');
+  ob_start();
+}  
+
 if (!$id) {
-  print $GLOBALS['I18N']->get('Select Message to view');
+  print '<p>'.PageLink2('mclicks&dl=true',$GLOBALS['I18N']->get('Download as CSV file')).'</p>';
+  print '<p>'.$GLOBALS['I18N']->get('Select Message to view').'</p>';
 /*  $req = Sql_Query(sprintf('select distinct messageid, subject, sum(clicked) as totalclicks, count(distinct userid) as users, count(distinct linkid) as linkcount from %s as linktrack, %s as message
     where clicked and linktrack.messageid = message.id %s group by messageid order by entered desc limit 50',
     $GLOBALS['tables']['linktrack'],$GLOBALS['tables']['message'],$subselect));*/
-  $req = Sql_Query(sprintf('select distinct messageid, subject, total, count(forwardid) as linkcount,clicked as totalclicks,htmlclicked,textclicked from %s as linktrack_ml, %s as message
-    where clicked and linktrack_ml.messageid = message.id %s group by messageid order by entered desc limit 50',
+  $req = Sql_Query(sprintf('select distinct messageid, subject,sum(total) as total, count(forwardid) as linkcount,sum(clicked) as totalclicks,sum(htmlclicked) as htmlclicked,sum(textclicked) as textclicked from %s as linktrack_ml, %s as message
+    where clicked and linktrack_ml.messageid = message.id %s and entered < date_sub(now(), interval 12 month) group by messageid order by entered  desc limit 50',
     $GLOBALS['tables']['linktrack_ml'],$GLOBALS['tables']['message'],$subselect));
   if (!Sql_Affected_Rows()) {
     print '<p class="information">'.$GLOBALS['I18N']->get('There are currently no messages to view').'</p>';
   }
   $ls = new WebblerListing($GLOBALS['I18N']->get('Available Messages'));
   while ($row = Sql_Fetch_Array($req)) {
+    $totalusers = Sql_Fetch_Row_Query(sprintf('select count(userid) from %s where messageid = %d and status = "sent"',$GLOBALS['tables']['usermessage'],$row['messageid']));
+    $totalclicked = Sql_Fetch_Row_Query(sprintf('select count(distinct userid) from %s where messageid = %d',$GLOBALS['tables']['linktrack_uml_click'],$row['messageid']));
+    if ($totalusers[0] > 0) {
+      $clickrate = sprintf('%0.2f',($totalclicked[0] / $totalusers[0] * 100));
+    } else {
+      $clickrate = $GLOBALS['I18N']->get('N/A');
+    }
+
     $ls->addElement($row['messageid'].' '.substr($row['subject'],0,50),PageURL2('mclicks&amp;id='.$row['messageid']));
     $ls->addColumn($row['messageid'].' '.substr($row['subject'],0,50),$GLOBALS['I18N']->get('links'),$row['linkcount']);
-    $ls->addColumn($row['messageid'].' '.substr($row['subject'],0,50),$GLOBALS['I18N']->get('clicks'),$row['totalclicks']);
+    $ls->addColumn($row['messageid'].' '.substr($row['subject'],0,50),$GLOBALS['I18N']->get('sent'),$totalusers[0]);
+    $ls->addColumn($row['messageid'].' '.substr($row['subject'],0,50),$GLOBALS['I18N']->get('userclicks'),$totalclicked[0]);
+    $ls->addColumn($row['messageid'].' '.substr($row['subject'],0,50),$GLOBALS['I18N']->get('click rate'),$clickrate);
+    
+    $ls->addColumn($row['messageid'].' '.substr($row['subject'],0,50),$GLOBALS['I18N']->get('total clicks'),$row['totalclicks']);
+#    $ls->addColumn($row['messageid'].' '.substr($row['subject'],0,50),$GLOBALS['I18N']->get('total'),$row['total']);
 #    $ls->addColumn($row['messageid'].' '.substr($row['subject'],0,50),$GLOBALS['I18N']->get('users'),$row['users']);
-    $perc = sprintf('%0.2f',($row['totalclicks'] / $row['total'] * 100));
-    $ls->addColumn($row['messageid'].' '.substr($row['subject'],0,50),$GLOBALS['I18N']->get('rate'),$perc.' %');
     $ls->addColumn($row['messageid'].' '.substr($row['subject'],0,50),$GLOBALS['I18N']->get('html'),$row['htmlclicked']);
     $ls->addColumn($row['messageid'].' '.substr($row['subject'],0,50),$GLOBALS['I18N']->get('text'),$row['textclicked']);
+
+    /* this one is the percentage of total links versus clicks. I guess that's too detailed for most people.
+     * besides it'll be low
+    $perc = sprintf('%0.2f',($row['totalclicks'] / $row['total'] * 100));
+    $ls->addColumn($row['messageid'].' '.substr($row['subject'],0,50),$GLOBALS['I18N']->get('rate'),$perc.' %');
+    */
   }
   print $ls->display();
+  if ($download) {
+    ob_end_clean();
+    print $ls->tabDelimited();
+  }
   return;
 }
 
 print '<h3>'.$GLOBALS['I18N']->get('Click Details for a Message').'</h3>';
 $messagedata = Sql_Fetch_Array_query("SELECT * FROM {$tables['message']} where id = $id $subselect");
+$totalusers = Sql_Fetch_Row_Query(sprintf('select count(userid) from %s where messageid = %d and status = "sent"',$GLOBALS['tables']['usermessage'],$id));
+$totalclicked = Sql_Fetch_Row_Query(sprintf('select count(distinct userid) from %s where messageid = %d',$GLOBALS['tables']['linktrack_uml_click'],$id));
+if ($totalusers[0] > 0) {
+  $perc = sprintf('%0.2f',($totalclicked[0] / $totalusers[0] * 100));
+} else {
+  $perc = $GLOBALS['I18N']->get('N/A');
+}
 print '<table class="mclicksDetails">
 <tr><td>'.$GLOBALS['I18N']->get('Subject').'<td><td>'.$messagedata['subject'].'</td></tr>
 <tr><td>'.$GLOBALS['I18N']->get('Entered').'<td><td>'.$messagedata['entered'].'</td></tr>
 <tr><td>'.$GLOBALS['I18N']->get('Sent').'<td><td>'.$messagedata['sent'].'</td></tr>
+<tr><td>'.$GLOBALS['I18N']->get('Sent to').'<td><td>'.$totalusers[0].' '.$GLOBALS['I18N']->get('Subscribers').'</td></tr>
+<tr><td>'.$GLOBALS['I18N']->get('Clicks').'<td><td>'.$totalclicked[0].'</td></tr>
+<tr><td>'.$GLOBALS['I18N']->get('Click Rate').'<td><td>'.$perc.$GLOBALS['I18N']->get('perc').'</td></tr>
 </table><hr/>';
 
 $ls = new WebblerListing($GLOBALS['I18N']->get('Message Click Statistics'));
@@ -71,6 +112,9 @@ $ls = new WebblerListing($GLOBALS['I18N']->get('Message Click Statistics'));
 $req = Sql_Query(sprintf('select url,firstclick,date_format(latestclick,
   "%%e %%b %%Y %%H:%%i") as latestclick,total,clicked,htmlclicked,textclicked,forwardid from %s ml, %s forward  where ml.messageid = %d and ml.forwardid = forward.id',$GLOBALS['tables']['linktrack_ml'],$GLOBALS['tables']['linktrack_forward'],$id));
 $summary = array();
+$summary['totalclicks'] = 0;
+$summary['totalsent'] = 0;
+$summary['uniqueclicks'] = 0;
 while ($row = Sql_Fetch_Array($req)) {
 
   if (CLICKTRACK_SHOWDETAIL) {
@@ -105,13 +149,18 @@ while ($row = Sql_Fetch_Array($req)) {
     $summary['uniqueclicks'] += $uniqueclicks['users'];
   }
   $summary['totalclicks'] += $row['clicked'];
+  $summary['totalsent'] += $row['total'];
   $ls->addColumn($element,$GLOBALS['I18N']->get('who'),
     PageLink2('userclicks&amp;msgid='.$id.'&amp;fwdid='.$row['forwardid'],$GLOBALS['I18N']->get('view users')));
 }
 $ls->addElement('total');
 $ls->addColumn('total',$GLOBALS['I18N']->get('clicks'),$summary['totalclicks']);
+$perc = sprintf('%0.2f',($summary['totalclicks'] / $summary['totalsent'] * 100));
+$ls->addColumn('total',$GLOBALS['I18N']->get('clickrate'),$perc.'%');
 if (CLICKTRACK_SHOWDETAIL) {
   $ls->addColumn('total',$GLOBALS['I18N']->get('unique clicks'),$summary['uniqueclicks']);
+  $perc = sprintf('%0.2f',($summary['uniqueclicks'] / $summary['totalsent'] * 100));
+  $ls->addColumn('total',$GLOBALS['I18N']->get('unique clickrate'),$perc.'%');
 }
 print $ls->display();
 ?>
