@@ -27,31 +27,57 @@ switch ($access) {
     break;
 }
 
+$download = !empty($_GET['dl']);
+if ($download) {
+  ob_end_clean();
+#  header("Content-type: text/plain");
+  header('Content-type: text/csv');
+  if (!$id) {
+    header('Content-disposition:  attachment; filename="phpList URL click statistics.csv"');
+  }
+  ob_start();
+}  
+
 if (!$id) {
-  print $GLOBALS['I18N']->get('Select URL to view');
-  $req = Sql_Query(sprintf('select forward.id,url, sum(clicked) as numclicks, count(messageid) as msgs from %s
-    where clicked %s and forward.id = ml.forwardid group by url order by numclicks desc limit 50',
+  print '<p>'.PageLink2('uclicks&dl=true',$GLOBALS['I18N']->get('Download as CSV file')).'</p>';
+  print '<p>'.$GLOBALS['I18N']->get('Select URL to view').'</p>';
+  $req = Sql_Query(sprintf('select forward.id,url, sum(clicked) as numclicks, max(latestclick) as lastclicked, count(messageid) as msgs from %s
+    where clicked %s and forward.id = ml.forwardid and latestclick > date_sub(now(),interval 12 month) group by url order by latestclick desc limit 50',
     $select_tables,$owner_and));
   $ls = new WebblerListing($GLOBALS['I18N']->get('Available URLs'));
   while ($row = Sql_Fetch_Array($req)) {
     $ls->addElement($row['url'],PageURL2('uclicks&amp;id='.$row['id']));
     $ls->addColumn($row['url'],$GLOBALS['I18N']->get('msgs'),$row['msgs']);
+    $ls->addColumn($row['url'],$GLOBALS['I18N']->get('last clicked'),$row['lastclicked']);
     $ls->addColumn($row['url'],$GLOBALS['I18N']->get('clicks'),$row['numclicks']);
+  }
+  if ($download) {
+    ob_end_clean();
+    print $ls->tabDelimited();
   }
   print $ls->display();
   return;
 }
 
+print '<p>'.PageLink2('uclicks&dl=true&id='.$id,$GLOBALS['I18N']->get('Download as CSV file')).'</p>';
+
 $ls = new WebblerListing($GLOBALS['I18N']->get('URL Click Statistics'));
 
 $urldata = Sql_Fetch_Array_Query(sprintf('select url from %s where id = %d',
   $GLOBALS['tables']['linktrack_forward'],$id));
-print '<h3>'.$GLOBALS['I18N']->get('Click Details for a URL').' <b>'.$urldata['url'].'</b></h3>';
+print '<h3>'.$GLOBALS['I18N']->get('Click Details for a URL').' <b>'.$urldata['url'].'</b></h3><br/>';
 
+if ($download) {
+  header('Content-disposition:  attachment; filename="phpList URL click statistics for '.$urldata['url'].'.csv"');
+}
 $req = Sql_Query(sprintf('select messageid,firstclick,date_format(latestclick,
   "%%e %%b %%Y %%H:%%i") as latestclick,total,clicked from %s where forwardid = %d 
   ',$GLOBALS['tables']['linktrack_ml'],$id));
 $summary = array();
+$summary['totalsent'] = 0;
+$summary['totalclicks'] = 0;
+$summary['uniqueclicks'] = 0;
+
 while ($row = Sql_Fetch_Array($req)) {
   $msgsubj = Sql_Fetch_Row_query(sprintf('select subject from %s where id = %d',$GLOBALS['tables']['message'],$row['messageid']));
   $element = $GLOBALS['I18N']->get('msg').' '.$row['messageid'].': '.substr($msgsubj[0],0,25);
@@ -72,6 +98,7 @@ while ($row = Sql_Fetch_Array($req)) {
   $ls->addColumn($element,$GLOBALS['I18N']->get('clicks'),$row['clicked']);
   $perc = sprintf('%0.2f',($row['clicked'] / $row['total'] * 100));
   $ls->addColumn($element,$GLOBALS['I18N']->get('clickrate'),$perc.'%');
+  $summary['totalsent'] += $row['total'];
   if (CLICKTRACK_SHOWDETAIL) {
     $ls->addColumn($element,$GLOBALS['I18N']->get('unique clicks'),$uniqueclicks['users']);
     $perc = sprintf('%0.2f',($uniqueclicks['users'] / $row['total'] * 100));
@@ -79,12 +106,21 @@ while ($row = Sql_Fetch_Array($req)) {
     $summary['uniqueclicks'] += $uniqueclicks['users'];
   }
   $ls->addColumn($element,$GLOBALS['I18N']->get('who'),PageLink2('userclicks&amp;msgid='.$row['messageid'].'&amp;fwdid='.$id,$GLOBALS['I18N']->get('view users')));
-  $summary['totalclicks'] += $row['numclicks'];
+  $summary['totalclicks'] += $row['clicked'];
 }
-$ls->addElement('total');
-$ls->addColumn('total',$GLOBALS['I18N']->get('clicks'),$summary['totalclicks']);
+$ls->addElement($GLOBALS['I18N']->get('total'));
+$ls->addColumn($GLOBALS['I18N']->get('total'),$GLOBALS['I18N']->get('clicks'),$summary['totalclicks']);
+$perc = sprintf('%0.2f',($summary['totalclicks'] / $summary['totalsent'] * 100));
+$ls->addColumn($GLOBALS['I18N']->get('total'),$GLOBALS['I18N']->get('clickrate'),$perc.'%');
 if (CLICKTRACK_SHOWDETAIL) {
-  $ls->addColumn('total',$GLOBALS['I18N']->get('unique clicks'),$summary['uniqueclicks']);
+  $ls->addColumn($GLOBALS['I18N']->get('total'),$GLOBALS['I18N']->get('unique clicks'),$summary['uniqueclicks']);
+  $perc = sprintf('%0.2f',($summary['uniqueclicks'] / $summary['totalsent'] * 100));
+  $ls->addColumn($GLOBALS['I18N']->get('total'),$GLOBALS['I18N']->get('unique clickrate'),$perc.'%');
 }
 print $ls->display();
+if ($download) {
+  ob_end_clean();
+  print $ls->tabDelimited();
+}
+
 ?>
