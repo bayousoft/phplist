@@ -74,6 +74,13 @@ if (sizeof($GLOBALS["plugins"])) {
 
 $domain = getConfig("domain");
 $website = getConfig("website");
+if (!$domain) {
+  $domain = $_SERVER['SERVER_NAME'];
+}
+if (!$website) {
+  $website = $_SERVER['SERVER_NAME'];
+}
+
 $xormask = getConfig('xormask');
 if (!$xormask) {
   $xormask = md5(uniqid(rand(), true));
@@ -726,6 +733,7 @@ function newMenu() {
 
 function recentlyVisited() {
   $html = '';
+  if (empty($_SESSION['adminloggedin'])) return '';
   if (isset($_SESSION['browsetrail']) && is_array($_SESSION['browsetrail'])) {
     $shade = 0;
     $html .= '<h3>'.$GLOBALS['I18N']->get('Recently Visited').'</h3><ul class="recentlyvisited">';
@@ -1270,7 +1278,8 @@ $newpoweredimage = 'iVBORw0KGgoAAAANSUhEUgAAAEYAAAAeCAMAAACmLZgsAAADAFBMVEXYx6fm
 function FileNotFound() {
   ob_end_clean();
   header("HTTP/1.0 404 File Not Found");
-  printf('<html><head><title>404 Not Found</title></head><body><h1>Not Found</h1>The requested document was not found on this server<br/>Please contact the <a href="mailto:%s?subject=File not Found: %s">Administrator</a><p><hr><address><a href="http://tincan.co.uk/phplist" target="_tincan">phplist</a> version %s</address></body></html>', getConfig("admin_address"), $_SERVER["REQUEST_URI"], VERSION);
+  printf('<html><head><title>404 Not Found</title></head><body><h1>Not Found</h1>The requested document was not found on this server<br/>Please contact the <a href="mailto:%s?subject=File not Found: %s">Administrator</a><p><hr><address><a href="http://tincan.co.uk/phplist" target="_tincan">phplist</a> version %s</address></body></html>', getConfig("admin_address"),
+  strip_tags($_SERVER["REQUEST_URI"]), VERSION);
   exit;
 }
 
