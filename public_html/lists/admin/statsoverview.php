@@ -41,8 +41,20 @@ switch ($access) {
     break;
 }
 
+$download = !empty($_GET['dl']);
+if ($download) {
+  ob_end_clean();
+#  header("Content-type: text/plain");
+  header('Content-type: text/csv');
+  if (!$id) {
+    header('Content-disposition:  attachment; filename="phpList Campaign statistics.csv"');
+  }
+  ob_start();
+}  
+
 if (!$id) {
-  print $GLOBALS['I18N']->get('Select Message to view');
+  print '<p>'.$GLOBALS['I18N']->get('Select Message to view').'</p>';
+  print '<p>'.PageLink2('statsoverview&dl=true',$GLOBALS['I18N']->get('Download as CSV file')).'</p>';
 
   /* broken Adodb conversion by Brian_252 */
 /*  $timerange = ' and msg.entered + interval \'6 months\' > current_timestamp';
@@ -67,9 +79,10 @@ if (!$id) {
   $params = array_merge(array(), $and_params);
   $req = Sql_Query_Params($query, $params);*/
 
-  $timerange = ' and date_add(msg.entered,interval 6 month) > now()';
+  $timerange = ' and msg.entered > date_sub(current_timestamp,interval 12 month)';
   #$timerange = '';
   $limit = 'limit 10';
+  $limit = '';
 
   $req = Sql_Query(sprintf('select msg.owner,msg.id as messageid,count(um.viewed) as views, count(um.status) as total,subject,date_format(sent,"%%e %%b %%Y") as sent,bouncecount as bounced from %s um,%s msg where um.messageid = msg.id %s %s
     group by msg.id order by msg.entered desc %s',
@@ -79,7 +92,7 @@ if (!$id) {
     print '<p class="information">'.$GLOBALS['I18N']->get('There are currently no messages to view').'</p>';
   }
 
-  $ls = new WebblerListing($GLOBALS['I18N']->get('Last few Messages'));
+  $ls = new WebblerListing($GLOBALS['I18N']->get('Campaigns in the last year'));
   while ($row = Sql_Fetch_Array($req)) {
     $element = $row['messageid'].' '.substr($row['subject'],0,50);
     $ls->addElement($element,PageURL2('message&amp;id='.$row['messageid']));
@@ -99,6 +112,10 @@ if (!$id) {
     $ls->addColumn($overall,$GLOBALS['I18N']->get('views'),$viewed['viewed']);
     $perc = sprintf('%0.2f',($viewed['viewed'] / $total['total'] * 100));
     $ls->addColumn($overall,$GLOBALS['I18N']->get('rate'),$perc.' %');
+  }
+  if ($download) {
+    ob_end_clean();
+    print $ls->tabDelimited();
   }
 
   print $ls->display();
