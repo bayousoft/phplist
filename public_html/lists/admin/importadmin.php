@@ -163,7 +163,7 @@ if(!empty($_POST['import'])) {
   } else {
     $count_email_add = 0;
     $count_list_add = 0;
-    $num_lists = sizeof($lists);
+    $some = 0;
 
     if (is_array($user_list))
     while (list($email,$data) = each ($user_list)) {
@@ -172,7 +172,7 @@ if(!empty($_POST['import'])) {
         $result = Sql_query("SELECT id FROM ".$tables["admin"]." WHERE email = '$email'");
         if (Sql_affected_rows()) {
           // Email exists, remember some values to add them to the lists
-          $user = Sql_fetch_array($result);
+          $admin = Sql_fetch_array($result);
           $adminid = $admin["id"];
         } else {
 
@@ -194,7 +194,7 @@ if(!empty($_POST['import'])) {
 
         reset($import_attribute);
         foreach ($import_attribute as $item) {
-          if ($data[$item["index"]]) {
+          if (!empty($data[$item["index"]])) {
             $attribute_index = $item["record"];
             $value = $data[$item["index"]];
             # check whether this is a textline or a selectable item
@@ -232,13 +232,14 @@ if(!empty($_POST['import'])) {
           }
         }
 
-        if ($createlist)
+        if (!empty($_REQUEST['createlist'])) {
           Sql_Query(sprintf('insert into %s (name,description,active,owner)
             values("%s","%s",1,%d)',
             $tables["list"],
             $loginname,
             $GLOBALS['I18N']->get('List for')." $loginname",
             $adminid));
+          }
         # copy permissions from the default set
         $req = Sql_Query(sprintf('select * from %s where adminid = 0',$tables["admin_task"]));
         while ($task = Sql_Fetch_Array($req))
@@ -252,15 +253,14 @@ if(!empty($_POST['import'])) {
     print '<script language="Javascript" type="text/javascript"> finish(); </script>';
     # let's be grammatically correct :-) '
     $dispemail = ($count_email_add == 1) ? $GLOBALS['I18N']->get('new email was')." ": $GLOBALS['I18N']->get('new emails were')." ";
-    $dispemail2 = ($additional_emails == 1) ? $GLOBALS['I18N']->get('email was')." ":$GLOBALS['I18N']->get('emails were')." ";
 
-    if(!$some && !$additional_emails) {
+    if(!$some) {
       print "<br/>".$GLOBALS['I18N']->get("All the emails already exist in the database");
     } else {
       print "$count_email_add $dispemail ".$GLOBALS['I18N']->get("succesfully imported to the database and added to the system.")."<br/>";
     }
   }; // end else
-  print '<p class="button">'.PageLink2("adminimport",$GLOBALS['I18N']->get("Import some more emails"));
+  print '<p class="button">'.PageLink2("importadmin",$GLOBALS['I18N']->get("Import some more emails"));
 
 
 } else {
