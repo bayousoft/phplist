@@ -64,15 +64,16 @@ if (!empty($_GET['tab'])) {
 ### if we're not working on an existing message, create one and redirect to edit it
 if (!$id) {
   $defaulttemplate = getConfig('defaultmessagetemplate');
+  $defaultfooter = getConfig('messagefooter');
   $query
   = " insert into %s"
   . "    (subject, status, entered, sendformat, embargo"
-  . "    , repeatuntil, owner, template, tofield, replyto)"
+  . "    , repeatuntil, owner, template, tofield, replyto,footer)"
   . " values"
   . "    ('(no subject)', 'draft', current_timestamp, 'HTML'"
-  . "    , current_timestamp, current_timestamp, ?, ?, '', '')";
+  . "    , current_timestamp, current_timestamp, ?, ?, '', '', ? )";
   $query = sprintf($query, $GLOBALS['tables']['message']);
-  Sql_Query_Params($query, array($_SESSION['logindetails']['id'], $defaulttemplate));
+  Sql_Query_Params($query, array($_SESSION['logindetails']['id'], $defaulttemplate,$defaultfooter));
   $id = Sql_Insert_Id($GLOBALS['tables']['message'], 'id');
   # 0008720: Using -p send from the commandline doesn't seem to work '
   if(!$GLOBALS["commandline"]) {
@@ -780,7 +781,7 @@ if (!$done) {
     <textarea name="textmessage" cols="65" rows="20">'.$messagedata["textmessage"].'</textarea>
   </div>';
   }
-
+#var_dump($messagedata);
   #0013076: different content when forwarding 'to a friend'
   $maincontent .= '<div><h3>'.Help("footer").' '.$GLOBALS['I18N']->get("messagefooter").'.</h3> 
     <p class="information">'.
@@ -790,11 +791,11 @@ if (!$done) {
     <p class="information">'.
     $GLOBALS['I18N']->get("messagefooterexplanation3").'</p>
    </div>
-  <div><textarea name="footer" cols="65" rows="5">'.$messagedata['footer'].'</textarea></div>';
+  <div><textarea name="footer" cols="65" rows="5">'.htmlspecialchars($messagedata['footer']).'</textarea></div>';
   $forwardcontent .= '<div><h3>'.$GLOBALS['I18N']->get("forwardfooter").'.</h3> <br/>
     '.$GLOBALS['I18N']->get("messageforwardfooterexplanation").'<br/>'.
   '.</div>
-  <div><textarea name="forwardfooter" cols="65" rows="5">'.$messagedata['forwardfooter'].'</textarea></div>';
+  <div><textarea name="forwardfooter" cols="65" rows="5">'.htmlspecialchars($messagedata['forwardfooter']).'</textarea></div>';
 
   if (ALLOW_ATTACHMENTS) {
     // If we have a message id saved, we want to query the attachments that are associated with this
@@ -992,7 +993,7 @@ $testValue = trim($messagedata['subject']);
 if (empty($testValue) || $testValue == '(no subject)') {
   $allReady = false;
   print '<script type="text/javascript">
-  $("#addtoqueue").append(\'<div class="missing">subject missing</div>\');
+  $("#addtoqueue").append(\'<div class="missing">'.$GLOBALS['I18N']->get('subject missing').'</div>\');
   </script>';
 }
 $testValue = trim($messagedata['message']);
@@ -1000,20 +1001,20 @@ $testValue2 = trim($messagedata['sendurl']);
 if (empty($testValue) && empty($testValue2)) {
   $allReady = false;
   print '<script type="text/javascript">
-  $("#addtoqueue").append(\'<div class="missing">message content missing</div>\');
+  $("#addtoqueue").append(\'<div class="missing">'.$GLOBALS['I18N']->get('message content missing').'</div>\');
   </script>';
 } 
 $testValue = trim($messagedata['from']);
 if (empty($testValue)) {
   $allReady = false;
   print '<script type="text/javascript">
-  $("#addtoqueue").append(\'<div class="missing">From missing</div>\');
+  $("#addtoqueue").append(\'<div class="missing">'.$GLOBALS['I18N']->get('From missing').'</div>\');
   </script>';
 } 
 if (empty($messagedata['targetlist'])) {
   $allReady = false;
   print '<script type="text/javascript">
-  $("#addtoqueue").append(\'<div class="missing">destination lists missing</div>\');
+  $("#addtoqueue").append(\'<div class="missing">'.$GLOBALS['I18N']->get('destination lists missing').'</div>\');
   </script>';
 } 
 if ($allReady) {
