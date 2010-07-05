@@ -488,7 +488,7 @@ $default_config = array (
 ),
 
 "messagefooter" => array (
-  "--\n$strToUnsubscribe [UNSUBSCRIBE]\n\n$strToUpdate [PREFERENCES]\n$strForwardTitle [FORWARD]",
+  "--\n$strToUnsubscribe [UNSUBSCRIBE]\n\n$strToUpdate [PREFERENCES]\n$strForwardTitle [FORWARD]\n\n[USERTRACK]",
   "Default footer for sending a message",
   "textarea"
 ),
@@ -753,7 +753,7 @@ if (!function_exists("getconfig")) {
 			#0013076: Blacklisting posibility for unknown users
 			if ($item == 'preferencesurl' || $item == 'unsubscribeurl' || $item == 'blacklisturl' || $item == 'subscribeurl' || $item == 'forwardurl' || $item == 'confirmationurl') {
 				$base = getConfig('public_baseurl');
-				$sep = ereg('\?', $base) ? '&amp;' : '?';
+				$sep = strpos($base,'?') ? '&amp;' : '?';
 				if (trim($base) != '') {
 					switch ($item) {
 						case "preferencesurl" :
