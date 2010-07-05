@@ -1,9 +1,21 @@
 <?php
+require_once dirname(__FILE__).'/accesscheck.php';
 
 # domain stats
 
 $totalreq = Sql_Fetch_Row_Query(sprintf('select count(*) from %s',$GLOBALS['tables']['user']));
 $total = $totalreq[0];
+
+$download = !empty($_GET['dl']);
+if ($download) {
+  ob_end_clean();
+#  header("Content-type: text/plain");
+  header('Content-type: text/csv');
+  header('Content-disposition:  attachment; filename="phpList Domain statistics.csv"');
+  ob_start();
+}  
+
+print '<p>'.PageLink2('domainstats&dl=true',$GLOBALS['I18N']->get('Download as CSV file')).'</p>';
 
 $confirmed = array();
 $req = Sql_Query(sprintf('select lcase(substring_index(email,"@",-1)) as domain,count(email) as num from %s where confirmed group by domain order by num desc limit 50',$GLOBALS['tables']['user']));
@@ -35,6 +47,11 @@ while ($row = Sql_Fetch_Array($req)) {
   }
 
 }
+if ($download) {
+  ob_end_clean();
+  print $ls->tabDelimited();
+}
+
 print $ls->display();
 
 ?>
