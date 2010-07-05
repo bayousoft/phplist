@@ -5,8 +5,12 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 $access = accessLevel("members");
-$id = sprintf('%d',$_REQUEST["id"]);
-$start = sprintf('%d',$_GET['start']);
+if (isset($_REQUEST['id'])) {
+  $id = sprintf('%d',$_REQUEST["id"]);
+} else $id = 0;
+if (isset($_GET['s'])) {
+  $start = sprintf('%d',$_GET['s']);
+} else $start = 0;
 
 switch ($access) {
   case "owner":
@@ -35,19 +39,27 @@ switch ($access) {
 function addUserForm ($listid) {
 //nizar 'value'
   $html = formStart(' class="membersAdd" ').'<input type="hidden" name="listid" value="'.$listid.'" />
-  '.$GLOBALS['I18N']->get("Add a user").': <input type="text" name="new" value="" size="40" />
+  '.$GLOBALS['I18N']->get("Add a user").': <input type="text" name="new" value="" size="40" id="emailsearch"/>
      <input class="submit" type="submit" name="add" value="'.$GLOBALS['I18N']->get('Add').'" />
   </form>';
   return $html;
 }
-if (isset($id)) {
+if (!empty($id)) {
   print "<h3>".$GLOBALS['I18N']->get("Members of")." ".ListName($id)."</h3>";
   echo "<br />".PageLink2("editlist",$GLOBALS['I18N']->get("back to this list"),"id=$id");
   echo "<br />".PageLink2("export&amp;list=$id",$GLOBALS['I18N']->get("Download users on this list as a CSV file"));
-  print addUserForm($id);
+  echo "<br />".PageLinkDialog("import&amp;list=$id",$GLOBALS['I18N']->get("Import Users to this list"));
+
+#  print addUserForm($id);
 } else {
-  Fatal_Error($GLOBALS['I18N']->get("Please enter a listid"));
+  Redirect('list');
+#  Fatal_Error($GLOBALS['I18N']->get("Please enter a listid"));
 }
+
+if (!empty($_POST['importcontent'])) {
+  include dirname(__FILE__).'/importsimple.php';
+}
+
 if (isset($_REQUEST["processtags"]) && $access != "view") {
   print $GLOBALS['I18N']->get("Processing")." .... <br/>";
   if ($_POST["tagaction"] && is_array($_POST["user"])) {
@@ -199,7 +211,7 @@ if (isset($_REQUEST["delete"])) {
   . '   and userid = ?';
   $result = Sql_Query_Params($query, array($id, $delete));
   print "... ".$GLOBALS['I18N']->get("Done")."<br />\n";
-  Redirect("members&amp;id=$id");
+  Redirect("members&id=$id");
 }
 if (isset($id)) {
   $query
@@ -224,13 +236,8 @@ if (isset($id)) {
         $limit = "limit 0,50";
       }
 
-     printf ('<table border=1><tr><td colspan=4 align=center>%s</td></tr><tr><td>%s</td><td>%s</td><td>
-          %s</td><td>%s</td></tr></table><p><hr>',
-          $listing,
-          PageLink2("members","&lt;&lt;","start=0&amp;id=$id"),
-          PageLink2("members","&lt;",sprintf('start=%d&amp;id=%d',max(0,$start-MAX_USER_PP),$id)),
-          PageLink2("members","&gt;",sprintf('start=%d&amp;id=%d',min($total-MAX_USER_PP,$start+MAX_USER_PP),$id)),
-          PageLink2("members","&gt;&gt;",sprintf('start=%d&amp;id=%d',$total-MAX_USER_PP,$id)));
+      print '<p>'.$listing.'</p>';
+      print Paging(PageUrl2("members&id=$id"),$start,$total,MAX_USER_PP);
   }
 //  $result = Sql_query("SELECT $tables[user].id,email,confirmed,rssfrequency FROM // so plugins can use all fields
   $query
@@ -247,18 +254,12 @@ if (isset($id)) {
   print formStart(' name="users" class="membersProcess" ');
   printf('<input type="hidden" name="id" value="%d" />',$id);
   ?>
-  <script language="Javascript" type="text/javascript">
-  function checkAll() {
-    for (i=0;i < document.users.length;i++) {
-       document.users.elements[i].checked = document.users.checkall.checked;
-    }
-  }
-  </script>
-  <input type="checkbox" name="checkall" onclick="checkAll()" /><?php echo $GLOBALS['I18N']->get("Tag all users in this page");?>
+
+  <input type="checkbox" name="checkall" class="checkallcheckboxes" /><?php echo $GLOBALS['I18N']->get("Tag all users in this page");?>
   <?php
   $columns = array();
   $columns = explode(',',getConfig('membership_columns'));
-  $columns = array('country','Lastname');
+ # $columns = array('country','Lastname');
   $ls = new WebblerListing($GLOBALS['I18N']->get("Members"));
   while ($user = Sql_fetch_array($result)) {
     $ls->addElement($user["email"],PageUrl2("user&amp;id=".$user["id"]));
@@ -268,7 +269,8 @@ if (isset($id)) {
     if ($access != "view")
        $ls->addColumn($user["email"],$GLOBALS['I18N']->get("del"),
        sprintf('<a href="javascript:deleteRec(\'%s\');">'.$GLOBALS['I18N']->get('Del').'</a>',
-       PageURL2("members","","start=$start&amp;id=$id&amp;delete=".$user["id"])));
+       PageURL2("members","","start=$start&id=$id&delete=".$user["id"])));
+/*
     $query
     = ' select count(*)'
     . ' from %s lm, %s um'
@@ -280,32 +282,20 @@ if (isset($id)) {
     $rs = Sql_Query_Params($query, array($id, $user['id']));
     $msgcount = Sql_Fetch_Row($rs);
     $ls->addColumn($user["email"],$GLOBALS['I18N']->get("# msgs"),$msgcount[0]);
+*/
 
     ## allow plugins to add columns
     foreach ($GLOBALS['plugins'] as $plugin) {
       $plugin->displayUsers($user,  $user['email'], $ls);
-    } 
+    }
 
-// obsolete by rssmanager plugin
-//    if (ENABLE_RSS) {
-//      $msgcount = Sql_Fetch_Row_Query("select count(*) from {$tables["rssitem"]},{$tables["rssitem_user"]}
-//        where {$tables["rssitem"]}.list = $id and {$tables["rssitem"]}.id = {$tables["rssitem_user"]}.itemid and
-//        {$tables["rssitem_user"]}.userid = {$user["id"]}");
-//      if ($msgcount[0])
-//        $ls->addColumn($user["email"],$GLOBALS['I18N']->get("# rss"),$msgcount[0]);
-//      if ($user["rssfrequency"])
-//        $ls->addColumn($user["email"],$GLOBALS['I18N']->get("rss freq"),$user["rssfrequency"]);
-//      $last = Sql_Fetch_Row_Query("select last from {$tables["user_rss"]} where userid = ".$user["id"]);
-//      if ($last[0])
-//        $ls->addColumn($user["email"],$GLOBALS['I18N']->get("last sent"),$last[0]);
-//    }
     if (sizeof($columns)) {
       # let's not do this when not required, adds rather many db requests
-      $attributes = getUserAttributeValues('',$user['id']);
+#      $attributes = getUserAttributeValues('',$user['id']);
 #      foreach ($attributes as $key => $val) {
 #          $ls->addColumn($user["email"],$key,$val);
 #      }
-        
+
       foreach ($columns as $column) {
         if (isset($attributes[$column]) && $attributes[$column]) {
           $ls->addColumn($user["email"],$column,$attributes[$column]);
@@ -321,7 +311,7 @@ if ($access == "view") return;
 <table class="membersProcess">
 <tr><td colspan="2"><h3><?php echo $GLOBALS['I18N']->get('What to do with "Tagged" users')?>:</h3>
 <?php echo $GLOBALS['I18N']->get('This will only process the users in this page that have the "Tag" checkbox checked')?></td></tr>
-<tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('delete')?> (<?php echo $GLOBALS['I18N']->get('from this list')?>) 
+<tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('delete')?> (<?php echo $GLOBALS['I18N']->get('from this list')?>)
 <input type="radio" name="tagaction" value="delete" /></td></tr>
 <?php
 $html = '';
@@ -345,7 +335,7 @@ if ($html) {
 <tr><td colspan="2"><hr/></td></tr>
 <tr><td colspan="2"><h3><?php echo $GLOBALS['I18N']->get('What to do with all users')?></h3>
             <?php echo $GLOBALS['I18N']->get('This will process all users on this list')?></td></tr>
-<tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('delete')?> (<?php echo $GLOBALS['I18N']->get('from this list')?>) 
+<tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('delete')?> (<?php echo $GLOBALS['I18N']->get('from this list')?>)
        <input type="radio" name="tagaction_all" value="delete" /></td>
 </tr>
 <?php if ($html) { ?>
