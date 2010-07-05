@@ -92,8 +92,10 @@ if (isset($_GET["doit"]) && (($GLOBALS["require_login"] && isSuperUser()) || !$G
 $guessedemail = '';
 if ($id) {
   $result = Sql_query("SELECT * FROM {$tables["bounce"]} where id = $id");
-  if (!Sql_Affected_Rows())
-    Fatal_Error($GLOBALS['I18N']->get('NoSRecord'));
+  if (!Sql_Affected_Rows()) {
+    Fatal_Error($GLOBALS['I18N']->get('This bounce no longer exists in the database.'));
+    return;
+  }
   $bounce = sql_fetch_array($result);
  #printf( "<br /><li><a href=\"javascript:deleteRec('%s');\">Delete</a>\n",PageURL2("bounce","","delete=$id"));
   if (preg_match("#([\d]+) bouncecount increased#",$bounce["comment"],$regs)) {
