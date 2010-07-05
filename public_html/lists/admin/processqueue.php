@@ -334,6 +334,7 @@ if ($num_per_batch > 0) {
   if ($original_num_per_batch != $num_per_batch) {
     output($GLOBALS['I18N']->get('Sending in batches of').' '.$original_num_per_batch.' '. $GLOBALS['I18N']->get('emails'),0);
     $diff = $original_num_per_batch - $num_per_batch;
+    if ($diff < 0) $diff = 0;
     output($GLOBALS['I18N']->get('This batch will be').' '. $num_per_batch.' '.$GLOBALS['I18N']->get('emails, because in the last').' '. $batch_period.' '.$GLOBALS['I18N']->get('seconds').' '. $diff.' '.$GLOBALS['I18N']->get('emails were sent'),0);
   } else {
     output($GLOBALS['I18N']->get('Sending in batches of').' '. $num_per_batch.' '.$GLOBALS['I18N']->get('emails'),0);
@@ -629,7 +630,7 @@ while ($message = Sql_fetch_array($messages)) {
     }
   }
   $affrows = Sql_Num_Rows($userids);
-  output($GLOBALS['I18N']->get(' Processing batch of ').': '.$affrows);
+  output($GLOBALS['I18N']->get('Processing batch of ').': '.$affrows);
 
   while ($userdata = Sql_Fetch_Row($userids)) {
     $failure_reason = '';
