@@ -68,7 +68,7 @@ function setMessageData($msgid,$name,$value) {
       $res = Sql_query('select * from '. $GLOBALS['tables']['list']. ' '.$GLOBALS['subselect']);
       while ($row = Sql_Fetch_Array($res))  {
         $listid  =  $row["id"];
-        if ($row["active"] || $value["all"] == "on")  {
+        if ($row["active"] || !empty($value["all"]))  {
           $result  =  Sql_query("insert ignore into ".$GLOBALS['tables']["listmessage"]."  (messageid,listid,entered) values($msgid,$listid,current_timestamp)");
         }
       }
@@ -341,6 +341,8 @@ function sendMailPhpMailer ($to,$subject,$message) {
   else
     $reply_to = $from_address;
   $destinationemail = '';
+
+#  print "Sending $to from $fromemail<br/>";
 
   if (!ereg("dev",VERSION)) {
     $mail = new PHPlistMailer('systemmessage',$to);
