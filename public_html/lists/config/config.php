@@ -430,6 +430,7 @@ define('REMOTE_URL_REFETCH_TIMEOUT',3600);
 # between messages to make sure that the MAILQUEUE_BATCH_SIZE (above) is spread evently over
 # MAILQUEUE_BATCH_PERIOD, instead of firing the Batch in the first few minutes of the period
 # and then waiting for the next period. This only works with mailqueue_throttle off
+# and MAILQUEUE_BATCH_PERIOD being a positive value
 # it still needs tweaking, so send your feedback to mantis.tincan.co.uk if you find
 # any issues with it
 define('MAILQUEUE_AUTOTHROTTLE',0);
