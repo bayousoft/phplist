@@ -108,7 +108,8 @@ if ($id) {
   if (empty($send)) {
     print '<div id="addtoqueue"><button class="submit" type="submit" name="send" id="addtoqueuebutton">'.$GLOBALS['I18N']->get('sendmessage').'</button></div>';
   } else {
-    print '<div id="addtoqueue"></div>';
+    ## hide the div in the final "message added to queue" page
+  #  print '<div id="addtoqueue"></div>';
   }
   require dirname(__FILE__)."/structure.php";  // This gets the database structures into DBStruct
 
