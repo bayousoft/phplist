@@ -90,7 +90,7 @@ $req = Sql_Query(sprintf('select id,entered,subject,unix_timestamp(current_times
 $numdraft = Sql_Num_Rows($req);
 if ($numdraft > 0 && !isset($_GET['id']) && !isset($_GET['new'])) {
   print '<p class="button">'.PageLink2('send&amp;new=1',$I18N->get('start a new message')).'</p>';
-  print '<h3>'.$I18N->get('Choose an existing draft message to work on').'</h3>';
+  print '<p><h3>'.$I18N->get('Choose an existing draft message to work on').'</h3></p>';
   $ls = new WebblerListing($I18N->get('Draft messages'));
   while ($row = Sql_Fetch_Array($req)) {
     $element = '<!--'.$row['id'].'-->'.$row['subject'];
