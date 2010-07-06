@@ -785,10 +785,8 @@ if (!$done) {
   #0013076: different content when forwarding 'to a friend'
   $maincontent .= '<div><h3>'.Help("footer").' '.$GLOBALS['I18N']->get("messagefooter").'.</h3> 
     <p class="information">'.
-    $GLOBALS['I18N']->get("messagefooterexplanation1").'</p>
-    <p class="information">'.
-    $GLOBALS['I18N']->get("messagefooterexplanation2").'</p>
-    <p class="information">'.
+    $GLOBALS['I18N']->get("messagefooterexplanation1").'<br/>'.
+    $GLOBALS['I18N']->get("messagefooterexplanation2").'<br/>'.
     $GLOBALS['I18N']->get("messagefooterexplanation3").'</p>
    </div>
   <div><textarea name="footer" cols="65" rows="5">'.htmlspecialchars($messagedata['footer']).'</textarea></div>';
