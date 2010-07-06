@@ -7,6 +7,8 @@ http://www.w3.org/International/O-charset-lang.html
 
 */
 
+## this array is now automatically build from the file system using the
+## language_info file in each subdirectory of /lan/
 $LANGUAGES = array(
 "nl"=> array("Dutch ","iso-8859-1"," iso-8859-1, windows-1252 "),
 "de" => array("Deutsch ","iso-8859-1","iso-8859-1, windows-1252 "),
@@ -21,6 +23,32 @@ $LANGUAGES = array(
 "vi" => array("Vietnamese","utf-8","utf-8"),
 );
 
+$lanDBstruct = array(
+  'language' => array(
+    'iso' => array('varchar(10)',''),
+    'name' => array('varchar(255)',''),
+    'charset' => array('varchar(100)',''),
+  ),
+  'translation' => array(
+    'tag' => array('varchar(255) not null','Tag for translation'),
+    'page' => array('varchar(100) not null','Page it is used'),
+    'lan' => array('varchar(10) not null','Language ISO'),
+    'translation' => array('text','Translated text'),
+    'index_1' => array('tagidx (tag)',''),
+    'index_2' => array('pageidx (page)',''),
+    'index_3' => array('lanidx (lan)',''),
+  ),
+);
+
+if (DB_TRANSLATION) {
+  $GLOBALS['tables']['translation'] = $GLOBALS['table_prefix'].'translation';
+  $GLOBALS['tables']['language'] = $GLOBALS['table_prefix'].'language';
+  if (!Sql_Table_Exists('phplist_translation')) {
+    Sql_Create_Table($GLOBALS['tables']['translation'],$lanDBstruct['translation']);
+    Sql_Create_Table($GLOBALS['tables']['language'],$lanDBstruct['language']);
+  }
+}
+
 ## pick up languages from the lan directory
 $landir = dirname(__FILE__).'/lan/';
 $d = opendir($landir);
@@ -31,7 +59,8 @@ while ($lancode = readdir($d)) {
     $lines = explode("\n",$lan_info);
     $lan = array();
     foreach ($lines as $line) {
-      if (preg_match('/(\w+)=([\w -]+)/',$line,$regs)) {
+      if (preg_match('/(\w+)=([\w&; \-\(\)]+)/',$line,$regs)) {
+#      if (preg_match('/(\w+)=(.+)/',$line,$regs)) {
         $lan[$regs[1]] = $regs[2];
       }
     }
@@ -42,7 +71,18 @@ while ($lancode = readdir($d)) {
 #    print '<br/>'.$landir.'/'.$lancode;
   }
 }
-ksort($LANGUAGES);
+function lanSort($a,$b) {
+  return strcmp(strtolower($a[0]),strtolower($b[0]));
+}
+uasort($LANGUAGES,"lanSort");
+
+#ksort($LANGUAGES);
+if (DB_TRANSLATION) {
+  foreach ($LANGUAGES as $lancode => $laninfo) {
+    Sql_Query(sprintf('insert ignore into %s (iso,name,charset) values("%s","%s","%s")',
+      $GLOBALS['tables']['language'],$lancode,$laninfo[0],$laninfo[1]));
+  }
+}
 #var_dump($LANGUAGES);
 
 if (!empty($GLOBALS["SessionTableName"])) {
@@ -97,7 +137,7 @@ if (!isset($_SESSION['adminlanguage']) || !is_array($_SESSION['adminlanguage']))
 #if (!isset($GLOBALS['strCharSet'])) {
   $GLOBALS['strCharSet'] = $_SESSION['adminlanguage']['charset'];
 #
-
+#var_dump($_SESSION['adminlanguage']);
 #print '<h1>'. $GLOBALS['strCharSet'].'</h1>';
 
 # internationalisation (I18N)
@@ -163,8 +203,13 @@ class phplist_I18N {
       '.$text;
 
       #sendMail($GLOBALS["developer_email"],"phplist dev, missing text",$msg);
-      $line = "'".$text."' => '".$text."',";
-      $this->appendText('/tmp/'.$prefix.$page.'.php',$line);
+      $line = "'".str_replace("'","\'",$text)."' => '".str_replace("'","\'",$text)."',";
+#      if (is_file($this->basedir.'/en/'.$page.'.php') && $_SESSION['adminlanguage']['iso'] == 'en') {
+      if (empty($prefix) && $_SESSION['adminlanguage']['iso'] == 'en') {
+        $this->appendText($this->basedir.'/en/'.$page.'.php',$line);
+      } else {
+        $this->appendText('/tmp/'.$prefix.$page.'.php',$line);
+      }
 
       return '<font color=#FF1717>'.$text.'</font>';#MISSING TEXT
       return $text;#MISSING TEXT
@@ -173,16 +218,31 @@ class phplist_I18N {
   }
 
   function appendText($file,$text) {
+    $filecontents = '';
     if (is_file($file)) {
-      $fp = @fopen ($file,"a");
+      $filecontents = file_get_contents($file);
     } else {
-      $fp = @fopen($file,"w");
+      $filecontents = '<?php
+
+$lan = array(
+
+);
+
+      ?>';
     }
 
-    if ($fp) {
-      fwrite($fp,$text."\n");
-      fclose($fp);
+#    print "<br/>Writing $text to $file";
+    $filecontents = preg_replace("/\n/","@@NL@@",$filecontents);
+    $filecontents = str_replace(');','  '.$text."\n);",$filecontents);
+    $filecontents = str_replace("@@NL@@","\n",$filecontents);
+
+    $dir = dirname($file);
+    if (!is_writable($dir) || (is_file($file) && !is_writable($file))) {
+      $newfile = basename($file);
+      $file = '/tmp/'.$newfile;
     }
+
+    file_put_contents($file,$filecontents);
   }
 
   function getPluginBasedir() {
@@ -199,7 +259,7 @@ class phplist_I18N {
     }
   }
   
-  function getTranslation($text,$page,$basedir) {
+  function getTranslation($text,$page,$basedir) { 
     if (is_file($basedir.'/'.$this->language.'/'.$page.'.php')) {
       @include $basedir.'/'.$this->language.'/'.$page.'.php';
     } elseif (!isset($GLOBALS['developer_email'])) {
@@ -258,7 +318,9 @@ class phplist_I18N {
     $translation = '';
     
     $this->basedir = dirname(__FILE__).'/lan/';
-    if (isset($_GET["page"])) {
+    if (isset($_GET['origpage']) && !empty($_GET['ajaxed'])) { ## used in ajaxed requests
+      $page = basename($_GET["origpage"]);
+    } elseif (isset($_GET["page"])) {
       $page = basename($_GET["page"]);
     } else {
       $page = "home";
