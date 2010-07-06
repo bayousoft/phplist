@@ -528,7 +528,7 @@ while ($user = Sql_Fetch_Row($userid_req)) {
         $emailreq = Sql_Fetch_Row_Query("select email from {$tables["user"]} where id = $user[0]");
         addUserHistory($emailreq[0],"Auto Unsubscribed","User auto unsubscribed for $cnt consecutive bounces");
         Sql_Query(sprintf('update %s set confirmed = 0 where id = %d',$tables["user"],$user[0]));
-        if(BLACKLIST_EMAIL_ON_BOUNCE) {
+        if (BLACKLIST_EMAIL_ON_BOUNCE && $cnt > BLACKLIST_EMAIL_ON_BOUNCE) {
           #0012262: blacklist email when email bounces
           addEmailToBlackList($emailreq, "$cnt consecutive bounces, threshold reached");
         }
