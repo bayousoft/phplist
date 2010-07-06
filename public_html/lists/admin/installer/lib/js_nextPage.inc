@@ -31,4 +31,4 @@ function goToPage() {
    }
 }
 </script>
-<noscript><input type="submit" name="submit" value="<?phpecho $textSubmit?>"/></noscript>
+<noscript><input type="submit" name="submit" value="<?php echo $textSubmit?>"/></noscript>

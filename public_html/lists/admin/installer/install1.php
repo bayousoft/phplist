@@ -78,7 +78,7 @@ $mailpass = $GLOBALS["I18N"]->get($GLOBALS['strJsMailPass']);
 ?>
 <br>
 <br>
-<div class="wrong"><?phpecho $msg?></div>
+<div class="wrong"><?php echo $msg?></div>
 <style type="text/css">
 //table tr td input { float:right; }
 </style>
@@ -86,7 +86,7 @@ $mailpass = $GLOBALS["I18N"]->get($GLOBALS['strJsMailPass']);
 <table width=500>
   <tr>
     <td>
-    <div class="explain"><?phpecho $GLOBALS["I18N"]->get($GLOBALS['strExplainInstall'])?></div>
+    <div class="explain"><?php echo $GLOBALS["I18N"]->get($GLOBALS['strExplainInstall'])?></div>
     </td>
   </tr>
 </table>
@@ -105,14 +105,14 @@ function validation(){
    var frm = document.pageForm;
    
    if (frm.message_envelope.value == ""){
-      alert("<?phpecho $mailacc?>");
+      alert("<?php echo $mailacc?>");
       frm.message_envelope.focus();
 
       return false;
    }
    else
    if (!validarEmail(frm.message_envelope.value)){
-      alert("<?phpecho $mailvalidacc?>");
+      alert("<?php echo $mailvalidacc?>");
       frm.message_envelope.focus();
       frm.message_envelope.select();
 
@@ -121,7 +121,7 @@ function validation(){
 
    if (frm.bounce_mailbox_host.value == ""){
       alert("You must enter the mail server (host) for this account");
-      alert("<?phpecho $mailhost?>");
+      alert("<?php echo $mailhost?>");
       frm.bounce_mailbox_host.focus();
 
       return false;
@@ -129,7 +129,7 @@ function validation(){
    
    if (frm.bounce_mailbox_user.value == ""){
       alert("You must enter the user for connect to the mail server (host)");
-      alert("<?phpecho $mailuser?>");
+      alert("<?php echo $mailuser?>");
       frm.bounce_mailbox_user.focus();
 
       return false;
@@ -137,7 +137,7 @@ function validation(){
    
    if (frm.bounce_mailbox_password.value == ""){
       alert("You must enter the password for this user");
-      alert("<?phpecho $mailpass?>");
+      alert("<?php echo $mailpass?>");
       frm.bounce_mailbox_password.focus();
 
       return false;
@@ -148,11 +148,11 @@ function validation(){
 </script>
 
 <form method="post" name="pageForm">
-  <input type="hidden" name="page" value="<?phpecho $nextPage?>"/>
-  <input type="hidden" name="submited" value="<?phpecho $inTheSame?>"/>
+  <input type="hidden" name="page" value="<?php echo $nextPage?>"/>
+  <input type="hidden" name="submited" value="<?php echo $inTheSame?>"/>
 
   <table border=0 width=350>
-    <?phpecho $HTMLElements?>
+    <?php echo $HTMLElements?>
   </table>
 </form>
 <?php

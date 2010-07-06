@@ -90,7 +90,7 @@ function validation(){
 </script>
 <br>
 <br>
-<div class="wrong"><?phpecho $errmsg?></div>
+<div class="wrong"><?php echo $errmsg?></div>
 <style type="text/css">
 table tr td input { float:right; }
 </style>
@@ -101,25 +101,25 @@ if ($errno || !$submited){
 <table width=500>
   <tr>
     <td>
-    <div class="explain"><?phpecho $GLOBALS["I18N"]->get($GLOBALS['strReadyToInstall'])?></div>
+    <div class="explain"><?php echo $GLOBALS["I18N"]->get($GLOBALS['strReadyToInstall'])?></div>
     </td>
   </tr>
 </table>
 
 <form method="post" name="pageForm">
-  <input type="hidden" name="page" value="<?phpecho $nextPage?>"/>
-  <input type="hidden" name="submited" value="<?phpecho $inTheSame?>"/>
+  <input type="hidden" name="page" value="<?php echo $nextPage?>"/>
+  <input type="hidden" name="submited" value="<?php echo $inTheSame?>"/>
 
 </form>
 <?php
 include("installer/lib/nextStep.inc");
 ?>
-<?php}else{?>
+<?php }else{ ?>
 <table width=500>
   <tr>
     <td>
-    <div class="explain" align="center"><br><br><font size=4><?phpecho $okmsg?></font><br><?echo $GLOBALS["I18N"]->get(sprintf($GLOBALS['strReadyToUse'],$link_o,$link_c))?><br><br><br></div>
+    <div class="explain" align="center"><br><br><font size=4><?php echo $okmsg?></font><br><?php echo $GLOBALS["I18N"]->get(sprintf($GLOBALS['strReadyToUse'],$link_o,$link_c))?><br><br><br></div>
     </td>
   </tr>
 </table>
-<?php}?>
+<?php } ?>
