@@ -8,7 +8,8 @@ if (Sql_Table_exists($tables["config"],1)) {
   if ($dbversion != VERSION && !defined("IN_WEBBLER")&& !defined("WEBBLER")) {
     Error($GLOBALS['I18N']->get('Your database is out of date, please make sure to upgrade').'<br/>'.
      $GLOBALS['I18N']->get('Your version').' : '.$dbversion.'<br/>'.
-     $GLOBALS['I18N']->get('phplist version').' : '.VERSION
+     $GLOBALS['I18N']->get('phplist version').' : '.VERSION.
+    '<br/>'.PageURL2("upgrade")
      );
     $upgrade_required = 1;
   }
