@@ -126,9 +126,6 @@ if (preg_match("/\n|\r/",$messagedata["from"])) {
 if (preg_match("/\n|\r/",$messagedata["forwardsubject"])) {
   $messagedata["forwardsubject"] = "";
 } 
-if (preg_match("/\n|\r/",$messagedata["forwardfooter"])) {
-  $messagedata["forwardfooter"] = "";
-}
 
 ## check that the message does not contain URLs that look like click tracking links
 ## it seems people are pasting the results of test messages back in the editor, which would duplicate
