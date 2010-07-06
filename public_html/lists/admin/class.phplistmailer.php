@@ -29,6 +29,7 @@ class PHPlistMailer extends PHPMailer {
 
     public $LE              = "\n";
     public $Hello = '';
+    public $timeStamp = '';
 
     function PHPlistMailer($messageid,$email) {
     #  parent::PHPMailer();
@@ -63,6 +64,7 @@ class PHPlistMailer extends PHPMailer {
          #  logEvent('Sending via mail');
        #  $this->Mailer = "mail";
       # $this->IsSendmail();
+         $this->CharSet = getConfig("text_charset");
          $this->isMail();
       }
 
@@ -74,6 +76,10 @@ class PHPlistMailer extends PHPMailer {
 
 ## one to work on at a later stage
 #        $this->addCustomHeader("Return-Receipt-To: ".$GLOBALS["message_envelope"]);
+      }
+      ## when the email is generated from a webpage (quite possible :-) add a "received line" to identify the origin
+      if (!empty($_SERVER['REMOTE_ADDR'])) {
+        $this->add_timestamp();
       }
       $this->messageid = $messageid;
     }
@@ -105,9 +111,12 @@ class PHPlistMailer extends PHPMailer {
       $this->addTimeStamp($sTimeStamp);
     }
 
+    function AddTimeStamp($sTimeStamp) {
+      $this->timeStamp = $sTimeStamp;
+    }
 
     function add_text($text) {
-      $this->Encoding = TEXTEMAIL_ENCODING;
+      $this->TextEncoding = TEXTEMAIL_ENCODING;
       if (!$this->Body) {
         $this->IsHTML(false);
         $this->Body = html_entity_decode($text ,ENT_QUOTES, 'UTF-8' ); #$text;
@@ -128,7 +137,13 @@ class PHPlistMailer extends PHPMailer {
     }
 
     function CreateHeader() {
-      return parent::CreateHeader();
+      $parentheader = parent::CreateHeader();
+      if (!empty($this->timeStamp)) {
+        $header = 'Received: '.$this->timeStamp.$this->LE.$parentheader;
+      } else {
+        $header = $parentheader;
+      }
+      return $header;
     }
 
     function CreateBody() {
@@ -200,6 +215,9 @@ class PHPlistMailer extends PHPMailer {
 
      function find_html_images($templateid) {
       #if (!$templateid) return;
+      ## no template can be templateid 0, find the powered by image
+      $templateid = sprintf('%d',$templateid);
+        
       // Build the list of image extensions
       while(list($key,) = each($this->image_types)) {
         $extensions[] = $key;
