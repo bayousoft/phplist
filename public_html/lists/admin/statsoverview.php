@@ -81,12 +81,23 @@ if (!$id) {
 
   $timerange = ' and msg.entered > date_sub(current_timestamp,interval 12 month)';
   #$timerange = '';
-  $limit = 'limit 10';
-  $limit = '';
+  $limit = ' limit 10';
+  $start = 0;
+  if (isset($_GET['s'])) {
+    $start = sprintf('%d',$_GET['s']);
+    $limit = ' limit '.$start. ', 10';
+  }
 
-  $req = Sql_Query(sprintf('select msg.owner,msg.id as messageid,count(um.viewed) as views, count(um.status) as total,subject,date_format(sent,"%%e %%b %%Y") as sent,bouncecount as bounced from %s um,%s msg where um.messageid = msg.id %s %s
-    group by msg.id order by msg.entered desc %s',
-    $GLOBALS['tables']['usermessage'],$GLOBALS['tables']['message'],$subselect,$timerange,$limit));
+  $query = sprintf('select msg.owner,msg.id as messageid,count(um.viewed) as views, count(um.status) as total,subject,date_format(sent,"%%e %%b %%Y") as sent,bouncecount as bounced from %s um,%s msg where um.messageid = msg.id %s %s
+    group by msg.id order by msg.entered desc',
+    $GLOBALS['tables']['usermessage'],$GLOBALS['tables']['message'],$subselect,$timerange);
+  $req = Sql_Query($query);
+  $total = Sql_Num_Rows($req);
+  if ($total > 10) {
+    print Paging(PageUrl2('statsoverview'),$start,$total,10);
+    $query .= $limit;
+    $req = Sql_Query($query);
+  }
 
   if (!Sql_Affected_Rows()) {
     print '<p class="information">'.$GLOBALS['I18N']->get('There are currently no messages to view').'</p>';
@@ -95,11 +106,15 @@ if (!$id) {
   $ls = new WebblerListing($GLOBALS['I18N']->get('Campaigns in the last year'));
   while ($row = Sql_Fetch_Array($req)) {
     $element = $row['messageid'].' '.substr($row['subject'],0,50);
+
+    $fwded = Sql_Fetch_Row_Query(sprintf('select count(id) from %s where message = %d',$GLOBALS['tables']['user_message_forward'],$row['messageid']));
+    
     $ls->addElement($element,PageURL2('message&amp;id='.$row['messageid']));
  #   $ls->addColumn($element,$GLOBALS['I18N']->get('owner'),$row['owner']);
     $ls->addColumn($element,$GLOBALS['I18N']->get('date'),$row['sent']);
     $ls->addColumn($element,$GLOBALS['I18N']->get('sent'),$row['total']);
     $ls->addColumn($element,$GLOBALS['I18N']->get('bounced'),$row['bounced']);
+    $ls->addColumn($element,$GLOBALS['I18N']->get('forwarded'),sprintf('%d',$fwded[0]));
     $ls->addColumn($element,$GLOBALS['I18N']->get('views'),$row['views'],$row['views'] ? PageURL2('mviews&amp;id='.$row['messageid']):'');
     $perc = sprintf('%0.2f',($row['views'] / $row['total'] * 100));
     $ls->addColumn($element,$GLOBALS['I18N']->get('rate'),$perc.' %');
