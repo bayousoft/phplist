@@ -9,7 +9,7 @@ if (Sql_Table_exists($tables["config"],1)) {
     Error($GLOBALS['I18N']->get('Your database is out of date, please make sure to upgrade').'<br/>'.
      $GLOBALS['I18N']->get('Your version').' : '.$dbversion.'<br/>'.
      $GLOBALS['I18N']->get('phplist version').' : '.VERSION.
-    '<br/>'.PageURL2("upgrade")
+    '<br/>'.PageLink2("upgrade",$GLOBALS['I18N']->get('Upgrade'))
      );
     $upgrade_required = 1;
   }
