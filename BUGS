@@ -3,10 +3,10 @@ PHPlist Bug Policy
 If you think you have found a bug,
 
 - Make sure you have the latest version of PHPlist.  Check our public
-  website at http://www.phplist.com/files/.  While the PHPlist website may not
+  website at http://www.phplist.com/.  While the PHPlist website may not
   always list the latest version, this directory will.
 
-- Go to http://mantis.tincan.co.uk/ and check whether someone else has
+- Go to http://mantis.phplist.com/ and check whether someone else has
   already reported the same thing. If so, add your comments, and anything that can
   be helpful to find and fix the bug to the existing report.
 
@@ -26,7 +26,7 @@ If you think you have found a bug,
     * What the error message states
     * What happened to cause the error
 
-- You may also wish to join our support forum (http://www.phplist.com/forums/)
+- You may also wish to join our support forum (http://forums.phplist.com/)
   and mention your bug.  Please include a direct link to your bug report, if
   you filed one.
   
