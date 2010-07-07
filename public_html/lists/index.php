@@ -868,10 +868,8 @@ function forwardPage($id) {
   } #mid set
 
   ## get userdata
-  $req = Sql_Query("select * from {$tables["user"]} where uniqid = \"".$_REQUEST["uid"]."\"");
+  $req = Sql_Query(sprintf('select * from %s where uniqid = "%s"',$tables["user"],sql_escape($_REQUEST["uid"])));
   $userdata = Sql_Fetch_Array($req);
-  $req = Sql_Query(sprintf('select * from %s where email = "%s"',$tables["user"],$forwardemail));
-  $forwarduserdata = Sql_Fetch_Array($req);
   
   #0011996: forward to friend - personal message
   # text cannot be longer than max, to prevent very long text with only linefeeds total cannot be longer than twice max
@@ -883,10 +881,6 @@ function forwardPage($id) {
     $personalNote = strip_tags(htmlspecialchars_decode(stripslashes($_REQUEST['personalNote'])));
     $userdata['personalNote'] = $personalNote;
   }
-  
-  ## get userdata
-  $req = Sql_Query("select * from {$tables["user"]} where uniqid = \"".$_REQUEST["uid"]."\"");
-  $userdata = Sql_Fetch_Array($req);
   
   if ($userdata["id"] && $mid) {
     if ($ok && count($emails)) { ## All is well, send it 
@@ -970,22 +964,22 @@ function forwardPage($id) {
   if (!$ok) {
     #0011860: forward to friend, multiple emails 
     if (FORWARD_EMAIL_COUNT == 1) {
-      $form .= '<BR /><H2>' .$GLOBALS['strForwardEnterEmail'] . '</H2>';
+      $form .= '<br /><h2>' .$GLOBALS['strForwardEnterEmail'] . '</h2>';
       $form .= sprintf('<input type=text name="email" value="%s" size=50 class="attributeinput">',$forwardemail);
     } else {
-      $form .= '<BR /><H2>' .sprintf($GLOBALS['strForwardEnterEmails'], FORWARD_EMAIL_COUNT) . '</H2>';
-      $form .= sprintf('<textarea name="email" rows=10 cols=50 class="attributeinput">%s</textarea>', $forwardemail);
+      $form .= '<br /><h2>' .sprintf($GLOBALS['strForwardEnterEmails'], FORWARD_EMAIL_COUNT) . '</h2>';
+      $form .= sprintf('<textarea name="email" rows="10" cols="50" class="attributeinput">%s</textarea>', $forwardemail);
     }
 
     #0011996: forward to friend - personal message
     if (FORWARD_PERSONAL_NOTE_SIZE ) {
-      $form .= sprintf('<h2>' . $GLOBALS['strForwardPersonalNote'] . '</H2>', FORWARD_PERSONAL_NOTE_SIZE);
+      $form .= sprintf('<h2>' . $GLOBALS['strForwardPersonalNote'] . '</h2>', FORWARD_PERSONAL_NOTE_SIZE);
       $cols=50;
       $rows=min(10,ceil(FORWARD_PERSONAL_NOTE_SIZE / 40));
 
-      $form .=sprintf('<BR/><textarea type=text name="personalNote" rows=%d cols=%d class="attributeinput">%s</textarea>', $rows, $cols, $personalNote);
+      $form .=sprintf('<br/><textarea type="text" name="personalNote" rows="%d" cols="%d" class="attributeinput">%s</textarea>', $rows, $cols, $personalNote);
     }
-    $form .= sprintf('<br /><input type=submit value="%s"></form>',$GLOBALS['strContinue']);
+    $form .= sprintf('<br /><input type="submit" value="%s"></form>',$GLOBALS['strContinue']);
   }
 
 ### END BAS
@@ -1021,7 +1015,7 @@ function forwardPage($id) {
       $res .= '<div class="missing">'.$info.'</div>';
     }
     $res .= $form;
-    $res .= "<P>".$GLOBALS["PoweredBy"].'</p>';
+    $res .= "<p>".$GLOBALS["PoweredBy"].'</p>';
     $res .= $data["footer"];
   }
 ### END MICHIEL
