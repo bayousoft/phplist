@@ -103,7 +103,7 @@ function loadMessageData($msgid) {
     $GLOBALS['tables']['message'],$msgid));
 
   $messagedata = array(
-    'template' => '',
+    'template' => getConfig("defaultmessagetemplate"),
     'sendformat' => 'HTML',
     'message' => '',
     'forwardmessage' => '',
@@ -217,8 +217,8 @@ function sendAdminPasswordToken ($adminId){
   Sql_Query($query);
   $urlroot = getConfig('website').$GLOBALS['adminpages'];
   #Build the email body to be sent, and finally send it.
-  $emailBody = $GLOBALS['I18N']->get('Hello, '.$adminName)."\n\n";
-  $emailBody.= $GLOBALS['I18N']->get('You have requested a new password at phpList.')."\n\n";
+  $emailBody = $GLOBALS['I18N']->get('Hello').' '.$adminName."\n\n";
+  $emailBody.= $GLOBALS['I18N']->get('You have requested a new password for phpList.')."\n\n";
   $emailBody.= $GLOBALS['I18N']->get('To enter a new one, please visit the following link:')."\n\n";
   $emailBody.= sprintf('http://%s/?page=login&token=%s',$urlroot, $key)."\n\n";
   $emailBody.= $GLOBALS['I18N']->get('You have 24 hours left to change your password. After that, your token won\'t be valid.');
@@ -678,6 +678,10 @@ function stripComments($content) {
 }
 
 function compressContent($content) {
+
+  ## this needs loads more testing across systems to be sure
+  return $content;
+  
   $content = preg_replace("/\n/",' ',$content);
   $content = preg_replace("/\r/",'',$content);
   $content = removeJavascript($content);
