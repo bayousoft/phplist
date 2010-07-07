@@ -8,8 +8,9 @@
 
 require_once dirname(__FILE__).'/accesscheck.php';
 
-if (!defined('STRUCTUREVERSION')) {
-  define ("STRUCTUREVERSION","dev");
+## don't remove spaces
+if (!defined  (  'STRUCTUREVERSION'  )) {
+  define("STRUCTUREVERSION","dev");
 }
 
 $DBstructuser = array( # order of tables is essential for smooth upgrade
