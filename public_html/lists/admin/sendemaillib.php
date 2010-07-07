@@ -19,7 +19,7 @@ if (!function_exists("output")) {
 function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$forwardedby = array()) {
   $getspeedstats = VERBOSE && !empty($GLOBALS['getspeedstats']) && isset($GLOBALS['processqueue_timer']);
   $sqlCountStart = $GLOBALS["pagestats"]["number_of_queries"];
-    
+
   ## for testing concurrency, put in a delay to check if multiple send processes cause duplicates
   #usleep(rand(0,10) * 1000000);
     
@@ -61,9 +61,11 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 
   if ($hash == 'forwarded' && defined('KEEPFORWARDERATTRIBUTES') && KEEPFORWARDERATTRIBUTES) {
     $user_att_values = getUserAttributeValues($forwardedby['email']);
-  } else {
+  } elseif ($hash != 'forwarded') {
     $user_att_values = getUserAttributeValues($email);
-  } 
+  }
+  if (!is_array($user_att_values)) $user_att_values = array();
+
   ## the editor seems to replace spaces with &nbsp; so add those
   foreach ($user_att_values as $key => $val) {
     if (strpos($key,' ')) {
@@ -75,6 +77,9 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   $query = sprintf('select * from %s where email = ?', $GLOBALS["tables"]["user"]);
   $rs = Sql_Query_Params($query, array($email));
   $userdata = Sql_Fetch_Assoc($rs);
+  if (empty($userdata['id'])) {
+    $userdata = array();
+  }
 
   if (stripos($content,"[LISTS]") !== false) {
     $listsarr = array();
@@ -100,14 +105,14 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     output('define placeholders start');
   }
 
-  $url = getConfig("unsubscribeurl");$sep = strpos($url,'?') === false ? '?':'&';
+  $url = getConfig("unsubscribeurl");$sep = strpos($url,'?') === false ? '?':'&amp;';
   $html["unsubscribe"] = sprintf('<a href="%s%suid=%s">%s</a>',$url,$sep,$hash,$strThisLink);
   $text["unsubscribe"] = sprintf('%s%suid=%s',$url,$sep,$hash);
   $html["unsubscribeurl"] = sprintf('%s%suid=%s',$url,$sep,$hash);
   $text["unsubscribeurl"] = sprintf('%s%suid=%s',$url,$sep,$hash);
 
   #0013076: Blacklisting posibility for unknown users
-  $url = getConfig("blacklisturl");$sep = strpos($url,'?') === false ? '?':'&';
+  $url = getConfig("blacklisturl");$sep = strpos($url,'?') === false ? '?':'&amp;';
   $html["blacklist"] = sprintf('<a href="%s%semail=%s">%s</a>',$url,$sep,$email,$strThisLink);
   $text["blacklist"] = sprintf('%s%semail=%s',$url,$sep,$email);
   $html["blacklisturl"] = sprintf('%s%semail=%s',$url,$sep,$email);
@@ -119,13 +124,13 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     $text["unsubscribe"] = $text["blacklist"];
   }
   
-  $url = getConfig("subscribeurl");$sep = strpos($url,'?') === false ? '?':'&';
+  $url = getConfig("subscribeurl");$sep = strpos($url,'?') === false ? '?':'&amp;';
   $html["subscribe"] = sprintf('<a href="%s">%s</a>',$url,$strThisLink);
   $text["subscribe"] = sprintf('%s',$url);
   $html["subscribeurl"] = sprintf('%s',$url);
   $text["subscribeurl"] = sprintf('%s',$url);
   #?mid=1&amp;id=1&uid=a9f35f130593a3d6b89cfe5cfb32a0d8&p=forward&email=michiel%40tincan.co.uk&
-  $url = getConfig("forwardurl");$sep = strpos($url,'?') === false ? '?':'&';
+  $url = getConfig("forwardurl");$sep = strpos($url,'?') === false ? '?':'&amp;';
   $html["forward"] = sprintf('<a href="%s%suid=%s&amp;mid=%d">%s</a>',$url,$sep,$hash,$messageid,$strThisLink);
   $text["forward"] = sprintf('%s%suid=%s&amp;mid=%d',$url,$sep,$hash,$messageid);
   $html["forwardurl"] = sprintf('%s%suid=%s&amp;mid=%d',$url,$sep,$hash,$messageid);
@@ -136,8 +141,8 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 
   # make sure there are no newlines, otherwise they get turned into <br/>s
   $html["forwardform"] = sprintf('<form method="get" action="%s" name="forwardform" class="forwardform"><input type="hidden" name="uid" value="%s" /><input type="hidden" name="mid" value="%d" /><input type="hidden" name="p" value="forward" /><input type=text name="email" value="" class="forwardinput" /><input name="Send" type="submit" value="%s" class="forwardsubmit"/></form>',$url,$hash,$messageid,$GLOBALS['strForward']);
-  $text["signature"] = "\n\n-- Powered by phpList, www.phplist.com --\n\n";
-  $url = getConfig("preferencesurl");$sep = strpos($url,'?') === false ? '?':'&';
+  $text["signature"] = "\n\n-- powered by phpList, www.phplist.com --\n\n";
+  $url = getConfig("preferencesurl");$sep = strpos($url,'?') === false ? '?':'&amp;';
   $html["preferences"] = sprintf('<a href="%s%suid=%s">%s</a>',$url,$sep,$hash,$strThisLink);
   $text["preferences"] = sprintf('%s%suid=%s',$url,$sep,$hash);
   $html["preferencesurl"] = sprintf('%s%suid=%s',$url,$sep,$hash);
@@ -284,19 +289,16 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     $htmlmessage = str_ireplace("[FOOTER]",$html["footer"],$htmlmessage);
   elseif ($html["footer"])
     $htmlmessage = addHTMLFooter($htmlmessage,'<br />'.$html["footer"]);
-    
-    
-/*
-  if (strpos($htmlmessage,"[SIGNATURE]") !== false)
+
+  if (strpos($htmlmessage,"[SIGNATURE]") !== false) {
     $htmlmessage = str_ireplace("[SIGNATURE]",$html["signature"],$htmlmessage);
-  elseif ($html["signature"])
-*/
+  } else {
 # BUGFIX 0015303, 2/2
 //    $htmlmessage .= '<br />'.$html["signature"];
-/*
       $htmlmessage = addHTMLFooter($htmlmessage, '
 '. $html["signature"]);
-*/
+  }
+
 
 # END BUGFIX 0015303, 2/2
 
@@ -304,12 +306,11 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     $textmessage = str_ireplace("[FOOTER]",$text["footer"],$textmessage);
   else
     $textmessage .= "\n\n".$text["footer"];
-/*
-  if (eregi("\[SIGNATURE\]",$textmessage))
-    $textmessage = eregi_replace("\[SIGNATURE\]",$text["signature"],$textmessage);
+
+  if (strpos($textmessage,'[SIGNATURE]'))
+    $textmessage = stri_replace("[SIGNATURE]",$text["signature"],$textmessage);
   else
     $textmessage .= "\n".$text["signature"];
-*/
 
   ### addition to handle [FORWARDURL:Message ID:Link Text] (link text optional)
 
@@ -324,7 +325,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
       $forwardtext = 'this link';
     }
     if (!empty($forwardmessage)) {
-      $url = getConfig("forwardurl");$sep = ereg('\?',$url)?'&':'?';
+      $url = getConfig("forwardurl");$sep = strpos($url,'?') === false ? '?':'&amp;';
       $forwardurl = sprintf('%s%suid=%s&amp;mid=%d',$url,$sep,$hash,$forwardmessage);
       $htmlmessage = str_replace($matchtext,'<a href="'.$forwardurl.'">'.$forwardtext.'</a>',$htmlmessage);
     } else {
@@ -345,7 +346,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
       $forwardtext = 'this link';
     }
     if (!empty($forwardmessage)) {
-      $url = getConfig("forwardurl");$sep = ereg('\?',$url)?'&':'?';
+      $url = getConfig("forwardurl");$sep = strpos($url,'?') === false ? '?':'&amp;';
       $forwardurl = sprintf('%s%suid=%s&amp;mid=%d',$url,$sep,$hash,$forwardmessage);
       $textmessage = str_replace($matchtext,$forwardtext.' '.$forwardurl,$textmessage);
     } else {
@@ -358,10 +359,10 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 #    $GLOBALS["tables"]["templateimage"],$cached[$messageid]["templateid"]));
 
   if (ALWAYS_ADD_USERTRACK) {
-    $htmlmessage .= '<img src="'.$GLOBALS['scheme'].'://'.$website.$GLOBALS["pageroot"].'/ut.php?u='.$hash.'&m='.$messageid.'" border="0" />';
+    $htmlmessage .= '<img src="'.$GLOBALS['scheme'].'://'.$website.$GLOBALS["pageroot"].'/ut.php?u='.$hash.'&m='.$messageid.'" width="1" height="1" border="0" />';
   } else {
     ## can't use str_replace or str_ireplace, because those replace all, and we only want to replace one
-    $htmlmessage = preg_replace( '/\[USERTRACK\]/i','<img src="'.$GLOBALS['scheme'].'://'.$website.$GLOBALS["pageroot"].'/ut.php?u='.$hash.'&m='.$messageid.'" border="0" />',$htmlmessage,1);
+    $htmlmessage = preg_replace( '/\[USERTRACK\]/i','<img src="'.$GLOBALS['scheme'].'://'.$website.$GLOBALS["pageroot"].'/ut.php?u='.$hash.'&m='.$messageid.'" width="1" height="1" border="0" />',$htmlmessage,1);
   }
   # make sure to only include usertrack once, otherwise the stats would go silly
   $htmlmessage = str_ireplace('[USERTRACK]','',$htmlmessage);
@@ -627,7 +628,6 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     $htmlmessage =  nl2br($forwardedby['personalNote']) . '<br/>' .  $htmlmessage;
     $textmessage = $forwardedby['personalNote'] . "\n" . $textmessage;
   }
-
   if (VERBOSE && $getspeedstats) {
     output('cleanup start');
   }
@@ -1103,7 +1103,7 @@ function clickTrackLinkId($messageid,$userid,$url,$link) {
     = ' select id'
     . ' from ' . $GLOBALS['tables']['linktrack_forward']
     . ' where url = ?';
-    $rs = Sql_Query_Params($query, array($url));
+    $rs = Sql_Query_Params($query, array($link));
     $exists = Sql_Fetch_Row($rs);
     if (!$exists[0]) {
       $personalise = preg_match('/uid=/',$link);
@@ -1161,6 +1161,7 @@ function clickTrackLinkId($messageid,$userid,$url,$link) {
 function parsePlaceHolders($content,$array = array()) {
   foreach ($array as $key => $val) {
     if (PHP5) {
+      $key = str_replace('/','\/',$key);
       if (stripos($content,'['.$key.']')) {
         $content = str_ireplace('['.$key.']',$val,$content);
       } elseif (preg_match('/\['.$key.'%%([^\]]+)\]/i',$content,$regs)) {
