@@ -382,6 +382,7 @@ class PHPlistMailer extends PHPMailer {
     ## end addition
 
     function image_exists($templateid,$filename) {
+      if (basename($filename) == 'powerphplist.png') $templateid = 0;
       $query
       = ' select *'
       . ' from ' . $GLOBALS['tables']['templateimage']
@@ -392,6 +393,7 @@ class PHPlistMailer extends PHPMailer {
     }
 
      function get_template_image($templateid,$filename){
+      if (basename($filename) == 'powerphplist.png') $templateid = 0;
       $query
       = ' select data'
       . ' from ' . $GLOBALS['tables']['templateimage']
