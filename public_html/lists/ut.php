@@ -9,6 +9,7 @@ require_once dirname(__FILE__).'/admin/init.php';
 $_GET = removeXss($_GET);
 $_POST = removeXss($_POST);
 $_REQUEST = removeXss($_REQUEST);
+$_COOKIE = removeXss($_COOKIE);
 
 if ($_SERVER["ConfigFile"] && is_file($_SERVER["ConfigFile"])) {
   include $_SERVER["ConfigFile"];
@@ -32,23 +33,31 @@ require_once dirname(__FILE__)."/admin/defaultconfig.inc";
 require_once dirname(__FILE__).'/admin/connect.php';
 include_once dirname(__FILE__)."/admin/languages.php";
 
-if ($_GET["u"] && $_GET["m"]) {
+if (!empty($_GET["u"]) && !empty($_GET["m"])) {
   $_GET['u'] = preg_replace('/\W/','',$_GET['u']);
   $query = sprintf('select id from %s where uniqid = ?', $GLOBALS['tables']['user']);
   $rs = Sql_Query_Params($query, array($_GET['u']));
-  $userid = Sql_Fetch_Row($rs);
-  if ($userid[0]) {
-    $query
-    = ' update %s set viewed = current_timestamp'
-    . ' where messageid = ? and userid = ?';
-    $query = sprintf($query, $GLOBALS['tables']['usermessage']);
-    Sql_Query_Params($query, array($_GET['m'], $userid[0]));
-    $query
-    = ' update %s set viewed = viewed + 1'
-    . ' where id = ?';
-    $query = sprintf($query, $GLOBALS['tables']['message']);
-    Sql_Query_Params($query, array($_GET['m']));
-  }
+  $useridrow = Sql_Fetch_Row($rs);
+  $userid = $useridrow[0];
+  $messageid = sprintf('%d',$_GET['m']);
+} elseif (!empty($_GET['x'])) {
+  ## new method, that also tracks forward-opens, not active yet.
+  $track = base64_decode($_GET['x']);
+  $track = $track ^ XORmask;
+  @list($userhash,$messageid,$userid) = explode('|',$track);
+}
+
+if ($userid) {
+  $query
+  = ' update %s set viewed = current_timestamp'
+  . ' where messageid = ? and userid = ?';
+  $query = sprintf($query, $GLOBALS['tables']['usermessage']);
+  Sql_Query_Params($query, array($messageid,$userid ));
+  $query
+  = ' update %s set viewed = viewed + 1'
+  . ' where id = ?';
+  $query = sprintf($query, $GLOBALS['tables']['message']);
+  Sql_Query_Params($query, array($messageid));
 }
 
 @ob_end_clean();
