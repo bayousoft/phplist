@@ -24,8 +24,12 @@ if (!isset ($_GET["pi"]))
 # make sure magic quotes are on. Try to switch it on, this may fail
 ini_set("magic_quotes_gpc","on");
 
+/* ##22933
 $GLOBALS["img_tick"] = '<img src="images/tick.gif" alt="Yes" />';
 $GLOBALS["img_cross"] = '<img src="images/cross.gif" alt="No" />';
+*/
+$GLOBALS["img_tick"] = '<span class="yes">Yes</span>';
+$GLOBALS["img_cross"] = '<span class="no">No</span>';
 
 # if keys need expanding with 0-s
 $checkboxgroup_storesize = 1; # this will allow 10000 options for checkboxes
