@@ -646,7 +646,7 @@ $redfont = "";
 $efont = "";
 
 if (!TEST && REGISTER && defined("VERSION")) {
-	if (ereg("dev", VERSION))
+  if (strpos(VERSION,"dev") !== false)
 		$v = "dev";
 	else
 		$v = VERSION;
@@ -734,8 +734,8 @@ if (!function_exists("getconfig")) {
 		}
 		#  print "$item => $value<br/>";
 		# if this is a subpage item, and no value was found get the global one
-		if (!$value && ereg(":", $item)) {
-			list ($a, $b) = split(":", $item);
+		if (!$value && strpos( $item,":") !== false) {
+			list ($a, $b) = explode(":", $item);
 			$value = getConfig($a);
       $_SESSION['config'][$item] = $value;
       return $value;

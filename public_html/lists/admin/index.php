@@ -490,7 +490,7 @@ if (checkAccess($page,"") || $page == 'about') {
 }
 
 # some debugging stuff
-if (ereg("dev",VERSION)) {
+if (strpos(VERSION,"dev") !== false) {
   $now =  gettimeofday();
   $finished = $now["sec"] * 1000000 + $now["usec"];
   $elapsed = $finished - $GLOBALS["pagestats"]["time_start"];

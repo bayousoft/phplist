@@ -759,7 +759,7 @@ FCKConfig.SmileyWindowHeight  = 240 ;
     if ($dir = opendir($smileypath)) {
       while (false !== ($file = readdir($dir)))
       {
-        if (ereg('\.',$file)) {
+        if (strpos($file,'.') !== false) {
           list($fname,$ext) = explode(".",$file);
           if (in_array($ext,$smileyextensions)) {
             $smileys .= '"'.$file.'",';

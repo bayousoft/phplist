@@ -134,7 +134,7 @@ function SaveConfig($item,$value,$editable=1,$ignore_errors = 0) {
 
   Michiel Dethmers, Tincan Ltd 2001,2004
 */
-if (ereg("dev", VERSION))
+if (strpos(VERSION,"dev") !== false)
   $v = "dev";
 else
   $v = VERSION;
