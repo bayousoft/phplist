@@ -190,8 +190,6 @@ $where = ' where ' . join(' and ', $cond);
 $req = Sql_query('select count(*) from ' . $tables['message']. $where);
 $total_req = Sql_Fetch_Row($req);
 $total = $total_req[0];
-$end = isset($start) ? $start + MAX_MSG_PP : MAX_MSG_PP;
-if ($end > $total) $end = $total;
 
 ## Browse buttons table
 $limit = MAX_MSG_PP;
@@ -204,7 +202,7 @@ if (isset($start) && $start > 0) {
 
 print $total. " ".$GLOBALS['I18N']->get("Messages");
 if ($total > MAX_MSG_PP) {
-  print simplePaging("messages$url_keep",$start,$total,MAX_MSG_PP,$GLOBALS['I18N']->get("message"));
+  print simplePaging("messages$url_keep",$start,$total,MAX_MSG_PP);
 }
   
 if ($_GET["type"] == "draft") {

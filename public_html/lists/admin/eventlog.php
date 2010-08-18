@@ -58,20 +58,13 @@ $total = $totalres[0];
 print $total . ' ' .  $GLOBALS['I18N']->get('events') . '<br/>';
 if ($total > MAX_USER_PP) {
   if (isset($start) && $start) {
-    $listing = $GLOBALS['I18N']->get('Listing') . ' ' . $start . ' '.$GLOBALS['I18N']->get('to') . ' ' . ($start + MAX_USER_PP);
     $limit = "limit $start," . MAX_USER_PP;
   } else {
-    $listing = $GLOBALS['I18N']->get('Listing 1 to 50');
     $limit = "limit 0,50";
     $start = 0;
   }
-  printf ('<table class="eventlogListing" border="1"><tr><td colspan="4" align="center">%s</td></tr><tr><td>%s</td><td>%s</td><td>
-          %s</td><td>%s</td></tr></table><hr/>',
-          $listing,
-          PageLink2("eventlog","&lt;&lt;","start=0".$find_url),
-          PageLink2("eventlog","&lt;",sprintf('start=%d',max(0,$start-MAX_USER_PP)).$find_url),
-          PageLink2("eventlog","&gt;",sprintf('start=%d',min($total,$start+MAX_USER_PP)).$find_url),
-          PageLink2("eventlog","&gt;&gt;",sprintf('start=%d',$total-MAX_USER_PP).$find_url));
+  print simplePaging("eventlog$find_url",$start,$total,MAX_USER_PP);
+
   $query = 'select * from %s %s order by entered desc, id desc %s';
   $query = sprintf($query, $tables['eventlog'], $where, $limit);
   $result = Sql_query($query);
@@ -81,8 +74,8 @@ if ($total > MAX_USER_PP) {
   $result = Sql_Query($query);
 }
 
-printf("[ <a href=\"javascript:deleteRec2('%s','%s');\">%s</a> |
-   <a href=\"javascript:deleteRec2('%s','%s');\">%s</a> ] ",
+printf("<a href=\"javascript:deleteRec2('%s','%s');\">%s</a> 
+   <a href=\"javascript:deleteRec2('%s','%s');\">%s</a>",
    $GLOBALS['I18N']->get('Are you sure you want to delete all events older than 2 months?'),
    PageURL2("eventlog","Delete","start=$start&amp;action=deleteprocessed"),
    $GLOBALS['I18N']->get('Delete all (&gt; 2 months old)'),

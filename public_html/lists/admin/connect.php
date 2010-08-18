@@ -1597,13 +1597,13 @@ function printarray($array){
   }
 }
 
-function simplePaging($baseurl,$start,$total,$numpp,$item) {
+function simplePaging($baseurl,$start,$total,$numpp) {
   $end = $start ? $start + $numpp : $numpp;
   if ($end > $total) $end = $total;
   if ($start > 0) {
-    $listing = $GLOBALS['I18N']->get("Listing")." ".$item." $start ".$GLOBALS['I18N']->get("to")." " . $end;
+    $listing = $GLOBALS['I18N']->get("Listing")." $start ".$GLOBALS['I18N']->get("to")." " . $end;
   } else {
-    $listing =  $GLOBALS['I18N']->get("Listing")." ".$item." 1 to ".$end;
+    $listing =  $GLOBALS['I18N']->get("Listing")." 1 to ".$end;
     $start = 0;
   }
 
