@@ -197,21 +197,16 @@ if ($end > $total) $end = $total;
 $limit = MAX_MSG_PP;
 $offset = 0;
 if (isset($start) && $start > 0) {
-  $listing = $GLOBALS['I18N']->get("Listing message")." $start ".$GLOBALS['I18N']->get("to")." " . $end;
   $offset = $start;
 } else {
-  $listing =  $GLOBALS['I18N']->get("Listing message 1 to")." ".$end;
   $start = 0;
 }
-  print $total. " ".$GLOBALS['I18N']->get("Messages");
-if ($total > MAX_MSG_PP)
-  printf ('<table class="messagesListing" border="1"><tr><td colspan="4" align="center">%s</td></tr><tr><td>%s</td><td>%s</td><td>
-          %s</td><td>%s</td></tr></table><hr/>',
-          $listing,
-          PageLink2("messages$url_keep","&lt;&lt;","start=0"),
-          PageLink2("messages$url_keep","&lt;",sprintf('start=%d',max(0,$start-MAX_MSG_PP))),
-          PageLink2("messages$url_keep","&gt;",sprintf('start=%d',min($total,$start+MAX_MSG_PP))),
-          PageLink2("messages$url_keep","&gt;&gt;",sprintf('start=%d',$total-MAX_MSG_PP)));
+
+print $total. " ".$GLOBALS['I18N']->get("Messages");
+if ($total > MAX_MSG_PP) {
+  print simplePaging("messages$url_keep",$start,$total,MAX_MSG_PP,$GLOBALS['I18N']->get("message"));
+}
+  
 if ($_GET["type"] == "draft") {
   print '<p class="delete">'.PageLink2("messages&amp;delete=draft",$GLOBALS['I18N']->get("Delete all draft messages without subject")).'</p>';
 }
