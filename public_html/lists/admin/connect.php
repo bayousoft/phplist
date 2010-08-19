@@ -801,9 +801,9 @@ function topMenu() {
     if (!empty($categoryDetails['toplink'])) {
       $categoryurl = PageUrl2($categoryDetails['toplink'],'',true);
       if ($categoryurl) {
-        $topmenu .=  '<ul><li><h3><a href="'.$categoryurl.'">'.$GLOBALS['I18N']->get($category).'</a></h3><ul>'.$thismenu.'</ul></li></ul>';
+        $topmenu .=  '<ul><li><a href="'.$categoryurl.'">'.$GLOBALS['I18N']->get($category).'</a><ul>'.$thismenu.'</ul></li></ul>';
       } else {
-        $topmenu .=  '<ul><li><h3><span>'.$GLOBALS['I18N']->get($category).$categoryurl.'</span></h3><ul>'.$thismenu.'</ul></li></ul>';
+        $topmenu .=  '<ul><li><span>'.$GLOBALS['I18N']->get($category).$categoryurl.'</span><ul>'.$thismenu.'</ul></li></ul>';
       }
     }
   }
