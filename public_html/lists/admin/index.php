@@ -114,6 +114,8 @@ if (!empty($_SESSION['hasconf']) || Sql_Table_exists($tables["config"],1)) {
     $plugin->activate();
   }
 }
+## send a header for IE
+header('X-UA-Compatible: IE=EmulateIE8');
 
 if (!$ajax) {
   include_once dirname(__FILE__).'/'.$GLOBALS['design'].'pagetop.php';
