@@ -158,8 +158,11 @@ if (!isset($_GET['page'])) {
   $page = $_GET['page'];
 }
 
-preg_match("/([\w_]+)/",$page,$regs);
-$page = $regs[1];
+if (preg_match("/([\w_]+)/",$page,$regs)) {
+  $page = $regs[1];
+} else {
+  $page = '';
+}
 if (!is_file($page.'.php') && !isset($_GET['pi'])) {
   $page = 'home';
 }
@@ -379,7 +382,8 @@ if (isset($_GET['page']) && $_GET['page'] == 'about') {
   $include = 'about.php';
 }
 
-$pageinfo = new pageInfo($include);
+$pageinfo = new pageInfo();
+$pageinfo->fetchInfoContent($include);
 print $pageinfo->show();
 
 if (!empty($_GET['action']) && $_GET['page'] != 'pageaction') {
