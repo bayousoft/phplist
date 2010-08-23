@@ -51,7 +51,6 @@ switch ($data['type']) {
 }
 
 ?>
-<script language="Javascript" src="js/jslib.js" type="text/javascript"></script>
 
 <br/><?php echo PageLink2("editattributes",$GLOBALS['I18N']->get('AddNew'),"id=$id&amp;action=new")?> <?php echo $data["name"]?>
   <br/><a href="javascript:deleteRec2('<?php echo $GLOBALS['I18N']->get('SureToDeleteAll');?>','<?php echo PageURL2("editattributes",$GLOBALS['I18N']->get('DelAll'),"id=$id&amp;deleteall=yes")?>');"><?php echo $GLOBALS['I18N']->get('DelAll');?></a>

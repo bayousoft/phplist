@@ -1,7 +1,7 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 
-echo '<script language="Javascript" src="js/jslib.js" type="text/javascript"></script><hr/><p class="information">';
+echo '<hr/><p class="information">';
 
 $access = accessLevel("sendprepared");
 

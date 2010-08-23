@@ -118,7 +118,7 @@ if (!empty($_SESSION['hasconf']) || Sql_Table_exists($tables["config"],1)) {
 header('X-UA-Compatible: IE=EmulateIE8');
 
 if (!$ajax) {
-  include_once dirname(__FILE__).'/'.$GLOBALS['design'].'pagetop.php';
+  include_once dirname(__FILE__).'/ui/'.$GLOBALS['ui'].'/pagetop.php';
 }
 
 if ($GLOBALS["commandline"]) {
@@ -296,7 +296,7 @@ if (LANGUAGE_SWITCH && empty($logoutontop) && !$ajax) {
 
 $include = '';
 if (!$ajax) {
-  include $GLOBALS['design']."header.inc";
+  include 'ui/'.$GLOBALS['ui']."/header.inc";
 }
 if ($page != '' && $page != 'install') {
   if ($IsCommandlinePlugin) {
@@ -541,7 +541,7 @@ if ($ajax || (isset($GLOBALS["commandline"]) && $GLOBALS["commandline"])) {
   if (!$GLOBALS['compression_used']) {
     @ob_end_flush();
   }
-  include_once $GLOBALS['design']."footer.inc";
+  include_once 'ui/'.$GLOBALS['ui']."/footer.inc";
 }
 
 function parseCline() {

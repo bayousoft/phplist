@@ -15,9 +15,6 @@ if (isset($_POST['defaulttemplate'])) {
 
 ?>
 
-<script language="Javascript" src="js/jslib.js" type="text/javascript"></script>
-
-
 <?php
 
 $req = Sql_Query("select * from {$tables["template"]} order by listorder");

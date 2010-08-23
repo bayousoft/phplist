@@ -27,11 +27,12 @@ $GLOBALS['compression_used'] = $zlib_compression || $gzhandler;
 $GLOBALS['language_module'] = $language_module;
 $GLOBALS['database_module'] = $database_module;
 if (isset($GLOBALS['design'])) {
+  $GLOBALS['ui'] = $GLOBALS['design'];
 #@todo 
 #  $GLOBALS['design'] = basename($GLOBALS['design']);
 }
-if (!isset($GLOBALS['design']) || !is_dir(dirname(__FILE__).'/'.$GLOBALS['design'])) {
-  $GLOBALS['design'] = '';
+if (!isset($GLOBALS['ui']) || !is_dir(dirname(__FILE__).'/ui/'.$GLOBALS['ui'])) {
+  $GLOBALS['ui'] = 'orange';
 }
 $GLOBALS['adodb_inc_file'] = $adodb_inc_file;
 $GLOBALS['show_dev_errors'] = $show_dev_errors;

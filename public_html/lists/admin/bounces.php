@@ -1,7 +1,6 @@
 <?php
 
 require_once dirname(__FILE__).'/accesscheck.php';
-print '<script language="javascript" type="text/javascript" src="js/jslib.js"></script>';
 
 if (isset($_REQUEST['delete']) && $_REQUEST['delete']) {
   # delete the index in delete
