@@ -290,7 +290,7 @@ function Error($msg) {
     clineError($msg);
     return;
   }
-  print '<div class="error" align="center">'.$GLOBALS["I18N"]->get("error").": $msg </div>";
+  print '<div class="error">'.$GLOBALS["I18N"]->get("error").": $msg </div>";
 
   $GLOBALS["mail_error"] .= 'Error: '.$msg."\n";
   $GLOBALS["mail_error_count"]++;
