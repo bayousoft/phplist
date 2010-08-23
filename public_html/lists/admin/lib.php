@@ -298,7 +298,7 @@ function sendMailOriginal ($to,$subject,$message,$header = "",$parameters = "") 
 
   # version 4.2.3 (and presumably up) does not allow the fifth parameter in safe mode
   # make sure not to send out loads of test emails to ppl when developing
-  if (!ereg("dev",VERSION)) {
+  if (strpos(VERSION,"dev") !== false) {
     if ($v > "4.0.5" && !ini_get("safe_mode")) {
       if (mail($to,$subject,$message,$header,$parameters))
         return 1;
@@ -325,7 +325,7 @@ function sendMailOriginal ($to,$subject,$message,$header = "",$parameters = "") 
         }
       }
     } else {
-      print "Error: Running CVS version, but developer_email not set";
+      print "Error: Running DEV version, but developer_email not set";
     }
   }
 }
@@ -344,7 +344,7 @@ function sendMailPhpMailer ($to,$subject,$message) {
 
 #  print "Sending $to from $fromemail<br/>";
 
-  if (!ereg("dev",VERSION)) {
+  if (strpos(VERSION,"dev") !== false) {
     $mail = new PHPlistMailer('systemmessage',$to);
     $destinationemail = $to;
     $mail->add_text($message);
@@ -361,7 +361,7 @@ function sendMailPhpMailer ($to,$subject,$message) {
         $destinationemail = $GLOBALS["developer_email"];
       }
     } else {
-      print "Error: Running CVS version, but developer_email not set";
+      print "Error: Running DEV version, but developer_email not set";
     }
   }
   # 0008549: message envelope not passed to php mailer,
