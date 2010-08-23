@@ -22,13 +22,14 @@
 <meta name="Powered-By" content="phplist version <?php echo VERSION?>" />
 <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $GLOBALS['strCharSet']?>" />
 <link rel="SHORTCUT ICON" href="./images/phplist.ico" />
-<link href="styles/phplist.css" type="text/css" rel="stylesheet" />
-<link href="styles/jquery-ui-1.8.1.all.css" rel="stylesheet" type="text/css"/>
-<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="js/jquery-ui-1.8.1.all.min.js"></script>
+<link href="ui/orange/styles/phplist.css" type="text/css" rel="stylesheet" />
+<link href="ui/orange/styles/jquery-ui-1.8.1.all.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="ui/orange/js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="ui/orange/js/jquery-ui-1.8.1.all.min.js"></script>
 <!--script type="text/javascript" src="js/jquery.tools.1.2.2.min.js"></script-->
-<script type="text/javascript" src="js/jquery.tools.scrollable.js"></script>
-<script language="Javascript" type="text/javascript" src="js/phplist.js"></script>
+<script type="text/javascript" src="ui/orange/js/jquery.tools.scrollable.js"></script>
+<script language="Javascript" type="text/javascript" src="ui/orange/js/jslib.js"></script>
+<script language="Javascript" type="text/javascript" src="ui/orange/js/phplist.js"></script>
 
 <?php
 if (isset($GLOBALS['config']['head'])) {
