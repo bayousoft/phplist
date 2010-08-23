@@ -1134,7 +1134,7 @@ function upgradeTable($table,$tablestructure) {
 }
 
 function Help($topic, $text = '?') {
-  return sprintf('<span class="helplink"><a href="help/?topic=%s" class="helpdialog" target="_blank">%s</a></span>', $topic, $text);
+  return sprintf('<a href="help/?topic=%s" class="helpdialog" target="_blank">%s</a>', $topic, $text);
 }
 
 # Debugging system, needs $debug = TRUE and $verbose = TRUE or $debug_log = {path} in config.php
