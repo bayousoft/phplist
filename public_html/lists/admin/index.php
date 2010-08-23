@@ -379,22 +379,39 @@ if (isset($_GET['page']) && $_GET['page'] == 'about') {
   $include = 'about.php';
 }
 
-# include some information
-if (empty($_GET['pi'])) {
-  if (is_file("info/".$_SESSION['adminlanguage']['info']."/$include")) {
-    @include "info/".$_SESSION['adminlanguage']['info']."/$include";
+$noteid = basename($include,'.php');
+if (isset($_GET['note'.$noteid]) && $_GET['note'.$noteid] == 'hide') {
+  if (!isset($_SESSION['suppressinfo']) || !is_array($_SESSION['suppressinfo'])) {
+    $_SESSION['suppressinfo'] = array();
+  }
+  $_SESSION['suppressinfo'][$noteid] = 'hide';
+}
+
+if (!$ajax && empty($_SESSION['suppressinfo'][$noteid])) {
+  
+  print '<div class="note '.$noteid.'">';
+  print '<a href="./?page='.$page.'&amp;note'.$noteid.'=hide" class="hide" />'.$GLOBALS['I18N']->get('Hide').'</a>';
+
+  # include some information
+  if (empty($_GET['pi'])) {
+    if (is_file("info/".$_SESSION['adminlanguage']['info']."/$include")) {
+      @include "info/".$_SESSION['adminlanguage']['info']."/$include";
+    } else {
+      @include "info/en/$include";
+    }
+
+  } elseif (isset($_GET['pi']) && !empty($GLOBALS['plugins'][$_GET['pi']]) && is_object($GLOBALS['plugins'][$_GET['pi']])) {
+    if (is_file($GLOBALS['plugins'][$_GET['pi']]->coderoot.'/info/'.$_SESSION['adminlanguage']['info']."/$include")) {
+      @include $GLOBALS['plugins'][$_GET['pi']]->coderoot .'/info/'.$_SESSION['adminlanguage']['info']."/$include";
+    }
   } else {
     @include "info/en/$include";
+  #  print "Not a file: "."info/".$adminlanguage["info"]."/$include";
   }
-
-} elseif (isset($_GET['pi']) && !empty($GLOBALS['plugins'][$_GET['pi']]) && is_object($GLOBALS['plugins'][$_GET['pi']])) {
-  if (is_file($GLOBALS['plugins'][$_GET['pi']]->coderoot.'/info/'.$_SESSION['adminlanguage']['info']."/$include")) {
-    @include $GLOBALS['plugins'][$_GET['pi']]->coderoot .'/info/'.$_SESSION['adminlanguage']['info']."/$include";
-  }
-} else {
-  @include "info/en/$include";
-#  print "Not a file: "."info/".$adminlanguage["info"]."/$include";
+  print '</div>'; ## end of info div
 }
+
+
 
 if (!empty($_GET['action']) && $_GET['page'] != 'pageaction') {
   $action = basename($_GET['action']);
