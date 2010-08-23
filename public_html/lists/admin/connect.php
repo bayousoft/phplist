@@ -374,7 +374,11 @@ function Info($msg) {
     print "\n".strip_tags($GLOBALS["I18N"]->get("information").": ".$msg)."\n";
     @ob_start();
   } else {
-    print '<div class="info">'.$GLOBALS["I18N"]->get("information").": $msg </div>";
+    ## generate some ID for the info div
+    $id = substr(md5($msg),0,15);
+    $pageinfo = new pageInfo($id);
+    $pageinfo->setContent($GLOBALS["I18N"]->get("information").": $msg");
+    print $pageinfo->show();
   }
 }
 
