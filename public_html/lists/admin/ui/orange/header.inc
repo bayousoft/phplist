@@ -33,6 +33,7 @@
 <td><div align="left">
 <br />
 <?php
+include dirname(__FILE__).'/mainmenu.php';
 print topMenu();
 print $languageswitcher;
 ?>
