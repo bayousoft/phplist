@@ -24,7 +24,7 @@ if (!empty($_REQUEST['firstinstall']) && empty($_REQUEST['adminemail'])) {
   if (!ENCRYPT_ADMIN_PASSWORDS) {
     */
     print '<p>'.$GLOBALS['I18N']->get('The initial <i>login name</i> will be' ).' "admin"'.'</p>';
-    print '<p>'.$GLOBALS['I18N']->get('Please enter the password you want to use for this account.').'</p>';
+    print '<p>'.$GLOBALS['I18N']->get('Please enter the password you want to use for this account.').' ('.$GLOBALS['I18N']->get('minimum of 8 characters.').')</p>';
     print '<input type="text" name="adminpassword" value="" size="25" id="initialadminpassword" /><br/><br/>';
 /*
   } 
@@ -127,7 +127,7 @@ if ($success) {
   $body = '
     Version: '.VERSION."\r\n".
    ' Url: '.getConfig("website").$pageroot."\r\n";
-  printf('<p class="information">'.$GLOBALS['I18N']->get('Success').': <a href="mailto:phplist2@tincan.co.uk?subject=Successful installation of phplist&body=%s">'.$GLOBALS['I18N']->get('Tell us about it').'</a>. </p>', $body);
+  printf('<p class="information">'.$GLOBALS['I18N']->get('Success').': <a class="button" href="mailto:phplist2@tincan.co.uk?subject=Successful installation of phplist&body=%s">'.$GLOBALS['I18N']->get('Tell us about it').'</a>. </p>', $body);
   printf('<p class="information">
     '.$GLOBALS['I18N']->get("Please make sure to read the file README.security that can be found in the zip file.").'</p>');
   printf('<p class="information">
@@ -137,10 +137,10 @@ if ($success) {
   if (ENCRYPT_ADMIN_PASSWORDS && !empty($adminid)) {
     print sendAdminPasswordToken($adminid);
   }
-  print '<p class="button">'.$GLOBALS['I18N']->get("Continue with")." ".PageLink2("setup",$GLOBALS['I18N']->get("phpList Setup"))."</p>";
+  print '<p>'.$GLOBALS['I18N']->get("Continue with")." ".PageLinkButton("setup",$GLOBALS['I18N']->get("phpList Setup"))."</p>";
 } else {
- print ('<div class="initialiseOptions"><ul><li>'.$GLOBALS['I18N']->get("Maybe you want to")." ".PageLink2("upgrade",$GLOBALS['I18N']->get("Upgrade")).' '.$GLOBALS['I18N']->get("instead?").'</li>
-    <li>'.PageLink2("initialise",$GLOBALS['I18N']->get("Force Initialisation"),"force=yes").' '.$GLOBALS['I18N']->get("(will erase all data!)").' '."</li></ul></div>\n");
+ print ('<div class="initialiseOptions"><ul><li>'.$GLOBALS['I18N']->get("Maybe you want to")." ".PageLinkButton("upgrade",$GLOBALS['I18N']->get("Upgrade")).' '.$GLOBALS['I18N']->get("instead?").'</li>
+    <li>'.PageLinkButton("initialise",$GLOBALS['I18N']->get("Force Initialisation"),"force=yes").' '.$GLOBALS['I18N']->get("(will erase all data!)").' '."</li></ul></div>\n");
 }
 /*
 if ($_GET["firstinstall"] || $_SESSION["firstinstall"]) {
