@@ -3,16 +3,16 @@ require_once dirname(__FILE__).'/accesscheck.php';
 
 
 $attributes = array();
-ob_end_flush();
+@ob_end_flush();
 
 function readentry($file) {
-  if (ereg('\.\.',$file)) return;
-  if (!ereg('data/',$file)) return;
+  if (preg_match('/\.\./',$file)) return;
+  if (!preg_match('/data/',$file)) return;
   $fp = fopen($file,"r");
   $found = "";
   while (!feof ($fp)) {
     $buffer = fgets($fp, 4096);
-    if (!ereg("#",$buffer)) {
+    if (strpos($buffer,"#") === false) {
       $found = $buffer;
       fclose($fp);
       return $found;
@@ -38,7 +38,7 @@ if (!empty($_POST['selected']) && is_array($_POST['selected'])) {
     list($name,$desc) = explode(":",$entry);
     print "<br/><br/>".$GLOBALS['I18N']->get('loading')." $desc<br/>\n";
     $lc_name = str_replace(" ","", strtolower(str_replace(".txt","",$val)));
-    $lc_name = ereg_replace("[^[:alnum:]]","",$lc_name);
+    $lc_name = preg_replace("/[\W]/","",$lc_name);
 
     if ($lc_name == "") Fatal_Error($GLOBALS['I18N']->get('name_empty')." $lc_name");
     Sql_Query("select * from {$tables['attribute']} where tablename = \"$lc_name\"");
@@ -55,7 +55,7 @@ if (!empty($_POST['selected']) && is_array($_POST['selected'])) {
     $header = "";
     while (!feof ($fp)) {
       $buffer = fgets($fp, 4096);
-      if (!ereg("#",$buffer)) {
+      if (strpos($buffer,"#") === false) {
         if (!$header)
           $header = $buffer;
         else if (trim($buffer) != "")
@@ -66,7 +66,7 @@ if (!empty($_POST['selected']) && is_array($_POST['selected'])) {
   }
   print $GLOBALS['I18N']->get('done')."<br/><br/>";
   
-  print PageLink2("attributes",$GLOBALS['I18N']->get('return to editing attributes'));
+  print PageLinkButton("attributes",$GLOBALS['I18N']->get('return to editing attributes'));
   
 #@@@@ not sure about this one:  print '<p class="button">'.PageLink2("attributes",$GLOBALS['I18N']->get('continue')).'</p>';
 
