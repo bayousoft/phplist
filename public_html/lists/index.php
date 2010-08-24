@@ -68,9 +68,9 @@ if (!isset($_POST) && isset($HTTP_POST_VARS)) {
   by the developers  but also helps build interest, traffic and use of
   PHPlist, which is beneficial to it's future development.
 
-  Michiel Dethmers, Tincan Ltd 2000-2008
+  Michiel Dethmers, Tincan Ltd 2000-2010
 */
-include "admin/pagetop.php";
+include 'admin/ui/'.$GLOBALS['ui'].'/publicpagetop.php';
 
 if (isset($_GET['id'])) {
   $id = sprintf('%d',$_GET['id']);
