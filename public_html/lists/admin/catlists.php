@@ -24,10 +24,10 @@ if (!empty($subselect)) {
 $subselect .= '(category is null or category = "")';
 
 $categories = listCategories();
-print '<p>'.PageLink2('configure&id=list_categories',$I18N->get('Configure Categories')).'</p>';
 
 if (!sizeof($categories)) {
   print $I18N->get('No list categories have been defined');
+  print '<p>'.PageLinkButton('configure&id=list_categories',$I18N->get('Configure Categories')).'</p>';
   print '<br/>';
   return;
 }
