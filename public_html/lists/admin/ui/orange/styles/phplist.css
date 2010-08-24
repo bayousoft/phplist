@@ -1,5 +1,6 @@
 @import url(shader.css);
 @import url(menu.css);
+@import url(tabs.css);
 
 #mainContent {
   width: 70%; float: left;
