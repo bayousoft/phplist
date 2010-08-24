@@ -1,44 +1,5 @@
 <?php
-/*
-function listArray($array,$indent = 0) {
-	if (!is_array($array))
-  	return $array;
-	if ($indent)
-	  $prefix = str_repeat(" ",$indent);
-  else
-  	$prefix = "";
-	$res = "\n".$prefix . "### start array ###";
-  while (list($key,$val) = each ($array)) {
-    $res .= "\n".$prefix ."$key => ";
-    if (is_array($val) && $key != "creditcard" && $key != "cardnumber" && $key != "card_number") {
-      $res .= listArray($val,$indent+2);
-    } else {
-      $res .= $prefix . $val;
-    }
-    $res .= "\n";
-  }
-  $res .= "\n### end array ###\n";
-  return $res;
-}
 
-
-function backtrace() {
-	$msg = "";
-  if (function_exists("debug_backtrace")) {
-	  $debug = debug_backtrace();
-  	while (list($key,$val) = each($debug)) {
-	  	$msg .= $key .'=>'."<br/>\n";
-      if (is_array($val))
-      	$msg .= listArray($val);
-      else
-      	$msg .= $val;
-    }
-  } else {
-  	return 'backtrace not available';
-  }
-  return $msg;
-}
-*/
 if (!function_exists("checkAccess") && !isset($GLOBALS["installer"])) {
 #	print backtrace();
   print "Invalid Request";
