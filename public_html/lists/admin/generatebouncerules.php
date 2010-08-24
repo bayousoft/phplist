@@ -137,13 +137,15 @@ while ($row = sql_Fetch_array($req)) {
     $notmatched++;
   }
 }
-print '<br/>';
-print sizeof($rules).' '.$GLOBALS['I18N']->get('new rules found');
-print '<br/>';
-print $notmatched.' '.$GLOBALS['I18N']->get('bounces not matched');
-print '<br/>';
-print $existmatch.' '.$GLOBALS['I18N']->get('bounces matched to existing rules');
-print $next;
+
+print '<ul>';
+print '<li>'.sizeof($rules).' '.$GLOBALS['I18N']->get('new rules found').'</li>';
+print '<li>'.$notmatched.' '.$GLOBALS['I18N']->get('bounces not matched').'</li>';
+print '<li>'.$existmatch.' '.$GLOBALS['I18N']->get('bounces matched to existing rules').'</li>';
+if ($next) {
+  print '<li>'.$next.'</li>';
+}
+print '</ul>';
 
 print '<script language="Javascript" type="text/javascript"> finish(); </script>';
 releaseLock($process_id);
