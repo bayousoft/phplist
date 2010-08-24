@@ -7,14 +7,14 @@ include dirname(__FILE__) .'/date.php';
 
 function quoteEnclosed($value,$col_delim = "\t",$row_delim = "\n") {
   $enclose = 0;
-  if (ereg('"',$value)) {
-    $value = ereg_replace('"','""',$value);
+  if (strpos($value,'"') !== false) {
+    $value = str_replace('"','""',$value);
     $enclose = 1;
   }
-  if (ereg($col_delim,$value)) {
+  if (strpos($value,$col_delim) !== false) {
     $enclose = 1;
   }
-  if (ereg($row_delim,$value)) {
+  if (strpos($value,$row_delim) !== false) {
     $enclose = 1;
   }
   if ($enclose) {
@@ -90,9 +90,9 @@ if (isset($_POST['processexport'])) {
   if (is_array($_POST['cols'])) {
     while (list ($key,$val) = each ($DBstruct["user"])) {
       if (in_array($key,$_POST['cols'])) {
-        if (!ereg("sys",$val[1])) {
+        if (strpos($val[1],"sys") === false) {
           print $val[1].$col_delim;
-        } elseif (ereg("sysexp:(.*)",$val[1],$regs)) {
+        } elseif (preg_match("/sysexp:(.*)/",$val[1],$regs)) {
           print $regs[1].$col_delim;
         }
       }
@@ -201,9 +201,9 @@ while ($row = Sql_Fetch_Array($req)) {
 <?php
   $cols = array();
   while (list ($key,$val) = each ($DBstruct["user"])) {
-    if (!ereg("sys",$val[1])) {
+    if (strpos($val[1],"sys") === false) {
       printf ("\n".'<tr><td><input type=checkbox name="cols[]" value="%s" checked></td><td>%s</td></tr>',$key,$val[1]);
-    } elseif (ereg("sysexp:(.*)",$val[1],$regs)) {
+    } elseif (preg_match("/sysexp:(.*)/",$val[1],$regs)) {
       printf ("\n".'<tr><td><input type=checkbox name="cols[]" value="%s" checked></td><td>%s</td></tr>',$key,$regs[1]);
     }
   }
