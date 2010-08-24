@@ -1,5 +1,5 @@
 
-var busyImage = '<img src="styles/images/ui-anim_basic_16x16.gif" with="16" height="16" border="0">';
+var busyImage = '<img src="ui/orange/styles/images/ui-anim_basic_16x16.gif" with="16" height="16" border="0">';
 
 function urlParameter( name, link) {
   name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
