@@ -191,6 +191,10 @@ function formStart($additional="") {
 
 function checkAccess($page) {
   global $tables;
+  if (!$GLOBALS["commandline"] && isset($GLOBALS['disallowpages']) && in_array($page,$GLOBALS['disallowpages'])) {
+    return 0;
+  }
+  
   if (!$GLOBALS["require_login"] || isSuperUser())
     return 1;
   # check whether it Is a page to protect
@@ -771,7 +775,9 @@ function topMenu() {
   if ($_SESSION["logindetails"]['superuser']) {
     if (sizeof($GLOBALS["plugins"])) {
       foreach ($GLOBALS["plugins"] as $pluginName => $plugin) {
-        array_push($GLOBALS['pagecategories']['plugins']['menulinks'],'main&pi='.$pluginName);
+        if (isset($GLOBALS['pagecategories']['plugins'])) {
+          array_push($GLOBALS['pagecategories']['plugins']['menulinks'],'main&pi='.$pluginName);
+        }
         $menulinks = $plugin->menuLinks;
         foreach ($menulinks as $link => $linkDetails) {
           if (isset($GLOBALS['pagecategories'][$linkDetails['category']])) {
@@ -866,6 +872,15 @@ function PageLinkAjax ($name,$desc="",$url="") {
   return $link;
 }
 
+function PageLinkButton($name,$desc="",$url="") {
+  ## as PageLink2, but add the option to ajax it in a popover window
+  $link = PageLink2($name,$desc,$url);
+  if ($link) {
+    $link = str_replace('<a ','<div><a class="button"',$link);
+    $link .= '</div>';
+  }
+  return $link;
+}
 
 function SidebarLink($name,$desc,$url="") {
   if ($url)
