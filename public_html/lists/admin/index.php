@@ -333,7 +333,7 @@ if ($GLOBALS["require_login"] && $page != "login") {
   }
 
   if ($page != "logout" && empty($logoutontop) && !$ajax) {
-    print '<div class="right">'.PageLink2("logout",$GLOBALS['I18N']->get('logout')).'</div>';
+  #  print '<div class="right">'.PageLink2("logout",$GLOBALS['I18N']->get('logout')).'</div>';
     if (!empty($_SESSION['firstinstall']) && $page != 'setup') {
       print '<div class="info right">'.PageLink2("setup",$GLOBALS['I18N']->get('Continue Configuration')).'</div>';
     }
