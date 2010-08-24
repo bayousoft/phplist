@@ -47,7 +47,18 @@ switch ($access) {
     break;
 }
 
-print PageLink2('catlists',$I18N->get('Categorise lists'));
+print PageLink2('catlists',$I18N->get('Categorise lists')).'<br/>';
+$canaddlist = false;
+if ($GLOBALS['require_login'] && !isSuperUser()) {
+  $numlists = Sql_Fetch_Row_query("select count(*) from {$tables['list']} where owner = " . $_SESSION['logindetails']['id']);
+  if ($numlists[0] < MAXLIST) {
+    print PageLink2("editlist",$GLOBALS['I18N']->get('Add a list'));
+    $canaddlist = true;
+  }
+} else {
+  print PageLink2('editlist',$GLOBALS['I18N']->get('Add a list'));
+  $canaddlist = true;
+}
 
 if (isset($_GET['delete'])) {
   $delete = sprintf('%d',$_GET['delete']);
@@ -80,9 +91,14 @@ if (sizeof($aListCategories)) {
   } else {
     $current = '';
   }
+/*
+ *
+ * hmm, if lists are marked for a category, which is then removed, this would
+ * cause them to not show up
   if (!in_array($current,$aConfiguredListCategories)) {
     $current = '';#$aListCategories[0];
   }
+*/
   $_SESSION['last_list_category'] = $current;
   
   if ($subselect == '') {
@@ -242,15 +258,10 @@ if (!$some) {
 ?>
 
 </form>
-<p class="button">
+<p>
 <?php
-if ($GLOBALS['require_login'] && !isSuperUser()) {
-  $numlists = Sql_Fetch_Row_query("select count(*) from {$tables['list']} where owner = " . $_SESSION['logindetails']['id']);
-  if ($numlists[0] < MAXLIST) {
-    print PageLink2("editlist",$GLOBALS['I18N']->get('Add a list'));
-  }
-} else {
-  print PageLink2('editlist',$GLOBALS['I18N']->get('Add a list'));
+if ($canaddlist) {
+  print PageLinkButton('editlist',$GLOBALS['I18N']->get('Add a list'));
 }
 ?>
 </p>
