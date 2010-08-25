@@ -1655,6 +1655,7 @@ function Paging($base_url,$start,$total,$numpp = 10,$label = "") {
   } else {
     $labeltitle = $GLOBALS['config']['paginglabeltitle'];
   }
+  if ($total < $numpp) return '';
 
   for ($i = 0;$i<=$total;$i+=$numpp) {
     if ($i == $start)
