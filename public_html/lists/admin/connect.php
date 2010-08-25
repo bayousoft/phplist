@@ -1286,7 +1286,7 @@ function formatDate ($date,$short = 0) {
   $year = substr($date,0,4);
   $month = substr($date,5,2);
   $day = substr($date,8,2);
-  $day = ereg_replace("^0","",$day);
+  $day = sprintf('%d',$day);
 
   if ($date) {
     if ($short)
