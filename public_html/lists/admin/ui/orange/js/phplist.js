@@ -106,6 +106,19 @@ $(".helpdialog").click(function() {
 $(".closedialog").click(function() {
   $("#dialog").dialog('close');
 });
+						   
+//dropbuttons						   
+$("div.dropButton img.arrow").click(function(){ 					
+		submenu = $(this).parent().parent().find("div.submenu");		
+		if(submenu.css('display')=="block"){
+			submenu.hide(); 		
+			$(this).attr('src','ui/orange/images/menuarrow.png');									
+		} else {
+			submenu.fadeIn(); 		
+			$(this).attr('src','ui/orange/images/menuarrow_active.png');	
+		}	
+		return false;					
+})						   
 
 
 /* hmm, doesn't work yet, but would be nice at some point

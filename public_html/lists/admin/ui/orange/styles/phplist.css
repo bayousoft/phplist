@@ -445,35 +445,51 @@ text-transform: capitalize;
 
 .dropButton {
 display:inline;
-position:relative;
+position:relative; /* check */
+margin: 5px 0; 
+border-color: #BBBBBB #AAAAAA #AAAAAA #BBBBBB;
+border-style: solid;
+border-width: 1px;
+-moz-border-radius: 2px;
+-webkit-border-radius: 2px;
+border-radius: 2px;
+padding: 3px 6px;
+background:url("../images/bg-button.gif") repeat-x 0 0 #DDDDDD;
+color: #333333;
+font-size: 14px; 
+font-family: Helvetica, Arial, sans-serif;
+text-transform: capitalize
 }
+
+.dropButton img.arrow {
+position: relative; padding: 0 0 0 .75em; top: .2em;
+}
+
+.dropButton a:hover {text-decoration: none!important}
 
 .button img {
 padding:0 0 0 7px;
 }
 
 .dropButton .submenu {
-background:none repeat scroll 0 0 #F9F9F9;
-border-color:#BBBBBB #BBBBBB #AAAAAA #AAAAAA;
-border-style:solid;
-border-width:1px;
-display:none;
-left:0;
-margin-top:16px;
-min-width:120px;
+background: none repeat scroll 0 0 #F9F9F9;
+border-color: #BBBBBB #BBBBBB #AAAAAA #AAAAAA;
+border-style: solid;
+border-width: 1px;
+display: none;
+left:-1px;
+top: 100%;
 padding:4px;
 position:absolute;
-top:0;
 z-index:100;
 }
 
 .dropButton .submenu a {
-border-bottom:1px solid #CCCCCC;
-display:block;
-font-family:Arial,Helvetica,sans-serif;
-font-size:11px;
+border-bottom: 1px solid #CCCCCC;
+display: block;
+font-family: Arial,Helvetica,sans-serif;
+font-size:12px;
 padding: 4px;
 }
 
 /* */
-
