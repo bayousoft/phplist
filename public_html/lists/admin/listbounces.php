@@ -38,12 +38,14 @@ $total = Sql_Num_Rows($req);
 $limit = '';
 $numpp = 150;
 
-$s = empty($_GET['s']) ? 0 : sprintf('%d',$_GET['s']);
+$start = empty($_GET['start']) ? 0 : sprintf('%d',$_GET['start']);
 if ($total > 500 && !$download) {
 #  print Paging2('listbounces&amp;id='.$listid,$total,$numpp,'Page');
-  $listing = sprintf($GLOBALS['I18N']->get("Listing %s to %s"),$s,$s+$numpp);
-  $limit = "limit $s,".$numpp;
+ # $listing = sprintf($GLOBALS['I18N']->get("Listing %s to %s"),$s,$s+$numpp);
+  $limit = "limit $start,".$numpp;
   print $total. " ".$GLOBALS['I18N']->get(" Total")."</p>";
+  print simplePaging('listbounces&amp;id='.$listid,$start,$total,$numpp);
+/*
   printf ('<table class="bouncesListing" border="1"><tr><td colspan="4" align="center">%s</td></tr><tr><td>%s</td><td>%s</td><td>
           %s</td><td>%s</td></tr></table><hr/>',
           $listing,
@@ -51,6 +53,7 @@ if ($total > 500 && !$download) {
           PageLink2('listbounces&amp;id='.$listid,"&lt;",sprintf('s=%d',max(0,$s-$numpp))),
           PageLink2('listbounces&amp;id='.$listid,"&gt;",sprintf('s=%d',min($total,$s+$numpp))),
           PageLink2('listbounces&amp;id='.$listid,"&gt;&gt;",sprintf('s=%d',$total-$numpp)));
+*/
 
   $query .= $limit;
   $req = Sql_Query_Params($query, array($listid));
@@ -75,6 +78,7 @@ if ($download) {
 }
 
 $ls = new WebblerListing($GLOBALS['I18N']->get('Bounces on').' '.listName($listid));
+$ls->noShader();
 while ($row = Sql_Fetch_Array($req)) {
   $userdata = Sql_Fetch_Array_Query(sprintf('select * from %s where id = %d',
     $GLOBALS['tables']['user'],$row['userid']));
