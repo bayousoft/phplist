@@ -176,7 +176,6 @@ if ($list)
 ?>
 <form method="post" action="">
 
-<br/><br/>
 <table class="exportForm">
 
 <tr><td><?php echo $GLOBALS['I18N']->get('DateFrom');?></td><td><?php echo $from->showInput("","",$fromdate);?></td></tr>
