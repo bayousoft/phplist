@@ -377,11 +377,12 @@ if ($send || $sendtest || $prepare || $save) {
     include "sendemaillib.php";
 
     // OK, let's get to sending!
-    $emailaddresses = split('[/,,/;]', $messagedata["testtarget"]);
+    $emailaddresses = explode(',', $messagedata["testtarget"]);
  //   var_dump($messagedata);exit;
 
     foreach ($emailaddresses as $address) {
       $address = trim($address);
+      if (empty($address)) continue;
       $query
       = ' select id, email, uniqid, htmlemail, rssfrequency, confirmed'
       . ' from %s'
@@ -456,6 +457,9 @@ if (!$done) {
     $tabs = new WebblerTabs();
     $tabbaseurl = preg_replace('/&tab=[^&]+/','',$baseurl);
     $tabs->addTab($GLOBALS['I18N']->get("Content"),$tabbaseurl.'&amp;tab=Content');
+    if (USE_MANUAL_TEXT_PART) {
+      $tabs->addTab($GLOBALS['I18N']->get("Text"),$tabbaseurl.'&amp;tab=Text');
+    }
     if (FORWARD_ALTERNATIVE_CONTENT) {
       $tabs->addTab($GLOBALS['I18N']->get("Forward"),$tabbaseurl.'&amp;tab=Forward');
     }
@@ -773,7 +777,7 @@ if (!$done) {
   $forwardcontent .= $tmp;
 
   if (USE_MANUAL_TEXT_PART) {
-  $maincontent .= '<div>
+  $textcontent = '<div>
     <h3>'.Help("plaintextversion").' '.$GLOBALS['I18N']->get("plaintextversion").'</h3>
     <textarea name="textmessage" cols="65" rows="20">'.$messagedata["textmessage"].'</textarea>
   </div>';
@@ -948,6 +952,7 @@ if (!$done) {
   switch ($_GET["tab"]) {
     case "Attach": print $att_content; break;
  //   case "Criteria": print $criteria_content; break; // moved to plugin
+    case "Text": print $textcontent; break;
     case "Format": print $formatting_content;break;
     case "Scheduling": print $scheduling_content;break;
 //    case "RSS": print $rss_content;break;            //Obsolete by rssmanager plugin
