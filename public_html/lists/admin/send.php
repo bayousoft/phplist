@@ -88,13 +88,14 @@ if (!empty($_GET['delete'])) {
 $req = Sql_Query(sprintf('select id,entered,subject,unix_timestamp(current_timestamp) - unix_timestamp(entered) as age from %s where status = "draft" %s order by entered desc',$GLOBALS['tables']['message'],$ownership));
 $numdraft = Sql_Num_Rows($req);
 if ($numdraft > 0 && !isset($_GET['id']) && !isset($_GET['new'])) {
-  print '<p class="button">'.PageLink2('send&amp;new=1',$I18N->get('start a new message')).'</p>';
+  print '<p>'.PageLinkButton('send&amp;new=1',$I18N->get('start a new message')).'</p>';
   print '<p><h3>'.$I18N->get('Choose an existing draft message to work on').'</h3></p><br/>';
   $ls = new WebblerListing($I18N->get('Draft messages'));
+  $ls->noShader();
   while ($row = Sql_Fetch_Array($req)) {
     $element = '<!--'.$row['id'].'-->'.$row['subject'];
-    $ls->addElement($element);
-    $ls->addColumn($element,$I18N->get('edit'),PageLink2('send&amp;id='.$row['id'],$I18N->get('edit')));
+    $ls->addElement($element,PageUrl2('send&amp;id='.$row['id']));
+#    $ls->addColumn($element,$I18N->get('edit'),PageLink2('send&amp;id='.$row['id'],$I18N->get('edit')));
     $ls->addColumn($element,$I18N->get('entered'),$row['entered']);
     $ls->addColumn($element,$I18N->get('age'),secs2time($row['age']));
     $ls->addColumn($element,$I18N->get('del'),PageLink2('send&amp;delete='.$row['id'],$I18N->get('delete')));
