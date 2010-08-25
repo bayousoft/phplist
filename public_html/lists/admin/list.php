@@ -47,16 +47,16 @@ switch ($access) {
     break;
 }
 
-print PageLink2('catlists',$I18N->get('Categorise lists')).'<br/>';
+print PageLinkButton('catlists',$I18N->get('Categorise lists')).'<br/>';
 $canaddlist = false;
 if ($GLOBALS['require_login'] && !isSuperUser()) {
   $numlists = Sql_Fetch_Row_query("select count(*) from {$tables['list']} where owner = " . $_SESSION['logindetails']['id']);
   if ($numlists[0] < MAXLIST) {
-    print PageLink2("editlist",$GLOBALS['I18N']->get('Add a list'));
+    print PageLinkButton("editlist",$GLOBALS['I18N']->get('Add a list'));
     $canaddlist = true;
   }
 } else {
-  print PageLink2('editlist',$GLOBALS['I18N']->get('Add a list'));
+  print PageLinkButton('editlist',$GLOBALS['I18N']->get('Add a list'));
   $canaddlist = true;
 }
 
@@ -126,13 +126,16 @@ $countresult = Sql_query($countquery);
 $total = Sql_Num_Rows($countresult);
 
 print '<p>'.$total .' '. $GLOBALS['I18N']->get('Lists').'</p>';
-
+$limit = '';
+/*
+ * paging is now dealt with by categories
 if ($total > 10) {
   $limit = ' limit 10 offset '.$s;
 } else {
   $limit = '';
 }
 print Paging($baseurl,$s,$total);
+*/
 
 $query
 = ' select *'
@@ -141,6 +144,7 @@ $query
 . ' order by listorder '.$limit;
 $result = Sql_query($query);
 $ls = new WebblerListing($GLOBALS['I18N']->get('Lists'));
+$ls->noShader();
 while ($row = Sql_fetch_array($result)) {
   $query
   = ' select count(*)'
@@ -148,6 +152,11 @@ while ($row = Sql_fetch_array($result)) {
   . ' where listid = ?';
   $rsc = Sql_Query_Params($query, array($row["id"]));
   $membercount = Sql_Fetch_Row($rsc);
+  if ($membercount[0]<=0) {
+    $members = $GLOBALS['I18N']->get('None yet');
+  } else {
+    $members = $membercount[0];
+  }
 
 /*
   $query = sprintf('
@@ -159,6 +168,11 @@ while ($row = Sql_fetch_array($result)) {
 */
   $bouncecount =
     Sql_Fetch_Row_Query(sprintf('select count(distinct userid) as bouncecount from %s listuser, %s umb where listuser.userid = umb.user and listuser.listid = %s ',$GLOBALS['tables']['listuser'],$GLOBALS['tables']['user_message_bounce'],$row['id']));
+  if ($bouncecount[0]<=0) {
+    $bounces = $GLOBALS['I18N']->get('None yet');
+  } else {
+    $bounces = $bouncecount[0];
+  }
 
   $desc = stripslashes($row['description']);
 
@@ -178,9 +192,11 @@ while ($row = Sql_fetch_array($result)) {
     $desc = $plugin->displayLists($row) . $desc;
   }
 
-  $ls->addElement($row["id"],PageUrl2("editlist&amp;id=".$row["id"]));
+  $element = '<!-- '.$row['id'].'-->'.$row['name'];
+  $ls->addElement($element,PageUrl2("editlist&amp;id=".$row["id"]));
   
 
+/*
   $html .= sprintf('
     <tr>
       <td valign="top">%s</td><td valign="top"><b>%s</b><br/>%d %s </td>
@@ -206,25 +222,30 @@ while ($row = Sql_fetch_array($result)) {
     $GLOBALS['require_login'] ? adminName($row['owner']):$GLOBALS['I18N']->get('n/a'),
     $desc
     );
-    $ls->addColumn($row['id'],
+*/
+    
+
+/*
+    $ls->addColumn($element,
       $GLOBALS['I18N']->get('Name'),
       PageLink2("editlist",stripslashes($row['name']),"id=".$row["id"]));
-    $ls->addColumn($row['id'],
+*/
+    $ls->addColumn($element,
       $GLOBALS['I18N']->get('Order'),
       sprintf('<input type="text" name="listorder[%d]" value="%d" size="5" />',$row['id'],$row['listorder']));
-    $ls->addColumn($row['id'],
+    $ls->addColumn($element,
       $GLOBALS['I18N']->get('Members'),
-      PageLink2("members",$membercount[0],"id=".$row["id"]));
-    $ls->addColumn($row['id'],
+      PageLink2("members",$members,"id=".$row["id"]));
+    $ls->addColumn($element,
       $GLOBALS['I18N']->get('Bounces'),
-      PageLink2("listbounces",$bouncecount[0],"id=".$row["id"]));
-    $ls->addColumn($row['id'],
+      PageLink2("listbounces",$bounces,"id=".$row["id"]));
+    $ls->addColumn($element,
       $GLOBALS['I18N']->get('Public'),sprintf('<input type="checkbox" name="active[%d]" value="1" %s />',$row["id"],
     $row["active"] ? 'checked="checked"' : ''));
-    $ls->addColumn($row['id'],
+    $ls->addColumn($element,
       $GLOBALS['I18N']->get('Owner'),$GLOBALS['require_login'] ? adminName($row['owner']):$GLOBALS['I18N']->get('n/a'));
     if (trim($desc) != '') {
-      $ls->addRow($row['id'],
+      $ls->addRow($element,
         $GLOBALS['I18N']->get('Description'),$desc);
     }
 
@@ -234,7 +255,7 @@ while ($row = Sql_fetch_array($result)) {
 $ls->addSubmitButton('update',$GLOBALS['I18N']->get('Save Changes'));
 
 if (!$some) {
-  echo $GLOBALS['I18N']->get('No lists available, use Add to add one');
+  echo $GLOBALS['I18N']->get('No lists, use Add List to add one');
 }  else {
   print $ls->display();
 }
