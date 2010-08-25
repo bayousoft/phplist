@@ -10,6 +10,8 @@ if (!$listid) {
     %s umb, %s lm where listuser.listid = lm.listid and listuser.userid = umb.user group by listuser.listid
     order by listuser.listid',$GLOBALS['tables']['listuser'],$GLOBALS['tables']['user_message_bounce'],$GLOBALS['tables']['listmessage']));
   $ls = new WebblerListing($GLOBALS['I18N']->get('Choose a list'));
+  $ls->noShader();
+
   while ($row = Sql_Fetch_Array($req)) {
     $element = '<!--'.$GLOBALS['I18N']->get('list').' '.$row['listid'].'-->'.listName($row['listid']);
     $ls->addElement($element,PageUrl2('listbounces&amp;id='.$row['listid']));
@@ -39,37 +41,26 @@ $limit = '';
 $numpp = 150;
 
 $start = empty($_GET['start']) ? 0 : sprintf('%d',$_GET['start']);
-if ($total > 500 && !$download) {
+if ($total > $numpp && !$download) {
 #  print Paging2('listbounces&amp;id='.$listid,$total,$numpp,'Page');
  # $listing = sprintf($GLOBALS['I18N']->get("Listing %s to %s"),$s,$s+$numpp);
   $limit = "limit $start,".$numpp;
   print $total. " ".$GLOBALS['I18N']->get(" Total")."</p>";
   print simplePaging('listbounces&amp;id='.$listid,$start,$total,$numpp);
-/*
-  printf ('<table class="bouncesListing" border="1"><tr><td colspan="4" align="center">%s</td></tr><tr><td>%s</td><td>%s</td><td>
-          %s</td><td>%s</td></tr></table><hr/>',
-          $listing,
-          PageLink2('listbounces&amp;id='.$listid,"&lt;&lt;","s=0"),
-          PageLink2('listbounces&amp;id='.$listid,"&lt;",sprintf('s=%d',max(0,$s-$numpp))),
-          PageLink2('listbounces&amp;id='.$listid,"&gt;",sprintf('s=%d',min($total,$s+$numpp))),
-          PageLink2('listbounces&amp;id='.$listid,"&gt;&gt;",sprintf('s=%d',$total-$numpp)));
-*/
 
   $query .= $limit;
   $req = Sql_Query_Params($query, array($listid));
 }
 
-#print '<p class="button">'.PageLink2('listbounces','Select another list').'<br/>';
-$otherlist = new buttonGroup(new Button(PageUrl2('listbounces'),$GLOBALS['I18N']->get('Select another list')));
+$selectOtherlist = new buttonGroup(new Button(PageUrl2('listbounces'),$GLOBALS['I18N']->get('Select another list')));
 $lists = Sql_Query(sprintf('select id,name from %s order by listorder',$tables['list']));
 while ($list = Sql_Fetch_Assoc($lists)) {
-  $otherlist->addButton(new Button(PageUrl2('listbounces').'&amp;id='.$list['id'],htmlspecialchars($list['name'])));
+  $selectOtherlist->addButton(new Button(PageUrl2('listbounces').'&amp;id='.$list['id'],htmlspecialchars($list['name'])));
 }
 
-print $otherlist->show();
+print $selectOtherlist->show();
+print PageLinkButton('listbounces&amp;type=dl&amp;id='.$listid,'Download emails');
 
-print '&nbsp;'.PageLink2('listbounces&amp;type=dl&amp;id='.$listid,'Download emails');
-print '</p>';
 if ($download) {
   ob_end_clean();
   Header("Content-type: text/plain");
