@@ -11,9 +11,9 @@ if (!$listid) {
     order by listuser.listid',$GLOBALS['tables']['listuser'],$GLOBALS['tables']['user_message_bounce'],$GLOBALS['tables']['listmessage']));
   $ls = new WebblerListing($GLOBALS['I18N']->get('Choose a list'));
   while ($row = Sql_Fetch_Array($req)) {
-    $element = $GLOBALS['I18N']->get('list').' '.$row['listid'];
+    $element = '<!--'.$GLOBALS['I18N']->get('list').' '.$row['listid'].'-->'.listName($row['listid']);
     $ls->addElement($element,PageUrl2('listbounces&amp;id='.$row['listid']));
-    $ls->addColumn($element,$GLOBALS['I18N']->get('name'),listName($row['listid']),PageUrl2('editlist&amp;id='.$row['listid']));
+  #  $ls->addColumn($element,$GLOBALS['I18N']->get('name'),listName($row['listid']),PageUrl2('editlist&amp;id='.$row['listid']));
     $ls->addColumn($element,$GLOBALS['I18N']->get('# bounced'),$row['numusers']);
   }
   print $ls->display();
@@ -56,7 +56,15 @@ if ($total > 500 && !$download) {
   $req = Sql_Query_Params($query, array($listid));
 }
 
-print '<p class="button">'.PageLink2('listbounces','Select another list').'<br/>';
+#print '<p class="button">'.PageLink2('listbounces','Select another list').'<br/>';
+$otherlist = new buttonGroup(new Button(PageUrl2('listbounces'),$GLOBALS['I18N']->get('Select another list')));
+$lists = Sql_Query(sprintf('select id,name from %s order by listorder',$tables['list']));
+while ($list = Sql_Fetch_Assoc($lists)) {
+  $otherlist->addButton(new Button(PageUrl2('listbounces').'&amp;id='.$list['id'],htmlspecialchars($list['name'])));
+}
+
+print $otherlist->show();
+
 print '&nbsp;'.PageLink2('listbounces&amp;type=dl&amp;id='.$listid,'Download emails');
 print '</p>';
 if ($download) {
