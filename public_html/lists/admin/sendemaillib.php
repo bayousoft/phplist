@@ -405,7 +405,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   }
 
   # this should move into a plugin
-  if (!ereg('@',$destinationemail) && isset($GLOBALS["expand_unqualifiedemail"])) {
+  if (strpos($destinationemail,'@') === false && isset($GLOBALS["expand_unqualifiedemail"])) {
     $destinationemail .= $GLOBALS["expand_unqualifiedemail"];
   }
   
@@ -705,7 +705,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     $mail->addCustomHeader("List-Owner: <mailto:".getConfig("admin_address").">");
   }
 
-  list($dummy,$domaincheck) = split('@',$destinationemail);
+  list($dummy,$domaincheck) = explode('@',$destinationemail);
   $text_domains = explode("\n",trim(getConfig("alwayssendtextto")));
   if (in_array($domaincheck,$text_domains)) {
     $htmlpref = 0;
@@ -1186,7 +1186,7 @@ function parseText($text) {
   $text = ltrim($text);
 
   # make urls and emails clickable
-  $text = eregi_replace("([\._a-z0-9-]+@[\.a-z0-9-]+)",'<a href="mailto:\\1" class="email">\\1</a>',$text);
+  $text = preg_replace("/([\._a-z0-9-]+@[\.a-z0-9-]+)/i",'<a href="mailto:\\1" class="email">\\1</a>',$text);
   $link_pattern="/(.*)<a.*href\s*=\s*\"(.*?)\"\s*(.*?)>(.*?)<\s*\/a\s*>(.*)/is";
 
   $i=0;
@@ -1222,8 +1222,8 @@ function parseText($text) {
   # first replace all the brackets with placeholders.
   # we cannot use htmlspecialchars or addslashes, because some are needed
 
-  $text = ereg_replace("\(","<!--LB-->",$text);
-  $text = ereg_replace("\)","<!--RB-->",$text);
+  $text = str_replace("\(","<!--LB-->",$text);
+  $text = str_replace("\)","<!--RB-->",$text);
   $text = preg_replace('/\$/',"<!--DOLL-->",$text);
 
   # @@@ to be xhtml compabible we'd have to close the <p> as well
@@ -1231,14 +1231,14 @@ function parseText($text) {
   # \n with <br/>
 #  $paragraph = '<p class="x">';
   $br = '<br />';
-  $text = ereg_replace("\r","",$text);
+  $text = preg_replace("/\r/","",$text);
 #  $text = ereg_replace("\n\n","\n".$paragraph,$text);
-  $text = ereg_replace("\n","$br\n",$text);
+  $text = preg_replace("/\n/","$br\n",$text);
 
   # reverse our previous placeholders
-  $text = ereg_replace("<!--LB-->","(",$text);
-  $text = ereg_replace("<!--RB-->",")",$text);
-  $text = ereg_replace("<!--DOLL-->","\$",$text);
+  $text = str_replace("<!--LB-->","(",$text);
+  $text = str_replace("<!--RB-->",")",$text);
+  $text = str_replace("<!--DOLL-->","\$",$text);
   return $text;
 }
 
