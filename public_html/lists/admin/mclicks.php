@@ -48,7 +48,7 @@ if (!$id) {
     where clicked and linktrack.messageid = message.id %s group by messageid order by entered desc limit 50',
     $GLOBALS['tables']['linktrack'],$GLOBALS['tables']['message'],$subselect));*/
   $req = Sql_Query(sprintf('select distinct messageid, subject,sum(total) as total, count(forwardid) as linkcount,sum(clicked) as totalclicks,sum(htmlclicked) as htmlclicked,sum(textclicked) as textclicked from %s as linktrack_ml, %s as message
-    where clicked and linktrack_ml.messageid = message.id %s and entered < date_sub(now(), interval 12 month) group by messageid order by entered  desc limit 50',
+    where clicked and linktrack_ml.messageid = message.id %s  group by messageid order by entered  desc limit 50',
     $GLOBALS['tables']['linktrack_ml'],$GLOBALS['tables']['message'],$subselect));
   if (!Sql_Affected_Rows()) {
     print '<p class="information">'.$GLOBALS['I18N']->get('There are currently no messages to view').'</p>';
