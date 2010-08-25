@@ -104,6 +104,7 @@ if (!$id) {
   }
 
   $ls = new WebblerListing($GLOBALS['I18N']->get('Campaigns in the last year'));
+  $ls->noShader();
   while ($row = Sql_Fetch_Array($req)) {
     $element = $row['messageid'].' '.substr($row['subject'],0,50);
 
