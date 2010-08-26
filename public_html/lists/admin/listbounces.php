@@ -22,6 +22,7 @@ if (!$listid) {
   return;
 }
 
+
 $query
 = ' select lu.userid, count(umb.bounce) as numbounces'
 . ' from %s lu'
@@ -40,18 +41,6 @@ $total = Sql_Num_Rows($req);
 $limit = '';
 $numpp = 150;
 
-$start = empty($_GET['start']) ? 0 : sprintf('%d',$_GET['start']);
-if ($total > $numpp && !$download) {
-#  print Paging2('listbounces&amp;id='.$listid,$total,$numpp,'Page');
- # $listing = sprintf($GLOBALS['I18N']->get("Listing %s to %s"),$s,$s+$numpp);
-  $limit = "limit $start,".$numpp;
-  print $total. " ".$GLOBALS['I18N']->get(" Total")."</p>";
-  print simplePaging('listbounces&amp;id='.$listid,$start,$total,$numpp);
-
-  $query .= $limit;
-  $req = Sql_Query_Params($query, array($listid));
-}
-
 $selectOtherlist = new buttonGroup(new Button(PageUrl2('listbounces'),$GLOBALS['I18N']->get('Select another list')));
 $lists = Sql_Query(sprintf('select id,name from %s order by listorder',$tables['list']));
 while ($list = Sql_Fetch_Assoc($lists)) {
@@ -59,7 +48,23 @@ while ($list = Sql_Fetch_Assoc($lists)) {
 }
 
 print $selectOtherlist->show();
-print PageLinkButton('listbounces&amp;type=dl&amp;id='.$listid,'Download emails');
+if ($total) {
+  print PageLinkButton('listbounces&amp;type=dl&amp;id='.$listid,'Download emails');
+}
+
+
+print '<p>'.$total. " ".$GLOBALS['I18N']->get(" bounces to list ").listName($listid)."</p>";
+
+$start = empty($_GET['start']) ? 0 : sprintf('%d',$_GET['start']);
+if ($total > $numpp && !$download) {
+#  print Paging2('listbounces&amp;id='.$listid,$total,$numpp,'Page');
+ # $listing = sprintf($GLOBALS['I18N']->get("Listing %s to %s"),$s,$s+$numpp);
+  $limit = "limit $start,".$numpp;
+  print simplePaging('listbounces&amp;id='.$listid,$start,$total,$numpp);
+
+  $query .= $limit;
+  $req = Sql_Query_Params($query, array($listid));
+}
 
 if ($download) {
   ob_end_clean();
