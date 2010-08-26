@@ -45,9 +45,9 @@ function addUserForm ($listid) {
 }
 if (!empty($id)) {
   print "<h3>".$GLOBALS['I18N']->get("Members of")." ".ListName($id)."</h3>";
-  echo "<br />".PageLink2("editlist",$GLOBALS['I18N']->get("back to this list"),"id=$id");
-  echo "<br />".PageLink2("export&amp;list=$id",$GLOBALS['I18N']->get("Download users on this list as a CSV file"));
-  echo "<br />".PageLinkDialog("import&amp;list=$id",$GLOBALS['I18N']->get("Import Users to this list"));
+  echo "<br />".PageLinkButton("editlist",$GLOBALS['I18N']->get("edit this list"),"id=$id");
+  echo "<br />".PageLinkButton("export&amp;list=$id",$GLOBALS['I18N']->get("Download subscribers"));
+  echo "<br />".PageLinkDialog("import&amp;list=$id",$GLOBALS['I18N']->get("Import Subscribers to this list"));
 
 #  print addUserForm($id);
 } else {
@@ -71,7 +71,7 @@ if (isset($_REQUEST["processtags"]) && $access != "view") {
           if (Sql_Affected_rows() == 1) # 2 means they were already on the list
             $cnt++;
         }
-        $msg = $cnt .' '.$GLOBALS['I18N']->get("users were moved to").' '.listName($_POST["movedestination"]);
+        $msg = $cnt .' '.$GLOBALS['I18N']->get("subscribers were moved to").' '.listName($_POST["movedestination"]);
         break;
       case "copy":
         $cnt = 0;
@@ -80,7 +80,7 @@ if (isset($_REQUEST["processtags"]) && $access != "view") {
             values({$_POST["copydestination"]},$key)");
           $cnt++;
         }
-        $msg = $cnt .' '.$GLOBALS['I18N']->get("users were copied to").' '.listName($_POST["copydestination"]);
+        $msg = $cnt .' '.$GLOBALS['I18N']->get("subscribers were copied to").' '.listName($_POST["copydestination"]);
         break;
       case "delete":
         $cnt = 0;
@@ -90,7 +90,7 @@ if (isset($_REQUEST["processtags"]) && $access != "view") {
           if (Sql_Affected_rows())
             $cnt++;
         }
-        $msg = $cnt.' '.$GLOBALS['I18N']->get("users were deleted from this list");
+        $msg = $cnt.' '.$GLOBALS['I18N']->get("subscribers were deleted from this list");
         break;
       default: # do nothing
         break;
@@ -110,7 +110,7 @@ if (isset($_REQUEST["processtags"]) && $access != "view") {
           if (Sql_Affected_rows() == 1) # 2 means they were already on the list
             $cnt++;
         }
-        $msg = $cnt . ' '.$GLOBALS['I18N']->get("users were moved to").' '.listName($_POST["movedestination_all"]);
+        $msg = $cnt . ' '.$GLOBALS['I18N']->get("subscribers were moved to").' '.listName($_POST["movedestination_all"]);
         break;
       case "copy":
         $cnt = 0;
@@ -119,11 +119,11 @@ if (isset($_REQUEST["processtags"]) && $access != "view") {
             values({$_POST["copydestination_all"]},$user[0])");
           $cnt++;
         }
-        $msg = $cnt .' '.$GLOBALS['I18N']->get("users were copied to").' '.listName($_POST["copydestination_all"]);
+        $msg = $cnt .' '.$GLOBALS['I18N']->get("subscribers were copied to").' '.listName($_POST["copydestination_all"]);
         break;
       case "delete":
         Sql_Query(sprintf('delete from %s where listid = %d',$tables["listuser"],$id));
-        $msg = Sql_Affected_Rows().' '.$GLOBALS['I18N']->get("users were deleted from this list");
+        $msg = Sql_Affected_Rows().' '.$GLOBALS['I18N']->get("subscribers were deleted from this list");
         break;
       default: # do nothing
     }
@@ -198,18 +198,18 @@ if (isset($_REQUEST["doadd"])) {
   if ($database_module == 'adodb.inc')
   Sql_Commit_Transaction();
 
-  echo "<br />".$GLOBALS['I18N']->get("User added")."<br />";
+  print "<br />".$GLOBALS['I18N']->get("User added")."<br />";
 }
 if (isset($_REQUEST["delete"])) {
   $delete = sprintf('%d',$_REQUEST["delete"]);
   # single delete the index in delete
-  print $GLOBALS['I18N']->get("Deleting")." $delete ..\n";
+  $_SESSION['action_result'] = $GLOBALS['I18N']->get("Deleting")." $delete ..\n";
   $query
   = ' delete from ' . $tables['listuser']
   . ' where listid = ?'
   . '   and userid = ?';
   $result = Sql_Query_Params($query, array($id, $delete));
-  print "... ".$GLOBALS['I18N']->get("Done")."<br />\n";
+  $_SESSION['action_result'] .= "... ".$GLOBALS['I18N']->get("Done")."<br />\n";
   Redirect("members&id=$id");
 }
 if (isset($id)) {
@@ -223,15 +223,15 @@ if (isset($id)) {
   $result = Sql_Query_Params($query, array($id));
   $row = Sql_Fetch_row($result);
   $total = $row[0];
-  print "$total ".$GLOBALS['I18N']->get("Users on this list");
+  print "<p>$total ".$GLOBALS['I18N']->get("Subscribers on this list").'</p>';
   $offset = $start;
 
   if ($total > MAX_USER_PP) {
       if ($start > 0) {
-        $listing = $GLOBALS['I18N']->get("Listing user")." $start ".$GLOBALS['I18N']->get("to")." " . ($start + MAX_USER_PP);
+        $listing = sprintf($GLOBALS['I18N']->get("Listing subscriber %d to %d"),$start,($start + MAX_USER_PP));
         $limit = "limit $start,".MAX_USER_PP;
      } else {
-        $listing = $GLOBALS['I18N']->get("Listing user 1 to 50");
+        $listing = $GLOBALS['I18N']->get("Listing subscriber 1 to 50");
         $limit = "limit 0,50";
       }
 
