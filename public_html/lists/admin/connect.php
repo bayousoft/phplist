@@ -870,8 +870,8 @@ function PageLinkAjax ($name,$desc="",$url="") {
   ## as PageLink2, but add the option to ajax it in a popover window
   $link = PageLink2($name,$desc,$url);
   if ($link) {
-    $link = str_replace('<a ','<div><a class="ajaxable"',$link);
-    $link .= '</div>';
+    $link = str_replace('<a ','<a class="ajaxable"',$link);
+    $link .= '';
   }
   return $link;
 }
@@ -880,8 +880,8 @@ function PageLinkButton($name,$desc="",$url="") {
   ## as PageLink2, but add the option to ajax it in a popover window
   $link = PageLink2($name,$desc,$url);
   if ($link) {
-    $link = str_replace('<a ','<div><a class="button"',$link);
-    $link .= '</div>';
+    $link = str_replace('<a ','<a class="button"',$link);
+    $link .= '';
   }
   return $link;
 }
