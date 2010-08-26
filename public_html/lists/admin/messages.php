@@ -64,6 +64,8 @@ if (!isset($_GET["type"]) && !empty($_SESSION["lastmessagetype"])) {
 #}
 #print '</p>';
 
+print PageLinkButton('send&amp;new=1',$GLOBALS['I18N']->get('Start a new campaign'));
+
 ### Print tabs
 $tabs = new WebblerTabs();
 $tabs->addTab($GLOBALS['I18N']->get("sent"),PageUrl2("messages&amp;type=sent"));
@@ -322,14 +324,16 @@ if ($total) {
    # }
     if ($msg['status'] == 'inprocess' || $msg['status'] == 'submitted') {
       $statusdiv .= '<br/>'.
-        PageLink2('messages&suspend='.$msg['id'],$GLOBALS['I18N']->get('Suspend Sending'));
+        PageLinkButton('messages&suspend='.$msg['id'],$GLOBALS['I18N']->get('Suspend Sending'));
     }
     #0012081: Add new 'Mark as sent' button
     if ($msg['status'] == 'suspended') {
       $statusdiv .= '<br/>'.
-        PageLink2('messages&amp;markSent='.$msg['id'],$GLOBALS['I18N']->get('Mark as sent'));
+        PageLinkButton('messages&amp;markSent='.$msg['id'],$GLOBALS['I18N']->get('Mark as sent'));
     }
 
+    $totalsent = '';
+/*
     $totalsentcount = $msg['astext'] + $msg['ashtml'] + $msg['astextandhtml'] + $msg['aspdf'] + $msg['astextandpdf'];
 
     $totalsent = '<div id="totalsent'.$msg['id'].'">'.$totalsentcount.'</div>';
@@ -338,6 +342,7 @@ if ($total) {
       totalSentUpdate('.$msg['id'].');
     </script>
     ';
+*/
 
     ## allow plugins to add information
     foreach ($GLOBALS['plugins'] as $plugin) {
@@ -366,9 +371,9 @@ PageURL2("messages$url_keep","","delete=".$msg["id"]));
       </tr>',
       $statusdiv.
       $sendstats,
-      PageLink2("message",$GLOBALS['I18N']->get("View"),"id=".$msg["id"]),
-      $msg['status'] != 'inprocess' ? PageLink2("messages",$GLOBALS['I18N']->get("Requeue"),"resend=".$msg["id"]) : $totalsent,
-      $msg["status"] != 'prepared' ? PageLink2("send",$GLOBALS['I18N']->get("Edit"),"id=".$msg["id"]) : PageLink2("preparesend",$GLOBALS['I18N']->get("Edit"),"id=".$msg["id"]),
+      PageLinkButton("message",$GLOBALS['I18N']->get("View"),"id=".$msg["id"]),
+      $msg['status'] != 'inprocess' ? PageLinkButton("messages",$GLOBALS['I18N']->get("Requeue"),"resend=".$msg["id"]) : $totalsent,
+      $msg["status"] != 'prepared' ? PageLinkButton("send",$GLOBALS['I18N']->get("Edit"),"id=".$msg["id"]) : PageLink2("preparesend",$GLOBALS['I18N']->get("Edit"),"id=".$msg["id"]),
       $clicks[0] && CLICKTRACK ? PageLink2("mclicks",$GLOBALS['I18N']->get("click stats"),"id=".$msg["id"]).'<br/>':'',
       $deletelink
     );
