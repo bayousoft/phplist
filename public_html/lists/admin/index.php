@@ -153,7 +153,7 @@ if (!isset($_POST) && isset($HTTP_POST_VARS)) {
 }
 
 if (!isset($_GET['page'])) {
-  $page = 'home';
+  $page = $GLOBALS['homepage'];
 } else {
   $page = $_GET['page'];
 }
@@ -164,7 +164,7 @@ if (preg_match("/([\w_]+)/",$page,$regs)) {
   $page = '';
 }
 if (!is_file($page.'.php') && !isset($_GET['pi'])) {
-  $page = 'home';
+  $page = $GLOBALS['homepage'];
 }
 
 if (!$GLOBALS["admin_auth_module"]) {
@@ -311,7 +311,7 @@ if ($page != '' && $page != 'install') {
     $include = $page . ".php";
   }
 } else {
-  $include = "home.php";
+  $include = $GLOBALS['homepage'].".php";
 }
 
 if (!$ajax) {
