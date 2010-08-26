@@ -111,7 +111,7 @@ if (!isset($_SESSION['adminlanguage']) || !is_array($_SESSION['adminlanguage']))
         $code = $regs[1];
         if (isset($LANGUAGES[$code])) {
           $detectlan = $code;
-        } elseif (ereg('-',$code)) {
+        } elseif (strpos($code,'-') !== false) {
           list($language,$country) = explode('-',$code);
           if (isset($LANGUAGES[$language])) {
             $detectlan = $language;
