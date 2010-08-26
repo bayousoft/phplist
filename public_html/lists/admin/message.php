@@ -29,7 +29,7 @@ switch ($access) {
 }
 
 if (!empty($_POST['resend']) && is_array($_POST['list'])) {
-  if ($_POST['list']['all']) {
+  if (!empty($_POST['list']['all'])) {
     $res = Sql_query("select * from $tables[list]");
     while($list = Sql_fetch_array($res))
       if ($list["active"]) {
@@ -58,14 +58,14 @@ if (isset($returnpage)) {
   $returnurl = "returnpage=$returnpage&returnoption=$returnoption";
 }
 
-print '<p class="button">'.PageLink2('send&amp;id='.$id,$GLOBALS['I18N']->get('Edit this message')).'</p>';
+print '<p>'.PageLinkButton('send&amp;id='.$id,$GLOBALS['I18N']->get('Edit this message')).'</p>';
 
 $result = Sql_query("SELECT * FROM {$tables['message']} where id = $id $owner_select_and");
 if (!Sql_Num_Rows($result)) {
   print $GLOBALS['I18N']->get('No such message');
   return;
 }
-echo '<table class="messageView" border="1">';
+echo '<table class="messageView">';
 
 while ($msg = Sql_fetch_array($result)) {
   foreach($DBstruct["message"] as $field => $val) {
@@ -124,7 +124,7 @@ $result = Sql_query("SELECT * FROM $tables[list] $subselect");
 while ($row = Sql_fetch_array($result)) {
   if (!in_array($row['id'],$lists_done)) {
     $messlis .= '<li><input type="checkbox" name="list[' . $row["id"] . ']" value="signup" ';
-    if ($list[$row["id"]] == 'signup')
+    if (isset($_POST['list'][$row["id"]]) && $_POST['list'][$row["id"]] == 'signup')
       $messlis .= 'checked="checked"';
     $messlis .= " />".$row['name'];
     if ($row["active"])
