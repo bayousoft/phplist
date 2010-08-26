@@ -45,7 +45,7 @@ if ($GLOBALS["require_login"] && !isSuperUser()) {
 }
 
 if ($id) {
-  echo "<br />".PageLink2("members",$GLOBALS['I18N']->get('Members of this list'),"id=$id");
+  echo "<br />".PageLinkButton("members",$GLOBALS['I18N']->get('Members of this list'),"id=$id");
 }
 echo "<hr />";
 if (isset($_POST["save"]) && $_POST["save"] == $GLOBALS['I18N']->get('Save') && isset($_POST["listname"]) && $_POST["listname"]) {
