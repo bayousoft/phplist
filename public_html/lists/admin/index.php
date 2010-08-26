@@ -474,8 +474,11 @@ if (checkAccess($page,"") || $page == 'about') {
       clineError("Sorry, that module does not exist");
       exit;
     }
-
-    print "$page -&gt; ".$GLOBALS['I18N']->get('notimplemented');
+    if (is_file('ui/'.$GLOBALS['ui'].'/pages/'.$include)) {
+      include ('ui/'.$GLOBALS['ui'].'/pages/'.$include);
+    } else {
+      print "$page -&gt; ".$GLOBALS['I18N']->get('notimplemented');
+    }
   }
 } else {
   Error($GLOBALS['I18N']->get('noaccess'));
