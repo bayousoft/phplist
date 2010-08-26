@@ -14,6 +14,7 @@ if (!$GLOBALS["message_envelope"]) {
     $GLOBALS["message_envelope"] = $admin;
   }
 }
+$GLOBALS['homepage'] = 'home';
 
 if (defined("IN_WEBBLER") && is_object($GLOBALS["config"]["plugins"]["phplist"])) {
   $GLOBALS["tables"] = $GLOBALS["config"]["plugins"]["phplist"]->tables;
