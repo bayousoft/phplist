@@ -1,9 +1,10 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 
-$spb ='<div>';
-$spe = '</div>';
+$spb ='<li>';
+$spe = '</li>';
 
+print '<ul>';
 print $spb.PageLink2("users",$GLOBALS['I18N']->get('users')).$spe;
 print $spb.PageLink2("attributes",$GLOBALS['I18N']->get('userattributes')).$spe;
 if ($tables["attribute"] && Sql_Table_Exists($tables["attribute"])) {
@@ -31,4 +32,5 @@ if (ALLOW_IMPORT) {
   print $spb.PageLink2("import",$GLOBALS['I18N']->get('import')).$spe;
 }
 print $spb.PageLink2("export",$GLOBALS['I18N']->get('export')).$spe;
+print '</ul>';
 ?>
