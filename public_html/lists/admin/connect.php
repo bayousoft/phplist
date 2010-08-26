@@ -795,7 +795,7 @@ function topMenu() {
     if (
       $category == 'hide' ||
       ($category == 'develop' && empty($GLOBALS['developer_email']))
-      || count($categoryDetails['menulinks']) == 0
+   #   || count($categoryDetails['menulinks']) == 0
       ) 
       continue;
     
@@ -808,12 +808,16 @@ function topMenu() {
         $thismenu .= '<li>'.$link.'</li>';
       }
     }
+    if (!empty($thismenu)) {
+      $thismenu = '<ul>'.$thismenu.'</ul>';
+    }
+    
     if (!empty($categoryDetails['toplink'])) {
-      $categoryurl = PageUrl2($categoryDetails['toplink'],'',true);
+      $categoryurl = PageUrl2($categoryDetails['toplink'],'','',true);
       if ($categoryurl) {
-        $topmenu .=  '<ul><li><a href="'.$categoryurl.'">'.$GLOBALS['I18N']->get($category).'</a><ul>'.$thismenu.'</ul></li></ul>';
+        $topmenu .=  '<ul><li><a href="'.$categoryurl.'">'.$GLOBALS['I18N']->get($category).'</a>'.$thismenu.'</li></ul>';
       } else {
-        $topmenu .=  '<ul><li><span>'.$GLOBALS['I18N']->get($category).$categoryurl.'</span><ul>'.$thismenu.'</ul></li></ul>';
+        $topmenu .=  '<ul><li><span>'.$GLOBALS['I18N']->get($category).$categoryurl.'</span>'.$thismenu.'</li></ul>';
       }
     }
   }
@@ -897,13 +901,13 @@ function SidebarLink($name,$desc,$url="") {
 #    return "\n$name disabled $access\n";
 }
 
-function PageURL2($name,$desc = "",$url="") {
+function PageURL2($name,$desc = "",$url="",$no_plugin = false) {
   if (empty($name)) return '';
   if ($url)
     $url = "&amp;".$url;
   $access = accessLevel($name);
   if ($access == "owner" || $access == "all" || $access == "view") {
-    if (!preg_match("/&amp;pi=/i",$name) && $_GET["pi"] && is_object($GLOBALS["plugins"][$_GET["pi"]])) {
+    if (!$no_plugin && !preg_match("/&amp;pi=/i",$name) && $_GET["pi"] && is_object($GLOBALS["plugins"][$_GET["pi"]])) {
       $pi = '&amp;pi='.$_GET["pi"];
     } else {
       $pi = "";
@@ -1667,7 +1671,7 @@ function Paging($base_url,$start,$total,$numpp = 10,$label = "") {
   if ($page == 1)
     return "";
  # $data .= PagingNext($base_url,$start,$total,$numpp,$label,$page);
-  return '<div class="pagingwrapper"><a class="prev browse left">&lt;&lt;</a><div class="paging"><div class="items">'.$data.'</div></div><a class="next browse right">&gt;&gt;</a></div>';
+  return '<div class="paging"><a class="prev browse left">&lt;&lt;</a><div class="items">'.$data.'</div><a class="next browse right">&gt;&gt;</a></div>';
 }
 
 function PagingNext($base_url,$start,$total,$numpp,$label = "") {
