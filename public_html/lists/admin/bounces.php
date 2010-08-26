@@ -38,22 +38,27 @@ $count = Sql_Query(sprintf('select count(*) from %s',$tables["bounce"]));
 $totalres = Sql_fetch_Row($count);
 $total = $totalres[0];
 $find_url = '';
-if (isset($_GET['s'])) {
-  $s = sprintf('%d',$_GET['s']);
+if (isset($_GET['start'])) {
+  $start = sprintf('%d',$_GET['start']);
 } else {
-  $s = 0;
+  $start = 0;
 }
-
+$offset = $start;
+$baseurl = "bounces&amp;start=$start";
 print $total . ' '.$GLOBALS['I18N']->get('bounces') . " <br/>";
 if ($total > MAX_USER_PP) {
   $limit = MAX_USER_PP;
+
+  print simplePaging("bounces",$start,$total,MAX_USER_PP);
+
+/*
   $offset = 0;
   if (isset($s) && $s) {
     $listing = $GLOBALS['I18N']->get('listing') . " $s " . $GLOBALS['I18N']->get('to') . ($s + MAX_USER_PP);
-    $offset = $s;
+    $offset = $start;
   } else {
     $listing = $GLOBALS['I18N']->get('listing') . " 1 " . $GLOBALS['I18N']->get('to') ." 50";
-    $s = 0;
+    $start = 0;
   }
   printf ('<table class="bouncesListing" border="1"><tr><td colspan="4" align="center">%s</td></tr><tr><td>%s</td><td>%s</td><td>
           %s</td><td>%s</td></tr></table><hr/>',
@@ -62,6 +67,7 @@ if ($total > MAX_USER_PP) {
           PageLink2("bounces","&lt;",sprintf('s=%d',max(0,$s-MAX_USER_PP)).$find_url),
           PageLink2("bounces","&gt;",sprintf('s=%d',min($total,$s+MAX_USER_PP)).$find_url),
           PageLink2("bounces","&gt;&gt;",sprintf('s=%d',$total-MAX_USER_PP).$find_url));
+*/
   $query = sprintf("select * from %s where status != ? order by date desc limit $limit offset $offset", $tables['bounce']);
   $result = Sql_Query_Params($query, array('unidentified bounce'));
 } else {
@@ -71,6 +77,7 @@ if ($total > MAX_USER_PP) {
 #  $result = Sql_Verbose_Query(sprintf('select * from %s where status not like "bounced list message%%" order by date desc',$tables["bounce"]));
 #  $result = Sql_Verbose_Query(sprintf('select * from %s where data like "%%systemmessage%%" order by date desc',$tables["bounce"]));
 
+/*
 printf("[ 
    <a href=\"javascript:deleteRec2('" . $GLOBALS['I18N']->get('are you sure you want to delete all unidentified bounces older than 2 months') . "?','%s');\">" . $GLOBALS['I18N']->get('delete all unidentified (&gt; 2 months old)') . "</a> |
    <a href=\"javascript:deleteRec2('" . $GLOBALS['I18N']->get('are you sure you want to delete all bounces older than 2 months') . "?','%s');\">" . $GLOBALS['I18N']->get('delete all processed (&gt; 2 months old)') . "</a> |
@@ -81,7 +88,26 @@ printf("[
    PageURL2("bounces",$GLOBALS['I18N']->get('delete'),"s=$s&amp;action=deleteall"),
    PageURL2("bounces",$GLOBALS['I18N']->get('delete'),"s=$s&amp;action=reset"));
 
-if (!Sql_Num_Rows($result))
+*/
+  $buttons = new ButtonGroup(new Button(PageURL2("bounces"),'delete'));
+  $buttons->addButton(
+    new ConfirmButton(
+      $GLOBALS['I18N']->get('are you sure you want to delete all unidentified bounces older than 2 months') . "?",
+      PageURL2("$baseurl&amp;action=deleteunidentified"),
+      $GLOBALS['I18N']->get('delete all unidentified (&gt; 2 months old)')));
+  $buttons->addButton(
+    new ConfirmButton(
+      $GLOBALS['I18N']->get('are you sure you want to delete all bounces older than 2 months') . "?",
+      PageURL2("$baseurl&amp;action=deleteprocessed"),
+      $GLOBALS['I18N']->get('delete all processed (&gt; 2 months old)')));
+  $buttons->addButton(
+    new ConfirmButton(
+      $GLOBALS['I18N']->get('are you sure you want to delete all bounces') . "?",
+      PageURL2("$baseurl&amp;action=deleteall"),
+      $GLOBALS['I18N']->get('Delete all')));
+ print $buttons->show();
+
+ if (!Sql_Num_Rows($result))
   print '<p class="information">' . $GLOBALS['I18N']->get('no unprocessed bounces available') . "</p>";
 
 print '<table class="bouncesListing"><tr><td></td><td>' . $GLOBALS['I18N']->get('message') . "</td><td>" . $GLOBALS['I18N']->get('user') . "</td><td>" . $GLOBALS['I18N']->get('date') . "</td></tr>";
@@ -104,9 +130,9 @@ while ($bounce = Sql_fetch_array($result)) {
 
   printf( "<tr><td>[ <a href=\"javascript:deleteRec('%s');\">%s</a> |
    %s ] </td><td>%s</td><td>%s</td><td>%s</td></tr>\n",
-   PageURL2("bounces",$GLOBALS['I18N']->get('delete'),"s=$s&amp;delete=".$bounce["id"]),
+   PageURL2("bounces",$GLOBALS['I18N']->get('delete'),"s=$start&amp;delete=".$bounce["id"]),
    $GLOBALS['I18N']->get('delete'),
-   PageLink2("bounce",$GLOBALS['I18N']->get('show'),"s=$s&amp;id=".$bounce["id"]),
+   PageLink2("bounce",$GLOBALS['I18N']->get('show'),"s=$start&amp;id=".$bounce["id"]),
    $messageid,
    $userid,
    $bounce["date"]
