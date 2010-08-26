@@ -598,7 +598,7 @@ if (!$done) {
   $scheduling_content = '<div id="schedulecontent">';
   $scheduling_content .= '
   <div><h3>'.$GLOBALS['I18N']->get("Time is Based on the Server Time").
-    '</h3><div class="info">'.$GLOBALS['I18N']->get('Current Server Time is').' <span id="servertime">'.$currentTime[0].'</span></div></div>
+    '</h3><div>'.$GLOBALS['I18N']->get('Current Server Time is').' <span id="servertime">'.$currentTime[0].'</span></div></div>
   <div><h3>'.Help('embargo').' '.$GLOBALS['I18N']->get("embargoeduntil").':</h3></div>
     <div>'.$embargo->showInput('embargo',"",$messagedata['embargo']).'</div>
     <script type="text/javascript">
@@ -651,6 +651,8 @@ if (!$done) {
       <div>  <h3>'.$GLOBALS['I18N']->get("requeueuntil").':</h3></div>
       <div>'.$requeueuntil->showInput("requeueuntil","",$messagedata["requeueuntil"]);
     $scheduling_content .= '</div>';
+
+  $scheduling_content .= '</div>';
     
   $formatting_content .= '<div><input type="hidden" name="htmlformatted" value="auto" /></div>';
 
@@ -949,6 +951,8 @@ if (!$done) {
   }
 
   print $tabs->display();
+  #print '<div id="tabcontent"></div>';
+  
   switch ($_GET["tab"]) {
     case "Attach": print $att_content; break;
  //   case "Criteria": print $criteria_content; break; // moved to plugin
@@ -1022,7 +1026,7 @@ if ($allReady) {
   $("#addtoqueue").html(\'<button class="submit" type="submit" name="send" id="addtoqueuebutton">'.$GLOBALS['I18N']->get('sendmessage').'</button>\');
   </script>';
 } 
-    
+
 
 print '<div class="sendSubmit">
     <input class="submit" type="submit" name="save" value="'.$savecaption.'"/>
