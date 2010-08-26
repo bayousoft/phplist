@@ -687,7 +687,7 @@ if (!function_exists("getconfig")) {
 		$value = '';
 		if ($hasconf) {
 			$query
-			= ' select value'
+			= ' select value,editable'
 			. ' from ' . $tables['config']
 			. ' where item = ?';
 			$req = Sql_Query_Params($query, array($toget));
@@ -703,6 +703,9 @@ if (!function_exists("getconfig")) {
 			} else {
 				$row = Sql_Fetch_Row($req);
 				$value = $row[0];
+        if ($row[1] == 0) {
+          $GLOBALS['noteditableconfig'][] = $item;
+        }
 			}
 		}
 		/*
@@ -788,7 +791,7 @@ function getUserConfig($item, $userid = 0) {
 	$hasconf = Sql_Table_Exists($tables["config"]);
 	$value = '';
 	if ($hasconf) {
-		$query = 'select value from ' . $tables['config'] . ' where item = ?';
+		$query = 'select value,editable from ' . $tables['config'] . ' where item = ?';
 		$req = Sql_Query_Params($query, array($item));
 		if (!Sql_Num_Rows($req)) {
 		  if ( array_key_exists($item, $default_config) ) { 
@@ -797,6 +800,9 @@ function getUserConfig($item, $userid = 0) {
     } else {
 			$row = Sql_fetch_Row($req);
 			$value = $row[0];
+      if ($row[1] == 0) {
+        $GLOBALS['noteditableconfig'][] = $item;
+      }
 		}
 	}
 	# if this is a subpage item, and no value was found get the global one
