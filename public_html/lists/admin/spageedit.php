@@ -111,7 +111,7 @@ if (isset($_POST["save"]) || isset($_POST["activate"]) || isset($_POST["deactiva
   }
 
 }
-ob_end_flush();
+@ob_end_flush();
 
 ## initialise values from defaults
 $data = array();
