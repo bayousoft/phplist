@@ -235,10 +235,10 @@ while ($row = Sql_fetch_array($result)) {
       sprintf('<input type="text" name="listorder[%d]" value="%d" size="5" />',$row['id'],$row['listorder']));
     $ls->addColumn($element,
       $GLOBALS['I18N']->get('Members'),
-      PageLink2("members",$members,"id=".$row["id"]));
+      PageLink2("members",$members,"id=".$row["id"]).' '.PageLink2('importsimple&list='.$row["id"],$GLOBALS['I18N']->get('add')));
     $ls->addColumn($element,
       $GLOBALS['I18N']->get('Bounces'),
-      PageLink2("listbounces",$bounces,"id=".$row["id"]));
+      PageLink2("listbounces",$bounces,"id=".$row["id"]));#.' '.PageLink2('listbounces&id='.$row["id"],$GLOBALS['I18N']->get('view'))
     $ls->addColumn($element,
       $GLOBALS['I18N']->get('Public'),sprintf('<input type="checkbox" name="active[%d]" value="1" %s />',$row["id"],
     $row["active"] ? 'checked="checked"' : ''));
