@@ -218,7 +218,7 @@ $ls = new WebblerListing($I18N->get('messages'));
 
 ## messages table
 if ($total) {
-  print "<td>".$GLOBALS['I18N']->get("Message info")."</td><td>".$GLOBALS['I18N']->get("Status")."</td><td>".$GLOBALS['I18N']->get("Action")."</td></tr>";
+  print "<th>".$GLOBALS['I18N']->get("Message info")."</th><th>".$GLOBALS['I18N']->get("Status")."</th><th>".$GLOBALS['I18N']->get("Action")."</th></tr>";
   $result = Sql_query("SELECT * FROM ".$tables["message"]." $where order by status,entered desc limit $limit offset $offset");
   while ($msg = Sql_fetch_array($result)) {
     $listingelement = $msg['id'];
