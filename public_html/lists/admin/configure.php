@@ -65,12 +65,14 @@ if (empty($id)) {
       } else {
         $value = $val[0];
       }
-      printf('<div class="shade%d"><div class="configEdit"><a href="%s" class="ajaxable">%s</a> <b>%s</b></div>',$alternate,PageURL2("configure","","id=$key"),$GLOBALS['I18N']->get('edit'),$GLOBALS['I18N']->get($val[1]));
-      printf('<div id="edit_%s" class="configcontent">%s</div></div>',$key,nl2br(htmlspecialchars(stripslashes($value))));
-      if ($alternate == 1) {
-        $alternate = 2;
-      } else {
-        $alternate = 1;
+      if (!in_array($key,$GLOBALS['noteditableconfig'])) {
+        printf('<div class="shade%d"><div class="configEdit"><a href="%s" class="ajaxable">%s</a> <b>%s</b></div>',$alternate,PageURL2("configure","","id=$key"),$GLOBALS['I18N']->get('edit'),$GLOBALS['I18N']->get($val[1]));
+        printf('<div id="edit_%s" class="configcontent">%s</div></div>',$key,nl2br(htmlspecialchars(stripslashes($value))));
+        if ($alternate == 1) {
+          $alternate = 2;
+        } else {
+          $alternate = 1;
+        }
       }
     }
   }
