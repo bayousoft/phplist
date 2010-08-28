@@ -408,11 +408,11 @@ function sendAdminCopy($subject,$message,$lists = array()) {
 }
 
 function safeImageName($name) {
-  $name = "image".ereg_replace("\.","DOT",$name);
-  $name = ereg_replace("-","DASH",$name);
-  $name = ereg_replace("_","US",$name);
-  $name = ereg_replace("/","SLASH",$name);
-  $name = ereg_replace(':','COLON',$name);
+  $name = "image".str_replace(".","DOT",$name);
+  $name = str_replace("-","DASH",$name);
+  $name = str_replace("_","US",$name);
+  $name = str_replace("/","SLASH",$name);
+  $name = str_replace(':','COLON',$name);
   return $name;
 }
 
