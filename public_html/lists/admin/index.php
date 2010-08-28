@@ -443,6 +443,7 @@ if (checkAccess($page,"") || $page == 'about') {
     } else {
       if (!empty($_SESSION['action_result'])) {
         print '<div class="actionresult">'.$_SESSION['action_result'].'</div>';
+#        print '<script>alert("'.$_SESSION['action_result'].'")</script>';
         unset($_SESSION['action_result']);
       }
 
