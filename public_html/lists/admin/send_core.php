@@ -29,6 +29,7 @@ $errormsg = '';
 $done = 0;
 $messageid = 0;
 $forwardsubject = $forwardmessage = $forwardfooter = '';
+$placeinqueue = '';
 $duplicate_atribute = 0; # not actually used it seems @@@ check
 $embargo = new date('embargo');
 $embargo->useTime = true;
@@ -53,6 +54,7 @@ if (isset($_GET['id'])) {
 $send = isset($_POST["send"]);
 $prepare = isset($_POST['prepare']);
 $save = !empty($_POST["save"]) || !empty($_POST['followupto']);
+$savedraft = !empty($_POST["savedraft"]);
 $sendtest = !empty($_POST["sendtest"]);
 $baseurl = PageURL2($_GET["page"].'&amp;id='.$id);
 
@@ -107,7 +109,7 @@ if ($id) {
 
   print formStart($enctype . ' name="sendmessageform" class="sendSend" id="sendmessageform" ');
   if (empty($send)) {
-    print '<div id="addtoqueue"><button class="submit" type="submit" name="send" id="addtoqueuebutton">'.$GLOBALS['I18N']->get('sendmessage').'</button></div>';
+    $placeinqueue = '<div id="addtoqueue"><button class="submit" type="submit" name="send" id="addtoqueuebutton">'.$GLOBALS['I18N']->get('sendmessage').'</button></div>';
   } else {
     ## hide the div in the final "message added to queue" page
   #  print '<div id="addtoqueue"></div>';
@@ -147,9 +149,9 @@ if (!isset($_SESSION["fckeditor_height"])) {
 
 #actions and store in database#######################
 
-if ($send || $sendtest || $prepare || $save) {
+if ($send || $sendtest || $prepare || $save || $savedraft) {
 
-  if ($save || $sendtest) {
+  if ($savedraft || $save || $sendtest) {
     // We're just saving, not sending.
     if (!isset($messagedata['status']) || $messagedata["status"] == "") {
       // No status - move to draft state
@@ -325,19 +327,23 @@ if ($send || $sendtest || $prepare || $save) {
     exit;
   } 
 
-  if (!empty($id)) {
-    print "<h3>".$GLOBALS['I18N']->get("saved")."</H3><br/>";
+  if (!empty($id) && !$send) {
+    if ($savedraft) {
+      $_SESSION['action_result'] = $GLOBALS['I18N']->get("saved");
+      Header('Location: ./?page=messages&type=draft');
+      exit;
+    }
   } else {
 #    $id = $messageid; // New ID - need to set it for later use (test email).
-    print "<h3>".$GLOBALS['I18N']->get("added")."</H3><br/>";
+    print "<h3>".$GLOBALS['I18N']->get("Campaign added")."</h3><br/>";
   }
 
   // If we're sending the message, just return now to the calling script
   # we only need to check that everything is there, once we actually want to send
   if ($send && !empty($messagedata['subject']) && !empty($messagedata['from']) && !empty($messagedata['message']) && empty($duplicate_atribute) && sizeof($messagedata["targetlist"])) {
     if ($messagedata['status'] == "submitted") {
-      print "<h3>".$GLOBALS['I18N']->get("queued")."</h3>";
-      print '<p class="button">'.PageLink2("processqueue",$GLOBALS['I18N']->get("processqueue")).'</p>';
+      print "<h3>".$GLOBALS['I18N']->get("Campaign queued")."</h3>";
+      print '<p class="button">'.PageLinkButton("processqueue",$GLOBALS['I18N']->get("processqueue")).'</p>';
     }
     $done = 1;
     return;
@@ -428,7 +434,7 @@ if ($send || $sendtest || $prepare || $save) {
         $tables["message_attachment"],
         $attid,
         $id));
-      print Info($GLOBALS['I18N']->get("removedattachment")." ".$att_cnt);
+      print Info($GLOBALS['I18N']->get("removedattachment"));
       // NOTE THAT THIS DOESN'T ACTUALLY DELETE THE ATTACHMENT FROM THE DATABASE, OR
       // FROM THE FILE SYSTEM - IT ONLY REMOVES THE MESSAGE / ATTACHMENT LINK.  THIS
       // SHOULD PROBABLY BE CORRECTED, BUT I (Pete Ness) AM NOT SURE WHAT OTHER IMPACTS
@@ -474,7 +480,6 @@ if (!$done) {
 #    $tabs->addTab($GLOBALS['I18N']->get("Criteria"),$tabbaseurl.'&amp;tab=Criteria');
     $tabs->addTab($GLOBALS['I18N']->get("Lists"),$tabbaseurl.'&amp;tab=Lists');
 #    $tabs->addTab("Review and Send",$baseurl.'&amp;tab=Review');
-    $tabs->addTab($GLOBALS['I18N']->get("Misc"),$tabbaseurl.'&amp;tab=Misc');
 
     if ($_GET["tab"]) {
       $tabs->setCurrent($GLOBALS['I18N']->get($_GET["tab"]));
@@ -497,6 +502,10 @@ if (!$done) {
         $tabs->addTab($GLOBALS['I18N']->get($plugintabname),"$tabbaseurl&amp;tab=".urlencode($plugintabname));
       }
     }
+
+    ## this one always last
+    $tabs->addTab($GLOBALS['I18N']->get("Finish"),$tabbaseurl.'&amp;tab=Send');
+
   # print $tabs->display();
   }
 
@@ -569,16 +578,16 @@ if (!$done) {
       $maincontent .= sprintf('
       
       <div id="contentchoice">
-      <h3>'.Help("sendmethod").' '.$GLOBALS['I18N']->get("Send your message from").':</h3>
-      <input type="radio" name="sendmethod" value="remoteurl" %s />'.$GLOBALS['I18N']->get("a URL (website)").'
-      <input type="radio" name="sendmethod" value="inputhere" %s />'.$GLOBALS['I18N']->get("Enter it here").'
+      <h3>'.Help("sendmethod").' '.$GLOBALS['I18N']->get("Content").':</h3>
+      <input type="radio" name="sendmethod" value="remoteurl" %s />'.$GLOBALS['I18N']->get("Send a Webpage").'
+      <input type="radio" name="sendmethod" value="inputhere" %s />'.$GLOBALS['I18N']->get("Compose Message").'
       </div>',
         $messagedata['sendmethod'] == 'remoteurl' ? 'checked="checked"':'',
         $messagedata['sendmethod'] == 'inputhere' ? 'checked="checked"':''
       );
       
       $maincontent .= '
-      <div id="remoteurl"><h3>'.Help("sendurl").' '.$GLOBALS['I18N']->get("URL").':</h3>
+      <div id="remoteurl"><h3>'.Help("sendurl").' '.$GLOBALS['I18N']->get("Send a Webpage - URL").':</h3>
         <div><input type=text name="sendurl" id="remoteurlinput"
        value="'.$messagedata['sendurl'].'" size="60" /></div><span id="remoteurlstatus"></span></div>';
       if (isset($messagedata['sendmethod']) && $messagedata['sendmethod'] != 'remoteurl') {
@@ -709,7 +718,7 @@ if (!$done) {
 //  }
 
   #0013076: different content when forwarding 'to a friend'
-  $tmp = '<div id="messagecontent"><h3>'.Help("message").' '.$GLOBALS['I18N']->get("message").'.</h3> ';
+  $tmp = '<div id="messagecontent"><h3>'.Help("message").' '.$GLOBALS['I18N']->get("Compose Message").'.</h3> ';
   $maincontent .= $tmp;
   $forwardcontent .= $tmp;
 
@@ -787,10 +796,7 @@ if (!$done) {
 #var_dump($messagedata);
   #0013076: different content when forwarding 'to a friend'
   $maincontent .= '<div><h3>'.Help("footer").' '.$GLOBALS['I18N']->get("messagefooter").'.</h3> 
-    <p class="information">'.
-    $GLOBALS['I18N']->get("messagefooterexplanation1").'<br/>'.
-    $GLOBALS['I18N']->get("messagefooterexplanation2").'<br/>'.
-    $GLOBALS['I18N']->get("messagefooterexplanation3").'</p>
+    
    </div>
   <div><textarea name="footer" cols="65" rows="5">'.htmlspecialchars($messagedata['footer']).'</textarea></div>';
   $forwardcontent .= '<div><h3>'.$GLOBALS['I18N']->get("forwardfooter").'.</h3> <br/>
@@ -863,14 +869,12 @@ if (!$done) {
   }
 
   // Display the HTML for the "Send Test" button, and the input field for the email addresses
-  $sendtest_content = sprintf('<div class="sendTest"><div>
+  $sendtest_content = sprintf('<div class="sendTest" id="sendTest"><div>
     <input class="submit" type="submit" name="sendtest" value="%s"/>%s: </div>
     <div><input type="text" name="testtarget" size="40" value="'.$messagedata["testtarget"].'"/><br />%s
     </div></div>',
     $GLOBALS['I18N']->get('sendtestmessage'),$GLOBALS['I18N']->get('toemailaddresses'),
     $GLOBALS['I18N']->get('sendtestexplain'));
-
-
 
   # notification of progress of message sending
   # defaulting to admin_details['email'] gives the wrong impression that this is the
@@ -878,7 +882,7 @@ if (!$done) {
   $notify_start = isset($messagedata['notify_start'])?$messagedata['notify_start']:'';#$admin_details['email'];
   $notify_end = isset($messagedata['notify_end'])?$messagedata['notify_end']:'';#$admin_details['email'];
 
-  $misc_content = sprintf('
+  $send_content = sprintf('
     <div class="sendNotify">
     <div>%s<br/>%s</div><div><input type="text" name="notify_start" id="notify_start" value="%s" size="35"/></div>
     <div>%s<br/>%s</div><div><input type="text" name="notify_end" id="notify_end" value="%s" size="35"/></div>
@@ -888,7 +892,7 @@ if (!$done) {
     $GLOBALS['I18N']->get('email to alert when sending of this message has finished'),
     $GLOBALS['I18N']->get('separate multiple with a comma'),$notify_end);
 
-  $misc_content .= sprintf('
+  $send_content .= sprintf('
     <div class="campaignTracking">
     <div>%s</div><div><input type="hidden" name="cb[google_track]" value="1" /><input type="checkbox" name="google_track" id="google_track" value="1" %s /></div>
     </div>',
@@ -898,10 +902,10 @@ if (!$done) {
   $show_lists = 0;
 
   if (!empty($messagedata['htmlsize'])) {
-    $misc_content .= $GLOBALS['I18N']->get('Estimated size of HTML email').': '.formatBytes($messagedata['htmlsize']).'<br/>';
+    $send_content .= $GLOBALS['I18N']->get('Estimated size of HTML email').': '.formatBytes($messagedata['htmlsize']).'<br/>';
   }
   if (!empty($messagedata['textsize'])) {
-    $misc_content .= $GLOBALS['I18N']->get('Estimated size of text email').': '.formatBytes($messagedata['textsize']).'<br/>';
+    $send_content .= $GLOBALS['I18N']->get('Estimated size of text email').': '.formatBytes($messagedata['textsize']).'<br/>';
   }
 
   if (!empty($messagedata['textsize']) || !empty($messagedata['htmlsize'])) {
@@ -940,17 +944,23 @@ if (!$done) {
         if (!isset($messagedata['textsize'])) $messagedata['textsize'] = 0;
         if (!isset($messagedata['htmlsize'])) $messagedata['htmlsize'] = 0;
 
-        $misc_content .= $GLOBALS['I18N']->get('Estimated size of mailout').': '.formatBytes($htmlcnt[0] * $messagedata['htmlsize'] + $textcnt[0] * $messagedata['textsize']).'<br/>';
+        $send_content .= $GLOBALS['I18N']->get('Estimated size of mailout').': '.formatBytes($htmlcnt[0] * $messagedata['htmlsize'] + $textcnt[0] * $messagedata['textsize']).'<br/>';
         ## remember this to see how well the estimate was
         Sql_Query(sprintf('replace into %s set name = "estimatedsize",id=%d,data = "%s"',$GLOBALS['tables']['messagedata'],$id,$htmlcnt[0] * $messagedata['htmlsize'] + $textcnt[0] * $messagedata['textsize']));
-        $misc_content .= sprintf($GLOBALS['I18N']->get('About %d users to receive HTML and %s users to receive text version of email'),$htmlcnt[0],$textcnt[0]).'<br/>';
+        $send_content .= sprintf($GLOBALS['I18N']->get('About %d users to receive HTML and %s users to receive text version of email'),$htmlcnt[0],$textcnt[0]).'<br/>';
         Sql_Query(sprintf('replace into %s set name = "estimatedhtmlusers",id=%d,data = "%s"',$GLOBALS['tables']['messagedata'],$id,$htmlcnt[0]));
         Sql_Query(sprintf('replace into %s set name = "estimatedtextusers",id=%d,data = "%s"',$GLOBALS['tables']['messagedata'],$id,$textcnt[0]));
       }
     }
   }
 
+  ## the button to actually send the campagin
+  $send_content .= $placeinqueue;
+
+  $tabs->setListClass('sendcampaign');
   print $tabs->display();
+  print '<div id="previousTab"><a href="'.$tabs->previous().'">'.$GLOBALS['I18N']->get('Back').'</a></div>';
+  print '<div id="nextTab"><a href="'.$tabs->next().'">'.$GLOBALS['I18N']->get('Next').'</a></div>';
   #print '<div id="tabcontent"></div>';
   
   switch ($_GET["tab"]) {
@@ -962,7 +972,7 @@ if (!$done) {
 //    case "RSS": print $rss_content;break;            //Obsolete by rssmanager plugin
     case "Lists": $show_lists = 1;break;
     case "Review": print $review_content; break;
-    case "Misc": print $misc_content; break;
+    case "Send": print $send_content; break;
     case "Forward": print $forwardcontent; break;
     default:
       $isplugin = 0;
@@ -978,14 +988,13 @@ if (!$done) {
       break;
   }
 }
-print $sendtest_content;
 
-if (empty($messagedata["status"])) {
+#if (empty($messagedata["status"])) {
   $savecaption = $GLOBALS['I18N']->get('saveasdraft');
-} else {
-  $savecaption = $GLOBALS['I18N']->get('savechanges');#"Save &quot;".$_POST["status"]."&quot; message edits";
+#} else {
+#  $savecaption = $GLOBALS['I18N']->get('savechanges');#"Save &quot;".$_POST["status"]."&quot; message edits";
 
-}
+#}
 
 ## if all is there, we can enable the send button
 $allReady = true;
@@ -1025,14 +1034,19 @@ if ($allReady) {
   print '<script type="text/javascript">
   $("#addtoqueue").html(\'<button class="submit" type="submit" name="send" id="addtoqueuebutton">'.$GLOBALS['I18N']->get('sendmessage').'</button>\');
   </script>';
-} 
-
+} else {
+  print '<script type="text/javascript">
+  $("#addtoqueue").append(\'<div class="error">'.$GLOBALS['I18N']->get('Some required information is missing. The send button will be enabled when this is resolved.').'</div>\');
+  $("#addtoqueue").append(\'<button class="submit" type="submit" name="save" id="addtoqueuebutton" disabled="disabled">'.$GLOBALS['I18N']->get('sendmessage').'</button>\');
+  </script>';
+}
 
 print '<div class="sendSubmit">
-    <input class="submit" type="submit" name="save" value="'.$savecaption.'"/>
+    <input class="submit" type="submit" name="savedraft" value="'.$savecaption.'"/>
     <input type="hidden" name="id" value="'.$id.'"/>
     <input type="hidden" name="status" value="'.$messagedata["status"].'"/></div>
 ';
 
+print $sendtest_content;
 
 ?>
