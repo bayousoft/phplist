@@ -51,7 +51,7 @@ if (!empty($_POST['importcontent']) && !empty($_POST['importlists'])) {
   $report .= sprintf($GLOBALS['I18N']->get('%d emails imported')."\n",$count['imported']);
   $report .= sprintf($GLOBALS['I18N']->get('%d duplicates')."\n",$count['duplicate']);
 
-  print nl2br($report);
+  print '<div class="action_result">'.nl2br($report).'</div>';
   sendMail(getConfig("admin_address"), $GLOBALS['I18N']->get('phplist Import Results'), $report);
   return;
 }
