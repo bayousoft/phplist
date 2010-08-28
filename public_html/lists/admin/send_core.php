@@ -504,7 +504,7 @@ if (!$done) {
     }
 
     ## this one always last
-    $tabs->addTab($GLOBALS['I18N']->get("Finish"),$tabbaseurl.'&amp;tab=Send');
+    $tabs->addTab($GLOBALS['I18N']->get("Finish"),$tabbaseurl.'&amp;tab=Finish');
 
   # print $tabs->display();
   }
@@ -959,8 +959,18 @@ if (!$done) {
 
   $tabs->setListClass('sendcampaign');
   print $tabs->display();
-  print '<div id="previousTab"><a href="'.$tabs->previous().'">'.$GLOBALS['I18N']->get('Back').'</a></div>';
-  print '<div id="nextTab"><a href="'.$tabs->next().'">'.$GLOBALS['I18N']->get('Next').'</a></div>';
+  $previousTab = $tabs->previous();
+  $nextTab = $tabs->next();
+  if (!empty($previousTab)) {
+    print '<div id="previousTab"><a href="'.$previousTab.'" class="savechanges">'.$GLOBALS['I18N']->get('Back').'</a></div>';
+  } else {
+    print '<div id="previousTab">'.$GLOBALS['I18N']->get('Back').'</div>';
+  }
+  if (!empty($nextTab)) {
+    print '<div id="nextTab"><a href="'.$nextTab.'" class="savechanges">'.$GLOBALS['I18N']->get('Next').'</a></div>';
+  } else {
+    print '<div id="nextTab">'.$GLOBALS['I18N']->get('Next').'</div>';
+  }
   #print '<div id="tabcontent"></div>';
   
   switch ($_GET["tab"]) {
@@ -972,7 +982,7 @@ if (!$done) {
 //    case "RSS": print $rss_content;break;            //Obsolete by rssmanager plugin
     case "Lists": $show_lists = 1;break;
     case "Review": print $review_content; break;
-    case "Send": print $send_content; break;
+    case "Finish": print $send_content; break;
     case "Forward": print $forwardcontent; break;
     default:
       $isplugin = 0;
