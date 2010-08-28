@@ -47,7 +47,7 @@ if (!empty($id)) {
   print "<h3>".$GLOBALS['I18N']->get("Members of")." ".ListName($id)."</h3>";
   echo "<br />".PageLinkButton("editlist",$GLOBALS['I18N']->get("edit this list"),"id=$id");
   echo "<br />".PageLinkButton("export&amp;list=$id",$GLOBALS['I18N']->get("Download subscribers"));
-  echo "<br />".PageLinkDialog("import&amp;list=$id",$GLOBALS['I18N']->get("Import Subscribers to this list"));
+  echo "<br />".PageLinkDialog("importsimple&amp;list=$id",$GLOBALS['I18N']->get("Import Subscribers to this list"));
 
 #  print addUserForm($id);
 } else {

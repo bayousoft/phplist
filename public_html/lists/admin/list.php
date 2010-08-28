@@ -47,7 +47,7 @@ switch ($access) {
     break;
 }
 
-print PageLinkButton('catlists',$I18N->get('Categorise lists')).'<br/>';
+print PageLinkButton('catlists',$I18N->get('Categorise lists'));
 $canaddlist = false;
 if ($GLOBALS['require_login'] && !isSuperUser()) {
   $numlists = Sql_Fetch_Row_query("select count(*) from {$tables['list']} where owner = " . $_SESSION['logindetails']['id']);
@@ -71,6 +71,10 @@ if (isset($_GET['delete'])) {
     $result = Sql_query('delete from '.$tables['listmessage']." where listid = $delete $subselect_and");
   }
   print '..' . $GLOBALS['I18N']->get('Done') . "<br /><hr /><br />\n";
+}
+
+if (!empty($_POST['importcontent'])) {
+  include dirname(__FILE__).'/importsimple.php';
 }
 
 $html = '';
@@ -235,7 +239,7 @@ while ($row = Sql_fetch_array($result)) {
       sprintf('<input type="text" name="listorder[%d]" value="%d" size="5" />',$row['id'],$row['listorder']));
     $ls->addColumn($element,
       $GLOBALS['I18N']->get('Members'),
-      PageLink2("members",$members,"id=".$row["id"]).' '.PageLink2('importsimple&list='.$row["id"],$GLOBALS['I18N']->get('add')));
+      PageLink2("members",$members,"id=".$row["id"]).' '.PageLinkDialog('importsimple&list='.$row["id"],$GLOBALS['I18N']->get('add')));
     $ls->addColumn($element,
       $GLOBALS['I18N']->get('Bounces'),
       PageLink2("listbounces",$bounces,"id=".$row["id"]));#.' '.PageLink2('listbounces&id='.$row["id"],$GLOBALS['I18N']->get('view'))
