@@ -37,7 +37,7 @@ class imageUpload {
        }
     </script>
     ';
-    if ($imdata["data"] && $imdata["width"] && $imdata["height"]) {
+    if (!empty($imdata["data"]) && !empty($imdata["width"]) && !empty($imdata["height"])) {
       $html .= '<tr><td colspan=3>'.$GLOBALS['I18N']->get('An image exists on the server, check this box to keep the existing one').' <input type="checkbox" name="'.$name.'_keep" value="yes" checked>&nbsp;';
       $html .= sprintf('%s</td></tr>',$this->viewImageLink($imdata["id"],$imdata["width"],$imdata["height"],$GLOBALS['I18N']->get('View Image')));
     }
