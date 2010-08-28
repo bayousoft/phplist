@@ -92,7 +92,7 @@ if (!empty($_POST['action']) && $_POST['action'] == "addimages") {
 } elseif (!empty($_POST['save'])) {
   $templateok = 1;
   $title = removeXss($_POST['title']);
-  if ($title && ereg("\[CONTENT\]",$content)) {
+  if ($title && strpos($content,"[CONTENT]") !== false) {
     $images = getTemplateImages($content);
 
     $cantestremoteimages = ini_get('allow_url_fopen');
@@ -180,7 +180,12 @@ if (!empty($_POST['action']) && $_POST['action'] == "addimages") {
   if ($id) {
     $req = Sql_Query("select * from {$tables["template"]} where id = $id");
     $data = Sql_Fetch_Array($req);
+  } else {
+    $data = array();
+    $data["title"] = '';
+    $data["template"] = '';
   }
+    
 }
 ?>
 
