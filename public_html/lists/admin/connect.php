@@ -886,6 +886,16 @@ function PageLinkButton($name,$desc="",$url="") {
   return $link;
 }
 
+function PageLinkActionButton($name,$desc="",$url="") {
+  ## as PageLink2, but add the option to ajax it in a popover window
+  $link = PageLink2($name,$desc,$url);
+  if ($link) {
+    $link = str_replace('<a ','<a class="action-button"',$link);
+    $link .= '';
+  }
+  return $link;
+}
+
 function SidebarLink($name,$desc,$url="") {
   if ($url)
     $url = "&".$url;
