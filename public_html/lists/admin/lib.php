@@ -168,7 +168,10 @@ function loadMessageData($msgid) {
   
   ## backwards, check that the content has a url and use it to fill the sendurl
   if (empty($messagedata['sendurl'])) {
-    if (preg_match('/\[URL:(.*)\]/iU',$messagedata['message'],$regs)) {
+
+    ## can't do "ungreedy matching, in case the URL has placeholders, but this can potentially
+    ## throw problems
+    if (preg_match('/\[URL:(.*)\]/i',$messagedata['message'],$regs)) {
       $messagedata['sendurl'] = $regs[1];
     }
   }
@@ -769,11 +772,17 @@ function expandURL($url) {
 }
 
 function fetchUrl($url,$userdata = array()) {
+
+  ## fix the Editor replacing & with &amp;
+  $url = str_ireplace('&amp;','&',$url);
+  
   require_once "HTTP/Request.php";
  # logEvent("Fetching $url");
   if (sizeof($userdata)) {
     foreach ($userdata as $key => $val) {
-      $url = str_ireplace("[$key]",urlencode($val),$url);
+      if ($key != 'password') {
+        $url = str_ireplace("[$key]",urlencode($val),$url);
+      }
     }
   }
 
@@ -782,6 +791,7 @@ function fetchUrl($url,$userdata = array()) {
   }
   
   $url = expandUrl($url);
+#  print "<h1>Fetching ".$url."</h1>";
 
   # keep in memory cache in case we send a page to many emails
   if (isset($GLOBALS['urlcache'][$url]) && is_array($GLOBALS['urlcache'][$url])
