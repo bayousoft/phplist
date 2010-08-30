@@ -80,6 +80,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   if (empty($userdata['id'])) {
     $userdata = array();
   }
+  #var_dump($userdata);
 
   if (stripos($content,"[LISTS]") !== false) {
     $listsarr = array();
@@ -99,6 +100,38 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 
   if (VERBOSE && $getspeedstats) {
     output('Load user end');
+  }
+  
+  if ($cached[$messageid]['userspecific_url']) {
+    if (VERBOSE && $getspeedstats) {
+      output('fetch personal URL start');
+    }
+
+    ## Fetch external content, only if the URL has placeholders
+    if ($GLOBALS["has_pear_http_request"] && preg_match("/\[URL:([^\s]+)\]/i",$content,$regs)) {
+      while (isset($regs[1]) && strlen($regs[1])) {
+        $url = $regs[1];
+        if (!preg_match('/^http/i',$url)) {
+          $url = 'http://'.$url;
+        }
+        $remote_content = fetchUrl($url,$userdata);
+
+        # @@ don't use this
+        #      $remote_content = includeStyles($remote_content);
+
+        if ($remote_content) {
+          $content = str_replace($regs[0],$remote_content,$content);
+          $cached[$messageid]["htmlformatted"] = strip_tags($content) != $content;
+        } else {
+          logEvent("Error fetching URL: $regs[1] to send to $email");
+          return 0;
+        }
+        preg_match("/\[URL:([^\s]+)\]/i",$content,$regs);
+      }
+    }
+    if (VERBOSE && $getspeedstats) {
+      output('fetch personal URL end');
+    }
   }
 
   if (VERBOSE && $getspeedstats) {
@@ -186,38 +219,6 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 
   if (VERBOSE && $getspeedstats) {
     output('define placeholders end');
-  }
-
-  if ($cached[$messageid]['userspecific_url']) {
-    if (VERBOSE && $getspeedstats) {
-      output('fetch URL start');
-    }
-
-    ## Fetch external content, only if the URL has placeholders
-    if ($GLOBALS["has_pear_http_request"] && preg_match("/\[URL:([^\s]+)\]/i",$htmlcontent,$regs)) {
-      while (isset($regs[1]) && strlen($regs[1])) {
-        $url = $regs[1];
-        if (!preg_match('/^http/i',$url)) {
-          $url = 'http://'.$url;
-        }
-        $remote_content = fetchUrl($url,$userdata);
-
-        # @@ don't use this
-        #      $remote_content = includeStyles($remote_content);
-
-        if ($remote_content) {
-          $content = str_replace($regs[0],$remote_content,$content);
-          $cached[$messageid]["htmlformatted"] = strip_tags($content) != $content;
-        } else {
-          logEvent("Error fetching URL: $regs[1] to send to $email");
-          return 0;
-        }
-        preg_match("/\[URL:([^\s]+)\]/i",$htmlcontent,$regs);
-      }
-    }
-    if (VERBOSE && $getspeedstats) {
-      output('fetch URL end');
-    }
   }
 
   ## Fill text and html versions depending on given versions.
@@ -1103,7 +1104,7 @@ function clickTrackLinkId($messageid,$userid,$url,$link) {
     = ' select id'
     . ' from ' . $GLOBALS['tables']['linktrack_forward']
     . ' where url = ?';
-    $rs = Sql_Query_Params($query, array($link));
+    $rs = Sql_Query_Params($query, array($url));
     $exists = Sql_Fetch_Row($rs);
     if (!$exists[0]) {
       $personalise = preg_match('/uid=/',$link);
