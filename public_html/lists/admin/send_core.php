@@ -567,18 +567,18 @@ if (!$done) {
   }
 
   $maincontent .= '
-  <div><h3>'.Help("subject").' '.$GLOBALS['I18N']->get("Subject").':</h3></div>
-    <div><input type="text" name="subject"
+  <div class="field"><label for="subject">'.$GLOBALS['I18N']->get("Subject").'</label>'.Help("subject").
+  '<input type="text" name="subject"
     value="'.htmlentities($utf8_subject,ENT_QUOTES,'UTF-8').'" size="60" /></div>
-  <div><h3>'.Help("from").' '.$GLOBALS['I18N']->get("fromline").':</h3></div>
-    <div><input type="text" name="from"
+  <div class="field"><label for="from">'.$GLOBALS['I18N']->get("fromline").'</label>'.Help("from").'
+    <input type="text" name="from"
    value="'.htmlentities($utf8_from,ENT_QUOTES,'UTF-8').'" size="60" /></div>';
    
    if ($GLOBALS['has_pear_http_request']) {
       $maincontent .= sprintf('
       
-      <div id="contentchoice">
-      <h3>'.Help("sendmethod").' '.$GLOBALS['I18N']->get("Content").':</h3>
+      <div id="contentchoice" class="field">
+      <label for="sendmethod">'.$GLOBALS['I18N']->get("Content").'</label>'.Help("sendmethod").'
       <input type="radio" name="sendmethod" value="remoteurl" %s />'.$GLOBALS['I18N']->get("Send a Webpage").'
       <input type="radio" name="sendmethod" value="inputhere" %s />'.$GLOBALS['I18N']->get("Compose Message").'
       </div>',
@@ -587,8 +587,8 @@ if (!$done) {
       );
       
       $maincontent .= '
-      <div id="remoteurl"><h3>'.Help("sendurl").' '.$GLOBALS['I18N']->get("Send a Webpage - URL").':</h3>
-        <div><input type=text name="sendurl" id="remoteurlinput"
+      <div id="remoteurl" class="field"><label for="sendurl">'.$GLOBALS['I18N']->get("Send a Webpage - URL").'</label>'.Help("sendurl").'
+        <input type=text name="sendurl" id="remoteurlinput"
        value="'.$messagedata['sendurl'].'" size="60" /></div><span id="remoteurlstatus"></span></div>';
       if (isset($messagedata['sendmethod']) && $messagedata['sendmethod'] != 'remoteurl') {
         $maincontent .= '<script type="text/javascript">$("#remoteurl").hide();</script>';
@@ -597,10 +597,9 @@ if (!$done) {
 
 // custom code - end
   #0013076: different content when forwarding 'to a friend'
-  $forwardcontent .= $GLOBALS['I18N']->get("When a user forwards to a friend," .
-  " the friend will receive this message instead of the one on the content tab.").
-  '<div><h3>'.Help("subject").' '.$GLOBALS['I18N']->get("Subject").':</h3></div>
-    <div><input type="text" name="forwardsubject" value="'.htmlentities($messagedata['forwardsubject'],ENT_QUOTES,'UTF-8').'" size="40" /></div>';
+  $forwardcontent .= 
+  '<div class="field"><label for="forwardsubject">'.$GLOBALS['I18N']->get("Subject").'</label>'.Help("forwardsubject").'
+    <input type="text" name="forwardsubject" value="'.htmlentities($messagedata['forwardsubject'],ENT_QUOTES,'UTF-8').'" size="40" /></div>';
 
   $currentTime = Sql_Fetch_Row_Query('select now()');
 
@@ -694,8 +693,8 @@ if (!$done) {
 
   $req = Sql_Query("select id,title from {$tables["template"]} order by listorder");
   if (Sql_Num_Rows($req)) {
-    $formatting_content .= '<div><h3>'.Help("usetemplate").' '.$GLOBALS['I18N']->get("usetemplate").':</h3> </div>
-      <div><select name="template"><option value="0">-- '.$GLOBALS['I18N']->get("selectone").'</option>';
+    $formatting_content .= '<div class="field"><label for="template">'.$GLOBALS['I18N']->get("usetemplate").'</label>'.Help("usetemplate").'
+      <select name="template"><option value="0">-- '.$GLOBALS['I18N']->get("selectone").'</option>';
     $req = Sql_Query("select id,title from {$tables["template"]} order by listorder");
     while ($row = Sql_Fetch_Array($req)) {
       if ($row["title"]) {
@@ -718,9 +717,8 @@ if (!$done) {
 //  }
 
   #0013076: different content when forwarding 'to a friend'
-  $tmp = '<div id="messagecontent"><h3>'.Help("message").' '.$GLOBALS['I18N']->get("Compose Message").'.</h3> ';
-  $maincontent .= $tmp;
-  $forwardcontent .= $tmp;
+  $maincontent .= '<div id="messagecontent" class="field"><label for="message">'.$GLOBALS['I18N']->get("Compose Message").'</label> '.Help("message");
+  $forwardcontent .= '<div id="messagecontent" class="field"><label for="forwardmessage">'.$GLOBALS['I18N']->get("Compose Message").'</label> '.Help("forwardmessage");
 
   if ($usefck) {
     $oFCKeditor = new FCKeditor('message') ;
@@ -777,7 +775,7 @@ if (!$done) {
 
   #0013076: different content when forwarding 'to a friend'
   $tmp = '
-  </div>
+ 
   </div> <!-- end of message content -->
   ';
   
@@ -788,21 +786,17 @@ if (!$done) {
   $forwardcontent .= $tmp;
 
   if (USE_MANUAL_TEXT_PART) {
-  $textcontent = '<div>
-    <h3>'.Help("plaintextversion").' '.$GLOBALS['I18N']->get("plaintextversion").'</h3>
+  $textcontent = '<div class="field">
+    <label for="textmessage">'.$GLOBALS['I18N']->get("plaintextversion").'</label>'.Help("plaintextversion").'
     <textarea name="textmessage" cols="65" rows="20">'.$messagedata["textmessage"].'</textarea>
   </div>';
   }
 #var_dump($messagedata);
   #0013076: different content when forwarding 'to a friend'
-  $maincontent .= '<div><h3>'.Help("footer").' '.$GLOBALS['I18N']->get("messagefooter").'.</h3> 
-    
-   </div>
-  <div><textarea name="footer" cols="65" rows="5">'.htmlspecialchars($messagedata['footer']).'</textarea></div>';
-  $forwardcontent .= '<div><h3>'.$GLOBALS['I18N']->get("forwardfooter").'.</h3> <br/>
-    '.$GLOBALS['I18N']->get("messageforwardfooterexplanation").'<br/>'.
-  '.</div>
-  <div><textarea name="forwardfooter" cols="65" rows="5">'.htmlspecialchars($messagedata['forwardfooter']).'</textarea></div>';
+  $maincontent .= '<div class="field"><label for="footer">'.$GLOBALS['I18N']->get("messagefooter").'.</label>'.Help("footer").'
+   <textarea name="footer" cols="65" rows="5">'.htmlspecialchars($messagedata['footer']).'</textarea></div>';
+  $forwardcontent .= '<div class="field"><label for="forwardfooter">'.$GLOBALS['I18N']->get("forwardfooter").'</label>'.Help("forwardfooter").'
+    <textarea name="forwardfooter" cols="65" rows="5">'.htmlspecialchars($messagedata['forwardfooter']).'</textarea></div>';
 
   if (ALLOW_ATTACHMENTS) {
     // If we have a message id saved, we want to query the attachments that are associated with this
@@ -884,8 +878,8 @@ if (!$done) {
 
   $send_content = sprintf('
     <div class="sendNotify">
-    <div>%s<br/>%s</div><div><input type="text" name="notify_start" id="notify_start" value="%s" size="35"/></div>
-    <div>%s<br/>%s</div><div><input type="text" name="notify_end" id="notify_end" value="%s" size="35"/></div>
+    <label for="notify_start">%s<br/>%s</label><div><input type="text" name="notify_start" id="notify_start" value="%s" size="35"/></div>
+    <label for="notify_end">%s<br/>%s</label><div><input type="text" name="notify_end" id="notify_end" value="%s" size="35"/></div>
     </div>',
     $GLOBALS['I18N']->get('email to alert when sending of this message starts'),
     $GLOBALS['I18N']->get('separate multiple with a comma'),$notify_start,
@@ -894,9 +888,9 @@ if (!$done) {
 
   $send_content .= sprintf('
     <div class="campaignTracking">
-    <div>%s</div><div><input type="hidden" name="cb[google_track]" value="1" /><input type="checkbox" name="google_track" id="google_track" value="1" %s /></div>
+    <label for"cb[google_track]">%s</label><div><input type="hidden" name="cb[google_track]" value="1" /><input type="checkbox" name="google_track" id="google_track" value="1" %s /></div>
     </div>',
-     $GLOBALS['I18N']->get('add Google tracking code'),
+     Help("googletrack").' '.$GLOBALS['I18N']->get('add Google tracking code'),
      !empty($messagedata['google_track']) ? 'checked="checked"':'');
    
   $show_lists = 0;
@@ -958,42 +952,34 @@ if (!$done) {
   $send_content .= $placeinqueue;
 
   $tabs->setListClass('sendcampaign');
+  $tabs->setId('sendtabs');
+#  $tabs->addPrevNext();
+  $tabs->addTabNo();
   print $tabs->display();
-  $previousTab = $tabs->previous();
-  $nextTab = $tabs->next();
-  if (!empty($previousTab)) {
-    print '<div id="previousTab"><a href="'.$previousTab.'" class="savechanges">'.$GLOBALS['I18N']->get('Back').'</a></div>';
-  } else {
-    print '<div id="previousTab">'.$GLOBALS['I18N']->get('Back').'</div>';
-  }
-  if (!empty($nextTab)) {
-    print '<div id="nextTab"><a href="'.$nextTab.'" class="savechanges">'.$GLOBALS['I18N']->get('Next').'</a></div>';
-  } else {
-    print '<div id="nextTab">'.$GLOBALS['I18N']->get('Next').'</div>';
-  }
   #print '<div id="tabcontent"></div>';
-  
+
+  $panelcontent = '';
   switch ($_GET["tab"]) {
-    case "Attach": print $att_content; break;
+    case "Attach": $panelcontent = $att_content; break;
  //   case "Criteria": print $criteria_content; break; // moved to plugin
-    case "Text": print $textcontent; break;
-    case "Format": print $formatting_content;break;
-    case "Scheduling": print $scheduling_content;break;
+    case "Text": $panelcontent =  $textcontent; break;
+    case "Format": $panelcontent =  $formatting_content;break;
+    case "Scheduling": $panelcontent =  $scheduling_content;break;
 //    case "RSS": print $rss_content;break;            //Obsolete by rssmanager plugin
     case "Lists": $show_lists = 1;break;
-    case "Review": print $review_content; break;
-    case "Finish": print $send_content; break;
-    case "Forward": print $forwardcontent; break;
+    case "Review": $panelcontent =  $review_content; break;
+    case "Finish": $panelcontent =  $send_content; break;
+    case "Forward": $panelcontent =  $forwardcontent; break;
     default:
       $isplugin = 0;
       foreach ($plugintabs as $tabname => $tabcontent) {
         if ($_GET['tab'] == $tabname) {
-          print $tabcontent;
+          $panelcontent =  $tabcontent;
           $isplugin = 1;
         }
       }
       if (!$isplugin) {
-        print $maincontent;
+        $panelcontent =  $maincontent;
       }
       break;
   }
@@ -1051,7 +1037,7 @@ if ($allReady) {
   </script>';
 }
 
-print '<div class="sendSubmit">
+$panelcontent .= '<div class="sendSubmit">
     <input class="submit" type="submit" name="savedraft" value="'.$savecaption.'"/>
     <input type="hidden" name="id" value="'.$id.'"/>
     <input type="hidden" name="status" value="'.$messagedata["status"].'"/></div>

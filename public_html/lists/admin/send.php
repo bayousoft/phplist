@@ -88,7 +88,7 @@ if (!empty($_GET['delete'])) {
 $req = Sql_Query(sprintf('select id,entered,subject,unix_timestamp(current_timestamp) - unix_timestamp(entered) as age from %s where status = "draft" %s order by entered desc',$GLOBALS['tables']['message'],$ownership));
 $numdraft = Sql_Num_Rows($req);
 if ($numdraft > 0 && !isset($_GET['id']) && !isset($_GET['new'])) {
-  print '<p>'.PageLinkButton('send&amp;new=1',$I18N->get('start a new message')).'</p>';
+  print '<p>'.PageLinkActionButton('send&amp;new=1',$I18N->get('start a new message')).'</p>';
   print '<p><h3>'.$I18N->get('Choose an existing draft message to work on').'</h3></p><br/>';
   $ls = new WebblerListing($I18N->get('Draft messages'));
   $ls->noShader();
@@ -146,7 +146,9 @@ $list_content .= '</div>'; ## close accordion
 
 if (isset($show_lists) && $show_lists) {
  # print htmlspecialchars($list_content);
-  print $list_content;
+  $panelcontent .= $list_content;
 } 
+  $panel = new UIPanel('Test',$panelcontent,$tabs->prevNextNav());
+  print $panel->display();
 
 print '</form>';
