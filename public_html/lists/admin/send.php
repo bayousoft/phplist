@@ -147,8 +147,11 @@ $list_content .= '</div>'; ## close accordion
 if (isset($show_lists) && $show_lists) {
  # print htmlspecialchars($list_content);
   $panelcontent .= $list_content;
-} 
-  $panel = new UIPanel('Test',$panelcontent,$tabs->prevNextNav());
-  print $panel->display();
+}
+
+$panelcontent .= $saveDraftButton;
+
+$panel = new UIPanel($tabs->tabTitle(),$panelcontent,$tabs->prevNextNav());
+print $panel->display();
 
 print '</form>';

@@ -605,10 +605,9 @@ if (!$done) {
 
   $scheduling_content = '<div id="schedulecontent">';
   $scheduling_content .= '
-  <div><h3>'.$GLOBALS['I18N']->get("Time is Based on the Server Time").
-    '</h3><div>'.$GLOBALS['I18N']->get('Current Server Time is').' <span id="servertime">'.$currentTime[0].'</span></div></div>
-  <div><h3>'.Help('embargo').' '.$GLOBALS['I18N']->get("embargoeduntil").':</h3></div>
-    <div>'.$embargo->showInput('embargo',"",$messagedata['embargo']).'</div>
+  <div class="field">'.$GLOBALS['I18N']->get("Dates and times are relative to the Server Time").'<br/>'.$GLOBALS['I18N']->get('Current Server Time is').' <span id="servertime">'.$currentTime[0].'</span>'.'</div>
+  <div class="field"><label for="embargo">'.$GLOBALS['I18N']->get("embargoeduntil").'</label>'.Help('embargo').'
+    '.$embargo->showInput('embargo',"",$messagedata['embargo']).'</div>
     <script type="text/javascript">
     getServerTime();
     </script>';
@@ -617,8 +616,8 @@ if (!$done) {
     $repeatinterval = $messagedata["repeatinterval"];
 
     $scheduling_content .= '
-    <div><h3>'.Help("repetition").' '.$GLOBALS['I18N']->get("repeatevery").':</h3></div>
-        <div><select name="repeatinterval">
+    <div class="field"><label for="repeatinterval">'.$GLOBALS['I18N']->get("repeatevery").'</label>'.Help("repetition").'
+        <select name="repeatinterval">
       <option value="0"';
       if ($repeatinterval == 0) { $scheduling_content .= ' selected="selected"'; }
       $scheduling_content .= '>-- '.$GLOBALS['I18N']->get("norepetition").'</option>
@@ -632,16 +631,15 @@ if (!$done) {
       if ($repeatinterval == 10080) { $scheduling_content .= ' selected="selected"'; }
       $scheduling_content .= '>'.$GLOBALS['I18N']->get("week").'</option>
       </select>
-        </div>
-        <div>  <h3>'.$GLOBALS['I18N']->get("repeatuntil").':</h3></div>
-        <div>'.$repeatuntil->showInput("repeatuntil","",$messagedata["repeatuntil"]);
+        <label for="repeatuntil">'.$GLOBALS['I18N']->get("repeatuntil").'</label>
+        '.$repeatuntil->showInput("repeatuntil","",$messagedata["repeatuntil"]);
       $scheduling_content .= '</div>';
   }
 
   $requeueinterval = $messagedata["requeueinterval"];
   $scheduling_content .= '
-  <div><h3>'.Help("requeueing").' '.$GLOBALS['I18N']->get("requeueevery").':</h3></div>
-      <div><select name="requeueinterval">
+  <div class="field"><label for="requeueinterval"> '.$GLOBALS['I18N']->get("requeueevery").'</label>'.Help("requeueing").'
+    <select name="requeueinterval">
     <option value="0"';
     if ($requeueinterval == 0) { $scheduling_content .= ' selected="selected"'; }
     $scheduling_content .= '>-- '.$GLOBALS['I18N']->get("norequeueing").'</option>
@@ -655,17 +653,18 @@ if (!$done) {
     if ($requeueinterval == 10080) { $scheduling_content .= ' selected="selected"'; }
     $scheduling_content .= '>'.$GLOBALS['I18N']->get("week").'</option>
     </select>
-      </div>
-      <div>  <h3>'.$GLOBALS['I18N']->get("requeueuntil").':</h3></div>
-      <div>'.$requeueuntil->showInput("requeueuntil","",$messagedata["requeueuntil"]);
+
+      <label for="requeueuntil">'.$GLOBALS['I18N']->get("requeueuntil").'</label>
+      '.$requeueuntil->showInput("requeueuntil","",$messagedata["requeueuntil"]);
     $scheduling_content .= '</div>';
 
   $scheduling_content .= '</div>';
     
-  $formatting_content .= '<div><input type="hidden" name="htmlformatted" value="auto" /></div>';
+  $formatting_content .= '<input type="hidden" name="htmlformatted" value="auto" />';
 
   $formatting_content .= '
-    <div><h3>'.Help("sendformat").' '.$GLOBALS['I18N']->get("sendas").':</h3>
+    <div class="field">
+    <label for="sendformat"> '.$GLOBALS['I18N']->get("sendas").'</label>'.Help("sendformat").'
   '.$GLOBALS['I18N']->get("html").' <input type="radio" name="sendformat" value="HTML" ';
     $formatting_content .= $messagedata["sendformat"]=="HTML"?'checked="checked"':'';
     $formatting_content .= '/>
@@ -802,8 +801,8 @@ if (!$done) {
     // If we have a message id saved, we want to query the attachments that are associated with this
     // message and display that (and allow deletion of!)
 
-    $att_content = '<div id="sendAttachment"><div>'.Help("attachments").' <h3>'.$GLOBALS['I18N']->get("addattachments").'</h3> </div>';
-    $att_content .= '<div>
+    $att_content = '<div class="field"><label for="attach">'.$GLOBALS['I18N']->get("addattachments").'</label>'.Help("attachments");
+    $att_content .= '<div class="info">
       '.$GLOBALS['I18N']->get("uploadlimits").':<br/>
       '.$GLOBALS['I18N']->get("maxtotaldata").': '.ini_get("post_max_size").'<br/>
       '.$GLOBALS['I18N']->get("maxfileupload").': '.ini_get("upload_max_filesize").'</div>';
@@ -985,23 +984,18 @@ if (!$done) {
   }
 }
 
-#if (empty($messagedata["status"])) {
-  $savecaption = $GLOBALS['I18N']->get('saveasdraft');
-#} else {
-#  $savecaption = $GLOBALS['I18N']->get('savechanges');#"Save &quot;".$_POST["status"]."&quot; message edits";
-
-#}
+$savecaption = $GLOBALS['I18N']->get('saveasdraft');
 
 ## if all is there, we can enable the send button
 $allReady = true;
-print '<script type="text/javascript">
+$panelcontent .= '<script type="text/javascript">
 $("#addtoqueue").html("");
 </script>';
 
 $testValue = trim($messagedata['subject']);
 if (empty($testValue) || $testValue == '(no subject)') {
   $allReady = false;
-  print '<script type="text/javascript">
+  $panelcontent .= '<script type="text/javascript">
   $("#addtoqueue").append(\'<div class="missing">'.$GLOBALS['I18N']->get('subject missing').'</div>\');
   </script>';
 }
@@ -1009,40 +1003,43 @@ $testValue = trim($messagedata['message']);
 $testValue2 = trim($messagedata['sendurl']);
 if (empty($testValue) && empty($testValue2)) {
   $allReady = false;
-  print '<script type="text/javascript">
+  $panelcontent .= '<script type="text/javascript">
   $("#addtoqueue").append(\'<div class="missing">'.$GLOBALS['I18N']->get('message content missing').'</div>\');
   </script>';
 } 
 $testValue = trim($messagedata['from']);
 if (empty($testValue)) {
   $allReady = false;
-  print '<script type="text/javascript">
+  $panelcontent .= '<script type="text/javascript">
   $("#addtoqueue").append(\'<div class="missing">'.$GLOBALS['I18N']->get('From missing').'</div>\');
   </script>';
 } 
 if (empty($messagedata['targetlist'])) {
   $allReady = false;
-  print '<script type="text/javascript">
+  $panelcontent .= '<script type="text/javascript">
   $("#addtoqueue").append(\'<div class="missing">'.$GLOBALS['I18N']->get('destination lists missing').'</div>\');
   </script>';
 } 
 if ($allReady) {
-  print '<script type="text/javascript">
+  $panelcontent .= '<script type="text/javascript">
   $("#addtoqueue").html(\'<button class="submit" type="submit" name="send" id="addtoqueuebutton">'.$GLOBALS['I18N']->get('sendmessage').'</button>\');
   </script>';
 } else {
-  print '<script type="text/javascript">
+  $panelcontent .= '<script type="text/javascript">
   $("#addtoqueue").append(\'<div class="error">'.$GLOBALS['I18N']->get('Some required information is missing. The send button will be enabled when this is resolved.').'</div>\');
   $("#addtoqueue").append(\'<button class="submit" type="submit" name="save" id="addtoqueuebutton" disabled="disabled">'.$GLOBALS['I18N']->get('sendmessage').'</button>\');
   </script>';
 }
 
-$panelcontent .= '<div class="sendSubmit">
+$saveDraftButton = '<div class="sendSubmit">
     <input class="submit" type="submit" name="savedraft" value="'.$savecaption.'"/>
     <input type="hidden" name="id" value="'.$id.'"/>
     <input type="hidden" name="status" value="'.$messagedata["status"].'"/></div>
 ';
 
-print $sendtest_content;
+  $testpanel = new UIPanel($GLOBALS['I18N']->get('Send Test'),$sendtest_content);
+  $testpanel->setID('testpanel');
+  print $testpanel->display();
+
 
 ?>
