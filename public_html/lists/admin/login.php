@@ -8,10 +8,10 @@ $page = '';
 if (isset($_GET['page']) && $_GET["page"]) {
   $page = $_GET["page"];
   if (!is_file($page.".php") || $page == "logout") {
-    $page = "home";
+    $page = $GLOBALS['homepage'];
   }
 } else {
-  $page = "home";
+  $page = $GLOBALS['homepage'];
 }
 if (!isset($GLOBALS['msg'])) $GLOBALS['msg'] = '';
 ?>
@@ -99,7 +99,7 @@ function deleteOldTokens(){
       echo "</form>";
     } else {
       echo "<p class=\"information\"> Unknown token or time expired (More than 24 hrs. passed since the notification email was sent).<br/><br/>";
-      echo "To return and log in again, click: <a href='?page=home'>login</a>.</p><br/><br/>";
+      echo "To return and log in again, click: <a href='./'>login</a>.</p><br/><br/>";
       deleteOldTokens();
     }
     } else {
