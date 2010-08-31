@@ -860,8 +860,8 @@ function PageLinkDialog ($name,$desc="",$url="") {
   ## as PageLink2, but add the option to ajax it in a popover window
   $link = PageLink2($name,$desc,$url);
   if ($link) {
-    $link = str_replace('<a ','<div><a class="opendialog"',$link);
-    $link .= '</div>';
+    $link = str_replace('<a ','<a class="button opendialog"',$link);
+    $link .= '';
   }
   return $link;
 }
@@ -1663,6 +1663,7 @@ function simplePaging($baseurl,$start,$total,$numpp) {
 
 function Paging($base_url,$start,$total,$numpp = 10,$label = "") {
   $page = 1;
+  $window = 8; ## size left and right of current
   $data = '';#PagingPrevious($base_url,$start,$total,$numpp,$label);#.'&nbsp;|&nbsp;';
   if (!isset($GLOBALS['config']['paginglabeltitle'])) {
     $labeltitle = $label;
@@ -1671,16 +1672,20 @@ function Paging($base_url,$start,$total,$numpp = 10,$label = "") {
   }
   if ($total < $numpp) return '';
 
+
   for ($i = 0;$i<=$total;$i+=$numpp) {
     if ($i == $start)
       $data .= sprintf('<a class="current paging-item" title="%s %s" class="paging-item">%s%s</a>',$labeltitle,$page,$label,$page);
-    else
+    ## only show 5 left and right of current
+    elseif ($i > $start - $window * $numpp && $i < $start + $window * $numpp)
+#    else
       $data .= sprintf('<a href="%s&amp;s=%d" title="%s %s" rel="nofollow" class="paging-item">%s%s</a>',$base_url,$i,$labeltitle,$page,$label,$page);
     $page++;
   }
   if ($page == 1)
     return "";
  # $data .= PagingNext($base_url,$start,$total,$numpp,$label,$page);
+  return '<div class="paging">'.PagingPrevious($base_url,$start,$total,$numpp,$label).'<div class="items">'.$data.'</div>'.PagingNext($base_url,$start,$total,$numpp,$label).'</div>';
   return '<div class="paging"><a class="prev browse left">&lt;&lt;</a><div class="items">'.$data.'</div><a class="next browse right">&gt;&gt;</a></div>';
 }
 
