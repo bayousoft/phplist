@@ -703,11 +703,15 @@ function newMenu() {
     "about" =>  'about',
     "logout" => "logout",
     "div1" => "<hr />",
-    'category' => $thispage_category,
+    'categoryheader' => $thispage_category,
   );
   if (!empty($thispage_category)) {
-    foreach ($GLOBALS['pagecategories'][$thispage_category]['menulinks'] as $category_page) {
-      $GLOBALS['main_menu'][$category_page] = $category_page;
+    if (sizeof($GLOBALS['pagecategories'][$thispage_category]['menulinks'])) {
+      foreach ($GLOBALS['pagecategories'][$thispage_category]['menulinks'] as $category_page) {
+        $GLOBALS['main_menu'][$category_page] = $category_page;
+      }
+    } else {
+      unset($GLOBALS['main_menu']['categoryheader']);
     }
   }
 
@@ -723,7 +727,7 @@ function newMenu() {
       // don't use the link for a rule
       elseif ($desc == "<hr />") {
         $html .= '<li>'.$desc.'</li>';
-      } elseif ($page == 'category') {
+      } elseif ($page == 'categoryheader') {
       #  $html .= '<li><h3>'.$GLOBALS['I18N']->get($thispage_category).'</h3></li>';
         $html .= '<li><h3>'.$GLOBALS['I18N']->get('In this section').'</h3></li>';
       } else {
