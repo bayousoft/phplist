@@ -1,4 +1,4 @@
-
+<div id="progressbar"></div>
 <script language="Javascript" src="js/jslib.js" type="text/javascript"></script>
 <hr/>
 
@@ -235,7 +235,7 @@ if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
 #            return;
         }
         $c = 1;
-        ob_end_flush();
+        @ob_end_flush();
         if ($todo && $req)
         while ($user = Sql_Fetch_Array($req)) {
           if ($c % 10 == 0) {
@@ -251,32 +251,13 @@ if (($require_login && !isSuperUser()) || !$require_login || isSuperUser()) {
           }
           $c++;
         }
-        if ($total)
+        if (!empty($total)) {
           print "$total/$total<br/>";
+        }
       }
       if (isset($_GET["option"]) && $_GET["option"] == "invalidemail") {
-        Info($GLOBALS['I18N']->get("Listing users with an invalid email"));
-        flush();
-        $req = Sql_Query("select id,email from {$tables["user"]}");
-        $c=0;
-        print '<form method="post" action="">';
-        while ($row = Sql_Fetch_Array($req)) {
-          set_time_limit(60);
-          if (!is_email($row["email"])) {
-            $c++;
-            if (isset($_POST['tagged']) && is_array($_POST['tagged']) && in_array($row["id"],array_keys($_POST['tagged']))) {
-              deleteUser($row["id"]);
-              $deleted++;
-            } else {
-              $list .= sprintf('<input type="checkbox" name="tagged[%d]" value="1" />&nbsp;  ',$row["id"]).PageLink2("user&amp;id=".$row["id"]."&amp;returnpage=reconcileusers&amp;returnoption=invalidemail","User ".$row["id"]). "    [".$row["email"].']<br/>';
-            }
-          }
-        }
-        if ($deleted)
-        print $deleted." ".$GLOBALS['I18N']->get('Users deleted')."<br/>";
-        print $c." ".$GLOBALS['I18N']->get('Users apply')."<br/>$list\n";
-        if ($c)
-        print '<input class="submit" type="submit" name="deletetagged" value="'.$GLOBALS['I18N']->get('Delete Tagged Users').'" /></form>';
+        #include dirname(__FILE__).'/actions/listinvalid.php';
+        print '<div id="listinvalid">LISTING</div>';
       } elseif (isset($_GET["option"]) && $_GET["option"] == "fixinvalidemail") {
         Info($GLOBALS['I18N']->get("Trying to fix users with an invalid email"));
         flush();
@@ -409,7 +390,7 @@ function snippetListsSelector ($optionAll = false) {
   if ( empty( $optionList ) ) {
     global $tables;
     $optionList = '';
-    
+
     $req = Sql_Query(sprintf('select id,name from %s order by listorder',$tables["list"]));
     while ($row = Sql_Fetch_Row($req)) {
       $optionList .= sprintf ('<option value="%d">%s</option>',$row[0],stripslashes($row[1]));
@@ -423,29 +404,29 @@ function snippetListsSelector ($optionAll = false) {
   $result .= $optionList;
   $result .= '</select>';
 
-  return $result;  
+  return $result;
 }
 
+print '<ul>';
+echo '<li>'.PageLinkButton("reconcileusers&amp;option=nolists",$GLOBALS['I18N']->get("Delete all subscribers who are not subscribed to any list")).'</li>';
+#echo '<li>'.PageLinkButton("reconcileusers&amp;option=invalidemail",$GLOBALS['I18N']->get("Find users who have an invalid email")).'</li>';
+#echo '<li>'.PageLinkButton("reconcileusers&amp;option=adduniqid",$GLOBALS['I18N']->get("Make sure that all users have a UniqID")).'</li>';
+#echo '<li>'.PageLinkButton("reconcileusers&amp;option=markinvalidunconfirmed",$GLOBALS['I18N']->get("Mark all users with an invalid email as unconfirmed")).'</li>';
+#echo '<li>'.PageLinkButton("reconcileusers&amp;option=deleteinvalidemail",$GLOBALS['I18N']->get("Delete users who have an invalid email")).'</li>';
+echo '<li>'.PageLinkButton("reconcileusers&amp;option=markallhtml",$GLOBALS['I18N']->get("Mark all subscribers to receive HTML")).'</li>';
+echo '<li>'.PageLinkButton("reconcileusers&amp;option=markalltext",$GLOBALS['I18N']->get("Mark all subscribers to receive text")).'</li>';
+#echo '<li>'.$GLOBALS['I18N']->get('To try to (automatically)').' '. PageLinkButton("reconcileusers&amp;option=fixinvalidemail",$GLOBALS['I18N']->get("Fix emails for users who have an invalid email")).'</li>';
+#echo '<li>'.PageLinkButton("reconcileusers&amp;option=removestaleentries",$GLOBALS['I18N']->get("Remove Stale entries from the database")).'</li>';
+#echo '<li>'.PageLinkButton("reconcileusers&amp;option=mergeduplicates",$GLOBALS['I18N']->get("Merge Duplicate Users")).'</li>';
+print '</ul>';
 ?>
-
-<p class="button"><?php echo PageLink2("reconcileusers&amp;option=nolists",$GLOBALS['I18N']->get("Delete all users who are not subscribed to any list"))?>
-<p class="button"><?php echo PageLink2("reconcileusers&amp;option=invalidemail",$GLOBALS['I18N']->get("Find users who have an invalid email"))?>
-<p class="button"><?php echo PageLink2("reconcileusers&amp;option=adduniqid",$GLOBALS['I18N']->get("Make sure that all users have a UniqID"))?>
-<p class="button"><?php echo PageLink2("reconcileusers&amp;option=markinvalidunconfirmed",$GLOBALS['I18N']->get("Mark all users with an invalid email as unconfirmed"))?>
-<p class="button"><?php echo PageLink2("reconcileusers&amp;option=deleteinvalidemail",$GLOBALS['I18N']->get("Delete users who have an invalid email"))?>
-<p class="button"><?php echo PageLink2("reconcileusers&amp;option=markallhtml",$GLOBALS['I18N']->get("Mark all users to receive HTML"))?>
-<p class="button"><?php echo PageLink2("reconcileusers&amp;option=markalltext",$GLOBALS['I18N']->get("Mark all users to receive text"))?>
-<p class="button"><?php echo $GLOBALS['I18N']->get('To try to (automatically)')?> <?php echo PageLink2("reconcileusers&amp;option=fixinvalidemail",$GLOBALS['I18N']->get("Fix emails for users who have an invalid email"))?>
-<p class="button"><?php echo PageLink2("reconcileusers&amp;option=removestaleentries",$GLOBALS['I18N']->get("Remove Stale entries from the database"))?>
-<p class="button"><?php echo PageLink2("reconcileusers&amp;option=mergeduplicates",$GLOBALS['I18N']->get("Merge Duplicate Users"))?>
-
 <hr/>
 <form method="get">
 <input type="hidden" name="page" value="reconcileusers" />
 <input type="hidden" name="option" value="markallconfirmed" />
 <p class="information">
-<?php 
-  echo sprintf( $GLOBALS['I18N']->get("Mark all users on list %s confirmed"), snippetListsSelector(true) );
+<?php
+  echo sprintf( $GLOBALS['I18N']->get("Mark all subscribers on list %s confirmed"), snippetListsSelector(true) );
 ?>
 </p>
 <input class="submit" type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>" />
@@ -456,11 +437,11 @@ function snippetListsSelector ($optionAll = false) {
 <input type="hidden" name="page" value="reconcileusers" />
 <input type="hidden" name="option" value="nolistsnewlist" />
 <p class="information">
-<?php 
-  echo sprintf( $GLOBALS['I18N']->get('To move all users who are not subscribed to any list to %s'), snippetListsSelector() );
+<?php
+  echo sprintf( $GLOBALS['I18N']->get('To move all subscribers who are not subscribed to any list to %s'), snippetListsSelector() );
 ?>
 </p>
-<input class="submit" type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>" />
+<input class="button" type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>" />
 </form>
 
 <hr/>
@@ -469,15 +450,15 @@ function snippetListsSelector ($optionAll = false) {
 <input type="hidden" name="option" value="bounces" />
 <p class="information"><?php echo $GLOBALS['I18N']->get('To delete all users with more than')?>
 <select name="num">
-  <option>5</option>
+  <option selected="selected">5</option>
   <option>10</option>
-  <option selected="selected">15</option>
+  <option>15</option>
   <option>20</option>
   <option>50</option>
-</select> <?php echo $GLOBALS['I18N']->get('bounces')?> <input class="submit" type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>" /></form>
+</select> <?php echo $GLOBALS['I18N']->get('bounces')?> <input class="button" type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>" /></form>
 <p class="information"><?php echo $GLOBALS['I18N']->get('Note: this will use the total count of bounces on a user, not consecutive bounces')?></p>
 
-<form method="get">
+<!--form method="get">
 <table class="reconcileForm"><tr><td colspan="2">
 <?php echo $GLOBALS['I18N']->get('To resend the request for confirmation to users who signed up and have not confirmed their subscription')?></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('Date they signed up after')?>:</td><td><?php echo $from->showInput("","",$fromval);?></td></tr>
@@ -490,7 +471,7 @@ function snippetListsSelector ($optionAll = false) {
 </table>
 <input type="hidden" name="page" value="reconcileusers" />
 <input type="hidden" name="option" value="resendconfirm" />
-<input class="submit" type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>" /></form>
+<input class="submit" type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>" /></form-->
 
 <hr/>
 <form method="get">
@@ -502,3 +483,4 @@ function snippetListsSelector ($optionAll = false) {
 <input type="hidden" name="page" value="reconcileusers" />
 <input type="hidden" name="option" value="deleteunconfirmed" />
 <input class="submit" type="submit" value="<?php echo $GLOBALS['I18N']->get('Click here')?>"></form>
+</form>
