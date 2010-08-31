@@ -126,7 +126,7 @@ function loadMessageData($msgid) {
     'targetlist' => '',
     'criteria_match' => '',
     'sendurl' => '',
-    'sendmethod' => 'remoteurl', ## make a config
+    'sendmethod' => 'inputhere', ## make a config
     'testtarget' => '',
     'notify_start' =>  getConfig("notifystart_default"),
     'notify_end' =>  getConfig("notifyend_default"),
