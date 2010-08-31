@@ -777,8 +777,8 @@ function unsubscribePage($id) {
 
   $finaltext = $GLOBALS["strUnsubscribeFinalInfo"];
   $pref_url = getConfig("preferencesurl");
-  $sep = ereg('\?',$pref_url)?'&':'?';
-  $finaltext = eregi_replace('\[preferencesurl\]',$pref_url.$sep.'uid='.$hash,$finaltext);
+  $sep = strpos($pref_url,'?') !== false ?'&':'?';
+  $finaltext = str_ireplace('[preferencesurl]',$pref_url.$sep.'uid='.$hash,$finaltext);
 
   if (!$some) {
     #0013076: Blacklisting posibility for unknown users
