@@ -50,10 +50,14 @@ if(isset($_REQUEST['import'])) {
     Fatal_Error($GLOBALS['I18N']->get('too_big'));
     return;
   }
+/*
   if( !preg_match("/^[0-9A-Za-z_\.\-\/\s \(\)]+$/", $_FILES["import_file"]["name"]) ) {
     Fatal_Error($GLOBALS['I18N']->get('wrong_characters').$_FILES["import_file"]["name"]);
     return;
   }
+*/
+  # don't send notification, but use processqueue instead
+  $_POST['notify'] = 'no'; 
   if (!$_POST["notify"] && !$test_import) {
     Fatal_Error($GLOBALS['I18N']->get('signup_or_notify'));
     return;
@@ -62,7 +66,7 @@ if(isset($_REQUEST['import'])) {
   $throttle_import = $_POST["throttle_import"];
 
   if ($_FILES["import_file"] && filesize($_FILES["import_file"]['tmp_name']) > 10) {
-    $newfile = $GLOBALS['tmpdir'].'/'. $_FILES['import_file']['name'].time();
+    $newfile = $GLOBALS['tmpdir'].'/import'. $GLOBALS['installation_name'].time();
     move_uploaded_file($_FILES['import_file']['tmp_name'], $newfile);
     if( !($fp = fopen ($newfile, "r"))) {
       Fatal_Error($GLOBALS['I18N']->get('unreadable')." (".$newfile.")");
@@ -348,10 +352,10 @@ function addFieldToCheck(value,name) {
 <tr><td><?php echo $GLOBALS['I18N']->get('emails_file'); ?></td><td><input type="file" name="import_file"></td></tr>
 <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('info_test_output'); ?></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('test_output'); ?></td><td><input type="checkbox" name="import_test" value="yes"></td></tr>
-<tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('info_notification_email'); ?></td></tr>
+<!--tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('info_notification_email'); ?></td></tr>
 <tr><td><?php echo $GLOBALS['I18N']->get('notification_email'); ?><input type="radio" name="notify" value="yes"></td><td><?php echo $GLOBALS['I18N']->get('confirmed_immediately'); ?><input type="radio" name="notify" value="no"></td></tr>
 <tr><td colspan="2"><?php echo $GLOBALS['I18N']->get('If you are going to send notification to users, you may want to add a little delay between messages')?></td></tr>
-<tr><td><?php echo $GLOBALS['I18N']->get('Notification throttle')?>:</td><td><input type="text" name="throttle_import" size="5"> <?php echo $GLOBALS['I18N']->get('(default is nothing, will send as fast as it can)')?></td></tr>
+<tr><td><?php echo $GLOBALS['I18N']->get('Notification throttle')?>:</td><td><input type="text" name="throttle_import" size="5"> <?php echo $GLOBALS['I18N']->get('(default is nothing, will send as fast as it can)')?></td></tr-->
 <?php
 include_once dirname(__FILE__)."/subscribelib2.php";
 print ListAllAttributes();
