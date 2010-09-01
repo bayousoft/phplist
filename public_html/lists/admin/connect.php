@@ -35,7 +35,7 @@ $GLOBALS["img_cross"] = '<span class="no">No</span>';
 $checkboxgroup_storesize = 1; # this will allow 10000 options for checkboxes
 
 # identify pages that can be run on commandline
-$commandline_pages = array('send','processqueueforked','processqueue','processbounces','import','upgrade','convertstats','reindex'); // ,'getrss' //Obsolete by rssmanager plugin
+$commandline_pages = array('send','processqueueforked','processqueue','processbounces','import','upgrade','convertstats','reindex','blacklistemail'); // ,'getrss' //Obsolete by rssmanager plugin
 
 if (isset($message_envelope))
   $envelope = "-f$message_envelope";
@@ -311,11 +311,11 @@ function Error($msg) {
 
 function clean ($value) {
   $value = trim($value);
-  $value = ereg_replace("\r","",$value);
-  $value = ereg_replace("\n","",$value);
-  $value = ereg_replace('"',"&quot;",$value);
-  $value = ereg_replace("'","&rsquo;",$value);
-  $value = ereg_replace("`","&lsquo;",$value);
+  $value = preg_replace("/\r/","",$value);
+  $value = preg_replace("/\n/","",$value);
+  $value = str_replace('"',"&quot;",$value);
+  $value = str_replace("'","&rsquo;",$value);
+  $value = str_replace("`","&lsquo;",$value);
   $value = stripslashes($value);
   return $value;
 }
