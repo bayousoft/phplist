@@ -1,6 +1,12 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 
+/*
+ * something to work on
+print '<script type="text/javascript" src="ckeditor/ckeditor.js"></script>
+<script type="text/javascript" src="ckeditor/adapters/jquery.js"></script>';
+*/
+
 #initialisation###############
 
 // Verify that FCKeditor is available
@@ -30,6 +36,7 @@ $done = 0;
 $messageid = 0;
 $forwardsubject = $forwardmessage = $forwardfooter = '';
 $placeinqueue = '';
+$sendtestresult = '';
 $duplicate_atribute = 0; # not actually used it seems @@@ check
 $embargo = new date('embargo');
 $embargo->useTime = true;
@@ -370,10 +377,10 @@ if ($send || $sendtest || $prepare || $save || $savedraft) {
   // OK, the message has been saved, now check to see if we need to send a test message
   if ($sendtest) {
 
-    echo "<HR>";
+    $sendtestresult = "<hr/>";
     // Let's send test messages to everyone that was specified in the
     if ($messagedata["testtarget"] == "") {
-      print $GLOBALS['I18N']->get("notargetemail")."<br/>";
+      $sendtestresult .= $GLOBALS['I18N']->get("notargetemail")."<br/>";
     }
 
     if (isset($cached[$id])) {
@@ -410,19 +417,19 @@ if ($send || $sendtest || $prepare || $save || $savedraft) {
             $success = sendEmail($id, $address, $user["uniqid"], 1) && sendEmail($id, $address, $user["uniqid"], 0);
           }
         }
-        print $GLOBALS['I18N']->get("sentemailto").": $address ";
+        $sendtestresult .= $GLOBALS['I18N']->get("sentemailto").": $address ";
         if (!$success) {
-          print $GLOBALS['I18N']->get('failed');
+          $sendtestresult .= $GLOBALS['I18N']->get('failed');
         } else {
-          print $GLOBALS['I18N']->get('success');
+          $sendtestresult .= $GLOBALS['I18N']->get('success');
         }
-        print '<br/>';
+        $sendtestresult .= '<br/>';
       } else {
-        print $GLOBALS['I18N']->get("emailnotfound").": $address<br/>";
-        printf('<div><a href="%s&action=addemail&email='.$address.'" class="ajaxable">%s</a></div>',$baseurl,$GLOBALS['I18N']->get("add"));
+        $sendtestresult .= $GLOBALS['I18N']->get("emailnotfound").": $address";
+        $sendtestresult .= sprintf('<div class="inline"><a href="%s&action=addemail&email='.$address.'" class="button ajaxable">%s</a></div>',$baseurl,$GLOBALS['I18N']->get("add"));
       }
     }
-    echo "<hr/>";
+    $sendtestresult .= "<hr/>";
   }
 } elseif (isset($_POST["deleteattachments"]) && is_array($_POST["deleteattachments"]) && $id) {
   if (ALLOW_ATTACHMENTS) {
@@ -585,6 +592,10 @@ if (!$done) {
         $messagedata['sendmethod'] == 'remoteurl' ? 'checked="checked"':'',
         $messagedata['sendmethod'] == 'inputhere' ? 'checked="checked"':''
       );
+
+      if (empty($messagedata['sendurl'])) {
+        $messagedata['sendurl'] = 'e.g. http://www.phplist.com/testcampaign.html';
+      }
       
       $maincontent .= '
       <div id="remoteurl" class="field"><label for="sendurl">'.$GLOBALS['I18N']->get("Send a Webpage - URL").'</label>'.Help("sendurl").'
@@ -861,13 +872,18 @@ if (!$done) {
     $messagedata["testtarget"] = $GLOBALS["developer_email"];
   }
 
+  if (empty($messagedata['testtarget'])) {
+    $messagedata['testtarget'] = $_SESSION['logininfo']['email'];
+  }
+
   // Display the HTML for the "Send Test" button, and the input field for the email addresses
-  $sendtest_content = sprintf('<div class="sendTest" id="sendTest"><div>
-    <input class="submit" type="submit" name="sendtest" value="%s"/>%s: </div>
-    <div><input type="text" name="testtarget" size="40" value="'.$messagedata["testtarget"].'"/><br />%s
-    </div></div>',
+  $sendtest_content = sprintf('<div class="sendTest" id="sendTest">
+    '.$sendtestresult .'
+    <input class="submit" type="submit" name="sendtest" value="%s"/>%s: 
+    <input type="text" name="testtarget" size="40" value="'.$messagedata["testtarget"].'"/><br />%s
+    </div>',
     $GLOBALS['I18N']->get('sendtestmessage'),$GLOBALS['I18N']->get('toemailaddresses'),
-    $GLOBALS['I18N']->get('sendtestexplain'));
+    $GLOBALS['I18N']->get('(comma separate addresses - all must be existing subscribers)'));
 
   # notification of progress of message sending
   # defaulting to admin_details['email'] gives the wrong impression that this is the
@@ -1022,7 +1038,7 @@ if (empty($messagedata['targetlist'])) {
 } 
 if ($allReady) {
   $panelcontent .= '<script type="text/javascript">
-  $("#addtoqueue").html(\'<button class="submit" type="submit" name="send" id="addtoqueuebutton">'.$GLOBALS['I18N']->get('sendmessage').'</button>\');
+  $("#addtoqueue").html(\'<input class="action-button" type="submit" name="send" id="addtoqueuebutton" value="'.htmlspecialchars($GLOBALS['I18N']->get('sendmessage')).'">\');
   </script>';
 } else {
   $panelcontent .= '<script type="text/javascript">
