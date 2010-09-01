@@ -312,7 +312,23 @@ class phplistPlugin {
     # 200710 Bas
     return true;
   }
-  
+
+  /*
+   * processSendStats
+   * param
+   * integer $sent - amount sent
+   * integer $invalid - amount invalid
+   * integer $failed_sent - amount failed
+   * integer $unconfirmed - amount unconfirmed
+   *
+   * receive stats from phpList for further handling
+   * @return null
+   */
+
+  function processSendStats($sent,$invalid,$failed_sent,$unconfirmed) {
+    return;
+  } 
+
   ############################################################
   # User
 

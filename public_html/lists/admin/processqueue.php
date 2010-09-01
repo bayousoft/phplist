@@ -171,6 +171,10 @@ function my_shutdown () {
   if ($unconfirmed)
     output(sprintf('%d %s',$unconfirmed,$GLOBALS['I18N']->get('emails unconfirmed (not sent)')));
 
+  foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
+    $plugin->processSendStats($sent,$invalid,$failed_sent,$unconfirmed);
+  }
+
   flushClickTrackCache();
   releaseLock($send_process_id);
 
