@@ -126,7 +126,7 @@ if ($done) {
 */
 $list_content = '
 <div id="listselection" class="accordion">
-<h3><a name="lists">'.$GLOBALS['I18N']->get('selectlists').':</a></h3>
+<h3><a name="lists">'.$GLOBALS['I18N']->get('Please select the lists you want to send your campaign to').':</a></h3>
 ';
 
 
@@ -134,12 +134,12 @@ $list_content .= listSelectHTML($messagedata['targetlist'],'targetlist',$subsele
 
 if (USE_LIST_EXCLUDE) {
   $list_content .= '
-    <h3><a name="excludelists">'.$GLOBALS['I18N']->get('selectexcludelist').'</a></h3>';
+    <h3><a name="excludelists">'.$GLOBALS['I18N']->get('Please select the lists you want to exclude from this campaign').'</a></h3>';
 
   if (!isset($messagedata['excludelist']) || !is_array($messagedata['excludelist'])) {
     $messagedata['excludelist'] = array();
   }
-  $list_content .= listSelectHTML($messagedata['excludelist'],'excludelist',$subselect);
+  $list_content .= listSelectHTML($messagedata['excludelist'],'excludelist',$subselect,$GLOBALS['I18N']->get('excludelistexplain'));
 }
 
 $list_content .= '</div>'; ## close accordion

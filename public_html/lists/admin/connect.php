@@ -983,8 +983,15 @@ function ListofLists($current,$fieldname,$subselect) {
   return $categoryhtml;
 }
 
-function listSelectHTML ($current,$fieldname,$subselect) {
+function listSelectHTML ($current,$fieldname,$subselect,$alltab = '') {
   $categoryhtml = ListofLists($current,$fieldname,$subselect);
+
+  if (!empty($alltab)) {
+    unset($categoryhtml['all']);
+    array_unshift($categoryhtml,$alltab);
+    
+  }
+  
   $tabno = 1;
   $listindex = $listhtml = '';
   foreach ($categoryhtml as $category => $content) {
