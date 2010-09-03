@@ -327,7 +327,22 @@ class phplistPlugin {
 
   function processSendStats($sent,$invalid,$failed_sent,$unconfirmed) {
     return;
-  } 
+  }
+
+  /* sendReport
+   * @param string $subject
+   * @param string $message
+   * @return null
+   */
+  function sendReport ($subject,$message) {
+  }
+
+  /* processError
+   * @param string msg
+   */
+  function processError($msg) {
+    
+  }
 
   ############################################################
   # User
