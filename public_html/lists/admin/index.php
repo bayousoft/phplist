@@ -300,7 +300,10 @@ if (LANGUAGE_SWITCH && empty($logoutontop) && !$ajax) {
 $include = '';
 if (!$ajax) {
   include 'ui/'.$GLOBALS['ui']."/header.inc";
-}
+} elseif (is_file('ui/'.$GLOBALS['ui']."/mainmenu.php")) {
+  include 'ui/'.$GLOBALS['ui']."/mainmenu.php";
+}  
+
 if ($page != '' && $page != 'install') {
   if ($IsCommandlinePlugin) {
     $include =  'plugins/' . $GLOBALS["commandlinePlugins"][$page];
