@@ -33,6 +33,7 @@
 require_once dirname(__FILE__).'/accesscheck.php';
 
 $subselect = $where = '';
+$action_result = '';
 
 if( !$GLOBALS["require_login"] || $_SESSION["logindetails"]['superuser'] ){
   $ownerselect_and = '';
@@ -48,10 +49,10 @@ if (isset($_GET['start'])) {
 }
 
 # remember last one listed
-if (!isset($_GET["type"]) && !empty($_SESSION["lastmessagetype"])) {
-  $_GET["type"] = $_SESSION["lastmessagetype"];
-} elseif (isset($_GET["type"])) {
-  $_SESSION["lastmessagetype"] = $_GET["type"];
+if (!isset($_GET["tab"]) && !empty($_SESSION["lastmessagetype"])) {
+  $_GET["tab"] = $_SESSION["lastmessagetype"];
+} elseif (isset($_GET["tab"])) {
+  $_SESSION["lastmessagetype"] = $_GET["tab"];
 }
 
 #print '<p class="x">'.PageLink2("messages&type=sent","Sent Messages").'&nbsp;&nbsp;&nbsp;';
@@ -68,21 +69,21 @@ print PageLinkActionButton('send&amp;new=1',$GLOBALS['I18N']->get('Start a new c
 
 ### Print tabs
 $tabs = new WebblerTabs();
-$tabs->addTab($GLOBALS['I18N']->get("sent"),PageUrl2("messages&amp;type=sent"));
-$tabs->addTab($GLOBALS['I18N']->get("active"),PageUrl2("messages&amp;type=active"));
-$tabs->addTab($GLOBALS['I18N']->get("draft"),PageUrl2("messages&amp;type=draft"));
-#$tabs->addTab($GLOBALS['I18N']->get("queued"),PageUrl2("messages&amp;type=queued"));#
+$tabs->addTab($GLOBALS['I18N']->get("sent"),PageUrl2("messages&amp;tab=sent"));
+$tabs->addTab($GLOBALS['I18N']->get("active"),PageUrl2("messages&amp;tab=active"));
+$tabs->addTab($GLOBALS['I18N']->get("draft"),PageUrl2("messages&amp;tab=draft"));
+#$tabs->addTab($GLOBALS['I18N']->get("queued"),PageUrl2("messages&amp;tab=queued"));#
 if (USE_PREPARE) {
-  $tabs->addTab($GLOBALS['I18N']->get("static"),PageUrl2("messages&amp;type=static"));
+  $tabs->addTab($GLOBALS['I18N']->get("static"),PageUrl2("messages&amp;tab=static"));
 }
 //obsolete, moved to rssmanager plugin
 #if (ENABLE_RSS) {
-#  $tabs->addTab("rss",PageUrl2("messages&amp;type=rss"));
+#  $tabs->addTab("rss",PageUrl2("messages&amp;tab=rss"));
 #}
-if (!empty($_GET['type'])) {
-  $tabs->setCurrent($_GET["type"]);
+if (!empty($_GET['tab'])) {
+  $tabs->setCurrent($_GET["tab"]);
 } else {
-  $_GET['type'] = 'sent';
+  $_GET['tab'] = 'sent';
   $tabs->setCurrent('sent');
 }
 
@@ -100,85 +101,87 @@ if (!empty($_GET["delete"])) {
     array_push($todelete,sprintf('%d',$_GET["delete"]));
   }
   foreach ($todelete as $delete) {
-    print $GLOBALS['I18N']->get("Deleting")." $delete ...";
+    $action_result .= $GLOBALS['I18N']->get("Deleting")." $delete ...";
     $del = deleteMessage($delete);
     if ($del)
-      print "... ".$GLOBALS['I18N']->get("Done");
+      $action_result .= "... ".$GLOBALS['I18N']->get("Done");
     else
-      print "... ".$GLOBALS['I18N']->get("failed");
-    print '<br/>';
+      $action_result .= "... ".$GLOBALS['I18N']->get("failed");
+    $action_result .= '<br/>';
   }
-  print "<hr /><br />\n";
+  $action_result .= "<hr /><br />\n";
 }
 
 if (isset($_GET['resend'])) {
   $resend = sprintf('%d',$_GET['resend']);
   # requeue the message in $resend
-  print $GLOBALS['I18N']->get("Requeuing")." $resend ..";
+  $action_result .=  $GLOBALS['I18N']->get("Requeuing")." $resend ..";
   $result = Sql_Query("update ${tables['message']} set status = 'submitted', sendstart = current_timestamp where id = $resend");
   $suc6 = Sql_Affected_Rows();
   # only send it again to users, if we are testing, otherwise only to new users
   if (TEST)
     $result = Sql_query("delete from ${tables['usermessage']} where messageid = $resend");
   if ($suc6)
-    print "... ".$GLOBALS['I18N']->get("Done");
+    $action_result .=  "... ".$GLOBALS['I18N']->get("Done");
   else
-    print "... ".$GLOBALS['I18N']->get("failed");
-  print '<br /><hr /><br />';
+    $action_result .=  "... ".$GLOBALS['I18N']->get("failed");
+  $action_result .=  '<br /><hr /><br />';
 }
 
 if (isset($_GET['suspend'])) {
   $suspend = sprintf('%d',$_GET['suspend']);
-  print $GLOBALS['I18N']->get('Suspending')." $suspend ..";
+  $action_result .=  $GLOBALS['I18N']->get('Suspending')." $suspend ..";
   $result = Sql_query(sprintf('update %s set status = "suspended" where id = %d and (status = "inprocess" or status = "submitted")',$tables["message"],$suspend));
   $suc6 = Sql_Affected_Rows();
   if ($suc6)
-    print "... ".$GLOBALS['I18N']->get("Done");
+    $action_result .=  "... ".$GLOBALS['I18N']->get("Done");
   else
-    print "... ".$GLOBALS['I18N']->get("failed");
-  print'<br /><hr /><br />';
+    $action_result .=  "... ".$GLOBALS['I18N']->get("failed");
+  $action_result .= '<br /><hr /><br />';
 }
 #0012081: Add new 'Mark as sent' button
 if (isset($_GET['markSent'])) {
   $markSent = sprintf('%d',$_GET['markSent']);
-  print $GLOBALS['I18N']->get('Marking as sent ')." $markSent ..";
+  $action_result .=  $GLOBALS['I18N']->get('Marking as sent ')." $markSent ..";
   $result = Sql_query(sprintf('update %s set status = "sent" where id = %d and (status = "suspended")',$tables["message"],$markSent));
   $suc6 = Sql_Affected_Rows();
   if ($suc6)
-    print "... ".$GLOBALS['I18N']->get("Done");
+    $action_result .=  "... ".$GLOBALS['I18N']->get("Done");
   else
-    print "... ".$GLOBALS['I18N']->get("Failed");
-  print '<br /><hr /><br />\n';
+    $action_result .=  "... ".$GLOBALS['I18N']->get("Failed");
+  $action_result .=  '<br /><hr /><br />\n';
 }
+
+print ActionResult($action_result);
 
 $cond = array();
 ### Switch tab
-switch ($_GET["type"]) {
+switch ($_GET["tab"]) {
   case "queued":
 #    $subselect = ' status in ("submitted") and (rsstemplate is NULL or rsstemplate = "") ';
     $cond[] = " status in ('submitted', 'suspended') ";
-    $url_keep = '&amp;type=queued';
+    $url_keep = '&amp;tab=queued';
     break;
   case "static":
     $cond[] = " status in ('prepared') ";
-    $url_keep = '&amp;type=static';
+    $url_keep = '&amp;tab=static';
     break;
 #  case "rss":
 #    $subselect = ' rsstemplate != ""';
-#    $url_keep = '&amp;type=sent';
+#    $url_keep = '&amp;tab=sent';
 #    break;
   case "draft":
     $cond[] = " status in ('draft') ";
-    $url_keep = '&amp;type=draft';
+    $url_keep = '&amp;tab=draft';
     break;
   case "active":
     $cond[] = " status in ('inprocess','submitted', 'suspended') ";
-    $url_keep = '&amp;type=active';
+    $url_keep = '&amp;tab=active';
     break;
   case "sent":
   default:
     $cond[] = " status in ('sent') ";
-    $url_keep = '&amp;type=sent';
+    $url_keep = '&amp;tab=sent';
     break;
 }
 
@@ -201,14 +204,15 @@ if (isset($start) && $start > 0) {
   $start = 0;
 }
 
-print '<p>'.$total. " ".$GLOBALS['I18N']->get("Messages").'</p>';
 if ($total > MAX_MSG_PP) {
-  print simplePaging("messages$url_keep",$start,$total,MAX_MSG_PP);
+  print simplePaging("messages$url_keep",$start,$total,MAX_MSG_PP,$GLOBALS['I18N']->get("Campaigns"));
 }
   
-if ($_GET["type"] == "draft") {
+/*
+if ($_GET["tab"] == "draft") {
   print '<p class="delete">'.PageLink2("messages&amp;delete=draft",$GLOBALS['I18N']->get("Delete all draft messages without subject")).'</p>';
 }
+*/
 
 ?>
 
