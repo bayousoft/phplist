@@ -222,7 +222,10 @@ function sendReport($subject,$message) {
   $report_addresses = explode(",",getConfig("report_address"));
   foreach ($report_addresses as $address) {
     sendMail($address,$GLOBALS["installation_name"]." ".$subject,$message);
-   }
+  }
+  foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
+    $plugin->sendReport($GLOBALS["installation_name"]." ".$subject,$message);
+  }
 }
 
 function sendMessageStats($msgid) {
@@ -342,14 +345,11 @@ function Fatal_Error($msg) {
     } else {
       print '<div align="center" class="error">'."Fatal Error: $msg </div>";
     }
-    $message = '
 
-    An error has occurred in the Mailinglist System
-    URL: '.$_SERVER["REQUEST_URI"].'
-    Error: ' . $msg;
-    if (function_exists("sendMail")) {
-      sendMail(getConfig("report_address"),"Mail list error",$message,"");
+    foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
+      $plugin->processError($msg);
     }
+
   }
  # include "footer.inc";
  # exit;
@@ -383,6 +383,16 @@ function Info($msg) {
     $pageinfo = new pageInfo($id);
     $pageinfo->setContent($GLOBALS["I18N"]->get("information").": $msg");
     print $pageinfo->show();
+  }
+}
+
+function ActionResult($msg) {
+  if ($GLOBALS['commandline']) {
+    @ob_end_clean();
+    print "\n".strip_tags($msg)."\n";
+    @ob_start();
+  } else {
+    return '<div class="action-result">'.$msg.'</div>';
   }
 }
 
@@ -834,7 +844,17 @@ function topMenu() {
 function PageLink2($name,$desc="",$url="",$no_plugin = false) {
   if ($url)
     $url = "&amp;".$url;
-  $access = accessLevel($name);
+
+  if (in_array($name,$GLOBALS['disallowpages'])) return '';
+  if (strpos($name,'&') !== false) {
+    preg_match('/([^&]+)&/',$name,$regs);
+    $page = $regs[1];
+    if (in_array($page,$GLOBALS['disallowpages'])) return '';
+  } else {
+    $page = $name;
+  }
+    
+  $access = accessLevel($page);
   $name = str_replace('&amp;','&',$name);
   $name = str_replace('&','&amp;',$name);
   
@@ -1540,17 +1560,22 @@ function phplist_shutdown () {
 #  output( "Script status: ".connection_status(),0); # with PHP 4.2.1 buggy. http://bugs.php.net/bug.php?id=17774
   $status = connection_status();
   if ($GLOBALS["mail_error_count"]) {
-   $message = "Some errors occurred in the PHPlist Mailinglist System\n"
+   $message = "Some errors occurred in the phpList Mailinglist System\n"
     ."URL: {$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}\n"
     ."Error message(s):\n\n"
 
     .$GLOBALS["mail_error"];
     $message .= "\n==== debugging information\n\nSERVER Vars\n";
     if (is_array($_SERVER))
-    while (list($key,$val) = each ($_SERVER))
-      if ($key != "password")
+    while (list($key,$val) = each ($_SERVER)) {
+      if (stripos($key,"password") === false) {
         $message .= $key . "=" . $val . "\n";
-    sendMail(getConfig("report_address"),$GLOBALS["installation_name"]." Mail list error",$message,"");
+      }
+    }
+    foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
+      $plugin->processError($message);
+    }
+#    sendMail(getConfig("report_address"),$GLOBALS["installation_name"]." Mail list error",,"");
   }
 
 #  print "Phplist shutdown $status";
@@ -1641,13 +1666,18 @@ function printarray($array){
   }
 }
 
-function simplePaging($baseurl,$start,$total,$numpp) {
+function simplePaging($baseurl,$start,$total,$numpp,$itemname = '') {
   $end = $start ? $start + $numpp : $numpp;
   if ($end > $total) $end = $total;
-  if ($start > 0) {
-    $listing = $GLOBALS['I18N']->get("Listing")." $start ".$GLOBALS['I18N']->get("to")." " . $end;
+  if (!empty($itemname)) {
+    $text = $GLOBALS['I18N']->get("Listing %d to %d of %d");
   } else {
-    $listing =  $GLOBALS['I18N']->get("Listing")." 1 to ".$end;
+    $text = $GLOBALS['I18N']->get("Listing %d to %d");
+  }
+  if ($start > 0) {
+    $listing = sprintf($text,$start,$end,$total).' '.$itemname;
+  } else {
+    $listing =  sprintf($text,1,$end,$total).' '.$itemname;
     $start = 0;
   }
 
