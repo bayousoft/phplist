@@ -671,6 +671,9 @@ define("PHPMAILERHOST",'');
 #$phpmailer_smtpuser = 'smtpuser';
 #$phpmailer_smtppassword = 'smtppassword';
 
+## when using phpMailer, you can set this to send out via a different port as well
+# define('PHPMAILERPORT',25);
+
 # tmpdir. A location where phplist can write some temporary files if necessary
 # Make sure it is writable by your webserver user, and also check that you have
 # open_basedir set to allow access to this directory. Linux users can leave it as it is.
