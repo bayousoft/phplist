@@ -12,103 +12,115 @@ require_once dirname(__FILE__).'/accesscheck.php';
 
 $alldone = 1;
 
-print '<table class="setupMain">';
-print
-'<tr><td>'.$GLOBALS['I18N']->get('initialise_database').'</td>
-<td>'.PageLink2("initialise",$GLOBALS['I18N']->get('go_there')).'</td><td>';
+$html = '';
+$html .= '<table class="setupMain">';
 
-if (Sql_Table_Exists($tables["config"],1)) {
-  print $GLOBALS["img_tick"];
-} else {
-  print $GLOBALS["img_cross"];
-  $alldone = 0;  
+$link = PageLink2("initialise",$GLOBALS['I18N']->get('go_there'));
+if (!empty($link)) {
+  $html .=
+  '<tr><td>'.$GLOBALS['I18N']->get('initialise_database').'</td>
+  <td>'.$link.'</td><td>';
+
+  if (Sql_Table_Exists($tables["config"],1)) {
+    $html .= $GLOBALS["img_tick"];
+  } else {
+    $html .= $GLOBALS["img_cross"];
+    $alldone = 0;  
+  }
+
+  $html .= '</td></tr>';
 }
 
-print '</td></tr>';
-
-if ($GLOBALS["require_login"]) {
-print '<tr><td>'.$GLOBALS['I18N']->get('change_admin_passwd').' </td>
-<td>'.PageLink2("admin&amp;id=1",$GLOBALS['I18N']->get('go_there')).'</td><td>';
+$link = PageLink2("admin&amp;id=1",$GLOBALS['I18N']->get('go_there'));
+if (!empty($link) && $GLOBALS["require_login"]) {
+  $html .= '<tr><td>'.$GLOBALS['I18N']->get('change_admin_passwd').' </td>
+  <td>'.$link.'</td><td>';
   $query
   = " select password"
   . " from ${tables['admin']}"
   . " where loginname = 'admin'";
   $curpwd = Sql_Fetch_Row_Query($query);
   if ($curpwd[0] != "phplist") {
-    print $GLOBALS["img_tick"];
+    $html .= $GLOBALS["img_tick"];
   } else {
     $alldone = 0;  
-    print $GLOBALS["img_cross"];
+    $html .= $GLOBALS["img_cross"];
   }
 
-  print '</td></tr>';
+  $html .= '</td></tr>';
 }
 
-print '<tr><td>'.$GLOBALS['I18N']->get('config_gral_values').'</td><td>'.PageLink2("configure",$GLOBALS['I18N']->get('go_there')).'</td><td>';
-$query
-= " select value"
-. " from ${tables['config']}"
-. " where item = 'admin_address'";
-$data = Sql_Fetch_Row_Query($query);
-if ($data[0]) {
-  print $GLOBALS["img_tick"];
-} else {
-  $alldone = 0;  
-  print $GLOBALS["img_cross"];
+$link = PageLink2("configure",$GLOBALS['I18N']->get('go_there'));
+if (!empty($link)) {
+  $html .= '<tr><td>'.$GLOBALS['I18N']->get('Verify Settings').'</td>
+    <td>'.$link.'</td><td>';
+  $query
+  = " select value"
+  . " from ${tables['config']}"
+  . " where item = 'admin_address'";
+  $data = Sql_Fetch_Row_Query($query);
+  if ($data[0]) {
+    $html .= $GLOBALS["img_tick"];
+  } else {
+    $alldone = 0;  
+    $html .= $GLOBALS["img_cross"];
+  }
+
+  $html .= '</td></tr>';
 }
 
-print '</td></tr>';
-
-print '<tr><td>'.$GLOBALS['I18N']->get('config_attribs').'</td>
+$html .= '<tr><td>'.$GLOBALS['I18N']->get('config_attribs').'</td>
 <td>'.PageLink2("attributes",$GLOBALS['I18N']->get('go_there')).'</td><td>';
 $req = Sql_Query("select * from {$tables["attribute"]}");
 if (Sql_Affected_Rows()) {
-  print $GLOBALS["img_tick"];
+  $html .= $GLOBALS["img_tick"];
 } else {
   $alldone = 0;  
-  print $GLOBALS["img_cross"];
+  $html .= $GLOBALS["img_cross"];
 }
 
-print '</td></tr>';
+$html .= '</td></tr>';
 
-print '<tr><td>'.$GLOBALS['I18N']->get('create_lists').'</td>
+$html .= '<tr><td>'.$GLOBALS['I18N']->get('create_lists').'</td>
 <td>'.PageLink2("list",$GLOBALS['I18N']->get('go_there')).'</td><td>';
 $req = Sql_Query("select * from ${tables['list']} where active <> 0");
 if (Sql_Affected_Rows()) {
-  print $GLOBALS["img_tick"];
+  $html .= $GLOBALS["img_tick"];
 } else {
   $alldone = 0;  
-  print $GLOBALS["img_cross"];
+  $html .= $GLOBALS["img_cross"];
 }
-print '</td></tr>';
+$html .= '</td></tr>';
 
-print '<tr><td>'.$GLOBALS['I18N']->get('create_subscr_pages').'</td>
+$html .= '<tr><td>'.$GLOBALS['I18N']->get('create_subscr_pages').'</td>
 <td>'.PageLink2("spage",$GLOBALS['I18N']->get('go_there')).'</td><td>';
 $req = Sql_Query("select * from {$tables["subscribepage"]}");
 if (Sql_Affected_Rows()) {
-  print $GLOBALS["img_tick"];
+  $html .= $GLOBALS["img_tick"];
 } else {
   $alldone = 0;  
-  print $GLOBALS["img_cross"];
+  $html .= $GLOBALS["img_cross"];
 }
 
-print '</td></tr>';
-print '<tr><td>'.$GLOBALS['I18N']->get('Add some subscribers').'</td>
+$html .= '</td></tr>';
+$html .= '<tr><td>'.$GLOBALS['I18N']->get('Add some subscribers').'</td>
 <td>'.PageLink2("import",$GLOBALS['I18N']->get('go_there')).'</td><td>';
 $req = Sql_Query("select * from {$tables["user"]}");
 if (Sql_Affected_Rows()) {
-  print $GLOBALS["img_tick"];
+  $html .= $GLOBALS["img_tick"];
 } else {
   $alldone = 0;  
-  print $GLOBALS["img_cross"];
+  $html .= $GLOBALS["img_cross"];
 }
 
-print '</td></tr>';
+$html .= '</td></tr>';
 
-print '</table>';
+$html .= '</table>';
 
 if ($alldone) {
-  print Info($GLOBALS['I18N']->get('Congratulations, phpList is set up, you are ready to start mailing').'<br/>'.'<div class="button">'.PageLink2('send',$GLOBALS['I18N']->get('Start a message campaign')).'</div>');
+  $html .= Info($GLOBALS['I18N']->get('Congratulations, phpList is set up, you are ready to start mailing')).'<br/>'.PageLinkActionButton('send',$GLOBALS['I18N']->get('Start a message campaign'));
   unset($_SESSION['firstinstall']);
 }
 
+$panel = new UIPanel($GLOBALS['I18N']->get('configuration steps'),$html);
+print $panel->display();
