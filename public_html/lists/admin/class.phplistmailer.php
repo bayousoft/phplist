@@ -46,6 +46,9 @@ class PHPlistMailer extends PHPMailer {
       $this->SingleTo = false;
 
       $this->CharSet = getConfig("html_charset");
+      if (defined('PHPMAILERPORT')) {
+        $this->Port = PHPMAILERPORT;
+      }
 
       if (defined('PHPMAILERHOST') && PHPMAILERHOST != '') {
         //logEvent('Sending email via '.PHPMAILERHOST);
