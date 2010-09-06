@@ -9,6 +9,7 @@ if (isset($_GET['id'])) {
   $id = 0;
 }
 
+$some = 0;
 $access = accessLevel('uclicks');
 switch ($access) {
   case 'owner':
@@ -39,13 +40,12 @@ if ($download) {
 }  
 
 if (!$id) {
-  print '<p>'.PageLink2('uclicks&dl=true',$GLOBALS['I18N']->get('Download as CSV file')).'</p>';
-  print '<p>'.$GLOBALS['I18N']->get('Select URL to view').'</p>';
   $req = Sql_Query(sprintf('select forward.id,url, sum(clicked) as numclicks, max(latestclick) as lastclicked, count(messageid) as msgs from %s
     where clicked %s and forward.id = ml.forwardid and latestclick > date_sub(now(),interval 12 month) group by url order by latestclick desc limit 50',
     $select_tables,$owner_and));
   $ls = new WebblerListing($GLOBALS['I18N']->get('Available URLs'));
   while ($row = Sql_Fetch_Array($req)) {
+    $some = 1;
     $ls->addElement($row['url'],PageURL2('uclicks&amp;id='.$row['id']));
     $ls->addColumn($row['url'],$GLOBALS['I18N']->get('msgs'),$row['msgs']);
     $ls->addColumn($row['url'],$GLOBALS['I18N']->get('last clicked'),$row['lastclicked']);
@@ -55,7 +55,13 @@ if (!$id) {
     ob_end_clean();
     print $ls->tabDelimited();
   }
-  print $ls->display();
+  if ($some) {
+    print '<p>'.$GLOBALS['I18N']->get('Select URL to view').'</p>';
+    print '<p>'.PageLink2('uclicks&dl=true',$GLOBALS['I18N']->get('Download as CSV file')).'</p>';
+    print $ls->display();
+  } else {
+    print '<p class="information">'.$GLOBALS['I18N']->get('There are currently no statistics available').'</p>';
+  }
   return;
 }
 

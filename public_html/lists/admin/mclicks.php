@@ -8,6 +8,7 @@ if (isset($_GET['id'])) {
 } else {
   $id = 0;
 }
+$some = 0;
 
 $access = accessLevel('mclicks');
 switch ($access) {
@@ -42,8 +43,6 @@ if ($download) {
 }  
 
 if (!$id) {
-  print '<p>'.PageLink2('mclicks&dl=true',$GLOBALS['I18N']->get('Download as CSV file')).'</p>';
-  print '<p>'.$GLOBALS['I18N']->get('Select Message to view').'</p>';
 /*  $req = Sql_Query(sprintf('select distinct messageid, subject, sum(clicked) as totalclicks, count(distinct userid) as users, count(distinct linkid) as linkcount from %s as linktrack, %s as message
     where clicked and linktrack.messageid = message.id %s group by messageid order by entered desc limit 50',
     $GLOBALS['tables']['linktrack'],$GLOBALS['tables']['message'],$subselect));*/
@@ -55,6 +54,7 @@ if (!$id) {
   }
   $ls = new WebblerListing($GLOBALS['I18N']->get('Available Messages'));
   while ($row = Sql_Fetch_Array($req)) {
+    $some = 1;
     $totalusers = Sql_Fetch_Row_Query(sprintf('select count(userid) from %s where messageid = %d and status = "sent"',$GLOBALS['tables']['usermessage'],$row['messageid']));
     $totalclicked = Sql_Fetch_Row_Query(sprintf('select count(distinct userid) from %s where messageid = %d',$GLOBALS['tables']['linktrack_uml_click'],$row['messageid']));
     if ($totalusers[0] > 0) {
@@ -81,7 +81,11 @@ if (!$id) {
     $ls->addColumn($row['messageid'].' '.substr($row['subject'],0,50),$GLOBALS['I18N']->get('rate'),$perc.' %');
     */
   }
-  print $ls->display();
+  if ($some) {
+    print '<p>'.PageLink2('mclicks&dl=true',$GLOBALS['I18N']->get('Download as CSV file')).'</p>';
+    print '<p>'.$GLOBALS['I18N']->get('Select Message to view').'</p>';
+    print $ls->display();
+  }
   if ($download) {
     ob_end_clean();
     print $ls->tabDelimited();

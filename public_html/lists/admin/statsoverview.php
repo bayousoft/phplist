@@ -54,7 +54,7 @@ if ($download) {
 
 if (!$id) {
   print '<p>'.$GLOBALS['I18N']->get('Select Message to view').'</p>';
-  print '<p>'.PageLink2('statsoverview&dl=true',$GLOBALS['I18N']->get('Download as CSV file')).'</p>';
+  print '<p>'.PageLinkButton('statsoverview&dl=true',$GLOBALS['I18N']->get('Download as CSV file')).'</p>';
 
   /* broken Adodb conversion by Brian_252 */
 /*  $timerange = ' and msg.entered + interval \'6 months\' > current_timestamp';
