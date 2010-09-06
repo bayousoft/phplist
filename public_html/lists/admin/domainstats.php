@@ -15,7 +15,7 @@ if ($download) {
   ob_start();
 }  
 
-print '<p>'.PageLink2('domainstats&dl=true',$GLOBALS['I18N']->get('Download as CSV file')).'</p>';
+print '<p>'.PageLinkButton('domainstats&dl=true',$GLOBALS['I18N']->get('Download as CSV file')).'</p>';
 
 $confirmed = array();
 $req = Sql_Query(sprintf('select lcase(substring_index(email,"@",-1)) as domain,count(email) as num from %s where confirmed group by domain order by num desc limit 50',$GLOBALS['tables']['user']));
