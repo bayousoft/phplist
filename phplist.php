@@ -183,6 +183,8 @@ class phplist extends DefaultPlugin {
   }
 
   function addEmailToList($email,$listid) {
+    if (empty($email) || empty($listid)) return 0;
+
     $userid = Sql_Fetch_Row_Query(sprintf('select * from %s where email = "%s"',
       $this->tables["user"],$email));
     if ($userid[0]) {
@@ -196,6 +198,18 @@ class phplist extends DefaultPlugin {
       }
      }
     return 0;
+  }
+
+  function addList($listname){
+    Sql_Query(sprintf('insert into %s (id,name,modified) values (NULL,"%s",now())',
+    $this->tables["list"],$listname));
+
+    return Sql_Insert_Id();
+  }
+
+
+  function deleteListUsers($listid){
+    Sql_Query(sprintf('delete from %s where listid = %d',$this->tables["listuser"],$listid));
   }
 
   function removeEmailFromList($email,$listid) {
