@@ -50,8 +50,8 @@ if ($download) {
 }  
 
 if (!$id) {
-  print '<p>'.PageLink2('mviews&dl=true',$GLOBALS['I18N']->get('Download as CSV file')).'</p>';
-  print '<p>'.$GLOBALS['I18N']->get('Select Message to view').'</p>';
+  print '<p>'.PageLinkButton('mviews&dl=true',$GLOBALS['I18N']->get('Download as CSV file')).'</p>';
+#  print '<p>'.$GLOBALS['I18N']->get('Select Message to view').'</p>';
   $timerange = ' and msg.entered  > date_sub(current_timestamp,interval 12 month)';
 #  $timerange = '';
 
