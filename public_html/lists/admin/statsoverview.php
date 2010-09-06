@@ -53,7 +53,7 @@ if ($download) {
 }  
 
 if (!$id) {
-  print '<p>'.$GLOBALS['I18N']->get('Select Message to view').'</p>';
+#  print '<p>'.$GLOBALS['I18N']->get('Select Message to view').'</p>';
   print '<p>'.PageLinkButton('statsoverview&dl=true',$GLOBALS['I18N']->get('Download as CSV file')).'</p>';
 
   /* broken Adodb conversion by Brian_252 */
@@ -93,7 +93,7 @@ if (!$id) {
     $GLOBALS['tables']['usermessage'],$GLOBALS['tables']['message'],$subselect,$timerange);
   $req = Sql_Query($query);
   $total = Sql_Num_Rows($req);
-  if ($total > 10) {
+  if ($total > 10 && !$download) {
     print Paging(PageUrl2('statsoverview'),$start,$total,10);
     $query .= $limit;
     $req = Sql_Query($query);
@@ -110,7 +110,7 @@ if (!$id) {
 
     $fwded = Sql_Fetch_Row_Query(sprintf('select count(id) from %s where message = %d',$GLOBALS['tables']['user_message_forward'],$row['messageid']));
     
-    $ls->addElement($element,PageURL2('message&amp;id='.$row['messageid']));
+    $ls->addElement($element);#,PageURL2('message&amp;id='.$row['messageid']));
  #   $ls->addColumn($element,$GLOBALS['I18N']->get('owner'),$row['owner']);
     $ls->addColumn($element,$GLOBALS['I18N']->get('date'),$row['sent']);
     $ls->addColumn($element,$GLOBALS['I18N']->get('sent'),$row['total']);
