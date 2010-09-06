@@ -67,7 +67,7 @@ if (!$id) {
   $ls = new WebblerListing($GLOBALS['I18N']->get('Available Messages'));
   while ($row = Sql_Fetch_Array($req)) {
     $element = $row['messageid'].' '.substr($row['subject'],0,50);
-    $ls->addElement($element);
+    $ls->addElement($element,PageUrl2('mviews&amp;id='.$row['messageid']));
     if (!empty($row['sent'])) {
       $ls->addColumn($element,$GLOBALS['I18N']->get('date'),$row['sent']);
     } else {
