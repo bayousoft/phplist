@@ -133,15 +133,9 @@ if ($id) {
 } else {
   $url_keep = '';
 }
-print $total. " ".$GLOBALS['I18N']->get("Entries")."</p>";
+
 if ($total) {
-  printf ('<table class="mviewsListing" border="1"><tr><td colspan="4" align="center">%s</td></tr><tr><td>%s</td><td>%s</td><td>
-          %s</td><td>%s</td></tr></table><hr/>',
-          $listing,
-          PageLink2("mviews$url_keep","&lt;&lt;","start=0"),
-          PageLink2("mviews$url_keep","&lt;",sprintf('start=%d',max(0,$start-MAX_USER_PP))),
-          PageLink2("mviews$url_keep","&gt;",sprintf('start=%d',min($total,$start+MAX_USER_PP))),
-          PageLink2("mviews$url_keep","&gt;&gt;",sprintf('start=%d',$total-MAX_USER_PP)));
+  print simplePaging("mviews$url_keep",$start,$total,MAX_USER_PP,$GLOBALS['I18N']->get("Entries"));
 }
 
 /* @todo, fix broken Adodb query */
