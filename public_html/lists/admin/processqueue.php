@@ -178,7 +178,7 @@ function my_shutdown () {
   flushClickTrackCache();
   releaseLock($send_process_id);
 
-  finish("info",$report);
+  finish("info",$report,$script_stage);
   if ($script_stage < 5 && !$nothingtodo) {
     output ($GLOBALS['I18N']->get('Warning: script never reached stage 5')."\n".$GLOBALS['I18N']->get('This may be caused by a too slow or too busy server')." \n");
   } elseif( $script_stage == 5 && (!$nothingtodo || $GLOBALS["wait"]))  {
@@ -228,7 +228,7 @@ function my_shutdown () {
 register_shutdown_function("my_shutdown");
 
 ## some general functions
-function finish ($flag,$message) {
+function finish ($flag,$message,$script_stage) {
   global $nothingtodo;
   if (!$GLOBALS["commandline"]) {
     print '<script language="Javascript" type="text/javascript"> finish(); </script>';
@@ -241,9 +241,11 @@ function finish ($flag,$message) {
   if (!$nothingtodo) {
     output($GLOBALS['I18N']->get('Finished this run'));
   } 
-
-  if (!TEST && !$nothingtodo)
-    sendReport($subject,$message);
+  if (!TEST && !$nothingtodo) {
+    foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
+      $plugin->sendReport($subject,$message);
+    }
+  }
 }
 
 function ProcessError ($message) {
@@ -345,7 +347,7 @@ if ($num_per_batch > 0) {
   }
 } elseif ($num_per_batch < 0) {
   output($GLOBALS['I18N']->get('In the last').' '. $batch_period .' '.$GLOBALS['I18N']->get('seconds more emails were sent')." ($recently_sent[0]) ".$GLOBALS['I18N']->get('than is currently allowed per batch')." ($original_num_per_batch).",0);
-  $processed = -1;
+  $processed = 0;
   $script_stage = 5;
   $GLOBALS["wait"] = $batch_period;
   return;
