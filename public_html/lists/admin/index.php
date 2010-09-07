@@ -115,7 +115,7 @@ if (!empty($_SESSION['hasconf']) || Sql_Table_exists($tables["config"],1)) {
   }
 }
 ## send a header for IE
-header('X-UA-Compatible: IE=IE8');
+header('X-UA-Compatible: IE=Edge');
 
 if (!$ajax) {
   include_once dirname(__FILE__).'/ui/'.$GLOBALS['ui'].'/pagetop.php';
