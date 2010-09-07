@@ -574,10 +574,10 @@ if (!$done) {
   }
 
   $maincontent .= '
-  <div class="field"><label for="subject">'.$GLOBALS['I18N']->get("Subject").'</label>'.Help("subject").
+  <div class="field"><label for="subject">'.$GLOBALS['I18N']->get("Subject").Help("subject").'</label>'.
   '<input type="text" name="subject"
     value="'.htmlentities($utf8_subject,ENT_QUOTES,'UTF-8').'" size="60" /></div>
-  <div class="field"><label for="from">'.$GLOBALS['I18N']->get("fromline").'</label>'.Help("from").'
+  <div class="field"><label for="from">'.$GLOBALS['I18N']->get("fromline").Help("from").'</label>'.'
     <input type="text" name="from"
    value="'.htmlentities($utf8_from,ENT_QUOTES,'UTF-8').'" size="60" /></div>';
    
@@ -585,7 +585,7 @@ if (!$done) {
       $maincontent .= sprintf('
       
       <div id="contentchoice" class="field">
-      <label for="sendmethod">'.$GLOBALS['I18N']->get("Content").'</label>'.Help("sendmethod").'
+      <label for="sendmethod">'.$GLOBALS['I18N']->get("Content").Help("sendmethod").'</label>'.'
       <input type="radio" name="sendmethod" value="remoteurl" %s />'.$GLOBALS['I18N']->get("Send a Webpage").'
       <input type="radio" name="sendmethod" value="inputhere" %s />'.$GLOBALS['I18N']->get("Compose Message").'
       </div>',
@@ -598,7 +598,7 @@ if (!$done) {
       }
       
       $maincontent .= '
-      <div id="remoteurl" class="field"><label for="sendurl">'.$GLOBALS['I18N']->get("Send a Webpage - URL").'</label>'.Help("sendurl").'
+      <div id="remoteurl" class="field"><label for="sendurl">'.$GLOBALS['I18N']->get("Send a Webpage - URL").Help("sendurl").'</label>'.'
         <input type=text name="sendurl" id="remoteurlinput"
        value="'.$messagedata['sendurl'].'" size="60" /></div><span id="remoteurlstatus"></span></div>';
       if (isset($messagedata['sendmethod']) && $messagedata['sendmethod'] != 'remoteurl') {
@@ -609,7 +609,7 @@ if (!$done) {
 // custom code - end
   #0013076: different content when forwarding 'to a friend'
   $forwardcontent .= 
-  '<div class="field"><label for="forwardsubject">'.$GLOBALS['I18N']->get("Subject").'</label>'.Help("forwardsubject").'
+  '<div class="field"><label for="forwardsubject">'.$GLOBALS['I18N']->get("Subject").Help("forwardsubject").'</label>'.'
     <input type="text" name="forwardsubject" value="'.htmlentities($messagedata['forwardsubject'],ENT_QUOTES,'UTF-8').'" size="40" /></div>';
 
   $currentTime = Sql_Fetch_Row_Query('select now()');
@@ -617,7 +617,7 @@ if (!$done) {
   $scheduling_content = '<div id="schedulecontent">';
   $scheduling_content .= '
   <div class="field">'.$GLOBALS['I18N']->get("Dates and times are relative to the Server Time").'<br/>'.$GLOBALS['I18N']->get('Current Server Time is').' <span id="servertime">'.$currentTime[0].'</span>'.'</div>
-  <div class="field"><label for="embargo">'.$GLOBALS['I18N']->get("embargoeduntil").'</label>'.Help('embargo').'
+  <div class="field"><label for="embargo">'.$GLOBALS['I18N']->get("embargoeduntil").Help('embargo').'</label>'.'
     '.$embargo->showInput('embargo',"",$messagedata['embargo']).'</div>
     <script type="text/javascript">
     getServerTime();
@@ -627,7 +627,7 @@ if (!$done) {
     $repeatinterval = $messagedata["repeatinterval"];
 
     $scheduling_content .= '
-    <div class="field"><label for="repeatinterval">'.$GLOBALS['I18N']->get("repeatevery").'</label>'.Help("repetition").'
+    <div class="field"><label for="repeatinterval">'.$GLOBALS['I18N']->get("repeatevery").Help("repetition").'</label>'.'
         <select name="repeatinterval">
       <option value="0"';
       if ($repeatinterval == 0) { $scheduling_content .= ' selected="selected"'; }
@@ -649,7 +649,7 @@ if (!$done) {
 
   $requeueinterval = $messagedata["requeueinterval"];
   $scheduling_content .= '
-  <div class="field"><label for="requeueinterval"> '.$GLOBALS['I18N']->get("requeueevery").'</label>'.Help("requeueing").'
+  <div class="field"><label for="requeueinterval"> '.$GLOBALS['I18N']->get("requeueevery").Help("requeueing").'</label>'.'
     <select name="requeueinterval">
     <option value="0"';
     if ($requeueinterval == 0) { $scheduling_content .= ' selected="selected"'; }
@@ -675,7 +675,7 @@ if (!$done) {
 
   $formatting_content .= '
     <div class="field">
-    <label for="sendformat"> '.$GLOBALS['I18N']->get("sendas").'</label>'.Help("sendformat").'
+    <label for="sendformat"> '.$GLOBALS['I18N']->get("sendas").Help("sendformat").'</label>'.'
   '.$GLOBALS['I18N']->get("html").' <input type="radio" name="sendformat" value="HTML" ';
     $formatting_content .= $messagedata["sendformat"]=="HTML"?'checked="checked"':'';
     $formatting_content .= '/>
@@ -703,7 +703,7 @@ if (!$done) {
 
   $req = Sql_Query("select id,title from {$tables["template"]} order by listorder");
   if (Sql_Num_Rows($req)) {
-    $formatting_content .= '<div class="field"><label for="template">'.$GLOBALS['I18N']->get("usetemplate").'</label>'.Help("usetemplate").'
+    $formatting_content .= '<div class="field"><label for="template">'.$GLOBALS['I18N']->get("usetemplate").Help("usetemplate").'</label>'.'
       <select name="template"><option value="0">-- '.$GLOBALS['I18N']->get("selectone").'</option>';
     $req = Sql_Query("select id,title from {$tables["template"]} order by listorder");
     while ($row = Sql_Fetch_Array($req)) {
@@ -727,8 +727,8 @@ if (!$done) {
 //  }
 
   #0013076: different content when forwarding 'to a friend'
-  $maincontent .= '<div id="messagecontent" class="field"><label for="message">'.$GLOBALS['I18N']->get("Compose Message").'</label> '.Help("message");
-  $forwardcontent .= '<div id="messagecontent" class="field"><label for="forwardmessage">'.$GLOBALS['I18N']->get("Compose Message").'</label> '.Help("forwardmessage");
+  $maincontent .= '<div id="messagecontent" class="field"><label for="message">'.$GLOBALS['I18N']->get("Compose Message").Help("message").'</label> ';
+  $forwardcontent .= '<div id="messagecontent" class="field"><label for="forwardmessage">'.$GLOBALS['I18N']->get("Compose Message").Help("forwardmessage").'</label> ';
 
   if ($usefck) {
     $oFCKeditor = new FCKeditor('message') ;
@@ -797,22 +797,22 @@ if (!$done) {
 
   if (USE_MANUAL_TEXT_PART) {
   $textcontent = '<div class="field">
-    <label for="textmessage">'.$GLOBALS['I18N']->get("plaintextversion").'</label>'.Help("plaintextversion").'
+    <label for="textmessage">'.$GLOBALS['I18N']->get("plaintextversion").Help("plaintextversion").'</label>'.'
     <textarea name="textmessage" cols="65" rows="20">'.$messagedata["textmessage"].'</textarea>
   </div>';
   }
 #var_dump($messagedata);
   #0013076: different content when forwarding 'to a friend'
-  $maincontent .= '<div class="field"><label for="footer">'.$GLOBALS['I18N']->get("messagefooter").'.</label>'.Help("footer").'
+  $maincontent .= '<div class="field"><label for="footer">'.$GLOBALS['I18N']->get("messagefooter").Help("footer").'.</label>'.'
    <textarea name="footer" cols="65" rows="5">'.htmlspecialchars($messagedata['footer']).'</textarea></div>';
-  $forwardcontent .= '<div class="field"><label for="forwardfooter">'.$GLOBALS['I18N']->get("forwardfooter").'</label>'.Help("forwardfooter").'
+  $forwardcontent .= '<div class="field"><label for="forwardfooter">'.$GLOBALS['I18N']->get("forwardfooter").Help("forwardfooter").'</label>'.'
     <textarea name="forwardfooter" cols="65" rows="5">'.htmlspecialchars($messagedata['forwardfooter']).'</textarea></div>';
 
   if (ALLOW_ATTACHMENTS) {
     // If we have a message id saved, we want to query the attachments that are associated with this
     // message and display that (and allow deletion of!)
 
-    $att_content = '<div class="field"><label for="attach">'.$GLOBALS['I18N']->get("addattachments").'</label>'.Help("attachments");
+    $att_content = '<div class="field"><label for="attach">'.$GLOBALS['I18N']->get("addattachments").Help("attachments").'</label>';
     $att_content .= '<div class="info">
       '.$GLOBALS['I18N']->get("uploadlimits").':<br/>
       '.$GLOBALS['I18N']->get("maxtotaldata").': '.ini_get("post_max_size").'<br/>
@@ -903,7 +903,7 @@ if (!$done) {
 
   $send_content .= sprintf('
     <div class="campaignTracking">
-    <label for"cb[google_track]">%s</label><div><input type="hidden" name="cb[google_track]" value="1" /><input type="checkbox" name="google_track" id="google_track" value="1" %s /></div>
+    <label for"cb[google_track]">%s</label><input type="hidden" name="cb[google_track]" value="1" /><input type="checkbox" name="google_track" id="google_track" value="1" %s />
     </div>',
      Help("googletrack").' '.$GLOBALS['I18N']->get('add Google tracking code'),
      !empty($messagedata['google_track']) ? 'checked="checked"':'');
