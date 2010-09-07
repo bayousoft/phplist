@@ -11,14 +11,9 @@ if (!ALLOW_IMPORT) {
 
 ## most basic possible import: big text area to paste emails in
 $selected_lists = array();
-if (!empty($_POST['importlists'])) {
-  $selected_lists = getSelectedLists('importlists');
-}
 
-if (!empty($_POST['addnewlist'])) {
-  include "editlist.php";
-  $selected_lists = array($_SESSION['newlistid'] => $_SESSION['newlistid']);
-}
+## this needs to be outside of anything, so that (ajaxed) addition of a list can be processed
+$selected_lists = getSelectedLists('importlists');
 
 if (!empty($_POST['importcontent'])) {
   $lines = explode("\n",$_POST['importcontent']);
@@ -84,7 +79,7 @@ if (isset($_GET['list'])) {
     $subselect .= ' where id = '.$id;
   }
 } 
-print PageLinkDialog('addlist',$GLOBALS['I18N']->get('Add a new list'));
+#print PageLinkDialog('addlist',$GLOBALS['I18N']->get('Add a new list'));
 print FormStart(' enctype="multipart/form-data" name="import"');
 
 $result = Sql_query("SELECT id,name FROM ".$tables["list"]."$subselect ORDER BY listorder");

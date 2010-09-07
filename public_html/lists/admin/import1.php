@@ -29,15 +29,12 @@ if (!is_dir($GLOBALS["tmpdir"]) || !is_writable($GLOBALS["tmpdir"])) {
   Warn($GLOBALS['I18N']->get('temp_dir_not_writeable')." (".$GLOBALS["tmpdir"].")");
 }
 
+$import_lists = getSelectedLists('importlists');
+
 if(isset($_REQUEST['import'])) {
 
   $test_import = (isset($_POST["import_test"]) && $_POST["import_test"] == "yes");
- /*
-  if (!is_array($_POST["lists"]) && !$test_import) {
-    Fatal_Error($GLOBALS['I18N']->get('select_list'));
-    return;
-  }
- */
+
   if(empty($_FILES["import_file"])) {
     Fatal_Error($GLOBALS['I18N']->get('none_specified'));
     return;
@@ -148,8 +145,7 @@ if(isset($_REQUEST['import'])) {
     $count_list_add = 0;
     $additional_emails = 0;
     $some = 0;
-    $lists = getSelectedLists('importlists');
-    $num_lists = sizeof($lists);
+    $num_lists = sizeof($import_lists);
     $todo = sizeof($user_list);
     $done = 0;
     if ($hasinfo) {
@@ -231,10 +227,9 @@ if(isset($_REQUEST['import'])) {
         }
 
         #add this user to the lists identified
-        reset($lists);
         $addition = 0;
         $listoflists = "";
-        while (list($key,$listid) = each($lists)) {
+        foreach($import_lists as $key => $listid) {
           $query = "replace INTO ".$tables["listuser"]." (userid,listid,entered) values($userid,$listid,current_timestamp)";
           $result = Sql_query($query);
           # if the affected rows is 2, the user was already subscribed
@@ -331,7 +326,7 @@ if (Sql_Affected_Rows() == 1) {
   printf('<input type="hidden" name="listname[%d]" value="%s"><input type="hidden" name="importlists[%d]" value="%d">'.$GLOBALS['I18N']->get('adding_users').' <b>%s</b>',$c,stripslashes($row["name"]),$c,$row["id"],stripslashes($row["name"]));
 } else {
   print '<p class="button">'.$GLOBALS['I18N']->get('select_lists').'</p>';
-  print ListSelectHTML(array(),'importlists',$subselect);
+  print ListSelectHTML($import_lists,'importlists',$subselect);
 }
 
 ?>

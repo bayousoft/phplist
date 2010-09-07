@@ -15,13 +15,13 @@ if ($GLOBALS["require_login"] && !isSuperUser()) {
       $subselect = " where owner = ".$_SESSION["logindetails"]["id"];
       $subselect_and = " and owner = ".$_SESSION["logindetails"]["id"];
       if ($id) {
-        Sql_Query("select id from ".$tables["list"]. $subselect . " and id = $id");
+        Sql_Query("select id from ".$GLOBALS['tables']["list"]. $subselect . " and id = $id");
         if (!Sql_Affected_Rows()) {
           Fatal_Error($GLOBALS['I18N']->get('You do not have enough priviliges to view this page'));
           return;
         }
       } else {
-        $numlists = Sql_Fetch_Row_query("select count(*) from {$tables['list']} $subselect");
+        $numlists = Sql_Fetch_Row_query("select count(*) from {$GLOBALS['tables']['list']} $subselect");
         if (!($numlists[0] < MAXLIST)) {
           Fatal_Error($GLOBALS['I18N']->get('You cannot create a new list because you have reached maximum number of lists.'));
           return;
@@ -70,7 +70,7 @@ if (!empty($_POST["addnewlist"]) && !empty($_POST["listname"])) {
     . ' set name = ?, description = ?, active = ?,'
     . '     listorder = ?, prefix = ?, owner = ?, category = ?'
     . ' where id = ?';
-    $query = sprintf($query, $tables['list']);
+    $query = sprintf($query, $GLOBALS['tables']['list']);
     $result = Sql_Query_Params($query, array($_POST['listname'],
        $_POST['description'], $_POST['active'], $_POST['listorder'],
        $_POST['prefix'], $_POST['owner'], $category, $id));
@@ -80,14 +80,14 @@ if (!empty($_POST["addnewlist"]) && !empty($_POST["listname"])) {
     . '    (name, description, entered, listorder, owner, prefix, active, category)'
     . ' values'
     . '    (?, ?, current_timestamp, ?, ?, ?, ?, ?)';
-    $query = sprintf($query, $tables['list']);
+    $query = sprintf($query, $GLOBALS['tables']['list']);
 #  print $query;
     $result = Sql_Query_Params($query, array($_POST['listname'],
        $_POST['description'], $_POST['listorder'], $_POST['owner'],
        $_POST['prefix'], $_POST['active'], $category));
   }
   if (!$id) {
-    $id = Sql_Insert_Id($tables['list'], 'id');
+    $id = Sql_Insert_Id($GLOBALS['tables']['list'], 'id');
     ## allow plugins to save their fields
     foreach ($GLOBALS['plugins'] as $plugin) {
       $result = $result && $plugin->processEditList($id);
@@ -103,7 +103,7 @@ if (!empty($_POST["addnewlist"]) && !empty($_POST["listname"])) {
 }
 
 if (!empty($id)) {
-  $result = Sql_Query("SELECT * FROM $tables[list] where id = $id");
+  $result = Sql_Query("SELECT * FROM ".$GLOBALS['tables']['list']." where id = $id");
   $list = Sql_Fetch_Array($result);
 } else {
   $list = array(
