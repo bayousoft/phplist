@@ -392,7 +392,7 @@ function ActionResult($msg) {
     print "\n".strip_tags($msg)."\n";
     @ob_start();
   } else {
-    return '<div class="action-result">'.$msg.'</div>';
+    return '<div class="result">'.$msg.'</div>';
   }
 }
 
