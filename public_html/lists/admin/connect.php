@@ -968,8 +968,11 @@ function ListofLists($current,$fieldname,$subselect) {
     $categoryhtml['all'] .= 'checked="checked"';
   }
   $categoryhtml['all'] .= ' />'.$GLOBALS['I18N']->get('All Active Lists').'</li>';
-  
-  $categoryhtml['all'] .= '<li>'.PageLinkDialog('addlist',$GLOBALS['I18N']->get('Add a list')).'</li>';
+
+  ## need a better way to suppress this
+  if ($_GET['page'] != 'send') {
+    $categoryhtml['all'] .= '<li>'.PageLinkDialog('addlist',$GLOBALS['I18N']->get('Add a list')).'</li>';
+  }
 
   $result = Sql_query('SELECT * FROM '.$GLOBALS['tables']['list']. $subselect.' order by category, name');
   while ($list = Sql_fetch_array($result)) {
