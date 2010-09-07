@@ -13,8 +13,13 @@ if (!empty($_GET['action'])) {
   $action = basename($_GET['action']);
   if (is_file(dirname(__FILE__).'/actions/'.$action.'.php')) {
     include dirname(__FILE__).'/actions/'.$action.'.php';
+  } elseif (!empty($_GET['origpage'])) {
+    $action = basename($_GET['origpage']);
+    if (is_file(dirname(__FILE__).'/actions/'.$action.'.php')) {
+      include dirname(__FILE__).'/actions/'.$action.'.php';
+    }
   }
-}
+} 
 
 print $status;
 if (!empty($GLOBALS['developer_email'])) {
