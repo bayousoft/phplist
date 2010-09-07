@@ -7,8 +7,8 @@ $access = accessLevel("members");
 if (isset($_REQUEST['id'])) {
   $id = sprintf('%d',$_REQUEST["id"]);
 } else $id = 0;
-if (isset($_GET['s'])) {
-  $start = sprintf('%d',$_GET['s']);
+if (isset($_GET['start'])) {
+  $start = sprintf('%d',$_GET['start']);
 } else $start = 0;
 
 switch ($access) {
@@ -223,7 +223,7 @@ if (isset($id)) {
   $result = Sql_Query_Params($query, array($id));
   $row = Sql_Fetch_row($result);
   $total = $row[0];
-  print "<p>$total ".$GLOBALS['I18N']->get("Subscribers on this list").'</p>';
+#  print "<p>$total ".$GLOBALS['I18N']->get("Subscribers on this list").'</p>';
   $offset = $start;
 
   if ($total > MAX_USER_PP) {
@@ -235,8 +235,8 @@ if (isset($id)) {
         $limit = "limit 0,50";
       }
 
-      print '<p>'.$listing.'</p>';
-      print Paging(PageUrl2("members&id=$id"),$start,$total,MAX_USER_PP);
+   #   print '<p>'.$listing.'</p>';
+      print simplePaging("members&amp;id=".$id,$start,$total,MAX_USER_PP,$GLOBALS['I18N']->get('subscribers'));
   }
 //  $result = Sql_query("SELECT $tables[user].id,email,confirmed,rssfrequency FROM // so plugins can use all fields
   $query
