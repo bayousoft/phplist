@@ -17,7 +17,7 @@ require_once dirname(__FILE__).'/accesscheck.php';
 ** Modified by....: Michiel Dethmers
 ***************************************/
 
-require_once($GLOBALS["coderoot"].'mimePart.php');
+require_once(dirname(__FILE__).'/mimePart.php');
 
 class html_mime_mail{
 
