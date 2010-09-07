@@ -48,7 +48,7 @@ if ($id) {
   echo "<br />".PageLinkButton("members",$GLOBALS['I18N']->get('Members of this list'),"id=$id");
 }
 echo "<hr />";
-if (isset($_POST["save"]) && $_POST["save"] == $GLOBALS['I18N']->get('Save') && isset($_POST["listname"]) && $_POST["listname"]) {
+if (!empty($_POST["addnewlist"]) && !empty($_POST["listname"])) {
   if ($GLOBALS["require_login"] && !isSuperUser()) {
     $owner = $_SESSION["logindetails"]["id"];
   }
@@ -93,7 +93,8 @@ if (isset($_POST["save"]) && $_POST["save"] == $GLOBALS['I18N']->get('Save') && 
       $result = $result && $plugin->processEditList($id);
     }
 
-    $_SESSION['action_result'] = $GLOBALS['I18N']->get('Record Saved') . ": $id";
+    $_SESSION['action_result'] = $GLOBALS['I18N']->get('New List added') . ": $id";
+    $_SESSION['newlistid'] = $id;
   }
   
   print '<h3>'.$_SESSION['action_result'].'</h3>';
@@ -122,35 +123,35 @@ ob_end_flush();
 
 <?php echo formStart(' class="editlistSave" ')?>
 <input type="hidden" name="id" value="<?php echo $id ?>" />
-<div><?php echo $GLOBALS['I18N']->get('List name'); ?>:</div><div><input type="text" name="listname" value="<?php echo  htmlspecialchars(StripSlashes($list["name"]))?>" /></div>
-<div><?php echo $GLOBALS['I18N']->get('Public list (listed on the frontend)'); ?></div>
-<div><input type="checkbox" name="active" value="1" <?php echo $list["active"] ? 'checked="checked"' : ''; ?> /></div>
-<div><?php echo $GLOBALS['I18N']->get('Order for listing'); ?></div>
-<div><input type="text" name="listorder" value="<?php echo $list["listorder"] ?>" size="5" /></div>
+<label for="listname"><?php echo $GLOBALS['I18N']->get('List name'); ?>:</label><input type="text" name="listname" value="<?php echo  htmlspecialchars(StripSlashes($list["name"]))?>" />
+<label for="active"><?php echo $GLOBALS['I18N']->get('Public list (listed on the frontend)'); ?></label>
+<input type="checkbox" name="active" value="1" <?php echo $list["active"] ? 'checked="checked"' : ''; ?> />
+<label for="listorder"><?php echo $GLOBALS['I18N']->get('Order for listing'); ?></label>
+<input type="text" name="listorder" value="<?php echo $list["listorder"] ?>" size="5" />
 <?php if ($GLOBALS["require_login"] && (isSuperUser() || accessLevel("editlist") == "all")) {
   if (empty($list["owner"])) {
     $list["owner"] = $_SESSION["logindetails"]["id"];
   }
-  print '<div>' . $GLOBALS['I18N']->get('Owner') . '</div><div><select name="owner">';
+  print '<label for="owner">' . $GLOBALS['I18N']->get('Owner') . '</label><select name="owner">';
   $admins = $GLOBALS["admin_auth"]->listAdmins();
   foreach ($admins as $adminid => $adminname) {
     printf ('    <option value="%d" %s>%s</option>',$adminid,$adminid == $list["owner"]? 'selected="selected"':'',$adminname);
   }
-  print '</select></div>';
+  print '</select>';
 } else {
   print '<input type="hidden" name="owner" value="'.$_SESSION["logindetails"]["id"].'" />';
 }
 
 $aListCategories = listCategories();
 if (sizeof($aListCategories)) {
-  print '<div>'.$GLOBALS['I18N']->get('Category').'</div>';
+  print '<label for="category">'.$GLOBALS['I18N']->get('Category').'</label>';
   print '<select name="category">';
   print '<option value="">-- '.$GLOBALS['I18N']->get('choose category').'</option>';
   foreach ($aListCategories as $category) {
     $category = trim($category);
     printf('<option value="%s" %s>%s</option>',$category,$category == $list['category'] ? 'selected="selected"':'',$category);
   }
-  print '</select></div>';
+  print '</select>';
 }
 
   ### allow plugins to add rows
@@ -159,8 +160,8 @@ if (sizeof($aListCategories)) {
   }
 
 ?>
-<div><?php echo $GLOBALS['I18N']->get('List Description'); ?></div>
-<div><textarea name="description" cols="55" rows="15">
+<label for="description"><?php echo $GLOBALS['I18N']->get('List Description'); ?></label>
+<div class="field"><textarea name="description" cols="35" rows="5">
 <?php echo htmlspecialchars(StripSlashes($list["description"])) ?></textarea></div>
-<div><input class="submit" type="submit" name="save" value="<?php echo $GLOBALS['I18N']->get('Save'); ?>" /></div>
+<input class="submit" type="submit" name="addnewlist" value="<?php echo $GLOBALS['I18N']->get('Save'); ?>" />
 </form>
