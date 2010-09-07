@@ -1,7 +1,10 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 
-require_once PHPMAILER_PATH;
+if (defined('PHPMAILER_PATH')) {
+  require_once PHPMAILER_PATH;
+}
+
 if (!class_exists('PHPmailer')) {
 #require_once dirname(__FILE__).'/phpmailer/class.phpmailer.php';
   require_once dirname(__FILE__).'/PHPMailer_v5.1/class.phpmailer.php';
