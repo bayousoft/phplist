@@ -968,6 +968,8 @@ function ListofLists($current,$fieldname,$subselect) {
     $categoryhtml['all'] .= 'checked="checked"';
   }
   $categoryhtml['all'] .= ' />'.$GLOBALS['I18N']->get('All Active Lists').'</li>';
+  
+  $categoryhtml['all'] .= '<li>'.PageLinkDialog('addlist',$GLOBALS['I18N']->get('Add a list')).'</li>';
 
   $result = Sql_query('SELECT * FROM '.$GLOBALS['tables']['list']. $subselect.' order by category, name');
   while ($list = Sql_fetch_array($result)) {
@@ -1009,12 +1011,12 @@ function listSelectHTML ($current,$fieldname,$subselect,$alltab = '') {
   if (!empty($alltab)) {
     unset($categoryhtml['all']);
     array_unshift($categoryhtml,$alltab);
-    
   }
   
   $tabno = 1;
   $listindex = $listhtml = '';
   foreach ($categoryhtml as $category => $content) {
+    if ($category == 'all') $category = '@';
     $listindex .= sprintf('<li><a href="#%s%d">%s</a></li>',$fieldname,$tabno,$category);
     $listhtml .= sprintf('<div id="%s%d"><ul>%s</ul></div>',$fieldname,$tabno,$content);
     $tabno++;
@@ -1046,6 +1048,10 @@ function getSelectedLists($fieldname) {
     while ($row = Sql_Fetch_Row($req)) {
       $_POST[$fieldname][$row[0]] = $row[0];
     }
+  }
+  if (!empty($_POST['addnewlist'])) {
+    include "editlist.php";
+    $_POST[$fieldname][$_SESSION['newlistid']] = $_SESSION['newlistid'];
   }
   return $_POST[$fieldname];
 }
