@@ -872,16 +872,11 @@ FCKConfig.TemplateReplaceCheckbox = true ;
 FCKConfig.ToolbarLocation = 'In' ;
 
 FCKConfig.ToolbarSets["Default"] = [
-  ['Source','DocProps','-','NewPage','Preview'],
-  ['Cut','Copy','Paste','PasteText','PasteWord','-','Print','SpellCheck'],
-  ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat','Link','Unlink','Anchor'],
-  ['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript'],
-  ['OrderedList','UnorderedList','-','Outdent','Indent'],
+  ['Source','PasteWord','Link','Unlink'],
+  ['Bold','Italic','Underline'],
+  ['OrderedList','UnorderedList'],
   ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
-  ['Image','Flash','Table','Rule','Smiley','SpecialChar','TextColor','BGColor'],
-  '/',
-  ['Style','FontFormat','FontName','FontSize'],
-  ['About']
+  ['Image','FontFormat','About']
 ] ;
 
 FCKConfig.ToolbarSets["Basic"] = [
