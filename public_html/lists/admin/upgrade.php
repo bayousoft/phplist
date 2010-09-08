@@ -50,6 +50,7 @@ if (isset($_GET["doit"]) && $_GET["doit"] == 'yes') {
     }
   }
   @ob_end_flush();
+  @ob_start();
 
   print '<script language="Javascript" src="js/progressbar.js" type="text/javascript"></script>';
   print '<script language="Javascript" type="text/javascript"> document.write(progressmeter); start();</script>';
@@ -408,10 +409,11 @@ if (isset($_GET["doit"]) && $_GET["doit"] == 'yes') {
 <p class="information">Your database requires upgrading, please make sure to create a backup of your database first.</p>
 
 <p class="information">When you're ready click <?php echo PageLink2("upgrade","Here","doit=yes")?>. Depending on the size of your database, this may take quite a while. Please make sure not to interrupt the process, once you've started it.</p>
-<?php } ?>
-</td></tr></table>
-</div>
+<?php }
 
-<?php
+if (!$GLOBALS['commandline']) {
+  print '</td></tr></table></div>';
+}  
+
 @ob_end_flush();
 ?>
