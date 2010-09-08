@@ -12,7 +12,18 @@ if (is_file(dirname(__FILE__) .'/../../../VERSION')) {
   $version = "dev";
 }
 
-define("VERSION",$version.'dev');
+define("CODEREVISION","$Rev$");
+if (preg_match('/Rev: (\d+)/','$Rev: 5953 $',$match)) {
+  define('REVISION',$match[1]);
+}
+
+if (is_dir(dirname(__FILE__).'/.svn')) {
+  define("VERSION",$version.'dev');
+  define('DEVVERSION',true);
+} else {
+  define("VERSION",$version);
+  define('DEVVERSION',false);
+}
 
 require_once dirname(__FILE__)."/commonlib/lib/userlib.php";
 include_once dirname(__FILE__)."/commonlib/lib/maillib.php";
@@ -134,7 +145,7 @@ function SaveConfig($item,$value,$editable=1,$ignore_errors = 0) {
 
   Michiel Dethmers, Tincan Ltd 2001,2004
 */
-if (strpos(VERSION,"dev") !== false)
+if (DEVVERSION)
   $v = "dev";
 else
   $v = VERSION;
@@ -285,8 +296,7 @@ function ClineError($msg) {
 }
 
 function clineUsage($line = "") {
-#  if (!ereg("dev",VERSION))
-    ob_end_clean();
+  @ob_end_clean();
   print clineSignature();
   print "Usage: ".$_SERVER["SCRIPT_FILENAME"]." -p page $line\n\n";
   exit;
@@ -808,7 +818,7 @@ function topMenu() {
   foreach ($GLOBALS['pagecategories'] as $category => $categoryDetails) {
     if (
       $category == 'hide' ||
-      ($category == 'develop' && empty($GLOBALS['developer_email']))
+      ($category == 'develop' && DEVVERSION)
    #   || count($categoryDetails['menulinks']) == 0
       ) 
       continue;

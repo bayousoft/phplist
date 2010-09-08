@@ -302,7 +302,7 @@ function sendMailOriginal ($to,$subject,$message,$header = "",$parameters = "") 
 
   # version 4.2.3 (and presumably up) does not allow the fifth parameter in safe mode
   # make sure not to send out loads of test emails to ppl when developing
-  if (strpos(VERSION,"dev") !== false) {
+  if (!DEVVERSION) {
     if ($v > "4.0.5" && !ini_get("safe_mode")) {
       if (mail($to,$subject,$message,$header,$parameters))
         return 1;
@@ -348,7 +348,7 @@ function sendMailPhpMailer ($to,$subject,$message) {
 
 #  print "Sending $to from $fromemail<br/>";
 
-  if (strpos(VERSION,"dev") !== false) {
+  if (!DEVVERSION) {
     $mail = new PHPlistMailer('systemmessage',$to);
     $destinationemail = $to;
     $mail->add_text($message);
