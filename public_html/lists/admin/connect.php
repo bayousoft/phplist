@@ -12,7 +12,7 @@ if (is_file(dirname(__FILE__) .'/../../../VERSION')) {
   $version = "dev";
 }
 
-define("CODEREVISION","$Rev$");
+define("CODEREVISION",'$Rev$');
 if (preg_match('/Rev: (\d+)/','$Rev: 5953 $',$match)) {
   define('REVISION',$match[1]);
 }
@@ -1047,6 +1047,7 @@ function listSelectHTML ($current,$fieldname,$subselect,$alltab = '') {
 }
 
 function getSelectedLists($fieldname) {
+  if (!isset($_POST[$fieldname])) return array();
   if (in_array('all',array_keys($_POST[$fieldname]))) {
     ## load all lists
     $_POST[$fieldname] = array();
