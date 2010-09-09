@@ -1397,7 +1397,7 @@ print $remote_content;exit;
 
   
   if ($cached[$messageid]["htmlformatted"]) {
-    $cached[$messageid]["content"] = compressContent($cached[$messageid]["content"]);
+ #   $cached[$messageid]["content"] = compressContent($cached[$messageid]["content"]);
   }
 
   $cached[$messageid]['google_track'] = $message['google_track'];
@@ -1428,6 +1428,10 @@ exit;
   } else {
     $cached[$messageid]['listowner'] = 0;
   }
+
+  $baseurl = $GLOBALS['website'];
+  $cached[$messageid]['content'] = preg_replace('/<img(.*)\/'.UPLOADIMAGES_DIR.'(.*)>/U','<img\\1http://'.$baseurl.'/'.UPLOADIMAGES_DIR.'\\2>',$cached[$messageid]['content']);
+  $cached[$messageid]['content'] = preg_replace('/<img(.*)\/lists\/'.FCKIMAGES_DIR.'(.*)>/U','<img\\1http://'.$baseurl.'/lists/'.FCKIMAGES_DIR.'\\2>',$cached[$messageid]['content']);
 }  
 
 # make sure the 0 template has the powered by image
