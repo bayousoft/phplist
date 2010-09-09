@@ -59,7 +59,7 @@ if (isset($_SERVER["ConfigFile"]) && is_file($_SERVER["ConfigFile"])) {
 }
 
 if (is_file($configfile) && filesize($configfile) > 20) {
-  print '<!-- using config '.$configfile.'-->';
+#  print '<!-- using config '.$configfile.'-->';
   include $configfile;
 } elseif ($GLOBALS["commandline"]) {
   print 'Cannot find config file'."\n";
