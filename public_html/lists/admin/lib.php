@@ -531,6 +531,13 @@ function system_messageHeaders($useremail = "") {
 }
 
 function logEvent($msg) {
+
+  $logged = false;
+  foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
+    $logged = $logged || $plugin->logEvent($msg);
+  }
+  if ($logged) return;
+  
   global $tables;
   if (isset($GLOBALS['page'])) {
     $p = $GLOBALS['page'];

@@ -344,6 +344,14 @@ class phplistPlugin {
     
   }
 
+  /* logEvent
+   * @param string msg message to log
+   * @return true when dealt with or false to pass on
+   */
+  function logEvent($msg = '') {
+    return false;
+  }
+
   ############################################################
   # User
 
