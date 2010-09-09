@@ -420,11 +420,11 @@ class PHPlistMailer extends PHPMailer {
      
       ## we don't really use multiple to's so pass that on to phpmailer, if there are any
       if (!$this->SingleTo || !USE_LOCAL_SPOOL) {
-output('Not single or not spool');
+#output('Not single or not spool');
         return parent::MailSend($header,$body);
       }
       if (!is_dir(USE_LOCAL_SPOOL) || !is_writable(USE_LOCAL_SPOOL)) {
-output('Not writable spool: '.USE_LOCAL_SPOOL);
+#output('Not writable spool: '.USE_LOCAL_SPOOL);
         ## if local spool is not set, send the normal way
         return parent::MailSend($header,$body);
       }
@@ -435,7 +435,7 @@ output('Not writable spool: '.USE_LOCAL_SPOOL);
         $header .= 'To: '.$GLOBALS['developer_email'].$this->LE;
       }
       $header .= "Subject: ".$this->EncodeHeader($this->Subject).$this->LE;
-output('Writing spool');
+#output('Writing spool');
       $fname = tempnam(USE_LOCAL_SPOOL,'msg');
       file_put_contents($fname,$header."\n".$body);
       file_put_contents($fname.'.S',$this->Sender);
