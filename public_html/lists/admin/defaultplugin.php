@@ -352,6 +352,16 @@ class phplistPlugin {
     return false;
   }
 
+  /* logout
+   * called on logout
+   * @param none
+   * @return null
+   */
+
+  function logout() {
+    return '';
+  }
+
   ############################################################
   # User
 
