@@ -24,6 +24,9 @@ if (!empty($_POST['importcontent'])) {
   $total = count($lines);
   foreach ($lines as $line) {
     if (trim($line) == '') continue;
+
+    ## do some basic clearing
+    $line = clean2($line);
     $uniqid = getUniqid();
     ## I guess everyone will import all their users wanting to receive HTML ....
     $query = sprintf('insert into %s (email,entered,htmlemail,confirmed,uniqid)
