@@ -430,6 +430,7 @@ if ($send || $sendtest || $prepare || $save || $savedraft) {
       }
     }
     $sendtestresult .= "<hr/>";
+    $sendtestresult .= '<script type="text/javascript">this.location.hash="sendTest";</script>';
   }
 } elseif (isset($_POST["deleteattachments"]) && is_array($_POST["deleteattachments"]) && $id) {
   if (ALLOW_ATTACHMENTS) {
