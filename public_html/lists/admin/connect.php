@@ -1699,6 +1699,9 @@ function simplePaging($baseurl,$start,$total,$numpp,$itemname = '') {
     $listing =  sprintf($text,1,$end,$total).' '.$itemname;
     $start = 0;
   }
+  if ($total < $numpp) {
+    return $listing;
+  }
 
 /*
   return sprintf ('<table class="messagesListing" border="1"><tr><td colspan="4" align="center">%s</td></tr><tr><td>%s</td><td>%s</td><td>
