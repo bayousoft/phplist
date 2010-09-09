@@ -104,8 +104,10 @@ if ($num_per_batch && $batch_period) {
   # check how many were sent in the last batch period and take off that
   # amount from this batch
   $original_num_per_batch = $num_per_batch;
+/*
   output(sprintf('select count(*) from %s where entered > date_sub(current_timestamp,interval %d second) and status = "sent"',
     $tables["usermessage"],$batch_period));
+*/
   $recently_sent = Sql_Fetch_Row_Query(sprintf('select count(*) from %s where entered > date_sub(current_timestamp,interval %d second) and status = "sent"',
     $tables["usermessage"],$batch_period));
   output('Recently sent : '.$recently_sent[0]);
