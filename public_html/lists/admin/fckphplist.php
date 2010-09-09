@@ -1072,7 +1072,7 @@ FCKConfig.LinkUploadDeniedExtensions  = "" ;  // empty for no one
 FCKConfig.ImageUpload = <?php echo $enable_image_upload?> ;
 //FCKConfig.ImageUploadURL = FCKConfig.BasePath + 'filemanager/connectors/' + _QuickUploadLanguage + '/upload.' + _QuickUploadExtension + '?Type=Image' ;
 FCKConfig.ImageUploadURL = FCKConfig.BasePath + 'filemanager/connectors/phplist/upload.php?Type=Image' ;
-FCKConfig.ImagePath = document.location.protocol + '//' + document.location.host +'<?php echo $GLOBALS["pageroot"].'/'.FCKIMAGES_DIR.'/'?>'
+FCKConfig.ImagePath = document.location.protocol + '//' + document.location.host +'<?php echo $GLOBALS["pageroot"].'/'.UPLOADIMAGES_DIR.'/'?>'
 
 FCKConfig.ImageUploadAllowedExtensions  = ".(jpg|gif|jpeg|png|bmp)$" ;    // empty for all
 FCKConfig.ImageUploadDeniedExtensions = "" ;              // empty for no one
