@@ -811,6 +811,7 @@ while ($message = Sql_fetch_array($messages)) {
              # make sure it's not because it's an invalid email
              # unconfirm this user, so they're not included next time
              if (!$throttled && !validateEmail($useremail)) {
+               $unconfirmed++;
                logEvent("invalid email $useremail user marked unconfirmed");
                Sql_Query(sprintf('update %s set confirmed = 0 where email = "%s"',
                  $GLOBALS['tables']['user'],$useremail));
