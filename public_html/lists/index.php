@@ -3,7 +3,6 @@
 ob_start();
 //$er = error_reporting(0); 
 require_once dirname(__FILE__) .'/admin/commonlib/lib/unregister_globals.php';
-require_once dirname(__FILE__) .'/admin/commonlib/lib/unregister_globals.php';
 require_once dirname(__FILE__) .'/admin/commonlib/lib/magic_quotes.php';
 
 ## none of our parameters can contain html for now
