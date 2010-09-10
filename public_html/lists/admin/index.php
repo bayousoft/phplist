@@ -434,6 +434,9 @@ if (checkAccess($page,"") || $page == 'about') {
     if (is_file("lan/".$_SESSION['adminlanguage']['iso']."/".$include)) {
       include "lan/".$_SESSION['adminlanguage']['iso']."/".$include;
     }
+    if ($include == 'login.php' && is_file('ui/'.$GLOBALS['ui'].'/pages/login.php')) {
+      $include = 'ui/'.$GLOBALS['ui'].'/pages/login.php';
+    }
   #  print "Including $include<br/>";
 
     # hmm, pre-parsing and capturing the error would be nice
@@ -442,7 +445,7 @@ if (checkAccess($page,"") || $page == 'about') {
 
     if (!$parses_ok) {
       print Error("cannot parse $include");
-      print '<p class="error">Sorry, an error occurred. This is a bug. Please <a href="http://mantis.tincan.co.uk">report the bug to the Bug Tracker</a><br/>Sorry for the inconvenience</a></p>';
+      print '<p class="error">Sorry, an error occurred. This is a bug. Please <a href="http://mantis.phplist.com">report the bug to the Bug Tracker</a><br/>Sorry for the inconvenience</a></p>';
     } else {
       if (!empty($_SESSION['action_result'])) {
         print '<div class="actionresult">'.$_SESSION['action_result'].'</div>';
