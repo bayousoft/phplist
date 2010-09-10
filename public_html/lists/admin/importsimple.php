@@ -15,6 +15,9 @@ $selected_lists = array();
 ## this needs to be outside of anything, so that (ajaxed) addition of a list can be processed
 $selected_lists = getSelectedLists('importlists');
 
+$actionresult = '';
+$content = '';
+
 if (!empty($_POST['importcontent'])) {
   $lines = explode("\n",$_POST['importcontent']);
   $count['imported'] = 0;
@@ -90,17 +93,20 @@ $total = Sql_Num_Rows($result);
 $c=0;
 if ($total == 1) {
   $row = Sql_fetch_array($result);
-  printf('<input type="hidden" name="listname[%d]" value="%s"><input type="hidden" name="importlists[%d]" value="%d">'.$GLOBALS['I18N']->get('adding_users').' <b>%s</b>',$c,stripslashes($row["name"]),$c,$row["id"],stripslashes($row["name"]));
+  $content .= sprintf('<input type="hidden" name="listname[%d]" value="%s"><input type="hidden" name="importlists[%d]" value="%d">'.$GLOBALS['I18N']->get('adding_users').' <b>%s</b>',$c,stripslashes($row["name"]),$c,$row["id"],stripslashes($row["name"]));
 } else {
-  print '<p class="button">'.$GLOBALS['I18N']->get('Select the lists to add the emails to').'</p>';
+  $content .= '<p class="button">'.$GLOBALS['I18N']->get('Select the lists to add the emails to').'</p>';
 
-  print ListSelectHTML($selected_lists,'importlists',$subselect);
+  $content .= ListSelectHTML($selected_lists,'importlists',$subselect);
 }
 
-print '<p class="information">'.
+$content .= '<p class="information">'.
 $GLOBALS['I18N']->get('Please enter the emails to import in the box below, one per line, and click "Import Emails"').'<br/>'.
 $GLOBALS['I18N']->get('<b>Warning</b>: the emails you import will not be checked on validity. You can do this later on the "reconcile subscribers" page.').
 '</p>';
-print '<br/><input type="submit" name="doimport" value="'.$GLOBALS['I18N']->get('Import Emails').'" >';
-print '<textarea name="importcontent" rows="10" cols="40"></textarea>';
+$content .= '<br/><input type="submit" name="doimport" value="'.$GLOBALS['I18N']->get('Import Emails').'" >';
+$content .= '<textarea name="importcontent" rows="10" cols="40"></textarea>';
+
+$panel = new UIPanel('',$content);
+print $panel->display();
 print '</form>';
