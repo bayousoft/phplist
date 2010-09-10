@@ -55,7 +55,7 @@ if ($message['status'] != 'inprocess') {
     $html .= '<br/>'.sprintf($GLOBALS['I18N']->get('%s left until embargo'),$secstowait);
   }
   
-  if ($message['status'] != 'submitted') {
+  if ($message['status'] != 'submitted' && $message['status'] != 'draft') {
     $html .= '<br/>'.PageLink2("messages",$GLOBALS['I18N']->get("requeue"),"resend=".$message["id"]);
   }
   if (!empty($messagedata['to process'])) {
@@ -80,7 +80,7 @@ if ($message['status'] != 'inprocess') {
   }
 }
 
-if (!empty($GLOBALS['developer_email'])) {
+if (!empty($GLOBALS['developer_email1'])) {
   if (isset($messagedata['sampletime'])) $html .= '<br/>ST: '.$messagedata['sampletime'];
   if (isset($messagedata['samplesent'])) $html .= '<br/>SS: '.$messagedata['samplesent'];
   if (isset($totaltime)) $html .= '<br/>TT: '.$totaltime;
