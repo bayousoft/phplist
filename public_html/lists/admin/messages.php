@@ -208,145 +208,129 @@ if ($total > MAX_MSG_PP) {
   print simplePaging("messages$url_keep",$start,$total,MAX_MSG_PP,$GLOBALS['I18N']->get("Campaigns"));
 }
   
-/*
-if ($_GET["tab"] == "draft") {
-  print '<p class="delete">'.PageLink2("messages&amp;delete=draft",$GLOBALS['I18N']->get("Delete all draft messages without subject")).'</p>';
-}
-*/
-
-?>
-
-<table class="messagesListing" border="1">
-<tr>
-<?php
-
 $ls = new WebblerListing($I18N->get('messages'));
+$ls->usePanel();
 
 ## messages table
 if ($total) {
-  print "<th>".$GLOBALS['I18N']->get("Message info")."</th><th>".$GLOBALS['I18N']->get("Status")."</th><th>".$GLOBALS['I18N']->get("Action")."</th></tr>";
   $result = Sql_query("SELECT * FROM ".$tables["message"]." $where order by status,entered desc limit $limit offset $offset");
   while ($msg = Sql_fetch_array($result)) {
-    $listingelement = $msg['id'];
+    $listingelement = '<!--'.$msg['id'].'-->'.stripslashes($msg["subject"]);
+    $ls->addElement($listingelement);
 
     $uniqueviews = Sql_Fetch_Row_Query("select count(userid) from {$tables["usermessage"]} where viewed is not null and messageid = ".$msg["id"]);
 
     ## need a better way to do this, it's way too slow 
-    #$clicks = Sql_Fetch_Row_Query("select sum(clicked) from {$tables["linktrack"]} where messageid = ".$msg["id"]);
+ #   $clicks = Sql_Fetch_Row_Query("select sum(clicked) from {$tables["linktrack"]} where messageid = ".$msg["id"]);
     $clicks = array(0);
 
     $messagedata = loadMessageData($msg['id']);
-    printf ('<tr><td valign="top"><table class="messagesListing">
-      <tr><td valign="top">'.$GLOBALS['I18N']->get("From:").'</td><td valign="top">%s</td></tr>
-      <tr><td valign="top">'.$GLOBALS['I18N']->get("Subject:").'</td><td valign="top">%s</td></tr>
-      <tr><td valign="top">'.$GLOBALS['I18N']->get("Entered:").'</td><td valign="top">%s</td></tr>
-      <tr><td valign="top">'.$GLOBALS['I18N']->get("Embargo:").'</td><td valign="top">%s</td></tr>
-      </table>
-      </td>',
-      stripslashes($msg["fromfield"]),
-      stripslashes($msg["subject"]),
-      $msg["entered"],
-      $msg["embargo"]
-    );
 
-    if ($clicks[0]) {
-      $clicked = sprintf('<tr><td></td>
-        <td align="right" colspan="2">
-        <b>'.$GLOBALS['I18N']->get('Clicks').'</b></td>
-        <td align="center"><b>%d</b></td></tr>
-        ',$clicks[0]);
+/*
+    foreach ($messagedata as $key => $val) {
+      $ls->addColumn($listingelement,$key,$val);
+    }
+    
+*/
+    $ls->addColumn($listingelement,$GLOBALS['I18N']->get("Entered"), formatDateTime($msg["entered"]));
+
+    $_GET['id'] = $msg['id'];
+    $statusdiv = '<div id="messagestatus'.$msg['id'].'">';
+    include 'actions/msgstatus.php';
+    $statusdiv .= $status;
+    $statusdiv .= '</div>';
+    $statusdiv .= '
+    <script type="text/javascript">
+      messageStatusUpdate('.$msg['id'].');
+    </script>
+    ';
+    if ($msg['status'] == 'sent') {
+      $statusdiv = $GLOBALS['I18N']->get("Sent").": ".$msg['sent'];
+    }
+    $ls->addColumn($listingelement,$GLOBALS['I18N']->get("Status"),$statusdiv);
+
+#    $ls->addColumn($listingelement,$GLOBALS['I18N']->get("total"), $msg['astext'] + $msg['ashtml'] + $msg['astextandhtml'] + $msg['aspdf'] + $msg['astextandpdf']);
+#    $ls->addColumn($listingelement,$GLOBALS['I18N']->get("text"), $msg['astext']);
+#    $ls->addColumn($listingelement,$GLOBALS['I18N']->get("html"), $msg["ashtml"] + $msg["astextandhtml"]);
+#    if (!empty($msg['aspdf'])) {
+#      $ls->addColumn($listingelement,$GLOBALS['I18N']->get("PDF"), $msg['aspdf']);
+#    }
+#    if (!empty($msg["astextandpdf"])) {
+#      $ls->addColumn($listingelement,$GLOBALS['I18N']->get("both"), $msg["astextandpdf"]);
+#    }
+#    $ls->addColumn($listingelement,$GLOBALS['I18N']->get("Clicks"), $clicks[0]);
+    $ls->addColumn($listingelement,$GLOBALS['I18N']->get("Viewed"), $msg["viewed"]);
+    $ls->addColumn($listingelement,$GLOBALS['I18N']->get("Unique Views"), $uniqueviews[0]);
+#    $ls->addColumn($listingelement,$GLOBALS['I18N']->get("Bounced"), $msg["bouncecount"]);
+
+    if ($msg['status'] == 'sent') {
+      $timetosend = $GLOBALS['I18N']->get("Time to send").': '.timeDiff($msg["sendstart"],$msg["sent"]);
     } else {
-      $clicked = '';
+      $timetosend = '';
     }
 
-    $statusdiv = '';
-    ## Rightmost two columns per message
-    if ($msg['status'] == 'sent') {
-      $statusdiv = $GLOBALS['I18N']->get("Sent").": ".$msg['sent'].'<br/>'.$GLOBALS['I18N']->get("Time to send").': '.timeDiff($msg["sendstart"],$msg["sent"]);
+    $colspan = 3;
+    if (!empty($msg['aspdf'])) $colspan++;
+    if (!empty($msg['astextandpdf'])) $colspan++;
+    $clicksrow = $bouncedrow = '';
 
-      if ($msg['viewed']) {
-        $viewed = sprintf('<tr><td></td>
-          <td align="right" colspan="2">
-          <b>'.$GLOBALS['I18N']->get("Viewed").'</b></td>
-          <td align="center"><b>%d</b></td></tr>
-          <tr><td></td><td align="right" colspan="2">
-          <b>'.$GLOBALS['I18N']->get("Unique Views").'</b></td>
-          <td align="center"><b>%d</b></td></tr>
-          ',$msg["viewed"],$uniqueviews[0]);
-      } else {
-        $viewed = '';
-      }
+    if ($clicks[0]) {
+      $clicksrow = sprintf('<tr><td colspan="%d">%s</td><td>%d</td></tr>',
+        $colspan-1,$GLOBALS['I18N']->get("Clicks"),$clicks[0]);
+    }
+    if ($msg["bouncecount"]) {
+      $bouncedrow = sprintf('<tr><td colspan="%d">%s</td><td>%d</td></tr>',
+        $colspan-1,$GLOBALS['I18N']->get("Bounced"),$msg["bouncecount"]);
+    }
+    
+    $sendstats =
+      sprintf('<table border="1">
+      %s
+      <tr><td>'.$GLOBALS['I18N']->get("total").'</td><td>'.$GLOBALS['I18N']->get("text").'</td><td>'.$GLOBALS['I18N']->get("html").'</td>
+        %s%s
+      </tr>
+      <tr><td><b>%d</b></td><td><b>%d</b></td><td><b>%d</b></td>
+        %s %s %s %s
+      </tr>
+      </table>',
+      !empty($timetosend) ? '<tr><td colspan="'.$colspan.'">'.$timetosend.'</td></tr>' : '',
+      !empty($msg['aspdf']) ? '<td>'.$GLOBALS['I18N']->get("PDF").'</td>':'',
+      !empty($msg['astextandpdf']) ? '<td>'.$GLOBALS['I18N']->get("both").'</td>':'',
+      $msg['astext'] + $msg['ashtml'] + $msg['astextandhtml'] + $msg['aspdf'] + $msg['astextandpdf'],
+      $msg["astext"],
+      $msg["ashtml"] + $msg["astextandhtml"], //bug 0009687
+      !empty($msg['aspdf']) ?  '<td><b>'.$msg["aspdf"].'</b></td>':'',
+      !empty($msg['astextandpdf']) ? '<td><b>'.$msg["astextandpdf"].'</b></td>':'',
+      $clicksrow,$bouncedrow
+    );
+    $ls->addColumn($listingelement,$GLOBALS['I18N']->get("Statistics"), $sendstats);
 
-      $sendstats =
-        sprintf('<br /><table class="messageStats" border="1">
-        <tr>
-          <td>'.$GLOBALS['I18N']->get("total").'</td>
-          <td>'.$GLOBALS['I18N']->get("text").'</td>
-          <td>'.$GLOBALS['I18N']->get("html").'</td>
-          <td>'.$GLOBALS['I18N']->get("PDF").'</td>
-          <td>'.$GLOBALS['I18N']->get("both").'</td>
-        </tr>
-        <tr>
-          <td align="center"><b>%d</b></td>
-          <td align="center"><b>%d</b></td>
-          <td align="center"><b>%d</b></td>
-          <td align="center"><b>%d</b></td>
-          <td align="center"><b>%d</b></td>
-        </tr>
-        %s
-        %s
-        %s
-        </table>',
-      #  $msg["processed"],
-        $msg['astext'] + $msg['ashtml'] + $msg['astextandhtml'] + $msg['aspdf'] + $msg['astextandpdf'],
-        $msg["astext"],
-        $msg["ashtml"] + $msg["astextandhtml"], //bug 0009687
-        $msg["aspdf"],
-        $msg["astextandpdf"],
-        $viewed,
-        $clicked,
-        $msg["bouncecount"] ? sprintf('<tr><td></td><td align="right" colspan="2"><b>'.$GLOBALS['I18N']->get("Bounced").'</b></td><td align="center"><b>%d</b></td></tr>
-        ',$msg["bouncecount"]):""
-        );
-    } else { ##Status <> sent
-//      $status = $msg['status'].'<br/>'.$msg['rsstemplate']; //Obsolete by rssmanager plugin
-   #   if ($msg['status'] == 'inprocess') {
-
-      #  $status .= '<br/>';
-        $_GET['id'] = $msg['id'];
-        $statusdiv = '<div id="messagestatus'.$msg['id'].'">';
-        include 'actions/msgstatus.php';
-        $statusdiv .= $status;
-        $statusdiv .= '</div>';
-        $statusdiv .= '
-        <script type="text/javascript">
-          messageStatusUpdate('.$msg['id'].');
-        </script>
-        ';
-      }
-      $sendstats = '';
-   # }
+    $actionbuttons = '';
     if ($msg['status'] == 'inprocess' || $msg['status'] == 'submitted') {
-      $statusdiv .= '<br/>'.
-        PageLinkButton('messages&suspend='.$msg['id'],$GLOBALS['I18N']->get('Suspend Sending'));
+      $actionbuttons .= PageLinkButton('messages&suspend='.$msg['id'],$GLOBALS['I18N']->get('Suspend'));
+    } elseif ($msg['status'] != 'draft') {
+      $actionbuttons .= PageLinkButton("messages",$GLOBALS['I18N']->get("Requeue"),"resend=".$msg["id"]);
     }
     #0012081: Add new 'Mark as sent' button
     if ($msg['status'] == 'suspended') {
-      $statusdiv .= '<br/>'.
-        PageLinkButton('messages&amp;markSent='.$msg['id'],$GLOBALS['I18N']->get('Mark as sent'));
+      $actionbuttons .= PageLinkButton('messages&amp;markSent='.$msg['id'],$GLOBALS['I18N']->get('Mark&nbsp;sent'));
+      $actionbuttons .= PageLinkButton("send",$GLOBALS['I18N']->get("Edit"),"id=".$msg["id"]); 
+    }
+    
+    if ($msg['status'] == 'draft') {
+      ## only draft messages should be deletable, the rest isn't
+      $actionbuttons .= sprintf('<a href="javascript:deleteRec(\'%s\');">'.$GLOBALS['I18N']->get("delete").'</a>',
+PageURL2("messages$url_keep","","delete=".$msg["id"]));
+      $actionbuttons .= PageLinkButton("send",$GLOBALS['I18N']->get("Edit"),"id=".$msg["id"]); 
+    }
+    $actionbuttons .= PageLinkButton("message",$GLOBALS['I18N']->get("View"),"id=".$msg["id"]);
+
+    if ($clicks[0] && CLICKTRACK) {
+      $actionbuttons .= PageLink2("mclicks",$GLOBALS['I18N']->get("click stats"),"id=".$msg["id"]);
     }
 
-    $totalsent = '';
-/*
-    $totalsentcount = $msg['astext'] + $msg['ashtml'] + $msg['astextandhtml'] + $msg['aspdf'] + $msg['astextandpdf'];
+    $ls->addColumn($listingelement,$GLOBALS['I18N']->get("Action"), $actionbuttons);
 
-    $totalsent = '<div id="totalsent'.$msg['id'].'">'.$totalsentcount.'</div>';
-    $totalsent .= '
-    <script type="text/javascript">
-      totalSentUpdate('.$msg['id'].');
-    </script>
-    ';
-*/
 
     ## allow plugins to add information
     foreach ($GLOBALS['plugins'] as $plugin) {
@@ -354,38 +338,12 @@ if ($total) {
         $plugin->displayMessages($msg, $status);
       }
     }
-
-    $deletelink = '';
-    if ($msg['status'] == 'draft') {
-      ## only draft messages should be deletable, the rest isn't
-      $deletelink = sprintf('<a href="javascript:deleteRec(\'%s\');">'.$GLOBALS['I18N']->get("delete").'</a>',
-PageURL2("messages$url_keep","","delete=".$msg["id"]));
-    }
-
-    printf('
-      <td>
-      %s<br />
-      </td><td>
-      %s<br />
-      %s<br />
-      %s<br />
-      %s
-      %s
-      </td>
-      </tr>',
-      $statusdiv.
-      $sendstats,
-      PageLinkButton("message",$GLOBALS['I18N']->get("View"),"id=".$msg["id"]),
-      $msg['status'] != 'inprocess' ? PageLinkButton("messages",$GLOBALS['I18N']->get("Requeue"),"resend=".$msg["id"]) : $totalsent,
-      $msg["status"] != 'prepared' ? PageLinkButton("send",$GLOBALS['I18N']->get("Edit"),"id=".$msg["id"]) : PageLink2("preparesend",$GLOBALS['I18N']->get("Edit"),"id=".$msg["id"]),
-      $clicks[0] && CLICKTRACK ? PageLink2("mclicks",$GLOBALS['I18N']->get("click stats"),"id=".$msg["id"]).'<br/>':'',
-      $deletelink
-    );
   }
 }
 
+print $ls->display();
+
 ?>
 
-</table>
 
 
