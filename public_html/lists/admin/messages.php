@@ -249,6 +249,7 @@ if ($total) {
     }
     $ls->addColumn($listingelement,$GLOBALS['I18N']->get("Status"),$statusdiv);
 
+    if ($msg['status'] != 'draft') {
 #    $ls->addColumn($listingelement,$GLOBALS['I18N']->get("total"), $msg['astext'] + $msg['ashtml'] + $msg['astextandhtml'] + $msg['aspdf'] + $msg['astextandpdf']);
 #    $ls->addColumn($listingelement,$GLOBALS['I18N']->get("text"), $msg['astext']);
 #    $ls->addColumn($listingelement,$GLOBALS['I18N']->get("html"), $msg["ashtml"] + $msg["astextandhtml"]);
@@ -259,9 +260,10 @@ if ($total) {
 #      $ls->addColumn($listingelement,$GLOBALS['I18N']->get("both"), $msg["astextandpdf"]);
 #    }
 #    $ls->addColumn($listingelement,$GLOBALS['I18N']->get("Clicks"), $clicks[0]);
-    $ls->addColumn($listingelement,$GLOBALS['I18N']->get("Viewed"), $msg["viewed"]);
-    $ls->addColumn($listingelement,$GLOBALS['I18N']->get("Unique Views"), $uniqueviews[0]);
-#    $ls->addColumn($listingelement,$GLOBALS['I18N']->get("Bounced"), $msg["bouncecount"]);
+      $ls->addColumn($listingelement,$GLOBALS['I18N']->get("Viewed"), $msg["viewed"]);
+      $ls->addColumn($listingelement,$GLOBALS['I18N']->get("Unique Views"), $uniqueviews[0]);
+  #    $ls->addColumn($listingelement,$GLOBALS['I18N']->get("Bounced"), $msg["bouncecount"]);
+    } 
 
     if ($msg['status'] == 'sent') {
       $timetosend = $GLOBALS['I18N']->get("Time to send").': '.timeDiff($msg["sendstart"],$msg["sent"]);
@@ -303,7 +305,9 @@ if ($total) {
       !empty($msg['astextandpdf']) ? '<td><b>'.$msg["astextandpdf"].'</b></td>':'',
       $clicksrow,$bouncedrow
     );
-    $ls->addColumn($listingelement,$GLOBALS['I18N']->get("Statistics"), $sendstats);
+    if ($msg['status'] != 'draft') {
+      $ls->addColumn($listingelement,$GLOBALS['I18N']->get("Statistics"), $sendstats);
+    }
 
     $actionbuttons = '';
     if ($msg['status'] == 'inprocess' || $msg['status'] == 'submitted') {
