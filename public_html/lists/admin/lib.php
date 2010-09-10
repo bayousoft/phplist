@@ -471,21 +471,22 @@ function previewTemplate($id,$adminid = 0,$text = "", $footer = "") {
       $template = preg_replace("#\[LISTOWNER.".strtoupper(preg_quote($att["name"]))."\]#",$att["value"],$template);
     }
   }
-  if ($footer)
-    $template = eregi_replace("\[FOOTER\]",$footer,$template);
-  $template = preg_replace("#\[CONTENT\]#",$text,$template);
-  $template = eregi_replace("\[UNSUBSCRIBE\]",sprintf('<a href="%s">%s</a>',getConfig("unsubscribeurl"),$GLOBALS["strThisLink"]),$template);
-  #0013076: Blacklisting posibility for unknown users
-  $template = eregi_replace("\[BLACKLIST\]",sprintf('<a href="%s">%s</a>',getConfig("blacklisturl"),$GLOBALS["strThisLink"]),$template);
-  $template = eregi_replace("\[PREFERENCES\]",sprintf('<a href="%s">%s</a>',getConfig("preferencesurl"),$GLOBALS["strThisLink"]),$template);
-  if (!EMAILTEXTCREDITS) {
-    $template = eregi_replace("\[SIGNATURE\]",$GLOBALS["PoweredByImage"],$template);
-  } else {
-    $template = eregi_replace("\[SIGNATURE\]",$GLOBALS["PoweredByText"],$template);
+  if ($footer) {
+    $template = str_ireplace("[FOOTER]",$footer,$template);
   }
-  $template = ereg_replace("\[[A-Z\. ]+\]","",$template);
-  $template = ereg_replace('<form','< form',$template);
-  $template = ereg_replace('</form','< /form',$template);
+  $template = preg_replace("#\[CONTENT\]#",$text,$template);
+  $template = str_ireplace("[UNSUBSCRIBE]",sprintf('<a href="%s">%s</a>',getConfig("unsubscribeurl"),$GLOBALS["strThisLink"]),$template);
+  #0013076: Blacklisting posibility for unknown users
+  $template = str_ireplace("[BLACKLIST]",sprintf('<a href="%s">%s</a>',getConfig("blacklisturl"),$GLOBALS["strThisLink"]),$template);
+  $template = str_ireplace("[PREFERENCES]",sprintf('<a href="%s">%s</a>',getConfig("preferencesurl"),$GLOBALS["strThisLink"]),$template);
+  if (!EMAILTEXTCREDITS) {
+    $template = str_ireplace("[SIGNATURE]",$GLOBALS["PoweredByImage"],$template);
+  } else {
+    $template = str_ireplace("[SIGNATURE]",$GLOBALS["PoweredByText"],$template);
+  }
+  $template = preg_replace("/\[[A-Z\. ]+\]/","",$template);
+  $template = str_ireplace('<form','< form',$template);
+  $template = str_ireplace('</form','< /form',$template);
 
   return $template;
 }
