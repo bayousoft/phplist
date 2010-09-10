@@ -41,6 +41,7 @@ $GLOBALS["img_cross"] = '<img src="images/cross.gif" alt="No" />';
 */
 $GLOBALS["img_tick"] = '<span class="yes">Yes</span>';
 $GLOBALS["img_cross"] = '<span class="no">No</span>';
+$GLOBALS["img_view"] = '<span class="view">View</span>';
 
 # if keys need expanding with 0-s
 $checkboxgroup_storesize = 1; # this will allow 10000 options for checkboxes
@@ -882,7 +883,7 @@ function PageLink2($name,$desc="",$url="",$no_plugin = false) {
       } else {
         $pi = "";
       }
-      return sprintf('<a href="./?page=%s%s%s" title="%s">%s</a>',$name,$url,$pi,$desc,strtolower($desc));
+      return sprintf('<a href="./?page=%s%s%s" title="%s">%s</a>',$name,$url,$pi,strip_tags($desc),strtolower($desc));
     }
   } else
     return "";
@@ -890,11 +891,22 @@ function PageLink2($name,$desc="",$url="",$no_plugin = false) {
 #    return "\n$name disabled $access\n";
 }
 
+## hmm actually should rename to PageLinkDialogButton
 function PageLinkDialog ($name,$desc="",$url="") {
   ## as PageLink2, but add the option to ajax it in a popover window
   $link = PageLink2($name,$desc,$url);
   if ($link) {
     $link = str_replace('<a ','<a class="button opendialog"',$link);
+    $link .= '';
+  }
+  return $link;
+}
+
+function PageLinkDialogOnly ($name,$desc="",$url="") {
+  ## as PageLink2, but add the option to ajax it in a popover window
+  $link = PageLink2($name,$desc,$url);
+  if ($link) {
+    $link = str_replace('<a ','<a class="opendialog"',$link);
     $link .= '';
   }
   return $link;
