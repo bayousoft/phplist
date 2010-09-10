@@ -1430,8 +1430,12 @@ exit;
   }
 
   $baseurl = $GLOBALS['website'];
-  $cached[$messageid]['content'] = preg_replace('/<img(.*)\/'.UPLOADIMAGES_DIR.'(.*)>/U','<img\\1http://'.$baseurl.'/'.UPLOADIMAGES_DIR.'\\2>',$cached[$messageid]['content']);
-  $cached[$messageid]['content'] = preg_replace('/<img(.*)\/lists\/'.FCKIMAGES_DIR.'(.*)>/U','<img\\1http://'.$baseurl.'/lists/'.FCKIMAGES_DIR.'\\2>',$cached[$messageid]['content']);
+  if (defined('UPLOADIMAGES_DIR') && UPLOADIMAGES_DIR) {
+    $cached[$messageid]['content'] = preg_replace('/<img(.*)src="\/'.UPLOADIMAGES_DIR.'(.*)>/iU','<img\\1src="http://'.$baseurl.'/'.UPLOADIMAGES_DIR.'\\2>',$cached[$messageid]['content']);
+  }
+  if (defined('FCKIMAGES_DIR') && FCKIMAGES_DIR) {
+    $cached[$messageid]['content'] = preg_replace('/<img(.*)src="\/lists\/'.FCKIMAGES_DIR.'(.*)>/iU','<img\\1src="http://'.$baseurl.'/lists/'.FCKIMAGES_DIR.'\\2>',$cached[$messageid]['content']);
+  }
 }  
 
 # make sure the 0 template has the powered by image
