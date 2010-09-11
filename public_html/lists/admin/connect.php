@@ -5,7 +5,7 @@ if (is_file(dirname(__FILE__) .'/../../../VERSION')) {
   while ($line = fscanf ($fd, "%[a-zA-Z0-9,. ]=%[a-zA-Z0-9,. ]")) {
     list ($key, $val) = $line;
     if ($key == "VERSION")
-      $version = $val . "-";
+      $version = $val;
   }
   fclose($fd);
 } else {
@@ -13,12 +13,12 @@ if (is_file(dirname(__FILE__) .'/../../../VERSION')) {
 }
 
 define("CODEREVISION",'$Rev$');
-if (preg_match('/Rev: (\d+)/','$Rev: 5953 $',$match)) {
+if (preg_match('/Rev: (\d+)/','$Rev$',$match)) {
   define('REVISION',$match[1]);
 }
 
 if (is_dir(dirname(__FILE__).'/.svn')) {
-  define("VERSION",$version.'dev');
+  define("VERSION",$version.'-dev');
   define('DEVVERSION',true);
 } else {
   define("VERSION",$version);
@@ -151,9 +151,9 @@ if (DEVVERSION)
 else
   $v = VERSION;
 if (REGISTER) {
-  $PoweredByImage = '<p class="poweredby"><a href="http://www.phplist.com"><img src="http://phplist.tincan.co.uk/images/'.$v.'/power-phplist.png" width=70 height=30 title="Powered by PHPlist version '.$v.', &copy; tincan ltd" alt="Powered by PHPlist'.$v.', &copy tincan ltd" border="0"/></a></p>';
+  $PoweredByImage = '<p class="poweredby"><a href="http://www.phplist.com"><img src="http://phplist.tincan.co.uk/images/'.$v.'/power-phplist.png" width=70 height=30 title="Powered by phpList version '.$v.', &copy; tincan ltd" alt="Powered by phpList'.$v.', &copy; tincan ltd" border="0"/></a></p>';
 } else {
-  $PoweredByImage = '<p class="poweredby"><a href="http://www.phplist.com"><img src="images/power-phplist.png" width=70 height=30 title="Powered by PHPlist version '.$v.', &copy; tincan ltd" alt="Powered by PHPlist'.$v.', &copy tincan ltd" border="0"/></a></p>';
+  $PoweredByImage = '<p class="poweredby"><a href="http://www.phplist.com"><img src="images/power-phplist.png" width=70 height=30 title="Powered by phpList version '.$v.', &copy; tincan ltd" alt="Powered by phpList'.$v.', &copy; tincan ltd" border="0"/></a></p>';
 }
 $PoweredByText = '<span class="poweredphplist">powered by <a href="http://www.phplist.com" class="poweredphplist" target="_blank">phplist</a> v '.$v.', &copy; <a href="http://tincan.co.uk/powered" target="_blank" class="poweredphplist">tincan ltd</a></span>';
 if (!TEST && REGISTER) {
