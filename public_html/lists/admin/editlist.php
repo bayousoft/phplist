@@ -117,7 +117,7 @@ if (!empty($id)) {
 if (empty($list['category'])) {
   $list['category'] = '';
 }
-ob_end_flush();
+@ob_end_flush();
 
 ?>
 
