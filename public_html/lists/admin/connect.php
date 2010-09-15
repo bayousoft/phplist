@@ -852,6 +852,7 @@ function topMenu() {
   return $topmenu;
 }
 
+### hmm, these really should become objects
 function PageLink2($name,$desc="",$url="",$no_plugin = false) {
   if ($url)
     $url = "&amp;".$url;
@@ -892,51 +893,51 @@ function PageLink2($name,$desc="",$url="",$no_plugin = false) {
 }
 
 ## hmm actually should rename to PageLinkDialogButton
-function PageLinkDialog ($name,$desc="",$url="") {
+function PageLinkDialog ($name,$desc="",$url="",$extraclass = '') {
   ## as PageLink2, but add the option to ajax it in a popover window
   $link = PageLink2($name,$desc,$url);
   if ($link) {
-    $link = str_replace('<a ','<a class="button opendialog"',$link);
+    $link = str_replace('<a ','<a class="button opendialog '.$extraclass.'"',$link);
     $link .= '';
   }
   return $link;
 }
 
-function PageLinkDialogOnly ($name,$desc="",$url="") {
+function PageLinkDialogOnly ($name,$desc="",$url="",$extraclass = '') {
   ## as PageLink2, but add the option to ajax it in a popover window
   $link = PageLink2($name,$desc,$url);
   if ($link) {
-    $link = str_replace('<a ','<a class="opendialog"',$link);
+    $link = str_replace('<a ','<a class="opendialog '.$extraclass.'"',$link);
     $link .= '';
   }
   return $link;
 }
 
-function PageLinkAjax ($name,$desc="",$url="") {
+function PageLinkAjax ($name,$desc="",$url="",$extraclass = '') {
   ## as PageLink2, but add the option to ajax it in a popover window
   $link = PageLink2($name,$desc,$url);
   if ($link) {
-    $link = str_replace('<a ','<a class="ajaxable"',$link);
+    $link = str_replace('<a ','<a class="ajaxable '.$extraclass.'"',$link);
     $link .= '';
   }
   return $link;
 }
 
-function PageLinkButton($name,$desc="",$url="") {
+function PageLinkButton($name,$desc="",$url="",$extraclass = '') {
   ## as PageLink2, but add the option to ajax it in a popover window
   $link = PageLink2($name,$desc,$url);
   if ($link) {
-    $link = str_replace('<a ','<a class="button"',$link);
+    $link = str_replace('<a ','<a class="button '.$extraclass.'"',$link);
     $link .= '';
   }
   return $link;
 }
 
-function PageLinkActionButton($name,$desc="",$url="") {
+function PageLinkActionButton($name,$desc="",$url="",$extraclass = '') {
   ## as PageLink2, but add the option to ajax it in a popover window
   $link = PageLink2($name,$desc,$url);
   if ($link) {
-    $link = str_replace('<a ','<a class="action-button"',$link);
+    $link = str_replace('<a ','<a class="action-button '.$extraclass.'"',$link);
     $link .= '';
   }
   return $link;
