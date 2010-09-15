@@ -315,11 +315,11 @@ class phplistPlugin {
 
   /*
    * processSendStats
-   * param
-   * integer $sent - amount sent
-   * integer $invalid - amount invalid
-   * integer $failed_sent - amount failed
-   * integer $unconfirmed - amount unconfirmed
+   * called when sending a campaign has finished
+   * @param integer $sent - amount sent
+   * @param integer $invalid - amount invalid
+   * @param integer $failed_sent - amount failed
+   * @param integer $unconfirmed - amount unconfirmed
    *
    * receive stats from phpList for further handling
    * @return null
@@ -338,6 +338,7 @@ class phplistPlugin {
   }
 
   /* importReport
+   * called when a subscriber import has finished
    * @param string $report
    * @return null
    */
@@ -350,6 +351,16 @@ class phplistPlugin {
   function processError($msg) {
     
   }
+
+  /*
+   * campaignStarted
+   * called when sending of a campaign starts
+   * @param array messagedata - associative array with all data for campaign
+   * @return null
+   */
+
+  function campaignStarted($messagedata = array()) {
+  }  
 
   /* logEvent
    * @param string msg message to log
@@ -383,11 +394,11 @@ class phplistPlugin {
     return null; #@@idea: return false could mean don't display this user at all
   }
   
-function deleteUser($id) {
-  # purpose: allow plugins to delete their data when deleting a user
-  # 200711 Bas
-  return true;
-}
+  function deleteUser($id) {
+    # purpose: allow plugins to delete their data when deleting a user
+    # 200711 Bas
+    return true;
+  }
 
   ############################################################
   # List
