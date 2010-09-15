@@ -421,11 +421,11 @@ function safeImageName($name) {
 
 function clean2 ($value) {
   $value = trim($value);
-  $value = ereg_replace("\r","",$value);
-  $value = ereg_replace("\n","",$value);
-  $value = ereg_replace('"',"&quot;",$value);
-  $value = ereg_replace("'","&rsquo;",$value);
-  $value = ereg_replace("`","&lsquo;",$value);
+  $value = preg_replace("/\r/","",$value);
+  $value = preg_replace("/\n/","",$value);
+  $value = str_replace('"',"&quot;",$value);
+  $value = str_replace("'","&rsquo;",$value);
+  $value = str_replace("`","&lsquo;",$value);
   $value = stripslashes($value);
   return $value;
 }
