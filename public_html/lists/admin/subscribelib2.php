@@ -18,7 +18,7 @@ require_once dirname(__FILE__)."/date.php";
 $date = new Date();
 
 function validateRssFrequency($freq = '') {
-  if (!$freq) return '';
+  if (empty($freq) || empty($GLOBALS['rssfrequencies'])) return '';
   if (in_array($freq,array_keys($GLOBALS['rssfrequencies']))) {
     return $freq;
   }
@@ -129,7 +129,7 @@ if ($allthere && ASKFORPASSWORD && ($_POST["passwordreq"] || $_POST["password"])
 }
 
 if (isset($_POST["email"]) && $check_for_host) {
-  list($username,$domaincheck) = split('@',$_POST["email"]);
+  list($username,$domaincheck) = explode('@',$_POST["email"]);
 #  $mxhosts = array();
 #  $validhost = getmxrr ($domaincheck,$mxhosts);
   $validhost = checkdnsrr($domaincheck, "MX") || checkdnsrr($domaincheck, "A");
@@ -290,7 +290,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok && $allt
 
    $history_entry .= "\n\nList Membership: \n$lists\n";
 
-   $subscribemessage = ereg_replace('\[LISTS\]', $lists, getUserConfig("subscribemessage:$id",$userid));
+   $subscribemessage = str_ireplace('[LISTS]', $lists, getUserConfig("subscribemessage:$id",$userid));
 
    $blacklisted = isBlackListed($email);
 
@@ -328,14 +328,12 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok && $allt
       $thankyoupage = '<h3>'.$strThanks.'</h3>'. $strEmailConfirmation;
    }
 
-   if (eregi("\[email\]",$thankyoupage,$regs))
-   $thankyoupage = eregi_replace("\[email\]",$email,$thankyoupage);
+   $thankyoupage = str_ireplace("[email]",$email,$thankyoupage);
 
    $user_att = getUserAttributeValues($email);
 
    while (list($att_name,$att_value) = each ($user_att)) {
-      if (eregi("\[".$att_name."\]",$thankyoupage,$regs))
-         $thankyoupage = eregi_replace("\[".$att_name."\]",$att_value,$thankyoupage);
+     $thankyoupage = str_ireplace("[".$att_name."]",$att_value,$thankyoupage);
    }
 
    if (is_array($GLOBALS["plugins"])) {
