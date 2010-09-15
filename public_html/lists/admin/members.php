@@ -45,9 +45,9 @@ function addUserForm ($listid) {
 }
 if (!empty($id)) {
   print "<h3>".$GLOBALS['I18N']->get("Members of")." ".ListName($id)."</h3>";
-  echo PageLinkButton("editlist",$GLOBALS['I18N']->get("edit list details"),"id=$id");
-  echo PageLinkButton("export&amp;list=$id",$GLOBALS['I18N']->get("Download subscribers"));
-  echo PageLinkDialog("importsimple&amp;list=$id",$GLOBALS['I18N']->get("Import Subscribers to this list"));
+  echo PageLinkButton("editlist",$GLOBALS['I18N']->get("edit list details"),"id=$id",'pill-l');
+  echo PageLinkButton("export&amp;list=$id",$GLOBALS['I18N']->get("Download subscribers"),'','pill-c');
+  echo PageLinkDialog("importsimple&amp;list=$id",$GLOBALS['I18N']->get("Import Subscribers to this list"),'','pill-r');
 
 #  print addUserForm($id);
 } else {
@@ -226,6 +226,7 @@ if (isset($id)) {
 #  print "<p>$total ".$GLOBALS['I18N']->get("Subscribers on this list").'</p>';
   $offset = $start;
 
+  $paging = '';
   if ($total > MAX_USER_PP) {
       if ($start > 0) {
         $listing = sprintf($GLOBALS['I18N']->get("Listing subscriber %d to %d"),$start,($start + MAX_USER_PP));
@@ -235,8 +236,7 @@ if (isset($id)) {
         $limit = "limit 0,50";
       }
 
-   #   print '<p>'.$listing.'</p>';
-      print simplePaging("members&amp;id=".$id,$start,$total,MAX_USER_PP,$GLOBALS['I18N']->get('subscribers'));
+      $paging = simplePaging("members&amp;id=".$id,$start,$total,MAX_USER_PP,$GLOBALS['I18N']->get('subscribers'));
   }
 //  $result = Sql_query("SELECT $tables[user].id,email,confirmed,rssfrequency FROM // so plugins can use all fields
   $query
@@ -260,6 +260,7 @@ if (isset($id)) {
   $columns = explode(',',getConfig('membership_columns'));
  # $columns = array('country','Lastname');
   $ls = new WebblerListing($GLOBALS['I18N']->get("Members"));
+  $ls->usePanel($paging);
   while ($user = Sql_fetch_array($result)) {
     $ls->addElement($user["email"],PageUrl2("user&amp;id=".$user["id"]));
     $ls->addColumn($user["email"],$GLOBALS['I18N']->get("confirmed"),$user["confirmed"]?$GLOBALS["img_tick"]:$GLOBALS["img_cross"]);
