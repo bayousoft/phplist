@@ -523,7 +523,6 @@ function system_messageHeaders($useremail = "") {
   else
     $additional_headers .= "Reply-To: $from_address\n";
   $v = VERSION;
-  $v = ereg_replace("-dev","",$v);
   $additional_headers .= "X-Mailer: phplist version $v (www.phplist.com)\n";
   $additional_headers .= "X-MessageID: systemmessage\n";
   if ($useremail)

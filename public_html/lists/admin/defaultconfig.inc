@@ -661,7 +661,7 @@ if (!function_exists("getconfig")) {
 		if ($item != 'website' && isset ($GLOBALS['config'][$item])) {
 			return $GLOBALS['config'][$item];
 		}
-    if (isset($_SESSION['config'][$item])) {
+    if (!DEVSITE && isset($_SESSION['config'][$item])) {
       return $_SESSION['config'][$item];
     }
 		if (!isset ($GLOBALS['config']) || !is_array($GLOBALS['config'])) {
@@ -820,16 +820,16 @@ function getUserConfig($item, $userid = 0) {
 		# hmm, reverted back to old system
 
     $url = getConfig("unsubscribeurl");
-    $sep = ereg('\?', $url) ? '&' : '?';
-    $value = eregi_replace('\[UNSUBSCRIBEURL\]', $url . $sep . 'uid=' . $uniqid, $value);
+    $sep = strpos($url,'?') !== false ? '&' : '?';
+    $value = str_ireplace('[UNSUBSCRIBEURL]', $url . $sep . 'uid=' . $uniqid, $value);
 		$url = getConfig("confirmationurl");
-		$sep = ereg('\?', $url) ? '&' : '?';
-		$value = eregi_replace('\[CONFIRMATIONURL\]', $url . $sep . 'uid=' . $uniqid, $value);
+    $sep = strpos($url,'?') !== false ? '&' : '?';
+		$value = str_ireplace('[CONFIRMATIONURL]', $url . $sep . 'uid=' . $uniqid, $value);
 		$url = getConfig("preferencesurl");
-		$sep = ereg('\?', $url) ? '&' : '?';
-		$value = eregi_replace('\[PREFERENCESURL\]', $url . $sep . 'uid=' . $uniqid, $value);
+    $sep = strpos($url,'?') !== false ? '&' : '?';
+		$value = str_ireplace('[PREFERENCESURL]', $url . $sep . 'uid=' . $uniqid, $value);
 	}
-	$value = eregi_replace('\[SUBSCRIBEURL\]', getConfig("subscribeurl"), $value);
+	$value = str_ireplace('[SUBSCRIBEURL]', getConfig("subscribeurl"), $value);
 	$value = preg_replace('/\[DOMAIN\]/i', $domain, $value); #@ID Should be done only in one place. Combine getConfig and this one?
 	$value = preg_replace('/\[WEBSITE\]/i', $website, $value);
 	if ($value == "0") {
