@@ -74,7 +74,7 @@ if (isset($_GET["doit"]) && (($GLOBALS["require_login"] && isSuperUser()) || !$G
     print sprintf($GLOBALS['I18N']->get('DelUser').'\n', $userid);
   }
 
-  if ($deletebounce) {
+  if (ALLOW_DELETEBOUNCE && $deletebounce) {
     print sprintf($GLOBALS['I18N']->get('DeletingB').'\n', $id);
     Sql_query("delete from {$tables["bounce"]} where id = $id");
     print $GLOBALS['I18N']->get('DoneAndLoading')."<br /><hr/><br />\n";
@@ -126,7 +126,9 @@ if ($id) {
   print '<tr><td>'.$GLOBALS['I18N']->get('MarkAsUnconfirmed').' </td><td><input type="checkbox" name="unconfirm" value="1" /> '.$GLOBALS['I18N']->get('MarkAsUnconfirmedNote').'</td></tr>';
   print '<tr><td>'.$GLOBALS['I18N']->get('SetReceiveText').' </td><td><input type="checkbox" name="maketext" value="1" /></td></tr>';
   print '<tr><td>'.$GLOBALS['I18N']->get('DelUser1').' </td><td><input type="checkbox" name="deleteuser" value="1" /></td></tr>';
-  print '<tr><td>'.$GLOBALS['I18N']->get('DelAndGo').' </td><td><input type="checkbox" name="deletebounce" value="1" checked="checked" /></td></tr>';
+  if (ALLOW_DELETEBOUNCE) {
+    print '<tr><td>'.$GLOBALS['I18N']->get('DelAndGo').' </td><td><input type="checkbox" name="deletebounce" value="1" checked="checked" /></td></tr>';
+  }
   print '<tr><td><input class="submit" type="submit" name="doit" value="'.$GLOBALS['I18N']->get('DoAbove').'" /></td></tr>';
   print "</table></form>";
   if (USE_ADVANCED_BOUNCEHANDLING) {
