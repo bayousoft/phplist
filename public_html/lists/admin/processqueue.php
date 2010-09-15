@@ -424,6 +424,10 @@ while ($message = Sql_fetch_array($messages)) {
 //  $rssmessage = $message["rsstemplate"]; // obsolete, moved to rssmanager plugin
 
   $msgdata = loadMessageData($messageid);
+  foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
+    $plugin->campaignStarted($msgdata);
+  }
+
   $userselection = $msgdata["userselection"]; ## @@ needs more work
   ## load message in cache
   precacheMessage($messageid);
@@ -714,7 +718,7 @@ while ($message = Sql_fetch_array($messages)) {
 
       reset($GLOBALS['plugins']);
       while ($cansend && $plugin = current($GLOBALS['plugins']) ) {
-        $cansend = $plugin->canSend($message, $user);
+        $cansend = $plugin->canSend($msgdata, $user);
         if (!$cansend) $failure_reason .= 'Sending blocked by plugin '.$plugin->name;
 
         next($GLOBALS['plugins']);
