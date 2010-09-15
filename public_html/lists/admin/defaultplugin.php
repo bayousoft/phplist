@@ -337,6 +337,13 @@ class phplistPlugin {
   function sendReport ($subject,$message) {
   }
 
+  /* importReport
+   * @param string $report
+   * @return null
+   */
+  function importReport($report) {
+  }
+
   /* processError
    * @param string msg
    */

@@ -2,7 +2,7 @@
 require_once dirname(__FILE__).'/accesscheck.php';
 
 $subselect = '';
-
+$report = '';
 if (!ALLOW_IMPORT) {
   print '<p class="information">'.$GLOBALS['I18N']->get('import is not available').'</p>';
   return;
@@ -289,12 +289,16 @@ if(isset($_REQUEST['import'])) {
     $dispemail2 = ($additional_emails == 1) ? $GLOBALS['I18N']->get('email_was'): $GLOBALS['I18N']->get('emails_were');
 
     if ($count_email_exist) {
-      print "<br/>$count_email_exist ".$GLOBALS['I18N']->get('some_emails_exist');
+      $report .= "<br/>$count_email_exist ".$GLOBALS['I18N']->get('some_emails_exist');
     }
     if(!$some && !$additional_emails) {
-      print "<br/>".$GLOBALS['I18N']->get('all_emails_exist');
+      $report .= "<br/>".$GLOBALS['I18N']->get('all_emails_exist');
     } else {
-      print "<br/>$count_email_add $dispemail ".$GLOBALS['I18N']->get('import_successful')." $num_lists $displists.<br/>$additional_emails $dispemail2 ".$GLOBALS['I18N']->get('subscribed')." $displists";
+      $report .= "<br/>$count_email_add $dispemail ".$GLOBALS['I18N']->get('import_successful')." $num_lists $displists.<br/>$additional_emails $dispemail2 ".$GLOBALS['I18N']->get('subscribed')." $displists";
+    }
+    print ActionResult($report);
+    foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
+      $plugin->importReport($report);
     }
   }; // end else
   print '<p class="button">'.PageLink2("import1",$GLOBALS['I18N']->get('import_more_emails')).'</p>';

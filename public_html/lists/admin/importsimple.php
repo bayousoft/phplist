@@ -61,6 +61,9 @@ if (!empty($_POST['importcontent'])) {
 
   print ActionResult(nl2br($report));
   sendMail(getConfig("admin_address"), $GLOBALS['I18N']->get('phplist Import Results'), $report);
+  foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
+    $plugin->importReport($report);
+  }
   return;
 }
 
@@ -101,10 +104,10 @@ if ($total == 1) {
 }
 
 $content .= '<p class="information">'.
-$GLOBALS['I18N']->get('Please enter the emails to import in the box below, one per line, and click "Import Emails"').'<br/>'.
-$GLOBALS['I18N']->get('<b>Warning</b>: the emails you import will not be checked on validity. You can do this later on the "reconcile subscribers" page.').
-'</p>';
-$content .= '<br/><input type="submit" name="doimport" value="'.$GLOBALS['I18N']->get('Import Emails').'" >';
+$GLOBALS['I18N']->get('Please enter the emails to import, one per line, in the box below and click "Import Emails"');
+#$GLOBALS['I18N']->get('<b>Warning</b>: the emails you import will not be checked on validity. You can do this later on the "reconcile subscribers" page.');
+$content .= '</p>';
+$content .= '<input type="submit" name="doimport" value="'.$GLOBALS['I18N']->get('Import Emails').'" >';
 $content .= '<textarea name="importcontent" rows="10" cols="40"></textarea>';
 
 $panel = new UIPanel('',$content);
