@@ -99,6 +99,10 @@ if (sizeof($aListCategories)) {
   } else {
     $current = '';
   }
+  if (stripos($current,'uncategorised') !== false) {
+    $current = '';
+  }
+
 /*
  *
  * hmm, if lists are marked for a category, which is then removed, this would
@@ -136,12 +140,12 @@ $total = Sql_Num_Rows($countresult);
 print '<p>'.$total .' '. $GLOBALS['I18N']->get('Lists').'</p>';
 $limit = '';
 
-
 $query
 = ' select *'
 . ' from ' . $tables['list']
 . $subselect
 . ' order by listorder '.$limit;
+
 $result = Sql_query($query);
 $ls = new WebblerListing($GLOBALS['I18N']->get('Lists'));
 while ($row = Sql_fetch_array($result)) {
