@@ -65,7 +65,9 @@ if (!isset($_GET["tab"]) && !empty($_SESSION["lastmessagetype"])) {
 #}
 #print '</p>';
 
+print '<div class="actions">';
 print PageLinkActionButton('send&amp;new=1',$GLOBALS['I18N']->get('Start a new campaign'));
+print '</div>';
 
 ### Print tabs
 $tabs = new WebblerTabs();
@@ -204,12 +206,13 @@ if (isset($start) && $start > 0) {
   $start = 0;
 }
 
+$paging = '';
 if ($total > MAX_MSG_PP) {
-  print simplePaging("messages$url_keep",$start,$total,MAX_MSG_PP,$GLOBALS['I18N']->get("Campaigns"));
+  $paging = simplePaging("messages$url_keep",$start,$total,MAX_MSG_PP,$GLOBALS['I18N']->get("Campaigns"));
 }
   
 $ls = new WebblerListing($I18N->get('messages'));
-$ls->usePanel();
+$ls->usePanel($paging);
 
 ## messages table
 if ($total) {
