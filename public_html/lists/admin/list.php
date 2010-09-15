@@ -13,6 +13,7 @@ if (isset($_GET['s'])) {
 }
 $baseurl = './?page=list';
 
+$actionresult = '';
 
 ## quick DB fix
 if (!Sql_Table_Column_Exists($tables['list'],'category')) {
@@ -47,6 +48,7 @@ switch ($access) {
     break;
 }
 
+print '<div class="actions">';
 print PageLinkButton('catlists',$I18N->get('Categorise lists'));
 $canaddlist = false;
 if ($GLOBALS['require_login'] && !isSuperUser()) {
@@ -59,18 +61,20 @@ if ($GLOBALS['require_login'] && !isSuperUser()) {
   print PageLinkButton('editlist',$GLOBALS['I18N']->get('Add a list'));
   $canaddlist = true;
 }
+print '</div>';
 
 if (isset($_GET['delete'])) {
   $delete = sprintf('%d',$_GET['delete']);
   # delete the index in delete
-  print $GLOBALS['I18N']->get('Deleting') . " $delete ..\n";
+  $actionresult = $GLOBALS['I18N']->get('Deleting') . " $delete ..\n";
   $result = Sql_query(sprintf('delete from '.$tables['list'].' where id = %d %s',$delete,$subselect_and));
   $done = Sql_Affected_Rows();
   if ($done) {
     $result = Sql_query('delete from '.$tables['listuser']." where listid = $delete $subselect_and");
     $result = Sql_query('delete from '.$tables['listmessage']." where listid = $delete $subselect_and");
   }
-  print '..' . $GLOBALS['I18N']->get('Done') . "<br /><hr /><br />\n";
+  $actionresult .= '..' . $GLOBALS['I18N']->get('Done') . "<br /><hr /><br />\n";
+  print ActionResult($actionresult);
 }
 
 if (!empty($_POST['importcontent'])) {
@@ -131,15 +135,7 @@ $total = Sql_Num_Rows($countresult);
 
 print '<p>'.$total .' '. $GLOBALS['I18N']->get('Lists').'</p>';
 $limit = '';
-/*
- * paging is now dealt with by categories
-if ($total > 10) {
-  $limit = ' limit 10 offset '.$s;
-} else {
-  $limit = '';
-}
-print Paging($baseurl,$s,$total);
-*/
+
 
 $query
 = ' select *'
@@ -148,7 +144,6 @@ $query
 . ' order by listorder '.$limit;
 $result = Sql_query($query);
 $ls = new WebblerListing($GLOBALS['I18N']->get('Lists'));
-$ls->noShader();
 while ($row = Sql_fetch_array($result)) {
   $query
   = ' select count(*)'
@@ -199,59 +194,27 @@ while ($row = Sql_fetch_array($result)) {
   $element = '<!-- '.$row['id'].'-->'.$row['name'];
   $ls->addElement($element,PageUrl2("editlist&amp;id=".$row["id"]));
   
-
-/*
-  $html .= sprintf('
-    <tr>
-      <td valign="top">%s</td><td valign="top"><b>%s</b><br/>%d %s </td>
-      <td valign="top"><input type="text" name="listorder[%d]" value="%d" size="5" /></td>
-    <td valign="top">%s<br/>%s<br/>%s<br/><a href="javascript:deleteRec(\'%s\');">%s</a></td>
-    <td valign="top"><input type="checkbox" name="active[%d]" value="1" %s /></td>
-    <td valign="top">%s</td></tr><tr><td>&nbsp;</td>
-      <td colspan="5">%s</td></tr><tr><td colspan="6"><hr width="50%%" size="4"></td>
-    </tr>',
-    PageLink2("editlist",$row["id"],"id=".$row["id"]),
-    PageLink2("editlist",stripslashes($row['name']),"id=".$row["id"]),
-    $membercount[0],
-    $GLOBALS['I18N']->get('members'),
-   $row['id'],
-    $row['listorder'],
-    '',#PageLink2("editlist",$GLOBALS['I18N']->get('edit'),"id=".$row["id"]),
-    PageLink2("members",$GLOBALS['I18N']->get('view members'),"id=".$row["id"]),
-    PageLink2("listbounces",$GLOBALS['I18N']->get('view bounces'),"id=".$row["id"]),
-    PageURL2("list","","delete=".$row["id"]),
-    $GLOBALS['I18N']->get('delete'),
-   $row["id"],
-    $row["active"] ? 'checked="checked"' : '',
-    $GLOBALS['require_login'] ? adminName($row['owner']):$GLOBALS['I18N']->get('n/a'),
-    $desc
-    );
-*/
-    
-
-/*
-    $ls->addColumn($element,
-      $GLOBALS['I18N']->get('Name'),
-      PageLink2("editlist",stripslashes($row['name']),"id=".$row["id"]));
-*/
-    $ls->addColumn($element,
-      $GLOBALS['I18N']->get('Order'),
-      sprintf('<input type="text" name="listorder[%d]" value="%d" size="5" />',$row['id'],$row['listorder']));
-    $ls->addColumn($element,
-      $GLOBALS['I18N']->get('Members'),
-      PageLink2("members",$members,"id=".$row["id"]).' '.PageLinkDialog('importsimple&list='.$row["id"],$GLOBALS['I18N']->get('add')));
-    $ls->addColumn($element,
-      $GLOBALS['I18N']->get('Bounces'),
-      PageLink2("listbounces",$bounces,"id=".$row["id"]));#.' '.PageLink2('listbounces&id='.$row["id"],$GLOBALS['I18N']->get('view'))
-    $ls->addColumn($element,
-      $GLOBALS['I18N']->get('Public'),sprintf('<input type="checkbox" name="active[%d]" value="1" %s />',$row["id"],
-    $row["active"] ? 'checked="checked"' : ''));
+  $ls->addColumn($element,
+    $GLOBALS['I18N']->get('Members'),
+    PageLink2("members",'<span class="membercount">'.$members.'</span>',"id=".$row["id"]).' '.PageLinkDialog('importsimple&list='.$row["id"],$GLOBALS['I18N']->get('add')));
+  $ls->addColumn($element,
+    $GLOBALS['I18N']->get('Bounces'),
+    PageLink2("listbounces",'<span class="bouncecount">'.$bounces.'</span>',"id=".$row["id"]));#.' '.PageLink2('listbounces&id='.$row["id"],$GLOBALS['I18N']->get('view'))
+  $ls->addColumn($element,
+    $GLOBALS['I18N']->get('Public'),sprintf('<input type="checkbox" name="active[%d]" value="1" %s />',$row["id"],
+  $row["active"] ? 'checked="checked"' : ''));
+  $owner = adminName($row['owner']);
+  if (!empty($owner)) {
     $ls->addColumn($element,
       $GLOBALS['I18N']->get('Owner'),$GLOBALS['require_login'] ? adminName($row['owner']):$GLOBALS['I18N']->get('n/a'));
-    if (trim($desc) != '') {
-      $ls->addRow($element,
-        $GLOBALS['I18N']->get('Description'),$desc);
-    }
+  }
+  if (trim($desc) != '') {
+    $ls->addRow($element,
+      $GLOBALS['I18N']->get('Description'),$desc);
+  }
+  $ls->addColumn($element,
+    $GLOBALS['I18N']->get('Order'),
+    sprintf('<input type="text" name="listorder[%d]" value="%d" size="3" class="listorder" />',$row['id'],$row['listorder']));
 
 
   $some = 1;
