@@ -318,7 +318,8 @@ if ($page != '' && $page != 'install') {
 }
 
 if (!$ajax) {
-  print '<h4 class="pagetitle">'.NAME.' - '.strtolower($page_title).'</h4>';
+#  print '<h4 class="pagetitle">'.NAME.' - '.strtolower($page_title).'</h4>';
+  print '<h4 class="pagetitle">'.strtolower($page_title).'</h4>';
 }
 
 if ($GLOBALS["require_login"] && $page != "login") {
