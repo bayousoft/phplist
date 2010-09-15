@@ -1716,18 +1716,10 @@ function simplePaging($baseurl,$start,$total,$numpp,$itemname = '') {
     return $listing;
   }
 
-/*
-  return sprintf ('<table class="messagesListing" border="1"><tr><td colspan="4" align="center">%s</td></tr><tr><td>%s</td><td>%s</td><td>
-          %s</td><td>%s</td></tr></table><hr/>',
-          $listing,
-          PageLink2($baseurl,"&lt;&lt;","start=0"),
-          PageLink2($baseurl,"&lt;",sprintf('start=%d',max(0,$start-$numpp))),
-          PageLink2($baseurl,"&gt;",sprintf('start=%d',min($total,$start+$numpp))),
-          PageLink2($baseurl,"&gt;&gt;",sprintf('start=%d',$total-$numpp)));
-*/
+
 ## 22934 - new code
   return '<div class="paging">
-    <p>'.$listing.'</p>
+    <p class="range">'.$listing.'</p>
     <a title="'.$GLOBALS['I18N']->get('First Page').'" href="'.PageUrl2($baseurl."&amp;start=0").'">&lt;&lt;</a>
     <a title="'.$GLOBALS['I18N']->get('Previous').'" href="'.PageUrl2($baseurl.sprintf('&amp;start=%d',max(0,$start-$numpp))).'">&lt;</a>
     <a title="'.$GLOBALS['I18N']->get('Next').'" href="'.PageUrl2($baseurl.sprintf('&amp;start=%d',min($total,$start+$numpp))).'">&gt;</a>
