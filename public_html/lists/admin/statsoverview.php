@@ -94,8 +94,9 @@ if (!$id) {
   $req = Sql_Query($query);
   $total = Sql_Num_Rows($req);
   if ($total > 10 && !$download) {
-    print Paging(PageUrl2('statsoverview'),$start,$total,10);
-    $query .= $limit;
+    #print Paging(PageUrl2('statsoverview'),$start,$total,10);
+    print simplePaging('statsoverview',$start,$total,10);
+   $query .= $limit;
     $req = Sql_Query($query);
   }
 
