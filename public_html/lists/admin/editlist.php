@@ -97,7 +97,9 @@ if (!empty($_POST["addnewlist"]) && !empty($_POST["listname"])) {
     $_SESSION['newlistid'] = $id;
   }
 
-  $_SESSION['action_result'] .= '<div class="actions">'.PageLinkButton('importsimple&amp;list='.$id,$GLOBALS['I18N']->get('Add some subscribers')).'</div>';
+  if ($_GET['page'] == 'editlist') {
+    $_SESSION['action_result'] .= '<div class="actions">'.PageLinkButton('importsimple&amp;list='.$id,$GLOBALS['I18N']->get('Add some subscribers')).'</div>';
+  }
   print '<h3>'.$_SESSION['action_result'].'</h3>';
   unset($_SESSION['action_result']);
   return;

@@ -59,12 +59,16 @@ if (!empty($_POST['importcontent'])) {
   $report .= sprintf($GLOBALS['I18N']->get('%d emails imported')."\n",$count['imported']);
   $report .= sprintf($GLOBALS['I18N']->get('%d duplicates')."\n",$count['duplicate']);
 
-  print ActionResult(nl2br($report)).'<div class="actions">
+  print ActionResult(nl2br($report));
+
+  if ($_GET['page'] == 'importsimple') {
+    print '<div class="actions">
     '
     .PageLinkButton('send',$GLOBALS['I18N']->get('Send a campaign'))
     .PageLinkButton('importsimple',$GLOBALS['I18N']->get('Import some more emails'))
     
     .'</div>';
+  }
   sendMail(getConfig("admin_address"), $GLOBALS['I18N']->get('phplist Import Results'), $report);
   foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
     $plugin->importReport($report);
