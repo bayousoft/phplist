@@ -78,10 +78,12 @@ if (!empty($_GET['delete'])) {
     while ($row = Sql_Fetch_Row($req)) {
       deleteMessage($row[0]);
     }
+    $_SESSION['action_result'] = $GLOBALS['I18N']->get('All draft campaigns deleted');
     print Info($GLOBALS['I18N']->get('campaigns deleted'));
   } else {
     deleteMessage(sprintf('%d',$_GET['delete']));
     print Info($GLOBALS['I18N']->get('campaign deleted'));
+    $_SESSION['action_result'] = $GLOBALS['I18N']->get('Campaign deleted');
   }
 }
 
