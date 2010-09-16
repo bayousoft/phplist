@@ -608,6 +608,7 @@ function pageCategory($page) {
   return '';
 }
 
+/*
 $main_menu = array(
   "configure" => "Configure",
   "community" => "Help",
@@ -630,13 +631,20 @@ $main_menu = array(
   "bounces"=>"View Bounces",
   "eventlog"=>"Eventlog"
 );
+*/
+  $GLOBALS['context_menu'] = array(
+    "home" => 'Main Page',
+    "community" => 'Help',
+    "about" =>  'about',
+    "logout" => "logout",
+  );
 
-function newMenu() {
+function contextMenu() {
   if (isset ($GLOBALS["firsttime"])) {
     return;
   }
   if (!CLICKTRACK) {
-    unset($GLOBALS["main_menu"]['statsmgt']);
+    unset($GLOBALS["context_menu"]['statsmgt']);
   }
   $shade = 1;
   $spb = '<li class="shade0">';
@@ -644,13 +652,13 @@ function newMenu() {
   $spe = '</li>';
   $nm = strtolower(NAME);
   if ($nm != "phplist") {
-    $GLOBALS["main_menu"]["community"] = "";
+    $GLOBALS["context_menu"]["community"] = "";
   }
   if (USE_ADVANCED_BOUNCEHANDLING) {
-    $GLOBALS["main_menu"]["bounces"] = "";
-    $GLOBALS["main_menu"]["processbounces"] = "";
+    $GLOBALS["context_menu"]["bounces"] = "";
+    $GLOBALS["context_menu"]["processbounces"] = "";
   } else {
-    $GLOBALS["main_menu"]["bouncemgt"] = '';
+    $GLOBALS["context_menu"]["bouncemgt"] = '';
   }
 
   if ($GLOBALS["require_login"] && (!isset ($_SESSION["adminloggedin"]) || !$_SESSION["adminloggedin"]))
@@ -676,35 +684,6 @@ function newMenu() {
     $pixel = "";
   global $tables;
   $html = "";
-/*   if ($GLOBALS["require_login"]) */
-/*     $html .= $spb.PageLink2("logout",$GLOBALS["I18N"]->get("logout")).'<br />'.$spe; */
-
-  $html .= $spb.PageLink2("home",$GLOBALS["I18N"]->get("Main Page"),'',true).$spe;
-
-  /*
-  $req = Sql_Query(sprintf('select * from %s %s',$tables["subscribepage"],$subselect));
-  $spages = array();
-  if (Sql_Affected_Rows()) {
-    $spages["div1"] = $GLOBALS["strSubscribeTitle"];
-    while ($row = Sql_Fetch_Array($req)) {
-      $spages[sprintf('%s&amp;id=%d',getConfig("subscribeurl"),$row["id"])] = $row["title"];
-    }
-    $url = getConfig("unsubscribeurl");
-    if ($url)
-      $spages[$url] = 'Unsubscribe';
-  } else {
-#    $html .= $spb.sprintf('<a href="%s">%s</a>',getConfig("subscribeurl"),$GLOBALS["strSubscribeTitle"]).$spe;
-    $spages["spage"] = "Create Subscribe Pages";
-  }
-  if ($tables["attribute"] && Sql_Table_Exists($tables["attribute"])) {
-    $attrmenu = array();
-    $res = Sql_Query("select * from {$tables['attribute']}",1);
-    while ($row = Sql_Fetch_array($res)) {
-      if ($row["type"] != "checkbox" && $row["type"] != "textarea" && $row["type"] != "textline" && $row["type"] != "hidden")
-        $attrmenu["editattributes&amp;id=".$row["id"]] = strip_tags($row["name"]);
-    }
-  }
-  */
 
   if (isset($_GET['page'])) {
     $thispage = $_GET['page'];
@@ -719,24 +698,17 @@ function newMenu() {
     $thispage_category = 'plugins';
   }
 
-  $GLOBALS['main_menu'] = array(
-    "community" => 'Help',
-    "about" =>  'about',
-    "logout" => "logout",
-    "div1" => "<hr />",
-    'categoryheader' => $thispage_category,
-  );
   if (!empty($thispage_category)) {
     if (sizeof($GLOBALS['pagecategories'][$thispage_category]['menulinks'])) {
       foreach ($GLOBALS['pagecategories'][$thispage_category]['menulinks'] as $category_page) {
-        $GLOBALS['main_menu'][$category_page] = $category_page;
+        $GLOBALS['context_menu'][$category_page] = $category_page;
       }
     } else {
-      unset($GLOBALS['main_menu']['categoryheader']);
+      unset($GLOBALS['context_menu']['categoryheader']);
     }
   }
 
-  foreach ($GLOBALS["main_menu"] as $page => $desc) {
+  foreach ($GLOBALS["context_menu"] as $page => $desc) {
     if (!$desc) continue;
     $link = PageLink2($page,$GLOBALS["I18N"]->get($desc));
     if ($link) {
@@ -765,7 +737,11 @@ function newMenu() {
   } 
 */
 
-  return '<ul class="contextmenu">'.$html.'</ul>' . $pixel;
+  if ($html) {
+    return '<ul class="contextmenu">'.$html.'</ul>' . $pixel;
+  } else {
+    return '';
+  }
 }
 
 function recentlyVisited() {
