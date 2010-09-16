@@ -44,10 +44,12 @@ function addUserForm ($listid) {
   return $html;
 }
 if (!empty($id)) {
+  print '<div class="actions">';
   print "<h3>".$GLOBALS['I18N']->get("Members of")." ".ListName($id)."</h3>";
   echo PageLinkButton("editlist",$GLOBALS['I18N']->get("edit list details"),"id=$id",'pill-l');
   echo PageLinkButton("export&amp;list=$id",$GLOBALS['I18N']->get("Download subscribers"),'','pill-c');
   echo PageLinkDialog("importsimple&amp;list=$id",$GLOBALS['I18N']->get("Import Subscribers to this list"),'','pill-r');
+  print '</div>';
 
 #  print addUserForm($id);
 } else {
