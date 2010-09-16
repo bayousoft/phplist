@@ -96,9 +96,12 @@ if (!empty($_POST["addnewlist"]) && !empty($_POST["listname"])) {
     $_SESSION['action_result'] = $GLOBALS['I18N']->get('New List added') . ": $id";
     $_SESSION['newlistid'] = $id;
   }
-  
+
+  $_SESSION['action_result'] .= '<div class="actions">'.PageLinkButton('importsimple&amp;list='.$id,$GLOBALS['I18N']->get('Add some subscribers')).'</div>';
   print '<h3>'.$_SESSION['action_result'].'</h3>';
+  unset($_SESSION['action_result']);
   return;
+  ## doing this, the action result disappears, which we don't want
   Redirect('list');
 }
 
