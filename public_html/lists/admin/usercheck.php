@@ -1,5 +1,6 @@
 <?php
 
+$content = '';
 if (isset($_POST["usercheck"])) {
   $lsexist = new WebblerListing($GLOBALS["I18N"]->get("existingusers"));
   $lsnonexist = new WebblerListing($GLOBALS["I18N"]->get("nonexistingusers"));
@@ -27,15 +28,20 @@ if (isset($_POST["usercheck"])) {
   $_POST['usercheck'] = '';
 }
 
-$GLOBALS["I18N"]->get("existcheckintro");
+/*
+print $GLOBALS["I18N"]->get("existcheckintro");
+*/
 
-print '<form method=post>';
-print '<table class="usercheckForm">';
-print '<tr><td>'.$GLOBALS["I18N"]->get("whatistype").'</td></tr>';
-print '<tr><td>'.$GLOBALS["I18N"]->get("foreignkey").' <input type=radio name="check" value="foreignkey"></td></tr>';
-print '<tr><td>'.$GLOBALS["I18N"]->get("email").' <input type=radio name="check" value="email"></td></tr>';
-print '<tr><td>'.$GLOBALS["I18N"]->get("pastevalues").'</td></tr>';
-print '<tr><td><p class="submit"><input type="submit" name="continue" value="'.$GLOBALS["I18N"]->get("continue").'"></p></td></tr>';
-print '<tr><td><textarea name="usercheck" rows=30 cols=65>'.$_POST['usercheck'].'</textarea></td></tr>';
-print '<tr><td><p class="submit"><input type="submit" name="continue" value="'.$GLOBALS["I18N"]->get("continue").'"></p></td></tr>';
-print '</table></form>';
+$content .=  '<form method="post" action="">';
+$content .=  '<table class="usercheckForm">';
+$content .=  '<tr><td>'.$GLOBALS["I18N"]->get("whatistype").'</td></tr>';
+$content .=  '<tr><td><label for="foreignkey">'.$GLOBALS["I18N"]->get("foreignkey").'</label> <input type="radio" id="foreignkey" name="check" value="foreignkey"></td></tr>';
+$content .=  '<tr><td><label for="email">'.$GLOBALS["I18N"]->get("email").'</label> <input type="radio" id="email" name="check" value="email"></td></tr>';
+$content .=  '<tr><td>'.$GLOBALS["I18N"]->get("pastevalues").'</td></tr>';
+$content .=  '<tr><td><input type="submit" name="continue" value="'.$GLOBALS["I18N"]->get("continue").'" class="button"></td></tr>';
+$content .=  '<tr><td><textarea name="usercheck" rows=30 cols=65>'.$_POST['usercheck'].'</textarea></td></tr>';
+$content .=  '<tr><td><input type="submit" name="continue" value="'.$GLOBALS["I18N"]->get("continue").'" class="button"></td></tr>';
+$content .=  '</table></form>';
+
+$p = new UIPanel('',$content);
+print $p->display();
