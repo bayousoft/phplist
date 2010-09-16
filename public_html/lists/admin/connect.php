@@ -1036,6 +1036,10 @@ function listSelectHTML ($current,$fieldname,$subselect,$alltab = '') {
 }
 
 function getSelectedLists($fieldname) {
+  if (!empty($_POST['addnewlist'])) {
+    include "editlist.php";
+    $_POST[$fieldname][$_SESSION['newlistid']] = $_SESSION['newlistid'];
+  }
   if (!isset($_POST[$fieldname])) return array();
   if (in_array('all',array_keys($_POST[$fieldname]))) {
     ## load all lists
@@ -1052,10 +1056,7 @@ function getSelectedLists($fieldname) {
       $_POST[$fieldname][$row[0]] = $row[0];
     }
   }
-  if (!empty($_POST['addnewlist'])) {
-    include "editlist.php";
-    $_POST[$fieldname][$_SESSION['newlistid']] = $_SESSION['newlistid'];
-  }
+
   return $_POST[$fieldname];
 }
 
