@@ -154,7 +154,12 @@ if (isset($_GET['markSent'])) {
   $action_result .=  '<br /><hr /><br />\n';
 }
 
-print ActionResult($action_result);
+  if (!empty($action_result)) {
+    #print ActionResult($action_result);
+    $_SESSION['action_result'] = $action_result;
+    Redirect('messages');
+    exit;
+  }
 
 $cond = array();
 ### Switch tab
