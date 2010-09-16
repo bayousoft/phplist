@@ -58,14 +58,23 @@ if (isset($returnpage)) {
   $returnurl = "returnpage=$returnpage&returnoption=$returnoption";
 }
 
-print '<p>'.PageLinkButton('send&amp;id='.$id,$GLOBALS['I18N']->get('Edit this message')).'</p>';
-
 $result = Sql_query("SELECT * FROM {$tables['message']} where id = $id $owner_select_and");
 if (!Sql_Num_Rows($result)) {
   print $GLOBALS['I18N']->get('No such message');
   return;
 }
-echo '<table class="messageView">';
+
+
+$msgdata = loadMessageData($id);
+
+if ($msgdata['status'] == 'draft' || $msgdata['status'] == 'suspended') {
+  print '<div class="actions">';
+  print '<p>'.PageLinkButton('send&amp;id='.$id,$GLOBALS['I18N']->get('Edit this message')).'</p>';
+  print '</div>';
+}
+
+$content = '<table class="messageView">';
+## optimise this, use msgdata above
 
 while ($msg = Sql_fetch_array($result)) {
   foreach($DBstruct["message"] as $field => $val) {
@@ -79,40 +88,45 @@ while ($msg = Sql_fetch_array($result)) {
       };
       if ($field == 'sendformat' and $msg[$field] = 'text and HTML')
         $msg[$field] = 'HTML';
-      printf('<tr><td valign="top">%s</td><td valign="top">%s</td></tr>',$GLOBALS['I18N']->get($field),$msg["htmlformatted"]?stripslashes($msg[$field]):nl2br(stripslashes($msg[$field])));
+      if (!empty($msg[$field])) {
+        $content .= sprintf('<tr><td valign="top">%s</td><td valign="top">%s</td></tr>',$GLOBALS['I18N']->get($field),$msg["htmlformatted"]?stripslashes($msg[$field]):nl2br(stripslashes($msg[$field])));
+      }
     }  
   }
 }
 
 if (ALLOW_ATTACHMENTS) {
-  print '<tr><td colspan="2"><h3>' . $GLOBALS['I18N']->get('Attachments for this message') . '</h3></td></tr>';
+  $content .=  '<tr><td colspan="2"><h3>' . $GLOBALS['I18N']->get('Attachments for this message') . '</h3></td></tr>';
   $req = Sql_Query("select * from {$tables["message_attachment"]},{$tables["attachment"]}
     where {$tables["message_attachment"]}.attachmentid = {$tables["attachment"]}.id and
     {$tables["message_attachment"]}.messageid = $id");
   if (!Sql_Num_Rows($req))
-    print '<tr><td colspan="2">' . $GLOBALS['I18N']->get('No attachments') . '</td></tr>';
+    $content .= '<tr><td colspan="2">' . $GLOBALS['I18N']->get('No attachments') . '</td></tr>';
   while ($att = Sql_Fetch_array($req)) {
-    printf ('<tr><td>%s:</td><td>%s</td></tr>', $GLOBALS['I18N']->get('Filename') ,$att["remotefile"]);
-    printf ('<tr><td>%s:</td><td>%s</td></tr>', $GLOBALS['I18N']->get('Size'), formatBytes($att["size"]));
-    printf ('<tr><td>%s:</td><td>%s</td></tr>', $GLOBALS['I18N']->get('Mime Type'),$att["mimetype"]);
-    printf ('<tr><td>%s:</td><td>%s</td></tr>', $GLOBALS['I18N']->get('Description'), $att["description"]);
+    $content .=sprintf ('<tr><td>%s:</td><td>%s</td></tr>', $GLOBALS['I18N']->get('Filename') ,$att["remotefile"]);
+    $content .=sprintf ('<tr><td>%s:</td><td>%s</td></tr>', $GLOBALS['I18N']->get('Size'), formatBytes($att["size"]));
+    $content .=sprintf ('<tr><td>%s:</td><td>%s</td></tr>', $GLOBALS['I18N']->get('Mime Type'),$att["mimetype"]);
+    $content .=sprintf ('<tr><td>%s:</td><td>%s</td></tr>', $GLOBALS['I18N']->get('Description'), $att["description"]);
   }
  # print '</table>';
 }
 
-print '<tr><td colspan="2"><h3>' . $GLOBALS['I18N']->get('Lists this message has been sent to') . ':</h3></td></tr>';
+$content .= '<tr><td colspan="2"><h3>' . $GLOBALS['I18N']->get('Lists this message has been sent to') . ':</h3></td></tr>';
 
 $lists_done = array();
 $result = Sql_Query("select l.name, l.id from $tables[listmessage] lm, $tables[list] l where lm.messageid = $id and lm.listid = l.id");
 if (!Sql_Num_Rows($result))
-  print '<tr><td colspan="2">' . $GLOBALS['I18N']->get('None yet') . '</td></tr>';
+  $content .= '<tr><td colspan="2">' . $GLOBALS['I18N']->get('None yet') . '</td></tr>';
 while ($lst = Sql_fetch_array($result)) {
   array_push($lists_done,$lst['id']);
-  printf ('<tr><td>%d</td><td>%s</td></tr>',$lst['id'],$lst['name']);
+  $content .=sprintf ('<tr><td>%d</td><td>%s</td></tr>',$lst['id'],$lst['name']);
 }
 
+$content .= '</table>';
+
+$panel = new UIPanel($msgdata['subject'],$content);
+print $panel->display();
 ?>
-</table>
 
 <a name="resend"></a><p class="information"><?php echo $GLOBALS['I18N']->get('Send this (same) message to (a) new list(s)'); ?>:</p>
 <?php echo formStart(' class="messageResend" ')?>
