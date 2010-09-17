@@ -218,7 +218,7 @@ $default_config = array (
 "list_categories" => array (
   "",
   "categories for lists. Separate with commas.",
-  "text"
+  "text",1
 ),
 
   # width of a textline field
@@ -572,7 +572,7 @@ div.emailfooter a { font-size: 11px; color: #ff6600; font-style: normal; font-fa
 </style>
 ',"CSS for HTML messages without a template","textarea"),
 
-"alwayssendtextto" => array("mail.com\nemail.com","Domains that only accept text emails, one per line","textarea",
+"alwayssendtextto" => array("","Domains that only accept text emails, one per line","textarea",
   1)
 );
 
