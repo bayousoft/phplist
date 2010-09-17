@@ -116,8 +116,8 @@ $content .= '<p class="information">'.
 $GLOBALS['I18N']->get('Please enter the emails to import, one per line, in the box below and click "Import Emails"');
 #$GLOBALS['I18N']->get('<b>Warning</b>: the emails you import will not be checked on validity. You can do this later on the "reconcile subscribers" page.');
 $content .= '</p>';
-$content .= '<input type="submit" name="doimport" value="'.$GLOBALS['I18N']->get('Import Emails').'" >';
-$content .= '<textarea name="importcontent" rows="10" cols="40"></textarea>';
+$content .= '<div class="field"><input type="submit" name="doimport" value="'.$GLOBALS['I18N']->get('Import Emails').'" ></div>';
+$content .= '<div class="field"><textarea name="importcontent" rows="10" cols="40"></textarea></div>';
 
 $panel = new UIPanel('',$content);
 print $panel->display();
