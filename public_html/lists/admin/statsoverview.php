@@ -54,7 +54,7 @@ if ($download) {
 
 if (!$id) {
 #  print '<p>'.$GLOBALS['I18N']->get('Select Message to view').'</p>';
-  print '<p>'.PageLinkButton('statsoverview&dl=true',$GLOBALS['I18N']->get('Download as CSV file')).'</p>';
+  print '<div class="actions">'.PageLinkButton('statsoverview&dl=true',$GLOBALS['I18N']->get('Download as CSV file')).'</div>';
 
   /* broken Adodb conversion by Brian_252 */
 /*  $timerange = ' and msg.entered + interval \'6 months\' > current_timestamp';
@@ -95,7 +95,7 @@ if (!$id) {
   $total = Sql_Num_Rows($req);
   if ($total > 10 && !$download) {
     #print Paging(PageUrl2('statsoverview'),$start,$total,10);
-    print simplePaging('statsoverview',$start,$total,10);
+    $paging = simplePaging('statsoverview',$start,$total,10);
    $query .= $limit;
     $req = Sql_Query($query);
   }
@@ -105,7 +105,7 @@ if (!$id) {
   }
 
   $ls = new WebblerListing($GLOBALS['I18N']->get('Campaigns in the last year'));
-  $ls->noShader();
+  $ls->usePanel($paging);
   while ($row = Sql_Fetch_Array($req)) {
     $element = $row['messageid'].' '.substr($row['subject'],0,50);
 
