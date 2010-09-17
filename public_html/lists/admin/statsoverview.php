@@ -111,7 +111,7 @@ if (!$id) {
 
     $fwded = Sql_Fetch_Row_Query(sprintf('select count(id) from %s where message = %d',$GLOBALS['tables']['user_message_forward'],$row['messageid']));
     
-    $ls->addElement($element);#,PageURL2('message&amp;id='.$row['messageid']));
+    $ls->addElement($element,PageURL2('mviews&amp;id='.$row['messageid']));#,PageURL2('message&amp;id='.$row['messageid']));
  #   $ls->addColumn($element,$GLOBALS['I18N']->get('owner'),$row['owner']);
     $ls->addColumn($element,$GLOBALS['I18N']->get('date'),$row['sent']);
     $ls->addColumn($element,$GLOBALS['I18N']->get('sent'),$row['total']);

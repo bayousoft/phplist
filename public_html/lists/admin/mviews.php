@@ -74,13 +74,15 @@ if (!$id) {
       $ls->addColumn($element,$GLOBALS['I18N']->get('date'),$GLOBALS['I18N']->get('in progress'));
     }
     $ls->addColumn($element,$GLOBALS['I18N']->get('sent'),$row['total']);
-    $ls->addColumn($element,$GLOBALS['I18N']->get('bounced'),$row['bounced']);
+ #   $ls->addColumn($element,$GLOBALS['I18N']->get('bounced'),$row['bounced']);
     $ls->addColumn($element,$GLOBALS['I18N']->get('views'),$row['views'],$row['views'] ? PageURL2('mviews&amp;id='.$row['messageid']):'');
     $openrate = sprintf('%0.2f',($row['views'] / $row['total'] * 100));
     $ls->addColumn($element,$GLOBALS['I18N']->get('rate'),$openrate.' %');
+/*
     $bouncerate = sprintf('%0.2f',($row['bounced'] / $row['total'] * 100));
     $ls->addColumn($element,$GLOBALS['I18N']->get('bounce rate'),$bouncerate.' %');
     
+*/
   }
   if ($addcomparison) {
     $total = Sql_Fetch_Array_Query(sprintf('select count(entered) as total from %s um', $GLOBALS['tables']['usermessage']));
@@ -135,7 +137,8 @@ if ($id) {
 }
 
 if ($total) {
-  print simplePaging("mviews$url_keep",$start,$total,MAX_USER_PP,$GLOBALS['I18N']->get("Entries"));
+  $paging = simplePaging("mviews$url_keep",$start,$total,MAX_USER_PP,$GLOBALS['I18N']->get("Entries"));
+  $ls->usePanel($paging);
 }
 
 /* @todo, fix broken Adodb query */
