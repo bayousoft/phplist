@@ -34,8 +34,6 @@ if (isset($_GET['action']) && $_GET['action']) {
    }
 }
 
-print PageLinkButton('listbounces',$GLOBALS['I18N']->get('view bounces by list'));
-
 # view bounces
 $count = Sql_Query(sprintf('select count(*) from %s',$tables["bounce"]));
 $totalres = Sql_fetch_Row($count);
@@ -52,7 +50,7 @@ $baseurl = "bounces&amp;start=$start";
 if ($total > MAX_USER_PP) {
   $limit = MAX_USER_PP;
 
-  print simplePaging("bounces",$start,$total,MAX_USER_PP,$GLOBALS['I18N']->get('bounces') );
+  $paging = simplePaging("bounces",$start,$total,MAX_USER_PP,$GLOBALS['I18N']->get('bounces') );
   $query = sprintf("select * from %s where status != ? order by date desc limit $limit offset $offset", $tables['bounce']);
   $result = Sql_Query_Params($query, array('unidentified bounce'));
 } else {
@@ -60,6 +58,8 @@ if ($total > MAX_USER_PP) {
   $result = Sql_Query_Params($query, array('unidentified bounce'));
 }
 
+print '<div class="actions">';
+print PageLinkButton('listbounces',$GLOBALS['I18N']->get('view bounces by list'));
   $buttons = new ButtonGroup(new Button(PageURL2("bounces"),'delete'));
   $buttons->addButton(
     new ConfirmButton(
@@ -79,12 +79,14 @@ if ($total > MAX_USER_PP) {
  if (ALLOW_DELETEBOUNCE) {
   print $buttons->show();
 }
+print '</div>';
 
 if (!Sql_Num_Rows($result)) {
   print '<p class="information">' . $GLOBALS['I18N']->get('no unprocessed bounces available') . "</p>";
 }
 
 $ls = new WebblerListing($GLOBALS['I18N']->get('bounces'));
+$ls->usePanel($paging);
 #print '<table class="bouncesListing"><tr><td></td><td>' . $GLOBALS['I18N']->get('message') . "</td><td>" . $GLOBALS['I18N']->get('user') . "</td><td>" . $GLOBALS['I18N']->get('date') . "</td></tr>";
 while ($bounce = Sql_fetch_array($result)) {
 #@@@ not sure about these ones - bounced list message
