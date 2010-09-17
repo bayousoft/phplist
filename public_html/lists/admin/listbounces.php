@@ -10,14 +10,21 @@ if (!$listid) {
     %s umb, %s lm where listuser.listid = lm.listid and listuser.userid = umb.user group by listuser.listid
     order by listuser.listid limit 50',$GLOBALS['tables']['listuser'],$GLOBALS['tables']['user_message_bounce'],$GLOBALS['tables']['listmessage']));
   $ls = new WebblerListing($GLOBALS['I18N']->get('Choose a list'));
-
+  $some = 0;
   while ($row = Sql_Fetch_Array($req)) {
+    $some = 1;
     $element = '<!--'.$GLOBALS['I18N']->get('list').' '.$row['listid'].'-->'.listName($row['listid']);
     $ls->addElement($element,PageUrl2('listbounces&amp;id='.$row['listid']));
   #  $ls->addColumn($element,$GLOBALS['I18N']->get('name'),listName($row['listid']),PageUrl2('editlist&amp;id='.$row['listid']));
     $ls->addColumn($element,$GLOBALS['I18N']->get('# bounced'),$row['numusers']);
   }
-  print $ls->display();
+  if ($some) {
+    print $ls->display();
+  } else {
+    print '<p>'.$GLOBALS['I18N']->get('None found').'</p>';
+  }
+
+    
   return;
 }
 
