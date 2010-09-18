@@ -83,8 +83,8 @@ if (!$id) {
   #$timerange = '';
   $limit = ' limit 10';
   $start = 0;
-  if (isset($_GET['s'])) {
-    $start = sprintf('%d',$_GET['s']);
+  if (isset($_GET['start'])) {
+    $start = sprintf('%d',$_GET['start']);
     $limit = ' limit '.$start. ', 10';
   }
 
