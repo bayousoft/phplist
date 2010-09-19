@@ -57,7 +57,7 @@ if (!$id) {
   }
   if ($some) {
     print '<p>'.$GLOBALS['I18N']->get('Select URL to view').'</p>';
-    print '<p>'.PageLink2('uclicks&dl=true',$GLOBALS['I18N']->get('Download as CSV file')).'</p>';
+    print '<div class="actions">'.PageLinkButton('uclicks&dl=true',$GLOBALS['I18N']->get('Download as CSV file')).'</div>';
     print $ls->display();
   } else {
     print '<p class="information">'.$GLOBALS['I18N']->get('There are currently no statistics available').'</p>';
@@ -65,7 +65,7 @@ if (!$id) {
   return;
 }
 
-print '<p>'.PageLink2('uclicks&dl=true&id='.$id,$GLOBALS['I18N']->get('Download as CSV file')).'</p>';
+print '<div class="actions">'.PageLinkButton('uclicks&dl=true&id='.$id,$GLOBALS['I18N']->get('Download as CSV file')).'</div>';
 
 $ls = new WebblerListing($GLOBALS['I18N']->get('URL Click Statistics'));
 

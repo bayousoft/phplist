@@ -82,8 +82,10 @@ if (!$id) {
     */
   }
   if ($some) {
-    print '<p>'.PageLink2('mclicks&dl=true',$GLOBALS['I18N']->get('Download as CSV file')).'</p>';
-    print '<p>'.$GLOBALS['I18N']->get('Select Message to view').'</p>';
+    print '<div class="action">';
+    print '<p>'.PageLinkButton('mclicks&dl=true',$GLOBALS['I18N']->get('Download as CSV file')).'</p>';
+    print '</div>';
+#    print '<p>'.$GLOBALS['I18N']->get('Select Message to view').'</p>';
     print $ls->display();
   }
   if ($download) {
