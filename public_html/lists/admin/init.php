@@ -74,7 +74,7 @@ if (!defined("ASKFORPASSWORD")) define("ASKFORPASSWORD",0);
 if (!defined("UNSUBSCRIBE_REQUIRES_PASSWORD")) define("UNSUBSCRIBE_REQUIRES_PASSWORD",0);
 if (!defined("UNSUBSCRIBE_JUMPOFF")) define("UNSUBSCRIBE_JUMPOFF",0);
 if (!defined("ENCRYPTPASSWORD")) define("ENCRYPTPASSWORD",0);
-if (!defined("PHPMAILER")) define("PHPMAILER",0);
+if (!defined("PHPMAILER")) define("PHPMAILER",1);
 if (!defined('PHPMAILERHOST')) define("PHPMAILERHOST",'');
 if (!defined("MANUALLY_PROCESS_QUEUE")) define("MANUALLY_PROCESS_QUEUE",1);
 if (!defined("CHECK_SESSIONIP")) define("CHECK_SESSIONIP",1);
