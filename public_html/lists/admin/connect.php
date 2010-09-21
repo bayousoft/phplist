@@ -17,13 +17,18 @@ if (preg_match('/Rev: (\d+)/','$Rev$',$match)) {
   define('REVISION',$match[1]);
 }
 
-if (is_dir(dirname(__FILE__).'/.svn')) {
-  define("VERSION",$version.'-dev');
-  define('DEVVERSION',true);
+if (!defined('VERSION')) {
+  if (is_dir(dirname(__FILE__).'/.svn')) {
+    define("VERSION",$version.'-dev');
+    define('DEVVERSION',true);
+  } else {
+    define("VERSION",$version);
+    define('DEVVERSION',false);
+  }
 } else {
-  define("VERSION",$version);
   define('DEVVERSION',false);
 }
+  
 
 require_once dirname(__FILE__)."/commonlib/lib/userlib.php";
 include_once dirname(__FILE__)."/commonlib/lib/maillib.php";
