@@ -73,18 +73,6 @@ $DBstructuser = array( # order of tables is essential for smooth upgrade
         "index_1" => array("userididx (userid)","sys:index"),
         "index_2" => array("dateidx (date)","sys:index"),
     ),
-    "user_blacklist" => array(
-        "email" => array("varchar(255) not null unique","Email"),
-        "added" => array("datetime","When added to blacklist"),
-        "index_1" => array("emailidx (email)",""),
-    ),
-    "user_blacklist_data" => array(
-        "email" => array("varchar(255) not null unique","Email"),
-        "name" => array("varchar(100) not null","Name of Dataitem"),
-        "data" => array("text",""),
-        "index_1" => array("emailidx (email)",""),
-        "index_2" => array("emailnameidx (email,name)",""),
-    ),
   );
   
   $DBstructphplist = array(
@@ -171,6 +159,18 @@ $DBstructuser = array( # order of tables is essential for smooth upgrade
         "modified" => array("timestamp","Modified"),
         "unique_1" => array("(messageid,listid)",""),
         "index_1" => array("listmessageidx (listid,messageid)",""),
+    ),
+    "user_blacklist" => array(
+        "email" => array("varchar(255) not null unique","Email"),
+        "added" => array("datetime","When added to blacklist"),
+        "index_1" => array("emailidx (email)",""),
+    ),
+    "user_blacklist_data" => array(
+        "email" => array("varchar(255) not null unique","Email"),
+        "name" => array("varchar(100) not null","Name of Dataitem"),
+        "data" => array("text",""),
+        "index_1" => array("emailidx (email)",""),
+        "index_2" => array("emailnameidx (email,name)",""),
     ),
     "rssitem" => array(
         "id" => array("integer not null primary key auto_increment","ID"),
