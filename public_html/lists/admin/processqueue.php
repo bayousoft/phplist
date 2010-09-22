@@ -217,6 +217,9 @@ function my_shutdown () {
     }
   #  print '<script language="Javascript" type="text/javascript">alert(document.location)</script>';
   }  elseif ($script_stage == 6 || $nothingtodo) {
+    foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
+      $plugin->messageQueueFinished();
+    }
     output($GLOBALS['I18N']->get('Finished, All done'),0);
   } else {
     output($GLOBALS['I18N']->get('Script finished, but not all messages have been sent yet.'));

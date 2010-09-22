@@ -360,7 +360,23 @@ class phplistPlugin {
    */
 
   function campaignStarted($messagedata = array()) {
-  }  
+  }
+
+  /* messageQueued
+   * called when a message is placed in the queue
+   * @param integer id message id
+   * @return null
+   */
+
+  function messageQueued($id) {
+  }
+
+  /* messageQueueFinished
+   * called when a sending of the queue has finished
+   * @return null
+   */
+  function messageQueueFinished() {
+  }
 
   /* logEvent
    * @param string msg message to log

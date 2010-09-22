@@ -350,6 +350,9 @@ if ($send || $sendtest || $prepare || $save || $savedraft) {
   if ($send && !empty($messagedata['subject']) && !empty($messagedata['from']) && !empty($messagedata['message']) && empty($duplicate_atribute) && sizeof($messagedata["targetlist"])) {
     if ($messagedata['status'] == "submitted") {
       print "<h3>".$GLOBALS['I18N']->get("Campaign queued")."</h3>";
+      foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
+        $plugin->messageQueued($id);
+      }
       print '<p class="button">'.PageLinkButton("processqueue",$GLOBALS['I18N']->get("processqueue")).'</p>';
     }
     $done = 1;
