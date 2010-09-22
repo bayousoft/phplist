@@ -1046,14 +1046,14 @@ function getSelectedLists($fieldname) {
     $_POST[$fieldname][$_SESSION['newlistid']] = $_SESSION['newlistid'];
   }
   if (!isset($_POST[$fieldname])) return array();
-  if (in_array('all',array_keys($_POST[$fieldname]))) {
+  if (!empty($_POST[$fieldname]['all'])) {
     ## load all lists
     $_POST[$fieldname] = array();
     $req = Sql_Query(sprintf('select id from %s',$GLOBALS['tables']['list']));
     while ($row = Sql_Fetch_Row($req)) {
       $_POST[$fieldname][$row[0]] = $row[0];
     }
-  } elseif (in_array('allactive',array_keys($_POST[$fieldname]))) {
+  } elseif (!empty($_POST[$fieldname]['allactive'])) {
     ## load all active lists
     $_POST[$fieldname] = array();
     $req = Sql_Query(sprintf('select id from %s where active',$GLOBALS['tables']['list']));
