@@ -299,7 +299,7 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok && $allt
 
    if (isset($_SESSION["adminloggedin"]) && $_SESSION["adminloggedin"]) {
       print '<p class="information"><b>You are logged in as '.$_SESSION["logindetails"]["adminname"].'</b></p>';
-      print '<p class="button"><a href="'.$adminpages.'">Back to the main admin page</a></p>';
+      print '<p><a href="'.$adminpages.'" class="button">Back to the main admin page</a></p>';
 
       if ($_POST["makeconfirmed"] && !$blacklisted) {
          $sendrequest = 0;
