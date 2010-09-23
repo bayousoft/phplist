@@ -349,7 +349,7 @@ function preferencesPage($id,$userid) {
   $html .= '<b>'.$GLOBALS["strPreferencesInfo"].'</b>';
   $html .= '
 
-<br/><font class="required">'.$GLOBALS["strRequired"].'</font><br/>
+<br/><span class="required">'.$GLOBALS["strRequired"].'</span><br/>
 '.$GLOBALS["msg"].'
 
 <script language="Javascript" type="text/javascript">
@@ -428,7 +428,7 @@ function subscribePage($id) {
   $html .= $GLOBALS['pagedata']["intro"];
   $html .= '
 
-<br/><font class="required">'.$GLOBALS["strRequired"].'</font><br/>
+<br/><span class="required">'.$GLOBALS["strRequired"].'</span><br/>
 '.$GLOBALS["msg"].'
 
 <script language="Javascript" type="text/javascript">
@@ -506,6 +506,7 @@ function checkGroup(name,value) {
   $html .= formStart('name="subscribeform"');
   # @@@ update
   if (isset($_SESSION["adminloggedin"]) && $_SESSION["adminloggedin"]) {
+/*
     $html .= '<style type="text/css">
       div.adminmessage {
         width: 100%;
@@ -516,9 +517,10 @@ function checkGroup(name,value) {
 
       }
       </style>';
+*/
     $html .= '<div class="adminmessage"><p><b>You are logged in as administrator ('.$_SESSION["logindetails"]["adminname"].') of this phplist system</b></p>';
     $html .= '<p>You are therefore offered the following choice, which your users will not see when they load this page.</p>';
-    $html .= '<p><a href="'.$GLOBALS['adminpages'].'">Go back to admin area</a></p>';
+    $html .= '<p><a href="'.$GLOBALS['adminpages'].'" class="button">Go back to admin area</a></p>';
     $html .= '<p><b>Please choose</b>: <br/><input type=radio name="makeconfirmed" value="1"> Make this user confirmed immediately
       <br/><input type=radio name="makeconfirmed" value="0" checked> Send this user a request for confirmation email </p></div>';
   }
