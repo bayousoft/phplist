@@ -647,13 +647,13 @@ elseif (isset($_POST["update"]) && $_POST["update"] && is_email($_POST["email"])
   ## mantis issue 6508
   return 3; 
 } elseif ((isset($_POST["subscribe"]) || isset($_POST["update"])) && !is_email($_POST["email"])) {
-  $msg = '<div class="missing">'.$strEnterEmail.'</div><br/>';
+  $msg = '<div class="error missing">'.$strEnterEmail.'</div><br/>';
 } elseif ((isset($_POST["subscribe"]) || isset($_POST["update"])) && !$validhost) {
-  $msg = '<div class="missing">'.$strInvalidHostInEmail.'</div><br/>';
+  $msg = '<div class="error missing">'.$strInvalidHostInEmail.'</div><br/>';
 } elseif ((isset($_POST["subscribe"]) || isset($_POST["update"])) && $missing) {
-  $msg = '<div class="missing">'."$strValuesMissing: $missing".'</div><br/>';
+  $msg = '<div class="error missing">'."$strValuesMissing: $missing".'</div><br/>';
 } elseif ((isset($_POST["subscribe"]) || isset($_POST["update"])) && !isset($_POST["list"]) && !ALLOW_NON_LIST_SUBSCRIBE) {
-  $msg = '<div class="missing">'.$strEnterList.'</div><br/>';
+  $msg = '<div class="error missing">'.$strEnterList.'</div><br/>';
 } else {
 #  $msg = 'Unknown Error';
 }
