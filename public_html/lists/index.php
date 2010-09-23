@@ -1010,7 +1010,7 @@ function forwardPage($id) {
     if ($ok) {
       $res .= '<h2>'.$info.'</h2>';
     } else {
-      $res .= '<div class="missing">'.$info.'</div>';
+      $res .= '<div class="error missing">'.$info.'</div>';
     }
     $res .= $form;
     $res .= "<p>".$GLOBALS["PoweredBy"].'</p>';
