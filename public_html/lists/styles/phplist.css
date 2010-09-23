@@ -817,3 +817,5 @@ border: none; margin: 0; background-color: #FFF;
 .ui-dialog .panel .header {display: none}
 .ui-dialog .panel .content {padding: 0; background-color:#FFFFFF}
 
+span.required {color: red}
+div.required {color: red}
