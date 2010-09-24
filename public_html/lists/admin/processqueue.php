@@ -442,9 +442,9 @@ while ($message = Sql_fetch_array($messages)) {
   if (!empty($msgdata['notify_start']) && !isset($msgdata['start_notified'])) {
     $notifications = explode(',',$msgdata['notify_start']);
     foreach ($notifications as $notification) {
-      sendMail($notification,$GLOBALS['I18N']->get('Message Sending has started'),
-        sprintf($GLOBALS['I18N']->get('phplist has started sending the message with subject %s'),$message['subject']."\n".
-        sprintf($GLOBALS['I18N']->get('to view the progress of this message, go to %s'),getConfig('website').$GLOBALS['adminpages'].'/?page=messages&amp;type=sent')));
+      sendMail($notification,$GLOBALS['I18N']->get('Campaign started'),
+        sprintf($GLOBALS['I18N']->get('phplist has started sending the campaign with subject %s'),$msgdata['subject']."\n\n".
+        sprintf($GLOBALS['I18N']->get('to view the progress of this campaign, go to http://%s'),getConfig('website').$GLOBALS['adminpages'].'/?page=messages&amp;tab=active')));
     }
     Sql_Query(sprintf('insert ignore into %s (name,id,data) values("start_notified",%d,current_timestamp)',
       $GLOBALS['tables']['messagedata'],$messageid));
@@ -959,8 +959,10 @@ while ($message = Sql_fetch_array($messages)) {
       if (!empty($msgdata['notify_end']) && !isset($msgdata['end_notified'])) {
         $notifications = explode(',',$msgdata['notify_end']);
         foreach ($notifications as $notification) {
-          sendMail($notification,$GLOBALS['I18N']->get('Message Sending has finished'),
-            sprintf($GLOBALS['I18N']->get('phplist has finished sending the message with subject %s'),$message['subject']));
+          sendMail($notification,$GLOBALS['I18N']->get('Message Campaign finished'),
+            sprintf($GLOBALS['I18N']->get('phplist has finished sending the campaign with subject %s'),$msgdata['subject'])."\n\n".
+            sprintf($GLOBALS['I18N']->get('to view the results of this campaign, go to http://%s'),getConfig('website').$GLOBALS['adminpages'].'/?page=messages&amp;tab=sent')
+            );
         }
         Sql_Query(sprintf('insert ignore into %s (name,id,data) values("end_notified",%d,current_timestamp)',
           $GLOBALS['tables']['messagedata'],$messageid));
