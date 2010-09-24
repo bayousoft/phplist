@@ -160,7 +160,7 @@ if (REGISTER) {
 } else {
   $PoweredByImage = '<p class="poweredby"><a href="http://www.phplist.com"><img src="images/power-phplist.png" width=70 height=30 title="Powered by phpList version '.$v.', &copy; tincan ltd" alt="Powered by phpList'.$v.', &copy; tincan ltd" border="0"/></a></p>';
 }
-$PoweredByText = '<span class="poweredphplist">powered by <a href="http://www.phplist.com" class="poweredphplist" target="_blank">phplist</a> v '.$v.', &copy; <a href="http://tincan.co.uk/powered" target="_blank" class="poweredphplist">tincan ltd</a></span>';
+$PoweredByText = '<p style="font-size: 7px; margin: 0.5em 0pt 1em; line-height: 1.3em; font-family: Verdana, Arial, Helvetica, sans-serif; text-align: left;">powered by <a href="http://www.phplist.com" target="_blank">phplist</a> v '.$v.', &copy; <a href="http://tincan.co.uk/powered" target="_blank">tincan ltd</a></p>';
 if (!TEST && REGISTER) {
   if (!PAGETEXTCREDITS) {
     ;
