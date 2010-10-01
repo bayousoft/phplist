@@ -639,6 +639,12 @@ $default_config["fckeditor_height"] = array (
 	"Height in px of FCKeditor Area",
 	"text"
 );
+$default_config["editortoolbar_row2"] = array(
+  "",#"Style,FontFormat,FontName,FontSize",
+  "Second row of toolbar elements in the editor",
+  "text",
+  1
+);
 
 ########## certainly do not edit after this #########
 

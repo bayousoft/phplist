@@ -877,6 +877,15 @@ FCKConfig.ToolbarSets["Default"] = [
   ['OrderedList','UnorderedList'],
   ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
   ['Image','FontFormat','About']
+
+  <?php
+    $editor_secondrow = getConfig('editortoolbar_row2');
+   if (!empty($editor_secondrow)) {
+    print ",'/',\n";
+    $tools = cleanCommaList($editor_secondrow);
+    $tools = str_replace("'","\'",$tools);
+    print "['".join("','",explode(',',$tools))."']";
+  }?>  
 ] ;
 
 FCKConfig.ToolbarSets["Basic"] = [
