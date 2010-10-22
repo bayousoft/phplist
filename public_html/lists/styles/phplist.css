@@ -462,7 +462,7 @@ font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 font-size: 14px; 
 border: 2px solid #CCCCCC;
 color: #333333;
-width: 80%;
+width: 300px !important;
 }
 
 /* =check */
