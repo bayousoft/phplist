@@ -533,7 +533,7 @@ while ($user = Sql_Fetch_Row($userid_req)) {
           addEmailToBlackList($emailreq, "$cnt consecutive bounces, threshold reached");
         }
         $email_req = Sql_Fetch_Row_Query(sprintf('select email from %s where id = %d',$tables["user"],$user[0]));
-        $unsubscribed_users .= $email_req[0]."\t\t($cnt)\t\t". $GLOBALS['scheme'].'//'.getConfig('website').$GLOBALS['adminpages'].'/?page=user&amp;id='.$user[0]. "\n";
+        $unsubscribed_users .= $email_req[0]."\t\t($cnt)\t\t". $GLOBALS['scheme'].'://'.getConfig('website').$GLOBALS['adminpages'].'/?page=user&amp;id='.$user[0]. "\n";
       }
     } elseif ($bounce["bounce"] == "") {
       #$cnt = 0; DT 051105
