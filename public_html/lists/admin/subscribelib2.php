@@ -305,28 +305,24 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok && $allt
          $sendrequest = 0;
          Sql_Query(sprintf('update %s set confirmed = 1 where email = "%s"',$GLOBALS["tables"]["user"],$email));
          addUserHistory($email,$history_subject." by ".$_SESSION["logindetails"]["adminname"],$history_entry);
-      }
-      elseif ($_POST["makeconfirmed"]) {
+      }  elseif ($_POST["makeconfirmed"]) {
          print '<p class="information">'.$GLOBALS['I18N']->get('Email is blacklisted, so request for confirmation has been sent.').'<br/>';
          print $GLOBALS['I18N']->get('If user confirms subscription, they will be removed from the blacklist.').'</p>';
 
          $sendrequest = 1;
+      } else {
+        $sendrequest = 1;
       }
-      else {
-         $sendrequest = 1;
-      }
-   }
-   else {
-      $sendrequest = 1;
+   } else {
+     $sendrequest = 1;
    }
 
   # personalise the thank you page
   if ($subscribepagedata["thankyoupage"]) {
     $thankyoupage = $subscribepagedata["thankyoupage"];
-   }
-   else {
-      $thankyoupage = '<h3>'.$strThanks.'</h3>'. $strEmailConfirmation;
-   }
+  } else {
+     $thankyoupage = '<h3>'.$strThanks.'</h3>'. $strEmailConfirmation;
+  }
 
    $thankyoupage = str_ireplace("[email]",$email,$thankyoupage);
 
@@ -350,11 +346,10 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok && $allt
       $thankyoupage = $plugin->parseThankyou($id,$userid,$thankyoupage);
     }
   }
-
-  $blacklisted = isBlackListed($email);
   if ($blacklisted) {
-    $thankyoupage .= '<p class="information">'.$GLOBALS["strYouAreBlacklisted"].'</p>';
-    return 1;
+    ## let's not confuse things. If someone re-subscribes then process it as normal, even if they are blacklisted
+#    $thankyoupage .= '<p class="information">'.$GLOBALS["strYouAreBlacklisted"].'</p>';
+ #   return 1;
   }
   if ($sendrequest && $listsok) { #is_array($_POST["list"])) {
     if (sendMail($email, getConfig("subscribesubject:$id"), $subscribemessage,system_messageheaders($email),$envelope,1)) {
