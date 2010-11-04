@@ -582,13 +582,13 @@ elseif (isset($_POST["update"]) && $_POST["update"] && is_email($_POST["email"])
   }
   $history_entry .= "\n\nList Membership: \n$lists\n";
 
-  $message = ereg_replace('\[LISTS\]', $lists, getUserConfig("updatemessage",$userid));
-  $message = ereg_replace('\[USERDATA\]', $datachange, $message);
+  $message = str_replace('[LISTS]', $lists, getUserConfig("updatemessage",$userid));
+  $message = str_replace('[USERDATA]', $datachange, $message);
   if ($emailchanged) {
-    $newaddressmessage = ereg_replace('\[CONFIRMATIONINFO\]', getUserConfig("emailchanged_text",$userid), $message);
-    $oldaddressmessage = ereg_replace('\[CONFIRMATIONINFO\]', getUserConfig("emailchanged_text_oldaddress",$userid), $message);
+    $newaddressmessage = str_replace('[CONFIRMATIONINFO]', getUserConfig("emailchanged_text",$userid), $message);
+    $oldaddressmessage = str_replace('[CONFIRMATIONINFO]', getUserConfig("emailchanged_text_oldaddress",$userid), $message);
   } else {
-    $message = ereg_replace('\[CONFIRMATIONINFO\]', "", $message);
+    $message = str_replace('[CONFIRMATIONINFO]', "", $message);
   }
 
   print '<title>'.$GLOBALS["strPreferencesTitle"].'</title>';
