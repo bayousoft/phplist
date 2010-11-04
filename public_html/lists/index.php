@@ -57,7 +57,7 @@ if ($require_login || ASKFORPASSWORD) {
 }
 
 if (!isset($_POST) && isset($HTTP_POST_VARS)) {
-    require "admin/commonlib/lib/oldphp_vars.php";
+  require "admin/commonlib/lib/oldphp_vars.php";
 }
 
 if (isset($_GET['id'])) {
@@ -201,7 +201,7 @@ if (!$id) {
 
 $pagedata = array();
 if ($id) {
-  $pagedata = PageData($id);
+  $GLOBALS['pagedata'] = PageData($id);
   if (isset($pagedata['language_file']) && is_file(dirname(__FILE__).'/texts/'.basename($pagedata['language_file']))) {
     @include dirname(__FILE__).'/texts/'.basename($pagedata['language_file']);
     # Allow customisation per installation
@@ -616,31 +616,24 @@ function confirmPage($id) {
 
 function unsubscribePage($id) {
   global $tables;
+  $email = '';
+  $userid = 0;
+  $msg = '';
+  ## for unsubscribe, don't validate host
+  $GLOBALS["check_for_host"] = 0;  
   $res = '<title>'.$GLOBALS["strUnsubscribeTitle"].'</title>'."\n";  
   $res .= $GLOBALS['pagedata']["header"];
   if (isset($_GET["uid"])){
-    $query = sprintf('select * from %s where uniqid = ?', $tables['user']);
+    $query = sprintf('select id,email,blacklisted from %s where uniqid = ?', $tables['user']);
     $req = Sql_Query_Params($query, array($_GET['uid']) );
     $userdata = Sql_Fetch_Array($req);
     $email = $userdata["email"];
-    if (UNSUBSCRIBE_JUMPOFF) {
-      $_POST["unsubscribe"] = 1;
-      $_POST["email"] = $email;
-      $_REQUEST['unsubscribeemail'] = $email;
-      $_POST["unsubscribereason"] = '"Jump off" set, reason not requested';
-    }
-    $blacklist = false; //invariant
+    $userid = $userdata['id'];
+    $isBlackListed =  $userdata['blacklisted'] != "0";
+    $blacklistRequest = false; //invariant
   } else {
-    if (isset($_REQUEST['unsubscribeemail'])) {
-      $email = $_REQUEST['unsubscribeemail'];
-    } else {
-       if (isset($_REQUEST['email'])) {
-          if (UNSUBSCRIBE_JUMPOFF) {
-             $_POST["unsubscribe"] = 1;
-             $_POST["unsubscribereason"] = '"Jump off" set, reason not requested';
-          }
-          $email = $_REQUEST['email'];
-       }
+    if (isset($_REQUEST['email'])) {
+      $email = $_REQUEST['email'];
     }
     if (!validateEmail($email)) {
       $email = '';
@@ -648,23 +641,30 @@ function unsubscribePage($id) {
     
     #0013076: Blacklisting posibility for unknown users
     # Set flag for blacklisting 
-    $blacklist = $_GET['p'] == 'blacklist';
+    $blacklistRequest = $_GET['p'] == 'blacklist';
     
     # only proceed when user has confirm the form 
-    if ($blacklist && is_email($email) ) {
+    if ($blacklistRequest && is_email($email) ) {
       $_POST["unsubscribe"] = 1;
       $_POST["unsubscribereason"] = 'Forwarded receiver requested blacklist';
     }
   }
+  if (UNSUBSCRIBE_JUMPOFF) {
+    $_POST["unsubscribe"] = 1;
+    $_REQUEST["email"] = $email;
+    $_REQUEST['unsubscribeemail'] = $email;
+    $_POST["unsubscribereason"] = '"Jump off" set, reason not requested';
+  }
 
-  $unsubscribeemail = (isset($_REQUEST['unsubscribeemail']))?$_REQUEST['unsubscribeemail']:$_REQUEST['email'];
-  
-  if ( is_email($unsubscribeemail) && isset($_POST['unsubscribe']) && (isset($_REQUEST['email']) || isset($_REQUEST['unsubscribeemail'])) && isset($_POST['unsubscribereason'])) {
+  if ( is_email($email) && isset($_POST['unsubscribe']) &&
+    isset($_REQUEST['email']) && isset($_POST['unsubscribereason'])) {
+
+    ## all conditions met, do the unsubscribe
 
     #0013076: Blacklisting posibility for unknown users
       // It would be better to do this above, where the email is set for the other cases.
-      // But to prevent vulnaribilities let's keep it here for now. [bas]
-    if ( !$blacklist ) {
+      // But to prevent vulnerabilities let's keep it here for now. [bas]
+    if ( !$blacklistRequest ) {
 
       $query
       = ' select id, email'
@@ -678,11 +678,11 @@ function unsubscribePage($id) {
 
     if (!$userid) {
       #0013076: Blacklisting posibility for unknown users
-      if ( $blacklist && $email) {
+      if ( $blacklistRequest && $email) {
         addUserToBlacklist($email,$_POST['unsubscribereason']);
         addSubscriberStatistics('forwardblacklist',1);
       } else {       
-        $res .= 'Error: '.$GLOBALS["strUserNotFound"];
+        $res .= $GLOBALS["strNoListsFound"];#'Error: '.$GLOBALS["strUserNotFound"];
         logEvent("Request to unsubscribe non-existent user: ".substr($email,0,150));
       }
     } else {
@@ -699,7 +699,7 @@ function unsubscribePage($id) {
       addUserToBlacklist($email,nl2br(strip_tags($_POST['unsubscribereason'])));
 
       addUserHistory($email,"Unsubscription","Unsubscribed from $lists");
-      $unsubscribemessage = ereg_replace("\[LISTS\]", $lists,getUserConfig("unsubscribemessage",$userid));
+      $unsubscribemessage = str_replace("[LISTS]", $lists,getUserConfig("unsubscribemessage",$userid));
       sendMail($email, getConfig("unsubscribesubject"), stripslashes($unsubscribemessage), system_messageheaders($email));
       $reason = $_POST["unsubscribereason"] ? "Reason given:\n".stripslashes($_POST["unsubscribereason"]):"No Reason given";
       sendAdminCopy("List unsubscription",$email . " has unsubscribed\n$reason",$subscriptions);
@@ -707,44 +707,31 @@ function unsubscribePage($id) {
     }
 
     if ($userid) {
-      $res .= '<h1>'.$GLOBALS["strUnsubscribeDone"] ."</h1><P>";
+      $res .= '<h3>'.$GLOBALS["strUnsubscribeDone"] ."</h3>";
     }
 
     #0013076: Blacklisting posibility for unknown users
-    if ($blacklist) {
-      $res .= '<h1>'.$GLOBALS["strYouAreBlacklisted"] ."</h1><P></p>";
+    if ($blacklistRequest) {
+      $res .= '<h3>'.$GLOBALS["strYouAreBlacklisted"] ."</h3>";
     }
     $res .= $GLOBALS["PoweredBy"].'</p>';
     $res .= $GLOBALS['pagedata']["footer"];
+    print $res; exit;
     return $res;
-  } elseif ( isset($_POST["unsubscribe"]) &&  !is_email($_REQUEST['unsubscribeemail']))  {
+  } elseif ( isset($_POST["unsubscribe"]) && !is_email($email) && !empty($email))  {
     $msg = '<span class="error">'.$GLOBALS["strEnterEmail"]."</span><br>";
-  } elseif (!empty($_GET["email"])) {
-    $email = trim($_GET["email"]);
-  } else {
-    if (isset($_REQUEST["email"])) {
-      $email = $_REQUEST["email"];
-    } elseif (isset($_REQUEST['unsubscribeemail'])) {
-      $email = $_REQUEST['unsubscribeemail'];
-    } elseif (!isset($email)) {
-      $email = '';
-    }
-  }
-  if (!isset($msg)) {
-    $msg = '';
-  }
-  if (!validateEmail($email)) {
-    $email = '';
   }
 
   $res .= '<b>'. $GLOBALS["strUnsubscribeInfo"].'</b><br>'.
   $msg.formStart();
-  $res .= '<table>
-  <tr><td>'.$GLOBALS["strEnterEmail"].':</td><td colspan=3><input type=text name="unsubscribeemail" value="'.$email.'" size=40></td></tr>
-  </table>';
+  if (!isset($_POST['email']) || empty($email)) {
+    $res .= '<p>'.$GLOBALS["strEnterEmail"].': <input type="text" name="email" value="'.$email.'" size="40" /></p>';
+  } else {
+    $res .= '<p><input type="hidden" name="email" value="'.$email.'" />'.$GLOBALS["strEmail"].': '.$email.'</p>';
+  }
 
   if (!$email) {
-    $res .= "<input type=submit name=unsubscribe value=\"$GLOBALS[strContinue]\"></form>\n";
+    $res .= '<input type="submit" name="unsubscribe" value="'.$GLOBALS['strContinue'].'"></form>';
     $res .= $GLOBALS["PoweredBy"];
     $res .= $GLOBALS['pagedata']["footer"];
     return $res;
@@ -778,12 +765,12 @@ function unsubscribePage($id) {
 
   if (!$some) {
     #0013076: Blacklisting posibility for unknown users
-    if ( $blacklist ) {
+    if ( ! $blacklistRequest ) {
       $res .= "<b>".$GLOBALS["strNoListsFound"]."</b></ul>";
     }
     $res .= '<p><input type=submit value="'.$GLOBALS["strUnsubscribe"].'">';
   } else {
-    if ($blacklist) {
+    if ($blacklistRequest) {
       $res .= $GLOBALS["strExplainBlacklist"];
     } elseif (!UNSUBSCRIBE_JUMPOFF) {      
       list($r,$c) = explode(",",getConfig("textarea_dimensions"));
