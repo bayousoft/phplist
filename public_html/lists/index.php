@@ -607,7 +607,7 @@ function confirmPage($id) {
 
   $res = '<title>'.$GLOBALS["strConfirmTitle"].'</title>';
   $res .= $GLOBALS['pagedata']["header"];
-  $res .= '<h1>'.$info.'</h1>';
+  $res .= '<h3>'.$info.'</h3>';
   $res .= $html;
   $res .= "<p>".$GLOBALS["PoweredBy"].'</p>';
   $res .= $GLOBALS['pagedata']["footer"];
@@ -993,9 +993,9 @@ function forwardPage($id) {
   } else {
     $res = '<title>'.$GLOBALS["strForwardTitle"].'</title>';
     $res .= $GLOBALS['pagedata']["header"];
-    $res .= '<h1>'.$subtitle.'</h1>';
+    $res .= '<h3>'.$subtitle.'</h3>';
     if ($ok) {
-      $res .= '<h2>'.$info.'</h2>';
+      $res .= '<h4>'.$info.'</h4>';
     } else {
       $res .= '<div class="error missing">'.$info.'</div>';
     }
