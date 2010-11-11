@@ -652,7 +652,6 @@ function unsubscribePage($id) {
   if (UNSUBSCRIBE_JUMPOFF) {
     $_POST["unsubscribe"] = 1;
     $_REQUEST["email"] = $email;
-    $_REQUEST['unsubscribeemail'] = $email;
     $_POST["unsubscribereason"] = '"Jump off" set, reason not requested';
   }
 
