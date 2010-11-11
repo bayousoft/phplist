@@ -245,6 +245,13 @@ function sendReport($subject,$message) {
   }
 }
 
+function sendError($message,$to,$subject) {
+  foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
+    $plugin->sendError($GLOBALS["installation_name"]." Error: ".$subject,$message);
+  }
+//  Error($msg);
+}
+
 function sendMessageStats($msgid) {
   global $stats_collection_address,$tables;
   $msg = '';
