@@ -337,6 +337,15 @@ class phplistPlugin {
   function sendReport ($subject,$message) {
   }
 
+  /* sendError
+   * @param string $subject
+   * @param string $to
+   * @param string $message
+   * @return null
+   */
+  function sendError ($subject,$to = '',$message = '') {
+  }
+
   /* importReport
    * called when a subscriber import has finished
    * @param string $report
