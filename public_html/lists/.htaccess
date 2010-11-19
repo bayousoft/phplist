@@ -11,3 +11,9 @@ allow from all
 </FilesMatch>
 php_flag magic_quotes_gpc on
 
+# if you want more than this for attachments, you can increase these values
+# but you really, really should consider uploading them somewhere
+# and only sending a link in your mails
+# bigger than this really doesn't make sense in emails
+php_value upload_max_filesize 2M
+php_value post_max_size 3M
