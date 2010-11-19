@@ -34,8 +34,9 @@ require_once dirname(__FILE__).'/accesscheck.php';
 
 $subselect = $where = '';
 $action_result = '';
+$access = accessLevel('messages');
 
-if( !$GLOBALS["require_login"] || $_SESSION["logindetails"]['superuser'] ){
+if( !$GLOBALS["require_login"] || $_SESSION["logindetails"]['superuser'] || $access == 'all'){
   $ownerselect_and = '';
   $ownerselect_where = '';
 } else {
@@ -193,7 +194,7 @@ switch ($_GET["tab"]) {
 }
 
 ### Query messages from db
-if ($GLOBALS['require_login'] && !$_SESSION['logindetails']['superuser']) {
+if ($GLOBALS['require_login'] && !$_SESSION['logindetails']['superuser'] || $access != 'all') {
   $cond[] = ' owner = ' . $_SESSION['logindetails']['id'];
 }
 $where = ' where ' . join(' and ', $cond);
