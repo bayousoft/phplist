@@ -655,6 +655,13 @@ function unsubscribePage($id) {
     $_POST["unsubscribereason"] = '"Jump off" set, reason not requested';
   }
 
+  foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
+#    print $pluginname.'<br/>';
+    if ($plugin->unsubscribePage($email)) {
+      return;
+    }
+  }
+
   if ( is_email($email) && isset($_POST['unsubscribe']) &&
     isset($_REQUEST['email']) && isset($_POST['unsubscribereason'])) {
 
@@ -715,7 +722,6 @@ function unsubscribePage($id) {
     }
     $res .= $GLOBALS["PoweredBy"].'</p>';
     $res .= $GLOBALS['pagedata']["footer"];
-    print $res; exit;
     return $res;
   } elseif ( isset($_POST["unsubscribe"]) && !is_email($email) && !empty($email))  {
     $msg = '<span class="error">'.$GLOBALS["strEnterEmail"]."</span><br>";
