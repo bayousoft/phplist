@@ -458,6 +458,16 @@ class phplistPlugin {
     return null;
   }
 
+  /*
+   * unsubscribePage
+   * @param email string - email to unsubscribe
+   * @return true when processed, which will then override the standard subscribe page
+   */
+
+  function unsubscribePage($email) {
+    return false;
+  }
+
   function processSubscribePageEdit($subscribePageID) {
     # purpose: process selected subscribepage options for this list 
     # return false if failed
