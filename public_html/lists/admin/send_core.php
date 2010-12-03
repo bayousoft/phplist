@@ -95,7 +95,7 @@ if (!$id) {
 $messagedata = loadMessageData($id);
 #var_dump($messagedata);
 #exit;
-
+#print '<h3>'.$messagedata['status'].'</h3>';
 
 if (!empty($_GET['deletecriterion'])) {
   include dirname(__FILE__).'/actions/deletecriterion.php';
@@ -170,6 +170,7 @@ if ($send || $sendtest || $prepare || $save || $savedraft) {
       && !empty($messagedata['subject']) && !empty($messagedata['from']) && 
       !empty($messagedata['message']) && empty($duplicate_attribute)) {
       $messagedata['status'] = "submitted";
+      setMessageData($id,'status','submitted');
     } else {
       if (USE_PREPARE) {
         $messagedata['status'] = "prepared";
