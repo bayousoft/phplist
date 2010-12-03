@@ -77,6 +77,8 @@ require_once dirname(__FILE__).'/accesscheck.php';
 * @package Mail
 */
 
+if (class_exists('Mail_mimePart')) return;
+
 class Mail_mimePart{
 
    /**

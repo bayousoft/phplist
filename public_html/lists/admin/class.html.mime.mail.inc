@@ -16,6 +16,7 @@ require_once dirname(__FILE__).'/accesscheck.php';
 ** Modification...: 3 April 2002
 ** Modified by....: Michiel Dethmers
 ***************************************/
+if (class_exists('html_mime_mail')) return;
 
 require_once(dirname(__FILE__).'/mimePart.php');
 
