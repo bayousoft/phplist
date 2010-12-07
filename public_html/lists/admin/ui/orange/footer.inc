@@ -6,7 +6,7 @@
 <td>
 <div class="menutableright">
 <?php
-  print NewMenu();
+  print contextMenu();
   ?>
 </div>
 <div class="menutableright">
