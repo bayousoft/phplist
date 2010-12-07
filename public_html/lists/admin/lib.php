@@ -58,11 +58,6 @@ function listName($id) {
 function setMessageData($msgid,$name,$value) {
   if ($name == 'PHPSESSID') return;
   
-  if (NO_MAGIC_QUOTES) {
- #   print "Escaping";
-    $value = sql_escape($value);
-  }
-
   if ($name == 'targetlist' && is_array($value))  {
     Sql_query(sprintf('delete from %s where messageid = %d',$GLOBALS['tables']["listmessage"],$msgid));
     if ( !empty($value["all"]) || !empty($value["allactive"])) {
