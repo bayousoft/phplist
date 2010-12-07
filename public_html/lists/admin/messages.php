@@ -134,7 +134,7 @@ if (isset($_GET['resend'])) {
 if (isset($_GET['suspend'])) {
   $suspend = sprintf('%d',$_GET['suspend']);
   $action_result .=  $GLOBALS['I18N']->get('Suspending')." $suspend ..";
-  $result = Sql_query(sprintf('update %s set status = "suspended" where id = %d and (status = "inprocess" or status = "submitted")',$tables["message"],$suspend));
+  $result = Sql_query(sprintf('update %s set status = "suspended" where id = %d and (status = "inprocess" or status = "submitted") %s',$tables["message"],$suspend,$ownerselect_and));
   $suc6 = Sql_Affected_Rows();
   if ($suc6)
     $action_result .=  "... ".$GLOBALS['I18N']->get("Done");
@@ -146,13 +146,38 @@ if (isset($_GET['suspend'])) {
 if (isset($_GET['markSent'])) {
   $markSent = sprintf('%d',$_GET['markSent']);
   $action_result .=  $GLOBALS['I18N']->get('Marking as sent ')." $markSent ..";
-  $result = Sql_query(sprintf('update %s set status = "sent" where id = %d and (status = "suspended")',$tables["message"],$markSent));
+  $result = Sql_query(sprintf('update %s set status = "sent" where id = %d and (status = "suspended") %s',$tables["message"],$markSent,$ownerselect_and));
   $suc6 = Sql_Affected_Rows();
   if ($suc6)
     $action_result .=  "... ".$GLOBALS['I18N']->get("Done");
   else
     $action_result .=  "... ".$GLOBALS['I18N']->get("Failed");
-  $action_result .=  '<br /><hr /><br />\n';
+  $action_result .=  '<br /><hr /><br />h';
+}
+
+if (isset($_GET['action'])) {
+  switch ($_GET['action']) {
+    case 'suspall':
+      $action_result .=  $GLOBALS['I18N']->get('Suspending all')." ..";
+      $result = Sql_query(sprintf('update %s set status = "suspended" where (status = "inprocess" or status = "submitted") %s',$tables["message"],$ownerselect_and));
+      $suc6 = Sql_Affected_Rows();
+      if ($suc6)
+        $action_result .=  "... $suc6".$GLOBALS['I18N']->get("Done");
+      else
+        $action_result .=  "... ".$GLOBALS['I18N']->get("failed");
+      $action_result .= '<br /><hr /><br />';
+      break;
+    case 'markallsent':
+      $action_result .=  $GLOBALS['I18N']->get('Marking all as sent ')."  ..";
+      $result = Sql_query(sprintf('update %s set status = "sent" where (status = "suspended") %s',$tables["message"],$markSent,$ownerselect_and));
+      $suc6 = Sql_Affected_Rows();
+      if ($suc6)
+        $action_result .=  "... $suc6".$GLOBALS['I18N']->get("Done");
+      else
+        $action_result .=  "... ".$GLOBALS['I18N']->get("Failed");
+      $action_result .=  '<br /><hr /><br />';
+      break;
+  }
 }
 
   if (!empty($action_result)) {
@@ -355,6 +380,12 @@ PageURL2("messages$url_keep","","delete=".$msg["id"]));
 }
 
 print $ls->display();
+
+if ($total > 5 && $_GET['tab'] == 'active') {
+  print PageLinkButton("messages",$GLOBALS['I18N']->get("Suspend All"),"action=suspall");
+  print PageLinkButton("messages",$GLOBALS['I18N']->get("Mark All Sent"),"action=markallsent");
+}
+
 
 ?>
 
