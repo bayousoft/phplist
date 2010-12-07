@@ -309,7 +309,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
     $textmessage .= "\n\n".$text["footer"];
 
   if (strpos($textmessage,'[SIGNATURE]'))
-    $textmessage = stri_replace("[SIGNATURE]",$text["signature"],$textmessage);
+    $textmessage = str_ireplace("[SIGNATURE]",$text["signature"],$textmessage);
   else
     $textmessage .= "\n".$text["signature"];
 
