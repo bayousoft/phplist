@@ -667,9 +667,11 @@ if (!function_exists("getconfig")) {
 		if ($item != 'website' && isset ($GLOBALS['config'][$item])) {
 			return $GLOBALS['config'][$item];
 		}
+/*
     if (!DEVSITE && isset($_SESSION['config'][$item])) {
       return $_SESSION['config'][$item];
     }
+*/
 		if (!isset ($GLOBALS['config']) || !is_array($GLOBALS['config'])) {
 			$GLOBALS['config'] = array ();
 		}
