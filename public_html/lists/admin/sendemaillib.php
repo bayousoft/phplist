@@ -139,14 +139,14 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   }
 
   $url = getConfig("unsubscribeurl");$sep = strpos($url,'?') === false ? '?':'&amp;';
-  $html["unsubscribe"] = sprintf('<a href="%s%suid=%s">%s</a>',$url,$sep,$hash,$strThisLink);
+  $html["unsubscribe"] = sprintf('<a href="%s%suid=%s">%s</a>',$url,$sep,$hash,$strUnsubscribe);
   $text["unsubscribe"] = sprintf('%s%suid=%s',$url,$sep,$hash);
   $html["unsubscribeurl"] = sprintf('%s%suid=%s',$url,$sep,$hash);
   $text["unsubscribeurl"] = sprintf('%s%suid=%s',$url,$sep,$hash);
 
   #0013076: Blacklisting posibility for unknown users
   $url = getConfig("blacklisturl");$sep = strpos($url,'?') === false ? '?':'&amp;';
-  $html["blacklist"] = sprintf('<a href="%s%semail=%s">%s</a>',$url,$sep,$email,$strThisLink);
+  $html["blacklist"] = sprintf('<a href="%s%semail=%s">%s</a>',$url,$sep,$email,$strUnsubscribe);
   $text["blacklist"] = sprintf('%s%semail=%s',$url,$sep,$email);
   $html["blacklisturl"] = sprintf('%s%semail=%s',$url,$sep,$email);
   $text["blacklisturl"] = sprintf('%s%semail=%s',$url,$sep,$email);
