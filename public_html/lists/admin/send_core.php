@@ -1040,7 +1040,18 @@ if (empty($messagedata['targetlist'])) {
   $panelcontent .= '<script type="text/javascript">
   $("#addtoqueue").append(\'<div class="missing">'.$GLOBALS['I18N']->get('destination lists missing').'</div>\');
   </script>';
-} 
+}
+foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
+  $pluginerror = '';
+  $pluginerror = $plugin->allowMessageToBeQueued($messagedata);
+  if ($pluginerror) {
+    $allReady = false;
+    $panelcontent .= '<script type="text/javascript">
+    $("#addtoqueue").append(\'<div class="missing">'.$pluginerror.'</div>\');
+    </script>';
+  }
+}
+
 if ($allReady) {
   $panelcontent .= '<script type="text/javascript">
   $("#addtoqueue").html(\'<input class="action-button" type="submit" name="send" id="addtoqueuebutton" value="'.htmlspecialchars($GLOBALS['I18N']->get('sendmessage')).'">\');

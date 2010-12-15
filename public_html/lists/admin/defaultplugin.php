@@ -371,6 +371,15 @@ class phplistPlugin {
   function campaignStarted($messagedata = array()) {
   }
 
+  /* allowMessageToBeQueued
+   * called to verify that the message can be added to the queue
+   * @param array messagedata - associative array with all data for campaign
+   * @return empty string if allowed, or error string containing reason for not allowing
+   */
+  function allowMessageToBeQueued($messagedata = array()) {
+    return '';
+  }
+
   /* messageQueued
    * called when a message is placed in the queue
    * @param integer id message id
