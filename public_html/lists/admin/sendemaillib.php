@@ -23,7 +23,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   ## for testing concurrency, put in a delay to check if multiple send processes cause duplicates
   #usleep(rand(0,10) * 1000000);
     
-  global $strThisLink,$PoweredByImage,$PoweredByText,$cached,$website;
+  global $strThisLink,$strUnsubscribe,$PoweredByImage,$PoweredByText,$cached,$website;
   if ($email == "")
     return 0;
   if ($getspeedstats) output('sendEmail start '.$GLOBALS['processqueue_timer']->interval(1));
