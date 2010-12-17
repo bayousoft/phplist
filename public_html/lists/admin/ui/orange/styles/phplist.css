@@ -264,12 +264,11 @@ html>body #maincontent_install div { float:left; padding:1em; clear:both;}
 }
 
 .paging {
-	/* required settings for scrollable*/
-	position:relative;
-	overflow:hidden;
-	width: 600px;
-	height:20px;
-  float: left;
+    float: none;
+    height: 44px;
+    overflow: visible;
+    position: relative;
+    width: 600px;
 }
 
 .paging .items {
