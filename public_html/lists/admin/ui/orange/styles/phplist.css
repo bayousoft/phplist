@@ -419,8 +419,8 @@ background:url("../images/bg-button.gif") repeat-x 0 0 #DDDDDD;
 color: #333333;
 font-size: 14px; 
 font-family: Helvetica, Arial, sans-serif;
-text-transform: capitalize
-
+text-transform: capitalize;
+top: 6px;
 }
 
 /*p.button a:first-child {border-right: 0}*/

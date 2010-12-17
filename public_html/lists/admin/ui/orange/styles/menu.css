@@ -1,19 +1,42 @@
 /* CSS Menus - Horizontal CSS Menu with Dropdown and Popout Menus - 20050131 */
 
 /* Begin CSS Popout Menu */
-
-#menuTop{
-width:100%;
-float:left;
+#menuTop {
+    float: left;
+    height: 25px;
+    width: 100%;
 }
 
-#menuTop a{
-display:block;
-border-width:1px;
-border-style:solid;
-margin:0;
-padding:0 5px;
+#menuTop a {
+    background: none repeat scroll 0 0 #F5F5F5;
+    border: 1px solid #CCCCCC;
+    display: block;
+    line-height: 23px;
+    padding: 4px;
+    text-decoration: none;
+    text-transform: uppercase;
 }
+
+#menuTop ul {
+    float: left;
+    height: 40px;
+    list-style: none outside none;
+    margin: 0;
+    padding: 0;}
+
+#menuTop a:hover {
+    background: none repeat scroll 0 0 #FFFECD;}
+
+
+#menuTop a:active {
+    background: none repeat scroll 0 0 #EEEEE;}
+
+#menuTop li li a {
+    background: none repeat scroll 0 0 #F5F5F5;
+    border: 1px solid #CCCCCC;
+    text-transform: capitalize;
+    width: 155%;}
+
 
 #menuTop h3{
 display:block;
@@ -27,28 +50,8 @@ padding:0 5px;
 text-transform:uppercase
 }
 
-#menuTop a{
-background:#eee;
-text-decoration:none;
-}
 
 #menuTop a, #menuTop a:visited{
-}
-
-#menuTop a:hover{
-}
-
-#menuTop a:active{
-}
-
-#menuTop ul{
-list-style:none;
-margin:0;
-padding:0;
-float:left;
-/*
-width:11.5em;
-*/
 }
 
 #menuTop li{
