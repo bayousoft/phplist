@@ -37,7 +37,7 @@ if (!empty($_REQUEST['save'])) {
           Error("$info[1] " . $GLOBALS['I18N']->get('cannot be empty'));
           $haserror = 1;
         } else {
-          SaveConfig($id,$value,0);
+          SaveConfig($id,$value);
         }
       }
     }
