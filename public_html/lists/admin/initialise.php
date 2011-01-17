@@ -56,7 +56,7 @@ while (list($table, $val) = each($DBstruct)) {
   }
   # get rid of the last ,
   $query = substr($query,0,-1);
-  $query .= "\n)";
+  $query .= "\n) default character set utf8";
 
   # submit it to the database
   echo $GLOBALS['I18N']->get("Initialising table")." <b>$table</b>";
@@ -126,7 +126,7 @@ if ($success) {
   $result = Sql_Query_Params($stmt, array('test', $info, '0', '1'));
   $body = '
     Version: '.VERSION."\r\n".
-   ' Url: '.getConfig("website").$pageroot."\r\n";
+   ' Url: '.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']."\r\n";
   printf('<p class="information">'.$GLOBALS['I18N']->get('Success').': <a class="button" href="mailto:phplist2@tincan.co.uk?subject=Successful installation of phplist&body=%s">'.$GLOBALS['I18N']->get('Tell us about it').'</a>. </p>', $body);
   printf('<p class="information">
     '.$GLOBALS['I18N']->get("Please make sure to read the file README.security that can be found in the zip file.").'</p>');

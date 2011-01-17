@@ -573,7 +573,7 @@ if (!$done) {
 // custom code - start
   $utf8_subject = $messagedata['subject'];
   $utf8_from = $messagedata['from'];
-  if (strcasecmp($GLOBALS['strCharSet'], 'utf-8') <> 0) {
+  if (0 && strcasecmp($GLOBALS['strCharSet'], 'utf-8') <> 0) {
      $utf8_subject = iconv($GLOBALS['strCharSet'],'UTF-8',$utf8_subject);
      $utf8_from = iconv($GLOBALS['strCharSet'],'UTF-8',$utf8_from);
   }

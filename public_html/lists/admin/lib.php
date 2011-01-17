@@ -824,6 +824,9 @@ function fetchUrl($url,$userdata = array()) {
     'allowRedirects' => 1,
     'method' => 'HEAD',
   );
+
+  $remote_charset = 'UTF-8';
+  
   $headreq = new HTTP_Request($url,$request_parameters);
   $headreq->addHeader('User-Agent', 'phplist v'.VERSION.' (http://www.phplist.com)');
   if (!PEAR::isError($headreq->sendRequest(false))) {
@@ -833,6 +836,10 @@ function fetchUrl($url,$userdata = array()) {
       return 0;
     }
     $header = $headreq->getResponseHeader();
+
+    if (preg_match('/charset=(.*)/i',$header['content-type'],$regs)) {
+      $remote_charset = strtoupper($regs[1]);
+    }
 
     ## relying on the last modified header doesn't work for many pages
     ## use current time instead
@@ -850,6 +857,11 @@ function fetchUrl($url,$userdata = array()) {
       }
       if (!PEAR::isError($req->sendRequest(true))) {
         $content = $req->getResponseBody();
+
+        if ($remote_charset != 'UTF-8') {
+          $content = iconv($remote_charset,'UTF-8//TRANSLIT',$content);
+        }
+        
         $content = addAbsoluteResources($content,$url);
         logEvent('Fetching '.$url.' success');
         setPageCache($url,$lastmodified,$content);

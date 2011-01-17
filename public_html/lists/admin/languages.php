@@ -10,14 +10,14 @@ http://www.w3.org/International/O-charset-lang.html
 ## this array is now automatically build from the file system using the
 ## language_info file in each subdirectory of /lan/
 $LANGUAGES = array(
-"nl"=> array("Dutch ","iso-8859-1"," iso-8859-1, windows-1252 "),
-"de" => array("Deutsch ","iso-8859-1","iso-8859-1, windows-1252 "),
-"en" => array("English ","iso-8859-1","iso-8859-1, windows-1252 "),
-"es"=>array("espa&ntilde;ol","iso-8859-1","iso-8859-1, windows-1252"),
+"nl"=> array("Dutch ","UTF-8"," UTF-8, windows-1252 "),
+"de" => array("Deutsch ","UTF-8","UTF-8, windows-1252 "),
+"en" => array("English ","UTF-8","UTF-8, windows-1252 "),
+"es"=>array("espa&ntilde;ol","UTF-8","UTF-8, windows-1252"),
 #"fa" => array('Persian','utf-8','utf-8'),
-"fr"=>array("fran&ccedil;ais ","iso-8859-1","iso-8859-1, windows-1252 "),
-"pl"=>array("Polish ","iso-8859-2","iso-8859-2"),
-"pt-br"=>array("portugu&ecirc;s ","iso-8859-1","iso-8859-1, windows-1252"),
+"fr"=>array("fran&ccedil;ais ","UTF-8","UTF-8, windows-1252 "),
+"pl"=>array("Polish ","UTF-8","UTF-8"),
+"pt-br"=>array("portugu&ecirc;s ","UTF-8","UTF-8, windows-1252"),
 "zh-tw" => array("Traditional Chinese","utf-8","utf-8"),
 'cn' => array('Simplified Chinese',"utf-8","utf-8"),
 "vi" => array("Vietnamese","utf-8","utf-8"),
@@ -59,7 +59,9 @@ while ($lancode = readdir($d)) {
     $lines = explode("\n",$lan_info);
     $lan = array();
     foreach ($lines as $line) {
-      if (preg_match('/(\w+)=([\w&; \-\(\)]+)/',$line,$regs)) {
+      // use utf8 matching
+      if (preg_match('/(\w+)=([\p{L}\p{N}&; \-\(\)]+)/u',$line,$regs)) {
+#      if (preg_match('/(\w+)=([\w&; \-\(\)]+)/',$line,$regs)) {
 #      if (preg_match('/(\w+)=(.+)/',$line,$regs)) {
         $lan[$regs[1]] = $regs[2];
       }

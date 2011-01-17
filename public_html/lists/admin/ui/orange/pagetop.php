@@ -20,7 +20,7 @@
 <meta name="Author" content="Michiel Dethmers - http://www.phplist.com" />
 <meta name="Copyright" content="Michiel Dethmers, Tincan Ltd - http://tincan.co.uk" />
 <meta name="Powered-By" content="phplist version <?php echo VERSION?>" />
-<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $GLOBALS['strCharSet']?>" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link rel="SHORTCUT ICON" href="./images/phplist.ico" />
 <link href="ui/orange/styles/phplist.css" type="text/css" rel="stylesheet" />
 <link href="ui/orange/styles/jquery-ui-1.8.1.all.css" rel="stylesheet" type="text/css"/>

@@ -63,7 +63,9 @@ if (isset($_POST["save"]) || isset($_POST["activate"]) || isset($_POST["deactiva
      // $required = $attr_required[$att];
       $default = $_POST['attr_default'][$att];
       ## rather crude sanitisation
-      $default = preg_replace('/[^\w -\.]+/','',$default);
+      //      $default = preg_replace('/[^\w -\.]+/','',$default);
+      // use unicode matching to keep non-ascii letters
+      $default = preg_replace('/[^\p{L} -\.]+/u','',$default);
       $order = sprintf('%d',$_POST['attr_listorder'][$att]);
       $required = !empty($_POST['attr_required'][$att]);
 //END BUGFIX 15285 - note 50677 (part 1)     

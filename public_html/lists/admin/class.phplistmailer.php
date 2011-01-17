@@ -48,7 +48,7 @@ class PHPlistMailer extends PHPMailer {
       $this->destinationemail = $email;
       $this->SingleTo = false;
 
-      $this->CharSet = getConfig("html_charset");
+      $this->CharSet =  'UTF-8';# getConfig("html_charset");
       if (defined('PHPMAILERPORT')) {
         $this->Port = PHPMAILERPORT;
       }
@@ -70,7 +70,7 @@ class PHPlistMailer extends PHPMailer {
          #  logEvent('Sending via mail');
        #  $this->Mailer = "mail";
       # $this->IsSendmail();
-         $this->CharSet = getConfig("text_charset");
+         $this->CharSet =  'UTF-8';#getConfig("text_charset");
          $this->isMail();
       }
 

@@ -1352,14 +1352,14 @@ function precacheMessage($messageid,$forwardContent = 0) {
   }
 
   ## @@ put this here, so it can become editable per email sent out at a later stage
-  $cached[$messageid]["html_charset"] = getConfig("html_charset");
+  $cached[$messageid]["html_charset"] = 'UTF-8';#getConfig("html_charset");
   ## @@ need to check on validity of charset
   if (!$cached[$messageid]["html_charset"]) {
-    $cached[$messageid]["html_charset"] = 'iso-8859-1';
+    $cached[$messageid]["html_charset"] = 'UTF-8';#'iso-8859-1';
   }
-  $cached[$messageid]["text_charset"] = getConfig("text_charset");
+  $cached[$messageid]["text_charset"] =  'UTF-8';#getConfig("text_charset");
   if (!$cached[$messageid]["text_charset"]) {
-    $cached[$messageid]["text_charset"] = 'iso-8859-1';
+    $cached[$messageid]["text_charset"] =  'UTF-8';#'iso-8859-1';
   }
     
   ## if we are sending a URL that contains user attributes, we cannot pre-parse the message here

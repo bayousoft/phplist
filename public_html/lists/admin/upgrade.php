@@ -385,6 +385,34 @@ if (isset($_GET["doit"]) && $_GET["doit"] == 'yes') {
   }
   Sql_Query(sprintf('delete from %s where page = "all" or page = "none"',$GLOBALS['tables']['task']));
 
+  ## convert to UTF8
+  $dbname = $GLOBALS["database_name"];
+  if (!empty($dbname)) {
+    ## the conversion complains about a key length
+    Sql_Query(sprintf('alter table '.$GLOBALS['tables']['user_blacklist_data'].' change column email email varchar(150) not null unique'));
+
+    Sql_Query('use information_schema');
+    $req = Sql_Query('select * from columns where table_schema = "'.$dbname.'" and CHARACTER_SET_NAME != "utf8"');
+
+    $columns = array();
+    $tables = array();
+    while ($row = Sql_Fetch_Assoc($req)) {
+      $columns[] = $row;
+      $tables[$row['TABLE_NAME']] = $row['TABLE_NAME'];
+    }
+
+    Sql_Query('use '.$dbname);
+
+    foreach ($tables as $table) {
+      Sql_Query(sprintf('alter table %s charset utf8',$table));
+    }
+
+    foreach ($columns as $column) {
+      Sql_Query(sprintf('alter table %s change column %s %s %s character set utf8',
+        $column['TABLE_NAME'],$column['COLUMN_NAME'],$column['COLUMN_NAME'],$column['COLUMN_TYPE']));
+    }  
+  }
+
   # mark the database to be our current version
   if ($success) {
     SaveConfig("version",VERSION,0);

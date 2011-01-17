@@ -7,6 +7,12 @@ $GLOBALS["pagestats"] = array();
 $GLOBALS["pagestats"]["time_start"] = $now["sec"] * 1000000 + $now["usec"];
 $GLOBALS["pagestats"]["number_of_queries"] = 0;
 
+iconv_set_encoding("input_encoding", "UTF-8");
+iconv_set_encoding("internal_encoding", "UTF-8");
+iconv_set_encoding("output_encoding", "UTF-8");
+
+mb_internal_encoding("UTF-8");
+
 $IsCommandlinePlugin = '';
 $zlib_compression = ini_get('zlib.output_compression');
 # hmm older versions of PHP don't have this, but then again, upgrade php instead?

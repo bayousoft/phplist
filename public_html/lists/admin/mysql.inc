@@ -45,9 +45,9 @@ function Sql_Connect($host,$user,$password,$database) {
     print "Cannot connect to Database, please check your configuration";
     exit;
   }
-  if (strcasecmp($GLOBALS['strCharSet'], 'utf-8') == 0) {
+#  if (strcasecmp($GLOBALS['strCharSet'], 'utf-8') == 0) {
     mysql_query ("SET NAMES 'utf8'");
-  }
+#  }
   unset($GLOBALS['lastquery']);
   return $db;
 }
@@ -312,7 +312,7 @@ function Sql_create_Table ($table,$structure) {
   }
   # get rid of the last ,
   $query = substr($query,0,-1);
-  $query .= "\n)";
+  $query .= "\n) default character set utf8";
   # submit it to the database
   $res = Sql_Query($query);
 }
