@@ -7,14 +7,15 @@ $GLOBALS["pagestats"] = array();
 $GLOBALS["pagestats"]["time_start"] = $now["sec"] * 1000000 + $now["usec"];
 $GLOBALS["pagestats"]["number_of_queries"] = 0;
 
-## check these on existence
-/*
-iconv_set_encoding("input_encoding", "UTF-8");
-iconv_set_encoding("internal_encoding", "UTF-8");
-iconv_set_encoding("output_encoding", "UTF-8");
+if (function_exists('iconv_set_encoding')) {
+  iconv_set_encoding("input_encoding", "UTF-8");
+  iconv_set_encoding("internal_encoding", "UTF-8");
+  iconv_set_encoding("output_encoding", "UTF-8");
+}
 
-mb_internal_encoding("UTF-8");
-*/
+if (function_exists('mb_internal_encoding')) {
+  mb_internal_encoding("UTF-8");
+}
 
 $IsCommandlinePlugin = '';
 $zlib_compression = ini_get('zlib.output_compression');
