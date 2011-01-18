@@ -394,22 +394,22 @@ if (isset($_GET["doit"]) && $_GET["doit"] == 'yes') {
     Sql_Query('use information_schema');
     $req = Sql_Query('select * from columns where table_schema = "'.$dbname.'" and CHARACTER_SET_NAME != "utf8"');
 
-    $columns = array();
-    $tables = array();
+    $dbcolumns = array();
+    $dbtables = array();
     while ($row = Sql_Fetch_Assoc($req)) {
-      $columns[] = $row;
-      $tables[$row['TABLE_NAME']] = $row['TABLE_NAME'];
+      $dbcolumns[] = $row;
+      $dbtables[$row['TABLE_NAME']] = $row['TABLE_NAME'];
     }
 
     Sql_Query('use '.$dbname);
 
-    foreach ($tables as $table) {
-      Sql_Query(sprintf('alter table %s charset utf8',$table));
+    foreach ($dbtables as $dbtable) {
+      Sql_Query(sprintf('alter table %s charset utf8',$dbtable));
     }
 
-    foreach ($columns as $column) {
+    foreach ($dbcolumns as $dbcolumn) {
       Sql_Query(sprintf('alter table %s change column %s %s %s character set utf8',
-        $column['TABLE_NAME'],$column['COLUMN_NAME'],$column['COLUMN_NAME'],$column['COLUMN_TYPE']));
+        $dbcolumn['TABLE_NAME'],$dbcolumn['COLUMN_NAME'],$dbcolumn['COLUMN_NAME'],$dbcolumn['COLUMN_TYPE']));
     }  
   }
 
