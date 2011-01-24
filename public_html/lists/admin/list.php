@@ -17,7 +17,7 @@ $actionresult = '';
 
 ## quick DB fix
 if (!Sql_Table_Column_Exists($tables['list'],'category')) {
-  Sql_Query('alter table '.$tables['list'].' add column category varchar(255) default ""');
+  Sql_Query('alter table '.$tables['list'].' add column category varchar(255) default ""',1);
 }
 
 if (isset($_POST['listorder']) && is_array($_POST['listorder']))
