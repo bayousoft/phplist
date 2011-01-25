@@ -22,7 +22,12 @@ function output ($message) {
     ob_start();
   } else {
     print $message;
+    # output some stuff to make sure it's not buffered in the browser, hmm, would be nice to find a better way for this
+    for ($i=0;$i<10000; $i++) {
+      print '  '."\n";
+    }
     flush();
+    @ob_end_flush();
   }
   flush();
 }
@@ -57,14 +62,7 @@ if (isset($_GET["doit"]) && $_GET["doit"] == 'yes') {
   # upgrade depending on old version
 #  $dbversion = ereg_replace("-dev","",$dbversion);
 
-  # output some stuff to make sure it's not buffered in the browser
-  for ($i=0;$i<10000; $i++) {
-    print '  '."\n";
-  }
   output( '<p class="information">'.$GLOBALS['I18N']->get('Please wait, upgrading your database, do not interrupt').'</p>');
-  for ($i=0;$i<10000; $i++) {
-    print '  '."\n";
-  }
 
   flush();
 
@@ -385,6 +383,8 @@ if (isset($_GET["doit"]) && $_GET["doit"] == 'yes') {
   }
   Sql_Query(sprintf('delete from %s where page = "all" or page = "none"',$GLOBALS['tables']['task']));
 
+error_reporting(E_ALL);
+ini_set('display_errors',1);
   ## convert to UTF8
   $dbname = $GLOBALS["database_name"];
   if (!empty($dbname)) {
@@ -397,21 +397,32 @@ if (isset($_GET["doit"]) && $_GET["doit"] == 'yes') {
     $dbcolumns = array();
     $dbtables = array();
     while ($row = Sql_Fetch_Assoc($req)) {
-      $dbcolumns[] = $row;
-      $dbtables[$row['TABLE_NAME']] = $row['TABLE_NAME'];
+      ## make sure to only change our own tables, in case we share with other applications
+      if (in_array($row['TABLE_NAME'],array_values($GLOBALS['tables']))) {
+        $dbcolumns[] = $row;
+        $dbtables[$row['TABLE_NAME']] = $row['TABLE_NAME'];
+      }
     }
 
     Sql_Query('use '.$dbname);
 
+    output($GLOBALS['I18N']->get('Upgrading the database to use UTF-8, please wait').'<br/>');
     foreach ($dbtables as $dbtable) {
-      Sql_Query(sprintf('alter table %s charset utf8',$dbtable));
+      set_time_limit(600);
+      output($GLOBALS['I18N']->get('Upgrading table ').' '.$dbtable.'<br/>');
+      Sql_Verbose_Query(sprintf('alter table %s default charset utf8',$dbtable),1);
     }
 
     foreach ($dbcolumns as $dbcolumn) {
-      Sql_Query(sprintf('alter table %s change column %s %s %s character set utf8',
-        $dbcolumn['TABLE_NAME'],$dbcolumn['COLUMN_NAME'],$dbcolumn['COLUMN_NAME'],$dbcolumn['COLUMN_TYPE']));
-    }  
+      set_time_limit(600);
+      output($GLOBALS['I18N']->get('Upgrading column ').' '.$dbcolumn['COLUMN_NAME'].'<br/>');
+      Sql_Query(sprintf('alter table %s change column %s %s %s default character set utf8',
+        $dbcolumn['TABLE_NAME'],$dbcolumn['COLUMN_NAME'],$dbcolumn['COLUMN_NAME'],$dbcolumn['COLUMN_TYPE']),1);
+    }
+    output($GLOBALS['I18N']->get('upgrade to UTF-8, done').'<br/>');
   }
+
+
 
   # mark the database to be our current version
   if ($success) {

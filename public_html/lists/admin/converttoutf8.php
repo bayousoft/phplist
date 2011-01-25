@@ -15,13 +15,20 @@ $req = Sql_Query('select * from columns where table_schema = "'.$dbname.'" and C
 $columns = array();
 $tables = array();
 while ($row = Sql_Fetch_Assoc($req)) {
-  $columns[] = $row;
-  $tables[$row['TABLE_NAME']] = $row['TABLE_NAME'];
+  ## make sure to only touch our own tables, in case we share with other applications
+  if (in_array($row['TABLE_NAME'],array_values($GLOBALS['tables']))) {
+    $columns[] = $row;
+    $tables[$row['TABLE_NAME']] = $row['TABLE_NAME'];
+  }
 #  var_dump($row);
 }
 
 ## this would be nice, but isn't allowed
 #Sql_query('update columns set CHARACTER_SET_NAME = "utf8" where table_schema = "icarchivesdb" and CHARACTER_SET_NAME = "latin1"');
+
+if (sizeof($tables) == 0) {
+  print $GLOBALS['I18N']->get('No tables to process, your database has probably been converted already');
+}
 
 Sql_Query('use '.$dbname);
 
