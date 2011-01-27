@@ -40,7 +40,11 @@ class PHPlistMailer extends PHPMailer {
       $this->addCustomHeader("X-Mailer: phplist v".VERSION);
       $this->addCustomHeader("X-MessageID: $messageid");
       $this->addCustomHeader("X-ListMember: $email");
-      $this->addCustomHeader("Precedence: bulk");
+
+      ## amazon SES doesn't like this
+      if (!USE_AMAZONSES) {
+        $this->addCustomHeader("Precedence: bulk");
+      }
       $newwrap = getConfig("wordwrap");
       if ($newwrap) {
         $this->WordWrap = $newwrap;
@@ -78,7 +82,10 @@ class PHPlistMailer extends PHPMailer {
 
       if ($GLOBALS["message_envelope"]) {
         $this->Sender = $GLOBALS["message_envelope"];
-        $this->addCustomHeader("Errors-To: ".$GLOBALS["message_envelope"]);
+        ## don't use with Amazon SES
+        if (!USE_AMAZONSES) {
+          $this->addCustomHeader("Errors-To: ".$GLOBALS["message_envelope"]);
+        }
 
 ## one to work on at a later stage
 #        $this->addCustomHeader("Return-Receipt-To: ".$GLOBALS["message_envelope"]);
@@ -181,7 +188,7 @@ class PHPlistMailer extends PHPMailer {
         # when developing
         $this->AddAddress($GLOBALS["developer_email"]);
         if ($GLOBALS["developer_email"] != $to_addr) {
-          $this->Body = 'Originally to: '.$to_addr."\n\n".$this->Body;
+          $this->Body = 'X-Originally to: '.$to_addr."\n\n".$this->Body;
         }
       } else {
         $this->AddAddress($to_addr);
@@ -415,23 +422,107 @@ class PHPlistMailer extends PHPMailer {
       return chunk_split($path, 76, $this->LE);
     }
 
+    function AmazonSESSend($messageheader,$messagebody) {
+
+      $messageheader = preg_replace('/'.$this->LE.'$/','',$messageheader);
+      $messageheader .= $this->LE."Subject: ".$this->EncodeHeader($this->Subject).$this->LE;
+/*
+      print nl2br(htmlspecialchars($messageheader));
+
+      exit;
+*/
+   
+      $date = date('r');
+      $aws_signature = base64_encode(hash_hmac('sha256',$date,AWS_SECRETKEY,true));
+      
+      $requestheader = array(
+        'Host: email.us-east-1.amazonaws.com',
+        'Content-Type: application/x-www-form-urlencoded',
+        'Date: '. $date,
+        'X-Amzn-Authorization: AWS3-HTTPS AWSAccessKeyId='.AWS_ACCESSKEYID.',Algorithm=HMACSHA256,Signature='.$aws_signature,
+      );
+      
+/*
+ *    using the SendEmail call
+      $requestdata = array(
+        'Action' => 'SendEmail',
+        'Source' => $this->Sender,
+        'Destination.ToAddresses.member.1' => $this->destinationemail,
+        'Message.Subject.Data' => $this->Subject,
+        'Message.Body.Text.Data' => $messagebody,
+      );
+*/
+ #     print '<hr/>Rawmessage '.nl2br(htmlspecialchars($messageheader. $this->LE. $this->LE.$messagebody));
+
+      $rawmessage = base64_encode($messageheader. $this->LE.$messagebody);
+  #   $rawmessage = str_replace('=','',$rawmessage);
+
+      $requestdata = array(
+        'Action' => 'SendRawEmail',
+        'Destinations.member.1' => $this->destinationemail,
+        'RawMessage.Data' => $rawmessage,
+      );
+
+      $header = '';
+      foreach ($requestheader as $param) {
+        $header .= $param.$this->LE;
+      }
+
+      $curl = curl_init();
+      curl_setopt($curl, CURLOPT_URL, AWS_POSTURL);
+      curl_setopt($curl, CURLOPT_TIMEOUT, 30);
+      curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+      curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE); 
+      curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+      curl_setopt($curl, CURLOPT_HTTPHEADER,$requestheader);
+  #    print('<br/>Sending header '.htmlspecialchars($header).'<hr/>');
+      
+      curl_setopt($curl, CURLOPT_HEADER, 1);
+      curl_setopt($curl, CURLOPT_DNS_USE_GLOBAL_CACHE, TRUE); 
+      curl_setopt($curl, CURLOPT_USERAGENT,NAME." (phpList version ".VERSION.", http://www.phplist.com/)");
+      curl_setopt($curl, CURLOPT_POST, 1);
+
+          ## this generates multipart/form-data, and that crashes the API, so don't use
+    #      curl_setopt($curl, CURLOPT_POSTFIELDS, $parameters);
+
+      $data = '';
+      foreach ($requestdata as $param => $value) {
+        $data .= $param.'='.urlencode($value).'&';
+      }
+      $data = substr($data,0,-1);
+  #    print('Sending data '.htmlspecialchars($data).'<hr/>');
+      curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+        
+      $res = curl_exec($curl);
+      $status = curl_getinfo($curl,CURLINFO_HTTP_CODE);
+  #    print('Curl status '.$status);
+      logEvent('Amazon SES status '.$status.' '.strip_tags($res));
+      curl_close($curl);
+ #     print('Got remote admin response '.htmlspecialchars($res).'<br/>');
+      return $status == 200;
+    }
+
     function MailSend($header, $body) {
       $this->mailsize = strlen($header.$body);
-     
+
+      ## use Amazon, if set up
+      if (USE_AMAZONSES) {
+        return $this->AmazonSESSend($header,$body);
+      }
+
       ## we don't really use multiple to's so pass that on to phpmailer, if there are any
       if (!$this->SingleTo || !USE_LOCAL_SPOOL) {
 #output('Not single or not spool');
         return parent::MailSend($header,$body);
       }
       if (!is_dir(USE_LOCAL_SPOOL) || !is_writable(USE_LOCAL_SPOOL)) {
-#output('Not writable spool: '.USE_LOCAL_SPOOL);
         ## if local spool is not set, send the normal way
         return parent::MailSend($header,$body);
       }
       if (empty($GLOBALS['developer_email'])) {
         $header .= "To: ".$this->destinationemail.$this->LE;
       } else {
-        $header .= 'Originally-To: '.$this->destinationemail.$this->LE;
+        $header .= 'X-Originally-To: '.$this->destinationemail.$this->LE;
         $header .= 'To: '.$GLOBALS['developer_email'].$this->LE;
       }
       $header .= "Subject: ".$this->EncodeHeader($this->Subject).$this->LE;
@@ -441,4 +532,6 @@ class PHPlistMailer extends PHPMailer {
       file_put_contents($fname.'.S',$this->Sender);
       return true;
     }
+
+    
 }

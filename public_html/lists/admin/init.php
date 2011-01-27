@@ -148,6 +148,7 @@ if (!defined('SENDPROCESS_ID')) define('SENDPROCESS_ID','');
 if (!defined('PHPMAILER_PATH')) define ('PHPMAILER_PATH',dirname(__FILE__) . '/PHPMailer_v5.1/class.phpmailer.php');
 if (!defined('DB_TRANSLATION')) define('DB_TRANSLATION',0);
 if (!defined('ALLOW_DELETEBOUNCE')) define('ALLOW_DELETEBOUNCE',1);
+define('USE_AMAZONSES',defined('AWS_ACCESSKEYID') && AWS_ACCESSKEYID);
 # check whether Pear HTTP/Request is available
 @include_once "HTTP/Request.php";
 $GLOBALS['has_pear_http_request'] = class_exists('HTTP_Request');
