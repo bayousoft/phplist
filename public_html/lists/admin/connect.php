@@ -808,7 +808,7 @@ function topMenu() {
     if (
       $category == 'hide' ||
       ($category == 'develop' && DEVVERSION)
-   #   || count($categoryDetails['menulinks']) == 0
+      || count($categoryDetails['menulinks']) == 0
       ) 
       continue;
     
