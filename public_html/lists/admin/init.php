@@ -149,6 +149,8 @@ if (!defined('PHPMAILER_PATH')) define ('PHPMAILER_PATH',dirname(__FILE__) . '/P
 if (!defined('DB_TRANSLATION')) define('DB_TRANSLATION',0);
 if (!defined('ALLOW_DELETEBOUNCE')) define('ALLOW_DELETEBOUNCE',1);
 define('USE_AMAZONSES',defined('AWS_ACCESSKEYID') && AWS_ACCESSKEYID && function_exists('curl_init'));
+if (!defined('AWS_POSTURL')) define('AWS_POSTURL','https://email.us-east-1.amazonaws.com/');
+
 # check whether Pear HTTP/Request is available
 @include_once "HTTP/Request.php";
 $GLOBALS['has_pear_http_request'] = class_exists('HTTP_Request');
