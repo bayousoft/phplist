@@ -144,6 +144,7 @@ if (!defined('ENCRYPT_ADMIN_PASSWORDS')) define('ENCRYPT_ADMIN_PASSWORDS',0);
 if (!defined('PASSWORD_CHANGE_TIMEFRAME')) define('PASSWORD_CHANGE_TIMEFRAME','1 day');
 if (!defined('MAX_SENDPROCESSES')) define('MAX_SENDPROCESSES',1);
 if (!defined('SENDPROCESS_ID')) define('SENDPROCESS_ID','');
+if (!defined('CHECK_REFERRER')) define('CHECK_REFERRER',true);
 # if (!defined('PHPMAILER_PATH')) define ('PHPMAILER_PATH',dirname(__FILE__) . '/phpmailer/class.phpmailer.php');
 if (!defined('PHPMAILER_PATH')) define ('PHPMAILER_PATH',dirname(__FILE__) . '/PHPMailer_v5.1/class.phpmailer.php');
 if (!defined('DB_TRANSLATION')) define('DB_TRANSLATION',0);
