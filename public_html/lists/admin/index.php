@@ -145,6 +145,14 @@ if ($GLOBALS["commandline"]) {
     clineUsage(" [other parameters]");
     exit;
   }
+} else {
+  if (CHECK_REFERRER && isset($_SERVER['HTTP_REFERER'])) {
+    ## do a crude check on referrer. Won't solve everything, as it can be faked, but shouldn't hurt
+    $ref = parse_url($_SERVER['HTTP_REFERER']);
+    if ($ref['host'] != $_SERVER['HTTP_HOST']) {
+      print 'Access denied';exit;
+    }
+  }
 }
 
 # fix for old PHP versions, although not failsafe :-(
