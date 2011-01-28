@@ -235,6 +235,8 @@ class PHPlistMailer extends PHPMailer {
       while(list($key,) = each($this->image_types)) {
         $extensions[] = $key;
       }
+      $html_images = array();
+      $filesystem_images = array();
 
       preg_match_all('/"([^"]+\.('.implode('|', $extensions).'))"/Ui', $this->Body, $images);
 
@@ -365,19 +367,25 @@ class PHPlistMailer extends PHPMailer {
 
     function get_filesystem_image($filename) {
       ## get the image contents
-      $localfile = urldecode($filename);
+      $localfile = basename(urldecode($filename));
  #     print '<h3>'.$localfile.'</h3>';
       if (defined('UPLOADIMAGES_DIR')) {
  #       print 'UPLOAD';
-        $docroot = getConfig('docroot');
-        if (is_file($docroot.$localfile)) {
-          return base64_encode( file_get_contents($docroot.$localfile));
+        $imageroot = getConfig('uploadimageroot');
+        if (is_file($imageroot.$localfile)) {
+          return base64_encode( file_get_contents($imageroot.$localfile));
         } else {
           if (is_file($_SERVER['DOCUMENT_ROOT'].$localfile)) {
             ## save the document root to be able to retrieve the file later from commandline
-            SaveConfig("docroot",$_SERVER['DOCUMENT_ROOT'],0,1);
+            SaveConfig("uploadimageroot",$_SERVER['DOCUMENT_ROOT'],0,1);
             return base64_encode( file_get_contents($_SERVER['DOCUMENT_ROOT'].$localfile));
-          }
+          } elseif (is_file($_SERVER['DOCUMENT_ROOT'].'/'.UPLOADIMAGES_DIR.'/image/'.$localfile)) {
+            SaveConfig("uploadimageroot",$_SERVER['DOCUMENT_ROOT'].'/'.UPLOADIMAGES_DIR.'/image/',0,1);
+            return base64_encode( file_get_contents($_SERVER['DOCUMENT_ROOT'].'/'.UPLOADIMAGES_DIR.'/image/'.$localfile));
+          } elseif (is_file($_SERVER['DOCUMENT_ROOT'].'/'.UPLOADIMAGES_DIR.'/'.$localfile)) {
+            SaveConfig("uploadimageroot",$_SERVER['DOCUMENT_ROOT'].'/'.UPLOADIMAGES_DIR.'/',0,1);
+            return base64_encode( file_get_contents($_SERVER['DOCUMENT_ROOT'].'/'.UPLOADIMAGES_DIR.'/'.$localfile));
+          } 
         }
       } elseif (is_file($_SERVER['DOCUMENT_ROOT'].$GLOBALS['pageroot'].'/'.FCKIMAGES_DIR.'/'.$localfile)) {
         $elements = parse_url($filename);
