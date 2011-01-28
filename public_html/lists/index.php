@@ -65,11 +65,14 @@ if (isset($_GET['id'])) {
 } else {
   $id = 0;
 }
-// What is id,
-// What is uid
-// What is userid
-// Why is there GET(id) and REQUEST(id)?
-## who's asking MD
+
+// What is id - id of subscribe page
+// What is uid - uid of subscriber
+// What is userid - userid of subscriber
+
+$userid = "";
+$userpassword = "";
+$emailcheck = "";
 
 if (isset($_GET['uid']) && $_GET["uid"]) {
   $query
@@ -82,37 +85,35 @@ if (isset($_GET['uid']) && $_GET["uid"]) {
   $userid = $req[1];
   $userpassword = $req[2];
   $emailcheck = $req[3];
-} elseif (isset($_GET["email"])) {
-  $req = Sql_Fetch_Row_Query(sprintf('select subscribepage,id,password,email from %s where email = "%s"',
-    $tables["user"],$_GET["email"]));
-  $id = $req[0];
-  $userid = $req[1];
-  $userpassword = $req[2];
-  $emailcheck = $req[3];
-} elseif (isset($_REQUEST["unsubscribeemail"])) {
-  $query
-  = ' select subscribepage, id, password, email'
-  . ' from ' . $tables['user']
-  . ' where email = ?';
-  $rs = Sql_Query_Params($query, array($_REQUEST['unsubscribeemail']));
-  $req = Sql_Fetch_Row($rs);
-  $id = $req[0];
-  $userid = $req[1];
-  $userpassword = $req[2];
-  $emailcheck = $req[3];
-/*
-} elseif ($_SESSION["userloggedin"] && $_SESSION["userid"]) {
-  $req = Sql_Fetch_Row_Query(sprintf('select subscribepage,id,password,email from %s where id = %d',
-    $tables["user"],$_SESSION["userid"]));
-  $id = $req[0];
-  $userid = $req[1];
-  $userpassword = $req[2];
-  $emailcheck = $req[3];
-*/
-} else {
-  $userid = "";
-  $userpassword = "";
-  $emailcheck = "";
+} elseif ($_GET['p'] == 'subscribe' || $_GET['p'] == 'unsubscribe' || $_GET['p'] == 'blacklist') {
+  if (isset($_GET["email"])) {
+    $req = Sql_Fetch_Row_Query(sprintf('select subscribepage,id,password,email from %s where email = "%s"',
+      $tables["user"],$_GET["email"]));
+    $id = $req[0];
+    $userid = $req[1];
+    $userpassword = $req[2];
+    $emailcheck = $req[3];
+  } elseif (isset($_REQUEST["unsubscribeemail"])) {
+    $query
+    = ' select subscribepage, id, password, email'
+    . ' from ' . $tables['user']
+    . ' where email = ?';
+    $rs = Sql_Query_Params($query, array($_REQUEST['unsubscribeemail']));
+    $req = Sql_Fetch_Row($rs);
+    $id = $req[0];
+    $userid = $req[1];
+    $userpassword = $req[2];
+    $emailcheck = $req[3];
+  /*
+  } elseif ($_SESSION["userloggedin"] && $_SESSION["userid"]) {
+    $req = Sql_Fetch_Row_Query(sprintf('select subscribepage,id,password,email from %s where id = %d',
+      $tables["user"],$_SESSION["userid"]));
+    $id = $req[0];
+    $userid = $req[1];
+    $userpassword = $req[2];
+    $emailcheck = $req[3];
+  */
+  }
 }
 
 if (isset($_REQUEST['id']) && $_REQUEST["id"]){
