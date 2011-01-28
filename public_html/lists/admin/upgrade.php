@@ -337,6 +337,9 @@ if (isset($_GET["doit"]) && $_GET["doit"] == 'yes') {
         Sql_Query(sprintf('alter table %s add column requeueinterval integer default 0',$tables['message']));
         Sql_Query(sprintf('alter table %s add column requeueuntil datetime',$tables['message']));
       }
+      if ($minor < 11 || ($minor == 11 && $sub < 7)) {
+        Sql_Create_Table($tables["admintoken"],$DBstruct["admintoken"],1);
+      }
       break;
   }
   

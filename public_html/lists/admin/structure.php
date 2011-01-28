@@ -475,6 +475,13 @@ $DBstructuser = array( # order of tables is essential for smooth upgrade
           "bounce" => array("integer not null","Related bounce"),
           "primary key" => array("(regex,bounce)",""),
         ),
+      "admintoken" => array(
+        "id" => array("integer not null primary key auto_increment","ID"),
+        "adminid" => array("integer not null","adminid"),
+        "value" => array('varchar(255)',''),
+        "entered" => array('integer not null',''),
+        "expires" => array('datetime not null',''),
+      ),
   /*    "translation" => array(
         "id" => array("integer not null primary key auto_increment",""),
         "translator" => array("varchar(255)","Name of translator"),

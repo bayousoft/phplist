@@ -203,7 +203,12 @@ function formStart($additional="") {
     isset($p)?'<input type="hidden" name="p" value="'.$p.'" />':"")
     );
 */
-  return $html;
+  $key = md5(time().mt_rand(0,10000));
+  Sql_Query(sprintf('insert into %s (adminid,value,entered,expires) values(%d,"%s",%d,date_add(now(),interval 1 hour))',
+    $GLOBALS['tables']['admintoken'],$_SESSION['logindetails']['id'],$key,time()));
+  $html .= sprintf('<input type="hidden" name="formtoken" value="%s" />',$key);
+  
+	return $html;
 }
 
 function checkAccess($page) {

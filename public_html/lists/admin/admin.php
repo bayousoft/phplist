@@ -31,6 +31,10 @@ if ($noaccess) {
 }
 
 if (!empty($_POST["change"])) {
+  if (!verifyToken()) { ## csrf check, should be added in more places
+    print Error($GLOBALS['I18N']->get('No Access'));
+    return;
+  }
   if (empty($_POST["id"])) {
     # new one
     $result = Sql_query(sprintf('SELECT count(*) FROM %s WHERE namelc="%s"',

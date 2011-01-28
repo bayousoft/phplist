@@ -1167,6 +1167,22 @@ function parseDate($strdate,$format = 'Y-m-d') {
   }
 }
 
+function verifyToken() {
+  if (empty($_POST['formtoken'])) {
+    return false;
+  }
+  $req = Sql_Fetch_Row_Query(sprintf('select id from %s where adminid = %d and value = "%s" and expires > now()',
+    $GLOBALS['tables']['admintoken'],$_SESSION['logindetails']['id'],sql_escape($_POST['formtoken'])));
+  if (empty($req[0])) {
+    return false;
+  }
+  Sql_Query(sprintf('delete from %s where id = %d',
+    $GLOBALS['tables']['admintoken'],$req[0]));
+  Sql_Query(sprintf('delete from %s where expires < now()',
+    $GLOBALS['tables']['admintoken']));
+  return true;
+}
+
 function listCategories() {
 
   $sListCategories = getConfig('list_categories');
