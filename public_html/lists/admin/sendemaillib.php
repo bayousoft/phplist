@@ -823,7 +823,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
         # possibly handled by plugin
         $pl = $GLOBALS['plugins'][$GLOBALS['pluginsendformats'][$cached[$messageid]["sendformat"]]];
         if (is_object($pl) && method_exists($pl,'parseFinalMessage')) {
-          $handled_by_plugin = $pl->parseFinalMessage($cached[$messageid]["sendformat"],$htmlmessage,$textmessage,$mail);
+          $handled_by_plugin = $pl->parseFinalMessage($cached[$messageid]["sendformat"],$htmlmessage,$textmessage,$mail,$messageid);
         }
       }
 
