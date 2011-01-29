@@ -218,6 +218,7 @@ class phplistPlugin {
     # parameters: none
     # returns array of "shorttag" => "description" of possible formats this plugin can provide
     # this will be listed in the "Send As" list of radio buttons, so that an editor can choose the format
+    # prefix the shorttag with _ to suppress it from the send page (for internal use)
     return array ();
   }
 
@@ -291,7 +292,7 @@ class phplistPlugin {
     return $email;
   }
 
-  function parseFinalMessage($sendformat, $htmlmessage, $textmessage, & $mail) {
+  function parseFinalMessage($sendformat, $htmlmessage, $textmessage, & $mail,$messageid) {
     ## parseFinalMessage
     # purpose: create the actual message, based on the text and html content as prepared by phplist
     # parameters:
@@ -389,6 +390,14 @@ class phplistPlugin {
   function messageQueued($id) {
   }
 
+  /* messageReQueued
+   * called when a message is placed back in the queue
+   * @param integer id message id
+   * @return null
+   */
+
+  function messageReQueued($id) {
+  }
   /* messageQueueFinished
    * called when a sending of the queue has finished
    * @return null
