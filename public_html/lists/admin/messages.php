@@ -124,10 +124,14 @@ if (isset($_GET['resend'])) {
   # only send it again to users, if we are testing, otherwise only to new users
   if (TEST)
     $result = Sql_query("delete from ${tables['usermessage']} where messageid = $resend");
-  if ($suc6)
+  if ($suc6) {
     $action_result .=  "... ".$GLOBALS['I18N']->get("Done");
-  else
+    foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
+      $plugin->messageReQueued($resend);
+    }
+  } else {
     $action_result .=  "... ".$GLOBALS['I18N']->get("failed");
+  }
   $action_result .=  '<br /><hr /><br />';
 }
 
