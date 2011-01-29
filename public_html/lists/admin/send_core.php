@@ -694,13 +694,15 @@ if (!$done) {
 //  $formatting_content .= $_POST["sendformat"]=="text and HTML" || !isset($_POST["sendformat"]) ?"checked":"";
 //  $formatting_content .= '/>';
 
-  foreach ($GLOBALS['plugins'] as $plugin) {
+  foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
     $plugins_sendformats = $plugin->sendFormats();
     if (is_array($plugins_sendformats) && sizeof($plugins_sendformats)) {
       foreach ($plugins_sendformats as $val => $desc) {
         $val = preg_replace("/\W/",'',strtolower(trim($val)));
-        $formatting_content .= sprintf('%s <input type="radio" name="sendformat" value="%s" %s />',
-          $desc,$val, $messagedata["sendformat"]==$val?'checked="checked"':'');
+        if ($val[0] != '_') { ## allow a plugin to add a format that is not actually displayed
+          $formatting_content .= sprintf('%s <input type="radio" name="sendformat" value="%s" %s />',
+            $desc,$val, $messagedata["sendformat"]==$val?'checked="checked"':'');
+        }
       }
     }
   }
