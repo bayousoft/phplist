@@ -386,8 +386,6 @@ if (isset($_GET["doit"]) && $_GET["doit"] == 'yes') {
   }
   Sql_Query(sprintf('delete from %s where page = "all" or page = "none"',$GLOBALS['tables']['task']));
 
-error_reporting(E_ALL);
-ini_set('display_errors',1);
   ## convert to UTF8
   $dbname = $GLOBALS["database_name"];
   if (!empty($dbname)) {
