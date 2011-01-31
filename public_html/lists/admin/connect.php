@@ -819,7 +819,8 @@ function topMenu() {
     if (
       $category == 'hide' ||
       ($category == 'develop' && DEVVERSION)
-      || count($categoryDetails['menulinks']) == 0
+      ## hmm, this also suppresses the "dashboard" item
+ #     || count($categoryDetails['menulinks']) == 0
       ) 
       continue;
     
