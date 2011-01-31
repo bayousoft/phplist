@@ -1171,15 +1171,17 @@ function verifyToken() {
   if (empty($_POST['formtoken'])) {
     return false;
   }
+
+  ## @@@TODO for now ignore the error. This will cause a block on editing admins if the table doesn't exist.
   $req = Sql_Fetch_Row_Query(sprintf('select id from %s where adminid = %d and value = "%s" and expires > now()',
-    $GLOBALS['tables']['admintoken'],$_SESSION['logindetails']['id'],sql_escape($_POST['formtoken'])));
+    $GLOBALS['tables']['admintoken'],$_SESSION['logindetails']['id'],sql_escape($_POST['formtoken'])),1);
   if (empty($req[0])) {
     return false;
   }
   Sql_Query(sprintf('delete from %s where id = %d',
-    $GLOBALS['tables']['admintoken'],$req[0]));
+    $GLOBALS['tables']['admintoken'],$req[0]),1);
   Sql_Query(sprintf('delete from %s where expires < now()',
-    $GLOBALS['tables']['admintoken']));
+    $GLOBALS['tables']['admintoken']),1);
   return true;
 }
 
