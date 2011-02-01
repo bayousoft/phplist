@@ -237,6 +237,27 @@ define('USE_SPAM_BLOCK',1);
 # in the configuration set to true
 define('NOTIFY_SPAM',1);
 
+/* 
+=========================================================================
+
+Security
+
+=========================================================================
+
+*/ 
+
+# CHECK REFERRER. Set this to true to activate a check on each request to make sure that
+# the "referrer" in the request is from ourselves. This is not failsafe, as the referrer may
+# not exist, or can be spoofed, but it will help a little
+# it is also possible that it doesn't work with Webservers that are not Apache, we haven't tested that.
+define('CHECK_REFERRER',true);
+
+# if you activate the check above, you can add domain names in this array for those domains
+# that you trust and that can be allowed as well
+# only mention the domain for each.
+# for example: $allowed_referrers = array('mydomain.com','msn.com','yahoo.com','google.com');
+$allowed_referrers = array();
+
 /*
 
 =========================================================================
