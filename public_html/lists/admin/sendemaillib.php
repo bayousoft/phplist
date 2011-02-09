@@ -360,7 +360,11 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 #    $GLOBALS["tables"]["templateimage"],$cached[$messageid]["templateid"]));
 
   if (ALWAYS_ADD_USERTRACK) {
-    $htmlmessage .= '<img src="'.$GLOBALS['scheme'].'://'.$website.$GLOBALS["pageroot"].'/ut.php?u='.$hash.'&m='.$messageid.'" width="1" height="1" border="0" />';
+    if (stripos($htmlmessage,'</body>')) {
+      $htmlmessage = str_replace('</body>','<img src="'.$GLOBALS['scheme'].'://'.$website.$GLOBALS["pageroot"].'/ut.php?u='.$hash.'&m='.$messageid.'" width="1" height="1" border="0" /></body>',$htmlmessage);
+    } else {
+      $htmlmessage .= '<img src="'.$GLOBALS['scheme'].'://'.$website.$GLOBALS["pageroot"].'/ut.php?u='.$hash.'&m='.$messageid.'" width="1" height="1" border="0" />';
+    }
   } else {
     ## can't use str_replace or str_ireplace, because those replace all, and we only want to replace one
     $htmlmessage = preg_replace( '/\[USERTRACK\]/i','<img src="'.$GLOBALS['scheme'].'://'.$website.$GLOBALS["pageroot"].'/ut.php?u='.$hash.'&m='.$messageid.'" width="1" height="1" border="0" />',$htmlmessage,1);
@@ -677,7 +681,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   if (VERBOSE && $getspeedstats) {
     output('cleanup end');
   }
-  $htmlmessage = compressContent($htmlmessage);
+#  $htmlmessage = compressContent($htmlmessage);
 
  # print htmlspecialchars($htmlmessage);exit;
 
