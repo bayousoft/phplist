@@ -505,7 +505,8 @@ class PHPlistMailer extends PHPMailer {
       $status = curl_getinfo($curl,CURLINFO_HTTP_CODE);
   #    print('Curl status '.$status);
       if ($status != 200) {
-        logEvent('Amazon SES status '.$status.' '.strip_tags($res));
+        $error = curl_error($curl);
+        logEvent('Amazon SES status '.$status.' '.strip_tags($res).' '.$error);
       }
       curl_close($curl);
  #     print('Got remote admin response '.htmlspecialchars($res).'<br/>');
