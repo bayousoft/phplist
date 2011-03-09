@@ -1,8 +1,10 @@
 <?php
 
-require '/home/michiel/svn/gchartphp/gChart.php';
+@include 'gchartphp/gChart.php';
 
-$util = new utility();
+if (class_exists('utility')) {
+  $util = new utility();
+}
 
 $systemstats = array(
   array(
@@ -67,7 +69,7 @@ foreach ($systemstats as $item) {
   if (!isset($item['collate'])) $item['collate'] = false;
   
   $req = Sql_Query($item['query']);
-  $ls = new WebblerListing($GLOBALS['I18N']->get($item['name']));
+  $ls = new WebblerListing('');
   $chartData = array();
   $collation = 0;
   while ($row = Sql_Fetch_Assoc($req)) {
@@ -87,7 +89,9 @@ foreach ($systemstats as $item) {
       $ls->addColumn($row['year'],'#',$row['num']);
       $chartData[$row['year']][''] = $row['num'];
     }
-    cl_output($item['name'].'|'.$row['year'].'|'.$row['month'].'|'.$row['num']);
+    if (!empty($row['year']) && !empty($row['month']) && !empty($row['num'])) {
+      cl_output($item['name'].'|'.$row['year'].'|'.$row['month'].'|'.$row['num']);
+    }
   }
 
   unset($chartData['2000']);
@@ -103,43 +107,50 @@ foreach ($systemstats as $item) {
   #unset($chartData['2011']);
 
   #var_dump($chartData);
-  $Chart = new gBarChart(800,350);
-  $max = 0; $min = 99999; $nummonths = 0;
-  $chartData = array_reverse($chartData,true);
-  foreach ($chartData as $year => $months) {
-  /*
-    print "<h3>$year</h3>";
-    var_dump($months);
-  */
-    ksort($months);
-    $Chart->addDataSet(array_values($months));
-    $monthmax = $util->getMaxOfArray($months);
-    if ($monthmax > $max) {
-      $max = $monthmax;
+  if (class_exists('gBarChart')) {
+    $Chart = new gBarChart(800,350);
+    $max = 0; $min = 99999; $nummonths = 0;
+    $chartData = array_reverse($chartData,true);
+    foreach ($chartData as $year => $months) {
+    /*
+      print "<h3>$year</h3>";
+      var_dump($months);
+    */
+      ksort($months);
+      $Chart->addDataSet(array_values($months));
+      $monthmax = $util->getMaxOfArray($months);
+      if ($monthmax > $max) {
+        $max = $monthmax;
+      }
+      $nummonths = sizeof($months);
     }
-    $nummonths = sizeof($months);
+    $Chart->setLegend(array_keys($chartData));
+    #$Chart->setBarWidth(4,1,3);
+    $Chart->setAutoBarWidth();
+    $Chart->setColors(array("ff3344", "11ff11", "22aacc", "3333aa"));
+    $Chart->setVisibleAxes(array('x','y'));
+    $Chart->setDataRange(0,$max);
+    $Chart->addAxisRange(0, 1, $nummonths);
+    $Chart->addAxisRange(1, 0, $max);
+    #$lineChart->addBackgroundFill('bg', 'EFEFEF');
+    #$lineChart->addBackgroundFill('c', '000000');
   }
-  $Chart->setLegend(array_keys($chartData));
-  #$Chart->setBarWidth(4,1,3);
-  $Chart->setAutoBarWidth();
-  $Chart->setColors(array("ff3344", "11ff11", "22aacc", "3333aa"));
-  $Chart->setVisibleAxes(array('x','y'));
-  $Chart->setDataRange(0,$max);
-  $Chart->addAxisRange(0, 1, $nummonths);
-  $Chart->addAxisRange(1, 0, $max);
-  #$lineChart->addBackgroundFill('bg', 'EFEFEF');
-  #$lineChart->addBackgroundFill('c', '000000');
 
   print '<div class="tabbed">';
   print '<h3>'.$GLOBALS['I18N']->get($item['name']).'</h3>';
-  print '<ul>';
-  print '<li><a href="#graph'.$chartCount.'">Graph</a></li>';
-  print '<li><a href="#numbers'.$chartCount.'">Numbers</a></li>';
-  print '</ul>';
-  print '<div id="graph'.$chartCount.'">';
-#  print $Chart->getUrl();
-  print '<img src="./?page=gchart&url='.urlencode($Chart->getUrl()).'" />';
-  print '</div>';
+  if (!empty($Chart)) {
+    print '<ul>';
+    print '<li><a href="#graph'.$chartCount.'">Graph</a></li>';
+    print '<li><a href="#numbers'.$chartCount.'">Numbers</a></li>';
+    print '</ul>';
+  }
+  
+  if (!empty($Chart)) {
+    print '<div id="graph'.$chartCount.'">';
+  #  print $Chart->getUrl();
+    print '<img src="./?page=gchart&url='.urlencode($Chart->getUrl()).'" />';
+    print '</div>';
+  }
   print '<div id="numbers'.$chartCount.'">';
   print $ls->display();
   print '</div>';
