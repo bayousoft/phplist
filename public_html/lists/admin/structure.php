@@ -229,6 +229,7 @@ $DBstructuser = array( # order of tables is essential for smooth upgrade
           "index_2" => array("useridindex (userid)",""),
           "index_3" => array("enteredindex (entered)",""),
           "index_4" => array("statusidx (status)",""),
+          "index_5" => array("viewedidx (viewed)",""),
       ),
       "sendprocess" => array( # keep track of running send processes to avoid to many running concurrently
           "id" => array("integer not null primary key auto_increment","ID"),
@@ -369,6 +370,13 @@ $DBstructuser = array( # order of tables is essential for smooth upgrade
          "added" => array("datetime",""),
          "content" => array("mediumtext",""),
          "index_1" => array("urlindex (url)",""),
+      ),
+      "gchartcache" => array(
+         "url" => array("text not null",""),
+         "lastmodified" => array("timestamp",""),
+         "added" => array("datetime",""),
+         "content" => array("blob",""),
+         "index_1" => array("urlindex (url (1000))",""),
       ),
       # obsoleted table, but may still contain data
   
