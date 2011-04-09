@@ -88,6 +88,13 @@ if (MAILQUEUE_BATCH_PERIOD) {
 if (empty($GLOBALS['commandline'])) {
   $num_per_batch = min($num_per_batch,50);
   $batch_period = max($batch_period,10);
+} elseif (isset($cline['m'])) {
+  $cl_num_per_batch = sprintf('%d',$cline['m']);
+  ## don't block when the param is not a number
+  if (!empty($cl_num_per_batch)) {
+    $num_per_batch = $cl_num_per_batch;
+  }
+  cl_output("Batch set with commandline to $num_per_batch");
 }
 
 $safemode = 0;
@@ -417,7 +424,7 @@ if ($num_messages) {
 
 $script_stage = 2; # we know the messages to process
 #include_once "footer.inc";
-if (!$num_per_batch) {
+if (!isset($num_per_batch)) {
   $num_per_batch = 1000000;
 }
 
