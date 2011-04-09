@@ -150,6 +150,8 @@ if (!defined('PHPMAILER_PATH')) define ('PHPMAILER_PATH',dirname(__FILE__) . '/P
 if (!defined('DB_TRANSLATION')) define('DB_TRANSLATION',0);
 if (!defined('MAX_PROCESS_MESSAGE')) define('MAX_PROCESS_MESSAGE',100);
 if (!defined('ALLOW_DELETEBOUNCE')) define('ALLOW_DELETEBOUNCE',1);
+if (!defined('MESSAGE_SENDSTATUS_INACTIVETHRESHOLD')) define('MESSAGE_SENDSTATUS_INACTIVETHRESHOLD',120);
+
 define('USE_AMAZONSES',defined('AWS_ACCESSKEYID') && AWS_ACCESSKEYID && function_exists('curl_init'));
 if (!defined('AWS_POSTURL')) define('AWS_POSTURL','https://email.us-east-1.amazonaws.com/');
 

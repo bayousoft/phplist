@@ -71,7 +71,7 @@ if ($message['status'] != 'inprocess') {
   $messagedata['to process'].' '.$GLOBALS['I18N']->get('still to process').'<br/>';
   ## not sure this calculation is accurate
 #  $html .= $GLOBALS['I18N']->get('sent').': '.$totalsent.'<br/>';
-  if ($active > 120) {
+  if ($active > MESSAGE_SENDSTATUS_INACTIVETHRESHOLD) {
     $html .= $GLOBALS['I18N']->get('Stalled');
   } else {
     $html .= 
