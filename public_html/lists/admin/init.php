@@ -148,6 +148,7 @@ if (!defined('CHECK_REFERRER')) define('CHECK_REFERRER',true);
 # if (!defined('PHPMAILER_PATH')) define ('PHPMAILER_PATH',dirname(__FILE__) . '/phpmailer/class.phpmailer.php');
 if (!defined('PHPMAILER_PATH')) define ('PHPMAILER_PATH',dirname(__FILE__) . '/PHPMailer_v5.1/class.phpmailer.php');
 if (!defined('DB_TRANSLATION')) define('DB_TRANSLATION',0);
+if (!defined('MAX_PROCESS_MESSAGE')) define('MAX_PROCESS_MESSAGE',100);
 if (!defined('ALLOW_DELETEBOUNCE')) define('ALLOW_DELETEBOUNCE',1);
 define('USE_AMAZONSES',defined('AWS_ACCESSKEYID') && AWS_ACCESSKEYID && function_exists('curl_init'));
 if (!defined('AWS_POSTURL')) define('AWS_POSTURL','https://email.us-east-1.amazonaws.com/');

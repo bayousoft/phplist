@@ -380,13 +380,18 @@ while ($msg = Sql_Fetch_Assoc($req)) {
   ## @@@ need to update message data as well
 }
 
-//rsstemplate Leftover from the preplugin era
+$messagelimit = '';
+## limit the number of campaigns to work on 
+if (defined('MAX_PROCESS_MESSAGE')) {
+  $messagelimit = sprintf(' limit %d ',MAX_PROCESS_MESSAGE);
+}
+
 $query
 = " select id"
 . " from ${tables['message']}"
 . " where status not in ('draft', 'sent', 'prepared', 'suspended')"
 . "   and embargo < current_timestamp"
-. " order by entered";
+. " order by entered ".$messagelimit;
 if (VERBOSE) {
   output($query);
 }
