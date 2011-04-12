@@ -152,9 +152,11 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   $text["blacklisturl"] = sprintf('%s%semail=%s',$url,$sep,$email);
 
   #0013076: Problem found during testing: message part must be parsed correctly as well.  
-  if ($forwardContent) {
+  if (sizeof($forwardedby) && isset($forwardedby['email'])) {
     $html["unsubscribe"] = $html["blacklist"];
     $text["unsubscribe"] = $text["blacklist"];
+    $html["forwardedby"] = $forwardedby["email"];
+    $text["forwardedby"] = $forwardedby["email"];
   }
   
   $url = getConfig("subscribeurl");$sep = strpos($url,'?') === false ? '?':'&amp;';
