@@ -329,6 +329,7 @@ function Sql_create_Table ($table,$structure) {
   $query .= "\n) default character set utf8";
   # submit it to the database
   $res = Sql_Query($query);
+  unset($_SESSION["dbtables"]);
 }
 
 function Sql_Drop_Table($table) {
