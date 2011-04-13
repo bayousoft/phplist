@@ -174,7 +174,7 @@ while ($row = Sql_Fetch_Array($req)) {
     $ls->addColumn($element,$GLOBALS['I18N']->get('views'),$row['viewcount']);
   } else {
     $ls->addColumn($element,$GLOBALS['I18N']->get('firstview'),formatDateTime($row['firstview'],1));
-    $ls->addColumn($element,$GLOBALS['I18N']->get('responsetime'),$row['responsetime'].' '.$GLOBALS['I18N']->get('sec'));
+    $ls->addColumn($element,$GLOBALS['I18N']->get('responsetime'),secs2time($row['responsetime']));
   }
 }
 print $ls->display();
