@@ -275,6 +275,7 @@ function Sql_Free_Result($dbresult) {
 };
 
 function Sql_Table_exists($table,$refresh = 0) {
+  ## table is the full table name including the prefix
   if (!empty($_GET['pi']) || $refresh || !isset($_SESSION) || !isset($_SESSION["dbtables"]) || !is_array($_SESSION["dbtables"])) {
     $_SESSION["dbtables"] = array();
     $req = Sql_Query("show tables");
@@ -286,6 +287,7 @@ function Sql_Table_exists($table,$refresh = 0) {
 }
 
 function Sql_Table_Column_Exists($table,$column) {
+  ## table is the full table name including the prefix
   if (Sql_Table_exists($table)) {
     $req = Sql_Query("show columns from $table");
     while ($row = Sql_Fetch_Row($req)) {
@@ -296,7 +298,19 @@ function Sql_Table_Column_Exists($table,$column) {
 }
 
 function Sql_Check_For_Table($table) {
-  return Sql_Table_exists($table);
+  ## table is the full table name including the prefix, or the abbreviated one without prefix
+  return Sql_Table_exists($table) || Sql_Table_exists($GLOBALS['tables'][$table]);
+}
+
+function createTable($table) {
+  ## table is the abbreviated table name one without prefix
+  if (!isset($GLOBALS['tables'][$table])) return false;
+  include dirname(__FILE__).'/structure.php';
+  if (!empty($DBstruct[$table]) && is_array($DBstruct[$table])) {
+    Sql_Create_table($GLOBALS['tables'][$table],$DBstruct[$table]);
+    return true;
+  }
+  return false;
 }
 
 function Sql_create_Table ($table,$structure) {
