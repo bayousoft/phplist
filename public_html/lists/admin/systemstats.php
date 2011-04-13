@@ -5,6 +5,17 @@
 if (class_exists('utility')) {
   $util = new utility();
 }
+if (!function_exists('monthName')) {
+  function monthName($month,$short=0) {
+    $months = array ("",$GLOBALS['I18N']->get("January"), $GLOBALS['I18N']->get("February"), $GLOBALS['I18N']->get("March"), $GLOBALS['I18N']->get("April"), $GLOBALS['I18N']->get("May"), $GLOBALS['I18N']->get("June"), $GLOBALS['I18N']->get("July"), $GLOBALS['I18N']->get("August"), $GLOBALS['I18N']->get("September"), $GLOBALS['I18N']->get("October"), $GLOBALS['I18N']->get("November"), $GLOBALS['I18N']->get("December"));
+    $shortmonths = array ("",$GLOBALS['I18N']->get("Jan"),$GLOBALS['I18N']->get("Feb"),$GLOBALS['I18N']->get("Mar"), $GLOBALS['I18N']->get("Apr"), $GLOBALS['I18N']->get("May"), $GLOBALS['I18N']->get("Jun"), $GLOBALS['I18N']->get("Jul"), $GLOBALS['I18N']->get("Aug"), $GLOBALS['I18N']->get("Sep"), $GLOBALS['I18N']->get("Oct"), $GLOBALS['I18N']->get("Nov"), $GLOBALS['I18N']->get("Dec"));
+    if ($short) {
+      return $shortmonths[intval($month)];
+    } else {
+      return $months[intval($month)];
+    }
+  }
+}
 
 $systemstats = array(
   array(
