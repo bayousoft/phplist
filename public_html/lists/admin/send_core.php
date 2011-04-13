@@ -550,10 +550,17 @@ if (!$done) {
     print Help("preparemessage",$GLOBALS['I18N']->get("whatisprepare"));
 
   if (!defined("IN_WEBBLER")) {
-    if (empty($messagedata['from']) && is_object($GLOBALS["admin_auth"]) && $GLOBALS['require_login']) {
-      $adminemail = $GLOBALS["admin_auth"]->adminEmail($_SESSION["logindetails"]["id"]);
-      if ($adminemail && USE_ADMIN_DETAILS_FOR_MESSAGES) {
-        $messagedata['from'] = $GLOBALS["admin_auth"]->adminName($_SESSION["logindetails"]["id"]).' '.$adminemail;
+    if (empty($messagedata['from'])) {
+      $defaultFrom = getConfig("campaignfrom_default");
+      if (!empty($defaultFrom)) {
+        $messagedata['from'] = $defaultFrom;
+      } elseif (USE_ADMIN_DETAILS_FOR_MESSAGES && is_object($GLOBALS["admin_auth"]) && $GLOBALS['require_login']) {
+        $adminemail = $GLOBALS["admin_auth"]->adminEmail($_SESSION["logindetails"]["id"]);
+        if (!empty($adminemail)) {
+          $messagedata['from'] = $GLOBALS["admin_auth"]->adminName($_SESSION["logindetails"]["id"]).' '.$adminemail;
+        } else {
+          $messagedata['from'] = getConfig("message_from_name") . ' '.getConfig("message_from_address");
+        }
       } else {
         $messagedata['from'] = getConfig("message_from_name") . ' '.getConfig("message_from_address");
       }

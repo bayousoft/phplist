@@ -159,6 +159,12 @@ $default_config = array (
   "text",
   1
 ),
+"campaignfrom_default" => array(
+  '',
+  "Default for 'From:' in a campaign",
+  "text",
+  1
+),
 "notifystart_default" => array(
   '',
   "Default for 'email to alert when sending starts'",
@@ -356,9 +362,8 @@ $default_config = array (
 
   You have been unsubscribed from our newsletters.
 
-  This is the last email you will receive from us. We have added you to our
-  "blacklist", which means that our newsletter system will refuse to send
-  you any other email, without manual intervention by our administrator.
+  This is the last email you will receive from us. Our newsletter system, phpList,
+  will refuse to send you any further messages, without manual intervention by our administrator.
 
   If there is an error in this information, you can re-subscribe:
   please go to [SUBSCRIBEURL] and follow the steps.
@@ -474,7 +479,7 @@ $default_config = array (
 "personallocation_message" => array (
   '
   
-  You have requested your personal location to update your details from our website.
+  You have requested your personal location to update your details in our newsletter database.
   The location is below. Please make sure that you use the full line as mentioned below.
   Sometimes email programme can wrap the line into multiple lines.
   
@@ -527,7 +532,7 @@ $default_config = array (
 
 You have requested your personal location to update your details from our website.
 The location is below. Please make sure that you use the full line as mentioned below.
-Sometimes email programme can wrap the line into multiple lines.
+Sometimes email programmes can wrap the line into multiple lines.
 
 Your personal location is:
 [PREFERENCESURL]
