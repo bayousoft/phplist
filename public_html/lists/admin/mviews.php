@@ -41,15 +41,15 @@ switch ($access) {
 }
 
 $download = !empty($_GET['dl']);
-if ($download) {
-  ob_end_clean();
-#  header("Content-type: text/plain");
-  header('Content-type: text/csv');
-  header('Content-disposition:  attachment; filename="phpList Message open statistics.csv"');
-  ob_start();
-}  
 
 if (!$id) {
+  if ($download) {
+    ob_end_clean();
+  #  header("Content-type: text/plain");
+    header('Content-type: text/csv');
+    header('Content-disposition:  attachment; filename="phpList Message open statistics.csv"');
+    ob_start();
+  }  
   print '<p>'.PageLinkButton('mviews&dl=true',$GLOBALS['I18N']->get('Download as CSV file')).'</p>';
 #  print '<p>'.$GLOBALS['I18N']->get('Select Message to view').'</p>';
   $timerange = ' and msg.entered  > date_sub(current_timestamp,interval 12 month)';
@@ -102,6 +102,13 @@ if (!$id) {
   return;
 }
 
+if ($download) {
+  ob_end_clean();
+#  header("Content-type: text/plain");
+  header('Content-type: text/csv');
+  ob_start();
+}  
+print '<p>'.PageLinkButton('mviews&dl=true&id='.$id.'&start='.$start,$GLOBALS['I18N']->get('Download as CSV file')).'</p>';
 
 print '<h3>'.$GLOBALS['I18N']->get('View Details for a Message').'</h3>';
 $messagedata = Sql_Fetch_Array_query("SELECT * FROM {$tables['message']} where id = $id $subselect");
@@ -111,6 +118,9 @@ print '<table class="mviewsDetails">
 <tr><td>'.$GLOBALS['I18N']->get('Sent').'<td><td>'.$messagedata['sent'].'</td></tr>
 </table><hr/>';
 
+if ($download) {
+  header('Content-disposition:  attachment; filename="phpList Message open statistics for '.$messagedata['subject'].'.csv"');
+}
 
 $ls = new WebblerListing($GLOBALS['I18N']->get('Message Open Statistics'));
 
@@ -130,6 +140,14 @@ if (isset($start) && $start > 0) {
   $start = 0;
   $limit = "limit 0,".MAX_USER_PP;
 }
+
+/*
+## hmm, this needs more work, as it'll run out of memory
+if ($download) {
+  $limit = '';
+}
+*/
+
 if ($id) {
   $url_keep = '&amp;id='.$id;
 } else {
@@ -177,5 +195,10 @@ while ($row = Sql_Fetch_Array($req)) {
     $ls->addColumn($element,$GLOBALS['I18N']->get('responsetime'),secs2time($row['responsetime']));
   }
 }
-print $ls->display();
+if ($download) {
+  ob_end_clean();
+  print $ls->tabDelimited();
+} else {
+  print $ls->display();
+}
 ?>
