@@ -66,7 +66,7 @@ print '</div>';
 if (isset($_GET['delete'])) {
   $delete = sprintf('%d',$_GET['delete']);
   # delete the index in delete
-  $actionresult = $GLOBALS['I18N']->get('Deleting') . " $delete ..\n";
+  $actionresult = $GLOBALS['I18N']->get('Deleting') . ' '.$GLOBALS['I18N']->get('list')." $delete ..\n";
   $result = Sql_query(sprintf('delete from '.$tables['list'].' where id = %d %s',$delete,$subselect_and));
   $done = Sql_Affected_Rows();
   if ($done) {
@@ -74,7 +74,10 @@ if (isset($_GET['delete'])) {
     $result = Sql_query('delete from '.$tables['listmessage']." where listid = $delete $subselect_and");
   }
   $actionresult .= '..' . $GLOBALS['I18N']->get('Done') . "<br /><hr /><br />\n";
-  print ActionResult($actionresult);
+  $_SESSION['action_result'] = $actionresult;
+  Redirect('list');
+  return;
+#  print ActionResult($actionresult);
 }
 
 if (!empty($_POST['importcontent'])) {
@@ -92,7 +95,7 @@ while ($row = Sql_Fetch_Row($req)) {
 }
 
 if (sizeof($aListCategories)) {
-  if (isset($_GET['tab'])) {
+  if (isset($_GET['tab']) && in_array($_GET['tab'],$aListCategories)) {
     $current = $_GET['tab'];
   } elseif (isset($_SESSION['last_list_category'])) {
     $current = $_SESSION['last_list_category'];
@@ -219,6 +222,11 @@ while ($row = Sql_fetch_array($result)) {
   $ls->addColumn($element,
     $GLOBALS['I18N']->get('Order'),
     sprintf('<input type="text" name="listorder[%d]" value="%d" size="3" class="listorder" />',$row['id'],$row['listorder']));
+
+  
+  $delete_url = sprintf('<a href="javascript:deleteRec2(\'%s\',\'%s\');">%s</a>',$GLOBALS['I18N']->get('Are you sure you want to delete this list?'),PageURL2("list&delete=".$row["id"]),$GLOBALS['I18N']->get('del'));
+
+  $ls->addColumn($element,$GLOBALS['I18N']->get('del'),$delete_url);
 
 
   $some = 1;
