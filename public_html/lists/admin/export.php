@@ -69,6 +69,10 @@ switch ($access) {
 
 require dirname(__FILE__). '/structure.php';
 if (isset($_POST['processexport'])) {
+  if (!verifyToken()) { ## csrf check
+    print Error($GLOBALS['I18N']->get('No Access'));
+    return;
+  }
   $fromdate= $from->getDate("from");
   $todate =  $to->getDate("to");
   if ($list)
@@ -78,8 +82,8 @@ if (isset($_POST['processexport'])) {
   ob_end_clean();
   $filename = trim(strip_tags($filename));
 
-#  header("Content-type: text/plain");
-  header("Content-type: ".$GLOBALS["export_mimetype"]);
+ # header("Content-type: text/plain");
+  header("Content-type: ".$GLOBALS["export_mimetype"].'; charset=UTF-8');
   header("Content-disposition:  attachment; filename=\"$filename\"");
   $col_delim = "\t";
   if (EXPORT_EXCEL) {
@@ -173,8 +177,8 @@ if ($list)
   print sprintf($GLOBALS['I18N']->get('ExportOn'),ListName($list));
 
 
+print formStart();
 ?>
-<form method="post" action="">
 
 <table class="exportForm">
 
