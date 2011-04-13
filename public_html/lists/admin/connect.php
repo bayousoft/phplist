@@ -1655,19 +1655,19 @@ function secs2time($secs) {
 
   $res = '';
   if ($years) {
-    $res .= $years .' years';
+    $res .= $years .' '.$GLOBALS['I18N']->get('years');
   }
   if ($days) {
-    $res .= ' '.$days .' days';
+    $res .= ' '.$days .' '.$GLOBALS['I18N']->get('days');
   }
   if ($hours) {
-    $res .= ' '.$hours . " hours";
+    $res .= ' '.$hours . ' '.$GLOBALS['I18N']->get('hours');
   }
   if ($mins) {
-    $res .= " ".$mins . " mins";
+    $res .= " ".$mins . ' '.$GLOBALS['I18N']->get('mins');
   }
   if ($secs) {
-    $res .= " ".sprintf('%02d',$secs) . " secs";
+    $res .= " ".sprintf('%02d',$secs) . ' '.$GLOBALS['I18N']->get('secs');
   }
   return $res;
 }
