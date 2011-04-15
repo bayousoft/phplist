@@ -309,6 +309,13 @@ $default_config = array (
   "text"
 ),
 
+'ajax_subscribeconfirmation' => array(
+  "Success, you will receive a message with a URL to confirm your subscription",
+  "Text to display when subscription with an AJAX request was successful",
+  "text",
+  1
+),
+
   # the location of your subscribe script
   #"subscribe_baseurl" => array("http://[WEBSITE]$pageroot/",
   #  "Base URL for public pages","text"),

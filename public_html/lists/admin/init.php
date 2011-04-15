@@ -158,6 +158,7 @@ if (!defined('AWS_POSTURL')) define('AWS_POSTURL','https://email.us-east-1.amazo
 if (!isset($allowed_referrers) || !is_array($allowed_referrers)) {
   $allowed_referrers = array();
 }
+if (!defined('ACCESS_CONTROL_ALLOW_ORIGIN')) define('ACCESS_CONTROL_ALLOW_ORIGIN','http://'.$_SERVER['HTTP_HOST']);
 
 # check whether Pear HTTP/Request is available
 @include_once "HTTP/Request.php";

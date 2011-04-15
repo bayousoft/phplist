@@ -47,6 +47,7 @@ require_once dirname(__FILE__).'/admin/connect.php';
 include_once dirname(__FILE__)."/admin/languages.php";
 include_once dirname(__FILE__)."/admin/lib.php";
 $I18N = new phplist_I18N();
+header('Access-Control-Allow-Origin: '.ACCESS_CONTROL_ALLOW_ORIGIN);
 
 if ($require_login || ASKFORPASSWORD) {
   # we need session info if an admin subscribes a user
@@ -232,6 +233,30 @@ if ($login_required && empty($_SESSION["userloggedin"]) && !$canlogin) {
         $success = require "admin/subscribelib2.php";
         if ($success != 2) {
           print SubscribePage($id);
+        }
+        break;
+      case "asubscribe": ## subscribe with Ajax
+        $_POST['subscribe'] = 1;
+        if (isset($_GET['email']) && !isset($_POST['email'])) {
+          $_POST['email'] = $_GET['email'];
+        }
+        foreach (explode(',',$GLOBALS['pagedata']["lists"]) as $listid) {
+          $_POST['list'][$listid] = 'signup';
+        }
+      
+        $success = require "admin/subscribelib2.php";
+        $result = ob_get_contents();
+        ob_end_clean();
+        if (stripos($result,$GLOBALS['strEmailConfirmation'])) {
+          $confirmation = getConfig('ajax_subscribeconfirmation');
+          if (empty($confirmation)) {
+            print 'OK';
+          } else {
+            print $confirmation;
+          }
+          exit;
+        } else {
+          print 'FAIL';
         }
         break;
       case "preferences":
