@@ -310,7 +310,7 @@ $default_config = array (
 ),
 
 'ajax_subscribeconfirmation' => array(
-  "Success, you will receive a message with a URL to confirm your subscription",
+  "<h3>Thanks, you have been added to our newsletter</h3><p>You will receive an email to confirm your subscription. Please click the link in the email to confirm</p>",
   "Text to display when subscription with an AJAX request was successful",
   "text",
   1
