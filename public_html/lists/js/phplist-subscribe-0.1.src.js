@@ -26,7 +26,7 @@ $(document).ready(function() {
         },
         error: function(jqXHR, textStatus, errorThrown) {
           document.location = subscribeaddress+"&email="+emailaddress;
-        },
+        }
       });
     } else {
       document.location = subscribeaddress+"&email="+emailaddress;
