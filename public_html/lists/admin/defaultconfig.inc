@@ -558,7 +558,7 @@ Thank you.
 
 "pagefooter" => array($defaultfooter,"Footer of public pages","textarea"),
 
-"remoteurl_append" => array("","String to always append to remote URL when using send-a-webpage","text"),
+"remoteurl_append" => array("","String to always append to remote URL when using send-a-webpage","text",1),
 
 "html_charset" => array("UTF-8","Charset for HTML messages","text"),
 "text_charset" => array("UTF-8","Charset for Text messages","text"),
