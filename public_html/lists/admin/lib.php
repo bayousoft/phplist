@@ -763,6 +763,8 @@ function isValidRedirect($url) {
 
 function expandURL($url) {
   $url_append = getConfig('remoteurl_append');
+  $url_append = strip_tags($url_append);
+  $url_append = preg_replace('/\W/','',$url_append);
   if ($url_append) {
     if (strpos($url,'?')) {
       $url = $url.$url_append;
