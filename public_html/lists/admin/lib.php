@@ -425,6 +425,18 @@ function clean2 ($value) {
   return $value;
 }
 
+function cleanEmail ($value) {
+  $value = trim($value);
+  $value = preg_replace("/\r/","",$value);
+  $value = preg_replace("/\n/","",$value);
+  $value = preg_replace('/"/',"&quot;",$value);
+  ## these are allowed in emails
+//  $value = preg_replace("/'/","&rsquo;",$value);
+  $value = preg_replace("/`/","&lsquo;",$value);
+  $value = stripslashes($value);
+  return $value;
+}
+
 if (TEST && REGISTER)
   $pixel = '<img src="http://phplist.tincan.co.uk/images/pixel.gif" width="1" height="1" />';
 
