@@ -221,6 +221,9 @@ if(isset($_REQUEST['import'])) {
 
           # add the attributes for this user
           foreach($attributes as $attr => $value) {
+            if (is_array($value)) {
+              $value = join(',',$value);
+            }
             Sql_query(sprintf('replace into %s (attributeid,userid,value) values("%s","%s","%s")',
               $tables["user_attribute"],$attr,$userid,addslashes($value)));
           }
