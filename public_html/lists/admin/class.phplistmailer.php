@@ -42,9 +42,12 @@ class PHPlistMailer extends PHPMailer {
       $this->addCustomHeader("X-ListMember: $email");
 
       ## amazon SES doesn't like this
+/*
+ * http://mantis.phplist.com/view.php?id=15562
       if (!USE_AMAZONSES) {
-        $this->addCustomHeader("Precedence: bulk");
+#        $this->addCustomHeader("Precedence: bulk");
       }
+*/
       $newwrap = getConfig("wordwrap");
       if ($newwrap) {
         $this->WordWrap = $newwrap;
