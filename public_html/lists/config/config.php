@@ -338,7 +338,8 @@ define("MAILQUEUE_BATCH_PERIOD",3600);
 # to avoid overloading the server that sends your email, you can add a little delay
 # between messages that will spread the load of sending
 # you will need to find a good value for your own server
-# value is in seconds (or you can play with the autothrottle below)
+# value is in seconds, and you can use fractions, eg "0.5" is half a second
+# (or you can play with the autothrottle below)
 define('MAILQUEUE_THROTTLE',0); 
 
 # year ranges. If you use dates, by default the drop down for year will be from
@@ -629,6 +630,7 @@ $attachment_repository = '/tmp';
 
 # the mime type for the export files. You can try changing this to
 # application/vnd.ms-excel to make it open automatically in excel
+# or text/tsv
 $export_mimetype = 'application/csv';
 
 # if you want to use export format optimized for Excel, set this one to 1
