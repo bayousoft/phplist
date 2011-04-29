@@ -156,11 +156,12 @@ if (DEVVERSION)
 else
   $v = VERSION;
 if (REGISTER) {
-  $PoweredByImage = '<p class="poweredby"><a href="http://www.phplist.com"><img src="http://phplist.tincan.co.uk/images/'.$v.'/power-phplist.png" width=70 height=30 title="Powered by phpList version '.$v.', &copy; tincan ltd" alt="Powered by phpList'.$v.', &copy; tincan ltd" border="0"/></a></p>';
+  $PoweredByImage = '<p class="poweredby"><a href="http://www.phplist.com"><img src="http://powered.phplist.com/images/'.$v.'/power-phplist.png" width="70" height="30" title="powered by phpList version '.$v.', &copy; phpList ltd" alt="powered by phpList'.$v.', &copy; phpList ltd" border="0" /></a></p>';
 } else {
-  $PoweredByImage = '<p class="poweredby"><a href="http://www.phplist.com"><img src="images/power-phplist.png" width=70 height=30 title="Powered by phpList version '.$v.', &copy; tincan ltd" alt="Powered by phpList'.$v.', &copy; tincan ltd" border="0"/></a></p>';
+  $PoweredByImage = '<p class="poweredby"><a href="http://www.phplist.com"><img src="images/power-phplist.png" width="70" height="30" title="powered by phpList version '.$v.', &copy; tincan ltd" alt="powered by phpList'.$v.', &copy; phpList ltd" border="0"/></a></p>';
 }
-$PoweredByText = '<p style="font-size: 7px; margin: 0.5em 0pt 1em; line-height: 1.3em; font-family: Verdana, Arial, Helvetica, sans-serif; text-align: left;">powered by <a href="http://www.phplist.com" target="_blank">phplist</a> v '.$v.', &copy; <a href="http://tincan.co.uk/powered" target="_blank">tincan ltd</a></p>';
+$PoweredByText = '<div style="clear: both; font-family: arial, verdana, sans-serif; font-size: 8px; font-variant: small-caps; font-weight: normal; padding: 2px; padding-left:10px;padding-top:20px;">powered by <a href="http://www.phplist.com" target="_blank">phplist</a> v ' . $v . ', &copy; <a href="http://www.phplist.com/poweredby" target="_blank">phpList ltd</a></div>';
+
 if (!TEST && REGISTER) {
   if (!PAGETEXTCREDITS) {
     ;
