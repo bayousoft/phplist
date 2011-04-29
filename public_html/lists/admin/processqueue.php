@@ -253,7 +253,7 @@ function finish ($flag,$message,$script_stage) {
   if (!$nothingtodo) {
     output($GLOBALS['I18N']->get('Finished this run'));
   } 
-  if (!TEST && !$nothingtodo) {
+  if (!TEST && !$nothingtodo && SEND_QUEUE_PROCESSING_REPORT) {
     foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
       $plugin->sendReport($subject,$message);
     }
