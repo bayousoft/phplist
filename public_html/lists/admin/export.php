@@ -97,6 +97,9 @@ if (isset($_POST['processexport'])) {
         if (strpos($val[1],"sys") === false) {
           print $val[1].$col_delim;
         } elseif (preg_match("/sysexp:(.*)/",$val[1],$regs)) {
+          if ($regs[1] == 'ID') { # avoid freak Excel bug: http://mantis.phplist.com/view.php?id=15526
+            $regs[1] = 'id';
+          }
           print $regs[1].$col_delim;
         }
       }
