@@ -23,6 +23,10 @@ print formStart(' class="configForm" ');
 # configure options
 reset($default_config);
 if (!empty($_REQUEST['save'])) {
+  if (!verifyToken()) {
+    print Error($GLOBALS['I18N']->get('No Access'));
+    return;
+  }
   $info = $default_config[$id];
   $haserror = 0;
   if (is_array($_POST['values'])) {
