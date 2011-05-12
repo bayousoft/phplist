@@ -379,28 +379,30 @@ if (USE_ADVANCED_BOUNCEHANDLING) {
       if ($row['user']) {
         $userdata = Sql_Fetch_Array_Query("select * from {$tables["user"]} where id = ".$row['user']);
       }
+      $report_linkroot = $GLOBALS['scheme'].'://'.$GLOBALS['website'].$GLOBALS['adminpages'];
+      
       switch ($rule['action']) {
         case 'deleteuser':
           logEvent('User '.$userdata['email'].' deleted by bounce rule '.PageLink2('bouncerule&amp;id='.$rule['id'],$rule['id']));
           $advanced_report .= 'User '.$userdata['email'].' deleted by bounce rule '.$rule['id']."\n";
-          $advanced_report .= 'User: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=user&amp;id='.$userdata['id']."\n";
-          $advanced_report .= 'Rule: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=bouncerule&amp;id='.$rule['id']."\n";
+          $advanced_report .= 'User: '.$report_linkroot.'/?page=user&amp;id='.$userdata['id']."\n";
+          $advanced_report .= 'Rule: '.$report_linkroot.'/?page=bouncerule&amp;id='.$rule['id']."\n";
           deleteUser($row['user']);
           break;
         case 'unconfirmuser':
           logEvent('User '.$userdata['email'].' unconfirmed by bounce rule '.PageLink2('bouncerule&amp;id='.$rule['id'],$rule['id']));
           Sql_Query(sprintf('update %s set confirmed = 0 where id = %d',$GLOBALS['tables']['user'],$row['user']));
           $advanced_report .= 'User '.$userdata['email'].' made unconfirmed by bounce rule '.$rule['id']."\n";
-          $advanced_report .= 'User: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=user&amp;id='.$userdata['id']."\n";
-          $advanced_report .= 'Rule: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=bouncerule&amp;id='.$rule['id']."\n";
+          $advanced_report .= 'User: '.$report_linkroot.'/?page=user&amp;id='.$userdata['id']."\n";
+          $advanced_report .= 'Rule: '.$report_linkroot.'/?page=bouncerule&amp;id='.$rule['id']."\n";
           addUserHistory($userdata['email'],$GLOBALS['I18N']->get("Auto Unsubscribed"),$GLOBALS['I18N']->get("User auto unsubscribed for")." ".$GLOBALS['I18N']->get("bounce rule").' '.$rule['id']);
           addSubscriberStatistics('auto unsubscribe',1);
           break;
         case 'deleteuserandbounce':
           logEvent('User '.$row['user'].' deleted by bounce rule '.PageLink2('bouncerule&amp;id='.$rule['id'],$rule['id']));
           $advanced_report .= 'User '.$userdata['email'].' deleted by bounce rule '.$rule['id']."\n";
-          $advanced_report .= 'User: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=user&amp;id='.$userdata['id']."\n";
-          $advanced_report .= 'Rule: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=bouncerule&amp;id='.$rule['id']."\n";
+          $advanced_report .= 'User: '.$report_linkroot.'/?page=user&amp;id='.$userdata['id']."\n";
+          $advanced_report .= 'Rule: '.$report_linkroot.'/?page=bouncerule&amp;id='.$rule['id']."\n";
           deleteUser($row['user']);
           deleteBounce($row['bounce']);
           break;
@@ -408,8 +410,8 @@ if (USE_ADVANCED_BOUNCEHANDLING) {
           logEvent('User '.$userdata['email'].' unconfirmed by bounce rule '.PageLink2('bouncerule&amp;id='.$rule['id'],$rule['id']));
           Sql_Query(sprintf('update %s set confirmed = 0 where id = %d',$GLOBALS['tables']['user'],$row['user']));
           $advanced_report .= 'User '.$userdata['email'].' made unconfirmed by bounce rule '.$rule['id']."\n";
-          $advanced_report .= 'User: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=user&amp;id='.$userdata['id']."\n";
-          $advanced_report .= 'Rule: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=bouncerule&amp;id='.$rule['id']."\n";
+          $advanced_report .= 'User: '.$report_linkroot.'/?page=user&amp;id='.$userdata['id']."\n";
+          $advanced_report .= 'Rule: '.$report_linkroot.'/?page=bouncerule&amp;id='.$rule['id']."\n";
           addUserHistory($userdata['email'],$GLOBALS['I18N']->get("Auto Unsubscribed"),$GLOBALS['I18N']->get("User auto unsubscribed for")." ".$GLOBALS['I18N']->get("bounce rule").' '.$rule['id']);
           addSubscriberStatistics('auto unsubscribe',1);
           deleteBounce($row['bounce']);
@@ -418,8 +420,8 @@ if (USE_ADVANCED_BOUNCEHANDLING) {
           logEvent('User '.$userdata['email'].' blacklisted by bounce rule '.PageLink2('bouncerule&amp;id='.$rule['id'],$rule['id']));
           addUserToBlacklist($userdata['email'],$GLOBALS['I18N']->get("Auto Blacklisted"),$GLOBALS['I18N']->get("User auto blacklisted for")." ".$GLOBALS['I18N']->get("bounce rule").' '.$rule['id']);
           $advanced_report .= 'User '.$userdata['email'].' blacklisted by bounce rule '.$rule['id']."\n";
-          $advanced_report .= 'User: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=user&amp;id='.$userdata['id']."\n";
-          $advanced_report .= 'Rule: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=bouncerule&amp;id='.$rule['id']."\n";
+          $advanced_report .= 'User: '.$report_linkroot.'/?page=user&amp;id='.$userdata['id']."\n";
+          $advanced_report .= 'Rule: '.$report_linkroot.'/?page=bouncerule&amp;id='.$rule['id']."\n";
           addUserHistory($userdata['email'],$GLOBALS['I18N']->get("Auto Unsubscribed"),$GLOBALS['I18N']->get("User auto unsubscribed for")." ".$GLOBALS['I18N']->get("bounce rule").' '.$rule['id']);
           addSubscriberStatistics('auto blacklist',1);
           break;
@@ -427,8 +429,8 @@ if (USE_ADVANCED_BOUNCEHANDLING) {
           logEvent('User '.$userdata['email'].' blacklisted by bounce rule '.PageLink2('bouncerule&amp;id='.$rule['id'],$rule['id']));
           addUserToBlacklist($userdata['email'],$GLOBALS['I18N']->get("Auto Blacklisted"),$GLOBALS['I18N']->get("User auto blacklisted for")." ".$GLOBALS['I18N']->get("bounce rule").' '.$rule['id']);
           $advanced_report .= 'User '.$userdata['email'].' blacklisted by bounce rule '.$rule['id']."\n";
-          $advanced_report .= 'User: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=user&amp;id='.$userdata['id']."\n";
-          $advanced_report .= 'Rule: http://'.$GLOBALS['domain'].$GLOBALS['adminpages'].'/?page=bouncerule&amp;id='.$rule['id']."\n";
+          $advanced_report .= 'User: '.$report_linkroot.'/?page=user&amp;id='.$userdata['id']."\n";
+          $advanced_report .= 'Rule: '.$report_linkroot.'/?page=bouncerule&amp;id='.$rule['id']."\n";
           addUserHistory($userdata['email'],$GLOBALS['I18N']->get("Auto Unsubscribed"),$GLOBALS['I18N']->get("User auto unsubscribed for")." ".$GLOBALS['I18N']->get("bounce rule").' '.$rule['id']);
           addSubscriberStatistics('auto blacklist',1);
           deleteBounce($row['bounce']);
