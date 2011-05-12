@@ -449,7 +449,7 @@ class PHPMailer
             $to .= $this->to[$i][0];
         }
 
-        if ($this->Sender != "" && strlen(ini_get("safe_mode"))< 1)
+        if ($this->Sender != "" && (bool) ini_get("safe_mode") == FALSE)
         {
             $old_from = ini_get("sendmail_from");
             ini_set("sendmail_from", $this->Sender);
