@@ -1001,10 +1001,15 @@ function ListofLists($current,$fieldname,$subselect) {
     $categoryhtml['all'] .= '<li>'.PageLinkDialog('addlist',$GLOBALS['I18N']->get('Add a list')).'</li>';
   }
 
-  $result = Sql_query('SELECT * FROM '.$GLOBALS['tables']['list']. $subselect.' order by category, name');
+  $result = Sql_query('select * from '.$GLOBALS['tables']['list']. $subselect.' order by category, name');
+  $numLists = Sql_Affected_Rows();
   while ($list = Sql_fetch_array($result)) {
     if (empty($list['category'])) {
-      $list['category'] = $GLOBALS['I18N']->get('Uncategorised');
+      if ($numLists < 5) { ## for a small number of lists, add them to the @ tab
+        $list['category'] = 'all';
+      } else {
+        $list['category'] = $GLOBALS['I18N']->get('Uncategorised');
+      }
     }
     if (!isset($categoryhtml[$list['category']])) {
       $categoryhtml[$list['category']] = '';
@@ -1045,12 +1050,16 @@ function listSelectHTML ($current,$fieldname,$subselect,$alltab = '') {
   
   $tabno = 1;
   $listindex = $listhtml = '';
-  foreach ($categoryhtml as $category => $content) {
-    if ($category == 'all') $category = '@';
-    $listindex .= sprintf('<li><a href="#%s%d">%s</a></li>',$fieldname,$tabno,$category);
-    $listhtml .= sprintf('<div id="%s%d"><ul>%s</ul></div>',$fieldname,$tabno,$content);
-    $tabno++;
-    $some = 1;
+  $some = sizeof($categoryhtml);
+  if ($some) {
+    foreach ($categoryhtml as $category => $content) {
+      if ($category == 'all') $category = '@';
+      if ($some > 1) { ## don't show tabs, when there's just one
+        $listindex .= sprintf('<li><a href="#%s%d">%s</a></li>',$fieldname,$tabno,$category);
+      }
+      $listhtml .= sprintf('<div id="%s%d"><ul>%s</ul></div>',$fieldname,$tabno,$content);
+      $tabno++;
+    }
   }
 
   $html = '<div class="tabbed"><ul>'.$listindex.'</ul>';
