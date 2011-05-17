@@ -247,7 +247,9 @@ if ($login_required && empty($_SESSION["userloggedin"]) && !$canlogin) {
         $success = require "admin/subscribelib2.php";
         $result = ob_get_contents();
         ob_end_clean();
-        if (stripos($result,$GLOBALS['strEmailConfirmation'])) {
+        if (stripos($result,$GLOBALS['strEmailConfirmation']) !== FALSE ||
+          stripos($result,$pagedata["thankyoupage"]) !== FALSE
+        ) {
           $confirmation = getConfig('ajax_subscribeconfirmation');
           if (empty($confirmation)) {
             print 'OK';
