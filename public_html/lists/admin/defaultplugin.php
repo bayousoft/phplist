@@ -225,8 +225,34 @@ class phplistPlugin {
   ############################################################
   # Processqueue
 
-  function canSend ($messagedata, $userdata) {
+  /* canSend
+   *
+   * can this message be sent to this subscriber
+   * if false is returned, the message will be identified as sent to the subscriber
+   * and never tried again
+   * 
+   * @param $messagedata array of all message data
+   * @param $userdata array of all user data
+   * returns bool: true, send it, false don't send it
+ */
+
+  function canSend ($messagedata, $subscriberdata) {
     return true; //@@@
+  }
+  
+  /* throttleSend
+   *
+   * can this message be sent to this subscriber
+   * if false is returned, the message will be identified as failed
+   * and re-tried in the next queue run
+   * 
+   * @param $messagedata array of all message data
+   * @param $userdata array of all user data
+   * returns bool: true, do not send it, false send it
+ */
+
+  function throttleSend($messagedata, $subscriberdata) {
+    return false;
   }
   
   function parseOutgoingTextMessage($messageid, $content, $destination, $userdata= null) {

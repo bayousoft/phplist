@@ -798,6 +798,12 @@ while ($message = Sql_fetch_array($messages)) {
         if ($cansend) {
           $success = 0;
           if (!TEST) {
+            reset($GLOBALS['plugins']);
+            while (!$throttled && $plugin = current($GLOBALS['plugins']) ) {
+              $throttled = $plugin->throttleSend($msgdata, $user);
+              if ($throttled) $failure_reason .= 'Sending throttled by plugin '.$plugin->name;
+              next($GLOBALS['plugins']);
+            } 
             if (!$throttled) {
               if (VERBOSE)
                 output($GLOBALS['I18N']->get('Sending').' '. $messageid.' '.$GLOBALS['I18N']->get('to').' '. $useremail);
