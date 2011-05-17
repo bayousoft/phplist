@@ -84,7 +84,18 @@ if (!$id) {
   $query = sprintf($query, $GLOBALS['tables']['message']);
   Sql_Query_Params($query, array($_SESSION['logindetails']['id'], $defaulttemplate,$defaultfooter));
   $id = Sql_Insert_Id($GLOBALS['tables']['message'], 'id');
-  # 0008720: Using -p send from the commandline doesn't seem to work '
+
+  if (isset($_GET['list'])) {
+    $addlists = explode(',',$_GET['list']);
+    $addlists = cleanArray($addlists);
+    foreach ($addlists as $listid) {
+      $query = "replace into %s (messageid,listid,entered) values(?,?,current_timestamp)";
+      $query = sprintf($query,$GLOBALS['tables']['listmessage']);
+      Sql_Query_Params($query,array($id,$listid));
+    }
+  }
+
+  # 0008720: Using -p send from the commandline doesn't seem to work 
   if(!$GLOBALS["commandline"]) {
     Redirect($_GET["page"].'&id='.$id);
     exit;
