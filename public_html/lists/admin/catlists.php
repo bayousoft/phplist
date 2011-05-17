@@ -26,7 +26,8 @@ $subselect .= '(category is null or category = "")';
 $categories = listCategories();
 
 if (!sizeof($categories)) {
-  print $I18N->get('No list categories have been defined');
+  print '<p>'.$I18N->get('No list categories have been defined').'</p>';
+  print '<p>'.$I18N->get('Once you have set up a few categories, come back to this page to classify your lists with your categories.').'</p>';
   print '<p>'.PageLinkButton('configure&id=list_categories',$I18N->get('Configure Categories')).'</p>';
   print '<br/>';
   return;
