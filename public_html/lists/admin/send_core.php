@@ -354,7 +354,11 @@ if ($send || $sendtest || $prepare || $save || $savedraft) {
       foreach ($GLOBALS['plugins'] as $pluginname => $plugin) {
         $plugin->messageQueued($id);
       }
-      print '<p class="button">'.PageLinkButton("processqueue",$GLOBALS['I18N']->get("processqueue")).'</p>';
+      if (MANUALLY_PROCESS_QUEUE) {
+        print '<p>'.PageLinkButton("processqueue",$GLOBALS['I18N']->get("processqueue")).'</p>';
+      } else {
+        print '<p>'.PageLinkButton("messages&tab=active",$GLOBALS['I18N']->get("view progress")).'</p>';
+      }
     }
     $done = 1;
     return;
@@ -631,6 +635,8 @@ if (!$done) {
   <div class="field">'.$GLOBALS['I18N']->get("Dates and times are relative to the Server Time").'<br/>'.$GLOBALS['I18N']->get('Current Server Time is').' <span id="servertime">'.$currentTime[0].'</span>'.'</div>
   <div class="field"><label for="embargo">'.$GLOBALS['I18N']->get("embargoeduntil").Help('embargo').'</label>'.'
     '.$embargo->showInput('embargo',"",$messagedata['embargo']).'</div>
+  <div class="field"><label for="finishsending">'.$GLOBALS['I18N']->get("Stop sending after").Help('finishsending').'</label>'.'
+    '.$embargo->showInput('finishsending',"",$messagedata['finishsending']).'</div>
     <script type="text/javascript">
     getServerTime();
     </script>';
