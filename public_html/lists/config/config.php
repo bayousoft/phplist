@@ -644,6 +644,17 @@ define("EXPORT_EXCEL",0);
 # also read the README.repetition for more info
 define("USE_REPETITION",0);
 
+# Message Age. The Scheduling tab has an option to stop sending a message when it has reached a certain date.
+# This can be used to avoid the campaign going out, eg when an event has already taken place.
+# This value defaults to the moment of creating the campaign + the number of seconds set here.
+# phpList will mark the campaign as sent, when this date has been reached
+# 15768000 is about 6 months, but other useful values can be
+# 2592000 - 30 days
+# 604800 - a week.
+# 86400 - a day
+define('DEFAULT_MESSAGEAGE',15768000);
+
+
 # Prepare a message. This system allows you to create messages as a super admin
 # that can then be reviewed and selected by sub admins to send to their own lists
 # it is old functionality that is quite confusing, and therefore by default it

@@ -98,6 +98,8 @@ function loadMessageData($msgid) {
   $prevMsgData = Sql_Fetch_Assoc_Query(sprintf('select * from %s where id = %d',
     $GLOBALS['tables']['message'],$msgid));
 
+  $finishSending = time() + DEFAULT_MESSAGEAGE;
+
   $messagedata = array(
     'template' => getConfig("defaultmessagetemplate"),
     'sendformat' => 'HTML',
@@ -110,6 +112,7 @@ function loadMessageData($msgid) {
     'repeatuntil' =>  array('year' => date('Y'),'month' => date('m'),'day' => date('d'),'hour' => date('H'),'minute' => date('i')),
     'requeueinterval' => 0,
     'requeueuntil' =>  array('year' => date('Y'),'month' => date('m'),'day' => date('d'),'hour' => date('H'),'minute' => date('i')),
+    'finishsending' => array('year' => date('Y',$finishSending),'month' => date('m',$finishSending),'day' => date('d',$finishSending),'hour' => date('H',$finishSending),'minute' => date('i',$finishSending)),
     'from' => '',
     'subject' => '',
     'forwardsubject' => '',
