@@ -42,6 +42,7 @@ if (!empty($_POST['importcontent'])) {
       $userid = $idreq[0];
     } else {
       $count['imported']++;
+      addUserHistory($line,$GLOBALS['I18N']->get('import_by').' '.adminName(),'');
     }
 
     foreach($selected_lists as $k => $listid) {
