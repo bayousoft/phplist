@@ -151,6 +151,12 @@ $query
 
 $result = Sql_query($query);
 $ls = new WebblerListing($GLOBALS['I18N']->get('Lists'));
+
+$numlists = Sql_Affected_Rows();
+if ($numlists > 15) {
+  Info($GLOBALS['I18N']->get('You seem to have quite a lot of lists, do you want to organise them in categories? ').' '.PageLinkButton('catlists',$GLOBALS['I18N']->get('Great idea!')));
+}
+
 while ($row = Sql_fetch_array($result)) {
   $query
   = ' select count(*)'
@@ -227,6 +233,7 @@ while ($row = Sql_fetch_array($result)) {
   $delete_url = sprintf('<a href="javascript:deleteRec2(\'%s\',\'%s\');">%s</a>',$GLOBALS['I18N']->get('Are you sure you want to delete this list?'),PageURL2("list&delete=".$row["id"]),$GLOBALS['I18N']->get('del'));
 
   $ls->addColumn($element,$GLOBALS['I18N']->get('del'),$delete_url);
+  $ls->addColumn($element,$GLOBALS['I18N']->get('send'),PageLinkButton('send&new=1&list='.$row['id'],$GLOBALS['I18N']->get('new campaign')));
 
 
   $some = 1;
