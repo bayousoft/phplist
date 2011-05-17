@@ -443,6 +443,15 @@ while ($message = Sql_fetch_array($messages)) {
     $plugin->campaignStarted($msgdata);
   }
 
+  ## check the end date of the campaign
+  $stopSending = false;
+  if (!empty($msgdata['finishsending'])) {
+    $finishSendingBefore = mktime($msgdata['finishsending']['hour'],$msgdata['finishsending']['minute'],0,$msgdata['finishsending']['month'],$msgdata['finishsending']['day'],$msgdata['finishsending']['year']);
+    $secondsTogo = $finishSendingBefore - time();
+    $stopSending = $secondsTogo < 0;
+    output(sprintf($GLOBALS['I18N']->get('sending of this campaign will finish in %s'),secs2time($secondsTogo)));
+  }
+
   $userselection = $msgdata["userselection"]; ## @@ needs more work
   ## load message in cache
   precacheMessage($messageid);
@@ -670,12 +679,20 @@ while ($message = Sql_fetch_array($messages)) {
     if (!empty($getspeedstats)) output('-----------------------------------'."\n".'start process user '.$userid);  
     $some = 1;
     set_time_limit(120);
+
+    $secondsTogo = $finishSendingBefore - time();
+    $stopSending = $secondsTogo < 0;
+
     # check if we have been "killed"
     $alive = checkLock($send_process_id);
-    if ($alive)
+    if ($alive && !$stopSending) {
       keepLock($send_process_id);
-    else
+    } elseif ($stopSending) {
+      output($GLOBALS['I18N']->get('Campaign sending timed out, is past date to process until'));
+      break;
+    } else {
       ProcessError($GLOBALS['I18N']->get('Process Killed by other process'));
+    }
 
     # check if the message we are working on is still there and in process
     $status = Sql_Fetch_Array_query("select id,status from {$tables['message']} where id = $messageid");
@@ -960,7 +977,8 @@ while ($message = Sql_fetch_array($messages)) {
   }
   $processed = $notsent + $sent + $invalid + $unconfirmed + $cannotsend + $failed_sent;
   output($GLOBALS['I18N']->get('Processed').' '. $processed.' '.$GLOBALS['I18N']->get('out of').' '. $num_users .' '.$GLOBALS['I18N']->get('users'));
-  if ($num_users - $sent <= 0) {
+
+  if ($num_users - $sent <= 0 || $stopSending) {
     # this message is done
     if (!$someusers)
       output($GLOBALS['I18N']->get('Hmmm, No users found to send to'));
