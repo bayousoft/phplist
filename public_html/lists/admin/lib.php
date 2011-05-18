@@ -918,8 +918,12 @@ function cleanUrl($url,$disallowed_params = array('PHPSESSID')) {
   if (strpos($parsed['query'],'&amp;')) {
     $pairs = explode('&amp;',$parsed['query']);
     foreach ($pairs as $pair) {
-      list($key,$val) = explode('=',$pair);
-      $params[$key] = $val;
+      if (strpos($pair,'=') !== FALSE) {
+        list($key,$val) = explode('=',$pair);
+        $params[$key] = $val;
+      } else {
+        $params[$pair] = '';
+      }
     }
   } else {
     parse_str($parsed['query'],$params);
@@ -931,10 +935,11 @@ function cleanUrl($url,$disallowed_params = array('PHPSESSID')) {
   $uri .= !empty($parsed['path']) ? $parsed['path'] : '';
 #  $uri .= $parsed['query'] ? '?'.$parsed['query'] : '';
   $query = '';
+
   foreach ($params as $key => $val) {
     if (!in_array($key,$disallowed_params)) {
-      //0008980: Link Conversion for Click Tracking. no = will be added if key is empty.
-      $query .= $key . ( $val ? '=' . $val . '&' : '&' );
+      //0008980: Link Conversion for Click Tracking. no = will be added if val is empty.
+      $query .= $key . ( $val != "" ? '=' . $val . '&' : '&' );
     }
   }
   $query = substr($query,0,-1);
