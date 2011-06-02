@@ -178,11 +178,19 @@ class phplist extends DefaultPlugin {
   }
 
   function addEmail($email,$password = "") {
+    ## don't touch the password if it's empty
+    if (!empty($password)) {
+      $passwordchange = sprintf('password = "%s",
+      passwordchanged = current_timestamp,',$password);
+    } else {
+      $passwordchange = '';
+    }
+    
     Sql_Query(sprintf('insert into user set email = "%s",
-      entered = current_timestamp,password = "%s",
-      passwordchanged = current_timestamp,disabled = 0,
+      entered = current_timestamp,%s disabled = 0,
       uniqid = "%s",htmlemail = 1
-      ', $email,$password,getUniqid()),1);
+      ', $email,$passwordchange,getUniqid()),1);
+            
     $id = Sql_Insert_Id('user', 'id');
     if (is_array($_SESSION["userdata"])) {
       saveUserByID($id,$_SESSION["userdata"]);
