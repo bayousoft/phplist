@@ -5,8 +5,8 @@
 # if you have any useful contributions like this for PHPlist, send them to me, 
 # and I can include them in next versions. That will save others in collecting 
 # the information
-EstadoMX:Estados en MÈxico
---- Fuera de MÈxico ---
+EstadoMX:Estados en M√©xico
+--- Fuera de M√©xico ---
 Aguascalientes
 Baja California Norte
 Baja California Sur
@@ -17,26 +17,26 @@ Coahuila
 Colima
 Distrito Federal
 Durango
-Estado de MÈxico
+Estado de M√©xico
 Guanajuato
 Guerrero
 Hidalgo
 Jalisco
-Michoac·n
+Michoac√°n
 Morelos
 Nayarit
-Nuevo LeÛn
+Nuevo Le√≥n
 Oaxaca
 Puebla
-QuerÈtaro
+Quer√©taro
 Quintana Roo
-San Luis PotosÌ
+San Luis Potos√≠
 Sinaloa
 Sonora
 Tabasaco
 Tamaulipas
 Tlaxcala
 Veracruz
-Yucat·n
+Yucat√°n
 Zacatecas
 
