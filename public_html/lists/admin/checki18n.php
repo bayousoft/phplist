@@ -1,6 +1,9 @@
 <?php
 
 require_once dirname(__FILE__).'/accesscheck.php';
+
+$_SESSION['show_translation_colours'] = 1;
+
 print '<p class="button">'.PageLink2('checki18n&amp;changedonly=yes','Show changes only').'</p>';
 # translation check. See that every token has a text in a file and vv
 

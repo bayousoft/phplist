@@ -6,7 +6,6 @@ Languages, countries, and the charsets typically used for them
 http://www.w3.org/International/O-charset-lang.html
 
 */
-
 ## this array is now automatically build from the file system using the
 ## language_info file in each subdirectory of /lan/
 $LANGUAGES = array(
@@ -143,6 +142,7 @@ if (!isset($_SESSION['adminlanguage']) || !is_array($_SESSION['adminlanguage']))
 #print '<h1>'. $GLOBALS['strCharSet'].'</h1>';
 
 # internationalisation (I18N)
+
 class phplist_I18N {
   var $defaultlanguage = 'en';
   var $language = 'en';
@@ -173,14 +173,16 @@ class phplist_I18N {
   }
 
   function formatText($text) {
-    # we've decided to spell phplist all lowercase '
+    # we've decided to spell phplist with on L
     $text = str_replace('PHPlist','phpList',$text);
 
     if (isset($GLOBALS["developer_email"])) {
-      return '<font color=#A704FF>'.str_replace("\n","",$text).'</font>';
-      return str_replace("\n","",$text);
+      if (!empty($_SESSION['show_translation_colours'])) {
+        return '<span style="color:#A704FF">'.str_replace("\n","",$text).'</span>';
+      }
 #       return 'TE'.$text.'XT';
     }
+#    return '<span class="translateabletext">'.str_replace("\n","",$text).'</span>';
     return str_replace("\n","",$text);
   }
 
@@ -213,8 +215,9 @@ class phplist_I18N {
         $this->appendText('/tmp/'.$prefix.$page.'.php',$line);
       }
 
-      return '<font color=#FF1717>'.$text.'</font>';#MISSING TEXT
-      return $text;#MISSING TEXT
+      if (!empty($_SESSION['show_translation_colours'])) {
+        return '<span style="color: #FF1717">'.$text.'</span>';#MISSING TEXT
+      }
     }
     return $text;
   }
