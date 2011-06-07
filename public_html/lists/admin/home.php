@@ -83,6 +83,7 @@ if (checkAccess("setup") && !$_GET["pi"]) {
     $element = $GLOBALS['I18N']->get('Continue Configuration');
     $ls->addElement($element,PageURL2("setup"));
     $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Continue the Configuration process of phpList'));
+	$ls->setClass($element,"config-link");
   }
 }
 if (checkAccess("send") && !$_GET["pi"]) {
@@ -90,18 +91,21 @@ if (checkAccess("send") && !$_GET["pi"]) {
   $element = $GLOBALS['I18N']->get('Send a campaign');
   $ls->addElement($element,PageURL2("send"));
   $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Start or continue a campaign'));
+  $ls->setClass($element,"send-campaign");
 }
 if (checkAccess("messages")) {
   $some = 1;
   $element = $GLOBALS['I18N']->get('Manage Campaigns');
   $ls->addElement($element,PageURL2("messages"));
   $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('View current campaigns'));
+    $ls->setClass($element,"manage-campaigns");
 }
 if (checkAccess("users")) {
   $some = 1;
   $element = $GLOBALS['I18N']->get('Manage Subscribers');
   $ls->addElement($element,PageURL2("users"));
   $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Search, edit and add Subscribers'));
+    $ls->setClass($element,"manage-users");
 }
 
 if ($some) {
@@ -118,30 +122,35 @@ if (checkAccess("list")) {
   $element = $GLOBALS['I18N']->get('Manage Lists');
   $ls->addElement($element,PageURL2("list"));
   $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('View, edit and add lists, that your subscribers can sign up to'));
+  $ls->setClass($element,"manage-lists");
 }
 if (checkAccess("users")) {
   $some = 1;
   $element = $GLOBALS['I18N']->get('users');
   $ls->addElement($element,PageURL2("users"));
   $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('List all Users'));
+    $ls->setClass($element,"list-users");
 }
 if (checkAccess("reconcileusers")) {
   $some = 1;
   $element = $GLOBALS['I18N']->get('reconcileusers');
   $ls->addElement($element,PageURL2("reconcileusers"));
   $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Reconcile the User Database'));
+  $ls->setClass($element,"reconcileusers");
 }
 if (ALLOW_IMPORT && checkAccess("import") && !$_GET["pi"]) {
   $some = 1;
   $element = $GLOBALS['I18N']->get('import');
   $ls->addElement($element,PageURL2("import"));
   $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Import Users'));
+  $ls->setClass($element,"import-users");
 }
 if (checkAccess("export") && !$_GET["pi"]) {
   $some = 1;
   $element = $GLOBALS['I18N']->get('export');
   $ls->addElement($element,PageURL2("export"));
   $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Export Users'));
+  $ls->setClass($element,"export-users");
 }
 if ($some) {
   print '<h3><a name="list">'.$GLOBALS['I18N']->get('List and user functions').'</a></h3>';
@@ -156,12 +165,14 @@ if (checkAccess("configure")) {
   $element = $GLOBALS['I18N']->get('configure');
   $ls->addElement($element,PageURL2("configure"));
   $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Configure').' '.NAME);
+  $ls->setClass($element,"configure");
 }
 if (checkAccess("attributes") && !$_GET["pi"]) {
   $some = 1;
   $element = $GLOBALS['I18N']->get('attributes');
   $ls->addElement($element,PageURL2("attributes"));
   $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Configure Attributes'));
+  $ls->setClass($element,"configure-attributes");
   if (Sql_table_exists($tables["attribute"])) {
     $res = Sql_Query("select * from ".$tables["attribute"],0);
     while ($row = Sql_Fetch_array($res)) {
@@ -177,6 +188,7 @@ if (checkAccess("spage")) {
   $element = $GLOBALS['I18N']->get('spage');
   $ls->addElement($element,PageURL2("spage"));
   $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Configure Subscribe Pages'));
+  $ls->setClass($element,"spage");
 }
 
 if ($some) {
@@ -193,12 +205,14 @@ if (checkAccess("admins")) {
   $element = $GLOBALS['I18N']->get('admins');
   $ls->addElement($element,PageURL2("admins"));
   $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Add, edit and remove Administrators'));
+  $ls->setClass($element,"admins");
 }
 if (checkAccess("adminattributes")) {
   $some = 1;
   $element = $GLOBALS['I18N']->get('adminattributes');
   $ls->addElement($element,PageURL2("adminattributes"));
   $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Configure Attributes for administrators'));
+  $ls->setClass($element,"adminattributes");
 }
 if ($some) {
   print '<h3><a name="admin">'.$GLOBALS['I18N']->get('Administrator Functions').'</a></h3>';
@@ -214,6 +228,7 @@ if (checkAccess("send")) {
   $element = $GLOBALS['I18N']->get('send');
   $ls->addElement($element,PageURL2("send"));
   $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Send a Message'));
+  $ls->setClass($element,"send-message");
 }
 if (USE_PREPARE) {
   if (checkAccess("preparesend")) {
@@ -221,12 +236,14 @@ if (USE_PREPARE) {
     $element = $GLOBALS['I18N']->get('preparesend');
     $ls->addElement($element,PageURL2("preparesend"));
     $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Prepare a Message'));
+	$ls->setClass($element,"preparesend");
   }
   if (checkAccess("sendprepared")) {
     $some = 1;
     $element = $GLOBALS['I18N']->get('sendprepared');
     $ls->addElement($element,PageURL2("sendprepared"));
     $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Send a Prepared Message'));
+	$ls->setClass($element,"sendprepared");
   }
 }
 if (checkAccess("templates")) {
@@ -234,18 +251,21 @@ if (checkAccess("templates")) {
   $element = $GLOBALS['I18N']->get('templates');
   $ls->addElement($element,PageURL2("templates"));
   $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Configure Templates'));
+  $ls->setClass($element,"templates");
 }
 if (checkAccess("messages")) {
   $some = 1;
   $element = $GLOBALS['I18N']->get('messages');
   $ls->addElement($element,PageURL2("messages"));
   $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('List all Messages'));
+  $ls->setClass($element,"list-all-msg");
 }
 if (checkAccess("processqueue") && MANUALLY_PROCESS_QUEUE) {
   $some = 1;
   $element = $GLOBALS['I18N']->get('processqueue');
   $ls->addElement($element,PageURL2("processqueue"));
   $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Process the Message Queue'));
+  $ls->setClass($element,"processqueue");
   if (TEST) {
    $ls->addColumn($element,$GLOBALS['I18N']->get('warning'),$GLOBALS['I18N']->get('You have set TEST in config.php to 1, so it will only show what would be sent'));
   }
@@ -255,12 +275,14 @@ if (checkAccess("processbounces") && MANUALLY_PROCESS_BOUNCES) {
   $element = $GLOBALS['I18N']->get('processbounces');
   $ls->addElement($element,PageURL2("processbounces"));
   $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Process Bounces'));
+  $ls->setClass($element,"processbounces");
 }
 if (checkAccess("bounces")) {
   $some = 1;
   $element = $GLOBALS['I18N']->get('bounces');
   $ls->addElement($element,PageURL2("bounces"));
   $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('View Bounces'));
+  $ls->setClass($element,"bounces");
 }
 if ($some) {
   print '<h3><a name="msg">'.$GLOBALS['I18N']->get('Message Functions').'</a></h3>';
@@ -323,12 +345,14 @@ if (checkAccess("initialise") && !$_GET["pi"]) {
   $element = $GLOBALS['I18N']->get('setup');
   $ls->addElement($element,PageURL2("setup"));
   $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Setup ').NAME);
+  $ls->setClass($element,"setup");
 }
 if (checkAccess("upgrade") && !$_GET["pi"] && $upgrade_required) {
   $some = 1;
   $element = $GLOBALS['I18N']->get('upgrade');
   $ls->addElement($element,PageURL2("upgrade"));
   $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Upgrade'));
+  $ls->setClass($element,"upgrade");
 }
 if (checkAccess("dbcheck")) {
   $some = 1;
@@ -342,12 +366,14 @@ if (checkAccess("eventlog")) {
   $element = $GLOBALS['I18N']->get('eventlog');
   $ls->addElement($element,PageURL2("eventlog"));
   $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('View the eventlog'));
+  $ls->setClass($element,"view-log");
 }
 if (checkAccess("admin") && $GLOBALS["require_login"] && !isSuperUser()) {
   $some = 1;
   $element = $GLOBALS['I18N']->get('admin');
   $ls->addElement($element,PageURL2("admin"));
-  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Change your details (e.g. password)'));;
+  $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Change your details (e.g. password)'));
+  $ls->setClass($element,"change-pass");
 }
 if ($some) {
   print '<h3><a name="system">'.$GLOBALS['I18N']->get('System Functions').'</a></h3>';
