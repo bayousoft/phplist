@@ -359,6 +359,7 @@ if (checkAccess("dbcheck")) {
   $element = $GLOBALS['I18N']->get('dbcheck');
   $ls->addElement($element,PageURL2("dbcheck"));
   $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Check Database structure'));
+  $ls->setClass($element,"dbcheck");
 }
 
 if (checkAccess("eventlog")) {
