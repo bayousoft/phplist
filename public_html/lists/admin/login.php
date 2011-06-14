@@ -27,7 +27,7 @@ if (!navigator.cookieEnabled) {
 </script>
 <?php
 function footer(){
-  echo '<form method="post" action="">';
+  echo '<form method="post" id="forgotpassword-form" action="">';
   echo '  <hr width="50%" size="3"/><p class="login">';
   echo $GLOBALS['I18N']->get('forgot password').':';
   echo $GLOBALS['I18N']->get('enter your email').': <input type="text" name="forgotpassword" value="" size="30" />';
@@ -84,7 +84,7 @@ function deleteOldTokens(){
       $SQLquery=sprintf("select loginname from %s where id = %d;", $GLOBALS['tables']['admin'], $adminId);
       $row = Sql_Fetch_Row_Query($SQLquery);
       echo "You have requested a password update.\n";
-      echo "<form method=\"post\" action=\"\">\n";
+      echo "<form method=\"post\" id=\"login-form\" action=\"\">\n";
       echo "  <input type=\"hidden\" name=\"page\" value=\"$page\" />\n";
       echo "  <input type=\"hidden\" name=\"name\" value=\"".$row[0]."\" />\n";
       echo "  <table class=\"loginPassUpdate\" width=\"100%\" border=\"0\" cellpadding=\"2\" cellspacing=\"0\">\n";
@@ -103,7 +103,7 @@ function deleteOldTokens(){
       deleteOldTokens();
     }
     } else {
-    echo "<form method=\"post\" action=\"\">\n";
+    echo "<form method=\"post\" id=\"login-form\" action=\"\">\n";
     echo "  <input type=\"hidden\" name=\"page\" value=\"$page\" />\n";
     echo "  <table class=\"loginPassUpdate\" width=\"100%\" border=\"0\" cellpadding=\"2\" cellspacing=\"0\">\n";
     echo "    <tr><td><span class=\"general\">".$GLOBALS['I18N']->get('name').":</span></td></tr>\n";
