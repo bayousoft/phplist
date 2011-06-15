@@ -179,6 +179,7 @@ if (checkAccess("attributes") && !$_GET["pi"]) {
       if ($row["type"] != "checkbox" && $row["type"] != "textarea" && $row["type"] != "textline" && $row["type"] != "hidden") {
         $ls->addElement($row["name"],PageURL2("editattributes&amp;id=".$row["id"]));
         $ls->addColumn($row["name"],"&nbsp;",$GLOBALS['I18N']->get('Control values for').' '.$row["name"]);
+        $ls->setClass($row["name"],"custom-attribute");
       }
     }
   }
