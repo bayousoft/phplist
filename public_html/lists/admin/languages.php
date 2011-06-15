@@ -358,4 +358,9 @@ $lan = array(
 
 $I18N = new phplist_I18N();
 
+/* add a shortcut that seems common in other apps */
+function s($text) {
+  return $GLOBALS['I18N']->get($text);
+}
+
 ?>
