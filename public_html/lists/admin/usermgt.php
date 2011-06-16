@@ -1,12 +1,12 @@
 <?php
 require_once dirname(__FILE__).'/accesscheck.php';
 
-$spb ='<li>';
-$spe = '</li>';
-
+#$spb ='<li>';
+#$spe = '</li>';
+# Replace the $spb & $spe by <li id="li_ID"> & </li>
 $html = '<ul>';
-$html .= $spb.PageLink2("users",$GLOBALS['I18N']->get('search subscribers')).$spe;
-$html .= $spb.PageLink2("attributes",$GLOBALS['I18N']->get('manage subscriber attributes')).$spe;
+$html .= '<li id="users">'.PageLink2("users",$GLOBALS['I18N']->get('search subscribers')).'</li>';
+$html .= '<li id="attributes">'.PageLink2("attributes",$GLOBALS['I18N']->get('manage subscriber attributes')).'</li>';
 
 
 $attributehtml = '';
@@ -24,19 +24,17 @@ foreach ($attrmenu as $page => $desc) {
     $attributehtml .= '<li>'.$link.'</li>';
   }
 }
-$html .= $spb.$GLOBALS['I18N']->get('edit values for attributes').$spe.'<ul>'.$attributehtml.'</ul>';
+$html .= '<li id="edit-values">'.$GLOBALS['I18N']->get('edit values for attributes').$spe.'<ul>'.$attributehtml.'</ul>';
 
-$html .= $spb.PageLink2("reconcileusers",$GLOBALS['I18N']->get('reconcile')).$spe;
-$html .= $spb.PageLink2("usercheck",$GLOBALS['I18N']->get('check')).$spe;
-$html .= $spb.PageLink2("massunconfirm",$GLOBALS['I18N']->get('mass unconfirm users')).$spe;
-$html .= $spb.PageLink2("massremove",$GLOBALS['I18N']->get('mass remove users')).$spe;
+$html .= '<li id="reconcileusers">'.PageLink2("reconcileusers",$GLOBALS['I18N']->get('reconcile')).'</li>';
+$html .= '<li id="usercheck">'.PageLink2("usercheck",$GLOBALS['I18N']->get('check')).'</li>';
+$html .= '<li id="massunconfirm">'.PageLink2("massunconfirm",$GLOBALS['I18N']->get('mass unconfirm users')).'</li>';
+$html .= '<li id="massremove">'.PageLink2("massremove",$GLOBALS['I18N']->get('mass remove users')).'</li>';
 if (ALLOW_IMPORT) {
-  $html .= $spb.PageLink2("import",$GLOBALS['I18N']->get('import')).$spe;
+  $html .= '<li id="import">'.PageLink2("import",$GLOBALS['I18N']->get('import')).'</li>';
 }
-$html .= $spb.PageLink2("export",$GLOBALS['I18N']->get('export')).$spe;
+$html .= '<li id="export">'.PageLink2("export",$GLOBALS['I18N']->get('export')).'</li>';
 $html .= '</ul>';
 
 $p = new UIPanel($GLOBALS['I18N']->get('subscriber management functions'),$html);
 print $p->display();
-
-?>
