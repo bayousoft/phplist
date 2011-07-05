@@ -1,5 +1,5 @@
 
-var waitImg1 = 'busy/busy-phplist_alpha50.gif';
+var waitImg1 = 'busy/busy-phplist_alpha50-3.gif';
 var waitImg2 = 'busy/busy-phplist_black.gif';
 var waitImg3 = 'busy/busy-phplist_mix.gif';
 
@@ -103,7 +103,9 @@ if (waitImage == undefined) {
     var dir = me.substring(0,me.lastIndexOf('/'));
     dir = dir+'/../images/';
   } else {
-    var dir = 'lists/images';
+    // fall back to central one
+    var dir = 'http://powered.phplist.com/images/';
+    waitImg1 = 'busy-phplist-1.gif';
   }
   var waitImage = dir+waitImg1;
 }  
