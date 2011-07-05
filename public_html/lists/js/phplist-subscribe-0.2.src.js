@@ -96,6 +96,15 @@ if (pleaseEnter == undefined) {
   var pleaseEnter = "Please enter your email";
 }
 if (waitImage == undefined) {
-  var waitImage = 'lists/images/'+waitImg1;
+  // trick to find the location of ourselves, but doesn't work in Chrome
+  // can't find any more where I found this trick 
+  var me = (new Error).fileName; 
+  if (me) {
+    var dir = me.substring(0,me.lastIndexOf('/'));
+    dir = dir+'/../images/';
+  } else {
+    var dir = 'lists/images';
+  }
+  var waitImage = dir+waitImg1;
 }  
 
