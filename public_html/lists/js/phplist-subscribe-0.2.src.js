@@ -28,6 +28,7 @@ $(document).ready(function() {
             .hide()
             .fadeIn(1500);
             $("#phplistsubscribeform").hide();
+            document.cookie = "phplistsubscribed=yes";
           }
         },
         error: function(jqXHR, textStatus, errorThrown) {
@@ -53,6 +54,11 @@ $(document).ready(function() {
       $("#emailaddress").val(pleaseEnter)
     }
   });
+  var cookie = document.cookie;
+  if (cookie.indexOf('phplistsubscribed=yes')) {
+    $("#phplistsubscribeform").html(thanksForSubscribing);
+  }
+    
 });
 
 // cross domain fix for IE
@@ -95,6 +101,10 @@ $.ajaxTransport("+*", function( options, originalOptions, jqXHR ) {
 if (pleaseEnter == undefined) {
   var pleaseEnter = "Please enter your email";
 }
+if (thanksForSubscribing == undefined) {
+  var thanksForSubscribing = '<div class="subscribed">Thanks for subscribing.</div>';
+}
+
 if (waitImage == undefined) {
   // trick to find the location of ourselves, but doesn't work in Chrome
   // can't find any more where I found this trick 
