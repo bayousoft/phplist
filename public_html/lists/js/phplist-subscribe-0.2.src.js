@@ -55,7 +55,7 @@ $(document).ready(function() {
     }
   });
   var cookie = document.cookie;
-  if (cookie.indexOf('phplistsubscribed=yes')) {
+  if (cookie.indexOf('phplistsubscribed=yes')>=0) {
     $("#phplistsubscribeform").html(thanksForSubscribing);
   }
     
