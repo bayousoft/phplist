@@ -1,7 +1,7 @@
 
-var waitImg1 = 'busy/busy-phplist_alpha50-3.gif';
-var waitImg2 = 'busy/busy-phplist_black.gif';
-var waitImg3 = 'busy/busy-phplist_mix.gif';
+//var waitImg1 = 'busy/busy-phplist_alpha50-3.gif';
+//var waitImg2 = 'busy/busy-phplist_black.gif';
+//var waitImg3 = 'busy/busy-phplist_mix.gif';
 
 $(document).ready(function() {
   var waitimg = new Image();
@@ -102,21 +102,9 @@ if (pleaseEnter == undefined) {
   var pleaseEnter = "Please enter your email";
 }
 if (thanksForSubscribing == undefined) {
-  var thanksForSubscribing = '<div class="subscribed">Thanks for subscribing.</div>';
+  var thanksForSubscribing = '<div class="subscribed">Thanks for subscribing. Please click the link in the confirmation email you will receive.</div>';
 }
-
 if (waitImage == undefined) {
-  // trick to find the location of ourselves, but doesn't work in Chrome
-  // can't find any more where I found this trick 
-  var me = (new Error).fileName; 
-  if (me) {
-    var dir = me.substring(0,me.lastIndexOf('/'));
-    dir = dir+'/../images/';
-  } else {
-    // fall back to central one
-    var dir = 'http://powered.phplist.com/images/';
-    waitImg1 = 'busy-phplist-1.gif';
-  }
-  var waitImage = dir+waitImg1;
+  var waitImage = 'https://s3.amazonaws.com/phplist/img/busy.gif';
 }  
 
