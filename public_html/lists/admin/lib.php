@@ -345,11 +345,73 @@ function sendMailPhpMailer ($to,$subject,$message) {
   $destinationemail = '';
 
 #  print "Sending $to from $fromemail<br/>";
-
   if (!DEVVERSION) {
     $mail = new PHPlistMailer('systemmessage',$to);
     $destinationemail = $to;
-    $mail->add_text($message);
+
+    $hasHTML = strip_tags($message) != $message;
+
+    if ($hasHTML) {
+      $message = stripslashes($message);
+      $textmessage = HTML2Text($message);
+      $htmlmessage = $message;
+    } else {
+      $textmessage = $message;
+      $htmlmessage = $message;
+      $htmlmessage = str_replace("\n\n","\n",$htmlmessage);
+      $htmlmessage = nl2br($htmlmessage);
+      ## make links clickable:
+      preg_match_all('~https?://[^\s<]+~i',$htmlmessage,$matches);
+      for ($i=0; $i<sizeof($matches[0]);$i++) {
+        $match = $matches[0][$i];
+        $htmlmessage = str_replace($match,'<a href="'.$match.'">'.$match.'</a>',$htmlmessage);
+      }
+    }
+    ## add li-s around the lists
+    if (preg_match('/<ul>\s+(\*.*)<\/ul>/imsxU',$htmlmessage,$listsmatch)) {
+      $lists = $listsmatch[1];
+      $listsHTML = '';
+      preg_match_all('/\*([^\*]+)/',$lists,$matches);
+      for ($i=0;$i<sizeof($matches[0]);$i++) {
+        $listsHTML .= '<li>'.$matches[1][$i].'</li>';
+      }
+      $htmlmessage = str_replace($listsmatch[0],'<ul>'.$listsHTML.'</ul>',$htmlmessage);
+/*
+      print "<h1>MATCH</h1>";
+*/
+    }
+/*
+    } else {
+      print "<h1>NO MATCH</h1>";
+      print htmlspecialchars($htmlmessage); exit;
+    }
+*/
+
+    $templateid = getConfig('systemmessagetemplate');
+    if (!empty($templateid)) {
+      $req = Sql_Fetch_Row_Query(sprintf('select template from %s where id = %d',
+        $GLOBALS["tables"]["template"],$templateid));
+      $htmltemplate = stripslashes($req[0]);
+    }
+    if (strpos($htmltemplate,'[CONTENT]')) {
+      $htmlcontent = str_replace('[CONTENT]',$htmlmessage,$htmltemplate);
+      $htmlcontent = str_replace('[FOOTER]','',$htmlcontent);
+      if (!EMAILTEXTCREDITS) {
+        $phpListPowered = preg_replace('/src=".*power-phplist.png"/','src="powerphplist.png"',$GLOBALS['PoweredByImage']);
+      } else {
+        $phpListPowered = $GLOBALS['PoweredByText'];
+      }
+      if (strpos($htmlcontent,'</body>')) {
+        $htmlcontent = str_replace('</body>',$phpListPowered.'</body>',$htmlcontent);
+      } else {
+        $htmlcontent .= $phpListPowered;
+      }
+      $mail->add_html($htmlcontent,$textmessage,$templateid);
+      ## In the above phpMailer strips all tags, which removes the links which are wrapped in < and > by HTML2text
+      ## so add it again
+      $mail->add_text($textmessage);
+    } 
+    $mail->add_text($textmessage);
   } else {
     # send mails to one place when running a test version
     $message = "To: $to\n".$message;
@@ -359,7 +421,7 @@ function sendMailPhpMailer ($to,$subject,$message) {
         return 0;
       } else {
         $mail = new PHPlistMailer('systemmessage',$to);
-        $mail->add_text($message);
+        $mail->add_text($textmessage);
         $destinationemail = $GLOBALS["developer_email"];
       }
     } else {
