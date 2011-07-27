@@ -12,6 +12,9 @@ if (isset($_GET['delete'])) {
 if (isset($_POST['defaulttemplate'])) {
   saveConfig('defaultmessagetemplate',sprintf('%d',$_POST['defaulttemplate']));
 }
+if (isset($_POST['systemtemplate'])) {
+  saveConfig('systemmessagetemplate',sprintf('%d',$_POST['systemtemplate']));
+}
 
 ?>
 
@@ -22,6 +25,7 @@ if (!Sql_Affected_Rows())
   print '<p class="information">'.$GLOBALS['I18N']->get("No template have been defined").'</p>';
 
 $defaulttemplate = getConfig('defaultmessagetemplate');
+$systemtemplate = getConfig('systemmessagetemplate');
 print formStart('name="templates" class="templatesEdit" ');
 $ls = new WebblerListing($GLOBALS['I18N']->get("Existing templates"));
 while ($row = Sql_fetch_Array($req)) {
@@ -34,8 +38,10 @@ while ($row = Sql_fetch_Array($req)) {
 #    $GLOBALS['tables']['templateimage'],$row['id']));
 #  $ls->addColumn($element,$GLOBALS['I18N']->get('# imgs'),$imgcount[0]);
   $ls->addColumn($element,$GLOBALS['I18N']->get('View'),PageLinkDialogOnly("viewtemplate&amp;id=".$row["id"],$GLOBALS['img_view']));
-  $ls->addColumn($element,$GLOBALS['I18N']->get('Default'),sprintf('<input type=radio name="defaulttemplate" value="%d" %s onchange="document.templates.submit();">',
+  $ls->addColumn($element,$GLOBALS['I18N']->get('Campaign Default'),sprintf('<input type=radio name="defaulttemplate" value="%d" %s onchange="document.templates.submit();">',
     $row['id'],$row['id'] == $defaulttemplate ? 'checked':''));
+  $ls->addColumn($element,$GLOBALS['I18N']->get('System'),sprintf('<input type=radio name="systemtemplate" value="%d" %s onchange="document.templates.submit();">',
+    $row['id'],$row['id'] == $systemtemplate ? 'checked':''));
 
 }
 print $ls->display();
