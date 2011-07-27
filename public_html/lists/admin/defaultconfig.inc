@@ -262,6 +262,12 @@ $default_config = array (
   "text"
 ),
 
+  # the template for system messages (welcome confirm subscribe etc)
+"systemmessagetemplate" => array (
+  0,
+  "The HTML wrapper template for system messages",
+  "text"
+),
   ## the location of your subscribe script
   #"public_baseurl" => array("http://[WEBSITE]$pageroot/",
   #  "Base URL for public pages","text"),
