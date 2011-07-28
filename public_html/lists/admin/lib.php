@@ -395,13 +395,16 @@ function sendMailPhpMailer ($to,$subject,$message) {
     }
     if (strpos($htmltemplate,'[CONTENT]')) {
       $htmlcontent = str_replace('[CONTENT]',$htmlmessage,$htmltemplate);
+      $htmlcontent = str_replace('[SUBJECT]',$subject,$htmlcontent);
       $htmlcontent = str_replace('[FOOTER]','',$htmlcontent);
       if (!EMAILTEXTCREDITS) {
         $phpListPowered = preg_replace('/src=".*power-phplist.png"/','src="powerphplist.png"',$GLOBALS['PoweredByImage']);
       } else {
         $phpListPowered = $GLOBALS['PoweredByText'];
       }
-      if (strpos($htmlcontent,'</body>')) {
+      if (strpos($htmlcontent,'[SIGNATURE]')) {
+        $htmlcontent = str_replace('[SIGNATURE]',$phpListPowered,$htmlcontent);
+      } elseif (strpos($htmlcontent,'</body>')) {
         $htmlcontent = str_replace('</body>',$phpListPowered.'</body>',$htmlcontent);
       } else {
         $htmlcontent .= $phpListPowered;
