@@ -1,5 +1,5 @@
-
 <?php
+
 require_once dirname(__FILE__).'/accesscheck.php';
 
 if (!empty($_FILES['file_template']) && is_uploaded_file($_FILES['file_template']['tmp_name'])) {
@@ -9,6 +9,8 @@ if (!empty($_FILES['file_template']) && is_uploaded_file($_FILES['file_template'
 } else {
   $content = '';
 }
+$testtarget = getConfig('admin_address');
+$systemTemplateID = getConfig('systemmessagetemplate');
 
 if (file_exists("./FCKeditor/fckeditor.php") && USEFCK) {
   include("./FCKeditor/fckeditor.php") ;
@@ -89,7 +91,7 @@ if (!empty($_POST['action']) && $_POST['action'] == "addimages") {
   }
   print '<p class="information">'.$msg.'</p>';
   return;
-} elseif (!empty($_POST['save'])) {
+} elseif (!empty($_POST['save']) || !empty($_POST['sendtest'])) { ## let's save when sending a test
   $templateok = 1;
   $title = removeXss($_POST['title']);
   if ($title && strpos($content,"[CONTENT]") !== false) {
@@ -166,27 +168,60 @@ if (!empty($_POST['action']) && $_POST['action'] == "addimages") {
 
       print '<input type="hidden" name="id" value="'.$id.'" /><input type="hidden" name="action" value="addimages" />
         <input class="submit" type="submit" name="addimages" value="'.$GLOBALS['I18N']->get("Save Images").'" /></form>';
-      return;
+      if (empty($_POST['sendtest'])) return;
+  #    return;
     } else {
       print '<p class="information">'.$GLOBALS['I18N']->get("Template does not contain local images")."</p>";
-      return;
+      if (empty($_POST['sendtest'])) return;
+  #    return;
     }
   } else {
     print '<p class="information">'.$GLOBALS['I18N']->get("Some errors were found, template NOT saved!").'</p>';
     $data["title"] = $title;
     $data["template"] = $content;
   }
-} else {
-  if ($id) {
-    $req = Sql_Query("select * from {$tables["template"]} where id = $id");
-    $data = Sql_Fetch_Array($req);
-  } else {
-    $data = array();
-    $data["title"] = '';
-    $data["template"] = '';
-  }
+  if (!empty($_POST['sendtest'])) {
+    ## check if it's the system message template or a normal one:
+
+    $targetEmails = explode(',',$_POST['testtarget']);
+    $testtarget = '';
+    print '<h3>'.$GLOBALS['I18N']->get('Sending test').'</h3>';
     
+    if ($id == $systemTemplateID) {
+      foreach ($targetEmails as $email) {
+        if (validateEmail($email)) {
+          $testtarget .= $email.', ';
+          print '<p>'.$GLOBALS['I18N']->get('Sending test "Request for confirmation" to ').$email.'</p>';
+          sendMail ($email,getConfig('subscribesubject'),getConfig('subscribemessage'));
+          print '<p>'.$GLOBALS['I18N']->get('Sending test "Welcome" to ').$email.'</p>';
+          sendMail ($email,getConfig('confirmationsubject'),getConfig('confirmationmessage'));
+          print '<p>'.$GLOBALS['I18N']->get('Sending test "Unsubscribe confirmation" to ').$email.'</p>';
+          sendMail ($email,getConfig('unsubscribesubject'),getConfig('unsubscribemessage'));
+        } else {
+          print '<p>'.$GLOBALS['I18N']->get('Eror sending test messages to ').$email.'</p>';
+        }
+      }
+    } else {
+      ## Sending test emails of non system templates to be added.
+    }
+    if (empty($testtarget)) {
+      $testtarget = getConfig('admin_address');
+    }
+      
+  }
+
+  
 }
+
+if ($id) {
+  $req = Sql_Query("select * from {$tables["template"]} where id = $id");
+  $data = Sql_Fetch_Array($req);
+} else {
+  $data = array();
+  $data["title"] = '';
+  $data["template"] = '';
+}
+    
 ?>
 
 <p class="information"><?php echo $msg?></p>
@@ -194,6 +229,7 @@ if (!empty($_POST['action']) && $_POST['action'] == "addimages") {
 
 <?php echo formStart(' enctype="multipart/form-data" class="template2" ')?>
 <input type="hidden" name="id" value="<?php echo $id?>" />
+<div class="panel">
 <table class="templateForm">
 <tr>
 
@@ -288,4 +324,19 @@ tinyMCE.init({
   <td colspan="2"><input class="submit" type="submit" name="save" value="<?php echo $GLOBALS['I18N']->get('Save Changes')?>" /></td>
 </tr>
 </table>
+</div>
+<?  $sendtest_content = sprintf('<div class="sendTest" id="sendTest">
+    '.$sendtestresult .'
+    <input class="submit" type="submit" name="sendtest" value="%s"/>  %s: 
+    <input type="text" name="testtarget" size="40" value="'.$testtarget.'"/><br />%s
+    </div>',
+    $GLOBALS['I18N']->get('Send test message'),$GLOBALS['I18N']->get('to email addresses'),
+    $GLOBALS['I18N']->get('(comma separate addresses - all must be existing subscribers)'));
+  $testpanel = new UIPanel($GLOBALS['I18N']->get('Send Test'),$sendtest_content);
+  $testpanel->setID('testpanel');
+  if ($systemTemplateID == $id) { ## for now, testing only for system message templates
+    print $testpanel->display();
+  }
+?>
+
 </form>
