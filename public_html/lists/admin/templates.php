@@ -49,4 +49,11 @@ print $ls->display();
 print '</form>';
 
 print '<p class="button">'.PageLink2("template",$GLOBALS['I18N']->get('Add new Template'))."</p>";
+
+$exists = Sql_Fetch_Row_Query(sprintf('select * from %s where title = "System Template"',$GLOBALS['tables']['template']));
+if (empty($exists[0])) {
+  print '<p class="button">'.PageLink2("defaultsystemtemplate",$GLOBALS['I18N']->get('Add default system template'))."</p>";
+}
+
+
 ?>
