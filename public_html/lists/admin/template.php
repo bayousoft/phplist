@@ -2,6 +2,8 @@
 
 require_once dirname(__FILE__).'/accesscheck.php';
 
+$actionresult = '';
+
 if (!empty($_FILES['file_template']) && is_uploaded_file($_FILES['file_template']['tmp_name'])) {
   $content = file_get_contents($_FILES['file_template']['tmp_name']);
 } elseif (isset($_POST['content'])) {
@@ -156,7 +158,7 @@ if (!empty($_POST['action']) && $_POST['action'] == "addimages") {
       include dirname(__FILE__) . "/class.image.inc";
       $image = new imageUpload();
       print "<h3>".$GLOBALS['I18N']->get("Images").'</h3><p class="information">'.$GLOBALS['I18N']->get("Below is the list of images used in your template. If an image is currently unavailable, please upload it to the database.")."</p>";
-      print '<p class="information">'.$GLOBALS['I18N']->get("This includes all images, also fully referenced ones, so you may choose not to upload some. If you upload images, they will be included in the emails that use this template.")."</p>";
+      print '<p class="information">'.$GLOBALS['I18N']->get("This includes all images, also fully referenced ones, so you may choose not to upload some. If you upload images, they will be included in the campaigns that use this template.")."</p>";
       print formStart('enctype="multipart/form-data" class="template1" ');
       print '<input type="hidden" name="id" value="'.$id.'" />';
       ksort($images);
@@ -185,20 +187,20 @@ if (!empty($_POST['action']) && $_POST['action'] == "addimages") {
 
     $targetEmails = explode(',',$_POST['testtarget']);
     $testtarget = '';
-    print '<h3>'.$GLOBALS['I18N']->get('Sending test').'</h3>';
+    $actionresult .= '<h3>'.$GLOBALS['I18N']->get('Sending test').'</h3>';
     
     if ($id == $systemTemplateID) {
       foreach ($targetEmails as $email) {
         if (validateEmail($email)) {
           $testtarget .= $email.', ';
-          print '<p>'.$GLOBALS['I18N']->get('Sending test "Request for confirmation" to ').$email.'</p>';
+          $actionresult .= '<p>'.$GLOBALS['I18N']->get('Sending test "Request for confirmation" to ').$email.'</p>';
           sendMail ($email,getConfig('subscribesubject'),getConfig('subscribemessage'));
-          print '<p>'.$GLOBALS['I18N']->get('Sending test "Welcome" to ').$email.'</p>';
+          $actionresult .= '<p>'.$GLOBALS['I18N']->get('Sending test "Welcome" to ').$email.'</p>';
           sendMail ($email,getConfig('confirmationsubject'),getConfig('confirmationmessage'));
-          print '<p>'.$GLOBALS['I18N']->get('Sending test "Unsubscribe confirmation" to ').$email.'</p>';
+          $actionresult .= '<p>'.$GLOBALS['I18N']->get('Sending test "Unsubscribe confirmation" to ').$email.'</p>';
           sendMail ($email,getConfig('unsubscribesubject'),getConfig('unsubscribemessage'));
-        } else {
-          print '<p>'.$GLOBALS['I18N']->get('Eror sending test messages to ').$email.'</p>';
+        } elseif (trim($email) != '') {
+          $actionresult .= '<p>'.$GLOBALS['I18N']->get('Eror sending test messages to ').$email.'</p>';
         }
       }
     } else {
@@ -207,7 +209,8 @@ if (!empty($_POST['action']) && $_POST['action'] == "addimages") {
     if (empty($testtarget)) {
       $testtarget = getConfig('admin_address');
     }
-      
+    $testtarget = preg_replace('/, $/','',$testtarget);
+    print '<div class="actionresult">'.$actionresult.'</div>';
   }
 
   
