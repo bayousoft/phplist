@@ -871,25 +871,25 @@ while ($message = Sql_fetch_array($messages)) {
              }
            } elseif (MAILQUEUE_THROTTLE) {
              usleep(MAILQUEUE_THROTTLE * 1000000);
-           } elseif (MAILQUEUE_BATCH_PERIOD && MAILQUEUE_BATCH_PERIOD > 0 && MAILQUEUE_BATCH_SIZE && MAILQUEUE_AUTOTHROTTLE && $sent > 10) {
+           } elseif (MAILQUEUE_BATCH_SIZE && MAILQUEUE_AUTOTHROTTLE) {
              $totaltime = $GLOBALS['processqueue_timer']->elapsed(1);
              $msgperhour = (3600/$totaltime) * $sent;
              $msgpersec = $msgperhour / 3600;
              $secpermsg = $totaltime / $sent;
-             $target = MAILQUEUE_BATCH_SIZE / MAILQUEUE_BATCH_PERIOD;
-             $actual = $sent / $totaltime;
-             $delay = $actual - $target;
-  #           output("Sent: $sent mph $msgperhour mps $msgpersec secpm $secpermsg target $target actual $actual d $delay");
+             $target = (MAILQUEUE_BATCH_PERIOD / MAILQUEUE_BATCH_SIZE) * $sent;
+             $delay = $target - $totaltime;
+#             output("Sent: $sent mph $msgperhour mps $msgpersec secpm $secpermsg target $target actual $actual d $delay");
+
              if ($delay > 0) {
-  #             $expected = MAILQUEUE_BATCH_PERIOD / $secpermsg;
-  #             $delay = MAILQUEUE_BATCH_SIZE / $expected;
                if (VERBOSE) {
-                 output($GLOBALS['I18N']->get('waiting for').' '.$delay.' '.$GLOBALS['I18N']->get('seconds').' '.
-                   $GLOBALS['I18N']->get('to make sure we don\'t exceed our limit of').MAILQUEUE_BATCH_SIZE.' '.
-                   $GLOBALS['I18N']->get('messages in').' '.MAILQUEUE_BATCH_PERIOD.' '.$GLOBALS['I18N']->get('seconds'));
+/* output($GLOBALS['I18N']->get('waiting for').' '.$delay.' '.$GLOBALS['I18N']->get('seconds').' '.
+                   $GLOBALS['I18N']->get('to make sure we don\'t exceed our limit of ').MAILQUEUE_BATCH_SIZE.' '.
+                   $GLOBALS['I18N']->get('messages in ').' '.MAILQUEUE_BATCH_PERIOD.$GLOBALS['I18N']->get('seconds')); */
+                output(sprintf($GLOBALS['I18N']->get('waiting for %.1f seconds to meet target of %s seconds per message'),
+                        $delay, (MAILQUEUE_BATCH_PERIOD / MAILQUEUE_BATCH_SIZE)
+                ));
                }
-               $delay = $delay * 1000000;
-               usleep($delay);
+               usleep($delay * 1000000);
              }
            }
         } else {
