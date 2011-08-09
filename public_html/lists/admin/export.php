@@ -70,7 +70,7 @@ switch ($access) {
 require dirname(__FILE__). '/structure.php';
 if (isset($_POST['processexport'])) {
   if (!verifyToken()) { ## csrf check
-    print Error($GLOBALS['I18N']->get('No Access'));
+    print Error($GLOBALS['I18N']->get('Invalid security token. Please reload the page and try again.'));
     return;
   }
   $fromdate= $from->getDate("from");
