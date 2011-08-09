@@ -1,262 +1,262 @@
-﻿1	# liste af attributer der kan være brugbare.
-2	# filens format: alt efter symbolet # er ignoreret.
-3	# den første linie uden # bliver navnet på denne attribut.
-4	# alt andet betragtes som værdier som bliver anvendt.
-5	# hvis du har nogen brugbare bidrag som denne, kan den sendes til PHPlist, 
-6	# denne bliver dermed inkluderet i den næste version og sparer andre for at oprette lister
-7	# af information
-8	Land:Verdens lande
-9	Afghanistan
-10	Albanien
-11	Algir
-12	Amerikansk Samoa
-13	Amerikas Forenede Stater (USA)
-14	Andorra
-15	Angola
-16	Anguilla
-17	Antarktis
-18	Antigua og Barbuda
-19	Argentina
-20	Armenien
-21	Aruba
-22	Aserbajdsjan
-23	Australien
-24	Bahama
-25	Bahrain
-26	Bangladesh
-27	Barbados
-28	Belarus
-29	Belgien
-30	Belize
-31	Benin
-32	Bermuda
-33	Bhutan
-34	Bolivia
-35	Bosnien-Hercegovina
-36	Botswana
-37	Bouvet-øen
-38	Brasilien
-39	British Indian Ocean Territory
-40	Brunei Darussalam
-41	Bulgarien
-42	Burkina Faso
-43	Burundi
-44	Cambodia
-45	Cameroon
-46	Canada
-47	Cayman-øerne
-48	Centralafrikanske Republik
-49	Chad
-50	Chile
-51	Colombia
-52	Comorerne
-53	Congo
-54	Cook-øerne
-55	Costa Rica
-56	Côte d'Ivoire (Elfenbenskysten)
-57	Cuba
-58	Cypern
-59	Danmark
-60	Den Demokratiske Republik Congo
-61	Djibouti
-62	Dominica
-63	Dominikanske Republik
-64	Ecuador
-65	Egypten
-66	El Salvador
-67	Eritrea
-68	Estland
-69	Ethiopien
-70	Falklandsøerne (Malvinerne)
-71	Fiji
-72	Finland
-73	Forenede Arabiske Emirater
-74	Forenede Staters Mindre Perifere Øer
-75	Frankrig
-76	Frankrig, Metropolitan
-77	Fransk Guiana
-78	Fransk Polynesien
-79	Franske Sydlige Territorier
-80	Færøerne
-81	Gabon
-82	Gambia
-83	Georgien
-84	Ghana
-85	Gibraltar
-86	Grenada
-87	Grækenland
-88	Grønland
-89	Guadeloupe
-90	Guam
-91	Guatemala
-92	Guinea
-93	Guinea-Bissau
-94	Guyana
-95	Haiti
-96	Heard- og McDonald-øerne
-97	Holland
-98	Hollandske Antiller
-99	Honduras
-100	Hong Kong
-101	Indien
-102	Indonesien
-103	Irak
-104	Iran
-105	Irland
-106	Island
-107	Israel
-108	Italien
-109	Jamaica
-110	Japan
-111	Jomfruøerne, Engelsk
-112	Jomfruøerne, USA
-113	Jordan
-114	Jugoslavien (Serbien og Montenegro)
-115	Juleøen
-116	Kap Verde
-117	Kasakhstan
-118	Kenya
-119	Kina
-120	Kirgisistan
-121	Kiribati
-122	Kokos-øerne (Keeling-øerne)
-123	Kroatien
-124	Kuwait
-125	Laos
-126	Lesotho
-127	Letland
-128	Libanon
-129	Liberia
-130	Libyen
-131	Lichtenstein
-132	Litauen
-133	Luxemburg
-134	Macau
-135	Madagaskar
-136	Makedonien
-137	Malawi
-138	Malaysia
-139	Maldiverne
-140	Mali
-141	Malta
-142	Marokko
-143	Marshall-øerne
-144	Martinique
-145	Mauretanien
-146	Mauritius
-147	Mayotte
-148	Mexico
-149	Mikronesien
-150	Moldova
-151	Monaco
-152	Mongoliet
-153	Montserrat
-154	Mozambique
-155	Myanmar
-156	Namibia
-157	Nauru
-158	Nepal
-159	New Caledonia
-160	New Zealand
-161	Nicaragua
-162	Niger
-163	Nigeria
-164	Niue
-165	Nordkorea
-166	Nordlige Marianere
-167	Norfolk-øen
-168	Norge
-169	Oman
-170	Pakistan
-171	Palau-øerne
-172	Panama
-173	Papua New Guinea
-174	Paraguay
-175	Peru
-176	Philippinerne
-177	Pitcairn
-178	Polen
-179	Portugal
-180	Puerto Rico
-181	Qatar
-182	Réunion
-183	Rumænien
-184	Russiske Føderation
-185	Rwanda
-186	Salomon-øerne
-187	Samoa
-188	San Marino
-189	Sankt Helena
-190	Sankt Kitts og Nevis
-191	Sankt Lucia
-192	Sankt Pierre og Miquelon
-193	Sankt Vincent og Grenadinerne
-194	São Tomé og Príncipe
-195	Saudi-Arabien
-196	Schweiz
-197	Senegal
-198	Seychellerne
-199	Sierra Leone
-200	Singapore
-201	Slovakiet
-202	Slovenien
-203	Somalia
-204	Spanien
-205	Sri Lanka
-206	Storbritannien
-207	Sudan
-208	Suriname
-209	Svalbard og Jan Mayen
-210	Sverige
-211	Swaziland
-212	Syd-Georgien og Sydlige Sandwich-øer
-213	Sydafrikanske Republik
-214	Sydkorea
-215	Syrien
-216	Tadsjikistan
-217	Taiwan
-218	Tanzania
-219	Thailand
-220	Tjekkiet
-221	Togo
-222	Tokelau
-223	Tonga
-224	Trinidad og Tobago
-225	Tunesien
-226	Turkmenistan
-227	Turks- og Caicos-øerne
-228	Tuvalu
-229	Tyrkiet
-230	Tyskland
-231	Uganda
-232	Ukraine
-233	Ungarn
-234	Uruguay
-235	Usbekistan
-236	Vanuatu
-237	Vatikanstaten
-238	Venezuela
-239	Vest-Sahara
-240	Viet Nam
-241	Wallis- og Futuna-øerne
-242	Yemen
-243	Zambia
-244	Zimbabwe
-245	Ækvatorial Guinea
-246	Øst-Timor
-247	Østrig
-248	Canton og Enderbury-øen
-249	Dronning Maud Land
-250	England
-251	Forenede Staters Forskellige Stillehavsøer
-252	Johnston- og Sand-øerne
-253	Midway-øerne
-254	Pacific Islands
-255	Wake-øen
-256	Burma [Myanmar]
-257	Demokratisk Yemen [Yemen]
-258	Tjekkoslovakiet [Tjekkiet / Slovakiet]
-259	USSR [Russiske Føderation]
-260	Østtyskland [Tyskland]
-261	Øvre Volta [Burkina Faso]
-262	Zaire [Den Demokratiske Republik Congo]
+﻿# liste af attributer der kan være brugbare.
+# filens format: alt efter symbolet # er ignoreret.
+# den første linie uden # bliver navnet på denne attribut.
+# alt andet betragtes som værdier som bliver anvendt.
+# hvis du har nogen brugbare bidrag som denne, kan den sendes til PHPlist, 
+# denne bliver dermed inkluderet i den næste version og sparer andre for at oprette lister
+# af information
+Land:Verdens lande
+Afghanistan
+Albanien
+Algir
+Amerikansk Samoa
+Amerikas Forenede Stater (USA)
+Andorra
+Angola
+Anguilla
+Antarktis
+Antigua og Barbuda
+Argentina
+Armenien
+Aruba
+Aserbajdsjan
+Australien
+Bahama
+Bahrain
+Bangladesh
+Barbados
+Belarus
+Belgien
+Belize
+Benin
+Bermuda
+Bhutan
+Bolivia
+Bosnien-Hercegovina
+Botswana
+Bouvet-øen
+Brasilien
+British Indian Ocean Territory
+Brunei Darussalam
+Bulgarien
+Burkina Faso
+Burundi
+Cambodia
+Cameroon
+Canada
+Cayman-øerne
+Centralafrikanske Republik
+Chad
+Chile
+Colombia
+Comorerne
+Congo
+Cook-øerne
+Costa Rica
+Côte d'Ivoire (Elfenbenskysten)
+Cuba
+Cypern
+Danmark
+Den Demokratiske Republik Congo
+Djibouti
+Dominica
+Dominikanske Republik
+Ecuador
+Egypten
+El Salvador
+Eritrea
+Estland
+Ethiopien
+Falklandsøerne (Malvinerne)
+Fiji
+Finland
+Forenede Arabiske Emirater
+Forenede Staters Mindre Perifere Øer
+Frankrig
+Frankrig, Metropolitan
+Fransk Guiana
+Fransk Polynesien
+Franske Sydlige Territorier
+Færøerne
+Gabon
+Gambia
+Georgien
+Ghana
+Gibraltar
+Grenada
+Grækenland
+Grønland
+Guadeloupe
+Guam
+Guatemala
+Guinea
+Guinea-Bissau
+Guyana
+Haiti
+Heard- og McDonald-øerne
+Holland
+Hollandske Antiller
+Honduras
+Hong Kong
+Indien
+Indonesien
+Irak
+Iran
+Irland
+Island
+Israel
+Italien
+Jamaica
+Japan
+Jomfruøerne, Engelsk
+Jomfruøerne, USA
+Jordan
+Jugoslavien (Serbien og Montenegro)
+Juleøen
+Kap Verde
+Kasakhstan
+Kenya
+Kina
+Kirgisistan
+Kiribati
+Kokos-øerne (Keeling-øerne)
+Kroatien
+Kuwait
+Laos
+Lesotho
+Letland
+Libanon
+Liberia
+Libyen
+Lichtenstein
+Litauen
+Luxemburg
+Macau
+Madagaskar
+Makedonien
+Malawi
+Malaysia
+Maldiverne
+Mali
+Malta
+Marokko
+Marshall-øerne
+Martinique
+Mauretanien
+Mauritius
+Mayotte
+Mexico
+Mikronesien
+Moldova
+Monaco
+Mongoliet
+Montserrat
+Mozambique
+Myanmar
+Namibia
+Nauru
+Nepal
+New Caledonia
+New Zealand
+Nicaragua
+Niger
+Nigeria
+Niue
+Nordkorea
+Nordlige Marianere
+Norfolk-øen
+Norge
+Oman
+Pakistan
+Palau-øerne
+Panama
+Papua New Guinea
+Paraguay
+Peru
+Philippinerne
+Pitcairn
+Polen
+Portugal
+Puerto Rico
+Qatar
+Réunion
+Rumænien
+Russiske Føderation
+Rwanda
+Salomon-øerne
+Samoa
+San Marino
+Sankt Helena
+Sankt Kitts og Nevis
+Sankt Lucia
+Sankt Pierre og Miquelon
+Sankt Vincent og Grenadinerne
+São Tomé og Príncipe
+Saudi-Arabien
+Schweiz
+Senegal
+Seychellerne
+Sierra Leone
+Singapore
+Slovakiet
+Slovenien
+Somalia
+Spanien
+Sri Lanka
+Storbritannien
+Sudan
+Suriname
+Svalbard og Jan Mayen
+Sverige
+Swaziland
+Syd-Georgien og Sydlige Sandwich-øer
+Sydafrikanske Republik
+Sydkorea
+Syrien
+Tadsjikistan
+Taiwan
+Tanzania
+Thailand
+Tjekkiet
+Togo
+Tokelau
+Tonga
+Trinidad og Tobago
+Tunesien
+Turkmenistan
+Turks- og Caicos-øerne
+Tuvalu
+Tyrkiet
+Tyskland
+Uganda
+Ukraine
+Ungarn
+Uruguay
+Usbekistan
+Vanuatu
+Vatikanstaten
+Venezuela
+Vest-Sahara
+Viet Nam
+Wallis- og Futuna-øerne
+Yemen
+Zambia
+Zimbabwe
+Ækvatorial Guinea
+Øst-Timor
+Østrig
+Canton og Enderbury-øen
+Dronning Maud Land
+England
+Forenede Staters Forskellige Stillehavsøer
+Johnston- og Sand-øerne
+Midway-øerne
+Pacific Islands
+Wake-øen
+Burma [Myanmar]
+Demokratisk Yemen [Yemen]
+Tjekkoslovakiet [Tjekkiet / Slovakiet]
+USSR [Russiske Føderation]
+Østtyskland [Tyskland]
+Øvre Volta [Burkina Faso]
+Zaire [Den Demokratiske Republik Congo]
