@@ -449,6 +449,7 @@ function compareEmail()
 }
 
 function subscribePage($id) {
+#  return subscribePage2($id);
   list($attributes,$attributedata) = PageAttributes($GLOBALS['pagedata']);
   $selected_lists = explode(',',$GLOBALS['pagedata']["lists"]);
   $html = '<title>'.$GLOBALS["strSubscribeTitle"].'</title>';
@@ -641,6 +642,34 @@ function confirmPage($id) {
   $res .= $GLOBALS['pagedata']["footer"];
   return $res;
 }
+
+/* unfinished
+function subscribePage2($id) {
+  list($attributes,$attributedata) = PageAttributes($GLOBALS['pagedata']);
+  $selected_lists = explode(',',$GLOBALS['pagedata']["lists"]);
+  $html = '<title>'.$GLOBALS["strSubscribeTitle"].'</title>';
+  $html .= '<link rel="stylesheet" type="text/css" href="styles/minimal.css" media="screen"/>';
+  $html .= '</head><body>';
+  $html .= '<div id="phplistform">';
+  $html .= formStart();
+  $html .= '<fieldset class="phplist"><legend>'.strip_tags($GLOBALS['pagedata']['intro']).'</legend>';
+  $html .= ListAttributes2011($attributes,$attributedata,$GLOBALS['pagedata']["htmlchoice"],0,$GLOBALS['pagedata']['emaildoubleentry']);
+  $html .= ListAvailableLists("",$GLOBALS['pagedata']["lists"]);
+
+  if (empty($GLOBALS['pagedata']['button'])) {
+    $GLOBALS['pagedata']['button'] = $GLOBALS['strSubmit'];
+  }
+  if (USE_SPAM_BLOCK) {
+    $html .= '<div style="display:none"><input type="text" name="VerificationCodeX" value="" size="20"></div>';
+  }
+  $html .= '<button type="submit" name="subscribe">'.$GLOBALS['pagedata']["button"].'</button>
+    </form>
+    <p><a href="'.getConfig("unsubscribeurl").'&id='.$id.'">'.$GLOBALS["strUnsubscribe"].'</a></p>
+  '.$GLOBALS["PoweredBy"];
+  $html .= '</div>';## id=phplistform
+  return $html;
+}
+*/
 
 function unsubscribePage($id) {
   global $tables;
@@ -886,6 +915,16 @@ function forwardPage($id) {
   ## get userdata
   $req = Sql_Query(sprintf('select * from %s where uniqid = "%s"',$tables["user"],sql_escape($_REQUEST["uid"])));
   $userdata = Sql_Fetch_Array($req);
+
+  ## verify that this subscriber actually received this message to forward, otherwise they're not allowed
+  $allowed = Sql_Fetch_Row_Query(sprintf('select userid from %s where userid = %d and messageid = %d',
+    $GLOBALS['tables']['usermessage'],$userdata['id'],$mid));
+  if (empty($userdata['id']) || $allowed[0] != $userdata['id']) {
+    ## when sending a test email as an admin, the entry isn't there yet
+    if (empty($_SESSION['adminloggedin']) || $_SESSION['adminloggedin'] != $_SERVER['REMOTE_ADDR']) {
+      FileNotFound();
+    }
+  }
   
   #0011996: forward to friend - personal message
   # text cannot be longer than max, to prevent very long text with only linefeeds total cannot be longer than twice max
