@@ -8,16 +8,15 @@ if (isset($_POST["usercheck"])) {
   foreach ($users as $user) {
     $user = trim($user);
     if (isset($_POST['check']) && $_POST["check"] == "foreignkey") {
-      $exists = Sql_Query(sprintf('select id,foreignkey,email,password from %s where foreignkey = "%s"',$tables["user"],$user));
+      $exists = Sql_Query(sprintf('select id,foreignkey,email from %s where foreignkey = "%s"',$tables["user"],sql_escape($user)));
     } else {
-      $exists = Sql_Query(sprintf('select id,foreignkey,email,password from %s where email = "%s"',$tables["user"],$user));
+      $exists = Sql_Query(sprintf('select id,foreignkey,email from %s where email = "%s"',$tables["user"],sql_escape($user)));
     }
     if (Sql_Num_Rows($exists)) {
       $id = Sql_Fetch_Array($exists);
       $lsexist->addElement($user,PageUrl2("user&amp;id=".$id["id"]));
       $lsexist->addColumn($user,$GLOBALS["I18N"]->get('email'),$id['email']);
       $lsexist->addColumn($user,$GLOBALS["I18N"]->get('key'),$id['foreignkey']);
-    #  $lsexist->addColumn($user,$GLOBALS["I18N"]->get('passwd'),$id['password']);
     } else {
       $lsnonexist->addElement($user);
     }
@@ -39,7 +38,7 @@ $content .=  '<tr><td><label for="foreignkey">'.$GLOBALS["I18N"]->get("foreignke
 $content .=  '<tr><td><label for="email">'.$GLOBALS["I18N"]->get("email").'</label> <input type="radio" id="email" name="check" value="email"></td></tr>';
 $content .=  '<tr><td>'.$GLOBALS["I18N"]->get("pastevalues").'</td></tr>';
 $content .=  '<tr><td><input type="submit" name="continue" value="'.$GLOBALS["I18N"]->get("continue").'" class="button"></td></tr>';
-$content .=  '<tr><td><textarea name="usercheck" rows=30 cols=65>'.$_POST['usercheck'].'</textarea></td></tr>';
+$content .=  '<tr><td><textarea name="usercheck" rows=30 cols=65>'.htmlspecialchars(stripslashes($_POST['usercheck'])).'</textarea></td></tr>';
 $content .=  '<tr><td><input type="submit" name="continue" value="'.$GLOBALS["I18N"]->get("continue").'" class="button"></td></tr>';
 $content .=  '</table></form>';
 
