@@ -274,10 +274,10 @@ function sendMessageStats($msgid) {
     return;
    }
   if (!isset($stats_collection_address)) {
-    $stats_collection_address = 'phplist-stats@tincan.co.uk';
+    $stats_collection_address = 'phplist-stats@phplist.com';
   }
   $data = Sql_Fetch_Array_Query(sprintf('select * from %s where id = %d', $tables["message"], $msgid));
-  $msg .= "PHPlist version ".VERSION . "\n";
+  $msg .= "phpList version ".VERSION . "\n";
   $diff = timeDiff($data["sendstart"],$data["sent"]);
 
   if ($data["id"] && $data["processed"] > 10 && $diff != "very little time") {
