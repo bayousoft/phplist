@@ -203,12 +203,12 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   We request you retain the signature below in your emails including the links.
   This not only gives respect to the large amount of time given freely
   by the developers  but also helps build interest, traffic and use of
-  PHPlist, which is beneficial to it's future development.
+  phpList, which is beneficial to it's future development.
 
   You can configure how the credits are added to your pages and emails in your
   config file.
 
-  Michiel Dethmers, Tincan Ltd 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010
+  Michiel Dethmers, phpList Ltd 2003 - 2011
 */
   if (!EMAILTEXTCREDITS) {
     $html["signature"] = $PoweredByImage;#'<div align="center" id="signature"><a href="http://www.phplist.com"><img src="powerphplist.png" width=88 height=31 title="Powered by PHPlist" alt="Powered by PHPlist" border="0" /></a></div>';
@@ -380,6 +380,9 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
       $htmlmessage = preg_replace("#\[LISTOWNER.".strtoupper(preg_quote($att["name"]))."\]#",$att["value"],$htmlmessage);
     }
   }
+  $html['subject'] = $cached[$messageid]["subject"];
+  $text['subject'] = $cached[$messageid]["subject"];
+  
   $htmlmessage = parsePlaceHolders($htmlmessage,$html);
   $textmessage = parsePlaceHolders($textmessage,$text);
 
@@ -1171,7 +1174,7 @@ function parsePlaceHolders($content,$array = array()) {
       $key = str_replace('/','\/',$key);
       if (stripos($content,'['.$key.']')) {
         $content = str_ireplace('['.$key.']',$val,$content);
-      } elseif (preg_match('/\['.$key.'%%([^\]]+)\]/i',$content,$regs)) {
+      } elseif (preg_match('/\['.$key.'%%([^\]]+)\]/i',$content,$regs)) { ## @@todo, check for quoting */ etc
         if (!empty($val)) {
           $content = str_ireplace($regs[0],$val,$content);
         } else {
