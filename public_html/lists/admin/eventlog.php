@@ -108,7 +108,7 @@ while ($event = Sql_fetch_array($result)) {
       PageURL2("eventlog","delete","start=$start&amp;delete=".$event["id"]),$GLOBALS['I18N']->get('del')));
   $ls->addColumn($event["id"],$GLOBALS['I18N']->get('page'),$event["page"]);
   $ls->addColumn($event["id"],$GLOBALS['I18N']->get('date'),$event["entered"]);
-  $ls->addColumn($event["id"],$GLOBALS['I18N']->get('message'),$event["entry"]);
+  $ls->addColumn($event["id"],$GLOBALS['I18N']->get('message'),strip_tags($event["entry"]));
 }
 print $ls->display();
 
