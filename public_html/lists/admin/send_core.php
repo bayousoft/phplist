@@ -10,16 +10,21 @@ print '<script type="text/javascript" src="ckeditor/ckeditor.js"></script>
 #initialisation###############
 
 // Verify that FCKeditor is available
+$usefck = $useck = false;
 if (USEFCK && file_exists("./FCKeditor/fckeditor.php")) {
   include("./FCKeditor/fckeditor.php") ;
-
-  // Create the editor object here so we can check to see if *it* wants us to use it (this
-  // does a browser check, etc.
   $oFCKeditor = new FCKeditor('message') ;
   $usefck = $oFCKeditor->IsCompatible();
-  unset($oFCKeditor); // This object is *very* short-lived.  Thankfully, it's also light-weight
+  unset($oFCKeditor); 
+} elseif (USECK && file_exists("./ckeditor/ckeditor_php5.php")) {
+  include("./ckeditor/ckeditor_php5.php") ;
+  $oCKeditor = new CKeditor('message') ;
+  #$usefck = $oFCKeditor->IsCompatible();
+  $useck = true;
+  unset($oCKeditor); 
 } else {
-  $usefck = 0;
+  $usefck = false;
+  $useck = false;
 }
 
 // Verify that TinyMCE is available
@@ -785,6 +790,10 @@ if (!$done) {
     
     $maincontent .= '<div>'.$oFCKeditor->CreateHtml() .'</div>';
 
+  } elseif ($useck) {
+    $oCKeditor = new CKeditor('./ckeditor/') ;
+  #  $maincontent .= '<div>'.$oCKeditor->editor('message',stripslashes($messagedata["message"])) .'</div>';
+    $maincontent .= '<div><textarea name="message" cols="65" rows="20">'.htmlspecialchars($messagedata["message"]).'</textarea></div>';
   } elseif ($useTinyMCE) {
 
   $tinyMCE_path = TINYMCEPATH;
@@ -910,7 +919,7 @@ if (!$done) {
   // Display the HTML for the "Send Test" button, and the input field for the email addresses
   $sendtest_content = sprintf('<div class="sendTest" id="sendTest">
     '.$sendtestresult .'
-    <input class="submit" type="submit" name="sendtest" value="%s"/>%s: 
+    <input class="submit" type="submit" name="sendtest" value="%s"/>  %s: 
     <input type="text" name="testtarget" size="40" value="'.$messagedata["testtarget"].'"/><br />%s
     </div>',
     $GLOBALS['I18N']->get('sendtestmessage'),$GLOBALS['I18N']->get('toemailaddresses'),
@@ -1048,7 +1057,8 @@ if (empty($testValue) || $testValue == '(no subject)') {
 }
 $testValue = trim($messagedata['message']);
 $testValue2 = trim($messagedata['sendurl']);
-if (empty($testValue) && empty($testValue2)) {
+
+if (empty($testValue) && (empty($testValue2) || $testValue2 == 'e.g. http://www.phplist.com/testcampaign.html')) {
   $allReady = false;
   $panelcontent .= '<script type="text/javascript">
   $("#addtoqueue").append(\'<div class="missing">'.$GLOBALS['I18N']->get('message content missing').'</div>\');
@@ -1085,7 +1095,7 @@ if ($allReady) {
 } else {
   $panelcontent .= '<script type="text/javascript">
   $("#addtoqueue").append(\'<div class="error">'.$GLOBALS['I18N']->get('Some required information is missing. The send button will be enabled when this is resolved.').'</div>\');
-  $("#addtoqueue").append(\'<button class="submit" type="submit" name="save" id="addtoqueuebutton" disabled="disabled">'.$GLOBALS['I18N']->get('sendmessage').'</button>\');
+//  $("#addtoqueue").append(\'<button class="submit" type="submit" name="save" id="addtoqueuebutton" disabled="disabled">'.$GLOBALS['I18N']->get('sendmessage').'</button>\');
   </script>';
 }
 
