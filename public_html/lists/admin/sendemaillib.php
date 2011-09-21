@@ -1171,7 +1171,7 @@ function parsePlaceHolders($content,$array = array()) {
   foreach ($array as $key => $val) {
     if (PHP5) {
       $key = str_replace('/','\/',$key);
-      if (stripos($content,'['.$key.']')) {
+      if (stripos($content,'['.$key.']') !== false) {
         $content = str_ireplace('['.$key.']',$val,$content);
       } elseif (preg_match('/\['.$key.'%%([^\]]+)\]/i',$content,$regs)) { ## @@todo, check for quoting */ etc
         if (!empty($val)) {
