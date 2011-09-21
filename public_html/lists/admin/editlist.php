@@ -167,6 +167,6 @@ if (sizeof($aListCategories)) {
 ?>
 <label for="description"><?php echo $GLOBALS['I18N']->get('List Description'); ?></label>
 <div class="field"><textarea name="description" cols="35" rows="5">
-<?php echo htmlspecialchars(StripSlashes($list["description"])) ?></textarea></div>
+<?php echo htmlspecialchars(stripslashes($list["description"])) ?></textarea></div>
 <input class="submit" type="submit" name="addnewlist" value="<?php echo $GLOBALS['I18N']->get('Save'); ?>" />
 </form>
