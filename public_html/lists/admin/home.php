@@ -83,7 +83,7 @@ if (checkAccess("setup") && !$_GET["pi"]) {
     $element = $GLOBALS['I18N']->get('Continue Configuration');
     $ls->addElement($element,PageURL2("setup"));
     $ls->addColumn($element,"&nbsp;",$GLOBALS['I18N']->get('Continue the Configuration process of phpList'));
-	$ls->setClass($element,"config-link");
+    $ls->setClass($element,"config-link");
   }
 }
 if (checkAccess("send") && !$_GET["pi"]) {

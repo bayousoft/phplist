@@ -149,7 +149,7 @@ function SaveConfig($item,$value,$editable=1,$ignore_errors = 0) {
 
   You can configure your PoweredBy options in your config file
 
-  Michiel Dethmers, Tincan Ltd 2001,2004
+  Michiel Dethmers, phpList Ltd 2001-2011
 */
 if (DEVVERSION)
   $v = "dev";
@@ -158,7 +158,7 @@ else
 if (REGISTER) {
   $PoweredByImage = '<p class="poweredby"><a href="http://www.phplist.com"><img src="http://powered.phplist.com/images/'.$v.'/power-phplist.png" width="70" height="30" title="powered by phpList version '.$v.', &copy; phpList ltd" alt="powered by phpList'.$v.', &copy; phpList ltd" border="0" /></a></p>';
 } else {
-  $PoweredByImage = '<p class="poweredby"><a href="http://www.phplist.com"><img src="images/power-phplist.png" width="70" height="30" title="powered by phpList version '.$v.', &copy; tincan ltd" alt="powered by phpList'.$v.', &copy; phpList ltd" border="0"/></a></p>';
+  $PoweredByImage = '<p class="poweredby"><a href="http://www.phplist.com"><img src="images/power-phplist.png" width="70" height="30" title="powered by phpList version '.$v.', &copy; phpList ltd" alt="powered by phpList'.$v.', &copy; phpList ltd" border="0"/></a></p>';
 }
 $PoweredByText = '<div style="clear: both; font-family: arial, verdana, sans-serif; font-size: 8px; font-variant: small-caps; font-weight: normal; padding: 2px; padding-left:10px;padding-top:20px;">powered by <a href="http://www.phplist.com" target="_blank">phplist</a> v ' . $v . ', &copy; <a href="http://www.phplist.com/poweredby" target="_blank">phpList ltd</a></div>';
 
@@ -298,7 +298,7 @@ function sendMessageStats($msgid) {
       ) as $item) {
         $msg .= "\n".$item.' => '.$data[$item];
     }
-    if ($stats_collection_address == 'phplist-stats@tincan.co.uk' && $data["processed"] > 500) {
+    if ($stats_collection_address == 'phplist-stats@phplist.com' && $data["processed"] > 500) {
       mail($stats_collection_address,"PHPlist stats",$msg);
     } else {
       mail($stats_collection_address,"PHPlist stats",$msg);
@@ -313,7 +313,7 @@ function normalize($var) {
 }
 
 function ClineSignature() {
-  return "PHPlist version ".VERSION." (c) 2000-".date("Y")." Tincan Ltd, http://www.phplist.com\n";
+  return "phpList version ".VERSION." (c) 2000-".date("Y")." phpList Ltd, http://www.phplist.com\n";
 }
 
 function ClineError($msg) {
@@ -706,7 +706,7 @@ function contextMenu() {
       break;
   }
   if (TEST && REGISTER)
-    $pixel = '<img src="http://phplist.tincan.co.uk/images/pixel.gif" width="1" height="1" alt="" />';
+    $pixel = '<img src="http://powered.phplist.com/images/pixel.gif" width="1" height="1" alt="" />';
   else
     $pixel = "";
   global $tables;
@@ -1400,7 +1400,7 @@ $newpoweredimage = 'iVBORw0KGgoAAAANSUhEUgAAAEYAAAAeCAMAAACmLZgsAAADAFBMVEXYx6fm
 function FileNotFound() {
   ob_end_clean();
   header("HTTP/1.0 404 File Not Found");
-  printf('<html><head><title>404 Not Found</title></head><body><h1>Not Found</h1>The requested document was not found on this server<br/>Please contact the <a href="mailto:%s?subject=File not Found: %s">Administrator</a><p><hr><address><a href="http://tincan.co.uk/phplist" target="_tincan">phplist</a> version %s</address></body></html>', getConfig("admin_address"),
+  printf('<html><head><title>404 Not Found</title></head><body><h1>Not Found</h1>The requested document was not found on this server<br/>Please contact the <a href="mailto:%s?subject=File not Found: %s">Administrator</a><p><hr><address><a href="http://phplist.com" target="_phplist">phplist</a> version %s</address></body></html>', getConfig("admin_address"),
   strip_tags($_SERVER["REQUEST_URI"]), VERSION);
   exit;
 }

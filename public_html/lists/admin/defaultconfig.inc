@@ -73,7 +73,7 @@ $defaultfooter = '
 
 <tr>
 <td bgcolor="#000000"><img height="1" alt="" src="images/transparent.png" width="1" border="0" /></td>
-<td bgcolor="#ff9900" class="bottom">&copy; <a href="http://tincan.co.uk" target="_tincan" class="urhere">tincan limited</a> | <a class="urhere" href="http://www.phplist.com" target="_blank">phplist</a> - version <?php echo VERSION?></td>
+<td bgcolor="#ff9900" class="bottom">&copy; <a href="http://phplist.com" target="_phplist" class="urhere">phpList limited</a> | <a class="urhere" href="http://www.phplist.com" target="_blank">phplist</a> - version <?php echo VERSION?></td>
 <td bgcolor="#000000"><img height="1" alt="" src="images/transparent.png" width="1" border="0" /></td>
 </tr>
 
@@ -674,7 +674,7 @@ if (!TEST && REGISTER && defined("VERSION")) {
 		$v = "dev";
 	else
 		$v = VERSION;
-	$PoweredBy = '<p align="left"><a href="http://www.phplist.com"><img src="http://phplist.tincan.co.uk/images/' . $v . '/power-phplist.png" width="88" height="31" title="powered by phplist" alt="powered by phplist" border="0" /></a></p>';
+	$PoweredBy = '<p align="left"><a href="http://www.phplist.com"><img src="http://powered.phplist.com/images/' . $v . '/power-phplist.png" width="88" height="31" title="powered by phplist" alt="powered by phplist" border="0" /></a></p>';
 } else
 	$PoweredBy = '<center><a href="http://www.phplist.com"><img src="images/power-phplist.png" width="88" height="31" title="powered by phplist" alt="powered by phplist" border="0" /></a></center>';
 

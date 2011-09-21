@@ -3,7 +3,6 @@ require_once dirname(__FILE__).'/accesscheck.php';
 
 
 class imageUpload {
-  # crude class to handle an image, partly taken from the easyuploader (http://tincan.co.uk)
   var $type = "image";
   var $description = "Image";
 

@@ -279,6 +279,8 @@ if (isset($GLOBALS["require_login"]) && $GLOBALS["require_login"]) {
       $page = "login";
       $msg = $validate[1];
     }
+  } else {
+    $page = "login";
   }
 }
 
