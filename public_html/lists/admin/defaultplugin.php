@@ -254,6 +254,16 @@ class phplistPlugin {
   function throttleSend($messagedata, $subscriberdata) {
     return false;
   }
+
+  /**
+   * messageStatusLimitReached
+   *
+   * @param $recentlySent integer 
+   * @return text to display in the status panel of the active message
+   */
+  function messageStatusLimitReached($recentlySent) {
+    return '';
+  }
   
   function parseOutgoingTextMessage($messageid, $content, $destination, $userdata= null) {
     ## parseOutgoingTextMessage
