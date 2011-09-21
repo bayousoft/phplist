@@ -164,7 +164,6 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
   $text["subscribe"] = sprintf('%s',$url);
   $html["subscribeurl"] = sprintf('%s',$url);
   $text["subscribeurl"] = sprintf('%s',$url);
-  #?mid=1&amp;id=1&uid=a9f35f130593a3d6b89cfe5cfb32a0d8&p=forward&email=michiel%40tincan.co.uk&
   $url = getConfig("forwardurl");$sep = strpos($url,'?') === false ? '?':'&amp;';
   $html["forward"] = sprintf('<a href="%s%suid=%s&amp;mid=%d">%s</a>',$url,$sep,$hash,$messageid,$strThisLink);
   $text["forward"] = sprintf('%s%suid=%s&amp;mid=%d',$url,$sep,$hash,$messageid);
@@ -471,7 +470,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
       $linktext = strip_tags($linktext);
       $looksLikePhishing = stripos($linktext,'https://') !== false || stripos($linktext,'http://') !== false;
       
-      if (!$looksLikePhishing && (preg_match('/^http|ftp/',$link) || preg_match('/^http|ftp/',$urlbase)) && $link != 'http://www.phplist.com' && $link != 'http://tincan.co.uk/powered' && !strpos($link,$clicktrack_root)) {
+      if (!$looksLikePhishing && (preg_match('/^http|ftp/',$link) || preg_match('/^http|ftp/',$urlbase)) && $link != 'http://www.phplist.com' && !strpos($link,$clicktrack_root)) {
         # take off personal uids
         $url = cleanUrl($link,array('PHPSESSID','uid'));
 
@@ -505,14 +504,14 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 #    preg_match_all('!(https?:\/\/www\.[a-zA-Z0-9\.\/#~\?+=&%@-_]+)!mis',$textmessage,$links);
 
     for($i=0; $i<count($links[1]); $i++){
-      # not entirely sure why strtolower was used, but it seems to break things http://mantis.tincan.co.uk/view.php?id=4406
+      # not entirely sure why strtolower was used, but it seems to break things http://mantis.phplist.com/view.php?id=4406
 #      $link = strtolower(cleanUrl($links[1][$i]));
       $link = cleanUrl($links[1][$i]);
       if (preg_match('/\.$/',$link)) {
         $link = substr($link,0,-1);
       }
       $linkid = 0;
-      if (preg_match('/^http|ftp/',$link) && $link != 'http://www.phplist.com' && $link != 'http://tincan.co.uk/powered' && !strpos($link,$clicktrack_root)) {
+      if (preg_match('/^http|ftp/',$link) && $link != 'http://www.phplist.com' && !strpos($link,$clicktrack_root)) {
         $url = cleanUrl($link,array('PHPSESSID','uid'));
         $req = Sql_Query(sprintf('insert ignore into %s (messageid,userid,url,forward)
           values(%d,%d,"%s","%s")',$GLOBALS['tables']['linktrack'],$messageid,$userdata['id'],$url,$link));
@@ -548,7 +547,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
       }
   
       $linkid = 0;
-      if (preg_match('/^http|ftp/',$link) && $link != 'http://www.phplist.com' && $link != 'http://tincan.co.uk/powered') {# && !strpos($link,$clicktrack_root)) {
+      if (preg_match('/^http|ftp/',$link) && $link != 'http://www.phplist.com') {# && !strpos($link,$clicktrack_root)) {
         $url = cleanUrl($link,array('PHPSESSID','uid'));
 
         $linkid = clickTrackLinkId($messageid,$userdata['id'],$url,$link);
@@ -608,7 +607,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
         $link = substr($link,0,-1);
       }
   
-      if (preg_match('/^http|ftp/',$link) && $link != 'http://www.phplist.com' && $link != 'http://tincan.co.uk/powered') {# && !strpos($link,$clicktrack_root)) {
+      if (preg_match('/^http|ftp/',$link) && $link != 'http://www.phplist.com' ) {# && !strpos($link,$clicktrack_root)) {
         $url = cleanUrl($link,array('PHPSESSID','uid'));
         $trackingcode = 'utm_source=emailcampaign'.$messageid.'&utm_medium=phpList&utm_content=textemail&utm_campaign='.urlencode($cached[$messageid]["subject"]);
         ## take off existing tracking code, if found
