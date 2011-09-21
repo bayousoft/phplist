@@ -277,7 +277,7 @@ define ("NOSTATSCOLLECTION",0);
 # this is the email it will be sent to. You can leave the default, or you can set it to send
 # to your self. If you use the default you will give me some feedback about performance
 # which is useful for me for future developments
-# $stats_collection_address = 'phplist-stats@tincan.co.uk';
+# $stats_collection_address = 'phplist-stats@phplist.com';
 
 /*
 
@@ -393,7 +393,7 @@ define("USE_LIST_EXCLUDE",0);
 # admin authentication module.
 # to validate the login for an administrator, you can define your own authentication module
 # this is not finished yet, so don't use it unless you're happy to play around with it
-# if you have modules to contribute, send them to phplist2@tincan.co.uk
+# if you have modules to contribute, open a tracker issue at http://mantis.phplist.com
 # the default module is phplist_auth.inc, which you can find in the "auth" subdirectory of the
 # admin directory. It will tell you the functions that need to be defined for phplist to
 # retrieve it's information.
