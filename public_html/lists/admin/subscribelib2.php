@@ -142,7 +142,7 @@ $listsok = ((!ALLOW_NON_LIST_SUBSCRIBE && isset($_POST["list"]) && is_array($_PO
 if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok && $allthere && $validhost) {
    $history_entry = '';
    # make sure to save the correct data
-   if ($subscribepagedata["htmlchoice"] == "checkfortext" && !$textemail) {
+   if ($subscribepagedata["htmlchoice"] == "checkfortext" && empty($_POST["textemail"])) {
       $htmlemail = 1;
    }
    else {
@@ -352,7 +352,31 @@ if (isset($_POST["subscribe"]) && is_email($_POST["email"]) && $listsok && $allt
  #   return 1;
   }
   if ($sendrequest && $listsok) { #is_array($_POST["list"])) {
-    if (sendMail($email, getConfig("subscribesubject:$id"), $subscribemessage,system_messageheaders($email),$envelope,1)) {
+    if (0) {
+      ## try to deliver directly, so that any error (eg user not found) can be sent back to the
+      ## subscriber, so they can fix it
+
+      ## experimental (needs loads of testing) and completely unfinished
+    
+      include 'PHPMailer_v5.1/class.smtp.php';
+      list($dummy,$domain) = explode('@',$email);
+      $mx = getmxrr($domain, $mxhosts);
+#      print_r ($mxhosts);exit;
+      $smtp = new SMTP();
+      $smtp->Connect($mxhosts[0]);
+      print "Connected to ".$mxhosts[0].'<br/>';
+      $smtp->Mail($GLOBALS['message_envelope']);
+      print "Mail sent From ".$GLOBALS['message_envelope'].'<br/>';
+      $smtp->Recipient($email);
+      print "Recipient sent to $email".'<br/>';
+      $smtp->Data('Test');
+      print "Data sent".'<br/>';
+      $smtp->Quit(); 
+      print "Quit sent".'<br/>';
+      $smtp->Close();
+      print "Closed".'<br/>';
+
+    } elseif (sendMail($email, getConfig("subscribesubject:$id"), $subscribemessage,system_messageheaders($email),$envelope,1)) {
       sendAdminCopy("Lists subscription","\n".$email . " has subscribed\n\n$history_entry",$subscriptions);
       addUserHistory($email,$history_subject,$history_entry);
       print $thankyoupage;
@@ -813,7 +837,7 @@ $html .= sprintf('
       <span class="attributeinput">
       <input type="checkbox" name="textemail" value="1" %s /></span>
       <span class="attributename">%s</span>
-      </td></tr>',!$htmlemail,$strPreferTextEmail);
+      </td></tr>',!$htmlemail ? 'checked="checked"':'',$strPreferTextEmail);
       break;
     case "radiotext":
       if (!isset($htmlemail))
@@ -986,6 +1010,254 @@ $html .= sprintf('
       $html .= $output[$attribute];
     }
    }
+  return $html;
+}
+
+/* same as the above, with minimal markup and no JS */
+function ListAttributes2011($attributes,$attributedata,$htmlchoice = 0,$userid = 0,$emaildoubleentry='no' ) {
+  global $strPreferHTMLEmail,$strPreferTextEmail,
+    $strEmail,$tables,$table_prefix,$strPreferredFormat,$strText,$strHTML;
+
+  if ($userid) {
+    $data = array();
+    $current = Sql_Fetch_array_Query("select * from {$GLOBALS["tables"]["user"]} where id = $userid");
+    $datareq = Sql_Query("select * from {$GLOBALS["tables"]["user_attribute"]} where userid = $userid");
+    while ($row = Sql_Fetch_Array($datareq)) {
+      $data[$row["attributeid"]] = $row["value"];
+    }
+
+    $email = $current["email"];
+    $htmlemail = $current["htmlemail"];
+    # override with posted info
+    foreach ($current as $key => $val) {
+      if ( isset($_POST[$key]) && $key != "password" ) {
+        $current[$key] = $val;
+      }
+    }
+  } else {
+    if (isset($_REQUEST['email'])) {
+      $email = stripslashes($_REQUEST["email"]);
+    } else {
+      $email = '';
+    }
+    if (isset($_POST['htmlemail'])) {
+      $htmlemail = $_POST["htmlemail"];
+    }
+    $data = array();
+    $current = array();
+  }
+
+  $textlinewidth = sprintf('%d',getConfig("textline_width"));
+  if (!$textlinewidth) $textlinewidth = 40;
+  list($textarearows,$textareacols) = explode(",",getConfig("textarea_dimensions"));
+  if (!$textarearows) $textarearows = 10;
+  if (!$textareacols) $textareacols = 40;
+
+  $html = '';
+  $html .= '<fieldset class="subscriberdetails">';
+  $html .= sprintf('<div class="required"><label for="email">%s</label>
+    <input type="text" name="email" value="%s" class="input email required" />',$GLOBALS["strEmail"],htmlspecialchars($email));
+
+  if ($emaildoubleentry=='yes') {
+    if (!isset($_REQUEST['emailconfirm'])) $_REQUEST['emailconfirm'] = '';
+    $html .= sprintf('<label for="emailconfirm">%s</label>
+      <input type="text" name="emailconfirm" value="%s" class="input emailconfirm required" />',
+      $GLOBALS["strConfirmEmail"],htmlspecialchars(stripslashes($_REQUEST["emailconfirm"])), $GLOBALS["strConfirmEmail"]);
+  }
+
+  if (ASKFORPASSWORD) {
+    # we only require a password if there isnt one, so they can set it
+    # otherwise they can keep the existing, if they do not enter anything
+    if (!isset($current['password']) || !$current["password"]) {
+      $pwdclass = "required";
+    #  $html .= '<input type="hidden" name="passwordreq" value="1" />';
+    } else {
+      $pwdclass = 'attributename';
+    #  $html .= '<input type="hidden" name="passwordreq" value="0" />';
+    }
+
+    $html .= sprintf('
+      <label for="password">%s</label><input type="password" name="password" value="" class="input password required" />',
+      $GLOBALS["strPassword"]);
+    $html .= sprintf('
+      <label for="password_check">%s</label><input type="password" name="password_check" value="" class="input password required" />',
+    $GLOBALS["strPassword2"]);
+  }
+  $html .= '</div>'; ## class=required
+
+$htmlchoice= 'checkforhtml';
+## Write attribute fields
+  switch($htmlchoice) {
+    case "textonly":
+      if (!isset($htmlemail)) $htmlemail = 0;
+      $html .= sprintf('<input type="hidden" name="htmlemail" value="0" />');
+      break;
+    case "htmlonly":
+      if (!isset($htmlemail)) $htmlemail = 1;
+      $html .= sprintf('<input type="hidden" name="htmlemail" value="1" />');
+      break;
+    case "checkfortext":
+      if (!isset($htmlemail)) $htmlemail = 0;
+      $html .= sprintf('<fieldset class="htmlchoice"><div><input type="checkbox" name="textemail" value="1" %s /><label for="textemail">%s</label></div></fieldset>',
+        empty($htmlemail) ? 'checked="checked"':'',$GLOBALS["strPreferTextEmail"]);
+      break;
+    case "radiotext":
+      if (!isset($htmlemail)) $htmlemail = 0;
+    case "radiohtml":
+      if (!isset($htmlemail)) $htmlemail = 1;
+      $html .= sprintf('<fieldset class="htmlchoice">
+        <legend>%s</legend>
+        <div><input type="radio" id="choicetext" name="htmlemail" value="0" %s /><label for="choicetext" class="htmlchoice">%s</label></div>
+        <div><input type="radio" id="choicehtml" name="htmlemail" value="1" %s /><label for="choicehtml" class="htmlchoice">%s</label></div>
+        </fieldset>',
+        $GLOBALS["strPreferredFormat"],
+        empty($htmlemail) ? 'checked="checked"':'',$GLOBALS["strText"],
+        !empty($htmlemail) ? 'checked="checked"':'',$GLOBALS["strHTML"]);
+      break;
+    case "checkforhtml":
+    default:
+      if (!isset($htmlemail)) $htmlemail = 0;
+      $html .= sprintf('<fieldset class="htmlchoice"><div><input type="checkbox" name="htmlemail" value="1" %s />
+        <label for="htmlemail">%s</label></div></fieldset>', !empty($htmlemail) ? 'checked="checked"':'',$GLOBALS["strPreferHTMLEmail"]);
+      break;
+  }
+  $html .= "</fieldset>\n";
+
+  $html .= '<fieldset class="attributes">'."\n";
+
+  $attids = join(',',array_keys($attributes));
+  $output = array();
+  if ($attids) {
+    $res = Sql_Query("select * from {$GLOBALS["tables"]["attribute"]} where id in ($attids)");
+    while ($attr = Sql_Fetch_Array($res)) {
+      $output[$attr["id"]] = '';
+      if (!isset($data[$attr['id']])) {
+        $data[$attr['id']] = '';
+      }
+      $attr["required"] = $attributedata[$attr["id"]]["required"];
+      $attr["default_value"] = $attributedata[$attr["id"]]["default_value"];
+      $fieldname = "attribute" .$attr["id"];
+  #  print "<tr><td>".$attr["id"]."</td></tr>";
+      if ($userid && !isset($_POST[$fieldname])) {
+        # post values take precedence
+        $val = Sql_Fetch_Row_Query(sprintf('select value from %s where
+          attributeid = %d and userid = %d',$GLOBALS["tables"]["user_attribute"],$attr["id"],$userid));
+        $_POST[$fieldname] = $val[0];
+      } elseif (!isset($_POST[$fieldname])) {
+        $_POST[$fieldname] = 0;
+      }
+      switch ($attr["type"]) {
+        case "checkbox":
+          $output[$attr["id"]] = '';
+          # what they post takes precedence over the database information
+          if (isset($_POST[$fieldname])) {
+            $checked = !empty($_POST[$fieldname]) ? 'checked="checked"':'';
+          } else {
+            $checked = !empty($data[$attr["id"]]) ? 'checked="checked"':'';
+          }
+          $output[$attr["id"]] .= sprintf("\n".'<input type="checkbox" name="%s" value="on" %s class="input%s" />',$fieldname,$checked,$attr["required"] ? ' required':'');
+          $output[$attr["id"]] .= sprintf("\n".'<label for="%s" class="%s">%s</label>',$fieldname,$attr["required"] ? 'required' : '',stripslashes($attr["name"]));
+          break;
+        case "radio":
+          $output[$attr["id"]] .= sprintf("\n".'<fieldset class="radiogroup %s"><legend>%s</legend>',$attr["required"] ? 'required' : '',stripslashes($attr["name"]));
+          $values_request = Sql_Query("select * from $table_prefix"."listattr_".$attr["tablename"]." order by listorder,name");
+          while ($value = Sql_Fetch_array($values_request)) {
+            if (!empty($_POST[$fieldname])) {
+              $checked = $_POST[$fieldname] == $value["id"] ? 'checked="checked"':'';
+            } else if ($data[$attr["id"]]) {
+              $checked = $data[$attr["id"]] == $value["id"] ? 'checked="checked"':'';
+            } else {
+              $checked = $attr["default_value"] == $value["name"] ? 'checked="checked"':'';
+            }
+            $output[$attr["id"]] .= sprintf('<input type="radio" class="input%s" name="%s" value="%s" %s /><label for="%s">%s</label>',
+              $attr["required"] ? ' required' : '',$fieldname,$value["id"],$checked,$fieldname,$value["name"]);
+          }
+          $output[$attr["id"]] .'</fieldset>';
+          break;
+        case "select":
+          $output[$attr["id"]] .= sprintf("\n".'<fieldset class="selectgroup %s"><label for="%s">%s</label>',$attr["required"] ? 'required' : '',$fieldname,stripslashes($attr["name"]));
+          $values_request = Sql_Query("select * from $table_prefix"."listattr_".$attr["tablename"]." order by listorder,name");
+          $output[$attr["id"]] .= sprintf('<select name="%s" class="input%s">',$fieldname,$attr["required"] ? 'required' : '');
+          while ($value = Sql_Fetch_array($values_request)) {
+            if (!empty($_POST[$fieldname])) {
+              $selected = $_POST[$fieldname] == $value["id"] ? 'selected="selected"' : '';
+            } elseif ($data[$attr["id"]]) {
+              $selected = $data[$attr["id"]] == $value["id"] ? 'selected="selected"':'';
+            } else {
+              $selected = $attr["default_value"] == $value["name"] ? 'selected="selected"':'';
+            }
+            if (preg_match('/^'.preg_quote(EMPTY_VALUE_PREFIX).'/i',$value['name'])) {
+              $value['id'] = '';
+            }
+            $output[$attr["id"]] .= sprintf('<option value="%s" %s>%s</option>',$value["id"],$selected,stripslashes($value["name"]));
+          }
+          $output[$attr["id"]] .= "</select>";
+          $output[$attr["id"]] .= "</fieldset>";
+          break;
+        case "checkboxgroup":
+          $output[$attr["id"]] .= sprintf("\n".'<fieldset class="checkboxgroup %s"><label for="%s">%s</label>',$attr["required"] ? 'required' : '',$fieldname,stripslashes($attr["name"]));
+          $values_request = Sql_Query("select * from $table_prefix"."listattr_".$attr["tablename"]." order by listorder,name");
+          $cbCounter = 0;
+          while ($value = Sql_Fetch_array($values_request)) {
+            $cbCounter++;
+          	$selected = '';
+            if (is_array($_POST[$fieldname])) {
+              $selected = in_array($value["id"],$_POST[$fieldname]) ? 'checked="checked"':'';
+            } elseif ($data[$attr["id"]]) {
+              $selection = explode(",",$data[$attr["id"]]);
+              $selected = in_array($value["id"],$selection) ? 'checked="checked"':'';
+            }
+            $output[$attr["id"]] .= sprintf('<input type="checkbox" name="%s[]" id="%s%d" class="input%s" value="%s" %s /><label for="%s%d">%s</label>',
+              $fieldname,$fieldname,$cbCounter, $attr["required"] ? ' required' : '',$value["id"], $selected, $fieldname,$cbCounter,stripslashes( $value["name"]) );
+          }
+          $output[$attr["id"]] .= '</fieldset>';
+          break;
+        case "textline":
+          $output[$attr["id"]] .= sprintf("\n".'<label for="%s" class="input %s">%s</label>',$fieldname,$attr["required"] ? ' required' : '',$attr["name"]);
+          $output[$attr["id"]] .= sprintf ('<input type="text" name="%s" class="input%s" value="%s" />',$fieldname,$attr["required"] ? ' required' : '',
+            isset($_POST[$fieldname]) ? htmlspecialchars(stripslashes($_POST[$fieldname])) : (isset($data[$attr["id"]]) ? $data[$attr["id"]] : $attr["default_value"]));
+          break;
+        case "textarea":
+          $output[$attr["id"]] .= sprintf("\n".'<label for="%s" class="input %s">%s</label>',$fieldname,$attr["required"] ? ' required' : '',$attr["name"]);
+          $output[$attr["id"]] .= sprintf ('<textarea name="%s" rows="%d" cols="%d" class="input%s" wrap="virtual">%s</textarea>',
+            $fieldname,$textarearows,$textareacols,$attr["required"] ? ' required' : '',
+            isset($_POST[$fieldname]) ? htmlspecialchars(stripslashes($_POST[$fieldname])) : (isset($data[$attr["id"]]) ? htmlspecialchars(stripslashes($data[$attr["id"]])) : $attr["default_value"]));
+          break;
+        case "hidden":
+          $output[$attr["id"]] .= sprintf('<input type="hidden" name="%s" value="%s" />',$fieldname,$data[$attr["id"]] ? $data[$attr["id"]] : $attr["default_value"]);
+          break;
+        case "date":
+          require_once dirname(__FILE__)."/date.php";
+          $date = new Date();
+          $postval = $date->getDate($fieldname);
+          if ($data[$attr["id"]]) {
+            $val = $data[$attr["id"]];
+          } else {
+            $val = $postval;
+          }
+
+          $output[$attr["id"]] = sprintf("\n".'<fieldset class="date%s"><label for="%s">%s</label>',$attr["required"] ? ' required' : '',$fieldname,$attr["name"]);
+          $output[$attr["id"]] .= sprintf ('%s',$date->showInput($fieldname,"",$val));
+          $output[$attr["id"]] .= '</fieldset>';
+          break;
+        default:
+          print "<!-- error: huh, invalid attribute type -->";
+      }
+      $output[$attr["id"]] .= "\n";
+    }
+  }
+
+  # make sure the order is correct
+  foreach ($attributes as $attribute => $listorder) {
+    if (isset($output[$attribute])) {
+      $html .= $output[$attribute];
+    }
+  }
+
+  $html .= '</fieldset>'."\n"; ## class=attributes
+
+
+#  print htmlspecialchars( '<fieldset class="phplist">'.$html.'</fieldset>');exit;
   return $html;
 }
 
