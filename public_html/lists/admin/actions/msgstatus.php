@@ -54,6 +54,9 @@ if ($message['status'] != 'inprocess') {
     $secstowait = secs2time($message['secstowait']);
     $html .= '<br/>'.sprintf($GLOBALS['I18N']->get('%s left until embargo'),$secstowait);
   }
+  foreach ($GLOBALS['plugins'] as $plname => $plugin) {
+    $html .= $plugin->messageStatus($id,$message['status']);
+  }
   
   if ($message['status'] != 'submitted' && $message['status'] != 'draft') {
     $html .= '<br/>'.PageLinkButton("messages",$GLOBALS['I18N']->get("requeue"),"resend=".$message["id"]);

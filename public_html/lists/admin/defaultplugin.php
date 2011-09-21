@@ -264,6 +264,16 @@ class phplistPlugin {
   function messageStatusLimitReached($recentlySent) {
     return '';
   }
+
+  /** messageStatus
+   *
+   * @param integer $id messageid
+   * @param string $status message status
+   * @return possible additional text to display
+   */
+  function messageStatus($id,$status) {
+    return '';
+  }
   
   function parseOutgoingTextMessage($messageid, $content, $destination, $userdata= null) {
     ## parseOutgoingTextMessage
