@@ -220,7 +220,7 @@ if ($id) {
   by the developers  but also helps build interest, traffic and use of
   PHPlist, which is beneficial to it's future development.
 
-  Michiel Dethmers, Tincan Ltd 2000-2010
+  Michiel Dethmers, phpList Ltd 2000-2011
 */
 include 'admin/ui/'.$GLOBALS['ui'].'/publicpagetop.php';
 
