@@ -134,12 +134,20 @@ if ($GLOBALS["commandline"]) {
 
   # getopt is actually useless
   #$opt = getopt("p:");
-  $IsCommandlinePlugin = isset($cline['p']) && array_key_exists($cline['p'],$GLOBALS["commandlinePlugins"]);
-  if ($cline['p']) {
-    if (isset($cline['p']) && !in_array($cline['p'],$GLOBALS["commandline_pages"]) && !$IsCommandlinePlugin ) {
+
+  $IsCommandlinePlugin = isset($cline['m']) && in_array($cline['m'],$GLOBALS["commandlinePlugins"]);
+  if ($cline['p'] && !$IsCommandlinePlugin) {
+    if (isset($cline['p']) && !in_array($cline['p'],$GLOBALS["commandline_pages"])) {
       clineError($cline['p']." does not process commandline");
     } elseif (isset($cline['p'])) {
       $_GET['page'] = $cline['p'];
+    }
+  } elseif ($cline['p'] && $IsCommandlinePlugin) {
+    if (isset($cline['p']) && !in_array($cline['p'],$commandlinePluginPages[$cline['m']])) {
+      clineError($cline['p']." does not process commandline");
+    } elseif (isset($cline['p'])) {
+      $_GET['page'] = $cline['p'];
+      $_GET['pi'] = $cline['m'];
     }
   } else {
     clineUsage(" [other parameters]");
@@ -315,14 +323,10 @@ if (!$ajax) {
 }  
 
 if ($page != '' && $page != 'install') {
-  if ($IsCommandlinePlugin) {
-    $include =  'plugins/' . $GLOBALS["commandlinePlugins"][$page];
-  } else {
-    preg_match("/([\w_]+)/",$page,$regs);
-    $include = $regs[1];
-    $include .= ".php";
-    $include = $page . ".php";
-  }
+  preg_match("/([\w_]+)/",$page,$regs);
+  $include = $regs[1];
+  $include .= ".php";
+  $include = $page . ".php";
 } else {
   $include = $GLOBALS['homepage'].".php";
 }

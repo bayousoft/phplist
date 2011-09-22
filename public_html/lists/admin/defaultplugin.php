@@ -27,7 +27,7 @@ class phplistPlugin {
   public $DBstruct= array ();
   # These files can be called from the commandline
   # This should hold an array per file: filename (without .php) => path relative to admin/
-  public $commandlinePlugins=array();
+  public $commandlinePluginPages = array();
   public $configArray = array();
 
   public $importTabTitle = ''; ## title of the tab for the import page

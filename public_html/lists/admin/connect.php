@@ -86,10 +86,15 @@ foreach ($GLOBALS["DBstructphplist"] as $tablename => $tablecolumns) {
 unset($GLOBALS["DBstructuser"]);
 unset($GLOBALS["DBstructphplist"]);
 
+$commandlinePluginPages = array();
 $commandlinePlugins = array();
 if (sizeof($GLOBALS["plugins"])) {
   foreach ($GLOBALS["plugins"] as $pluginName => $plugin) {
-    $commandlinePlugins = array_merge($commandlinePlugins, $plugin->commandlinePlugins);
+    $cl_pages = $plugin->commandlinePages;
+    if (sizeof($cl_pages)) {
+      $commandlinePlugins[] = $pluginName;
+      $commandlinePluginPages[$pluginName] = $cl_pages;
+    }
   }
 }
 
