@@ -374,6 +374,19 @@ define('USE_ADMIN_DETAILS_FOR_MESSAGES',1);
 # test emails are sent to
 define('SEND_ONE_TESTMAIL',0);
 
+# Time Zone
+# By default phpList will operate in the Timezone of your server. If you want to work
+# in a different Timezone, you can set that here. It will need to be a valid setting for
+# both PHP and Mysql. The value should be a city in the world
+# to find PHP timezones, check out http://php.net/manual/en/timezones.php
+# You will also need to tell Mysql about your timezones, which means you have to load the timezone
+# data in the Mysql Database, which you can find out about here:
+# http://dev.mysql.com/doc/refman/5.0/en/mysql-tzinfo-to-sql.html
+# make sure that the value you use works for both PHP and Mysql. If you find strange discrepancies
+# in the dates and times used in phpList, you probably used the wrong value.
+
+# define('SYSTEM_TIMEZONE','Europe/London');
+
 /*
 
 =========================================================================
@@ -435,7 +448,6 @@ define("USE_LIST_EXCLUDE",0);
 # if you want to use dates for attribute selections, you need to use this one
 
 define("STACKED_ATTRIBUTE_SELECTION",0);
-
 
 # send a webpage. You can send the contents of a webpage, by adding
 # [URL:http://website/file.html] as the content of a message. This can also be personalised

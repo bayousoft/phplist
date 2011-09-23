@@ -61,6 +61,11 @@ $database_schema = '';
 $database_connection = Sql_Connect($database_host,$database_user,$database_password,$database_name);
 Sql_Set_Search_Path($database_schema);
 
+if (defined('SYSTEM_TIMEZONE')) {
+  Sql_Query('set time_zone = "'.SYSTEM_TIMEZONE.'"');
+  date_default_timezone_set(SYSTEM_TIMEZONE);
+}
+
 if (!empty($GLOBALS["SessionTableName"])) {
   include_once dirname(__FILE__)."/sessionlib.php";
 }
