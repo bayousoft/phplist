@@ -156,7 +156,7 @@ if (isset($_GET['markSent'])) {
     $action_result .=  "... ".$GLOBALS['I18N']->get("Done");
   else
     $action_result .=  "... ".$GLOBALS['I18N']->get("Failed");
-  $action_result .=  '<br /><hr /><br />h';
+  $action_result .=  '<br /><hr /><br />';
 }
 
 if (isset($_GET['action'])) {
