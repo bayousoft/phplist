@@ -5,24 +5,6 @@ require_once dirname(__FILE__).'/accesscheck.php';
 
 $id = !empty($_GET['id']) ? sprintf('%d',$_GET['id']) : 0;
 ob_end_flush();
-function adminMenu() {
-  global $adminlevel,$config;
-
-  if ($adminlevel == "superuser"){
-    $html .= menuLink("admins","administrators");
-    $html .= menuLink("groups","groups");
-    $html .= menuLink("users","users");
-    $html .= menuLink("userattributes","user attributes");
-    $req = Sql_Query('select * from attribute where type = "select" or type = "radio" or type = "checkboxgroup"');
-    while ($row = Sql_Fetch_Array($req)) {
-      $html .= menuLink("editattributes&amp;id=".$row["id"],"&gt;&nbsp;".$row["name"]);
-    }
-
-    $html .= menuLink("branches","branch fields","option=branchfields");
-    $html .= menuLink("templates","templates");
-  }
-  return $html;
-}
 
 if (!$id) {
   Fatal_Error($GLOBALS['I18N']->get('NoAttr')." $id");
@@ -51,9 +33,12 @@ switch ($data['type']) {
 }
 
 ?>
+<div class="panel"><div class="header"></div><!-- ENDOF .header -->
+<div class="content">
 
-<br/><?php echo PageLink2("editattributes",$GLOBALS['I18N']->get('AddNew'),"id=$id&amp;action=new")?> <?php echo $data["name"]?>
+<div class="actions"><?php echo PageLinkButton("editattributes",$GLOBALS['I18N']->get('AddNew'),"id=$id&amp;action=new")?> <?php echo $data["name"]?>
   <br/><a href="javascript:deleteRec2('<?php echo $GLOBALS['I18N']->get('SureToDeleteAll');?>','<?php echo PageURL2("editattributes",$GLOBALS['I18N']->get('DelAll'),"id=$id&amp;deleteall=yes")?>');"><?php echo $GLOBALS['I18N']->get('DelAll');?></a>
+</div>
 <hr/>
 <?php echo formStart(' class="editattributesAdd" ')?>
 <input type="hidden" name="action" value="add" />
@@ -65,7 +50,7 @@ switch ($data['type']) {
 
 if (isset($_POST["addnew"])) {
   $items = explode("\n", $_POST["itemlist"]);
-  $query = sprintf('SELECT MAX(listorder) AS listorder FROM %s',$table);
+  $query = sprintf('select max(listorder) as listorder from %s',$table);
   $maxitem = Sql_Fetch_Row_Query($query);
   if (!Sql_Affected_Rows() || !is_numeric($maxitem[0])) {
     $listorder = 1; # insert the listorder as it's in the textarea / start with 1 '
@@ -76,7 +61,7 @@ if (isset($_POST["addnew"])) {
   while (list($key,$val) = each($items)) {
     $val = clean($val);
     if ($val != "") {
-      $query = sprintf('INSERT into %s (name,listorder) values("%s","%s")',$table,$val,$listorder);
+      $query = sprintf('insert into %s (name,listorder) values("%s","%s")',$table,$val,$listorder);
       $result = Sql_query($query);
     }
     $listorder++;
@@ -85,7 +70,7 @@ if (isset($_POST["addnew"])) {
 
 if (isset($_POST["listorder"]) && is_array($_POST["listorder"])) {
   foreach ($_POST["listorder"] as $key => $val) {
-    Sql_Verbose_Query("update $table set listorder = $val where id = $key");
+    Sql_Query(sprintf('update %s set listorder = %d where id = %d',sql_escape($table),$val,$key));
   }
 }
 
@@ -99,7 +84,7 @@ function giveAlternative($table,$delete,$attributeid) {
   print "</select>";
   printf('<input type="hidden" name="delete" value="%d" />',$delete);
   printf('<input type="hidden" name="id" value="%d" />',$attributeid);
-  printf('<input class="submit" type="submit" name="deleteandreplace" value="%s" /></form>',$GLOBALS['I18N']->get('deleteandreplace'));
+  printf('<input class="submit" type="submit" name="deleteandreplace" value="%s" /><hr class="line" />',$GLOBALS['I18N']->get('deleteandreplace'));
 }
 
 function deleteItem($table,$attributeid,$delete) {
@@ -144,7 +129,7 @@ function deleteItem($table,$attributeid,$delete) {
 }
 
 if (isset($_GET["delete"])) {
-  deleteItem($table,$id,$_GET["delete"]);
+  deleteItem($table,$id,sprintf('%d',$_GET["delete"]));
 } elseif(isset($_GET["deleteall"])) {
   $count = 0;
   $errcount = 0;
@@ -181,7 +166,7 @@ if ($num < 100 && $num > 25)
 while ($row = Sql_Fetch_array($rs)) {
   printf( '<span class="delete"><a href="javascript:deleteRec(\'%s\');">'.$GLOBALS['I18N']->get('Delete').'</a></span>',PageURL2("editattributes","","id=$id&amp;delete=".$row["id"]));
   if ($num < 100)
-    printf(' <input type="text" name="listorder[%d]" value="%s" size="5" />',$row["id"],$row["listorder"]);
+    printf(' <input type="text" name="listorder[%d]" value="%s" size="5" class="listorder" />',$row["id"],$row["listorder"]);
   printf(' %s %s <br />', $row["name"],($row["name"] == $data["default_value"]) ? $GLOBALS['I18N']->get('Default'):"");
 }
 if ($num && $num < 100)
@@ -189,3 +174,6 @@ if ($num && $num < 100)
 
 ?>
 </form>
+
+</div> <!-- eo content -->
+</div> <!-- eo panel -->
