@@ -504,6 +504,14 @@ define('DOMAIN_BATCH_PERIOD',120);
 # process every 10 or 15 minutes is recommended.
 define('DOMAIN_AUTO_THROTTLE',0);
 
+# MAX_PROCESSQUEUE_TIME
+# to limit the time, regardless of batch processing or other throttling of a single run of "processqueue"
+# you can set the MAX_PROCESSQUEUE_TIME in seconds
+# if a single queue run exceeds this amount, it will stop, just to pick up from where it left off next time
+# this allows multiple installations each to run the queue, but slow installations (eg with large emails) 
+# set to 0 to disable this feature.
+define('MAX_PROCESSQUEUE_TIME',0);
+
 # admin language
 # if you want to disable the language switch for the admin interface (and run all in english)
 # set this one to 0
