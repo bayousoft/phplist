@@ -333,6 +333,9 @@ set_time_limit(600);
 flush();
 
 output($GLOBALS['I18N']->get('Started'),0);
+if (defined('SYSTEM_TIMEZONE')) {
+  output($GLOBALS['I18N']->get('Time now ').date('Y-m-d H:i'));
+}
 # check for other processes running
 if (!$send_process_id) {
   $send_process_id = getPageLock();
@@ -685,7 +688,13 @@ while ($message = Sql_fetch_array($messages)) {
 
     # check if we have been "killed"
     $alive = checkLock($send_process_id);
-    if ($alive && !$stopSending) {
+
+    ## check for max-process-queue-time
+    $elapsed = $GLOBALS['processqueue_timer']->elapsed(1);
+    if (defined('MAX_PROCESSQUEUE_TIME') && MAX_PROCESSQUEUE_TIME > 0 && $elapsed > MAX_PROCESSQUEUE_TIME) {
+      output($GLOBALS['I18N']->get('queue processing time has exceeded max processing time ').MAX_PROCESSQUEUE_TIME);
+      break;
+    } elseif ($alive && !$stopSending) {
       keepLock($send_process_id);
     } elseif ($stopSending) {
       output($GLOBALS['I18N']->get('Campaign sending timed out, is past date to process until'));
