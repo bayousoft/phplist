@@ -691,7 +691,7 @@ while ($message = Sql_fetch_array($messages)) {
 
     ## check for max-process-queue-time
     $elapsed = $GLOBALS['processqueue_timer']->elapsed(1);
-    if (defined('MAX_PROCESSQUEUE_TIME') && MAX_PROCESSQUEUE_TIME > 0 && $elapsed > MAX_PROCESSQUEUE_TIME) {
+    if (defined('MAX_PROCESSQUEUE_TIME') && MAX_PROCESSQUEUE_TIME > 0 && $elapsed > MAX_PROCESSQUEUE_TIME && $sent > 0) {
       output($GLOBALS['I18N']->get('queue processing time has exceeded max processing time ').MAX_PROCESSQUEUE_TIME);
       break;
     } elseif ($alive && !$stopSending) {
