@@ -450,7 +450,7 @@ if ($send || $sendtest || $prepare || $save || $savedraft) {
         $sendtestresult .= '<br/>';
       } else {
         $sendtestresult .= $GLOBALS['I18N']->get("emailnotfound").": $address";
-        $sendtestresult .= sprintf('<div class="inline"><a href="%s&action=addemail&email='.$address.'" class="button ajaxable">%s</a></div>',$baseurl,$GLOBALS['I18N']->get("add"));
+        $sendtestresult .= sprintf('  <div class="inline"><a href="%s&action=addemail&email=%s" class="button ajaxable">%s</a></div>',$baseurl,urlencode($address),$GLOBALS['I18N']->get("add"));
       }
     }
     $sendtestresult .= "<hr/>";
@@ -918,10 +918,10 @@ if (!$done) {
 
   // Display the HTML for the "Send Test" button, and the input field for the email addresses
   $sendtest_content = sprintf('<div class="sendTest" id="sendTest">
-    '.$sendtestresult .'
+    %s
     <input class="submit" type="submit" name="sendtest" value="%s"/>  %s: 
     <input type="text" name="testtarget" size="40" value="'.$messagedata["testtarget"].'"/><br />%s
-    </div>',
+    </div>',$sendtestresult,
     $GLOBALS['I18N']->get('sendtestmessage'),$GLOBALS['I18N']->get('toemailaddresses'),
     $GLOBALS['I18N']->get('(comma separate addresses - all must be existing subscribers)'));
 
