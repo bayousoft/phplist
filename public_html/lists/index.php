@@ -866,8 +866,9 @@ function forwardPage($id) {
   ## Check requirements
   
   # user
-  if (!isset($_REQUEST["uid"]) || !$_REQUEST['uid'])
+  if (!isset($_REQUEST["uid"]) || !$_REQUEST['uid']) {
     FileNotFound();
+  }
 
   $firstpage = 1; ## is this the initial page or a followup
   
@@ -922,7 +923,7 @@ function forwardPage($id) {
   if (empty($userdata['id']) || $allowed[0] != $userdata['id']) {
     ## when sending a test email as an admin, the entry isn't there yet
     if (empty($_SESSION['adminloggedin']) || $_SESSION['adminloggedin'] != $_SERVER['REMOTE_ADDR']) {
-      FileNotFound();
+      FileNotFound('<br/><i>'.$GLOBALS['I18N']->get('When testing the phpList forward functionality, you need to be logged in as an administrator.').'</i><br/>');
     }
   }
   
