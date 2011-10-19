@@ -1267,7 +1267,12 @@ function addHTMLFooter($message,$footer) {
 
 function precacheMessage($messageid,$forwardContent = 0) {
   global $cached;
-  $domain = getConfig("domain");
+  $domain = getConfig('domain');
+  $default_from = getConfig('message_from_address');
+  if (empty($default_from)) {
+    $default_from = getConfig('admin_address');
+  }
+    
 #    $message = Sql_query("select * from {$GLOBALS["tables"]["message"]} where id = $messageid");
 #    $cached[$messageid] = array();
 #    $message = Sql_fetch_array($message);
@@ -1285,13 +1290,14 @@ function precacheMessage($messageid,$forwardContent = 0) {
   } elseif (strpos($message["from"]," ")) {
     # if there is a space, we need to add the email
     $cached[$messageid]["fromname"] = $message["from"];
-    $cached[$messageid]["fromemail"] = "listmaster@$domain";
+  #  $cached[$messageid]["fromemail"] = "listmaster@$domain";
+    $cached[$messageid]["fromemail"] = $default_from;
   } else {
-    $cached[$messageid]["fromemail"] = $message["from"] . "@$domain";
+    $cached[$messageid]["fromemail"] = $default_from;#$message["from"] . "@$domain";
 
     ## makes more sense not to add the domain to the word, but the help says it does
     ## so let's keep it for now
-    $cached[$messageid]["fromname"] = $message["from"] . "@$domain";
+    $cached[$messageid]["fromname"] = $message["from"] ;#. "@$domain";
   }
   # erase double spacing 
   while (strpos($cached[$messageid]["fromname"],"  ")) {
