@@ -148,6 +148,12 @@ if (isset($_POST['processexport'])) {
 # print Sql_Affected_Rows()." users apply<br/>";
 #return;
   while ($user = Sql_fetch_array($result)) {
+    ## re-verify the blacklist status
+    if (empty($user['blacklisted']) && isBlackListed($user['email'])) {
+      $user['blacklisted'] = 1;
+      Sql_Query(sprintf('update %s set blacklisted = 1 where email = "%s"',$GLOBALS['tables']["user"],$user['email']));
+    }
+    
     set_time_limit(500);
     reset($_POST['cols']);
     while (list ($key,$val) = each ($_POST['cols']))
