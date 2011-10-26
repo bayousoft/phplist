@@ -48,7 +48,8 @@ if (!empty($_POST['importcontent'])) {
       if (empty($userid)) {
         $count['duplicate']++;
         ## mark the subscriber confirmed, don't touch blacklisted
-        Sql_Query(sprintf('update %s set confirmed = 1 where email = "%s"', $tables["user"], $line));
+        ## hmm, maybe not, can be done on the reconcile page
+     #   Sql_Query(sprintf('update %s set confirmed = 1 where email = "%s"', $tables["user"], $line));
         $idreq = Sql_Fetch_Row_Query(sprintf('select id from %s where email = "%s"', $tables["user"], $line));
         $userid = $idreq[0];
       } else {
