@@ -27,7 +27,7 @@ if (!isset($messagedata['sampletime'])) { ## take a "sample" of the send speed, 
 } else {
   $totaltime = time() - $messagedata['sampletime'];
   $sent = $totalsent - $messagedata['samplesent'];
-  if ($totaltime > 600) { ## refresh speed sampling every 5 minutes
+  if ($totaltime > MESSAGE_SENDSTATUS_SAMPLETIME) { ## refresh speed sampling
     setMessageData($id,'sampletime',time());
     setMessageData($id,'samplesent',$totalsent);
   }
@@ -70,8 +70,10 @@ if ($message['status'] != 'inprocess') {
   if (empty($messagedata['to process'])) $messagedata['to process'] = $GLOBALS['I18N']->get('Unknown');
   
   $active = time() - $messagedata['last msg sent'];
-  $html = $GLOBALS['I18N']->get($message['status']).'<br/>'.
-  $messagedata['to process'].' '.$GLOBALS['I18N']->get('still to process').'<br/>';
+  $html = $GLOBALS['I18N']->get($message['status']).'<br/>';
+  if ($messagedata['to process'] > 0) {
+    $html .= $messagedata['to process'].' '.$GLOBALS['I18N']->get('still to process').'<br/>';
+  }
   ## not sure this calculation is accurate
 #  $html .= $GLOBALS['I18N']->get('sent').': '.$totalsent.'<br/>';
   $recently_sent = Sql_Fetch_Row_Query(sprintf('select count(*) from %s where entered > date_sub(current_timestamp,interval %d second) and status = "sent"',
