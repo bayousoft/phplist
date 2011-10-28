@@ -161,7 +161,7 @@ function my_shutdown () {
   global $script_stage,$reload;
 #  output( "Script status: ".connection_status(),0); # with PHP 4.2.1 buggy. http://bugs.php.net/bug.php?id=17774
   output( $GLOBALS['I18N']->get('Script stage').': '.$script_stage,0);
-  global $report,$send_process_id,$tables,$nothingtodo,$invalid,$processed,$failed_sent,$notsent,$sent,$unconfirmed,$num_per_batch,$batch_period,$num_users;
+  global $counters,$report,$send_process_id,$tables,$nothingtodo,$invalid,$processed,$failed_sent,$notsent,$sent,$unconfirmed,$num_per_batch,$batch_period,$num_users;
   $some = $processed; #$sent;# || $invalid || $notsent;
   if (!$some) {
     output($GLOBALS['I18N']->get('Finished, Nothing to do'),0);
@@ -175,8 +175,12 @@ function my_shutdown () {
       $totaltime,$GLOBALS['I18N']->get('seconds'),$msgperhour,$GLOBALS['I18N']->get('msgs/hr')),$sent);
   if ($invalid)
     output(sprintf('%d %s',$invalid,$GLOBALS['I18N']->get('invalid emails')));
-  if ($failed_sent)
+  if ($failed_sent) {
     output(sprintf('%d %s',$failed_sent,$GLOBALS['I18N']->get('emails failed (will retry later)')));
+    foreach ($counters as $label => $value) {
+      output(sprintf('%d %s',$value,$GLOBALS['I18N']->get($label)));
+    }
+  }
   if ($unconfirmed)
     output(sprintf('%d %s',$unconfirmed,$GLOBALS['I18N']->get('emails unconfirmed (not sent)')));
 
@@ -431,7 +435,10 @@ if (!isset($num_per_batch)) {
   $num_per_batch = 1000000;
 }
 
+$counters = array();
+
 while ($message = Sql_fetch_array($messages)) {
+  $counters['campaign']++;
   $failed_sent = 0;
   $throttlecount = 0;
 
@@ -760,7 +767,10 @@ while ($message = Sql_fetch_array($messages)) {
       reset($GLOBALS['plugins']);
       while ($cansend && $plugin = current($GLOBALS['plugins']) ) {
         $cansend = $plugin->canSend($msgdata, $user);
-        if (!$cansend) $failure_reason .= 'Sending blocked by plugin '.$plugin->name;
+        if (!$cansend) {
+          $failure_reason .= 'Sending blocked by plugin '.$plugin->name;
+          $counters['send blocked by '.$plugin->name]++;
+        }
 
         next($GLOBALS['plugins']);
       } 
@@ -779,6 +789,7 @@ while ($message = Sql_fetch_array($messages)) {
           } elseif (isset($domainthrottle[$domainname]['interval']) && $domainthrottle[$domainname]['interval'] == $interval) {
             $throttled = $domainthrottle[$domainname]['sent'] >= DOMAIN_BATCH_SIZE;
             if ($throttled) {
+              $counters['send blocked by domain throttle']++;
               $domainthrottle[$domainname]['attempted']++;
               if (DOMAIN_AUTO_THROTTLE
                 && $domainthrottle[$domainname]['attempted'] > 25 # skip a few before auto throttling
@@ -817,7 +828,10 @@ while ($message = Sql_fetch_array($messages)) {
               if (VERBOSE)
                 output($GLOBALS['I18N']->get('Sending').' '. $messageid.' '.$GLOBALS['I18N']->get('to').' '. $useremail);
               $emailSentTimer = new timer();
-              $success = sendEmail($messageid,$useremail,$userhash,$htmlpref); // $rssitems Obsolete by rssmanager plugin 
+              $success = sendEmail($messageid,$useremail,$userhash,$htmlpref); // $rssitems Obsolete by rssmanager plugin
+              if (!$success) {
+                $counters['sendemail returned false']++;
+              }
               if (VERBOSE) {
                 output($GLOBALS['I18N']->get('It took').' '.$emailSentTimer->elapsed(1).' '.$GLOBALS['I18N']->get('seconds to send'));
               }
@@ -854,7 +868,9 @@ while ($message = Sql_fetch_array($messages)) {
 //              }
            } else {
              $failed_sent++;
-             Sql_Query_Params(sprintf('delete from %s where userid = ? and messageid = ?',$tables['usermessage']), array($userid,$messageid));
+             ## need to check this, the entry shouldn't be there in the first place, so no need to delete it
+             ## might be a cause for duplicated emails
+             #Sql_Query_Params(sprintf('delete from %s where userid = ? and messageid = ?',$tables['usermessage']), array($userid,$messageid));
              if (VERBOSE) {
                output($GLOBALS['I18N']->get('Failed sending to').' '. $useremail);
                logEvent("Failed sending message $messageid to $useremail");
@@ -863,6 +879,7 @@ while ($message = Sql_fetch_array($messages)) {
              # unconfirm this user, so they're not included next time
              if (!$throttled && !validateEmail($useremail)) {
                $unconfirmed++;
+               $counters['email address invalidated']++;               
                logEvent("invalid email $useremail user marked unconfirmed");
                Sql_Query(sprintf('update %s set confirmed = 0 where email = "%s"',
                  $GLOBALS['tables']['user'],$useremail));
