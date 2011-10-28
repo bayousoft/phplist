@@ -43,6 +43,9 @@ if (!empty($_POST['resend']) && is_array($_POST['list'])) {
     }
   }
   Sql_Query("update $tables[message] set status = \"submitted\" where id = $id");
+  $_SESSION['action_result'] = $GLOBALS['I18N']->get('campaign requeued');
+  Redirect('messages&tab=active');
+  exit;  
 }
 
 
