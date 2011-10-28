@@ -346,7 +346,7 @@ function sendMailPhpMailer ($to,$subject,$message) {
 
 #  print "Sending $to from $fromemail<br/>";
   if (!DEVVERSION) {
-    $mail = new PHPlistMailer('systemmessage',$to);
+    $mail = new PHPlistMailer('systemmessage',$to,false);
     $destinationemail = $to;
 
     $hasHTML = strip_tags($message) != $message;
@@ -423,7 +423,7 @@ function sendMailPhpMailer ($to,$subject,$message) {
       if (mt_rand(0,50) == 1) {
         return 0;
       } else {
-        $mail = new PHPlistMailer('systemmessage',$to);
+        $mail = new PHPlistMailer('systemmessage',$to,false);
         $mail->add_text($textmessage);
         $destinationemail = $GLOBALS["developer_email"];
       }
