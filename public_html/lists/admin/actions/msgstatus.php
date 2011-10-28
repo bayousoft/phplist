@@ -74,6 +74,9 @@ if ($message['status'] != 'inprocess') {
   if ($messagedata['to process'] > 0) {
     $html .= $messagedata['to process'].' '.$GLOBALS['I18N']->get('still to process').'<br/>';
   }
+  foreach ($GLOBALS['plugins'] as $plname => $plugin) {
+    $html .= $plugin->messageStatus($id,$message['status']);
+  }
   ## not sure this calculation is accurate
 #  $html .= $GLOBALS['I18N']->get('sent').': '.$totalsent.'<br/>';
   $recently_sent = Sql_Fetch_Row_Query(sprintf('select count(*) from %s where entered > date_sub(current_timestamp,interval %d second) and status = "sent"',
