@@ -128,35 +128,36 @@ if (empty($list['category'])) {
 
 <?php echo formStart(' class="editlistSave" ')?>
 <input type="hidden" name="id" value="<?php echo $id ?>" />
-<label for="listname"><?php echo $GLOBALS['I18N']->get('List name'); ?>:</label><input type="text" name="listname" value="<?php echo  htmlspecialchars(StripSlashes($list["name"]))?>" />
-<label for="active"><?php echo $GLOBALS['I18N']->get('Public list (listed on the frontend)'); ?></label>
-<input type="checkbox" name="active" value="1" <?php echo $list["active"] ? 'checked="checked"' : ''; ?> />
-<label for="listorder"><?php echo $GLOBALS['I18N']->get('Order for listing'); ?></label>
-<input type="text" name="listorder" value="<?php echo $list["listorder"] ?>" size="5" />
+<div class="label"><label for="listname"><?php echo $GLOBALS['I18N']->get('List name'); ?>:</label></div>
+<div class="field"><input type="text" name="listname" value="<?php echo  htmlspecialchars(StripSlashes($list["name"]))?>" /></div>
+<div class="label"><label for="active"><?php echo $GLOBALS['I18N']->get('Public list (listed on the frontend)'); ?></label></div>
+<div class="field"><input type="checkbox" name="active" value="1" <?php echo $list["active"] ? 'checked="checked"' : ''; ?> /></div>
+<div class="label"><label for="listorder"><?php echo $GLOBALS['I18N']->get('Order for listing'); ?></label></div>
+<div class="field"><input type="text" name="listorder" value="<?php echo $list["listorder"] ?>" size="5" /></div>
 <?php if ($GLOBALS["require_login"] && (isSuperUser() || accessLevel("editlist") == "all")) {
   if (empty($list["owner"])) {
     $list["owner"] = $_SESSION["logindetails"]["id"];
   }
-  print '<label for="owner">' . $GLOBALS['I18N']->get('Owner') . '</label><select name="owner">';
+  print '<div class="label"><label for="owner">' . $GLOBALS['I18N']->get('Owner') . '</label></div><div class="field"><select name="owner">';
   $admins = $GLOBALS["admin_auth"]->listAdmins();
   foreach ($admins as $adminid => $adminname) {
     printf ('    <option value="%d" %s>%s</option>',$adminid,$adminid == $list["owner"]? 'selected="selected"':'',$adminname);
   }
-  print '</select>';
+  print '</select></div>';
 } else {
   print '<input type="hidden" name="owner" value="'.$_SESSION["logindetails"]["id"].'" />';
 }
 
 $aListCategories = listCategories();
 if (sizeof($aListCategories)) {
-  print '<label for="category">'.$GLOBALS['I18N']->get('Category').'</label>';
-  print '<select name="category">';
+  print '<div class="label"><label for="category">'.$GLOBALS['I18N']->get('Category').'</label></div>';
+  print '<div class="field"><select name="category">';
   print '<option value="">-- '.$GLOBALS['I18N']->get('choose category').'</option>';
   foreach ($aListCategories as $category) {
     $category = trim($category);
     printf('<option value="%s" %s>%s</option>',$category,$category == $list['category'] ? 'selected="selected"':'',$category);
   }
-  print '</select>';
+  print '</select></div>';
 }
 
   ### allow plugins to add rows
