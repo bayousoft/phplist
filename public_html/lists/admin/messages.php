@@ -361,11 +361,11 @@ if ($total) {
     
     if ($msg['status'] == 'draft') {
       ## only draft messages should be deletable, the rest isn't
-      $actionbuttons .= sprintf('<a href="javascript:deleteRec(\'%s\');" class="button">'.$GLOBALS['I18N']->get("delete").'</a>',
+      $actionbuttons .= sprintf('<span class="delete"><a href="javascript:deleteRec(\'%s\');" class="button">'.$GLOBALS['I18N']->get("delete").'</a></span>',
 PageURL2("messages$url_keep","","delete=".$msg["id"]));
-      $actionbuttons .= PageLinkButton("send",$GLOBALS['I18N']->get("Edit"),"id=".$msg["id"]); 
+      $actionbuttons .= '<span class="edit">'.PageLinkButton("send",$GLOBALS['I18N']->get("Edit"),"id=".$msg["id"]).'</span>'; 
     }
-    $actionbuttons .= PageLinkButton("message",$GLOBALS['I18N']->get("View"),"id=".$msg["id"]);
+    $actionbuttons .= '<span class="view">'.PageLinkButton("message",$GLOBALS['I18N']->get("View"),"id=".$msg["id"]).'</span>';
 
     if ($clicks[0] && CLICKTRACK) {
       $actionbuttons .= PageLink2("mclicks",$GLOBALS['I18N']->get("click stats"),"id=".$msg["id"]);
