@@ -726,7 +726,7 @@ function sendEmail ($messageid,$email,$hash,$htmlpref = 0,$rssitems = array(),$f
 #    $htmlmessage = $plugin->parseOutgoingHTMLMessage($messageid,$htmlmessage,$destinationemail, $userdata);
     $plugin_attachments = $plugin->getMessageAttachment($messageid,$mail->Body);
     if (!empty($plugin_attachments[0]['content'])) {
-      foreach ($plugins_attachments as $plugin_attachment) {
+      foreach ($plugin_attachments as $plugin_attachment) {
         $mail->add_attachment($plugin_attachment['content'],
             basename($plugin_attachment["filename"]),
             $plugin_attachment["mimetype"]);
